@@ -1,0 +1,8 @@
+.coverage
+dist
+doc/_build
+*.egg-info
+*.pyc
+_scratch
+Session.vim
+.tox
