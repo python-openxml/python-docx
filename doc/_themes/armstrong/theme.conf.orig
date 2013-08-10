@@ -1,0 +1,66 @@
+[theme]
+inherit = default
+stylesheet = rtd.css
+pygment_style = default
+show_sphinx = False
+
+[options]
+show_rtd = True
+
+white = #ffffff
+almost_white = #f8f8f8
+barely_white = #f2f2f2
+dirty_white = #eeeeee
+almost_dirty_white = #e6e6e6
+dirtier_white = #DAC6AF
+lighter_gray = #cccccc
+gray_a = #aaaaaa
+gray_9 = #999999
+light_gray = #888888
+gray_7 = #777777
+gray = #666666
+dark_gray = #444444
+gray_2 = #222222
+black = #111111
+light_color = #EDE4D8
+light_medium_color = #DDEAF0
+medium_color = #8ca1af
+medium_color_link = #634320
+medium_color_link_hover = #261a0c
+dark_color = rgba(160, 109, 52, 1.0)
+
+h1 = #1f3744
+h2 = #335C72
+h3 = #638fa6
+
+link_color = #335C72
+link_color_decoration = #99AEB9
+
+medium_color_hover = rgba(255, 255, 255, 0.25)
+medium_color = rgba(255, 255, 255, 0.5)
+green_highlight = #8ecc4c
+
+
+positive_dark = rgba(51, 77, 0, 1.0)
+positive_medium = rgba(102, 153, 0, 1.0)
+positive_light = rgba(102, 153, 0, 0.1)
+
+negative_dark = rgba(51, 13, 0, 1.0)
+negative_medium = rgba(204, 51, 0, 1.0)
+negative_light = rgba(204, 51, 0, 0.1)
+negative_text = #c60f0f
+
+ruler = #abc
+
+viewcode_bg = #f4debf
+viewcode_border = #ac9
+
+highlight = #ffe080
+
+code_background = rgba(0, 0, 0, 0.075)
+
+background = rgba(135, 57, 34, 1.0)
+background_link = rgba(212, 195, 172, 1.0)
+background_link_half = rgba(212, 195, 172, 0.5)
+background_text = rgba(212, 195, 172, 1.0)
+background_text_link = rgba(171, 138, 93, 1.0)

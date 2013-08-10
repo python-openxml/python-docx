@@ -1,0 +1,48 @@
+{% extends "basic/layout.html" %}
+
+{% set script_files = script_files + [pathto("_static/searchtools.js", 1)] %}
+
+{% block htmltitle %}
+{{ super() }}
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+{% endblock %}
+
+{% block footer %}
+<div class="footer">
+{%- if show_copyright %}
+  {%- if hasdoc('copyright') %}
+    {% trans path=pathto('copyright'), copyright=copyright|e %}&copy; <a href="{{ path }}">Copyright</a> {{ copyright }}.{% endtrans %}
+  {%- else %}
+    {% trans copyright=copyright|e %}&copy; Copyright {{ copyright }}.{% endtrans %}
+  {%- endif %}
+{%- endif %}
+{%- if last_updated %}
+  {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
+{%- endif %}
+{%- if show_sphinx %}
+  {% trans sphinx_version=sphinx_version|e %}Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+{%- endif %}
+{%- if theme_show_rtd %}
+  {% trans %}<br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>{% endtrans %}
+{% endif %}
+</div>
+
+
+{% if theme_analytics_code %}
+<!-- Google Analytics Code -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', '{{ theme_analytics_code }}']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+{% endif %}
+
+{% endblock %}
