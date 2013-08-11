@@ -3,7 +3,6 @@ Feature: Add a paragraph of text
   As an python-docx developer
   I need to add a paragraph
 
-  @wip
   Scenario: Add a paragraph to a document created from the default template
      Given a new document created from the default template
       When I add a new paragraph to the body

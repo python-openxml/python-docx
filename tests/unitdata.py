@@ -84,6 +84,35 @@ class CT_BodyBuilder(BaseBuilder):
         return xml
 
 
+class CT_DocumentBuilder(BaseBuilder):
+    """
+    XML data builder for CT_Document (<w:document>) element, the root element
+    in document.xml files.
+    """
+    def __init__(self):
+        """Establish instance variables with default values"""
+        super(CT_DocumentBuilder, self).__init__()
+        self._body = None
+
+    def with_body(self):
+        """Add an empty body element"""
+        self._body = a_body().with_indent(2)
+        return self
+
+    @property
+    def xml(self):
+        """
+        Return XML string based on settings accumulated via method calls.
+        """
+        if not self._body:
+            return '<w:document %s/>\n' % nsdecls('w')
+
+        xml = '<w:document %s>\n' % nsdecls('w')
+        xml += self._body.xml
+        xml += '</w:document>\n'
+        return xml
+
+
 class CT_PBuilder(BaseBuilder):
     """
     Test data builder for a CT_P (<w:p>) XML element that appears within the
@@ -188,6 +217,11 @@ class CT_SectPrBuilder(BaseBuilder):
 def a_body():
     """Return a CT_BodyBuilder instance"""
     return CT_BodyBuilder()
+
+
+def a_document():
+    """Return a CT_DocumentBuilder instance"""
+    return CT_DocumentBuilder()
 
 
 def a_p():

@@ -15,6 +15,12 @@ from docx.oxml.base import OxmlBaseElement
 from docx.oxml.text import CT_P
 
 
+class CT_Document(OxmlBaseElement):
+    """
+    ``<w:document>`` element, the root element of a document.xml file.
+    """
+
+
 class CT_Body(OxmlBaseElement):
     """
     ``<w:body>``, the container element for the main document story in
