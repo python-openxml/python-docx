@@ -51,6 +51,17 @@ class Run(object):
         t = self._r.add_t(text)
         return Text(t)
 
+    @property
+    def text(self):
+        """
+        A string formed by concatenating all the <w:t> elements present in
+        this run.
+        """
+        text = ''
+        for t in self._r.t_elms:
+            text += t.text
+        return text
+
 
 class Text(object):
     """

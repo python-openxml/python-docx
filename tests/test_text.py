@@ -69,3 +69,11 @@ class DescribeRun(object):
         r_elm.add_t.assert_called_once_with(text)
         Text_.assert_called_once_with(t_elm)
         assert t is Text_.return_value
+
+    def it_has_a_composite_of_the_text_it_contains(self):
+        # mockery ----------------------
+        t1, t2 = (Mock(name='t1', text='foo'), Mock(name='t2', text='bar'))
+        r_elm = Mock(name='r_elm', t_elms=[t1, t2])
+        r = Run(r_elm)
+        # verify -----------------------
+        assert r.text == 'foobar'
