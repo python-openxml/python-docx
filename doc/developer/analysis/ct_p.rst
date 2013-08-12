@@ -71,6 +71,14 @@ Schema excerpt
     <xsd:attribute name="rsidRDefault" type="ST_LongHexNumber"/>
   </xsd:complexType>
 
+  <xsd:complexType name="CT_Text">
+    <xsd:simpleContent>
+      <xsd:extension base="s:ST_String">
+        <xsd:attribute ref="xml:space" use="optional"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
   <xsd:group name="EG_PContent">
     <xsd:choice>
       <xsd:group   ref="EG_ContentRunContent"             minOccurs="0" maxOccurs="unbounded"/>

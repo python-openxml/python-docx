@@ -35,3 +35,16 @@ class Run(object):
     def __init__(self, r_elm):
         super(Run, self).__init__()
         self._r = r_elm
+
+    def add_text(self, text):
+        """
+        Add a text element to this run.
+        """
+        t = self._r.add_t(text)
+        return Text(t)
+
+
+class Text(object):
+    """
+    Proxy object wrapping ``<w:t>`` element.
+    """
