@@ -32,3 +32,16 @@ class CT_P(OxmlBaseElement):
         xml = '<w:p %s/>' % nsdecls('w')
         p = oxml_fromstring(xml)
         return p
+
+
+class CT_R(OxmlBaseElement):
+    """
+    ``<w:r>`` element, containing the properties and text for a run.
+    """
+    @staticmethod
+    def new():
+        """
+        Return a new ``<w:r>`` element.
+        """
+        xml = '<w:r %s/>' % nsdecls('w')
+        return oxml_fromstring(xml)

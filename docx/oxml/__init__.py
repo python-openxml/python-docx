@@ -14,7 +14,7 @@ corresponding to Open XML elements.
 
 from docx.oxml.base import register_custom_element_class
 from docx.oxml.parts import CT_Body
-from docx.oxml.text import CT_P
+from docx.oxml.text import CT_P, CT_R
 
 
 # ===========================================================================
@@ -23,3 +23,4 @@ from docx.oxml.text import CT_P
 
 register_custom_element_class('w:body',     CT_Body)
 register_custom_element_class('w:p',        CT_P)
+register_custom_element_class('w:r',        CT_R)

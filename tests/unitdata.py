@@ -101,6 +101,22 @@ class CT_PBuilder(BaseBuilder):
         return xml
 
 
+class CT_RBuilder(BaseBuilder):
+    """
+    Test data builder for a CT_R (<w:r>) XML element that appears within the
+    body element of a document.xml file.
+    """
+    def __init__(self):
+        """Establish instance variables with default values"""
+        super(CT_RBuilder, self).__init__()
+
+    @property
+    def xml(self):
+        """Return element XML based on attribute settings"""
+        indent = ' ' * self._indent
+        return '%s<w:r%s/>\n' % (indent, self._nsdecls)
+
+
 class CT_SectPrBuilder(BaseBuilder):
     """
     Test data builder for a CT_SectPr (<w:sectPr>) XML element that appears
@@ -131,3 +147,8 @@ def a_p():
 def a_sectPr():
     """Return a CT_SectPr instance"""
     return CT_SectPrBuilder()
+
+
+def an_r():
+    """Return a CT_RBuilder instance"""
+    return CT_RBuilder()
