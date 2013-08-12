@@ -126,12 +126,29 @@ class CT_RBuilder(BaseBuilder):
     def __init__(self):
         """Establish instance variables with default values"""
         super(CT_RBuilder, self).__init__()
+        self._t = []
+
+    @property
+    def is_empty(self):
+        return len(self._t) == 0
+
+    def with_t(self, text):
+        """Add an text element containing *text*"""
+        self._t.append(a_t(text))
+        return self
 
     @property
     def xml(self):
         """Return element XML based on attribute settings"""
         indent = ' ' * self._indent
-        return '%s<w:r%s/>\n' % (indent, self._nsdecls)
+        if self.is_empty:
+            xml = '%s<w:r%s/>\n' % (indent, self._nsdecls)
+        else:
+            xml = '%s<w:r%s>\n' % (indent, self._nsdecls)
+            for t_builder in self._t:
+                xml += t_builder.with_indent(self._indent+2).xml
+            xml += '%s</w:r>\n' % indent
+        return xml
 
 
 class CT_TextBuilder(BaseBuilder):

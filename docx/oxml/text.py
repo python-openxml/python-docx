@@ -49,6 +49,14 @@ class CT_R(OxmlBaseElement):
         xml = '<w:r %s/>' % nsdecls('w')
         return oxml_fromstring(xml)
 
+    def add_t(self, text):
+        """
+        Return a newly added CT_T (<w:t>) element containing *text*.
+        """
+        t = CT_Text.new(text)
+        self.append(t)
+        return t
+
 
 class CT_Text(OxmlBaseElement):
     """

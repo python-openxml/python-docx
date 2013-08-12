@@ -36,6 +36,15 @@ class DescribeCT_R(object):
         r = CT_R.new()
         assert r.xml == an_r().with_nsdecls().xml
 
+    def it_can_add_a_t_to_itself(self):
+        text = 'foobar'
+        r = an_r().with_nsdecls().element
+        # exercise -----------------
+        t = r.add_t(text)
+        # verify -------------------
+        assert r.xml == an_r().with_nsdecls().with_t(text).xml
+        assert isinstance(t, CT_Text)
+
 
 class DescribeCT_Text(object):
 

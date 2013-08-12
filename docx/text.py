@@ -48,3 +48,6 @@ class Text(object):
     """
     Proxy object wrapping ``<w:t>`` element.
     """
+    def __init__(self, t_elm):
+        super(Text, self).__init__()
+        self._t = t_elm
