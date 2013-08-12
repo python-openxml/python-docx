@@ -21,6 +21,12 @@ class DescribeCT_P(object):
         expected_xml = a_p().with_nsdecls().xml
         assert p.xml == expected_xml
 
+    def it_has_a_sequence_of_the_runs_it_contains(self):
+        p = a_p().with_nsdecls().with_r(3).element
+        assert len(p.r_elms) == 3
+        for r in p.r_elms:
+            assert isinstance(r, CT_R)
+
     def it_can_add_an_r_to_itself(self):
         p = a_p().with_nsdecls().element
         # exercise -----------------

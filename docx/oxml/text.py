@@ -36,6 +36,15 @@ class CT_P(OxmlBaseElement):
         p = oxml_fromstring(xml)
         return p
 
+    @property
+    def r_elms(self):
+        """
+        Sequence containing a reference to each run element in this paragraph.
+        """
+        if not hasattr(self, 'r'):
+            return ()
+        return tuple([r for r in self.r])
+
 
 class CT_R(OxmlBaseElement):
     """
