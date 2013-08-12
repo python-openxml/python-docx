@@ -21,6 +21,14 @@ class DescribeCT_P(object):
         expected_xml = a_p().with_nsdecls().xml
         assert p.xml == expected_xml
 
+    def it_can_add_an_r_to_itself(self):
+        p = a_p().with_nsdecls().element
+        # exercise -----------------
+        r = p.add_r()
+        # verify -------------------
+        assert p.xml == a_p().with_nsdecls().with_r().xml
+        assert isinstance(r, CT_R)
+
 
 class DescribeCT_R(object):
 

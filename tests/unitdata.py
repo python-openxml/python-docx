@@ -92,12 +92,29 @@ class CT_PBuilder(BaseBuilder):
     def __init__(self):
         """Establish instance variables with default values"""
         super(CT_PBuilder, self).__init__()
+        self._r = []
+
+    @property
+    def is_empty(self):
+        return len(self._r) == 0
+
+    def with_r(self, count=1):
+        """Add *count* empty run elements"""
+        for i in range(count):
+            self._r.append(an_r())
+        return self
 
     @property
     def xml(self):
         """Return element XML based on attribute settings"""
         indent = ' ' * self._indent
-        xml = '%s<w:p%s/>\n' % (indent, self._nsdecls)
+        if self.is_empty:
+            xml = '%s<w:p%s/>\n' % (indent, self._nsdecls)
+        else:
+            xml = '%s<w:p%s>\n' % (indent, self._nsdecls)
+            for r in self._r:
+                xml += r.with_indent(self._indent+2).xml
+            xml += '%s</w:p>\n' % indent
         return xml
 
 

@@ -23,6 +23,9 @@ class CT_P(OxmlBaseElement):
         """
         Return a newly added CT_R (<w:r>) element.
         """
+        r = CT_R.new()
+        self.append(r)
+        return r
 
     @staticmethod
     def new():
