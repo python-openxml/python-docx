@@ -66,6 +66,15 @@ class CT_R(OxmlBaseElement):
         self.append(t)
         return t
 
+    @property
+    def t_elms(self):
+        """
+        Sequence of the <w:t> elements in this paragraph.
+        """
+        if not hasattr(self, 't'):
+            return ()
+        return tuple([t for t in self.t])
+
 
 class CT_Text(OxmlBaseElement):
     """

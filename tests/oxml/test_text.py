@@ -51,6 +51,18 @@ class DescribeCT_R(object):
         assert r.xml == an_r().with_nsdecls().with_t(text).xml
         assert isinstance(t, CT_Text)
 
+    def it_has_a_sequence_of_the_t_elms_it_contains(self):
+        cases = (
+            (an_r().with_nsdecls(), 0),
+            (an_r().with_nsdecls().with_t('foo'), 1),
+            (an_r().with_nsdecls().with_t('foo').with_t('bar'), 2),
+        )
+        for builder, expected_len in cases:
+            r = builder.element
+            assert len(r.t_elms) == expected_len
+            for t in r.t_elms:
+                assert isinstance(t, CT_Text)
+
 
 class DescribeCT_Text(object):
 
