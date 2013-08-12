@@ -9,9 +9,9 @@
 
 """Test suite for the docx.oxml.text module."""
 
-from docx.oxml.text import CT_P, CT_R
+from docx.oxml.text import CT_P, CT_R, CT_Text
 
-from ..unitdata import a_p, an_r
+from ..unitdata import a_p, a_t, an_r
 
 
 class DescribeCT_P(object):
@@ -35,3 +35,11 @@ class DescribeCT_R(object):
     def it_can_construct_a_new_r_element(self):
         r = CT_R.new()
         assert r.xml == an_r().with_nsdecls().xml
+
+
+class DescribeCT_Text(object):
+
+    def it_can_construct_a_new_t_element(self):
+        text = 'foobar'
+        t = CT_Text.new(text)
+        assert t.xml == a_t(text).with_nsdecls().xml

@@ -134,6 +134,23 @@ class CT_RBuilder(BaseBuilder):
         return '%s<w:r%s/>\n' % (indent, self._nsdecls)
 
 
+class CT_TextBuilder(BaseBuilder):
+    """
+    Test data builder for a CT_Text (<w:t>) XML element that appears within a
+    run element.
+    """
+    def __init__(self, text):
+        """Establish instance variables with default values"""
+        super(CT_TextBuilder, self).__init__()
+        self._text = text
+
+    @property
+    def xml(self):
+        """Return element XML based on attribute settings"""
+        indent = ' ' * self._indent
+        return '%s<w:t%s>%s</w:t>\n' % (indent, self._nsdecls, self._text)
+
+
 class CT_SectPrBuilder(BaseBuilder):
     """
     Test data builder for a CT_SectPr (<w:sectPr>) XML element that appears
@@ -159,6 +176,11 @@ def a_body():
 def a_p():
     """Return a CT_PBuilder instance"""
     return CT_PBuilder()
+
+
+def a_t(text):
+    """Return a CT_TextBuilder instance"""
+    return CT_TextBuilder(text)
 
 
 def a_sectPr():
