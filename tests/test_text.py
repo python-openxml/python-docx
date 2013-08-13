@@ -59,6 +59,17 @@ class DescribeParagraph(object):
             p = Paragraph(p_elm)
             assert p.style == expected_style
 
+    def it_can_set_its_paragraph_style(self):
+        cases = (
+            ('foobar', 'foobar'),
+            ('Normal', None),
+        )
+        for style, expected_setting in cases:
+            p_elm = Mock(name='p_elm')
+            p = Paragraph(p_elm)
+            p.style = style
+            assert p_elm.style == expected_setting
+
 
 class DescribeRun(object):
 

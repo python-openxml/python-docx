@@ -43,6 +43,10 @@ class Paragraph(object):
         style = self._p.style
         return style if style is not None else 'Normal'
 
+    @style.setter
+    def style(self, style):
+        self._p.style = None if style == 'Normal' else style
+
 
 class Run(object):
     """
