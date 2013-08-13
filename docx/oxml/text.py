@@ -12,7 +12,9 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from docx.oxml.base import nsdecls, OxmlBaseElement, oxml_fromstring, qn
+from docx.oxml.base import (
+    _Element, nsdecls, OxmlBaseElement, oxml_fromstring, qn
+)
 
 
 class CT_P(OxmlBaseElement):
@@ -58,6 +60,17 @@ class CT_PPr(OxmlBaseElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
+    def __setattr__(self, attr, value):
+        """
+        Implement setter side of properties. Filters ``__setattr__`` messages
+        to ObjectifiedElement base class to intercept messages intended for
+        custom property setters.
+        """
+        if attr == 'style':
+            self._set_style(value)
+        else:
+            super(CT_PPr, self).__setattr__(attr, value)
+
     @property
     def style(self):
         """
@@ -67,6 +80,20 @@ class CT_PPr(OxmlBaseElement):
         if not hasattr(self, 'pStyle'):
             return None
         return self.pStyle.get(qn('w:val'))
+
+    def _set_style(self, style):
+        """
+        Set w:val attribute of <w:pStyle> child element to *style*, adding a
+        new element if necessary. If *style* is |None|, remove the <w:pStyle>
+        element if present.
+        """
+        if not hasattr(self, 'pStyle'):
+            pStyle = _Element('w:pStyle')
+            self.insert(0, pStyle)
+        if style is None:
+            self.remove(self.pStyle)
+        else:
+            self.pStyle.set(qn('w:val'), style)
 
 
 class CT_R(OxmlBaseElement):

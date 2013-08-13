@@ -60,6 +60,24 @@ class DescribeCT_PPr(object):
             pPr = builder.with_nsdecls().element
             assert pPr.style == expected_value
 
+    def it_can_set_the_paragraph_style(self):
+        cases = (
+            (1, a_pPr(), None, a_pPr()),
+            (2, a_pPr(), 'foobar', a_pPr().with_style('foobar')),
+            (3, a_pPr().with_style('foobar'), None, a_pPr()),
+            (4, a_pPr().with_style('foobar'), 'barfoo',
+             a_pPr().with_style('barfoo')),
+        )
+        for case_nmbr, before_bldr, new_style, after_bldr in cases:
+            print '====\ncase %d: new_style => %s' % (case_nmbr, new_style)
+            print 'before:\n%s' % before_bldr.with_nsdecls().xml
+            pPr = before_bldr.with_nsdecls().element
+            pPr.style = new_style
+            expected_xml = after_bldr.with_nsdecls().xml
+            print 'expected:\n%s' % expected_xml
+            print 'actual:\n%s' % pPr.xml
+            assert pPr.xml == expected_xml
+
 
 class DescribeCT_R(object):
 
