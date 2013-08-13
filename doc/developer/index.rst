@@ -10,3 +10,4 @@ Developer Documentation
    analysis/ct_document
    analysis/ct_body
    analysis/ct_p
+   analysis/ct_ppr
