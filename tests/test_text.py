@@ -50,6 +50,15 @@ class DescribeParagraph(object):
         Run_.assert_called_once_with(r_elm)
         assert r is Run_.return_value
 
+    def it_knows_its_paragraph_style(self):
+        cases = (
+            (Mock(name='p_elm', style='foobar'), 'foobar'),
+            (Mock(name='p_elm', style=None),     'Normal'),
+        )
+        for p_elm, expected_style in cases:
+            p = Paragraph(p_elm)
+            assert p.style == expected_style
+
 
 class DescribeRun(object):
 

@@ -35,6 +35,14 @@ class Paragraph(object):
         """
         return tuple([Run(r) for r in self._p.r_elms])
 
+    @property
+    def style(self):
+        """
+        Paragraph style for this paragraph. Read/Write.
+        """
+        style = self._p.style
+        return style if style is not None else 'Normal'
+
 
 class Run(object):
     """
