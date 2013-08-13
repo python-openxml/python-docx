@@ -12,7 +12,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from docx.oxml.base import nsdecls, OxmlBaseElement, oxml_fromstring
+from docx.oxml.base import nsdecls, OxmlBaseElement, oxml_fromstring, qn
 
 
 class CT_P(OxmlBaseElement):
@@ -44,6 +44,21 @@ class CT_P(OxmlBaseElement):
         if not hasattr(self, 'r'):
             return ()
         return tuple([r for r in self.r])
+
+
+class CT_PPr(OxmlBaseElement):
+    """
+    ``<w:pPr>`` element, containing the properties for a paragraph.
+    """
+    @property
+    def style(self):
+        """
+        String contained in <w:pStyle> child, or None if that element is not
+        present.
+        """
+        if not hasattr(self, 'pStyle'):
+            return None
+        return self.pStyle.get(qn('w:val'))
 
 
 class CT_R(OxmlBaseElement):

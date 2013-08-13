@@ -147,6 +147,39 @@ class CT_PBuilder(BaseBuilder):
         return xml
 
 
+class CT_PPrBuilder(BaseBuilder):
+    """
+    Test data builder for a CT_PPr (<w:pPr>) XML element that appears as a
+    child of a <w:p> element in a document.xml file.
+    """
+    def __init__(self):
+        """Establish instance variables with default values"""
+        super(CT_PPrBuilder, self).__init__()
+        self._pStyle = None
+
+    @property
+    def is_empty(self):
+        return self._pStyle is None
+
+    def with_style(self, style='foobar'):
+        """Add pStyle child with inner text *style*"""
+        self._pStyle = '<w:pStyle w:val="%s"/>' % style
+        return self
+
+    @property
+    def xml(self):
+        """Return element XML based on attribute settings"""
+        indent = ' ' * self._indent
+        if self.is_empty:
+            xml = '%s<w:pPr%s/>\n' % (indent, self._nsdecls)
+        else:
+            xml = '%s<w:pPr%s>\n' % (indent, self._nsdecls)
+            if self._pStyle:
+                xml += '%s%s\n' % (indent+'  ', self._pStyle)
+            xml += '%s</w:pPr>\n' % indent
+        return xml
+
+
 class CT_RBuilder(BaseBuilder):
     """
     Test data builder for a CT_R (<w:r>) XML element that appears within the
@@ -227,6 +260,11 @@ def a_document():
 def a_p():
     """Return a CT_PBuilder instance"""
     return CT_PBuilder()
+
+
+def a_pPr():
+    """Return a CT_PPrBuilder instance"""
+    return CT_PPrBuilder()
 
 
 def a_t(text):

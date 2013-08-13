@@ -11,7 +11,7 @@
 
 from docx.oxml.text import CT_P, CT_R, CT_Text
 
-from ..unitdata import a_p, a_t, an_r
+from ..unitdata import a_p, a_pPr, a_t, an_r
 
 
 class DescribeCT_P(object):
@@ -34,6 +34,19 @@ class DescribeCT_P(object):
         # verify -------------------
         assert p.xml == a_p().with_nsdecls().with_r().xml
         assert isinstance(r, CT_R)
+
+
+class DescribeCT_PPr(object):
+
+    def it_knows_the_paragraph_style(self):
+        cases = (
+            (a_pPr(), None),
+            (a_pPr().with_style('foobar'), 'foobar'),
+        )
+        for builder, expected_value in cases:
+            print builder.with_nsdecls().xml
+            pPr = builder.with_nsdecls().element
+            assert pPr.style == expected_value
 
 
 class DescribeCT_R(object):
