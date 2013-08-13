@@ -45,6 +45,14 @@ class CT_P(OxmlBaseElement):
             return ()
         return tuple([r for r in self.r])
 
+    @property
+    def style(self):
+        """
+        String contained in w:val attribute of <w:pPr><w:pStyle> child, or
+        None if that element is not present.
+        """
+        return self.pPr.style if hasattr(self, 'pPr') else None
+
 
 class CT_PPr(OxmlBaseElement):
     """

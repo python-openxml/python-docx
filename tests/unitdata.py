@@ -121,11 +121,19 @@ class CT_PBuilder(BaseBuilder):
     def __init__(self):
         """Establish instance variables with default values"""
         super(CT_PBuilder, self).__init__()
+        self._pPr = None
         self._r = []
 
     @property
     def is_empty(self):
-        return len(self._r) == 0
+        return self._pPr is None and len(self._r) == 0
+
+    def with_pPr(self, pPr=None):
+        """Add a <w:pPr> child element"""
+        if pPr is None:
+            pPr = a_pPr()
+        self._pPr = pPr
+        return self
 
     def with_r(self, count=1):
         """Add *count* empty run elements"""
@@ -141,6 +149,8 @@ class CT_PBuilder(BaseBuilder):
             xml = '%s<w:p%s/>\n' % (indent, self._nsdecls)
         else:
             xml = '%s<w:p%s>\n' % (indent, self._nsdecls)
+            if self._pPr:
+                xml += self._pPr.with_indent(self._indent+2).xml
             for r in self._r:
                 xml += r.with_indent(self._indent+2).xml
             xml += '%s</w:p>\n' % indent

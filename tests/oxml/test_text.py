@@ -35,6 +35,18 @@ class DescribeCT_P(object):
         assert p.xml == a_p().with_nsdecls().with_r().xml
         assert isinstance(r, CT_R)
 
+    def it_knows_its_paragraph_style(self):
+        # effectively an integration test with CT_PPr
+        pPr = a_pPr().with_style('foobar')
+        cases = (
+            (a_p(), None),
+            (a_p().with_pPr(pPr), 'foobar'),
+        )
+        for builder, expected_value in cases:
+            print builder.with_nsdecls().xml
+            p = builder.with_nsdecls().element
+            assert p.style == expected_value
+
 
 class DescribeCT_PPr(object):
 
