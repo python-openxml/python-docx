@@ -21,6 +21,17 @@ class CT_P(OxmlBaseElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
+    def __setattr__(self, attr, value):
+        """
+        Implement setter side of properties. Filters ``__setattr__`` messages
+        to ObjectifiedElement base class to intercept messages intended for
+        custom property setters.
+        """
+        if attr == 'style':
+            self._set_style(value)
+        else:
+            super(CT_P, self).__setattr__(attr, value)
+
     def add_r(self):
         """
         Return a newly added CT_R (<w:r>) element.
@@ -53,7 +64,35 @@ class CT_P(OxmlBaseElement):
         String contained in w:val attribute of <w:pPr><w:pStyle> child, or
         None if that element is not present.
         """
-        return self.pPr.style if hasattr(self, 'pPr') else None
+        return self.pPr.style if self._has_pPr else None
+
+    def _get_or_add_pPr(self):
+        """
+        Return the pPr child element of this <w:p> element, adding a new one
+        if one is not present.
+        """
+        if not self._has_pPr:
+            self.insert(0, CT_PPr.new())
+        return self.pPr
+
+    @property
+    def _has_pPr(self):
+        """
+        Return True if this <w:p> element has a <w:pPr> child element, False
+        otherwise.
+        """
+        return hasattr(self, 'pPr')
+
+    def _set_style(self, style):
+        """
+        Set style of this <w:p> element to *style*. If *style* is None,
+        remove the style element. If the pPr element is empty after the
+        operation, remove it.
+        """
+        pPr = self._get_or_add_pPr()
+        pPr.style = style
+        if pPr.countchildren() == 0:
+            self.remove(pPr)
 
 
 class CT_PPr(OxmlBaseElement):

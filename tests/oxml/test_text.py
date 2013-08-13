@@ -47,6 +47,26 @@ class DescribeCT_P(object):
             p = builder.with_nsdecls().element
             assert p.style == expected_value
 
+    def it_can_set_its_paragraph_style(self):
+        # effectively an integration test with CT_PPr
+        pPr = a_pPr().with_style('foobar')
+        pPr2 = a_pPr().with_style('barfoo')
+        cases = (
+            (1, a_p(), None, a_p()),
+            (2, a_p(), 'foobar', a_p().with_pPr(pPr)),
+            (3, a_p().with_pPr(pPr), None, a_p()),
+            (4, a_p().with_pPr(pPr), 'barfoo', a_p().with_pPr(pPr2)),
+        )
+        for case_nmbr, before_bldr, new_style, after_bldr in cases:
+            print before_bldr.with_nsdecls().xml
+            print 'case_nmbr, new_style => %d, %s' % (case_nmbr, new_style)
+            p = before_bldr.with_nsdecls().element
+            p.style = new_style
+            expected_xml = after_bldr.with_nsdecls().xml
+            print expected_xml
+            print p.xml
+            assert p.xml == expected_xml
+
 
 class DescribeCT_PPr(object):
 

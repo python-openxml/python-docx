@@ -3,7 +3,6 @@ Feature: Each paragraph has a read/write style
   As an python-docx developer
   I need to get and set the style of a paragraph
 
-  @wip
   Scenario: Set the style of a paragraph
      Given a new document created from the default template
       When I add a new paragraph to the body
