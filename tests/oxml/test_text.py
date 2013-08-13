@@ -9,7 +9,7 @@
 
 """Test suite for the docx.oxml.text module."""
 
-from docx.oxml.text import CT_P, CT_R, CT_Text
+from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_Text
 
 from ..unitdata import a_p, a_pPr, a_t, an_r
 
@@ -49,6 +49,11 @@ class DescribeCT_P(object):
 
 
 class DescribeCT_PPr(object):
+
+    def it_can_construct_a_new_pPr_element(self):
+        pPr = CT_PPr.new()
+        expected_xml = a_pPr().with_nsdecls().xml
+        assert pPr.xml == expected_xml
 
     def it_knows_the_paragraph_style(self):
         cases = (

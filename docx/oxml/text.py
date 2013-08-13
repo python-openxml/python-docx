@@ -71,6 +71,15 @@ class CT_PPr(OxmlBaseElement):
         else:
             super(CT_PPr, self).__setattr__(attr, value)
 
+    @staticmethod
+    def new():
+        """
+        Return a new ``<w:pPr>`` element.
+        """
+        xml = '<w:pPr %s/>' % nsdecls('w')
+        pPr = oxml_fromstring(xml)
+        return pPr
+
     @property
     def style(self):
         """
