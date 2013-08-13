@@ -23,6 +23,7 @@ thisdir = os.path.split(__file__)[0]
 scratch_dir = absjoin(thisdir, '../_scratch')
 saved_docx_path = absjoin(scratch_dir, 'test_out.docx')
 
+test_style = 'Heading1'
 test_text = 'python-docx was here!'
 
 
@@ -58,6 +59,12 @@ def step_when_save_document(context):
     context.doc.save(saved_docx_path)
 
 
+@when('I set the paragraph style')
+def step_when_set_paragraph_style(context):
+    context.p.add_run().add_text(test_text)
+    context.p.style = test_style
+
+
 # then =====================================================
 
 @then('the document contains the text I added')
@@ -68,3 +75,12 @@ def step_then_document_contains_text_I_added(context):
     p = paragraphs[-1]
     r = p.runs[0]
     assert r.text == test_text
+
+
+@then('the paragraph has the style I set')
+def step_then_paragraph_has_the_style_I_set(context):
+    doc = Document(saved_docx_path)
+    body = doc.body
+    paragraphs = body.paragraphs
+    p = paragraphs[-1]
+    assert p.style == test_style
