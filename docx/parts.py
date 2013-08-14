@@ -57,6 +57,15 @@ class _Body(object):
         p = self._body.add_p()
         return Paragraph(p)
 
+    def clear_content(self):
+        """
+        Return this |_Body| instance after clearing it of all content.
+        Section properties for the main document story, if present, are
+        preserved.
+        """
+        self._body.clear_content()
+        return self
+
     @property
     def paragraphs(self):
         if not hasattr(self._body, 'p'):

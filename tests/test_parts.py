@@ -109,3 +109,13 @@ class Describe_Body(object):
     def it_returns_an_empty_sequence_when_it_contains_no_paragraphs(self):
         body = _Body(a_body().element)
         assert body.paragraphs == ()
+
+    def it_can_clear_itself_of_all_content_it_holds(self):
+        # mockery ----------------------
+        body_elm = Mock(name='body_elm')
+        body = _Body(body_elm)
+        # exercise ---------------------
+        retval = body.clear_content()
+        # verify -----------------------
+        body_elm.clear_content.assert_called_once_with()
+        assert retval is body
