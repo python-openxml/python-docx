@@ -13,6 +13,8 @@ Provides a syntactically more convenient API for interacting with the
 opc.OpcPackage graph.
 """
 
+from opc import OpcPackage
+
 
 def Document(docx=None):
     """
@@ -21,3 +23,14 @@ def Document(docx=None):
     *docx* is missing or ``None``, the built-in default document "template"
     is loaded.
     """
+    pkg = OpcPackage.open(docx)
+    document_part = pkg.main_document
+    return _Document(pkg, document_part)
+
+
+class _Document(object):
+    """
+    API class representing a Word document.
+    """
+    def __init__(self, pkg, document_part):
+        super(_Document, self).__init__()
