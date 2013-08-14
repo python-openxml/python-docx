@@ -14,6 +14,7 @@ import pytest
 from mock import Mock, PropertyMock
 
 from docx.api import Document, _Document
+from opc.constants import CONTENT_TYPE as CT
 
 from .unitutil import class_mock, var_mock
 
@@ -37,6 +38,7 @@ class DescribeDocument(object):
         OpcPackage_ = class_mock('docx.api.OpcPackage', request)
         pkg = OpcPackage_.open.return_value
         main_document = PropertyMock(name='main_document')
+        main_document.return_value.content_type = CT.WML_DOCUMENT_MAIN
         type(pkg).main_document = main_document
         document_part = main_document.return_value
         return (OpcPackage_, pkg, main_document, document_part)
@@ -58,3 +60,12 @@ class DescribeDocument(object):
                                             default_docx):
         Document()
         OpcPackage_.open.assert_called_once_with(default_docx)
+
+    def it_should_raise_if_not_a_docx_file(self, OpcPackage_mockery):
+        # mockery ----------------------
+        docx = Mock(name='docx')
+        OpcPackage_, pkg, main_document, document_part = OpcPackage_mockery
+        main_document.return_value.content_type = 'foobar'
+        # verify -----------------------
+        with pytest.raises(ValueError):
+            Document(docx)
