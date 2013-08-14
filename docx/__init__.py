@@ -9,7 +9,7 @@
 
 from docx.api import Document  # noqa
 
-__version__ = '0.3.0d1'
+__version__ = '0.3.0dev1'
 
 
 from opc import PartFactory

@@ -11,3 +11,4 @@ Developer Documentation
    analysis/ct_body
    analysis/ct_p
    analysis/ct_ppr
+   analysis/ct_styles
