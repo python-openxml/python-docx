@@ -34,6 +34,23 @@ class DescribeCT_Body(object):
             assert body.xml == after_body_bldr.xml
             assert isinstance(p, CT_P)
 
+    def it_can_clear_all_the_content_it_holds(self):
+        """
+        Remove all content child elements from this <w:body> element.
+        """
+        cases = (
+            (a_body(), a_body()),
+            (a_body().with_p(), a_body()),
+            (a_body().with_sectPr(), a_body().with_sectPr()),
+            (a_body().with_p().with_sectPr(), a_body().with_sectPr()),
+        )
+        for before_body_bldr, after_body_bldr in cases:
+            body = before_body_bldr.element
+            # exercise -----------------
+            body.clear_content()
+            # verify -------------------
+            assert body.xml == after_body_bldr.xml
+
 
 class DescribeCT_Document(object):
 

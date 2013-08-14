@@ -38,6 +38,16 @@ class CT_Body(OxmlBaseElement):
             self.append(p)
         return p
 
+    def clear_content(self):
+        """
+        Remove all content child elements from this <w:body> element. Leave
+        the <w:sectPr> element if it is present.
+        """
+        children = self.getchildren()
+        content_elms = children[:-1] if self._has_sectPr else children
+        for content_elm in content_elms:
+            self.remove(content_elm)
+
     @property
     def _has_sectPr(self):
         """
