@@ -7,4 +7,6 @@
 # This module is part of python-docx and is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.php
 
+from docx.api import Document  # noqa
+
 __version__ = '0.3.0d1'
