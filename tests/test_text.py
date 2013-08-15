@@ -14,7 +14,7 @@ from docx.text import Paragraph, Run
 
 import pytest
 
-from mock import create_autospec, Mock
+from mock import call, create_autospec, Mock
 
 from .unitutil import class_mock
 
@@ -24,6 +24,19 @@ class DescribeParagraph(object):
     @pytest.fixture
     def Run_(self, request):
         return class_mock('docx.text.Run', request)
+
+    def it_has_a_sequence_of_the_runs_it_contains(self, Run_):
+        p_elm = Mock(name='p_elm')
+        r1, r2 = (Mock(name='r1'), Mock(name='r2'))
+        R1, R2 = (Mock(name='Run1'), Mock(name='Run2'))
+        p_elm.r_elms = [r1, r2]
+        p = Paragraph(p_elm)
+        Run_.side_effect = [R1, R2]
+        # exercise ---------------------
+        runs = p.runs
+        # verify -----------------------
+        assert Run_.mock_calls == [call(r1), call(r2)]
+        assert runs == (R1, R2)
 
     def it_can_add_a_run_to_itself(self, Run_):
         # mockery ----------------------

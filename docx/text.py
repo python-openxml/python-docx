@@ -27,6 +27,14 @@ class Paragraph(object):
         r = self._p.add_r()
         return Run(r)
 
+    @property
+    def runs(self):
+        """
+        Sequence of |Run| instances corresponding to the <w:r> elements in
+        this paragraph.
+        """
+        return tuple([Run(r) for r in self._p.r_elms])
+
 
 class Run(object):
     """
