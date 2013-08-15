@@ -81,3 +81,8 @@ class Describe_Document(object):
         body = doc.body
         # verify -----------------------
         assert body is document_part.body
+
+    def it_can_save_the_package(self):
+        pkg, file_ = (Mock(name='pkg'), Mock(name='file_'))
+        _Document(pkg, None).save(file_)
+        pkg.save.assert_called_once_with(file_)

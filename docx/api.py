@@ -47,6 +47,7 @@ class _Document(object):
     def __init__(self, pkg, document_part):
         super(_Document, self).__init__()
         self._document = document_part
+        self._pkg = pkg
 
     @property
     def body(self):
@@ -54,3 +55,10 @@ class _Document(object):
         Return a reference to the |Body| instance for this document.
         """
         return self._document.body
+
+    def save(self, file_):
+        """
+        Save this document to *file_*, where *file_* can be either a path to
+        a file (a string) or a file-like object.
+        """
+        return self._pkg.save(file_)
