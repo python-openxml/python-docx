@@ -51,3 +51,9 @@ class _Body(object):
     def add_paragraph(self):
         p = self._body.add_p()
         return Paragraph(p)
+
+    @property
+    def paragraphs(self):
+        if not hasattr(self._body, 'p'):
+            return ()
+        return tuple([Paragraph(p) for p in self._body.p])
