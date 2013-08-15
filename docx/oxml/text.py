@@ -19,6 +19,11 @@ class CT_P(OxmlBaseElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
+    def add_r(self):
+        """
+        Return a newly added CT_R (<w:r>) element.
+        """
+
     @staticmethod
     def new():
         """
