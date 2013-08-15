@@ -9,7 +9,7 @@
 
 """Test suite for the docx.parts module."""
 
-from docx.parts import _Document
+from docx.parts import _Body, _Document
 
 import pytest
 
@@ -56,3 +56,22 @@ class Describe_Document(object):
         # verify -----------------------
         _Body_.assert_called_once_with(doc._element.body)
         assert body is _Body_.return_value
+
+
+class Describe_Body(object):
+
+    @pytest.fixture
+    def Paragraph_(self, request):
+        return class_mock('docx.parts.Paragraph', request)
+
+    def it_can_add_a_paragraph_to_itself(self, Paragraph_):
+        # mockery ----------------------
+        body_elm = Mock(name='body_elm')
+        body_elm.add_p.return_value = p_elm = Mock(name='p_elm')
+        body = _Body(body_elm)
+        # exercise ---------------------
+        p = body.add_paragraph()
+        # verify -----------------------
+        body_elm.add_p.assert_called_once_with()
+        Paragraph_.assert_called_once_with(p_elm)
+        assert p is Paragraph_.return_value

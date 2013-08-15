@@ -14,6 +14,7 @@ Document parts such as _Document, and closely related classes.
 from opc import Part
 
 from docx.oxml.base import oxml_fromstring
+from docx.text import Paragraph
 
 
 class _Document(Part):
@@ -43,3 +44,10 @@ class _Body(object):
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
+    def __init__(self, body_elm):
+        super(_Body, self).__init__()
+        self._body = body_elm
+
+    def add_paragraph(self):
+        p = self._body.add_p()
+        return Paragraph(p)
