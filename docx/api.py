@@ -46,3 +46,11 @@ class _Document(object):
     """
     def __init__(self, pkg, document_part):
         super(_Document, self).__init__()
+        self._document = document_part
+
+    @property
+    def body(self):
+        """
+        Return a reference to the |Body| instance for this document.
+        """
+        return self._document.body

@@ -11,8 +11,9 @@
 
 import pytest
 
-from mock import Mock, PropertyMock
+from mock import create_autospec, Mock, PropertyMock
 
+from docx import parts
 from docx.api import Document, _Document
 from opc.constants import CONTENT_TYPE as CT
 
@@ -69,3 +70,14 @@ class DescribeDocument(object):
         # verify -----------------------
         with pytest.raises(ValueError):
             Document(docx)
+
+
+class Describe_Document(object):
+
+    def it_provides_access_to_the_document_body(self):
+        document_part = create_autospec(parts._Document)
+        doc = _Document(None, document_part)
+        # exercise ---------------------
+        body = doc.body
+        # verify -----------------------
+        assert body is document_part.body
