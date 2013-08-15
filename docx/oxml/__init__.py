@@ -11,3 +11,13 @@
 Initializes oxml sub-package, including registering custom element classes
 corresponding to Open XML elements.
 """
+
+from docx.oxml.base import register_custom_element_class
+from docx.oxml.text import CT_P
+
+
+# ===========================================================================
+# custom element class mappings
+# ===========================================================================
+
+register_custom_element_class('w:p',        CT_P)
