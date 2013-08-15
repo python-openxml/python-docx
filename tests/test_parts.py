@@ -15,10 +15,14 @@ import pytest
 
 from mock import Mock
 
-from .unitutil import function_mock, initializer_mock
+from .unitutil import class_mock, function_mock, initializer_mock
 
 
 class Describe_Document(object):
+
+    @pytest.fixture
+    def _Body_(self, request):
+        return class_mock('docx.parts._Body', request)
 
     @pytest.fixture
     def init(self, request):
@@ -28,8 +32,8 @@ class Describe_Document(object):
     def oxml_fromstring_(self, request):
         return function_mock('docx.parts.oxml_fromstring', request)
 
-    def it_can_be_constructed_by_opc_part_factory(self, oxml_fromstring_,
-                                                  init):
+    def it_can_be_constructed_by_opc_part_factory(
+            self, oxml_fromstring_, init):
         # mockery ----------------------
         partname, content_type, blob, document_elm = (
             Mock(name='partname'), Mock(name='content_type'),
@@ -42,3 +46,13 @@ class Describe_Document(object):
         oxml_fromstring_.assert_called_once_with(blob)
         init.assert_called_once_with(partname, content_type, document_elm)
         assert isinstance(doc, _Document)
+
+    def it_has_a_body(self, init, _Body_):
+        # mockery ----------------------
+        doc = _Document(None, None, None)
+        doc._element = Mock(name='_element')
+        # exercise ---------------------
+        body = doc.body
+        # verify -----------------------
+        _Body_.assert_called_once_with(doc._element.body)
+        assert body is _Body_.return_value

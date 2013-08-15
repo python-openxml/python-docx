@@ -29,9 +29,17 @@ class _Document(Part):
         """
         The |_Body| instance containing the content for this document.
         """
+        return _Body(self._element.body)
 
     @staticmethod
     def load(partname, content_type, blob):
         document_elm = oxml_fromstring(blob)
         document = _Document(partname, content_type, document_elm)
         return document
+
+
+class _Body(object):
+    """
+    Proxy for ``<w:body>`` element in this document, having primarily a
+    container role.
+    """
