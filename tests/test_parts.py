@@ -33,6 +33,10 @@ class Describe_Document(object):
     def oxml_fromstring_(self, request):
         return function_mock('docx.parts.oxml_fromstring', request)
 
+    @pytest.fixture
+    def oxml_tostring(self, request):
+        return function_mock('docx.parts.oxml_tostring', request)
+
     def it_can_be_constructed_by_opc_part_factory(
             self, oxml_fromstring_, init):
         # mockery ----------------------
@@ -57,6 +61,17 @@ class Describe_Document(object):
         # verify -----------------------
         _Body_.assert_called_once_with(doc._element.body)
         assert body is _Body_.return_value
+
+    def it_can_serialize_to_xml(self, init, oxml_tostring):
+        # mockery ----------------------
+        doc = _Document(None, None, None)
+        doc._element = Mock(name='_element')
+        # exercise ---------------------
+        doc.blob
+        # verify -----------------------
+        oxml_tostring.assert_called_once_with(
+            doc._element, encoding='UTF-8', pretty_print=False,
+            standalone=True)
 
 
 class Describe_Body(object):

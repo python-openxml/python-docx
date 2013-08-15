@@ -13,7 +13,7 @@ Document parts such as _Document, and closely related classes.
 
 from opc import Part
 
-from docx.oxml.base import oxml_fromstring
+from docx.oxml.base import oxml_fromstring, oxml_tostring
 from docx.text import Paragraph
 
 
@@ -24,6 +24,11 @@ class _Document(Part):
     def __init__(self, partname, content_type, document_elm):
         super(_Document, self).__init__(partname, content_type)
         self._element = document_elm
+
+    @property
+    def blob(self):
+        return oxml_tostring(self._element, encoding='UTF-8',
+                             pretty_print=False, standalone=True)
 
     @property
     def body(self):
