@@ -13,13 +13,25 @@ Document parts such as _Document, and closely related classes.
 
 from opc import Part
 
+from docx.oxml.base import oxml_fromstring
+
 
 class _Document(Part):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
+    def __init__(self, document_elm):
+        self._element = document_elm
+
     @property
     def body(self):
         """
         The |_Body| instance containing the content for this document.
         """
+
+    @staticmethod
+    def load(partname, content_type, blob):
+        document_elm = oxml_fromstring(blob)
+        document = _Document(document_elm)
+        super(_Document, document).__init__(partname, content_type)
+        return document

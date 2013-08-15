@@ -10,3 +10,12 @@
 from docx.api import Document  # noqa
 
 __version__ = '0.3.0d1'
+
+
+from opc import PartFactory
+from opc.constants import CONTENT_TYPE as CT
+
+from docx.parts import _Document
+
+
+PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = _Document
