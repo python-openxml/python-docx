@@ -40,5 +40,5 @@ class Describe_Document(object):
         doc = _Document.load(partname, content_type, blob)
         # verify -----------------------
         oxml_fromstring_.assert_called_once_with(blob)
-        init.assert_called_once_with(document_elm)
+        init.assert_called_once_with(partname, content_type, document_elm)
         assert isinstance(doc, _Document)

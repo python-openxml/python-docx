@@ -20,7 +20,8 @@ class _Document(Part):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
-    def __init__(self, document_elm):
+    def __init__(self, partname, content_type, document_elm):
+        super(_Document, self).__init__(partname, content_type)
         self._element = document_elm
 
     @property
@@ -32,6 +33,5 @@ class _Document(Part):
     @staticmethod
     def load(partname, content_type, blob):
         document_elm = oxml_fromstring(blob)
-        document = _Document(document_elm)
-        super(_Document, document).__init__(partname, content_type)
+        document = _Document(partname, content_type, document_elm)
         return document
