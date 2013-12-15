@@ -1,0 +1,13 @@
+default namespace =
+  "http://schemas.openxmlformats.org/drawingml/2006/lockedCanvas"
+namespace a = "http://schemas.openxmlformats.org/drawingml/2006/main"
+namespace dlckcnv =
+  "http://schemas.openxmlformats.org/drawingml/2006/lockedCanvas"
+namespace o = "urn:schemas-microsoft-com:office:office"
+namespace r =
+  "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+namespace v = "urn:schemas-microsoft-com:vml"
+namespace w10 = "urn:schemas-microsoft-com:office:word"
+namespace x = "urn:schemas-microsoft-com:office:excel"
+
+dlckcnv_lockedCanvas = element lockedCanvas { a_CT_GvmlGroupShape }

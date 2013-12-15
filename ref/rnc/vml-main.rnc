@@ -1,0 +1,412 @@
+namespace o = "urn:schemas-microsoft-com:office:office"
+namespace pvml = "urn:schemas-microsoft-com:office:powerpoint"
+namespace r =
+  "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+namespace s =
+  "http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes"
+default namespace v = "urn:schemas-microsoft-com:vml"
+namespace w =
+  "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+namespace w10 = "urn:schemas-microsoft-com:office:word"
+namespace x = "urn:schemas-microsoft-com:office:excel"
+namespace local = ""
+
+v_AG_Id = attribute id { xsd:string }?
+v_AG_Style = attribute style { xsd:string }?
+v_AG_Type = attribute type { xsd:string }?
+v_AG_Adj = attribute adj { xsd:string }?
+v_AG_Path = attribute path { xsd:string }?
+v_AG_Fill =
+  attribute filled { s_ST_TrueFalse }?,
+  attribute fillcolor { s_ST_ColorType }?
+v_AG_Chromakey = attribute chromakey { s_ST_ColorType }?
+v_AG_Ext = attribute v:ext { v_ST_Ext }?
+v_AG_CoreAttributes =
+  v_AG_Id,
+  v_AG_Style,
+  attribute href { xsd:string }?,
+  attribute target { xsd:string }?,
+  attribute class { xsd:string }?,
+  attribute title { xsd:string }?,
+  attribute alt { xsd:string }?,
+  attribute coordsize { xsd:string }?,
+  attribute coordorigin { xsd:string }?,
+  attribute wrapcoords { xsd:string }?,
+  attribute print { s_ST_TrueFalse }?
+v_AG_ShapeAttributes =
+  v_AG_Chromakey,
+  v_AG_Fill,
+  attribute opacity { xsd:string }?,
+  attribute stroked { s_ST_TrueFalse }?,
+  attribute strokecolor { s_ST_ColorType }?,
+  attribute strokeweight { xsd:string }?,
+  attribute insetpen { s_ST_TrueFalse }?
+v_AG_OfficeCoreAttributes =
+  o_spid?,
+  o_oned?,
+  o_regroupid?,
+  o_doubleclicknotify?,
+  o_button?,
+  o_userhidden?,
+  o_bullet?,
+  o_hr?,
+  o_hrstd?,
+  o_hrnoshade?,
+  o_hrpct?,
+  o_hralign?,
+  o_allowincell?,
+  o_allowoverlap?,
+  o_userdrawn?,
+  o_bordertopcolor?,
+  o_borderleftcolor?,
+  o_borderbottomcolor?,
+  o_borderrightcolor?,
+  o_dgmlayout?,
+  o_dgmnodekind?,
+  o_dgmlayoutmru?,
+  o_insetmode?
+v_AG_OfficeShapeAttributes =
+  o_spt?,
+  o_connectortype?,
+  o_bwmode?,
+  o_bwpure?,
+  o_bwnormal?,
+  o_forcedash?,
+  o_oleicon?,
+  o_ole?,
+  o_preferrelative?,
+  o_cliptowrap?,
+  o_clip?
+v_AG_AllCoreAttributes = v_AG_CoreAttributes, v_AG_OfficeCoreAttributes
+v_AG_AllShapeAttributes =
+  v_AG_ShapeAttributes, v_AG_OfficeShapeAttributes
+v_AG_ImageAttributes =
+  attribute src { xsd:string }?,
+  attribute cropleft { xsd:string }?,
+  attribute croptop { xsd:string }?,
+  attribute cropright { xsd:string }?,
+  attribute cropbottom { xsd:string }?,
+  attribute gain { xsd:string }?,
+  attribute blacklevel { xsd:string }?,
+  attribute gamma { xsd:string }?,
+  attribute grayscale { s_ST_TrueFalse }?,
+  attribute bilevel { s_ST_TrueFalse }?
+v_AG_StrokeAttributes =
+  attribute on { s_ST_TrueFalse }?,
+  attribute weight { xsd:string }?,
+  attribute color { s_ST_ColorType }?,
+  attribute opacity { xsd:string }?,
+  attribute linestyle { v_ST_StrokeLineStyle }?,
+  attribute miterlimit { xsd:decimal }?,
+  attribute joinstyle { v_ST_StrokeJoinStyle }?,
+  attribute endcap { v_ST_StrokeEndCap }?,
+  attribute dashstyle { xsd:string }?,
+  attribute filltype { v_ST_FillType }?,
+  attribute src { xsd:string }?,
+  attribute imageaspect { v_ST_ImageAspect }?,
+  attribute imagesize { xsd:string }?,
+  attribute imagealignshape { s_ST_TrueFalse }?,
+  attribute color2 { s_ST_ColorType }?,
+  attribute startarrow { v_ST_StrokeArrowType }?,
+  attribute startarrowwidth { v_ST_StrokeArrowWidth }?,
+  attribute startarrowlength { v_ST_StrokeArrowLength }?,
+  attribute endarrow { v_ST_StrokeArrowType }?,
+  attribute endarrowwidth { v_ST_StrokeArrowWidth }?,
+  attribute endarrowlength { v_ST_StrokeArrowLength }?,
+  o_href?,
+  o_althref?,
+  o_title?,
+  o_forcedash?,
+  r_id?,
+  attribute insetpen { s_ST_TrueFalse }?,
+  o_relid?
+v_EG_ShapeElements =
+  v_path
+  | v_formulas
+  | v_handles
+  | v_fill
+  | v_stroke
+  | v_shadow
+  | v_textbox
+  | v_textpath
+  | v_imagedata
+  | o_skew
+  | o_extrusion
+  | o_callout
+  | o_lock
+  | o_clippath
+  | o_signatureline
+  | w10_wrap
+  | w10_anchorlock
+  | w10_bordertop
+  | w10_borderbottom
+  | w10_borderleft
+  | w10_borderright
+  | x_ClientData?
+  | pvml_textdata?
+v_shape = element shape { v_CT_Shape }
+v_shapetype = element shapetype { v_CT_Shapetype }
+v_group = element group { v_CT_Group }
+v_background = element background { v_CT_Background }
+v_CT_Shape =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  v_AG_Type,
+  v_AG_Adj,
+  v_AG_Path,
+  o_gfxdata?,
+  attribute equationxml { xsd:string }?,
+  (v_EG_ShapeElements | o_ink | pvml_iscomment | o_equationxml)+
+v_CT_Shapetype =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  v_AG_Adj,
+  v_AG_Path,
+  o_master?,
+  v_EG_ShapeElements*,
+  o_complex?
+v_CT_Group =
+  v_AG_AllCoreAttributes,
+  v_AG_Fill,
+  attribute editas { v_ST_EditAs }?,
+  o_tableproperties?,
+  o_tablelimits?,
+  (v_EG_ShapeElements
+   | v_group
+   | v_shape
+   | v_shapetype
+   | v_arc
+   | v_curve
+   | v_image
+   | v_line
+   | v_oval
+   | v_polyline
+   | v_rect
+   | v_roundrect
+   | o_diagram)+
+v_CT_Background =
+  v_AG_Id,
+  v_AG_Fill,
+  o_bwmode?,
+  o_bwpure?,
+  o_bwnormal?,
+  o_targetscreensize?,
+  v_fill?
+v_fill = element fill { v_CT_Fill }
+v_formulas = element formulas { v_CT_Formulas }
+v_handles = element handles { v_CT_Handles }
+v_imagedata = element imagedata { v_CT_ImageData }
+v_path = element path { v_CT_Path }
+v_textbox = element textbox { v_CT_Textbox }
+v_shadow = element shadow { v_CT_Shadow }
+v_stroke = element stroke { v_CT_Stroke }
+v_textpath = element textpath { v_CT_TextPath }
+v_CT_Fill =
+  v_AG_Id,
+  attribute type { v_ST_FillType }?,
+  attribute on { s_ST_TrueFalse }?,
+  attribute color { s_ST_ColorType }?,
+  attribute opacity { xsd:string }?,
+  attribute color2 { s_ST_ColorType }?,
+  attribute src { xsd:string }?,
+  o_href?,
+  o_althref?,
+  attribute size { xsd:string }?,
+  attribute origin { xsd:string }?,
+  attribute position { xsd:string }?,
+  attribute aspect { v_ST_ImageAspect }?,
+  attribute colors { xsd:string }?,
+  attribute angle { xsd:decimal }?,
+  attribute alignshape { s_ST_TrueFalse }?,
+  attribute focus { xsd:string }?,
+  attribute focussize { xsd:string }?,
+  attribute focusposition { xsd:string }?,
+  attribute method { v_ST_FillMethod }?,
+  o_detectmouseclick?,
+  o_title?,
+  o_opacity2?,
+  attribute recolor { s_ST_TrueFalse }?,
+  attribute rotate { s_ST_TrueFalse }?,
+  r_id?,
+  o_relid?,
+  o_fill?
+v_CT_Formulas = element f { v_CT_F }*
+v_CT_F = attribute eqn { xsd:string }?
+v_CT_Handles = element h { v_CT_H }*
+v_CT_H =
+  attribute position { xsd:string }?,
+  attribute polar { xsd:string }?,
+  attribute map { xsd:string }?,
+  attribute invx { s_ST_TrueFalse }?,
+  attribute invy { s_ST_TrueFalse }?,
+  attribute switch { s_ST_TrueFalseBlank }?,
+  attribute xrange { xsd:string }?,
+  attribute yrange { xsd:string }?,
+  attribute radiusrange { xsd:string }?
+v_CT_ImageData =
+  v_AG_Id,
+  v_AG_ImageAttributes,
+  v_AG_Chromakey,
+  attribute embosscolor { s_ST_ColorType }?,
+  attribute recolortarget { s_ST_ColorType }?,
+  o_href?,
+  o_althref?,
+  o_title?,
+  o_oleid?,
+  o_detectmouseclick?,
+  o_movie?,
+  o_relid?,
+  r_id?,
+  r_pict?,
+  r_href?
+v_CT_Path =
+  v_AG_Id,
+  attribute v { xsd:string }?,
+  attribute limo { xsd:string }?,
+  attribute textboxrect { xsd:string }?,
+  attribute fillok { s_ST_TrueFalse }?,
+  attribute strokeok { s_ST_TrueFalse }?,
+  attribute shadowok { s_ST_TrueFalse }?,
+  attribute arrowok { s_ST_TrueFalse }?,
+  attribute gradientshapeok { s_ST_TrueFalse }?,
+  attribute textpathok { s_ST_TrueFalse }?,
+  attribute insetpenok { s_ST_TrueFalse }?,
+  o_connecttype?,
+  o_connectlocs?,
+  o_connectangles?,
+  o_extrusionok?
+v_CT_Shadow =
+  v_AG_Id,
+  attribute on { s_ST_TrueFalse }?,
+  attribute type { v_ST_ShadowType }?,
+  attribute obscured { s_ST_TrueFalse }?,
+  attribute color { s_ST_ColorType }?,
+  attribute opacity { xsd:string }?,
+  attribute offset { xsd:string }?,
+  attribute color2 { s_ST_ColorType }?,
+  attribute offset2 { xsd:string }?,
+  attribute origin { xsd:string }?,
+  attribute matrix { xsd:string }?
+v_CT_Stroke =
+  v_AG_Id,
+  v_AG_StrokeAttributes,
+  o_left?,
+  o_top?,
+  o_right?,
+  o_bottom?,
+  o_column?
+v_CT_Textbox =
+  v_AG_Id,
+  v_AG_Style,
+  attribute inset { xsd:string }?,
+  o_singleclick?,
+  o_insetmode?,
+  (w_txbxContent? | anyHTMLElementAsLocalElement)
+anyHTMLElementAsLocalElement = element local:* { anyAttribute*, text?, anyHTMLElementAsLocalElement* }
+v_CT_TextPath =
+  v_AG_Id,
+  v_AG_Style,
+  attribute on { s_ST_TrueFalse }?,
+  attribute fitshape { s_ST_TrueFalse }?,
+  attribute fitpath { s_ST_TrueFalse }?,
+  attribute trim { s_ST_TrueFalse }?,
+  attribute xscale { s_ST_TrueFalse }?,
+  attribute string { xsd:string }?
+v_arc = element arc { v_CT_Arc }
+v_curve = element curve { v_CT_Curve }
+v_image = element image { v_CT_Image }
+v_line = element line { v_CT_Line }
+v_oval = element oval { v_CT_Oval }
+v_polyline = element polyline { v_CT_PolyLine }
+v_rect = element rect { v_CT_Rect }
+v_roundrect = element roundrect { v_CT_RoundRect }
+v_CT_Arc =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  attribute startAngle { xsd:decimal }?,
+  attribute endAngle { xsd:decimal }?,
+  v_EG_ShapeElements*
+v_CT_Curve =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  attribute from { xsd:string }?,
+  attribute control1 { xsd:string }?,
+  attribute control2 { xsd:string }?,
+  attribute to { xsd:string }?,
+  v_EG_ShapeElements*
+v_CT_Image =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  v_AG_ImageAttributes,
+  v_EG_ShapeElements*
+v_CT_Line =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  attribute from { xsd:string }?,
+  attribute to { xsd:string }?,
+  v_EG_ShapeElements*
+v_CT_Oval =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  (v_EG_ShapeElements*)+
+v_CT_PolyLine =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  attribute points { xsd:string }?,
+  (v_EG_ShapeElements | o_ink)*
+v_CT_Rect =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  (v_EG_ShapeElements*)+
+v_CT_RoundRect =
+  v_AG_AllCoreAttributes,
+  v_AG_AllShapeAttributes,
+  attribute arcsize { xsd:string }?,
+  (v_EG_ShapeElements*)+
+v_ST_Ext = string "view" | string "edit" | string "backwardCompatible"
+v_ST_FillType =
+  string "solid"
+  | string "gradient"
+  | string "gradientRadial"
+  | string "tile"
+  | string "pattern"
+  | string "frame"
+v_ST_FillMethod =
+  string "none"
+  | string "linear"
+  | string "sigma"
+  | string "any"
+  | string "linear sigma"
+v_ST_ShadowType =
+  string "single"
+  | string "double"
+  | string "emboss"
+  | string "perspective"
+v_ST_StrokeLineStyle =
+  string "single"
+  | string "thinThin"
+  | string "thinThick"
+  | string "thickThin"
+  | string "thickBetweenThin"
+v_ST_StrokeJoinStyle = string "round" | string "bevel" | string "miter"
+v_ST_StrokeEndCap = string "flat" | string "square" | string "round"
+v_ST_StrokeArrowLength =
+  string "short" | string "medium" | string "long"
+v_ST_StrokeArrowWidth =
+  string "narrow" | string "medium" | string "wide"
+v_ST_StrokeArrowType =
+  string "none"
+  | string "block"
+  | string "classic"
+  | string "oval"
+  | string "diamond"
+  | string "open"
+v_ST_ImageAspect = string "ignore" | string "atMost" | string "atLeast"
+v_ST_EditAs =
+  string "canvas"
+  | string "orgchart"
+  | string "radial"
+  | string "cycle"
+  | string "stacked"
+  | string "venn"
+  | string "bullseye"

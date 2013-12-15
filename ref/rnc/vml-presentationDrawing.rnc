@@ -1,0 +1,11 @@
+default namespace = "urn:schemas-microsoft-com:office:powerpoint"
+namespace o = "urn:schemas-microsoft-com:office:office"
+namespace pvml = "urn:schemas-microsoft-com:office:powerpoint"
+namespace v = "urn:schemas-microsoft-com:vml"
+namespace w10 = "urn:schemas-microsoft-com:office:word"
+namespace x = "urn:schemas-microsoft-com:office:excel"
+
+pvml_iscomment = element iscomment { pvml_CT_Empty }
+pvml_textdata = element textdata { pvml_CT_Rel }
+pvml_CT_Empty = empty
+pvml_CT_Rel = attribute id { xsd:string }?

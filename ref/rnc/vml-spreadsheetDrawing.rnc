@@ -1,0 +1,99 @@
+default namespace = "urn:schemas-microsoft-com:office:excel"
+namespace o = "urn:schemas-microsoft-com:office:office"
+namespace s =
+  "http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes"
+namespace v = "urn:schemas-microsoft-com:vml"
+namespace w10 = "urn:schemas-microsoft-com:office:word"
+namespace x = "urn:schemas-microsoft-com:office:excel"
+
+x_ClientData = element ClientData { x_CT_ClientData }
+x_CT_ClientData =
+  attribute ObjectType { x_ST_ObjectType },
+  (element MoveWithCells { s_ST_TrueFalseBlank }
+   | element SizeWithCells { s_ST_TrueFalseBlank }
+   | element Anchor { xsd:string }
+   | element Locked { s_ST_TrueFalseBlank }
+   | element DefaultSize { s_ST_TrueFalseBlank }
+   | element PrintObject { s_ST_TrueFalseBlank }
+   | element Disabled { s_ST_TrueFalseBlank }
+   | element AutoFill { s_ST_TrueFalseBlank }
+   | element AutoLine { s_ST_TrueFalseBlank }
+   | element AutoPict { s_ST_TrueFalseBlank }
+   | element FmlaMacro { xsd:string }
+   | element TextHAlign { xsd:string }
+   | element TextVAlign { xsd:string }
+   | element LockText { s_ST_TrueFalseBlank }
+   | element JustLastX { s_ST_TrueFalseBlank }
+   | element SecretEdit { s_ST_TrueFalseBlank }
+   | element Default { s_ST_TrueFalseBlank }
+   | element Help { s_ST_TrueFalseBlank }
+   | element Cancel { s_ST_TrueFalseBlank }
+   | element Dismiss { s_ST_TrueFalseBlank }
+   | element Accel { xsd:integer }
+   | element Accel2 { xsd:integer }
+   | element Row { xsd:integer }
+   | element Column { xsd:integer }
+   | element Visible { s_ST_TrueFalseBlank }
+   | element RowHidden { s_ST_TrueFalseBlank }
+   | element ColHidden { s_ST_TrueFalseBlank }
+   | element VTEdit { xsd:integer }
+   | element MultiLine { s_ST_TrueFalseBlank }
+   | element VScroll { s_ST_TrueFalseBlank }
+   | element ValidIds { s_ST_TrueFalseBlank }
+   | element FmlaRange { xsd:string }
+   | element WidthMin { xsd:integer }
+   | element Sel { xsd:integer }
+   | element NoThreeD2 { s_ST_TrueFalseBlank }
+   | element SelType { xsd:string }
+   | element MultiSel { xsd:string }
+   | element LCT { xsd:string }
+   | element ListItem { xsd:string }
+   | element DropStyle { xsd:string }
+   | element Colored { s_ST_TrueFalseBlank }
+   | element DropLines { xsd:integer }
+   | element Checked { xsd:integer }
+   | element FmlaLink { xsd:string }
+   | element FmlaPict { xsd:string }
+   | element NoThreeD { s_ST_TrueFalseBlank }
+   | element FirstButton { s_ST_TrueFalseBlank }
+   | element FmlaGroup { xsd:string }
+   | element Val { xsd:integer }
+   | element Min { xsd:integer }
+   | element Max { xsd:integer }
+   | element Inc { xsd:integer }
+   | element Page { xsd:integer }
+   | element Horiz { s_ST_TrueFalseBlank }
+   | element Dx { xsd:integer }
+   | element MapOCX { s_ST_TrueFalseBlank }
+   | element CF { x_ST_CF }
+   | element Camera { s_ST_TrueFalseBlank }
+   | element RecalcAlways { s_ST_TrueFalseBlank }
+   | element AutoScale { s_ST_TrueFalseBlank }
+   | element DDE { s_ST_TrueFalseBlank }
+   | element UIObj { s_ST_TrueFalseBlank }
+   | element ScriptText { xsd:string }
+   | element ScriptExtended { xsd:string }
+   | element ScriptLanguage { xsd:nonNegativeInteger }
+   | element ScriptLocation { xsd:nonNegativeInteger }
+   | element FmlaTxbx { xsd:string })*
+x_ST_CF = xsd:string
+x_ST_ObjectType =
+  string "Button"
+  | string "Checkbox"
+  | string "Dialog"
+  | string "Drop"
+  | string "Edit"
+  | string "GBox"
+  | string "Label"
+  | string "LineA"
+  | string "List"
+  | string "Movie"
+  | string "Note"
+  | string "Pict"
+  | string "Radio"
+  | string "RectA"
+  | string "Scroll"
+  | string "Spin"
+  | string "Shape"
+  | string "Group"
+  | string "Rect"

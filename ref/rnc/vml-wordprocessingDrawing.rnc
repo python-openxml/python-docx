@@ -1,0 +1,64 @@
+default namespace = "urn:schemas-microsoft-com:office:word"
+namespace o = "urn:schemas-microsoft-com:office:office"
+namespace v = "urn:schemas-microsoft-com:vml"
+namespace w10 = "urn:schemas-microsoft-com:office:word"
+namespace x = "urn:schemas-microsoft-com:office:excel"
+
+w10_bordertop = element bordertop { w10_CT_Border }
+w10_borderleft = element borderleft { w10_CT_Border }
+w10_borderright = element borderright { w10_CT_Border }
+w10_borderbottom = element borderbottom { w10_CT_Border }
+w10_CT_Border =
+  attribute type { w10_ST_BorderType }?,
+  attribute width { xsd:positiveInteger }?,
+  attribute shadow { w10_ST_BorderShadow }?
+w10_wrap = element wrap { w10_CT_Wrap }
+w10_CT_Wrap =
+  attribute type { w10_ST_WrapType }?,
+  attribute side { w10_ST_WrapSide }?,
+  attribute anchorx { w10_ST_HorizontalAnchor }?,
+  attribute anchory { w10_ST_VerticalAnchor }?
+w10_anchorlock = element anchorlock { w10_CT_AnchorLock }
+w10_CT_AnchorLock = empty
+w10_ST_BorderType =
+  string "none"
+  | string "single"
+  | string "thick"
+  | string "double"
+  | string "hairline"
+  | string "dot"
+  | string "dash"
+  | string "dotDash"
+  | string "dashDotDot"
+  | string "triple"
+  | string "thinThickSmall"
+  | string "thickThinSmall"
+  | string "thickBetweenThinSmall"
+  | string "thinThick"
+  | string "thickThin"
+  | string "thickBetweenThin"
+  | string "thinThickLarge"
+  | string "thickThinLarge"
+  | string "thickBetweenThinLarge"
+  | string "wave"
+  | string "doubleWave"
+  | string "dashedSmall"
+  | string "dashDotStroked"
+  | string "threeDEmboss"
+  | string "threeDEngrave"
+  | string "HTMLOutset"
+  | string "HTMLInset"
+w10_ST_BorderShadow =
+  string "t" | string "true" | string "f" | string "false"
+w10_ST_WrapType =
+  string "topAndBottom"
+  | string "square"
+  | string "none"
+  | string "tight"
+  | string "through"
+w10_ST_WrapSide =
+  string "both" | string "left" | string "right" | string "largest"
+w10_ST_HorizontalAnchor =
+  string "margin" | string "page" | string "text" | string "char"
+w10_ST_VerticalAnchor =
+  string "margin" | string "page" | string "text" | string "line"

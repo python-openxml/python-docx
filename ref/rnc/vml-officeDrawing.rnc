@@ -1,0 +1,407 @@
+default namespace o = "urn:schemas-microsoft-com:office:office"
+namespace r =
+  "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+namespace s =
+  "http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes"
+namespace v = "urn:schemas-microsoft-com:vml"
+namespace w10 = "urn:schemas-microsoft-com:office:word"
+namespace x = "urn:schemas-microsoft-com:office:excel"
+
+o_bwmode = attribute o:bwmode { o_ST_BWMode }
+o_bwpure = attribute o:bwpure { o_ST_BWMode }
+o_bwnormal = attribute o:bwnormal { o_ST_BWMode }
+o_targetscreensize = attribute o:targetscreensize { o_ST_ScreenSize }
+o_insetmode =
+  
+  ## default value: custom
+  attribute o:insetmode { o_ST_InsetMode }
+o_spt = attribute o:spt { xsd:float }
+o_wrapcoords = attribute o:wrapcoords { xsd:string }
+o_oned = attribute o:oned { s_ST_TrueFalse }
+o_regroupid = attribute o:regroupid { xsd:integer }
+o_doubleclicknotify = attribute o:doubleclicknotify { s_ST_TrueFalse }
+o_connectortype =
+  
+  ## default value: straight
+  attribute o:connectortype { o_ST_ConnectorType }
+o_button = attribute o:button { s_ST_TrueFalse }
+o_userhidden = attribute o:userhidden { s_ST_TrueFalse }
+o_forcedash = attribute o:forcedash { s_ST_TrueFalse }
+o_oleicon = attribute o:oleicon { s_ST_TrueFalse }
+o_ole = attribute o:ole { s_ST_TrueFalseBlank }
+o_preferrelative = attribute o:preferrelative { s_ST_TrueFalse }
+o_cliptowrap = attribute o:cliptowrap { s_ST_TrueFalse }
+o_clip = attribute o:clip { s_ST_TrueFalse }
+o_bullet = attribute o:bullet { s_ST_TrueFalse }
+o_hr = attribute o:hr { s_ST_TrueFalse }
+o_hrstd = attribute o:hrstd { s_ST_TrueFalse }
+o_hrnoshade = attribute o:hrnoshade { s_ST_TrueFalse }
+o_hrpct = attribute o:hrpct { xsd:float }
+o_hralign =
+  
+  ## default value: left
+  attribute o:hralign { o_ST_HrAlign }
+o_allowincell = attribute o:allowincell { s_ST_TrueFalse }
+o_allowoverlap = attribute o:allowoverlap { s_ST_TrueFalse }
+o_userdrawn = attribute o:userdrawn { s_ST_TrueFalse }
+o_bordertopcolor = attribute o:bordertopcolor { xsd:string }
+o_borderleftcolor = attribute o:borderleftcolor { xsd:string }
+o_borderbottomcolor = attribute o:borderbottomcolor { xsd:string }
+o_borderrightcolor = attribute o:borderrightcolor { xsd:string }
+o_connecttype = attribute o:connecttype { o_ST_ConnectType }
+o_connectlocs = attribute o:connectlocs { xsd:string }
+o_connectangles = attribute o:connectangles { xsd:string }
+o_master = attribute o:master { xsd:string }
+o_extrusionok = attribute o:extrusionok { s_ST_TrueFalse }
+o_href = attribute o:href { xsd:string }
+o_althref = attribute o:althref { xsd:string }
+o_title = attribute o:title { xsd:string }
+o_singleclick = attribute o:singleclick { s_ST_TrueFalse }
+o_oleid = attribute o:oleid { xsd:float }
+o_detectmouseclick = attribute o:detectmouseclick { s_ST_TrueFalse }
+o_movie = attribute o:movie { xsd:float }
+o_spid = attribute o:spid { xsd:string }
+o_opacity2 = attribute o:opacity2 { xsd:string }
+o_relid = attribute o:relid { r_ST_RelationshipId }
+o_dgmlayout = attribute o:dgmlayout { o_ST_DiagramLayout }
+o_dgmnodekind = attribute o:dgmnodekind { xsd:integer }
+o_dgmlayoutmru = attribute o:dgmlayoutmru { o_ST_DiagramLayout }
+o_gfxdata = attribute o:gfxdata { xsd:base64Binary }
+o_tableproperties = attribute o:tableproperties { xsd:string }
+o_tablelimits = attribute o:tablelimits { xsd:string }
+o_shapedefaults = element shapedefaults { o_CT_ShapeDefaults }
+o_shapelayout = element shapelayout { o_CT_ShapeLayout }
+o_signatureline = element signatureline { o_CT_SignatureLine }
+o_ink = element ink { o_CT_Ink }
+o_diagram = element diagram { o_CT_Diagram }
+o_equationxml = element equationxml { o_CT_EquationXml }
+o_CT_ShapeDefaults =
+  v_AG_Ext,
+  attribute spidmax { xsd:integer }?,
+  attribute style { xsd:string }?,
+  attribute fill { s_ST_TrueFalse }?,
+  attribute fillcolor { s_ST_ColorType }?,
+  attribute stroke { s_ST_TrueFalse }?,
+  attribute strokecolor { s_ST_ColorType }?,
+  attribute o:allowincell { s_ST_TrueFalse }?,
+  (v_fill?
+   & v_stroke?
+   & v_textbox?
+   & v_shadow?
+   & o_skew?
+   & o_extrusion?
+   & o_callout?
+   & o_lock?
+   & element colormru { o_CT_ColorMru }?
+   & element colormenu { o_CT_ColorMenu }?)?
+o_CT_Ink =
+  attribute i { xsd:string }?,
+  attribute annotation { s_ST_TrueFalse }?,
+  attribute contentType { o_ST_ContentType }?,
+  empty
+o_CT_SignatureLine =
+  v_AG_Ext,
+  attribute issignatureline { s_ST_TrueFalse }?,
+  attribute id { s_ST_Guid }?,
+  attribute provid { s_ST_Guid }?,
+  attribute signinginstructionsset { s_ST_TrueFalse }?,
+  attribute allowcomments { s_ST_TrueFalse }?,
+  attribute showsigndate { s_ST_TrueFalse }?,
+  attribute o:suggestedsigner { xsd:string }?,
+  attribute o:suggestedsigner2 { xsd:string }?,
+  attribute o:suggestedsigneremail { xsd:string }?,
+  attribute signinginstructions { xsd:string }?,
+  attribute addlxml { xsd:string }?,
+  attribute sigprovurl { xsd:string }?
+o_CT_ShapeLayout =
+  v_AG_Ext,
+  (element idmap { o_CT_IdMap }?
+   & element regrouptable { o_CT_RegroupTable }?
+   & element rules { o_CT_Rules }?)
+o_CT_IdMap =
+  v_AG_Ext,
+  attribute data { xsd:string }?
+o_CT_RegroupTable =
+  v_AG_Ext,
+  element entry { o_CT_Entry }*
+o_CT_Entry =
+  attribute new { xsd:int }?,
+  attribute old { xsd:int }?
+o_CT_Rules =
+  v_AG_Ext,
+  element r { o_CT_R }*
+o_CT_R =
+  attribute id { xsd:string },
+  attribute type { o_ST_RType }?,
+  attribute how { o_ST_How }?,
+  attribute idref { xsd:string }?,
+  element proxy { o_CT_Proxy }*
+o_CT_Proxy =
+  
+  ## default value: false
+  attribute start { s_ST_TrueFalseBlank }?,
+  
+  ## default value: false
+  attribute end { s_ST_TrueFalseBlank }?,
+  attribute idref { xsd:string }?,
+  attribute connectloc { xsd:int }?
+o_CT_Diagram =
+  v_AG_Ext,
+  attribute dgmstyle { xsd:integer }?,
+  attribute autoformat { s_ST_TrueFalse }?,
+  attribute reverse { s_ST_TrueFalse }?,
+  attribute autolayout { s_ST_TrueFalse }?,
+  attribute dgmscalex { xsd:integer }?,
+  attribute dgmscaley { xsd:integer }?,
+  attribute dgmfontsize { xsd:integer }?,
+  attribute constrainbounds { xsd:string }?,
+  attribute dgmbasetextscale { xsd:integer }?,
+  element relationtable { o_CT_RelationTable }?
+o_CT_EquationXml =
+  attribute contentType { o_ST_AlternateMathContentType }?,
+  o_CT_EquationXml_any
+o_CT_EquationXml_any =
+  element * - (o:* | v:* | w10:* | x:*) {
+    anyAttribute*,
+    mixed { anyElement* }
+  }
+o_ST_AlternateMathContentType = xsd:string
+o_CT_RelationTable =
+  v_AG_Ext,
+  element rel { o_CT_Relation }*
+o_CT_Relation =
+  v_AG_Ext,
+  attribute idsrc { xsd:string }?,
+  attribute iddest { xsd:string }?,
+  attribute idcntr { xsd:string }?
+o_CT_ColorMru =
+  v_AG_Ext,
+  attribute colors { xsd:string }?
+o_CT_ColorMenu =
+  v_AG_Ext,
+  attribute strokecolor { s_ST_ColorType }?,
+  attribute fillcolor { s_ST_ColorType }?,
+  attribute shadowcolor { s_ST_ColorType }?,
+  attribute extrusioncolor { s_ST_ColorType }?
+o_skew = element skew { o_CT_Skew }
+o_extrusion = element extrusion { o_CT_Extrusion }
+o_callout = element callout { o_CT_Callout }
+o_lock = element lock { o_CT_Lock }
+o_OLEObject = element OLEObject { o_CT_OLEObject }
+o_complex = element complex { o_CT_Complex }
+o_left = element left { o_CT_StrokeChild }
+o_top = element top { o_CT_StrokeChild }
+o_right = element right { o_CT_StrokeChild }
+o_bottom = element bottom { o_CT_StrokeChild }
+o_column = element column { o_CT_StrokeChild }
+o_clippath = element clippath { o_CT_ClipPath }
+o_fill = element fill { o_CT_Fill }
+o_CT_Skew =
+  v_AG_Ext,
+  attribute id { xsd:string }?,
+  attribute on { s_ST_TrueFalse }?,
+  attribute offset { xsd:string }?,
+  attribute origin { xsd:string }?,
+  attribute matrix { xsd:string }?
+o_CT_Extrusion =
+  v_AG_Ext,
+  attribute on { s_ST_TrueFalse }?,
+  
+  ## default value: parallel
+  attribute type { o_ST_ExtrusionType }?,
+  
+  ## default value: solid
+  attribute render { o_ST_ExtrusionRender }?,
+  attribute viewpointorigin { xsd:string }?,
+  attribute viewpoint { xsd:string }?,
+  
+  ## default value: XY
+  attribute plane { o_ST_ExtrusionPlane }?,
+  attribute skewangle { xsd:float }?,
+  attribute skewamt { xsd:string }?,
+  attribute foredepth { xsd:string }?,
+  attribute backdepth { xsd:string }?,
+  attribute orientation { xsd:string }?,
+  attribute orientationangle { xsd:float }?,
+  attribute lockrotationcenter { s_ST_TrueFalse }?,
+  attribute autorotationcenter { s_ST_TrueFalse }?,
+  attribute rotationcenter { xsd:string }?,
+  attribute rotationangle { xsd:string }?,
+  attribute colormode { o_ST_ColorMode }?,
+  attribute color { s_ST_ColorType }?,
+  attribute shininess { xsd:float }?,
+  attribute specularity { xsd:string }?,
+  attribute diffusity { xsd:string }?,
+  attribute metal { s_ST_TrueFalse }?,
+  attribute edge { xsd:string }?,
+  attribute facet { xsd:string }?,
+  attribute lightface { s_ST_TrueFalse }?,
+  attribute brightness { xsd:string }?,
+  attribute lightposition { xsd:string }?,
+  attribute lightlevel { xsd:string }?,
+  attribute lightharsh { s_ST_TrueFalse }?,
+  attribute lightposition2 { xsd:string }?,
+  attribute lightlevel2 { xsd:string }?,
+  attribute lightharsh2 { s_ST_TrueFalse }?
+o_CT_Callout =
+  v_AG_Ext,
+  attribute on { s_ST_TrueFalse }?,
+  attribute type { xsd:string }?,
+  attribute gap { xsd:string }?,
+  attribute angle { o_ST_Angle }?,
+  attribute dropauto { s_ST_TrueFalse }?,
+  attribute drop { o_ST_CalloutDrop }?,
+  attribute distance { xsd:string }?,
+  
+  ## default value: f
+  attribute lengthspecified { s_ST_TrueFalse }?,
+  attribute length { xsd:string }?,
+  attribute accentbar { s_ST_TrueFalse }?,
+  attribute textborder { s_ST_TrueFalse }?,
+  attribute minusx { s_ST_TrueFalse }?,
+  attribute minusy { s_ST_TrueFalse }?
+o_CT_Lock =
+  v_AG_Ext,
+  attribute position { s_ST_TrueFalse }?,
+  attribute selection { s_ST_TrueFalse }?,
+  attribute grouping { s_ST_TrueFalse }?,
+  attribute ungrouping { s_ST_TrueFalse }?,
+  attribute rotation { s_ST_TrueFalse }?,
+  attribute cropping { s_ST_TrueFalse }?,
+  attribute verticies { s_ST_TrueFalse }?,
+  attribute adjusthandles { s_ST_TrueFalse }?,
+  attribute text { s_ST_TrueFalse }?,
+  attribute aspectratio { s_ST_TrueFalse }?,
+  attribute shapetype { s_ST_TrueFalse }?
+o_CT_OLEObject =
+  attribute Type { o_ST_OLEType }?,
+  attribute ProgID { xsd:string }?,
+  attribute ShapeID { xsd:string }?,
+  attribute DrawAspect { o_ST_OLEDrawAspect }?,
+  attribute ObjectID { xsd:string }?,
+  r_id?,
+  attribute UpdateMode { o_ST_OLEUpdateMode }?,
+  element LinkType { o_ST_OLELinkType }?,
+  element LockedField { s_ST_TrueFalseBlank }?,
+  element FieldCodes { xsd:string }?
+o_CT_Complex = v_AG_Ext
+o_CT_StrokeChild =
+  v_AG_Ext,
+  attribute on { s_ST_TrueFalse }?,
+  attribute weight { xsd:string }?,
+  attribute color { s_ST_ColorType }?,
+  attribute color2 { s_ST_ColorType }?,
+  attribute opacity { xsd:string }?,
+  attribute linestyle { v_ST_StrokeLineStyle }?,
+  attribute miterlimit { xsd:decimal }?,
+  attribute joinstyle { v_ST_StrokeJoinStyle }?,
+  attribute endcap { v_ST_StrokeEndCap }?,
+  attribute dashstyle { xsd:string }?,
+  attribute insetpen { s_ST_TrueFalse }?,
+  attribute filltype { v_ST_FillType }?,
+  attribute src { xsd:string }?,
+  attribute imageaspect { v_ST_ImageAspect }?,
+  attribute imagesize { xsd:string }?,
+  attribute imagealignshape { s_ST_TrueFalse }?,
+  attribute startarrow { v_ST_StrokeArrowType }?,
+  attribute startarrowwidth { v_ST_StrokeArrowWidth }?,
+  attribute startarrowlength { v_ST_StrokeArrowLength }?,
+  attribute endarrow { v_ST_StrokeArrowType }?,
+  attribute endarrowwidth { v_ST_StrokeArrowWidth }?,
+  attribute endarrowlength { v_ST_StrokeArrowLength }?,
+  o_href?,
+  o_althref?,
+  o_title?,
+  o_forcedash?
+o_CT_ClipPath = attribute o:v { xsd:string }
+o_CT_Fill =
+  v_AG_Ext,
+  attribute type { o_ST_FillType }?
+o_ST_RType =
+  string "arc" | string "callout" | string "connector" | string "align"
+o_ST_How =
+  string "top"
+  | string "middle"
+  | string "bottom"
+  | string "left"
+  | string "center"
+  | string "right"
+o_ST_BWMode =
+  string "color"
+  | string "auto"
+  | string "grayScale"
+  | string "lightGrayscale"
+  | string "inverseGray"
+  | string "grayOutline"
+  | string "highContrast"
+  | string "black"
+  | string "white"
+  | string "hide"
+  | string "undrawn"
+  | string "blackTextAndLines"
+o_ST_ScreenSize =
+  string "544,376"
+  | string "640,480"
+  | string "720,512"
+  | string "800,600"
+  | string "1024,768"
+  | string "1152,862"
+o_ST_InsetMode = string "auto" | string "custom"
+o_ST_ColorMode = string "auto" | string "custom"
+o_ST_ContentType = xsd:string
+o_ST_DiagramLayout = "0" | "1" | "2" | "3"
+o_ST_ExtrusionType = string "perspective" | string "parallel"
+o_ST_ExtrusionRender =
+  string "solid" | string "wireFrame" | string "boundingCube"
+o_ST_ExtrusionPlane = string "XY" | string "ZX" | string "YZ"
+o_ST_Angle =
+  string "any"
+  | string "30"
+  | string "45"
+  | string "60"
+  | string "90"
+  | string "auto"
+o_ST_CalloutDrop = xsd:string
+o_ST_CalloutPlacement =
+  string "top" | string "center" | string "bottom" | string "user"
+o_ST_ConnectorType =
+  string "none" | string "straight" | string "elbow" | string "curved"
+o_ST_HrAlign = string "left" | string "right" | string "center"
+o_ST_ConnectType =
+  string "none" | string "rect" | string "segments" | string "custom"
+o_ST_OLELinkType = xsd:string
+o_ST_OLEType = string "Embed" | string "Link"
+o_ST_OLEDrawAspect = string "Content" | string "Icon"
+o_ST_OLEUpdateMode = string "Always" | string "OnCall"
+o_ST_FillType =
+  string "gradientCenter"
+  | string "solid"
+  | string "pattern"
+  | string "tile"
+  | string "frame"
+  | string "gradientUnscaled"
+  | string "gradientRadial"
+  | string "gradient"
+  | string "background"
+o_any_vml_vml =
+  v_shape
+  | v_shapetype
+  | v_group
+  | v_background
+  | v_fill
+  | v_formulas
+  | v_handles
+  | v_imagedata
+  | v_path
+  | v_textbox
+  | v_shadow
+  | v_stroke
+  | v_textpath
+  | v_arc
+  | v_curve
+  | v_image
+  | v_line
+  | v_oval
+  | v_polyline
+  | v_rect
+  | v_roundrect
