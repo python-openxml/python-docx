@@ -1,15 +1,25 @@
-###########
-python-docx
-###########
 
-Welcome
-=======
+python-docx
+===========
+
+Release v\ |version| (:ref:`Installation <install>`)
+
+.. include:: ../README.rst
 
 |docx| is a Python library for manipulating Microsoft Word document files for
 Word 2007 and later.
 
 **STATUS: as of Aug 8 2013 python-docx and this documentation are both work
 in progress.**
+
+
+User Guide
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   user/install
 
 
 Documentation
@@ -31,8 +41,4 @@ Contents
    :titlesonly:
    :maxdepth: 2
 
-   developer/index
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   dev/index

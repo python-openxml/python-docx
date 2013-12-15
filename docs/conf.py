@@ -67,6 +67,8 @@ release = '0.3.0d1'
 rst_epilog = """
 .. |Document| replace:: :class:`Document`
 
+.. |_Document| replace:: :class:`_Document`
+
 .. |OpcPackage| replace:: :class:`OpcPackage`
 
 .. |Paragraph| replace:: :class:`Paragraph`
@@ -87,7 +89,7 @@ rst_epilog = """
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['.build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

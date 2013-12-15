@@ -1,8 +1,8 @@
 .coverage
-dist
-doc/_build
-*.egg-info
+/dist/
+/docs/.build/
+/*.egg-info
 *.pyc
-_scratch
+_scratch/
 Session.vim
-.tox
+/.tox/

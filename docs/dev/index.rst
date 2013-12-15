@@ -7,8 +7,8 @@ Developer Documentation
    :maxdepth: 2
 
    design_narratives
-   analysis/ct_document
-   analysis/ct_body
-   analysis/ct_p
-   analysis/ct_ppr
-   analysis/ct_styles
+   analysis/schema/ct_document
+   analysis/schema/ct_body
+   analysis/schema/ct_p
+   analysis/schema/ct_ppr
+   analysis/schema/ct_styles
