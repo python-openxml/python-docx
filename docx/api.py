@@ -1,22 +1,15 @@
-# -*- coding: utf-8 -*-
-#
-# api.py
-#
-# Copyright (C) 2012, 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
 """
 Directly exposed API functions and classes, :func:`Document` for now.
 Provides a syntactically more convenient API for interacting with the
-opc.OpcPackage graph.
+OpcPackage graph.
 """
 
 import os
 
-from opc import OpcPackage
-from opc.constants import CONTENT_TYPE as CT
+from docx.opc.package import OpcPackage
+from docx.opc.constants import CONTENT_TYPE as CT
 
 
 thisdir = os.path.split(__file__)[0]

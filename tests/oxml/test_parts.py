@@ -31,6 +31,7 @@ class DescribeCT_Body(object):
             # exercise -----------------
             p = body.add_p()
             # verify -------------------
+            print(body.xml)
             assert body.xml == after_body_bldr.xml
             assert isinstance(p, CT_P)
 

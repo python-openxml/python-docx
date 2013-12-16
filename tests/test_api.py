@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-#
-# test_api.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
-"""Test suite for the docx.api module."""
+"""
+Test suite for the docx.api module
+"""
 
 import pytest
 
@@ -15,7 +10,7 @@ from mock import create_autospec, Mock, PropertyMock
 
 from docx import parts
 from docx.api import Document, _Document
-from opc.constants import CONTENT_TYPE as CT
+from docx.opc.constants import CONTENT_TYPE as CT
 
 from .unitutil import class_mock, var_mock
 
@@ -24,11 +19,11 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def _Document_(self, request):
-        return class_mock('docx.api._Document', request)
+        return class_mock(request, 'docx.api._Document')
 
     @pytest.fixture
     def default_docx(self, request):
-        return var_mock('docx.api._default_docx_path', request)
+        return var_mock(request, 'docx.api._default_docx_path')
 
     @pytest.fixture
     def OpcPackage_(self, OpcPackage_mockery):
@@ -36,7 +31,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def OpcPackage_mockery(self, request):
-        OpcPackage_ = class_mock('docx.api.OpcPackage', request)
+        OpcPackage_ = class_mock(request, 'docx.api.OpcPackage')
         pkg = OpcPackage_.open.return_value
         main_document = PropertyMock(name='main_document')
         main_document.return_value.content_type = CT.WML_DOCUMENT_MAIN

@@ -1,26 +1,18 @@
-# -*- coding: utf-8 -*-
-#
-# oxml/base.py
-#
-# Copyright (C) 2012, 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
 """
-Common and utility code used by other modules in the docx.oxml subpackage.
+Objects shared by modules in the docx.oxml subpackage.
 """
 
-from lxml import etree, objectify
+from lxml import etree
 
 
 nsmap = {
     'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
 }
 
-# configure objectified XML parser
-_fallback_lookup = objectify.ObjectifyElementClassLookup()
-element_class_lookup = etree.ElementNamespaceClassLookup(_fallback_lookup)
+# configure XML parser
+element_class_lookup = etree.ElementNamespaceClassLookup()
 oxml_parser = etree.XMLParser(remove_blank_text=True)
 oxml_parser.set_element_class_lookup(element_class_lookup)
 
@@ -29,27 +21,23 @@ oxml_parser.set_element_class_lookup(element_class_lookup)
 # utility functions
 # ===========================================================================
 
-def _Element(tag, nsmap=None):
-    return oxml_parser.makeelement(qn(tag), nsmap=nsmap)
+# def _Element(tag, nsmap=None):
+#     return oxml_parser.makeelement(qn(tag), nsmap=nsmap)
 
 
 def nsdecls(*prefixes):
     return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
 
 
+def OxmlElement(tag, attrs=None):
+    return oxml_parser.makeelement(qn(tag), attrib=attrs, nsmap=nsmap)
+
+
 def oxml_fromstring(text):
-    """``etree.fromstring()`` replacement that uses oxml parser"""
-    return objectify.fromstring(text, oxml_parser)
-
-
-def oxml_tostring(elm, encoding=None, pretty_print=False, standalone=None):
-    # if xsi parameter is not set to False, PowerPoint won't load without a
-    # repair step; deannotate removes some original xsi:type tags in core.xml
-    # if this parameter is left out (or set to True)
-    objectify.deannotate(elm, xsi=False, cleanup_namespaces=False)
-    # objectify.deannotate(elm, xsi=False, cleanup_namespaces=True)
-    return etree.tostring(elm, encoding=encoding, pretty_print=pretty_print,
-                          standalone=standalone)
+    """
+    ``etree.fromstring()`` replacement that uses oxml parser
+    """
+    return etree.fromstring(text, oxml_parser)
 
 
 def qn(tag):
@@ -74,11 +62,19 @@ def register_custom_element_class(tag, cls):
     namespace[tagroot] = cls
 
 
+def serialize_for_reading(element):
+    """
+    Serialize *element* to human-readable XML suitable for tests. No XML
+    declaration.
+    """
+    return etree.tostring(element, encoding='unicode', pretty_print=True)
+
+
 def _SubElement(parent, tag):
-    return objectify.SubElement(parent, qn(tag), nsmap=nsmap)
+    return etree.SubElement(parent, qn(tag), nsmap=nsmap)
 
 
-class OxmlBaseElement(objectify.ObjectifiedElement):
+class OxmlBaseElement(etree.ElementBase):
     """
     Base class for all custom element classes, to add standardized behavior
     to all classes in one place.
@@ -90,4 +86,4 @@ class OxmlBaseElement(objectify.ObjectifiedElement):
         Pretty printed for readability and without an XML declaration at the
         top.
         """
-        return oxml_tostring(self, encoding='unicode', pretty_print=True)
+        return serialize_for_reading(self)

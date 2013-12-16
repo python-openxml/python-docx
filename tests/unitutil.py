@@ -1,17 +1,18 @@
-# -*- coding: utf-8 -*-
-#
-# unitutil.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
-"""Utility functions for unit testing"""
+"""
+Utility functions for unit testing
+"""
 
 import os
 
-from mock import patch
+from mock import create_autospec, Mock, patch
+
+from docx.oxml.shared import serialize_for_reading
+
+
+_thisdir = os.path.split(__file__)[0]
+test_file_dir = os.path.abspath(os.path.join(_thisdir, 'test_files'))
 
 
 def abspath(relpath):
@@ -19,17 +20,38 @@ def abspath(relpath):
     return os.path.abspath(os.path.join(thisdir, relpath))
 
 
-def class_mock(q_class_name, request):
+def actual_xml(elm):
+    return serialize_for_reading(elm)
+
+
+def absjoin(*paths):
+    return os.path.abspath(os.path.join(*paths))
+
+
+def class_mock(request, q_class_name, autospec=True, **kwargs):
     """
     Return a mock patching the class with qualified name *q_class_name*.
-    Patch is reversed after calling test returns.
+    The mock is autospec'ed based on the patched class unless the optional
+    argument *autospec* is set to False. Any other keyword arguments are
+    passed through to Mock(). Patch is reversed after calling test returns.
     """
-    _patch = patch(q_class_name, autospec=True)
+    _patch = patch(q_class_name, autospec=autospec, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 
 
-def function_mock(q_function_name, request):
+def cls_attr_mock(request, cls, attr_name, name=None, **kwargs):
+    """
+    Return a mock for attribute *attr_name* on *cls* where the patch is
+    reversed after pytest uses it.
+    """
+    name = request.fixturename if name is None else name
+    _patch = patch.object(cls, attr_name, name=name, **kwargs)
+    request.addfinalizer(_patch.stop)
+    return _patch.start()
+
+
+def function_mock(request, q_function_name):
     """
     Return a mock patching the function with qualified name
     *q_function_name*. Patch is reversed after calling test returns.
@@ -39,7 +61,7 @@ def function_mock(q_function_name, request):
     return _patch.start()
 
 
-def initializer_mock(cls, request):
+def initializer_mock(request, cls):
     """
     Return a mock for the __init__ method on *cls* where the patch is
     reversed after pytest uses it.
@@ -49,21 +71,46 @@ def initializer_mock(cls, request):
     return _patch.start()
 
 
-def method_mock(cls, method_name, request):
+def instance_mock(request, cls, name=None, spec_set=True, **kwargs):
+    """
+    Return a mock for an instance of *cls* that draws its spec from the class
+    and does not allow new attributes to be set on the instance. If *name* is
+    missing or |None|, the name of the returned |Mock| instance is set to
+    *request.fixturename*. Additional keyword arguments are passed through to
+    the Mock() call that creates the mock.
+    """
+    name = name if name is not None else request.fixturename
+    return create_autospec(
+        cls, _name=name, spec_set=spec_set, instance=True, **kwargs
+    )
+
+
+def loose_mock(request, name=None, **kwargs):
+    """
+    Return a "loose" mock, meaning it has no spec to constrain calls on it.
+    Additional keyword arguments are passed through to Mock(). If called
+    without a name, it is assigned the name of the fixture.
+    """
+    if name is None:
+        name = request.fixturename
+    return Mock(name=name, **kwargs)
+
+
+def method_mock(request, cls, method_name, **kwargs):
     """
     Return a mock for method *method_name* on *cls* where the patch is
     reversed after pytest uses it.
     """
-    _patch = patch.object(cls, method_name)
+    _patch = patch.object(cls, method_name, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 
 
-def var_mock(q_var_name, request):
+def var_mock(request, q_var_name, **kwargs):
     """
     Return a mock patching the variable with qualified name *q_var_name*.
     Patch is reversed after calling test returns.
     """
-    _patch = patch(q_var_name)
+    _patch = patch(q_var_name, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()

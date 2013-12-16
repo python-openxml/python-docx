@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-#
-# test_text.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
-"""Test suite for the docx.text module."""
+"""
+Test suite for the docx.text module
+"""
 
 from docx.oxml.text import CT_P
 from docx.text import Paragraph, Run
@@ -23,20 +18,20 @@ class DescribeParagraph(object):
 
     @pytest.fixture
     def Run_(self, request):
-        return class_mock('docx.text.Run', request)
+        return class_mock(request, 'docx.text.Run')
 
     def it_has_a_sequence_of_the_runs_it_contains(self, Run_):
         p_elm = Mock(name='p_elm')
         r1, r2 = (Mock(name='r1'), Mock(name='r2'))
         R1, R2 = (Mock(name='Run1'), Mock(name='Run2'))
-        p_elm.r_elms = [r1, r2]
+        p_elm.r_lst = [r1, r2]
         p = Paragraph(p_elm)
         Run_.side_effect = [R1, R2]
         # exercise ---------------------
         runs = p.runs
         # verify -----------------------
         assert Run_.mock_calls == [call(r1), call(r2)]
-        assert runs == (R1, R2)
+        assert runs == [R1, R2]
 
     def it_can_add_a_run_to_itself(self, Run_):
         # mockery ----------------------
@@ -75,7 +70,7 @@ class DescribeRun(object):
 
     @pytest.fixture
     def Text_(self, request):
-        return class_mock('docx.text.Text', request)
+        return class_mock(request, 'docx.text.Text')
 
     def it_can_add_text_to_itself(self, Text_):
         # mockery ----------------------
@@ -93,7 +88,7 @@ class DescribeRun(object):
     def it_has_a_composite_of_the_text_it_contains(self):
         # mockery ----------------------
         t1, t2 = (Mock(name='t1', text='foo'), Mock(name='t2', text='bar'))
-        r_elm = Mock(name='r_elm', t_elms=[t1, t2])
+        r_elm = Mock(name='r_elm', t_lst=[t1, t2])
         r = Run(r_elm)
         # verify -----------------------
         assert r.text == 'foobar'

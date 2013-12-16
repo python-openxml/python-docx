@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-#
-# oxml/parts.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
 """
 Custom element classes that correspond to OPC parts like <w:document>.
 """
 
-from docx.oxml.base import OxmlBaseElement
+from docx.oxml.shared import OxmlBaseElement, qn
 from docx.oxml.text import CT_P
 
 
@@ -19,6 +12,9 @@ class CT_Document(OxmlBaseElement):
     """
     ``<w:document>`` element, the root element of a document.xml file.
     """
+    @property
+    def body(self):
+        return self.find(qn('w:body'))
 
 
 class CT_Body(OxmlBaseElement):
@@ -32,26 +28,51 @@ class CT_Body(OxmlBaseElement):
         existing body content.
         """
         p = CT_P.new()
-        if hasattr(self, 'sectPr'):
-            self.sectPr.addprevious(p)
-        else:
-            self.append(p)
-        return p
+        return self._append_blocklevelelt(p)
 
     def clear_content(self):
         """
         Remove all content child elements from this <w:body> element. Leave
         the <w:sectPr> element if it is present.
         """
-        children = self.getchildren()
-        content_elms = children[:-1] if self._has_sectPr else children
+        if self._sentinel_sectPr is not None:
+            content_elms = self[:-1]
+        else:
+            content_elms = self[:]
         for content_elm in content_elms:
             self.remove(content_elm)
 
     @property
-    def _has_sectPr(self):
+    def p_lst(self):
         """
-        Return True if this <w:body> element has a <w:sectPr> child element,
-        False otherwise.
+        List of <w:p> child elements.
         """
-        return hasattr(self, 'sectPr')
+        return self.findall(qn('w:p'))
+
+    def _append_blocklevelelt(self, block_level_elt):
+        """
+        Return *block_level_elt* after appending it to end of
+        EG_BlockLevelElts sequence.
+        """
+        sentinel_sectPr = self._sentinel_sectPr
+        if sentinel_sectPr is not None:
+            sentinel_sectPr.addprevious(block_level_elt)
+        else:
+            self.append(block_level_elt)
+        return block_level_elt
+
+    @property
+    def _sentinel_sectPr(self):
+        """
+        Return ``<w:sectPr>`` element appearing as last child, or None if not
+        found. Note that the ``<w:sectPr>`` element can also occur earlier in
+        the body; here we're only interested in one occuring as the last
+        child.
+        """
+        if len(self) == 0:
+            sentinel_sectPr = None
+        elif self[-1].tag != qn('w:sectPr'):
+            sentinel_sectPr = None
+        else:
+            sentinel_sectPr = self[-1]
+        return sentinel_sectPr

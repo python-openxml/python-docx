@@ -1,19 +1,12 @@
-# -*- coding: utf-8 -*-
-#
-# oxml/text.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
 """
 Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from docx.oxml.base import (
-    _Element, nsdecls, OxmlBaseElement, oxml_fromstring, qn
+from docx.oxml.shared import (
+    nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
 )
 
 
@@ -21,17 +14,6 @@ class CT_P(OxmlBaseElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
-    def __setattr__(self, attr, value):
-        """
-        Implement setter side of properties. Filters ``__setattr__`` messages
-        to ObjectifiedElement base class to intercept messages intended for
-        custom property setters.
-        """
-        if attr == 'style':
-            self._set_style(value)
-        else:
-            super(CT_P, self).__setattr__(attr, value)
-
     def add_r(self):
         """
         Return a newly added CT_R (<w:r>) element.
@@ -39,6 +21,15 @@ class CT_P(OxmlBaseElement):
         r = CT_R.new()
         self.append(r)
         return r
+
+    def get_or_add_pPr(self):
+        """
+        Return the pPr child element, newly added if not present.
+        """
+        pPr = self.pPr
+        if pPr is None:
+            pPr = self._add_pPr()
+        return pPr
 
     @staticmethod
     def new():
@@ -50,13 +41,18 @@ class CT_P(OxmlBaseElement):
         return p
 
     @property
-    def r_elms(self):
+    def pPr(self):
+        """
+        ``<w:pPr>`` child element or None if not present.
+        """
+        return self.find(qn('w:pPr'))
+
+    @property
+    def r_lst(self):
         """
         Sequence containing a reference to each run element in this paragraph.
         """
-        if not hasattr(self, 'r'):
-            return ()
-        return tuple([r for r in self.r])
+        return self.findall(qn('w:r'))
 
     @property
     def style(self):
@@ -64,51 +60,41 @@ class CT_P(OxmlBaseElement):
         String contained in w:val attribute of <w:pPr><w:pStyle> child, or
         None if that element is not present.
         """
-        return self.pPr.style if self._has_pPr else None
+        pPr = self.pPr
+        if pPr is None:
+            return None
+        return pPr.style
 
-    def _get_or_add_pPr(self):
-        """
-        Return the pPr child element of this <w:p> element, adding a new one
-        if one is not present.
-        """
-        if not self._has_pPr:
-            self.insert(0, CT_PPr.new())
-        return self.pPr
-
-    @property
-    def _has_pPr(self):
-        """
-        Return True if this <w:p> element has a <w:pPr> child element, False
-        otherwise.
-        """
-        return hasattr(self, 'pPr')
-
-    def _set_style(self, style):
+    @style.setter
+    def style(self, style):
         """
         Set style of this <w:p> element to *style*. If *style* is None,
-        remove the style element. If the pPr element is empty after the
-        operation, remove it.
+        remove the style element.
         """
-        pPr = self._get_or_add_pPr()
+        pPr = self.get_or_add_pPr()
         pPr.style = style
-        if pPr.countchildren() == 0:
-            self.remove(pPr)
+
+    def _add_pPr(self):
+        """
+        Return a newly added pPr child element. Assumes one is not present.
+        """
+        pPr = CT_PPr.new()
+        self.insert(0, pPr)
+        return pPr
 
 
 class CT_PPr(OxmlBaseElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
-    def __setattr__(self, attr, value):
+    def get_or_add_pStyle(self):
         """
-        Implement setter side of properties. Filters ``__setattr__`` messages
-        to ObjectifiedElement base class to intercept messages intended for
-        custom property setters.
+        Return the pStyle child element, newly added if not present.
         """
-        if attr == 'style':
-            self._set_style(value)
-        else:
-            super(CT_PPr, self).__setattr__(attr, value)
+        pStyle = self.pStyle
+        if pStyle is None:
+            pStyle = self._add_pStyle()
+        return pStyle
 
     @staticmethod
     def new():
@@ -120,28 +106,49 @@ class CT_PPr(OxmlBaseElement):
         return pPr
 
     @property
+    def pStyle(self):
+        """
+        ``<w:pStyle>`` child element or None if not present.
+        """
+        return self.find(qn('w:pStyle'))
+
+    def remove_pStyle(self):
+        pStyle = self.pStyle
+        if pStyle is not None:
+            self.remove(pStyle)
+
+    @property
     def style(self):
         """
         String contained in <w:pStyle> child, or None if that element is not
         present.
         """
-        if not hasattr(self, 'pStyle'):
+        pStyle = self.pStyle
+        if pStyle is None:
             return None
-        return self.pStyle.get(qn('w:val'))
+        return pStyle.get(qn('w:val'))
 
-    def _set_style(self, style):
+    @style.setter
+    def style(self, style):
         """
-        Set w:val attribute of <w:pStyle> child element to *style*, adding a
+        Set val attribute of <w:pStyle> child element to *style*, adding a
         new element if necessary. If *style* is |None|, remove the <w:pStyle>
         element if present.
         """
-        if not hasattr(self, 'pStyle'):
-            pStyle = _Element('w:pStyle')
-            self.insert(0, pStyle)
         if style is None:
-            self.remove(self.pStyle)
+            self.remove_pStyle()
+        elif self.pStyle is None:
+            self._add_pStyle(style)
         else:
-            self.pStyle.set(qn('w:val'), style)
+            self.pStyle.val = style
+
+    def _add_pStyle(self, style):
+        pStyle = CT_String.new_pStyle(style)
+        return self._insert_pStyle(pStyle)
+
+    def _insert_pStyle(self, pStyle):
+        self.insert(0, pStyle)
+        return pStyle
 
 
 class CT_R(OxmlBaseElement):
@@ -165,13 +172,33 @@ class CT_R(OxmlBaseElement):
         return t
 
     @property
-    def t_elms(self):
+    def t_lst(self):
         """
-        Sequence of the <w:t> elements in this paragraph.
+        Sequence of <w:t> elements in this paragraph.
         """
-        if not hasattr(self, 't'):
-            return ()
-        return tuple([t for t in self.t])
+        return self.findall(qn('w:t'))
+
+
+class CT_String(OxmlBaseElement):
+    """
+    Used for ``<w:pStyle>`` element, containing a style name in its ``val``
+    attribute.
+    """
+    @classmethod
+    def new_pStyle(cls, val):
+        """
+        Return a new ``<w:pStyle>`` element with ``val`` attribute set to
+        *val*.
+        """
+        return OxmlElement('w:pStyle', attrs={qn('w:val'): val})
+
+    @property
+    def val(self):
+        return self.get(qn('w:val'))
+
+    @val.setter
+    def val(self, val):
+        return self.set(qn('w:val'), val)
 
 
 class CT_Text(OxmlBaseElement):

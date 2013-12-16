@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# text.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
 """
 Text-related proxy types for python-docx, such as Paragraph and Run.
@@ -33,7 +26,7 @@ class Paragraph(object):
         Sequence of |Run| instances corresponding to the <w:r> elements in
         this paragraph.
         """
-        return tuple([Run(r) for r in self._p.r_elms])
+        return [Run(r) for r in self._p.r_lst]
 
     @property
     def style(self):
@@ -70,7 +63,7 @@ class Run(object):
         this run.
         """
         text = ''
-        for t in self._r.t_elms:
+        for t in self._r.t_lst:
             text += t.text
         return text
 

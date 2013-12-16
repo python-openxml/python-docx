@@ -23,8 +23,8 @@ class DescribeCT_P(object):
 
     def it_has_a_sequence_of_the_runs_it_contains(self):
         p = a_p().with_nsdecls().with_r(3).element
-        assert len(p.r_elms) == 3
-        for r in p.r_elms:
+        assert len(p.r_lst) == 3
+        for r in p.r_lst:
             assert isinstance(r, CT_R)
 
     def it_can_add_an_r_to_itself(self):
@@ -52,9 +52,9 @@ class DescribeCT_P(object):
         pPr = a_pPr().with_style('foobar')
         pPr2 = a_pPr().with_style('barfoo')
         cases = (
-            (1, a_p(), None, a_p()),
+            (1, a_p(), None, a_p().with_pPr(a_pPr())),
             (2, a_p(), 'foobar', a_p().with_pPr(pPr)),
-            (3, a_p().with_pPr(pPr), None, a_p()),
+            (3, a_p().with_pPr(pPr), None, a_p().with_pPr(a_pPr())),
             (4, a_p().with_pPr(pPr), 'barfoo', a_p().with_pPr(pPr2)),
         )
         for case_nmbr, before_bldr, new_style, after_bldr in cases:
@@ -125,10 +125,10 @@ class DescribeCT_R(object):
             (an_r().with_nsdecls().with_t('foo'), 1),
             (an_r().with_nsdecls().with_t('foo').with_t('bar'), 2),
         )
-        for builder, expected_len in cases:
-            r = builder.element
-            assert len(r.t_elms) == expected_len
-            for t in r.t_elms:
+        for r_bldr, expected_len in cases:
+            r = r_bldr.element
+            assert len(r.t_lst) == expected_len
+            for t in r.t_lst:
                 assert isinstance(t, CT_Text)
 
 

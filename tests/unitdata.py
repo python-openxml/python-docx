@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-#
-# unitdata.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-opc and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
-"""Test data builders for unit tests"""
+"""
+Test data builders for unit tests
+"""
 
-from docx.oxml.base import nsdecls, oxml_fromstring
+from docx.oxml.shared import nsdecls, oxml_fromstring
 
 
 class BaseBuilder(object):
