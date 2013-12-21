@@ -90,16 +90,16 @@ Schema excerpt
     <xsd:attributeGroup ref="AG_SectPrAttributes"/>
   </xsd:complexType>
 
-  <xsd:group name="EG_BlockLevelChunkElts">
-    <xsd:choice>
-      <xsd:group ref="EG_ContentBlockContent" minOccurs="0" maxOccurs="unbounded"/>
-    </xsd:choice>
-  </xsd:group>
-
   <xsd:group name="EG_BlockLevelElts">
     <xsd:choice>
       <xsd:group   ref="EG_BlockLevelChunkElts"       minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="altChunk" type="CT_AltChunk" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:group name="EG_BlockLevelChunkElts">
+    <xsd:choice>
+      <xsd:group ref="EG_ContentBlockContent" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:choice>
   </xsd:group>
 

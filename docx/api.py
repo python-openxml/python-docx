@@ -45,7 +45,7 @@ class _Document(object):
     @property
     def body(self):
         """
-        Return a reference to the |Body| instance for this document.
+        Return a reference to the |_Body| instance for this document.
         """
         return self._document.body
 

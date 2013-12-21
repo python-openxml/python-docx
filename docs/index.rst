@@ -22,23 +22,20 @@ User Guide
    user/install
 
 
-Documentation
-=============
-
-|Document| objects
-==================
-
-.. autoclass:: docx.Document
-   :members:
-   :member-order: bysource
-   :undoc-members:
-
-
-Contents
-========
+API Documentation
+-----------------
 
 .. toctree::
-   :titlesonly:
    :maxdepth: 2
 
-   dev/index
+   api/document
+
+
+Contributor Guide
+-----------------
+
+.. toctree::
+   :maxdepth: 1
+
+   dev/design_narratives
+   dev/analysis/index
