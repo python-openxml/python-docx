@@ -199,19 +199,10 @@ Schema Definitions
     <xsd:attribute name="val"         type="ST_ShortHexNumber"/>
   </xsd:complexType>
 
-  <xsd:complexType name="CT_TblGrid">
-    <xsd:complexContent>
-      <xsd:extension base="CT_TblGridBase">
-        <xsd:sequence>
-          <xsd:element name="tblGridChange" type="CT_TblGridChange" minOccurs="0"/>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="CT_TblGridBase">
+  <xsd:complexType name="CT_TblGrid">  <!-- denormalized -->
     <xsd:sequence>
-      <xsd:element name="gridCol" type="CT_TblGridCol" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="gridCol"       type="CT_TblGridCol"    minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="tblGridChange" type="CT_TblGridChange" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
 

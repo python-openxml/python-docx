@@ -6,12 +6,11 @@ Test suite for the docx.parts module
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.parts import _Body, _Document
-
 import pytest
 
 from mock import Mock
 
+from docx.parts import _Body, _Document
 from docx.table import Table
 from docx.text import Paragraph
 
