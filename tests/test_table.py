@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.table import _Column, Table
+from docx.table import _Column, _Row, Table
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
@@ -19,9 +19,14 @@ class DescribeTable(object):
     def it_can_add_a_column(self, add_column_fixture):
         table, expected_xml = add_column_fixture
         col = table.add_column()
-        print('\n%s' % table._tbl.xml)
         assert table._tbl.xml == expected_xml
         assert isinstance(col, _Column)
+
+    def it_can_add_a_row(self, add_row_fixture):
+        table, expected_xml = add_row_fixture
+        row = table.add_row()
+        assert table._tbl.xml == expected_xml
+        assert isinstance(row, _Row)
 
     # fixtures -------------------------------------------------------
 
@@ -30,6 +35,13 @@ class DescribeTable(object):
         tbl = self._tbl_bldr(2, 1).element
         table = Table(tbl)
         expected_xml = self._tbl_bldr(2, 2).xml()
+        return table, expected_xml
+
+    @pytest.fixture
+    def add_row_fixture(self):
+        tbl = self._tbl_bldr(rows=1, cols=2).element
+        table = Table(tbl)
+        expected_xml = self._tbl_bldr(rows=2, cols=2).xml()
         return table, expected_xml
 
     def _tbl_bldr(self, rows, cols):

@@ -23,6 +23,16 @@ class Table(object):
             tr.add_tc()
         return _Column(gridCol)
 
+    def add_row(self):
+        """
+        Return a |_Row| instance, newly added bottom-most to the table.
+        """
+        tbl = self._tbl
+        tr = tbl.add_tr()
+        for gridCol in tbl.tblGrid.gridCol_lst:
+            tr.add_tc()
+        return _Row(tr)
+
 
 class _Column(object):
     """
@@ -31,3 +41,12 @@ class _Column(object):
     def __init__(self, gridCol):
         super(_Column, self).__init__()
         self._gridCol = gridCol
+
+
+class _Row(object):
+    """
+    Table row
+    """
+    def __init__(self, tr):
+        super(_Row, self).__init__()
+        self._tr = tr

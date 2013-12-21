@@ -24,6 +24,13 @@ class CT_Row(OxmlBaseElement):
         tc = CT_Tc.new()
         return self._append_tc(tc)
 
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tr>`` element.
+        """
+        return OxmlElement('w:tr')
+
     def _append_tc(self, tc):
         """
         Return *tc* after appending it to end of tc sequence.
@@ -36,6 +43,14 @@ class CT_Tbl(OxmlBaseElement):
     """
     ``<w:tbl>`` element
     """
+    def add_tr(self):
+        """
+        Return a new <w:tr> element that has been added at the end of any
+        existing tr elements.
+        """
+        tr = CT_Row.new()
+        return self._append_tr(tr)
+
     @property
     def tblGrid(self):
         tblGrid = self.find(qn('w:tblGrid'))
@@ -51,6 +66,13 @@ class CT_Tbl(OxmlBaseElement):
         """
         return self.findall(qn('w:tr'))
 
+    def _append_tr(self, tr):
+        """
+        Return *tr* after appending it to end of tr sequence.
+        """
+        self.append(tr)
+        return tr
+
 
 class CT_TblGrid(OxmlBaseElement):
     """
@@ -64,6 +86,14 @@ class CT_TblGrid(OxmlBaseElement):
         """
         gridCol = CT_TblGridCol.new()
         return self._append_gridCol(gridCol)
+
+    @property
+    def gridCol_lst(self):
+        """
+        Sequence containing the ``<w:gridCol>`` child elements in this
+        ``<w:tblGrid>``.
+        """
+        return self.findall(qn('w:gridCol'))
 
     def _append_gridCol(self, gridCol):
         """
