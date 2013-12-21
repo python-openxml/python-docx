@@ -101,7 +101,7 @@ class Describe_Body(object):
         assert paragraphs == [P1, P2]
 
     def it_returns_an_empty_sequence_when_it_contains_no_paragraphs(self):
-        body = _Body(a_body().element)
+        body = _Body(a_body().with_nsdecls().element)
         assert body.paragraphs == []
 
     def it_can_clear_itself_of_all_content_it_holds(self):

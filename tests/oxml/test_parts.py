@@ -8,6 +8,7 @@ from docx.oxml.parts import CT_Body
 from docx.oxml.text import CT_P
 
 from .unitdata.parts import a_body, a_document
+from .unitdata.text import a_p, a_sectPr
 
 
 class DescribeCT_Body(object):
@@ -18,8 +19,10 @@ class DescribeCT_Body(object):
         existing content.
         """
         cases = (
-            (a_body(),               a_body().with_p()),
-            (a_body().with_sectPr(), a_body().with_p().with_sectPr()),
+            (a_body().with_nsdecls(),
+             a_body().with_nsdecls().with_child(a_p())),
+            (a_body().with_nsdecls().with_child(a_sectPr()),
+             a_body().with_nsdecls().with_child(a_p()).with_child(a_sectPr())),
         )
         for before_body_bldr, after_body_bldr in cases:
             body = before_body_bldr.element
@@ -27,7 +30,7 @@ class DescribeCT_Body(object):
             p = body.add_p()
             # verify -------------------
             print(body.xml)
-            assert body.xml == after_body_bldr.xml
+            assert body.xml == after_body_bldr.xml()
             assert isinstance(p, CT_P)
 
     def it_can_clear_all_the_content_it_holds(self):
@@ -35,21 +38,25 @@ class DescribeCT_Body(object):
         Remove all content child elements from this <w:body> element.
         """
         cases = (
-            (a_body(), a_body()),
-            (a_body().with_p(), a_body()),
-            (a_body().with_sectPr(), a_body().with_sectPr()),
-            (a_body().with_p().with_sectPr(), a_body().with_sectPr()),
+            (a_body().with_nsdecls(),
+             a_body().with_nsdecls()),
+            (a_body().with_nsdecls().with_child(a_p()),
+             a_body().with_nsdecls()),
+            (a_body().with_nsdecls().with_child(a_sectPr()),
+             a_body().with_nsdecls().with_child(a_sectPr())),
+            (a_body().with_nsdecls().with_child(a_p()).with_child(a_sectPr()),
+             a_body().with_nsdecls().with_child(a_sectPr())),
         )
         for before_body_bldr, after_body_bldr in cases:
             body = before_body_bldr.element
             # exercise -----------------
             body.clear_content()
             # verify -------------------
-            assert body.xml == after_body_bldr.xml
+            assert body.xml == after_body_bldr.xml()
 
 
 class DescribeCT_Document(object):
 
     def it_holds_a_body_element(self):
-        document = a_document().with_body().element
+        document = a_document().with_nsdecls().with_child(a_body()).element
         assert isinstance(document.body, CT_Body)
