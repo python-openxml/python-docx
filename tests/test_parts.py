@@ -85,15 +85,13 @@ class Describe_Body(object):
         assert body._body.xml == expected_xml
         assert isinstance(p, Paragraph)
 
-    def it_can_clear_itself_of_all_content_it_holds(self):
-        # mockery ----------------------
-        body_elm = Mock(name='body_elm')
-        body = _Body(body_elm)
-        # exercise ---------------------
-        retval = body.clear_content()
-        # verify -----------------------
-        body_elm.clear_content.assert_called_once_with()
-        assert retval is body
+    def it_can_clear_itself_of_all_content_it_holds(
+            self, clear_content_fixture):
+        body, expected_xml = clear_content_fixture
+        _body = body.clear_content()
+        assert body._body.xml == expected_xml
+        print(body._body.xml)
+        assert _body is body
 
     def it_provides_access_to_the_paragraphs_it_contains(
             self, body_with_paragraphs):
@@ -137,3 +135,20 @@ class Describe_Body(object):
                     .element
         )
         return _Body(body_elm)
+
+    @pytest.fixture(params=[False, True])
+    def clear_content_fixture(self, request):
+        has_sectPr = request.param
+        # body element -----------------
+        body_bldr = a_body().with_nsdecls()
+        body_bldr.with_child(a_p())
+        if has_sectPr:
+            body_bldr.with_child(a_sectPr())
+        body_elm = body_bldr.element
+        body = _Body(body_elm)
+        # expected XML -----------------
+        body_bldr = a_body().with_nsdecls()
+        if has_sectPr:
+            body_bldr.with_child(a_sectPr())
+        expected_xml = body_bldr.xml()
+        return body, expected_xml
