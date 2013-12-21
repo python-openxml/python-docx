@@ -8,9 +8,12 @@ from docx.parts import _Body, _Document
 
 import pytest
 
-from mock import call, Mock
+from mock import Mock
+
+from docx.text import Paragraph
 
 from .oxml.unitdata.parts import a_body
+from .oxml.unitdata.text import a_p
 from .unitutil import class_mock, function_mock, initializer_mock
 
 
@@ -86,20 +89,6 @@ class Describe_Body(object):
         Paragraph_.assert_called_once_with(p_elm)
         assert p is Paragraph_.return_value
 
-    def it_provides_access_to_its_paragraphs_as_a_sequence(self, Paragraph_):
-        # mockery ----------------------
-        body_elm = Mock(name='body_elm')
-        p1, p2 = (Mock(name='p1'), Mock(name='p2'))
-        P1, P2 = (Mock(name='Paragraph1'), Mock(name='Paragraph2'))
-        body_elm.p_lst = [p1, p2]
-        body = _Body(body_elm)
-        Paragraph_.side_effect = [P1, P2]
-        # exercise ---------------------
-        paragraphs = body.paragraphs
-        # verify -----------------------
-        assert Paragraph_.mock_calls == [call(p1), call(p2)]
-        assert paragraphs == [P1, P2]
-
     def it_returns_an_empty_sequence_when_it_contains_no_paragraphs(self):
         body = _Body(a_body().with_nsdecls().element)
         assert body.paragraphs == []
@@ -114,7 +103,25 @@ class Describe_Body(object):
         body_elm.clear_content.assert_called_once_with()
         assert retval is body
 
+    def it_provides_access_to_the_paragraphs_it_contains(
+            self, body_with_paragraphs):
+        body = body_with_paragraphs
+        paragraphs = body.paragraphs
+        assert len(paragraphs) == 2
+        for p in paragraphs:
+            assert isinstance(p, Paragraph)
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def body_with_paragraphs(self):
+        body_elm = (
+            a_body().with_nsdecls()
+                    .with_child(a_p())
+                    .with_child(a_p())
+                    .element
+        )
+        return _Body(body_elm)
 
     @pytest.fixture
     def Paragraph_(self, request):
