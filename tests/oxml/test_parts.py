@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-#
-# test_parts.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
-"""Test suite for the docx.oxml.parts module."""
+"""
+Test suite for the docx.oxml.parts module.
+"""
 
 from docx.oxml.parts import CT_Body
 from docx.oxml.text import CT_P
 
-from ..unitdata import a_body, a_document
+from .unitdata.parts import a_body, a_document
 
 
 class DescribeCT_Body(object):

@@ -10,7 +10,7 @@ import pytest
 
 from mock import call, Mock
 
-from .unitdata import a_body
+from .oxml.unitdata.parts import a_body
 from .unitutil import class_mock, function_mock, initializer_mock
 
 

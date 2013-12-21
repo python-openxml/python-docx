@@ -1,17 +1,12 @@
-# -*- coding: utf-8 -*-
-#
-# test_text.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
-"""Test suite for the docx.oxml.text module."""
+"""
+Test suite for the docx.oxml.text module.
+"""
 
 from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_Text
 
-from ..unitdata import a_p, a_pPr, a_t, an_r
+from .unitdata.text import a_p, a_pPr, a_t, an_r
 
 
 class DescribeCT_P(object):
