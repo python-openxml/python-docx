@@ -4,6 +4,8 @@
 Test suite for the docx.parts module
 """
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 from docx.parts import _Body, _Document
 
 import pytest
@@ -13,7 +15,7 @@ from mock import Mock
 from docx.text import Paragraph
 
 from .oxml.unitdata.parts import a_body
-from .oxml.unitdata.text import a_p
+from .oxml.unitdata.text import a_p, a_sectPr
 from .unitutil import class_mock, function_mock, initializer_mock
 
 
@@ -77,21 +79,11 @@ class Describe_Document(object):
 
 class Describe_Body(object):
 
-    def it_can_add_a_paragraph_to_itself(self, Paragraph_):
-        # mockery ----------------------
-        body_elm = Mock(name='body_elm')
-        body_elm.add_p.return_value = p_elm = Mock(name='p_elm')
-        body = _Body(body_elm)
-        # exercise ---------------------
+    def it_can_add_a_paragraph_to_itself(self, add_paragraph_fixture):
+        body, expected_xml = add_paragraph_fixture
         p = body.add_paragraph()
-        # verify -----------------------
-        body_elm.add_p.assert_called_once_with()
-        Paragraph_.assert_called_once_with(p_elm)
-        assert p is Paragraph_.return_value
-
-    def it_returns_an_empty_sequence_when_it_contains_no_paragraphs(self):
-        body = _Body(a_body().with_nsdecls().element)
-        assert body.paragraphs == []
+        assert body._body.xml == expected_xml
+        assert isinstance(p, Paragraph)
 
     def it_can_clear_itself_of_all_content_it_holds(self):
         # mockery ----------------------
@@ -113,6 +105,29 @@ class Describe_Body(object):
 
     # fixtures -------------------------------------------------------
 
+    @pytest.fixture(params=[
+        (False, False), (True, False), (False, True), (True, True)
+    ])
+    def add_paragraph_fixture(self, request):
+        has_p, has_sectPr = request.param
+        # body element -----------------
+        body_bldr = a_body().with_nsdecls()
+        if has_p:
+            body_bldr.with_child(a_p())
+        if has_sectPr:
+            body_bldr.with_child(a_sectPr())
+        body_elm = body_bldr.element
+        body = _Body(body_elm)
+        # expected XML -----------------
+        body_bldr = a_body().with_nsdecls()
+        if has_p:
+            body_bldr.with_child(a_p())
+        body_bldr.with_child(a_p())
+        if has_sectPr:
+            body_bldr.with_child(a_sectPr())
+        expected_xml = body_bldr.xml()
+        return body, expected_xml
+
     @pytest.fixture
     def body_with_paragraphs(self):
         body_elm = (
@@ -122,7 +137,3 @@ class Describe_Body(object):
                     .element
         )
         return _Body(body_elm)
-
-    @pytest.fixture
-    def Paragraph_(self, request):
-        return class_mock(request, 'docx.parts.Paragraph')
