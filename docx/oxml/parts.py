@@ -5,6 +5,7 @@ Custom element classes that correspond to OPC parts like <w:document>.
 """
 
 from docx.oxml.shared import OxmlBaseElement, qn
+from docx.oxml.table import CT_Tbl
 from docx.oxml.text import CT_P
 
 
@@ -29,6 +30,14 @@ class CT_Body(OxmlBaseElement):
         """
         p = CT_P.new()
         return self._append_blocklevelelt(p)
+
+    def add_tbl(self):
+        """
+        Return a new <w:tbl> element that has been added at the end of any
+        existing body content.
+        """
+        tbl = CT_Tbl.new()
+        return self._append_blocklevelelt(tbl)
 
     def clear_content(self):
         """

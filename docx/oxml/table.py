@@ -51,6 +51,19 @@ class CT_Tbl(OxmlBaseElement):
         tr = CT_Row.new()
         return self._append_tr(tr)
 
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tbl>`` element, containing the required
+        ``<w:tblPr>`` and ``<w:tblGrid>`` child elements.
+        """
+        tbl = OxmlElement('w:tbl')
+        tblPr = CT_TblPr.new()
+        tbl.append(tblPr)
+        tblGrid = CT_TblGrid.new()
+        tbl.append(tblGrid)
+        return tbl
+
     @property
     def tblGrid(self):
         tblGrid = self.find(qn('w:tblGrid'))
@@ -95,6 +108,13 @@ class CT_TblGrid(OxmlBaseElement):
         """
         return self.findall(qn('w:gridCol'))
 
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tblGrid>`` element.
+        """
+        return OxmlElement('w:tblGrid')
+
     def _append_gridCol(self, gridCol):
         """
         Return *gridCol* after appending it to end of gridCol sequence.
@@ -129,6 +149,19 @@ class CT_TblGridCol(OxmlBaseElement):
         Return a new ``<w:gridCol>`` element.
         """
         return OxmlElement('w:gridCol')
+
+
+class CT_TblPr(OxmlBaseElement):
+    """
+    ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
+    define table properties such as style and borders.
+    """
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tblPr>`` element.
+        """
+        return OxmlElement('w:tblPr')
 
 
 class CT_Tc(OxmlBaseElement):

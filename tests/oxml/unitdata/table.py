@@ -31,6 +31,12 @@ class CT_TblGridColBuilder(BaseBuilder):
     __attrs__ = ('w:w',)
 
 
+class CT_TblPrBuilder(BaseBuilder):
+    __tag__ = 'w:tblPr'
+    __nspfxs__ = ('w',)
+    __attrs__ = ()
+
+
 class CT_TcBuilder(BaseBuilder):
     __tag__ = 'w:tc'
     __nspfxs__ = ('w',)
@@ -47,6 +53,10 @@ def a_tbl():
 
 def a_tblGrid():
     return CT_TblGridBuilder()
+
+
+def a_tblPr():
+    return CT_TblPrBuilder()
 
 
 def a_tc():

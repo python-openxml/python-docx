@@ -49,8 +49,24 @@ class _Body(object):
         self._body = body_elm
 
     def add_paragraph(self):
+        """
+        Return a paragraph newly added to the end of body content.
+        """
         p = self._body.add_p()
         return Paragraph(p)
+
+    def add_table(self, rows, cols):
+        """
+        Return a table having *rows* rows and *cols* cols, newly appended to
+        the main document story.
+        """
+        tbl = self._body.add_tbl()
+        table = Table(tbl)
+        for i in range(cols):
+            table.add_column()
+        for i in range(rows):
+            table.add_row()
+        return table
 
     def clear_content(self):
         """

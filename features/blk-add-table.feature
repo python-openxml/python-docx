@@ -7,7 +7,6 @@ Feature: Add a table
      Given a document containing a table
       Then I can access the table
 
-  @wip
   Scenario: Add a table
      Given a document
       When I add a table

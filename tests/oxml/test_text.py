@@ -37,7 +37,6 @@ class DescribeCT_P(object):
             (a_p().with_child(pPr_bldr), 'foobar'),
         )
         for builder, expected_value in cases:
-            print builder.with_nsdecls().xml()
             p = builder.with_nsdecls().element
             assert p.style == expected_value
 
@@ -51,13 +50,9 @@ class DescribeCT_P(object):
             (4, a_p().with_child(pPr), 'barfoo', a_p().with_child(pPr2)),
         )
         for case_nmbr, before_bldr, new_style, after_bldr in cases:
-            print before_bldr.with_nsdecls().xml()
-            print 'case_nmbr, new_style => %d, %s' % (case_nmbr, new_style)
             p = before_bldr.with_nsdecls().element
             p.style = new_style
             expected_xml = after_bldr.with_nsdecls().xml()
-            print expected_xml
-            print p.xml
             assert p.xml == expected_xml
 
 
@@ -74,7 +69,6 @@ class DescribeCT_PPr(object):
             (a_pPr().with_child(a_pStyle().with_val('foobar')), 'foobar'),
         )
         for builder, expected_value in cases:
-            print builder.with_nsdecls().xml
             pPr = builder.with_nsdecls().element
             assert pPr.style == expected_value
 
@@ -89,13 +83,9 @@ class DescribeCT_PPr(object):
              a_pPr().with_child(a_pStyle().with_val('barfoo'))),
         )
         for case_nmbr, before_bldr, new_style, after_bldr in cases:
-            print '====\ncase %d: new_style => %s' % (case_nmbr, new_style)
-            print 'before:\n%s' % before_bldr.with_nsdecls().xml()
             pPr = before_bldr.with_nsdecls().element
             pPr.style = new_style
             expected_xml = after_bldr.with_nsdecls().xml()
-            print 'expected:\n%s' % expected_xml
-            print 'actual:\n%s' % pPr.xml
             assert pPr.xml == expected_xml
 
 

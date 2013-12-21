@@ -102,7 +102,6 @@ class DescribeCT_Types(object):
 
     def it_provides_access_to_default_child_elements(self):
         types = a_Types().element
-        print(actual_xml(types))
         assert len(types.defaults) == 2
         for default in types.defaults:
             assert isinstance(default, CT_Default)
