@@ -7,6 +7,7 @@ Document parts such as _Document, and closely related classes.
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
 from docx.oxml.shared import oxml_fromstring
+from docx.table import Table
 from docx.text import Paragraph
 
 
@@ -63,3 +64,11 @@ class _Body(object):
     @property
     def paragraphs(self):
         return [Paragraph(p) for p in self._body.p_lst]
+
+    @property
+    def tables(self):
+        """
+        A sequence containing all the tables in the document, in the order
+        they appear.
+        """
+        return [Table(tbl) for tbl in self._body.tbl_lst]

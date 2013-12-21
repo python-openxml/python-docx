@@ -3,7 +3,6 @@ Feature: Add a table
   As an python-docx developer
   I need the ability to add a table
 
-  @wip
   Scenario: Access a table
      Given a document containing a table
       Then I can access the table

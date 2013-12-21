@@ -12,9 +12,11 @@ import pytest
 
 from mock import Mock
 
+from docx.table import Table
 from docx.text import Paragraph
 
 from .oxml.unitdata.parts import a_body
+from .oxml.unitdata.table import a_tbl
 from .oxml.unitdata.text import a_p, a_sectPr
 from .unitutil import class_mock, function_mock, initializer_mock
 
@@ -90,7 +92,6 @@ class Describe_Body(object):
         body, expected_xml = clear_content_fixture
         _body = body.clear_content()
         assert body._body.xml == expected_xml
-        print(body._body.xml)
         assert _body is body
 
     def it_provides_access_to_the_paragraphs_it_contains(
@@ -100,6 +101,14 @@ class Describe_Body(object):
         assert len(paragraphs) == 2
         for p in paragraphs:
             assert isinstance(p, Paragraph)
+
+    def it_provides_access_to_the_tables_it_contains(
+            self, body_with_tables):
+        body = body_with_tables
+        tables = body.tables
+        assert len(tables) == 2
+        for table in tables:
+            assert isinstance(table, Table)
 
     # fixtures -------------------------------------------------------
 
@@ -132,6 +141,16 @@ class Describe_Body(object):
             a_body().with_nsdecls()
                     .with_child(a_p())
                     .with_child(a_p())
+                    .element
+        )
+        return _Body(body_elm)
+
+    @pytest.fixture
+    def body_with_tables(self):
+        body_elm = (
+            a_body().with_nsdecls()
+                    .with_child(a_tbl())
+                    .with_child(a_tbl())
                     .element
         )
         return _Body(body_elm)
