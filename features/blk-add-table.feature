@@ -1,0 +1,15 @@
+Feature: Add a table
+  In order to fulfill a requirement for a table in a document
+  As an python-docx developer
+  I need the ability to add a table
+
+  @wip
+  Scenario: Access a table
+     Given a document containing a table
+      Then I can access the table
+
+  @wip
+  Scenario: Add a table
+     Given a document
+      When I add a table
+      Then the new table appears in the document

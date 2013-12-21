@@ -1,6 +1,6 @@
-###########
+
 ``CT_Body``
-###########
+===========
 
 .. highlight:: xml
 
@@ -16,37 +16,8 @@
    Spec Section , 17.2.2
 
 
-Analysis
-========
-
-XPath expression from `<p:sp>` is ``./p:txBody``
-
-Can only occur in ``<p:sp>``. Other shape types do not have text.
-
-.. note:: There is a special case of a text box, there's an element or
-   attribute for that but I'm not sure yet on the details.
-
-
-attributes
-^^^^^^^^^^
-
-None.
-
-
-child elements
-^^^^^^^^^^^^^^
-
-=========  ====  ======================  ==========
-name        #    type                    line
-=========  ====  ======================  ==========
-bodyPr      1    CT_TextBodyProperties   2612 dml
-lstStyle    ?    CT_TextListStyle        2579 dml
-p           \+   CT_TextParagraph        2527 dml
-=========  ====  ======================  ==========
-
-
 Spec text
-^^^^^^^^^
+---------
 
     This element specifies the contents of the body of the document -- the main
     document editing surface.
@@ -70,7 +41,7 @@ Spec text
 
 
 Schema excerpt
-^^^^^^^^^^^^^^
+--------------
 
 ::
 

@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# environment.py
-#
-# Copyright (C) 2013 Steve Canny scanny@cisco.com
-#
-# This module is part of python-docx and is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.php
+# encoding: utf-8
 
 """
 Used by behave to set testing environment before and after running acceptance
