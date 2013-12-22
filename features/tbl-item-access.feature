@@ -7,3 +7,7 @@ Feature: Access table rows, columns, and cells
      Given a table having two rows
       Then the length of its row collection is 2
        And each item in its row collection is a table row
+
+  Scenario: Access table row by collection index
+     Given a table having two rows
+      Then I can access the rows by index

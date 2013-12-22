@@ -56,6 +56,46 @@ class DescribeTable(object):
         return table
 
 
+class Describe_RowCollection(object):
+
+    def it_contains__Row_instances(self, row_count_fixture):
+        table, row_count = row_count_fixture
+        actual_count = 0
+        for row in table.rows:
+            assert isinstance(row, _Row)
+            actual_count += 1
+        assert actual_count == row_count
+
+    def it_knows_how_many_rows_it_contains(self, row_count_fixture):
+        table, row_count = row_count_fixture
+        rows = table.rows
+        assert len(rows) == row_count
+
+    def it_provides_indexed_access_to_rows(self, row_count_fixture):
+        table, row_count = row_count_fixture
+        for idx in range(-row_count, row_count):
+            row = table.rows[idx]
+            assert isinstance(row, _Row)
+
+    def it_raises_on_indexed_access_out_of_range(self, row_count_fixture):
+        table, row_count = row_count_fixture
+        with pytest.raises(IndexError):
+            too_low = -1 - row_count
+            table.rows[too_low]
+        with pytest.raises(IndexError):
+            too_high = row_count
+            table.rows[too_high]
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def row_count_fixture(self):
+        row_count = 2
+        tbl = _tbl_bldr(rows=row_count, cols=2).element
+        table = Table(tbl)
+        return table, row_count
+
+
 # fixtures -----------------------------------------------------------
 
 def _tbl_bldr(rows, cols):

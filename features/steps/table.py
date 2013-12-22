@@ -25,6 +25,15 @@ def given_a_table_having_two_rows(context):
 
 # then =====================================================
 
+@then('I can access the rows by index')
+def then_can_access_rows_by_index(context):
+    rows = context.table_.rows
+    row_count = len(rows)
+    for idx in range(row_count):
+        row = rows[idx]
+        assert isinstance(row, _Row)
+
+
 @then('the length of its row collection is 2')
 def then_len_of_row_collection_is_2(context):
     rows = context.table_.rows

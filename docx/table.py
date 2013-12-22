@@ -67,3 +67,20 @@ class _RowCollection(object):
     def __init__(self, tbl):
         super(_RowCollection, self).__init__()
         self._tbl = tbl
+
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, (e.g. 'rows[0]')
+        """
+        try:
+            tr = self._tbl.tr_lst[idx]
+        except IndexError:
+            msg = "row index [%d] out of range" % idx
+            raise IndexError(msg)
+        return _Row(tr)
+
+    def __iter__(self):
+        return iter([_Row(tr) for tr in self._tbl.tr_lst])
+
+    def __len__(self):
+        return len(self._tbl.tr_lst)
