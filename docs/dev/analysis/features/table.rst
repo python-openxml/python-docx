@@ -16,21 +16,6 @@ Open questions
 * What about ranges? Why is that a good idea?
 
 
-Candidate Protocol
-------------------
-
-::
-
-    >>> row_count, col_count = 2, 2
-    >>> table = body.add_table(row_count, col_count)
-    >>> cell = table.cell(0, 0)
-    >>> p = cell.content[0]
-    >>> p.text = 'foobar'
-    >>> p = cell.content.add_paragraph('barfoo')
-    >>> p.text
-    'barfoo'
-
-
 Table access protocol
 ---------------------
 
@@ -42,6 +27,34 @@ Table access protocol
     ...     if isinstance(block_item, _Table):
     ...         ..do table-y things..
 
+
+Candidate Protocol
+------------------
+
+::
+
+    >>> table = body.add_table(rows=1, cols=2)
+    >>> header_cells = table.rows[0].cells
+    >>> header_cells[0].text = 'Foo Name'
+    >>> header_cells[1].text = 'Bar Value'
+    >>> for obj in data_records:
+    ...     row_cells = table.add_row().cells
+    ...     row_cells[0].text = obj.str_fld_a
+    ...     row_cells[1].text = str(obj.int_fld_b)
+    ...
+
+
+Other protocol notions
+----------------------
+
+::
+
+    >>> cell = table.cell(0, 0)
+    >>> p = cell.content[0]
+    >>> p.text = 'foobar'
+    >>> p = cell.content.add_paragraph('barfoo')
+    >>> p.text
+    'barfoo'
 
 
 MS API
