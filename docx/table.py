@@ -75,7 +75,7 @@ class _CellCollection(object):
         return _Cell(tc)
 
     def __iter__(self):
-        return iter([_Cell(tc) for tc in self._tr.tc_lst])
+        return (_Cell(tc) for tc in self._tr.tc_lst)
 
     def __len__(self):
         return len(self._tr.tc_lst)
@@ -97,6 +97,32 @@ class _ColumnCollection(object):
     def __init__(self, tbl):
         super(_ColumnCollection, self).__init__()
         self._tbl = tbl
+
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, e.g. 'columns[0]'
+        """
+        try:
+            gridCol = self._gridCol_lst[idx]
+        except IndexError:
+            msg = "column index [%d] is out of range" % idx
+            raise IndexError(msg)
+        return _Column(gridCol)
+
+    def __iter__(self):
+        return (_Column(gridCol) for gridCol in self._gridCol_lst)
+
+    def __len__(self):
+        return len(self._gridCol_lst)
+
+    @property
+    def _gridCol_lst(self):
+        """
+        Sequence containing ``<w:gridCol>`` elements for this table, each
+        representing a table column.
+        """
+        tblGrid = self._tbl.tblGrid
+        return tblGrid.gridCol_lst
 
 
 class _Row(object):
@@ -135,7 +161,7 @@ class _RowCollection(object):
         return _Row(tr)
 
     def __iter__(self):
-        return iter([_Row(tr) for tr in self._tbl.tr_lst])
+        return (_Row(tr) for tr in self._tbl.tr_lst)
 
     def __len__(self):
         return len(self._tbl.tr_lst)

@@ -13,13 +13,11 @@ Feature: Access table rows, columns, and cells
       Then I can iterate over the row collection
        And I can access a collection row by index
 
-  @wip
   Scenario: Access table column collection
      Given a table having two columns
       Then I can access the column collection of the table
        And the length of the column collection is 2
 
-  @wip
   Scenario: Access column in column collection
      Given a column collection having two columns
       Then I can iterate over the column collection

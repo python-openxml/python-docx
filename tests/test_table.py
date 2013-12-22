@@ -104,6 +104,45 @@ class Describe_CellCollection(object):
         return cells, cell_count
 
 
+class Describe_ColumnCollection(object):
+
+    def it_knows_how_many_columns_it_contains(self, columns_fixture):
+        columns, column_count = columns_fixture
+        assert len(columns) == column_count
+
+    def it_can_interate_over_its__Column_instances(self, columns_fixture):
+        columns, column_count = columns_fixture
+        actual_count = 0
+        for column in columns:
+            assert isinstance(column, _Column)
+            actual_count += 1
+        assert actual_count == column_count
+
+    def it_provides_indexed_access_to_columns(self, columns_fixture):
+        columns, column_count = columns_fixture
+        for idx in range(-column_count, column_count):
+            column = columns[idx]
+            assert isinstance(column, _Column)
+
+    def it_raises_on_indexed_access_out_of_range(self, columns_fixture):
+        columns, column_count = columns_fixture
+        too_low = -1 - column_count
+        too_high = column_count
+        with pytest.raises(IndexError):
+            columns[too_low]
+        with pytest.raises(IndexError):
+            columns[too_high]
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def columns_fixture(self):
+        column_count = 2
+        tbl = _tbl_bldr(rows=2, cols=column_count).element
+        columns = _ColumnCollection(tbl)
+        return columns, column_count
+
+
 class Describe_Row(object):
 
     def it_provides_access_to_the_row_cells(self, cells_access_fixture):
@@ -122,42 +161,41 @@ class Describe_Row(object):
 
 class Describe_RowCollection(object):
 
-    def it_contains__Row_instances(self, row_count_fixture):
-        table, row_count = row_count_fixture
+    def it_knows_how_many_rows_it_contains(self, rows_fixture):
+        rows, row_count = rows_fixture
+        assert len(rows) == row_count
+
+    def it_can_iterate_over_its__Row_instances(self, rows_fixture):
+        rows, row_count = rows_fixture
         actual_count = 0
-        for row in table.rows:
+        for row in rows:
             assert isinstance(row, _Row)
             actual_count += 1
         assert actual_count == row_count
 
-    def it_knows_how_many_rows_it_contains(self, row_count_fixture):
-        table, row_count = row_count_fixture
-        rows = table.rows
-        assert len(rows) == row_count
-
-    def it_provides_indexed_access_to_rows(self, row_count_fixture):
-        table, row_count = row_count_fixture
+    def it_provides_indexed_access_to_rows(self, rows_fixture):
+        rows, row_count = rows_fixture
         for idx in range(-row_count, row_count):
-            row = table.rows[idx]
+            row = rows[idx]
             assert isinstance(row, _Row)
 
-    def it_raises_on_indexed_access_out_of_range(self, row_count_fixture):
-        table, row_count = row_count_fixture
+    def it_raises_on_indexed_access_out_of_range(self, rows_fixture):
+        rows, row_count = rows_fixture
         with pytest.raises(IndexError):
             too_low = -1 - row_count
-            table.rows[too_low]
+            rows[too_low]
         with pytest.raises(IndexError):
             too_high = row_count
-            table.rows[too_high]
+            rows[too_high]
 
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def row_count_fixture(self):
+    def rows_fixture(self):
         row_count = 2
         tbl = _tbl_bldr(rows=row_count, cols=2).element
-        table = Table(tbl)
-        return table, row_count
+        rows = _RowCollection(tbl)
+        return rows, row_count
 
 
 # fixtures -----------------------------------------------------------
