@@ -38,6 +38,10 @@ class Table(object):
         return _Row(tr)
 
     @lazyproperty
+    def columns(self):
+        return _ColumnCollection(self._tbl)
+
+    @lazyproperty
     def rows(self):
         return _RowCollection(self._tbl)
 
@@ -90,6 +94,9 @@ class _ColumnCollection(object):
     """
     Sequence of |_Column| instances corresponding to the columns in a table.
     """
+    def __init__(self, tbl):
+        super(_ColumnCollection, self).__init__()
+        self._tbl = tbl
 
 
 class _Row(object):

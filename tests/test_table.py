@@ -9,7 +9,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.table import (
-    _Cell, _CellCollection, _Column, _Row, _RowCollection, Table
+    _Cell, _CellCollection, _Column, _ColumnCollection, _Row, _RowCollection,
+    Table
 )
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
@@ -18,10 +19,13 @@ from .oxml.unitdata.text import a_p
 
 class DescribeTable(object):
 
-    def it_provides_access_to_the_table_rows(self, row_access_fixture):
-        table = row_access_fixture
+    def it_provides_access_to_the_table_rows(self, table):
         rows = table.rows
         assert isinstance(rows, _RowCollection)
+
+    def it_provides_access_to_the_table_columns(self, table):
+        columns = table.columns
+        assert isinstance(columns, _ColumnCollection)
 
     def it_can_add_a_column(self, add_column_fixture):
         table, expected_xml = add_column_fixture
@@ -52,7 +56,7 @@ class DescribeTable(object):
         return table, expected_xml
 
     @pytest.fixture
-    def row_access_fixture(self):
+    def table(self):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl)
         return table
