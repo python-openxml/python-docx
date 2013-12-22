@@ -4,6 +4,10 @@
 The |Table| object and related proxy classes.
 """
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from .shared import lazyproperty
+
 
 class Table(object):
     """
@@ -33,6 +37,10 @@ class Table(object):
             tr.add_tc()
         return _Row(tr)
 
+    @lazyproperty
+    def rows(self):
+        return _RowCollection(self._tbl)
+
 
 class _Column(object):
     """
@@ -50,3 +58,12 @@ class _Row(object):
     def __init__(self, tr):
         super(_Row, self).__init__()
         self._tr = tr
+
+
+class _RowCollection(object):
+    """
+    Sequence of |_Row| instances corresponding to the rows in a table.
+    """
+    def __init__(self, tbl):
+        super(_RowCollection, self).__init__()
+        self._tbl = tbl
