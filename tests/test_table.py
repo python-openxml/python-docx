@@ -8,7 +8,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.table import _CellCollection, _Column, _Row, _RowCollection, Table
+from docx.table import (
+    _Cell, _CellCollection, _Column, _Row, _RowCollection, Table
+)
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
@@ -54,6 +56,48 @@ class DescribeTable(object):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl)
         return table
+
+
+class Describe_CellCollection(object):
+
+    def it_can_iterate_over_its__Cell_instances(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        actual_count = 0
+        for cell in cells:
+            assert isinstance(cell, _Cell)
+            actual_count += 1
+        assert actual_count == cell_count
+
+    def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        assert len(cells) == cell_count
+
+    def it_provides_indexed_access_to_cells(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        for idx in range(-cell_count, cell_count):
+            cell = cells[idx]
+            assert isinstance(cell, _Cell)
+
+    def it_raises_on_indexed_access_out_of_range(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        too_low = -1 - cell_count
+        too_high = cell_count
+        with pytest.raises(IndexError):
+            cells[too_low]
+        with pytest.raises(IndexError):
+            cells[too_high]
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cell_count_fixture(self):
+        cell_count = 2
+        tr_bldr = a_tr().with_nsdecls()
+        for idx in range(cell_count):
+            tr_bldr.with_child(a_tc())
+        tr = tr_bldr.element
+        cells = _CellCollection(tr)
+        return cells, cell_count
 
 
 class Describe_Row(object):

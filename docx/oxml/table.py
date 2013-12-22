@@ -31,6 +31,13 @@ class CT_Row(OxmlBaseElement):
         """
         return OxmlElement('w:tr')
 
+    @property
+    def tc_lst(self):
+        """
+        Sequence containing the ``<w:tc>`` child elements in this ``<w:tr>``.
+        """
+        return self.findall(qn('w:tc'))
+
     def _append_tc(self, tc):
         """
         Return *tc* after appending it to end of tc sequence.

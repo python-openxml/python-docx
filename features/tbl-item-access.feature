@@ -12,7 +12,6 @@ Feature: Access table rows, columns, and cells
      Given a table having two rows
       Then I can access the rows by index
 
-  @wip
   Scenario: Access cell collection of table row
      Given a table row having two cells
       Then I can access the cell collection of the row

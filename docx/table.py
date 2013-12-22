@@ -46,6 +46,9 @@ class _Cell(object):
     """
     Table cell
     """
+    def __init__(self, tc):
+        super(_Cell, self).__init__()
+        self._tc = tc
 
 
 class _CellCollection(object):
@@ -55,6 +58,23 @@ class _CellCollection(object):
     def __init__(self, tr):
         super(_CellCollection, self).__init__()
         self._tr = tr
+
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, (e.g. 'cells[0]')
+        """
+        try:
+            tc = self._tr.tc_lst[idx]
+        except IndexError:
+            msg = "cell index [%d] is out of range" % idx
+            raise IndexError(msg)
+        return _Cell(tc)
+
+    def __iter__(self):
+        return iter([_Cell(tc) for tc in self._tr.tc_lst])
+
+    def __len__(self):
+        return len(self._tr.tc_lst)
 
 
 class _Column(object):
