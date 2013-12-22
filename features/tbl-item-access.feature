@@ -32,3 +32,7 @@ Feature: Access table rows, columns, and cells
      Given a cell collection having two cells
       Then I can iterate over the cell collection
        And I can access a collection cell by index
+
+  Scenario: Access cell in table
+     Given a table having two rows
+      Then I can access a cell using its row and column indices

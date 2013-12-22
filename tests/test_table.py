@@ -27,6 +27,15 @@ class DescribeTable(object):
         columns = table.columns
         assert isinstance(columns, _ColumnCollection)
 
+    def it_provides_access_to_a_cell_by_row_and_col_indices(self, table):
+        for row_idx in range(2):
+            for col_idx in range(2):
+                cell = table.cell(row_idx, col_idx)
+                assert isinstance(cell, _Cell)
+                tr = table._tbl.tr_lst[row_idx]
+                tc = tr.tc_lst[col_idx]
+                assert tc is cell._tc
+
     def it_can_add_a_column(self, add_column_fixture):
         table, expected_xml = add_column_fixture
         col = table.add_column()

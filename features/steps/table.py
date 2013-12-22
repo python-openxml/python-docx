@@ -64,6 +64,15 @@ def given_a_table_row_having_two_cells(context):
 
 # then =====================================================
 
+@then('I can access a cell using its row and column indices')
+def then_can_access_cell_using_its_row_and_col_indices(context):
+    table = context.table_
+    for row_idx in range(2):
+        for col_idx in range(2):
+            cell = table.cell(row_idx, col_idx)
+            assert isinstance(cell, _Cell)
+
+
 @then('I can access a collection cell by index')
 def then_can_access_collection_cell_by_index(context):
     cells = context.cells

@@ -37,6 +37,14 @@ class Table(object):
             tr.add_tc()
         return _Row(tr)
 
+    def cell(self, row_idx, col_idx):
+        """
+        Return |_Cell| instance correponding to table cell at *row_idx*,
+        *col_idx* intersection, where (0, 0) is the top, left-most cell.
+        """
+        row = self.rows[row_idx]
+        return row.cells[col_idx]
+
     @lazyproperty
     def columns(self):
         return _ColumnCollection(self._tbl)
