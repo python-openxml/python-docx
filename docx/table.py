@@ -52,6 +52,9 @@ class _CellCollection(object):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table row.
     """
+    def __init__(self, tr):
+        super(_CellCollection, self).__init__()
+        self._tr = tr
 
 
 class _Column(object):
@@ -70,6 +73,13 @@ class _Row(object):
     def __init__(self, tr):
         super(_Row, self).__init__()
         self._tr = tr
+
+    @property
+    def cells(self):
+        """
+        Sequence of |_Cell| instances corresponding to the cells in this row.
+        """
+        return _CellCollection(self._tr)
 
 
 class _RowCollection(object):

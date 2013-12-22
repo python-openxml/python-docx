@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.table import _Column, _Row, _RowCollection, Table
+from docx.table import _CellCollection, _Column, _Row, _RowCollection, Table
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
@@ -54,6 +54,22 @@ class DescribeTable(object):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl)
         return table
+
+
+class Describe_Row(object):
+
+    def it_provides_access_to_the_row_cells(self, cells_access_fixture):
+        row = cells_access_fixture
+        cells = row.cells
+        assert isinstance(cells, _CellCollection)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cells_access_fixture(self):
+        tr = a_tr().with_nsdecls().element
+        row = _Row(tr)
+        return row
 
 
 class Describe_RowCollection(object):
