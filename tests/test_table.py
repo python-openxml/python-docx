@@ -9,8 +9,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.table import (
-    _Cell, _CellCollection, _Column, _ColumnCollection, _Row, _RowCollection,
-    Table
+    _Cell, _Column, _ColumnCollection, _Row, _RowCellCollection,
+    _RowCollection, Table
 )
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
@@ -71,48 +71,6 @@ class DescribeTable(object):
         return table
 
 
-class Describe_CellCollection(object):
-
-    def it_can_iterate_over_its__Cell_instances(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        actual_count = 0
-        for cell in cells:
-            assert isinstance(cell, _Cell)
-            actual_count += 1
-        assert actual_count == cell_count
-
-    def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        assert len(cells) == cell_count
-
-    def it_provides_indexed_access_to_cells(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        for idx in range(-cell_count, cell_count):
-            cell = cells[idx]
-            assert isinstance(cell, _Cell)
-
-    def it_raises_on_indexed_access_out_of_range(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        too_low = -1 - cell_count
-        too_high = cell_count
-        with pytest.raises(IndexError):
-            cells[too_low]
-        with pytest.raises(IndexError):
-            cells[too_high]
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def cell_count_fixture(self):
-        cell_count = 2
-        tr_bldr = a_tr().with_nsdecls()
-        for idx in range(cell_count):
-            tr_bldr.with_child(a_tc())
-        tr = tr_bldr.element
-        cells = _CellCollection(tr)
-        return cells, cell_count
-
-
 class Describe_ColumnCollection(object):
 
     def it_knows_how_many_columns_it_contains(self, columns_fixture):
@@ -157,7 +115,7 @@ class Describe_Row(object):
     def it_provides_access_to_the_row_cells(self, cells_access_fixture):
         row = cells_access_fixture
         cells = row.cells
-        assert isinstance(cells, _CellCollection)
+        assert isinstance(cells, _RowCellCollection)
 
     # fixtures -------------------------------------------------------
 
@@ -166,6 +124,48 @@ class Describe_Row(object):
         tr = a_tr().with_nsdecls().element
         row = _Row(tr)
         return row
+
+
+class Describe_RowCellCollection(object):
+
+    def it_can_iterate_over_its__Cell_instances(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        actual_count = 0
+        for cell in cells:
+            assert isinstance(cell, _Cell)
+            actual_count += 1
+        assert actual_count == cell_count
+
+    def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        assert len(cells) == cell_count
+
+    def it_provides_indexed_access_to_cells(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        for idx in range(-cell_count, cell_count):
+            cell = cells[idx]
+            assert isinstance(cell, _Cell)
+
+    def it_raises_on_indexed_access_out_of_range(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        too_low = -1 - cell_count
+        too_high = cell_count
+        with pytest.raises(IndexError):
+            cells[too_low]
+        with pytest.raises(IndexError):
+            cells[too_high]
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cell_count_fixture(self):
+        cell_count = 2
+        tr_bldr = a_tr().with_nsdecls()
+        for idx in range(cell_count):
+            tr_bldr.with_child(a_tc())
+        tr = tr_bldr.element
+        cells = _RowCellCollection(tr)
+        return cells, cell_count
 
 
 class Describe_RowCollection(object):

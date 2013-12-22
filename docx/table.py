@@ -63,32 +63,6 @@ class _Cell(object):
         self._tc = tc
 
 
-class _CellCollection(object):
-    """
-    Sequence of |_Cell| instances corresponding to the cells in a table row.
-    """
-    def __init__(self, tr):
-        super(_CellCollection, self).__init__()
-        self._tr = tr
-
-    def __getitem__(self, idx):
-        """
-        Provide indexed access, (e.g. 'cells[0]')
-        """
-        try:
-            tc = self._tr.tc_lst[idx]
-        except IndexError:
-            msg = "cell index [%d] is out of range" % idx
-            raise IndexError(msg)
-        return _Cell(tc)
-
-    def __iter__(self):
-        return (_Cell(tc) for tc in self._tr.tc_lst)
-
-    def __len__(self):
-        return len(self._tr.tc_lst)
-
-
 class _Column(object):
     """
     Table column
@@ -96,6 +70,13 @@ class _Column(object):
     def __init__(self, gridCol):
         super(_Column, self).__init__()
         self._gridCol = gridCol
+
+
+class _ColumnCellCollection(object):
+    """
+    Sequence of |_Cell| instances corresponding to the cells in a table
+    column.
+    """
 
 
 class _ColumnCollection(object):
@@ -146,7 +127,33 @@ class _Row(object):
         """
         Sequence of |_Cell| instances corresponding to the cells in this row.
         """
-        return _CellCollection(self._tr)
+        return _RowCellCollection(self._tr)
+
+
+class _RowCellCollection(object):
+    """
+    Sequence of |_Cell| instances corresponding to the cells in a table row.
+    """
+    def __init__(self, tr):
+        super(_RowCellCollection, self).__init__()
+        self._tr = tr
+
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, (e.g. 'cells[0]')
+        """
+        try:
+            tc = self._tr.tc_lst[idx]
+        except IndexError:
+            msg = "cell index [%d] is out of range" % idx
+            raise IndexError(msg)
+        return _Cell(tc)
+
+    def __iter__(self):
+        return (_Cell(tc) for tc in self._tr.tc_lst)
+
+    def __len__(self):
+        return len(self._tr.tc_lst)
 
 
 class _RowCollection(object):

@@ -10,7 +10,8 @@ from behave import given, then
 
 from docx import Document
 from docx.table import (
-    _Cell, _CellCollection, _Column, _ColumnCollection, _Row, _RowCollection
+    _Cell, _Column, _ColumnCellCollection, _ColumnCollection, _Row,
+    _RowCellCollection, _RowCollection
 )
 
 from .helpers import test_docx
@@ -18,11 +19,11 @@ from .helpers import test_docx
 
 # given ===================================================
 
-@given('a cell collection having two cells')
-def given_a_cell_collection_having_two_cells(context):
+@given('a column cell collection having two cells')
+def given_a_column_cell_collection_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.cells = document.body.tables[0].rows[0].cells
+    context.cells = document.body.tables[0].columns[0].cells
 
 
 @given('a column collection having two columns')
@@ -30,6 +31,13 @@ def given_a_column_collection_having_two_columns(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
     context.columns = document.body.tables[0].columns
+
+
+@given('a row cell collection having two cells')
+def given_a_row_cell_collection_having_two_cells(context):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.cells = document.body.tables[0].rows[0].cells
 
 
 @given('a row collection having two rows')
@@ -55,6 +63,13 @@ def given_a_table_having_two_rows(context):
     context.table_ = document.body.tables[0]
 
 
+@given('a table column having two cells')
+def given_a_table_column_having_two_cells(context):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.column = document.body.tables[0].columns[0]
+
+
 @given('a table row having two cells')
 def given_a_table_row_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
@@ -73,14 +88,6 @@ def then_can_access_cell_using_its_row_and_col_indices(context):
             assert isinstance(cell, _Cell)
 
 
-@then('I can access a collection cell by index')
-def then_can_access_collection_cell_by_index(context):
-    cells = context.cells
-    for idx in range(2):
-        cell = cells[idx]
-        assert isinstance(cell, _Cell)
-
-
 @then('I can access a collection column by index')
 def then_can_access_collection_column_by_index(context):
     columns = context.columns
@@ -97,11 +104,34 @@ def then_can_access_collection_row_by_index(context):
         assert isinstance(row, _Row)
 
 
+@then('I can access a column cell by index')
+def then_can_access_column_cell_by_index(context):
+    cells = context.cells
+    for idx in range(2):
+        cell = cells[idx]
+        assert isinstance(cell, _Cell)
+
+
+@then('I can access a row cell by index')
+def then_can_access_row_cell_by_index(context):
+    cells = context.cells
+    for idx in range(2):
+        cell = cells[idx]
+        assert isinstance(cell, _Cell)
+
+
+@then('I can access the cell collection of the column')
+def then_can_access_cell_collection_of_column(context):
+    column = context.column
+    cells = column.cells
+    assert isinstance(cells, _ColumnCellCollection)
+
+
 @then('I can access the cell collection of the row')
 def then_can_access_cell_collection_of_row(context):
     row = context.row
     cells = row.cells
-    assert isinstance(cells, _CellCollection)
+    assert isinstance(cells, _RowCellCollection)
 
 
 @then('I can access the column collection of the table')
@@ -118,15 +148,22 @@ def then_can_access_row_collection_of_table(context):
     assert isinstance(rows, _RowCollection)
 
 
-@then('I can get the length of the cell collection')
-def then_can_get_length_of_cell_collection(context):
+@then('I can get the length of the column cell collection')
+def then_can_get_length_of_column_cell_collection(context):
+    column = context.column
+    cells = column.cells
+    assert len(cells) == 2
+
+
+@then('I can get the length of the row cell collection')
+def then_can_get_length_of_row_cell_collection(context):
     row = context.row
     cells = row.cells
     assert len(cells) == 2
 
 
-@then('I can iterate over the cell collection')
-def then_can_iterate_over_cell_collection(context):
+@then('I can iterate over the column cells')
+def then_can_iterate_over_the_column_cells(context):
     cells = context.cells
     actual_count = 0
     for cell in cells:
@@ -142,6 +179,16 @@ def then_can_iterate_over_column_collection(context):
     for column in columns:
         actual_count += 1
         assert isinstance(column, _Column)
+    assert actual_count == 2
+
+
+@then('I can iterate over the row cells')
+def then_can_iterate_over_the_row_cells(context):
+    cells = context.cells
+    actual_count = 0
+    for cell in cells:
+        actual_count += 1
+        assert isinstance(cell, _Cell)
     assert actual_count == 2
 
 

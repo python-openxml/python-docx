@@ -23,15 +23,27 @@ Feature: Access table rows, columns, and cells
       Then I can iterate over the column collection
        And I can access a collection column by index
 
+  @wip
+  Scenario: Access cell collection of table column
+     Given a table column having two cells
+      Then I can access the cell collection of the column
+       And I can get the length of the column cell collection
+
   Scenario: Access cell collection of table row
      Given a table row having two cells
       Then I can access the cell collection of the row
-       And I can get the length of the cell collection
+       And I can get the length of the row cell collection
 
-  Scenario: Access cell in cell collection
-     Given a cell collection having two cells
-      Then I can iterate over the cell collection
-       And I can access a collection cell by index
+  @wip
+  Scenario: Access cell in column cell collection
+     Given a column cell collection having two cells
+      Then I can iterate over the column cells
+       And I can access a column cell by index
+
+  Scenario: Access cell in row cell collection
+     Given a row cell collection having two cells
+      Then I can iterate over the row cells
+       And I can access a row cell by index
 
   Scenario: Access cell in table
      Given a table having two rows
