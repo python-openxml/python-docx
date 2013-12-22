@@ -86,6 +86,12 @@ class _Column(object):
         self._gridCol = gridCol
 
 
+class _ColumnCollection(object):
+    """
+    Sequence of |_Column| instances corresponding to the columns in a table.
+    """
+
+
 class _Row(object):
     """
     Table row
