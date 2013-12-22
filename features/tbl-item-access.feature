@@ -11,3 +11,11 @@ Feature: Access table rows, columns, and cells
   Scenario: Access table row by collection index
      Given a table having two rows
       Then I can access the rows by index
+
+  @wip
+  Scenario: Access cell collection of table row
+     Given a table row having two cells
+      Then I can access the cell collection of the row
+       And I can get the length of the cell collection
+       And I can iterate over the cell collection
+       And I can access a collection cell by index

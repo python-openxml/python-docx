@@ -42,6 +42,18 @@ class Table(object):
         return _RowCollection(self._tbl)
 
 
+class _Cell(object):
+    """
+    Table cell
+    """
+
+
+class _CellCollection(object):
+    """
+    Sequence of |_Cell| instances corresponding to the cells in a table row.
+    """
+
+
 class _Column(object):
     """
     Table column
