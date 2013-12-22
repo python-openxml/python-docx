@@ -9,8 +9,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.table import (
-    _Cell, _Column, _ColumnCollection, _Row, _RowCellCollection,
-    _RowCollection, Table
+    _Cell, _Column, _ColumnCellCollection, _ColumnCollection, _Row,
+    _RowCellCollection, _RowCollection, Table
 )
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
@@ -69,6 +69,19 @@ class DescribeTable(object):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl)
         return table
+
+
+class Describe_Column(object):
+
+    def it_provides_access_to_the_column_cells(self, column):
+        cells = column.cells
+        assert isinstance(cells, _ColumnCellCollection)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def column(self):
+        return _Column(None, None)
 
 
 class Describe_ColumnCollection(object):

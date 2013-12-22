@@ -25,7 +25,7 @@ class Table(object):
         gridCol = tblGrid.add_gridCol()
         for tr in self._tbl.tr_lst:
             tr.add_tc()
-        return _Column(gridCol)
+        return _Column(gridCol, self._tbl)
 
     def add_row(self):
         """
@@ -67,9 +67,18 @@ class _Column(object):
     """
     Table column
     """
-    def __init__(self, gridCol):
+    def __init__(self, gridCol, tbl):
         super(_Column, self).__init__()
         self._gridCol = gridCol
+        self._tbl = tbl
+
+    @lazyproperty
+    def cells(self):
+        """
+        |_ColumnCellCollection| instance containing sequence of |_Cell|
+        instances corresponding to cells in this column.
+        """
+        return _ColumnCellCollection(self._tbl, self._gridCol)
 
 
 class _ColumnCellCollection(object):
@@ -77,6 +86,10 @@ class _ColumnCellCollection(object):
     Sequence of |_Cell| instances corresponding to the cells in a table
     column.
     """
+    def __init__(self, tbl, gridCol):
+        super(_ColumnCellCollection, self).__init__()
+        self._tbl = tbl
+        self._gridCol = gridCol
 
 
 class _ColumnCollection(object):
@@ -96,10 +109,10 @@ class _ColumnCollection(object):
         except IndexError:
             msg = "column index [%d] is out of range" % idx
             raise IndexError(msg)
-        return _Column(gridCol)
+        return _Column(gridCol, self._tbl)
 
     def __iter__(self):
-        return (_Column(gridCol) for gridCol in self._gridCol_lst)
+        return (_Column(gridCol, self._tbl) for gridCol in self._gridCol_lst)
 
     def __len__(self):
         return len(self._gridCol_lst)
@@ -122,7 +135,7 @@ class _Row(object):
         super(_Row, self).__init__()
         self._tr = tr
 
-    @property
+    @lazyproperty
     def cells(self):
         """
         Sequence of |_Cell| instances corresponding to the cells in this row.
