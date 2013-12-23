@@ -3,7 +3,6 @@ Feature: Query and apply a table style
   As an python-docx developer
   I need the ability to query and apply a table style
 
-  @wip
   Scenario: Access table style
      Given a table having an applied style
       Then I can get the table style name

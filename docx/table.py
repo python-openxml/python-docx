@@ -34,6 +34,17 @@ class Table(object):
     def rows(self):
         return _RowCollection(self._tbl)
 
+    @property
+    def style(self):
+        tblStyle = self._tblPr.tblStyle
+        if tblStyle is None:
+            return None
+        return tblStyle.val
+
+    @property
+    def _tblPr(self):
+        return self._tbl.tblPr
+
 
 class _Cell(object):
     """

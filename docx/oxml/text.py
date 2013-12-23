@@ -6,7 +6,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 """
 
 from docx.oxml.shared import (
-    nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
+    CT_String, nsdecls, OxmlBaseElement, oxml_fromstring, qn
 )
 
 
@@ -177,28 +177,6 @@ class CT_R(OxmlBaseElement):
         Sequence of <w:t> elements in this paragraph.
         """
         return self.findall(qn('w:t'))
-
-
-class CT_String(OxmlBaseElement):
-    """
-    Used for ``<w:pStyle>`` element, containing a style name in its ``val``
-    attribute.
-    """
-    @classmethod
-    def new_pStyle(cls, val):
-        """
-        Return a new ``<w:pStyle>`` element with ``val`` attribute set to
-        *val*.
-        """
-        return OxmlElement('w:pStyle', attrs={qn('w:val'): val})
-
-    @property
-    def val(self):
-        return self.get(qn('w:val'))
-
-    @val.setter
-    def val(self, val):
-        return self.set(qn('w:val'), val)
 
 
 class CT_Text(OxmlBaseElement):

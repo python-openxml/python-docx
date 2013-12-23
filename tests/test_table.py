@@ -14,7 +14,9 @@ from docx.table import (
 )
 from docx.text import Paragraph
 
-from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
+from .oxml.unitdata.table import (
+    a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblStyle, a_tc, a_tr
+)
 from .oxml.unitdata.text import a_p
 
 
@@ -37,6 +39,10 @@ class DescribeTable(object):
                 tc = tr.tc_lst[col_idx]
                 assert tc is cell._tc
 
+    def it_knows_its_table_style(self, table_style_fixture):
+        table, style = table_style_fixture
+        assert table.style == style
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -44,6 +50,17 @@ class DescribeTable(object):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl)
         return table
+
+    @pytest.fixture
+    def table_style_fixture(self):
+        style = 'foobar'
+        tbl = (
+            a_tbl().with_nsdecls().with_child(
+                a_tblPr().with_child(
+                    a_tblStyle().with_val(style)))
+        ).element
+        table = Table(tbl)
+        return table, style
 
 
 class Describe_Cell(object):

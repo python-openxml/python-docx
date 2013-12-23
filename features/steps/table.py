@@ -185,7 +185,8 @@ def then_can_get_length_of_row_cell_collection(context):
 @then('I can get the table style name')
 def then_can_get_table_style_name(context):
     table = context.table_
-    assert table.style == 'foobar', "got '%s'" % table.style
+    msg = "got '%s'" % table.style
+    assert table.style == 'LightShading-Accent1', msg
 
 
 @then('I can iterate over the column cells')

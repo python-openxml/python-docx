@@ -5,6 +5,7 @@ Test data builders for text XML elements
 """
 
 from ...unitdata import BaseBuilder
+from .shared import CT_StringBuilder
 
 
 class CT_PBuilder(BaseBuilder):
@@ -31,16 +32,6 @@ class CT_SectPrBuilder(BaseBuilder):
     __attrs__ = ()
 
 
-class CT_StringBuilder(BaseBuilder):
-    __tag__ = 'w:pStyle'
-    __nspfxs__ = ('w',)
-    __attrs__ = ()
-
-    def with_val(self, value):
-        self._set_xmlattr('w:val', str(value))
-        return self
-
-
 class CT_TextBuilder(BaseBuilder):
     __tag__ = 'w:t'
     __nspfxs__ = ('w',)
@@ -56,7 +47,7 @@ def a_pPr():
 
 
 def a_pStyle():
-    return CT_StringBuilder()
+    return CT_StringBuilder('w:pStyle')
 
 
 def a_sectPr():

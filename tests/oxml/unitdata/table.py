@@ -5,6 +5,7 @@ Test data builders for text XML elements
 """
 
 from ...unitdata import BaseBuilder
+from .shared import CT_StringBuilder
 
 
 class CT_RowBuilder(BaseBuilder):
@@ -57,6 +58,10 @@ def a_tblGrid():
 
 def a_tblPr():
     return CT_TblPrBuilder()
+
+
+def a_tblStyle():
+    return CT_StringBuilder('w:tblStyle')
 
 
 def a_tc():

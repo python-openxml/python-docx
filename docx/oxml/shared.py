@@ -87,3 +87,29 @@ class OxmlBaseElement(etree.ElementBase):
         top.
         """
         return serialize_for_reading(self)
+
+
+# ===========================================================================
+# shared custom element classes
+# ===========================================================================
+
+class CT_String(OxmlBaseElement):
+    """
+    Used for ``<w:pStyle>`` and ``<w:tblStyle>`` elements and others,
+    containing a style name in its ``val`` attribute.
+    """
+    @classmethod
+    def new_pStyle(cls, val):
+        """
+        Return a new ``<w:pStyle>`` element with ``val`` attribute set to
+        *val*.
+        """
+        return OxmlElement('w:pStyle', attrs={qn('w:val'): val})
+
+    @property
+    def val(self):
+        return self.get(qn('w:val'))
+
+    @val.setter
+    def val(self, val):
+        return self.set(qn('w:val'), val)

@@ -79,6 +79,13 @@ class CT_Tbl(OxmlBaseElement):
         return tblGrid
 
     @property
+    def tblPr(self):
+        tblPr = self.find(qn('w:tblPr'))
+        if tblPr is None:
+            raise ValidationError('required w:tblPr child not found')
+        return tblPr
+
+    @property
     def tr_lst(self):
         """
         Sequence containing the ``<w:tr>`` child elements in this
@@ -169,6 +176,13 @@ class CT_TblPr(OxmlBaseElement):
         Return a new ``<w:tblPr>`` element.
         """
         return OxmlElement('w:tblPr')
+
+    @property
+    def tblStyle(self):
+        """
+        Optional <w:tblStyle> child element, or |None| if not present.
+        """
+        return self.find(qn('w:tblStyle'))
 
 
 class CT_Tc(OxmlBaseElement):

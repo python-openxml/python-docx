@@ -19,17 +19,21 @@ class ValidationError(Exception):
 # custom element class mappings
 # ===========================================================================
 
+from docx.oxml.shared import CT_String
+
 from docx.oxml.parts import CT_Body, CT_Document
 register_custom_element_class('w:body', CT_Body)
 register_custom_element_class('w:document', CT_Document)
 
-from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_Tc
+from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc
 register_custom_element_class('w:tbl', CT_Tbl)
 register_custom_element_class('w:tblGrid', CT_TblGrid)
+register_custom_element_class('w:tblPr', CT_TblPr)
+register_custom_element_class('w:tblStyle', CT_String)
 register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 
-from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_String, CT_Text
+from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_Text
 register_custom_element_class('w:p', CT_P)
 register_custom_element_class('w:pPr', CT_PPr)
 register_custom_element_class('w:pStyle', CT_String)
