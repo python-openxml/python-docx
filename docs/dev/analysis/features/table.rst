@@ -165,17 +165,7 @@ Schema Definitions
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="CT_TblPr">
-    <xsd:complexContent>
-      <xsd:extension base="CT_TblPrBase">
-        <xsd:sequence>
-          <xsd:element name="tblPrChange" type="CT_TblPrChange" minOccurs="0"/>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="CT_TblPrBase">
+  <xsd:complexType name="CT_TblPr">  <!-- denormalized -->
     <xsd:sequence>
       <xsd:element name="tblStyle"            type="CT_String"        minOccurs="0"/>
       <xsd:element name="tblpPr"              type="CT_TblPPr"        minOccurs="0" maxOccurs="1"/>
@@ -194,8 +184,8 @@ Schema Definitions
       <xsd:element name="tblLook"             type="CT_TblLook"       minOccurs="0" maxOccurs="1"/>
       <xsd:element name="tblCaption"          type="CT_String"        minOccurs="0" maxOccurs="1"/>
       <xsd:element name="tblDescription"      type="CT_String"        minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="tblPrChange"         type="CT_TblPrChange"   minOccurs="0"/>
     </xsd:sequence>
-  </xsd:complexType>
 
   <xsd:complexType name="CT_TblWidth">
     <xsd:attribute name="w"    type="ST_MeasurementOrPercent"/>

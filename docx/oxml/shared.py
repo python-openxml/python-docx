@@ -99,6 +99,14 @@ class CT_String(OxmlBaseElement):
     containing a style name in its ``val`` attribute.
     """
     @classmethod
+    def new(cls, nsptagname, val):
+        """
+        Return a new ``CT_String`` element with tagname *nsptagname* and
+        ``val`` attribute set to *val*.
+        """
+        return OxmlElement(nsptagname, attrs={qn('w:val'): val})
+
+    @classmethod
     def new_pStyle(cls, val):
         """
         Return a new ``<w:pStyle>`` element with ``val`` attribute set to

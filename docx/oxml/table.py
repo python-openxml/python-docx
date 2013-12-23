@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from docx.oxml.shared import OxmlBaseElement, OxmlElement, qn
 
 from . import ValidationError
+from .shared import CT_String
 from .text import CT_P
 
 
@@ -170,6 +171,14 @@ class CT_TblPr(OxmlBaseElement):
     ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
     define table properties such as style and borders.
     """
+    def add_tblStyle(self, style_name):
+        """
+        Return a new <w:tblStyle> element newly inserted in sequence among
+        the existing child elements, respecting the schema definition.
+        """
+        tblStyle = CT_String.new('w:tblStyle', style_name)
+        return self._insert_tblStyle(tblStyle)
+
     @classmethod
     def new(cls):
         """
@@ -183,6 +192,15 @@ class CT_TblPr(OxmlBaseElement):
         Optional <w:tblStyle> child element, or |None| if not present.
         """
         return self.find(qn('w:tblStyle'))
+
+    def _insert_tblStyle(self, tblStyle):
+        """
+        Return *tblStyle* after inserting it in sequence among the existing
+        child elements. Assumes no ``<w:tblStyle>`` element is present.
+        """
+        assert self.tblStyle is None
+        self.insert(0, tblStyle)
+        return tblStyle
 
 
 class CT_Tc(OxmlBaseElement):

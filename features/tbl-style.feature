@@ -7,7 +7,6 @@ Feature: Query and apply a table style
      Given a table having an applied style
       Then I can get the table style name
 
-  @wip
   Scenario: Apply table style
      Given a table
       When I apply a style to the table

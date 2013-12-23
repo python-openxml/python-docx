@@ -43,6 +43,11 @@ class DescribeTable(object):
         table, style = table_style_fixture
         assert table.style == style
 
+    def it_can_apply_a_table_style_by_name(self, table_style_set_fixture):
+        table, style_name, expected_xml = table_style_set_fixture
+        table.style = style_name
+        assert table._tbl.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -61,6 +66,21 @@ class DescribeTable(object):
         ).element
         table = Table(tbl)
         return table, style
+
+    @pytest.fixture
+    def table_style_set_fixture(self):
+        # table ------------------------
+        tbl = a_tbl().with_nsdecls().with_child(a_tblPr()).element
+        table = Table(tbl)
+        # style_name -------------------
+        style_name = 'foobar'
+        # expected_xml -----------------
+        expected_xml = (
+            a_tbl().with_nsdecls().with_child(
+                a_tblPr().with_child(
+                    a_tblStyle().with_val(style_name)))
+        ).xml()
+        return table, style_name, expected_xml
 
 
 class Describe_Cell(object):

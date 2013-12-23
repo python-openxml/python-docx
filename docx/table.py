@@ -41,6 +41,14 @@ class Table(object):
             return None
         return tblStyle.val
 
+    @style.setter
+    def style(self, style_name):
+        tblStyle = self._tblPr.tblStyle
+        if tblStyle is None:
+            self._tblPr.add_tblStyle(style_name)
+        else:
+            tblStyle.val = style_name
+
     @property
     def _tblPr(self):
         return self._tbl.tblPr
