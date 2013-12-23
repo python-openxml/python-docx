@@ -91,6 +91,35 @@ class _ColumnCellCollection(object):
         self._tbl = tbl
         self._gridCol = gridCol
 
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, (e.g. 'cells[0]')
+        """
+        try:
+            tr = self._tr_lst[idx]
+        except IndexError:
+            msg = "cell index [%d] is out of range" % idx
+            raise IndexError(msg)
+        tc = tr.tc_lst[self._col_idx]
+        return _Cell(tc)
+
+    def __iter__(self):
+        for tr in self._tr_lst:
+            tc = tr.tc_lst[self._col_idx]
+            yield _Cell(tc)
+
+    def __len__(self):
+        return len(self._tr_lst)
+
+    @property
+    def _col_idx(self):
+        gridCol_lst = self._tbl.tblGrid.gridCol_lst
+        return gridCol_lst.index(self._gridCol)
+
+    @property
+    def _tr_lst(self):
+        return self._tbl.tr_lst
+
 
 class _ColumnCollection(object):
     """

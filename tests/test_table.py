@@ -84,6 +84,46 @@ class Describe_Column(object):
         return _Column(None, None)
 
 
+class Describe_ColumnCellCollection(object):
+
+    def it_knows_how_many_cells_it_contains(self, cells_fixture):
+        cells, cell_count = cells_fixture
+        assert len(cells) == cell_count
+
+    def it_can_iterate_over_its__Cell_instances(self, cells_fixture):
+        cells, cell_count = cells_fixture
+        actual_count = 0
+        for cell in cells:
+            assert isinstance(cell, _Cell)
+            actual_count += 1
+        assert actual_count == cell_count
+
+    def it_provides_indexed_access_to_cells(self, cells_fixture):
+        cells, cell_count = cells_fixture
+        for idx in range(-cell_count, cell_count):
+            cell = cells[idx]
+            assert isinstance(cell, _Cell)
+
+    def it_raises_on_indexed_access_out_of_range(self, cells_fixture):
+        cells, cell_count = cells_fixture
+        too_low = -1 - cell_count
+        too_high = cell_count
+        with pytest.raises(IndexError):
+            cells[too_low]
+        with pytest.raises(IndexError):
+            cells[too_high]
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cells_fixture(self):
+        cell_count = 2
+        tbl = _tbl_bldr(rows=cell_count, cols=1).element
+        gridCol = tbl.tblGrid.gridCol_lst[0]
+        cells = _ColumnCellCollection(tbl, gridCol)
+        return cells, cell_count
+
+
 class Describe_ColumnCollection(object):
 
     def it_knows_how_many_columns_it_contains(self, columns_fixture):
@@ -141,6 +181,10 @@ class Describe_Row(object):
 
 class Describe_RowCellCollection(object):
 
+    def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
+        cells, cell_count = cell_count_fixture
+        assert len(cells) == cell_count
+
     def it_can_iterate_over_its__Cell_instances(self, cell_count_fixture):
         cells, cell_count = cell_count_fixture
         actual_count = 0
@@ -148,10 +192,6 @@ class Describe_RowCellCollection(object):
             assert isinstance(cell, _Cell)
             actual_count += 1
         assert actual_count == cell_count
-
-    def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        assert len(cells) == cell_count
 
     def it_provides_indexed_access_to_cells(self, cell_count_fixture):
         cells, cell_count = cell_count_fixture
