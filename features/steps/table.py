@@ -6,7 +6,7 @@ Step implementations for table-related features
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from behave import given, then
+from behave import given, then, when
 
 from docx import Document
 from docx.table import (
@@ -47,6 +47,18 @@ def given_a_row_collection_having_two_rows(context):
     context.rows = document.body.tables[0].rows
 
 
+@given('a table')
+def given_a_table(context):
+    context.table_ = Document().body.add_table(rows=2, cols=2)
+
+
+@given('a table having an applied style')
+def given_a_table_having_an_applied_style(context):
+    docx_path = test_docx('tbl-having-applied-style')
+    document = Document(docx_path)
+    context.table_ = document.body.tables[0]
+
+
 @given('a table having two columns')
 def given_a_table_having_two_columns(context):
     docx_path = test_docx('blk-containing-table')
@@ -75,6 +87,14 @@ def given_a_table_row_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
     context.row = document.body.tables[0].rows[0]
+
+
+# when =====================================================
+
+@when('I apply a style to the table')
+def when_apply_style_to_table(context):
+    table = context.table_
+    table.style = 'LightShading-Accent1'
 
 
 # then =====================================================
@@ -162,6 +182,12 @@ def then_can_get_length_of_row_cell_collection(context):
     assert len(cells) == 2
 
 
+@then('I can get the table style name')
+def then_can_get_table_style_name(context):
+    table = context.table_
+    assert table.style == 'foobar', "got '%s'" % table.style
+
+
 @then('I can iterate over the column cells')
 def then_can_iterate_over_the_column_cells(context):
     cells = context.cells
@@ -212,3 +238,10 @@ def then_len_of_column_collection_is_2(context):
 def then_len_of_row_collection_is_2(context):
     rows = context.table_.rows
     assert len(rows) == 2
+
+
+@then('the table style matches the name I applied')
+def then_table_style_matches_name_applied(context):
+    table = context.table_
+    tmpl = "table.style doesn't match, got '%s'"
+    assert table.style == 'LightShading-Accent1', tmpl % table.style
