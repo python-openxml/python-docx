@@ -7,6 +7,7 @@ The |Table| object and related proxy classes.
 from __future__ import absolute_import, print_function, unicode_literals
 
 from .shared import lazyproperty
+from .text import Paragraph
 
 
 class Table(object):
@@ -41,6 +42,10 @@ class _Cell(object):
     def __init__(self, tc):
         super(_Cell, self).__init__()
         self._tc = tc
+
+    @property
+    def paragraphs(self):
+        return [Paragraph(p) for p in self._tc.p_lst]
 
 
 class _Column(object):

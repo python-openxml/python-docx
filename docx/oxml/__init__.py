@@ -23,9 +23,10 @@ from docx.oxml.parts import CT_Body, CT_Document
 register_custom_element_class('w:body', CT_Body)
 register_custom_element_class('w:document', CT_Document)
 
-from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid
+from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_Tc
 register_custom_element_class('w:tbl', CT_Tbl)
 register_custom_element_class('w:tblGrid', CT_TblGrid)
+register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 
 from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_String, CT_Text

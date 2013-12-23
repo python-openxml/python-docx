@@ -284,6 +284,48 @@ Schema Definitions
     </xsd:choice>
   </xsd:group>
 
+::
+
+    w_CT_Tc =
+      attribute w:id { s_ST_String }?,
+      element tcPr { w_CT_TcPr }?,
+      w_EG_BlockLevelElts+
+
+    w_EG_BlockLevelElts =  # denormalized
+      element customXml { w_CT_CustomXmlBlock }
+      | element p { w_CT_P }
+      | element sdt { w_CT_SdtBlock }
+      | element tbl { w_CT_Tbl }
+      | element altChunk { w_CT_AltChunk }
+
+      | element proofErr { w_CT_ProofErr }
+      | element permStart { w_CT_PermStart }
+      | element permEnd { w_CT_Perm }
+      | element ins { w_CT_RunTrackChange }
+      | element del { w_CT_RunTrackChange }
+      | element moveFrom { w_CT_RunTrackChange }
+      | element moveTo { w_CT_RunTrackChange }
+
+      | element bookmarkStart { w_CT_Bookmark }
+      | element bookmarkEnd { w_CT_MarkupRange }
+      | element moveFromRangeStart { w_CT_MoveBookmark }
+      | element moveFromRangeEnd { w_CT_MarkupRange }
+      | element moveToRangeStart { w_CT_MoveBookmark }
+      | element moveToRangeEnd { w_CT_MarkupRange }
+      | element commentRangeStart { w_CT_MarkupRange }
+      | element commentRangeEnd { w_CT_MarkupRange }
+      | element customXmlInsRangeStart { w_CT_TrackChange }
+      | element customXmlInsRangeEnd { w_CT_Markup }
+      | element customXmlDelRangeStart { w_CT_TrackChange }
+      | element customXmlDelRangeEnd { w_CT_Markup }
+      | element customXmlMoveFromRangeStart { w_CT_TrackChange }
+      | element customXmlMoveFromRangeEnd { w_CT_Markup }
+      | element customXmlMoveToRangeStart { w_CT_TrackChange }
+      | element customXmlMoveToRangeEnd { w_CT_Markup }
+
+      | element oMathPara { m_CT_OMathPara }
+      | element oMath { m_CT_OMath }
+
 
 Resources
 ---------

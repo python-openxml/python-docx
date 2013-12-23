@@ -185,3 +185,10 @@ class CT_Tc(OxmlBaseElement):
         p = CT_P.new()
         tc.append(p)
         return tc
+
+    @property
+    def p_lst(self):
+        """
+        List of <w:p> child elements.
+        """
+        return self.findall(qn('w:p'))

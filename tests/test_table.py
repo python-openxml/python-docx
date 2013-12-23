@@ -12,6 +12,7 @@ from docx.table import (
     _Cell, _Column, _ColumnCellCollection, _ColumnCollection, _Row,
     _RowCellCollection, _RowCollection, Table
 )
+from docx.text import Paragraph
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
@@ -43,6 +44,29 @@ class DescribeTable(object):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl)
         return table
+
+
+class Describe_Cell(object):
+
+    def it_provides_access_to_the_paragraphs_it_contains(
+            self, cell_with_paragraphs):
+        cell = cell_with_paragraphs
+        paragraphs = cell.paragraphs
+        assert len(paragraphs) == 2
+        for p in paragraphs:
+            assert isinstance(p, Paragraph)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cell_with_paragraphs(self):
+        tc = (
+            a_tc().with_nsdecls()
+                  .with_child(a_p())
+                  .with_child(a_p())
+                  .element
+        )
+        return _Cell(tc)
 
 
 class Describe_Column(object):
