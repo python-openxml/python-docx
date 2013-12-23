@@ -36,12 +36,6 @@ class DescribeTable(object):
                 tc = tr.tc_lst[col_idx]
                 assert tc is cell._tc
 
-    def it_can_add_a_column(self, add_column_fixture):
-        table, expected_xml = add_column_fixture
-        col = table.add_column()
-        assert table._tbl.xml == expected_xml
-        assert isinstance(col, _Column)
-
     def it_can_add_a_row(self, add_row_fixture):
         table, expected_xml = add_row_fixture
         row = table.add_row()
@@ -49,13 +43,6 @@ class DescribeTable(object):
         assert isinstance(row, _Row)
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_column_fixture(self):
-        tbl = _tbl_bldr(2, 1).element
-        table = Table(tbl)
-        expected_xml = _tbl_bldr(2, 2).xml()
-        return table, expected_xml
 
     @pytest.fixture
     def add_row_fixture(self):
@@ -153,7 +140,20 @@ class Describe_ColumnCollection(object):
         with pytest.raises(IndexError):
             columns[too_high]
 
+    def it_can_add_a_column(self, add_column_fixture):
+        columns, expected_xml = add_column_fixture
+        column = columns.add()
+        assert columns._tbl.xml == expected_xml
+        assert isinstance(column, _Column)
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def add_column_fixture(self):
+        tbl = _tbl_bldr(2, 1).element
+        columns = _ColumnCollection(tbl)
+        expected_xml = _tbl_bldr(2, 2).xml()
+        return columns, expected_xml
 
     @pytest.fixture
     def columns_fixture(self):
