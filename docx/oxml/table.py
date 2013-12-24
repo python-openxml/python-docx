@@ -207,6 +207,26 @@ class CT_Tc(OxmlBaseElement):
     """
     ``<w:tc>`` table cell element
     """
+    def add_p(self):
+        """
+        Return a new <w:p> element that has been added at the end of any
+        existing cell content.
+        """
+        p = CT_P.new()
+        self.append(p)
+        return p
+
+    def clear_content(self):
+        """
+        Remove all content child elements, preserving the ``<w:tcPr>``
+        element if present.
+        """
+        new_children = []
+        tcPr = self.tcPr
+        if tcPr is not None:
+            new_children.append(tcPr)
+        self[:] = new_children
+
     @classmethod
     def new(cls):
         """
@@ -224,3 +244,10 @@ class CT_Tc(OxmlBaseElement):
         List of <w:p> child elements.
         """
         return self.findall(qn('w:p'))
+
+    @property
+    def tcPr(self):
+        """
+        <w:tcPr> child element or |None| if not present.
+        """
+        return self.find(qn('w:tcPr'))

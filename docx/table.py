@@ -72,7 +72,11 @@ class _Cell(object):
         Write-only. Set entire contents of cell to the string *text*. Any
         existing content or revisions are replaced.
         """
-        raise NotImplementedError
+        tc = self._tc
+        tc.clear_content()
+        p = tc.add_p()
+        r = p.add_r()
+        r.add_t(text)
 
 
 class _Column(object):

@@ -3,7 +3,6 @@ Feature: Set table cell text
   As an python-docx developer working with a table
   I need the ability to set the text of a table cell
 
-  @wip
   Scenario: Set table cell text
      Given a table cell
       When I assign a string to the cell text attribute

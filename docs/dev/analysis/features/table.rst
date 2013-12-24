@@ -274,6 +274,27 @@ Schema Definitions
     </xsd:choice>
   </xsd:group>
 
+  <xsd:complexType name="CT_TcPr">  <!-- denormalized -->
+    <xsd:sequence>
+      <xsd:element name="cnfStyle" type="CT_Cnf" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="tcW" type="CT_TblWidth" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="gridSpan" type="CT_DecimalNumber" minOccurs="0"/>
+      <xsd:element name="hMerge" type="CT_HMerge" minOccurs="0"/>
+      <xsd:element name="vMerge" type="CT_VMerge" minOccurs="0"/>
+      <xsd:element name="tcBorders" type="CT_TcBorders" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="shd" type="CT_Shd" minOccurs="0"/>
+      <xsd:element name="noWrap" type="CT_OnOff" minOccurs="0"/>
+      <xsd:element name="tcMar" type="CT_TcMar" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="textDirection" type="CT_TextDirection" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="tcFitText" type="CT_OnOff" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="vAlign" type="CT_VerticalJc" minOccurs="0"/>
+      <xsd:element name="hideMark" type="CT_OnOff" minOccurs="0"/>
+      <xsd:element name="headers" type="CT_Headers" minOccurs="0"/>
+      <xsd:group ref="EG_CellMarkupElements" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="tcPrChange" type="CT_TcPrChange" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
 ::
 
     w_CT_Tc =

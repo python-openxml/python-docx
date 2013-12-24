@@ -15,9 +15,9 @@ from docx.table import (
 from docx.text import Paragraph
 
 from .oxml.unitdata.table import (
-    a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblStyle, a_tc, a_tr
+    a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblStyle, a_tc, a_tcPr, a_tr
 )
-from .oxml.unitdata.text import a_p
+from .oxml.unitdata.text import a_p, a_t, an_r
 
 
 class DescribeTable(object):
@@ -93,7 +93,36 @@ class Describe_Cell(object):
         for p in paragraphs:
             assert isinstance(p, Paragraph)
 
+    def it_can_replace_its_content_with_a_string_of_text(
+            self, cell_text_fixture):
+        cell, text, expected_xml = cell_text_fixture
+        cell.text = text
+        assert cell._tc.xml == expected_xml
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cell_text_fixture(self):
+        # cell -------------------------
+        tc = (
+            a_tc().with_nsdecls().with_child(
+                a_tcPr()).with_child(
+                a_p()).with_child(
+                a_tbl()).with_child(
+                a_p())
+        ).element
+        cell = _Cell(tc)
+        # text -------------------------
+        text = 'foobar'
+        # expected_xml -----------------
+        expected_xml = (
+            a_tc().with_nsdecls().with_child(
+                a_tcPr()).with_child(
+                a_p().with_child(
+                    an_r().with_child(
+                        a_t().with_text(text))))
+        ).xml()
+        return cell, text, expected_xml
 
     @pytest.fixture
     def cell_with_paragraphs(self):
