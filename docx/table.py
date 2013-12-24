@@ -6,7 +6,7 @@ The |Table| object and related proxy classes.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .shared import lazyproperty
+from .shared import lazyproperty, write_only_property
 from .text import Paragraph
 
 
@@ -65,6 +65,14 @@ class _Cell(object):
     @property
     def paragraphs(self):
         return [Paragraph(p) for p in self._tc.p_lst]
+
+    @write_only_property
+    def text(self, text):
+        """
+        Write-only. Set entire contents of cell to the string *text*. Any
+        existing content or revisions are replaced.
+        """
+        raise NotImplementedError
 
 
 class _Column(object):

@@ -25,3 +25,13 @@ def lazyproperty(f):
             return value
 
     return property(get_prop_value, doc=docstring)
+
+
+def write_only_property(f):
+    """
+    @write_only_property decorator. Creates a property (descriptor attribute)
+    that accepts assignment, but not getattr (use in an expression).
+    """
+    docstring = f.__doc__
+
+    return property(fset=f, doc=docstring)
