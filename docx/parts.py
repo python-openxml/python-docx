@@ -88,3 +88,17 @@ class _Body(object):
         they appear.
         """
         return [Table(tbl) for tbl in self._body.tbl_lst]
+
+
+class InlineShape(object):
+    """
+    Proxy for an ``<wp:inline>`` element, representing the container for an
+    inline graphical object.
+    """
+
+
+class InlineShapes(object):
+    """
+    Sequence of |InlineShape| instances, supporting len(), iteration, and
+    indexed access.
+    """
