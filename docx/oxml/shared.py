@@ -8,7 +8,9 @@ from lxml import etree
 
 
 nsmap = {
-    'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+    'w':  ('http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
+    'wp': ('http://schemas.openxmlformats.org/drawingml/2006/wordprocessingD'
+           'rawing'),
 }
 
 # configure XML parser
@@ -25,12 +27,74 @@ oxml_parser.set_element_class_lookup(element_class_lookup)
 #     return oxml_parser.makeelement(qn(tag), nsmap=nsmap)
 
 
+class NamespacePrefixedTag(str):
+    """
+    Value object that knows the semantics of an XML tag having a namespace
+    prefix.
+    """
+    def __new__(cls, nstag, *args):
+        return super(NamespacePrefixedTag, cls).__new__(cls, nstag)
+
+    def __init__(self, nstag):
+        self._pfx, self._local_part = nstag.split(':')
+        self._ns_uri = nsmap[self._pfx]
+
+    @property
+    def clark_name(self):
+        return '{%s}%s' % (self._ns_uri, self._local_part)
+
+    @property
+    def local_part(self):
+        """
+        Return the local part of the tag as a string. E.g. 'foobar' is
+        returned for tag 'f:foobar'.
+        """
+        return self._local_part
+
+    @property
+    def nsmap(self):
+        """
+        Return a dict having a single member, mapping the namespace prefix of
+        this tag to it's namespace name (e.g. {'f': 'http://foo/bar'}). This
+        is handy for passing to xpath calls and other uses.
+        """
+        return {self._pfx: self._ns_uri}
+
+    @property
+    def nspfx(self):
+        """
+        Return the string namespace prefix for the tag, e.g. 'f' is returned
+        for tag 'f:foobar'.
+        """
+        return self._pfx
+
+    @property
+    def nsuri(self):
+        """
+        Return the namespace URI for the tag, e.g. 'http://foo/bar' would be
+        returned for tag 'f:foobar' if the 'f' prefix maps to
+        'http://foo/bar' in nsmap.
+        """
+        return self._ns_uri
+
+
 def nsdecls(*prefixes):
     return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
 
 
-def OxmlElement(tag, attrs=None):
-    return oxml_parser.makeelement(qn(tag), attrib=attrs, nsmap=nsmap)
+def OxmlElement(nsptag_str, attrs=None, nsmap=None):
+    """
+    Return a 'loose' lxml element having the tag specified by *nsptag_str*.
+    *nsptag_str* must contain the standard namespace prefix, e.g. 'a:tbl'.
+    The resulting element is an instance of the custom element class for this
+    tag name if one is defined. A dictionary of attribute values may be
+    provided as *attrs*; they are set if present.
+    """
+    nsptag = NamespacePrefixedTag(nsptag_str)
+    nsmap = nsmap if nsmap is not None else nsptag.nsmap
+    return oxml_parser.makeelement(
+        nsptag.clark_name, attrib=attrs, nsmap=nsmap
+    )
 
 
 def oxml_fromstring(text):

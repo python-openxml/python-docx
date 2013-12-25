@@ -6,7 +6,7 @@ Document parts such as _Document, and closely related classes.
 
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
-from docx.oxml.shared import oxml_fromstring
+from docx.oxml.shared import nsmap, oxml_fromstring
 from docx.shared import lazyproperty
 from docx.table import Table
 from docx.text import Paragraph
@@ -114,3 +114,9 @@ class InlineShapes(object):
     def __init__(self, body_elm):
         super(InlineShapes, self).__init__()
         self._body = body_elm
+
+    def __len__(self):
+        body = self._body
+        xpath = './w:p/w:r/w:drawing/wp:inline'
+        inline_elms = body.xpath(xpath, namespaces=nsmap)
+        return len(inline_elms)

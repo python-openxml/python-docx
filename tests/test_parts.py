@@ -11,15 +11,16 @@ import pytest
 from mock import Mock
 
 from docx.oxml.parts import CT_Document
-from docx.parts import _Body, _Document
+from docx.parts import _Body, _Document, InlineShapes
 from docx.table import Table
 from docx.text import Paragraph
 
+from .oxml.unitdata.dml import a_drawing, an_inline
 from .oxml.unitdata.parts import a_body, a_document
 from .oxml.unitdata.table import (
     a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tc, a_tr
 )
-from .oxml.unitdata.text import a_p, a_sectPr
+from .oxml.unitdata.text import a_p, a_sectPr, an_r
 from .unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock
 )
@@ -253,3 +254,33 @@ class Describe_Body(object):
             tc_bldr = self._tc_bldr()
             tr_bldr.with_child(tc_bldr)
         return tr_bldr
+
+
+class DescribeInlineShapes(object):
+
+    def it_knows_how_many_inline_shapes_it_contains(
+            self, inline_shapes_fixture):
+        inline_shapes, inline_shape_count = inline_shapes_fixture
+        print(inline_shapes._body.xml)
+        assert len(inline_shapes) == inline_shape_count
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def inline_shapes_fixture(self):
+        inline_shape_count = 2
+        body = (
+            a_body().with_nsdecls('w', 'wp').with_child(
+                a_p().with_child(
+                    an_r().with_child(
+                        a_drawing().with_child(
+                            an_inline()))).with_child(
+                    an_r().with_child(
+                        a_drawing().with_child(
+                            an_inline())
+                    )
+                )
+            )
+        ).element
+        inline_shapes = InlineShapes(body)
+        return inline_shapes, inline_shape_count

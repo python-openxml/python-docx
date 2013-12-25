@@ -3,7 +3,6 @@ Feature: Access inline shapes in document
   As an python-docx developer
   I need the ability to access the inline shapes in a document
 
-  @wip
   Scenario: Access inline shapes collection of document
      Given a document containing two inline shapes
       Then I can access the inline shape collection of the document
