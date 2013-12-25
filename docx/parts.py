@@ -104,6 +104,9 @@ class InlineShape(object):
     Proxy for an ``<wp:inline>`` element, representing the container for an
     inline graphical object.
     """
+    def __init__(self, inline):
+        super(InlineShape, self).__init__()
+        self._inline = inline
 
 
 class InlineShapes(object):
@@ -115,8 +118,14 @@ class InlineShapes(object):
         super(InlineShapes, self).__init__()
         self._body = body_elm
 
+    def __iter__(self):
+        return (InlineShape(inline) for inline in self._inline_lst)
+
     def __len__(self):
+        return len(self._inline_lst)
+
+    @property
+    def _inline_lst(self):
         body = self._body
         xpath = './w:p/w:r/w:drawing/wp:inline'
-        inline_elms = body.xpath(xpath, namespaces=nsmap)
-        return len(inline_elms)
+        return body.xpath(xpath, namespaces=nsmap)

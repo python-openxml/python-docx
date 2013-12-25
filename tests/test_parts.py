@@ -11,7 +11,7 @@ import pytest
 from mock import Mock
 
 from docx.oxml.parts import CT_Document
-from docx.parts import _Body, _Document, InlineShapes
+from docx.parts import _Body, _Document, InlineShape, InlineShapes
 from docx.table import Table
 from docx.text import Paragraph
 
@@ -263,6 +263,15 @@ class DescribeInlineShapes(object):
         inline_shapes, inline_shape_count = inline_shapes_fixture
         print(inline_shapes._body.xml)
         assert len(inline_shapes) == inline_shape_count
+
+    def it_can_iterate_over_its_InlineShape_instances(
+            self, inline_shapes_fixture):
+        inline_shapes, inline_shape_count = inline_shapes_fixture
+        actual_count = 0
+        for inline_shape in inline_shapes:
+            assert isinstance(inline_shape, InlineShape)
+            actual_count += 1
+        assert actual_count == inline_shape_count
 
     # fixtures -------------------------------------------------------
 

@@ -26,7 +26,7 @@ def given_a_document_containing_two_inline_shapes(context):
 def given_inline_shape_collection_containing_two_shapes(context):
     docx_path = test_docx('shp-inline-shape-access')
     document = Document(docx_path)
-    context.inline_shapes = document.body.inline_shapes
+    context.inline_shapes = document.inline_shapes
 
 
 # then =====================================================
