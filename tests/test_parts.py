@@ -14,12 +14,14 @@ from docx.parts import _Body, _Document
 from docx.table import Table
 from docx.text import Paragraph
 
-from .oxml.unitdata.parts import a_body
+from .oxml.unitdata.parts import a_body, a_document
 from .oxml.unitdata.table import (
     a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tc, a_tr
 )
 from .oxml.unitdata.text import a_p, a_sectPr
-from .unitutil import class_mock, function_mock, initializer_mock
+from .unitutil import (
+    function_mock, class_mock, initializer_mock
+)
 
 
 class Describe_Document(object):
@@ -42,19 +44,15 @@ class Describe_Document(object):
         )
         assert isinstance(doc, _Document)
 
-    def it_has_a_body(self, init, _Body_):
-        # mockery ----------------------
-        doc = _Document(None, None, None)
-        doc._element = Mock(name='_element')
-        # exercise ---------------------
-        body = doc.body
-        # verify -----------------------
-        _Body_.assert_called_once_with(doc._element.body)
-        assert body is _Body_.return_value
+    def it_has_a_body(self, document_body_fixture):
+        document, _Body_, body_elm = document_body_fixture
+        _body = document.body
+        _Body_.assert_called_once_with(body_elm)
+        assert _body is _Body_.return_value
 
-    def it_can_serialize_to_xml(self, init, serialize_part_xml_):
+    def it_can_serialize_to_xml(self, serialize_part_xml_):
         # mockery ----------------------
-        doc = _Document(None, None, None)
+        doc = _Document(None, None, None, None)
         doc._element = Mock(name='_element')
         # exercise ---------------------
         doc.blob
@@ -62,6 +60,16 @@ class Describe_Document(object):
         serialize_part_xml_.assert_called_once_with(doc._element)
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def document_body_fixture(self, request, _Body_):
+        document_elm = (
+            a_document().with_nsdecls().with_child(
+                a_body())
+        ).element
+        body_elm = document_elm[0]
+        document = _Document(None, None, document_elm, None)
+        return document, _Body_, body_elm
 
     @pytest.fixture
     def _Body_(self, request):
