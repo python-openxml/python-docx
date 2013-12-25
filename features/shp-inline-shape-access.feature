@@ -8,7 +8,6 @@ Feature: Access inline shapes in document
       Then I can access the inline shape collection of the document
        And the length of the inline shape collection is 2
 
-  @wip
   Scenario: Access shape in inline shape collection
      Given an inline shape collection containing two shapes
       Then I can iterate over the inline shape collection

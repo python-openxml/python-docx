@@ -273,6 +273,23 @@ class DescribeInlineShapes(object):
             actual_count += 1
         assert actual_count == inline_shape_count
 
+    def it_provides_indexed_access_to_inline_shapes(
+            self, inline_shapes_fixture):
+        inline_shapes, inline_shape_count = inline_shapes_fixture
+        for idx in range(-inline_shape_count, inline_shape_count):
+            inline_shape = inline_shapes[idx]
+            assert isinstance(inline_shape, InlineShape)
+
+    def it_raises_on_indexed_access_out_of_range(
+            self, inline_shapes_fixture):
+        inline_shapes, inline_shape_count = inline_shapes_fixture
+        with pytest.raises(IndexError):
+            too_low = -1 - inline_shape_count
+            inline_shapes[too_low]
+        with pytest.raises(IndexError):
+            too_high = inline_shape_count
+            inline_shapes[too_high]
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

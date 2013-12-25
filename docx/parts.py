@@ -118,6 +118,17 @@ class InlineShapes(object):
         super(InlineShapes, self).__init__()
         self._body = body_elm
 
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, e.g. 'inline_shapes[idx]'
+        """
+        try:
+            inline = self._inline_lst[idx]
+        except IndexError:
+            msg = "inline shape index [%d] out of range" % idx
+            raise IndexError(msg)
+        return InlineShape(inline)
+
     def __iter__(self):
         return (InlineShape(inline) for inline in self._inline_lst)
 
