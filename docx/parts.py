@@ -7,6 +7,7 @@ Document parts such as _Document, and closely related classes.
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
 from docx.oxml.shared import oxml_fromstring
+from docx.shared import lazyproperty
 from docx.table import Table
 from docx.text import Paragraph
 
@@ -31,6 +32,14 @@ class _Document(Part):
         The |_Body| instance containing the content for this document.
         """
         return _Body(self._element.body)
+
+    @lazyproperty
+    def inline_shapes(self):
+        """
+        The |InlineShapes| instance containing the inline shapes in the
+        document.
+        """
+        return InlineShapes(self._element.body)
 
     @staticmethod
     def load(partname, content_type, blob, package):
@@ -102,3 +111,6 @@ class InlineShapes(object):
     Sequence of |InlineShape| instances, supporting len(), iteration, and
     indexed access.
     """
+    def __init__(self, body_elm):
+        super(InlineShapes, self).__init__()
+        self._body = body_elm

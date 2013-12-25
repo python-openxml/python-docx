@@ -49,6 +49,13 @@ class _Document(object):
         """
         return self._document.body
 
+    @property
+    def inline_shapes(self):
+        """
+        Return a reference to the |InlineShapes| instance for this document.
+        """
+        return self._document.inline_shapes
+
     def save(self, file_):
         """
         Save this document to *file_*, where *file_* can be either a path to

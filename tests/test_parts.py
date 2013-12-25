@@ -10,6 +10,7 @@ import pytest
 
 from mock import Mock
 
+from docx.oxml.parts import CT_Document
 from docx.parts import _Body, _Document
 from docx.table import Table
 from docx.text import Paragraph
@@ -20,7 +21,7 @@ from .oxml.unitdata.table import (
 )
 from .oxml.unitdata.text import a_p, a_sectPr
 from .unitutil import (
-    function_mock, class_mock, initializer_mock
+    function_mock, class_mock, initializer_mock, instance_mock
 )
 
 
@@ -50,16 +51,26 @@ class Describe_Document(object):
         _Body_.assert_called_once_with(body_elm)
         assert _body is _Body_.return_value
 
-    def it_can_serialize_to_xml(self, serialize_part_xml_):
-        # mockery ----------------------
-        doc = _Document(None, None, None, None)
-        doc._element = Mock(name='_element')
-        # exercise ---------------------
-        doc.blob
-        # verify -----------------------
-        serialize_part_xml_.assert_called_once_with(doc._element)
+    def it_can_serialize_to_xml(self, document_blob_fixture):
+        document, document_elm, serialize_part_xml_ = document_blob_fixture
+        blob = document.blob
+        serialize_part_xml_.assert_called_once_with(document_elm)
+        assert blob is serialize_part_xml_.return_value
+
+    def it_provides_access_to_the_inline_shapes_in_the_document(
+            self, inline_shapes_fixture):
+        document, InlineShapes_, body_elm = inline_shapes_fixture
+        inline_shapes = document.inline_shapes
+        InlineShapes_.assert_called_once_with(body_elm)
+        assert inline_shapes is InlineShapes_.return_value
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def document_blob_fixture(self, request, serialize_part_xml_):
+        document_elm = instance_mock(request, CT_Document)
+        document = _Document(None, None, document_elm, None)
+        return document, document_elm, serialize_part_xml_
 
     @pytest.fixture
     def document_body_fixture(self, request, _Body_):
@@ -78,6 +89,20 @@ class Describe_Document(object):
     @pytest.fixture
     def init(self, request):
         return initializer_mock(request, _Document)
+
+    @pytest.fixture
+    def InlineShapes_(self, request):
+        return class_mock(request, 'docx.parts.InlineShapes')
+
+    @pytest.fixture
+    def inline_shapes_fixture(self, request, InlineShapes_):
+        document_elm = (
+            a_document().with_nsdecls().with_child(
+                a_body())
+        ).element
+        body_elm = document_elm[0]
+        document = _Document(None, None, document_elm, None)
+        return document, InlineShapes_, body_elm
 
     @pytest.fixture
     def oxml_fromstring_(self, request):
