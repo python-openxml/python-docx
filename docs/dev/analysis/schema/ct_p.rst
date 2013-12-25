@@ -1,61 +1,22 @@
-########
-``CT_P``
-########
 
-.. highlight:: xml
+CT_P
+====
 
 .. csv-table::
    :header-rows: 0
    :stub-columns: 1
    :widths: 15, 50
 
-   Schema Name  , CT_P
    Spec Name    , Paragraph
    Tag(s)       , w:p
    Namespace    , wordprocessingml (wml.xsd)
    Spec Section , 17.3.1.22
 
 
-Analysis
-========
-
-XPath expression from `<p:sp>` is ``./p:txBody``
-
-Can only occur in ``<p:sp>``. Other shape types do not have text.
-
-.. note:: There is a special case of a text box, there's an element or
-   attribute for that but I'm not sure yet on the details.
-
-
-attributes
-^^^^^^^^^^
-
-None.
-
-
-child elements
-^^^^^^^^^^^^^^
-
-=========  ====  ======================  ==========
-name        #    type                    line
-=========  ====  ======================  ==========
-bodyPr      1    CT_TextBodyProperties   2612 dml
-lstStyle    ?    CT_TextListStyle        2579 dml
-p           \+   CT_TextParagraph        2527 dml
-=========  ====  ======================  ==========
-
-
-Spec text
-^^^^^^^^^
-
-   This element specifies the existence of text to be contained within the
-   corresponding shape. All visible text and visible text related properties
-   are contained within this element. There can be multiple paragraphs and
-   within paragraphs multiple runs of text.
-
-
 Schema excerpt
-^^^^^^^^^^^^^^
+--------------
+
+.. highlight:: xml
 
 ::
 

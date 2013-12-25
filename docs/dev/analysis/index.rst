@@ -11,6 +11,9 @@ Feature Analysis
    :maxdepth: 1
 
    features/table
+   features/shapes
+   features/shapes-inline
+   features/picture
 
 
 Schema Analysis
