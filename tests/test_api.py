@@ -6,78 +6,103 @@ Test suite for the docx.api module
 
 import pytest
 
-from mock import create_autospec, Mock, PropertyMock
-
 from docx import parts
 from docx.api import Document, _Document
 from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.package import OpcPackage
 
-from .unitutil import class_mock, var_mock
+from .unitutil import class_mock, instance_mock, var_mock
 
 
 class DescribeDocument(object):
+
+    def it_opens_a_docx_file(self, open_fixture):
+        docx_, OpcPackage_, _Document_, package, document_part = open_fixture
+        _document = Document(docx_)
+        OpcPackage_.open.assert_called_once_with(docx_)
+        _Document_.assert_called_once_with(package, document_part)
+        assert _document is _Document_.return_value
+
+    def it_uses_default_if_no_file_provided(self, OpcPackage_, default_docx_):
+        Document()
+        OpcPackage_.open.assert_called_once_with(default_docx_)
+
+    def it_should_raise_if_not_a_Word_file(
+            self, OpcPackage_, package_, docx_):
+        package_.main_document.content_type = 'foobar'
+        with pytest.raises(ValueError):
+            Document(docx_)
+
+    # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def _Document_(self, request):
         return class_mock(request, 'docx.api._Document')
 
     @pytest.fixture
-    def default_docx(self, request):
+    def default_docx_(self, request):
         return var_mock(request, 'docx.api._default_docx_path')
 
     @pytest.fixture
-    def OpcPackage_(self, OpcPackage_mockery):
-        return OpcPackage_mockery[0]
+    def document_part_(self, request):
+        return instance_mock(
+            request, parts._Document, content_type=CT.WML_DOCUMENT_MAIN
+        )
 
     @pytest.fixture
-    def OpcPackage_mockery(self, request):
+    def docx_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def OpcPackage_(self, request, package_):
         OpcPackage_ = class_mock(request, 'docx.api.OpcPackage')
-        pkg = OpcPackage_.open.return_value
-        main_document = PropertyMock(name='main_document')
-        main_document.return_value.content_type = CT.WML_DOCUMENT_MAIN
-        type(pkg).main_document = main_document
-        document_part = main_document.return_value
-        return (OpcPackage_, pkg, main_document, document_part)
+        OpcPackage_.open.return_value = package_
+        return OpcPackage_
 
-    def it_opens_a_docx_file_on_construction(self, OpcPackage_mockery,
-                                             _Document_):
-        # mockery ----------------------
-        docx = Mock(name='docx')
-        OpcPackage_, pkg, main_document, document_part = OpcPackage_mockery
-        # exercise ---------------------
-        doc = Document(docx)
-        # verify -----------------------
-        OpcPackage_.open.assert_called_once_with(docx)
-        main_document.assert_called_once_with()
-        _Document_.assert_called_once_with(pkg, document_part)
-        assert isinstance(doc, _Document)
+    @pytest.fixture
+    def open_fixture(
+            self, request, docx_, OpcPackage_, _Document_, package_,
+            document_part_):
+        return docx_, OpcPackage_, _Document_, package_, document_part_
 
-    def it_uses_default_if_no_file_provided(self, OpcPackage_, _Document_,
-                                            default_docx):
-        Document()
-        OpcPackage_.open.assert_called_once_with(default_docx)
-
-    def it_should_raise_if_not_a_docx_file(self, OpcPackage_mockery):
-        # mockery ----------------------
-        docx = Mock(name='docx')
-        OpcPackage_, pkg, main_document, document_part = OpcPackage_mockery
-        main_document.return_value.content_type = 'foobar'
-        # verify -----------------------
-        with pytest.raises(ValueError):
-            Document(docx)
+    @pytest.fixture
+    def package_(self, request, document_part_):
+        package_ = instance_mock(request, OpcPackage)
+        package_.main_document = document_part_
+        return package_
 
 
 class Describe_Document(object):
 
-    def it_provides_access_to_the_document_body(self):
-        document_part = create_autospec(parts._Document)
-        doc = _Document(None, document_part)
-        # exercise ---------------------
-        body = doc.body
-        # verify -----------------------
-        assert body is document_part.body
+    def it_provides_access_to_the_document_body(self, document):
+        body = document.body
+        assert body is document._document.body
 
-    def it_can_save_the_package(self):
-        pkg, file_ = (Mock(name='pkg'), Mock(name='file_'))
-        _Document(pkg, None).save(file_)
-        pkg.save.assert_called_once_with(file_)
+    def it_provides_access_to_the_document_inline_shapes(self, document):
+        body = document.inline_shapes
+        assert body is document._document.inline_shapes
+
+    def it_can_save_the_package(self, save_fixture):
+        document, package_, file_ = save_fixture
+        document.save(file_)
+        package_.save.assert_called_once_with(file_)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def document(self, request, package_, document_part_):
+        return _Document(package_, document_part_)
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, parts._Document)
+
+    @pytest.fixture
+    def package_(self, request):
+        return instance_mock(request, OpcPackage)
+
+    @pytest.fixture
+    def save_fixture(self, request, package_):
+        file_ = instance_mock(request, str)
+        document = _Document(package_, None)
+        return document, package_, file_
