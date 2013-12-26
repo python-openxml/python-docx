@@ -71,6 +71,8 @@ rst_epilog = """
 
 .. |_Document| replace:: :class:`_Document`
 
+.. |InlineShapes| replace:: :class:`InlineShapes`
+
 .. |OpcPackage| replace:: :class:`OpcPackage`
 
 .. |Paragraph| replace:: :class:`Paragraph`

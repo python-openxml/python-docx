@@ -15,10 +15,47 @@ Candidate protocol
 
 ::
 
-    >>> run = body.add_paragraph().add_run()
-    >>> shape = run.add_picture(
-    ...     image, width=None, height=None, MIME_type=None
-    ... )
+    >>> run = paragraph.add_run()
+    >>> inline_shape = run.add_inline_picture(file_like_image, MIME_type=None)
+    >>> inline_shape.width = width
+    >>> inline_shape.height = height
+
+
+Minimal XML
+-----------
+
+.. highlight:: xml
+
+This XML represents the working hypothesis of the minimum XML that must be
+inserted to add a working picture to a document::
+
+    <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+      <pic:nvPicPr>
+        <pic:cNvPr id="1" name="python-powered.png"/>
+        <pic:cNvPicPr/>
+      </pic:nvPicPr>
+      <pic:blipFill>
+        <a:blip r:embed="rId7"/>
+        <a:stretch>
+          <a:fillRect/>
+        </a:stretch>
+      </pic:blipFill>
+      <pic:spPr>
+        <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="859536" cy="343814"/>
+        </a:xfrm>
+        <a:prstGeom prst="rect"/>
+      </pic:spPr>
+    </pic:pic>
+
+
+Required parameters:
+
+* unique DrawingML object id (document-wide, pretty sure it's just the part)
+* name, either filename or generic if file-like object.
+* rId for rel to image part
+* size (cx, cy)
 
 
 Specimen XML
@@ -67,13 +104,6 @@ Schema definitions
 
 ::
 
-  <xsd:complexType name="CT_GraphicalObjectData">
-    <xsd:sequence>
-      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="strict"/>
-    </xsd:sequence>
-    <xsd:attribute name="uri" type="xsd:token" use="required"/>
-  </xsd:complexType>
-
   <xsd:element name="pic" type="CT_Picture"/>
 
   <xsd:complexType name="CT_Picture">
@@ -95,11 +125,50 @@ Schema definitions
     <xsd:sequence>
       <xsd:element name="blip"    type="CT_Blip"         minOccurs="0"/>
       <xsd:element name="srcRect" type="CT_RelativeRect" minOccurs="0"/>
-      <xsd:group   ref="EG_FillModeProperties"           minOccurs="0" maxOccurs="1"/>
+      <xsd:group   ref="EG_FillModeProperties"           minOccurs="0"/>
     </xsd:sequence>
     <xsd:attribute name="dpi"          type="xsd:unsignedInt" use="optional"/>
     <xsd:attribute name="rotWithShape" type="xsd:boolean"     use="optional"/>
   </xsd:complexType>
+
+  <xsd:complexType name="CT_Blip">
+    <xsd:sequence>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="alphaBiLevel" type="CT_AlphaBiLevelEffect"/>
+        <xsd:element name="alphaCeiling" type="CT_AlphaCeilingEffect"/>
+        <xsd:element name="alphaFloor"   type="CT_AlphaFloorEffect"/>
+        <xsd:element name="alphaInv"     type="CT_AlphaInverseEffect"/>
+        <xsd:element name="alphaMod"     type="CT_AlphaModulateEffect"/>
+        <xsd:element name="alphaModFix"  type="CT_AlphaModulateFixedEffect"/>
+        <xsd:element name="alphaRepl"    type="CT_AlphaReplaceEffect"/>
+        <xsd:element name="biLevel"      type="CT_BiLevelEffect"/>
+        <xsd:element name="blur"         type="CT_BlurEffect"/>
+        <xsd:element name="clrChange"    type="CT_ColorChangeEffect"/>
+        <xsd:element name="clrRepl"      type="CT_ColorReplaceEffect"/>
+        <xsd:element name="duotone"      type="CT_DuotoneEffect"/>
+        <xsd:element name="fillOverlay"  type="CT_FillOverlayEffect"/>
+        <xsd:element name="grayscl"      type="CT_GrayscaleEffect"/>
+        <xsd:element name="hsl"          type="CT_HSLEffect"/>
+        <xsd:element name="lum"          type="CT_LuminanceEffect"/>
+        <xsd:element name="tint"         type="CT_TintEffect"/>
+      </xsd:choice>
+      <xsd:element name="extLst" type="CT_OfficeArtExtensionList" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attributeGroup ref="AG_Blob"/>
+    <xsd:attribute name="cstate" type="ST_BlipCompression" use="optional" default="none"/>
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="AG_Blob">
+    <xsd:attribute ref="r:embed" use="optional" default=""/>
+    <xsd:attribute ref="r:link"  use="optional" default=""/>
+  </xsd:attributeGroup>
+
+  <xsd:group name="EG_FillModeProperties">
+    <xsd:choice>
+      <xsd:element name="tile"    type="CT_TileInfoProperties"/>
+      <xsd:element name="stretch" type="CT_StretchInfoProperties"/>
+    </xsd:choice>
+  </xsd:group>
 
   <xsd:complexType name="CT_ShapeProperties">
     <xsd:sequence>
@@ -115,6 +184,20 @@ Schema definitions
     <xsd:attribute name="bwMode" type="ST_BlackWhiteMode" use="optional"/>
   </xsd:complexType>
 
+  <xsd:group name="EG_Geometry">
+    <xsd:choice>
+      <xsd:element name="custGeom" type="CT_CustomGeometry2D"/>
+      <xsd:element name="prstGeom" type="CT_PresetGeometry2D"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:complexType name="CT_PresetGeometry2D">
+    <xsd:sequence>
+      <xsd:element name="avLst" type="CT_GeomGuideList" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="prst" type="ST_ShapeType" use="required"/>
+  </xsd:complexType>
+
   <xsd:complexType name="CT_NonVisualDrawingProps">
     <xsd:sequence>
       <xsd:element name="hlinkClick" type="CT_Hyperlink"              minOccurs="0"/>
@@ -126,4 +209,12 @@ Schema definitions
     <xsd:attribute name="descr"  type="xsd:string"          use="optional" default=""/>
     <xsd:attribute name="hidden" type="xsd:boolean"         use="optional" default="false"/>
     <xsd:attribute name="title"  type="xsd:string"          use="optional" default=""/>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_NonVisualPictureProperties">
+    <xsd:sequence>
+      <xsd:element name="picLocks" type="CT_PictureLocking"         minOccurs="0"/>
+      <xsd:element name="extLst"   type="CT_OfficeArtExtensionList" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="preferRelativeResize" type="xsd:boolean" use="optional" default="true"/>
   </xsd:complexType>
