@@ -37,10 +37,18 @@ class _Document(object):
     """
     API class representing a Word document.
     """
-    def __init__(self, pkg, document_part):
+    def __init__(self, package, document_part):
         super(_Document, self).__init__()
         self._document = document_part
-        self._pkg = pkg
+        self._package = package
+
+    def add_inline_picture(self, image_path_or_stream):
+        """
+        Add the image at *image_path_or_stream* to the document at its native
+        size. The picture is placed inline in a new paragraph at the end of
+        the document.
+        """
+        return self.inline_shapes.add_picture(image_path_or_stream)
 
     @property
     def body(self):
@@ -61,4 +69,4 @@ class _Document(object):
         Save this document to *file_*, where *file_* can be either a path to
         a file (a string) or a file-like object.
         """
-        return self._pkg.save(file_)
+        self._package.save(file_)

@@ -52,7 +52,7 @@ def given_inline_shape_known_to_be_shape_of_type(context, shp_of_type):
 def when_add_inline_picture_to_document(context):
     document = context.document
     context.inline_shape = (
-        document.add_picture(test_file_path('monty-truth.png'))
+        document.add_inline_picture(test_file_path('monty-truth.png'))
     )
 
 

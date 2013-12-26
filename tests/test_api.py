@@ -10,6 +10,7 @@ from docx import parts
 from docx.api import Document, _Document
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import OpcPackage
+from docx.parts import InlineShapes
 
 from .unitutil import class_mock, instance_mock, var_mock
 
@@ -82,12 +83,31 @@ class Describe_Document(object):
         body = document.inline_shapes
         assert body is document._document.inline_shapes
 
+    def it_can_add_an_inline_picture(self, add_picture_fixture):
+        document, inline_shapes, image_path_or_stream_, picture_shape_ = (
+            add_picture_fixture
+        )
+        picture_shape = document.add_inline_picture(image_path_or_stream_)
+        inline_shapes.add_picture.assert_called_once_with(
+            image_path_or_stream_
+        )
+        assert picture_shape is picture_shape_
+
     def it_can_save_the_package(self, save_fixture):
         document, package_, file_ = save_fixture
         document.save(file_)
         package_.save.assert_called_once_with(file_)
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def add_picture_fixture(self, request, document_part_):
+        document = _Document(None, document_part_)
+        inline_shapes = instance_mock(request, InlineShapes)
+        document_part_.inline_shapes = inline_shapes
+        image_path_ = instance_mock(request, str)
+        picture_shape_ = inline_shapes.add_picture.return_value
+        return document, inline_shapes, image_path_, picture_shape_
 
     @pytest.fixture
     def document(self, request, package_, document_part_):

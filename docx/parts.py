@@ -151,6 +151,13 @@ class InlineShapes(object):
     def __len__(self):
         return len(self._inline_lst)
 
+    def add_picture(self, image_path_or_stream):
+        """
+        Add the image at *image_path_or_stream* to the document at its native
+        size. The picture is placed inline in a new paragraph at the end of
+        the document.
+        """
+
     @property
     def _inline_lst(self):
         body = self._body
