@@ -4,6 +4,7 @@
 Document parts such as _Document, and closely related classes.
 """
 
+from docx.enum.shape import WD_INLINE_SHAPE
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
 from docx.oxml.shared import nsmap, oxml_fromstring
@@ -107,6 +108,21 @@ class InlineShape(object):
     def __init__(self, inline):
         super(InlineShape, self).__init__()
         self._inline = inline
+
+    @property
+    def type(self):
+        graphicData = self._inline.graphic.graphicData
+        uri = graphicData.uri
+        if uri == nsmap['pic']:
+            blip = graphicData.pic.blipFill.blip
+            if blip.link is not None:
+                return WD_INLINE_SHAPE.LINKED_PICTURE
+            return WD_INLINE_SHAPE.PICTURE
+        if uri == nsmap['c']:
+            return WD_INLINE_SHAPE.CHART
+        if uri == nsmap['dgm']:
+            return WD_INLINE_SHAPE.SMART_ART
+        return WD_INLINE_SHAPE.NOT_IMPLEMENTED
 
 
 class InlineShapes(object):

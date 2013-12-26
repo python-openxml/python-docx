@@ -19,9 +19,12 @@ class BaseBuilder(object):
         self._text = ''
         self._xmlattrs = []
         self._xmlattr_method_map = {}
-        for xmlattr_name in self.__attrs__:
-            method_name = 'with_%s' % xmlattr_name
-            self._xmlattr_method_map[method_name] = xmlattr_name
+        for attr_name in self.__attrs__:
+            base_name = (
+                attr_name.split(':')[1] if ':' in attr_name else attr_name
+            )
+            method_name = 'with_%s' % base_name
+            self._xmlattr_method_map[method_name] = attr_name
         self._child_bldrs = []
 
     def __getattr__(self, name):

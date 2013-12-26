@@ -10,12 +10,16 @@ import pytest
 
 from mock import Mock
 
+from docx.enum.shape import WD_INLINE_SHAPE
 from docx.oxml.parts import CT_Document
+from docx.oxml.shared import nsmap
 from docx.parts import _Body, _Document, InlineShape, InlineShapes
 from docx.table import Table
 from docx.text import Paragraph
 
-from .oxml.unitdata.dml import a_drawing, an_inline
+from .oxml.unitdata.dml import (
+    a_blip, a_blipFill, a_drawing, a_graphic, a_graphicData, a_pic, an_inline
+)
 from .oxml.unitdata.parts import a_body, a_document
 from .oxml.unitdata.table import (
     a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tc, a_tr
@@ -256,12 +260,78 @@ class Describe_Body(object):
         return tr_bldr
 
 
+class DescribeInlineShape(object):
+
+    def it_knows_what_type_of_shape_it_is(self, shape_type_fixture):
+        inline_shape, inline_shape_type = shape_type_fixture
+        assert inline_shape.type == inline_shape_type
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        'embed pic', 'link pic', 'link+embed pic', 'chart', 'smart art',
+        'not implemented'
+    ])
+    def shape_type_fixture(self, request):
+        if request.param == 'embed pic':
+            inline = self._inline_with_picture(embed=True)
+            shape_type = WD_INLINE_SHAPE.PICTURE
+
+        elif request.param == 'link pic':
+            inline = self._inline_with_picture(link=True)
+            shape_type = WD_INLINE_SHAPE.LINKED_PICTURE
+
+        elif request.param == 'link+embed pic':
+            inline = self._inline_with_picture(embed=True, link=True)
+            shape_type = WD_INLINE_SHAPE.LINKED_PICTURE
+
+        elif request.param == 'chart':
+            inline = self._inline_with_uri(nsmap['c'])
+            shape_type = WD_INLINE_SHAPE.CHART
+
+        elif request.param == 'smart art':
+            inline = self._inline_with_uri(nsmap['dgm'])
+            shape_type = WD_INLINE_SHAPE.SMART_ART
+
+        elif request.param == 'not implemented':
+            inline = self._inline_with_uri('foobar')
+            shape_type = WD_INLINE_SHAPE.NOT_IMPLEMENTED
+
+        return InlineShape(inline), shape_type
+
+    def _inline_with_picture(self, embed=False, link=False):
+        picture_ns = nsmap['pic']
+
+        blip_bldr = a_blip()
+        if embed:
+            blip_bldr.with_embed('rId1')
+        if link:
+            blip_bldr.with_link('rId2')
+
+        inline = (
+            an_inline().with_nsdecls('wp', 'r').with_child(
+                a_graphic().with_nsdecls().with_child(
+                    a_graphicData().with_uri(picture_ns).with_child(
+                        a_pic().with_nsdecls().with_child(
+                            a_blipFill().with_child(
+                                blip_bldr)))))
+        ).element
+        return inline
+
+    def _inline_with_uri(self, uri):
+        inline = (
+            an_inline().with_nsdecls('wp').with_child(
+                a_graphic().with_nsdecls().with_child(
+                    a_graphicData().with_uri(uri)))
+        ).element
+        return inline
+
+
 class DescribeInlineShapes(object):
 
     def it_knows_how_many_inline_shapes_it_contains(
             self, inline_shapes_fixture):
         inline_shapes, inline_shape_count = inline_shapes_fixture
-        print(inline_shapes._body.xml)
         assert len(inline_shapes) == inline_shape_count
 
     def it_can_iterate_over_its_InlineShape_instances(
