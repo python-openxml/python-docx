@@ -6,13 +6,15 @@ Step implementations for graphical object (shape) related features
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from behave import given, then
+import hashlib
+
+from behave import given, then, when
 
 from docx import Document
 from docx.enum.shape import WD_INLINE_SHAPE
 from docx.parts import InlineShape, InlineShapes
 
-from .helpers import test_docx
+from .helpers import test_docx, test_file_path
 
 
 # given ===================================================
@@ -42,6 +44,16 @@ def given_inline_shape_known_to_be_shape_of_type(context, shp_of_type):
     docx_path = test_docx('shp-inline-shape-access')
     document = Document(docx_path)
     context.inline_shape = document.inline_shapes[inline_shape_idx]
+
+
+# when =====================================================
+
+@when('I add an inline picture to the document')
+def when_add_inline_picture_to_document(context):
+    document = context.document
+    context.inline_shape = (
+        document.add_picture(test_file_path('monty-truth.png'))
+    )
 
 
 # then =====================================================
@@ -84,6 +96,21 @@ def then_inline_shape_type_is_shape_type(context, shape_type):
     }[shape_type]
     inline_shape = context.inline_shape
     assert inline_shape.type == expected_value
+
+
+@then('the document contains the inline picture')
+def then_the_document_contains_the_inline_picture(context):
+    document = context.document
+    picture_shape = document.inline_shapes[0]
+    blip = picture_shape._inline.graphic.graphicData.pic.blipFill.blip
+    rId = blip.embed
+    image_part = document.related_parts[rId]
+    image_sha1 = hashlib.sha1(image_part.blob).hexdigest()
+    expected_sha1 = '92abcF0eab86674as0e029342309023423'
+    assert image_sha1 == expected_sha1, (
+        "image SHA1 doesn't match, expected %s, got %s" %
+        (expected_sha1, image_sha1)
+    )
 
 
 @then('the length of the inline shape collection is 5')
