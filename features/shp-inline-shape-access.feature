@@ -12,3 +12,13 @@ Feature: Access inline shapes in document
      Given an inline shape collection containing two shapes
       Then I can iterate over the inline shape collection
        And I can access an inline shape by index
+
+  @wip
+  Scenario Outline: Identify type of inline shape
+     Given an inline shape known to be <shape of type>
+      Then its inline shape type is <shape type>
+
+   Examples: Inline shapes of recognized types
+     | shape of type       | shape type                     |
+     | an embedded picture | WD_INLINE_SHAPE.PICTURE        |
+     | a linked picture    | WD_INLINE_SHAPE.LINKED_PICTURE |
