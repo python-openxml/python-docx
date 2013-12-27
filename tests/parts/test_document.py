@@ -89,6 +89,10 @@ class Describe_Document(object):
     def it_knows_it_is_the_part_its_child_objects_belong_to(self, document):
         assert document.part is document
 
+    def it_knows_the_next_available_xml_id(self, next_id_fixture):
+        document, expected_id = next_id_fixture
+        assert document.next_id == expected_id
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -156,6 +160,20 @@ class Describe_Document(object):
         body_elm = document_elm[0]
         document = _Document(None, None, document_elm, None)
         return document, InlineShapes_, body_elm
+
+    @pytest.fixture(params=[
+        ((), 1), ((1,), 2), ((2,), 1), ((1, 2, 3), 4), ((1, 2, 4), 3),
+        ((0, 0), 1), ((0, 0, 1, 3), 2),
+    ])
+    def next_id_fixture(self, request):
+        existing_ids, expected_id = request.param
+        document_elm = a_document().with_nsdecls().element
+        for n in existing_ids:
+            p = a_p().with_nsdecls().element
+            p.set('id', str(n))
+            document_elm.append(p)
+        document = _Document(None, None, document_elm, None)
+        return document, expected_id
 
     @pytest.fixture
     def oxml_fromstring_(self, request):

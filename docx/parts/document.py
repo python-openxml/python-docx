@@ -69,7 +69,11 @@ class _Document(Part):
         in id sequence are filled. The id attribute value is unique in the
         document, without regard to the element type it appears on.
         """
-        raise NotImplementedError
+        id_str_lst = self._element.xpath('//@id')
+        used_ids = [int(id_str) for id_str in id_str_lst]
+        for n in range(1, len(used_ids)+2):
+            if n not in used_ids:
+                return n
 
     @property
     def part(self):
