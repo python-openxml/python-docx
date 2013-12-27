@@ -28,7 +28,8 @@ from ..oxml.unitdata.table import (
 )
 from ..oxml.unitdata.text import a_p, a_sectPr, an_r
 from ..unitutil import (
-    function_mock, class_mock, initializer_mock, instance_mock, property_mock
+    function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
+    property_mock
 )
 
 
@@ -68,10 +69,17 @@ class Describe_Document(object):
             self, inline_shapes_fixture):
         document, InlineShapes_, body_elm = inline_shapes_fixture
         inline_shapes = document.inline_shapes
-        InlineShapes_.assert_called_once_with(body_elm)
+        InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
 
+    def it_knows_it_is_the_part_its_child_objects_belong_to(self, document):
+        assert document.part is document
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def document(self):
+        return _Document(None, None, None, None)
 
     @pytest.fixture
     def document_blob_fixture(self, request, serialize_part_xml_):
@@ -375,13 +383,18 @@ class DescribeInlineShapes(object):
         )
         assert picture_shape is new_picture_shape_
 
+    def it_knows_the_part_it_belongs_to(self, inline_shapes_with_parent_):
+        inline_shapes, parent_ = inline_shapes_with_parent_
+        part = inline_shapes.part
+        assert part is parent_.part
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def add_picture_fixture(
             self, request, body_, document_, image_descriptor_, InlineShape_,
             r_, image_, rId_, shape_id_, new_picture_shape_):
-        inline_shapes = InlineShapes(body_)
+        inline_shapes = InlineShapes(body_, None)
         property_mock(request, InlineShapes, 'part', return_value=document_)
         return (
             inline_shapes, image_descriptor_, document_, InlineShape_, r_,
@@ -431,8 +444,14 @@ class DescribeInlineShapes(object):
                 )
             )
         ).element
-        inline_shapes = InlineShapes(body)
+        inline_shapes = InlineShapes(body, None)
         return inline_shapes, inline_shape_count
+
+    @pytest.fixture
+    def inline_shapes_with_parent_(self, request):
+        parent_ = loose_mock(request, name='parent_')
+        inline_shapes = InlineShapes(None, parent_)
+        return inline_shapes, parent_
 
     @pytest.fixture
     def new_picture_shape_(self, request):

@@ -8,7 +8,7 @@ from docx.enum.shape import WD_INLINE_SHAPE
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
 from docx.oxml.shared import nsmap, oxml_fromstring
-from docx.shared import lazyproperty
+from docx.shared import lazyproperty, Parented
 from docx.table import Table
 from docx.text import Paragraph
 
@@ -50,7 +50,7 @@ class _Document(Part):
         The |InlineShapes| instance containing the inline shapes in the
         document.
         """
-        return InlineShapes(self._element.body)
+        return InlineShapes(self._element.body, self)
 
     @staticmethod
     def load(partname, content_type, blob, package):
@@ -66,6 +66,15 @@ class _Document(Part):
         document, without regard to the element type it appears on.
         """
         raise NotImplementedError
+
+    @property
+    def part(self):
+        """
+        Part of the parent protocol, "children" of the document will not know
+        the part that contains them so must ask their parent object. That
+        chain of delegation ends here for document child objects.
+        """
+        return self
 
 
 class _Body(object):
@@ -160,13 +169,13 @@ class InlineShape(object):
         return WD_INLINE_SHAPE.NOT_IMPLEMENTED
 
 
-class InlineShapes(object):
+class InlineShapes(Parented):
     """
     Sequence of |InlineShape| instances, supporting len(), iteration, and
     indexed access.
     """
-    def __init__(self, body_elm):
-        super(InlineShapes, self).__init__()
+    def __init__(self, body_elm, parent):
+        super(InlineShapes, self).__init__(parent)
         self._body = body_elm
 
     def __getitem__(self, idx):
@@ -197,15 +206,6 @@ class InlineShapes(object):
         shape_id = self.part.next_id
         r = self._body.add_p().add_r()
         return InlineShape.new_picture(r, image, rId, shape_id)
-
-    @property
-    def part(self):
-        """
-        The package part containing this object, a |_Document| instance in
-        this case.
-        """
-        # return self._parent.part
-        raise NotImplementedError
 
     @property
     def _inline_lst(self):

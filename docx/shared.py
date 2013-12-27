@@ -35,3 +35,22 @@ def write_only_property(f):
     docstring = f.__doc__
 
     return property(fset=f, doc=docstring)
+
+
+class Parented(object):
+    """
+    Provides common services for document elements that occur below a part
+    but may occasionally require an ancestor object to provide a service,
+    such as add or drop a relationship. Provides ``self._parent`` attribute
+    to subclasses.
+    """
+    def __init__(self, parent):
+        super(Parented, self).__init__()
+        self._parent = parent
+
+    @property
+    def part(self):
+        """
+        The package part containing this object
+        """
+        return self._parent.part
