@@ -1,7 +1,8 @@
 # encoding: utf-8
 
 """
-Custom element classes that correspond to OPC parts like <w:document>.
+Custom element classes that correspond to the document part, e.g.
+<w:document>.
 """
 
 from docx.oxml.shared import OxmlBaseElement, qn

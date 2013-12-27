@@ -32,7 +32,7 @@ register_custom_element_class('pic:blipFill', CT_BlipFillProperties)
 register_custom_element_class('pic:pic', CT_Picture)
 register_custom_element_class('wp:inline', CT_Inline)
 
-from docx.oxml.parts import CT_Body, CT_Document
+from docx.oxml.parts.document import CT_Body, CT_Document
 register_custom_element_class('w:body', CT_Body)
 register_custom_element_class('w:document', CT_Document)
 

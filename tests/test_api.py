@@ -6,11 +6,10 @@ Test suite for the docx.api module
 
 import pytest
 
-from docx import parts
 from docx.api import Document, _Document
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import OpcPackage
-from docx.parts import InlineShapes
+from docx.parts.document import _Document as parts_Document, InlineShapes
 
 from .unitutil import class_mock, instance_mock, var_mock
 
@@ -47,7 +46,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(
-            request, parts._Document, content_type=CT.WML_DOCUMENT_MAIN
+            request, parts_Document, content_type=CT.WML_DOCUMENT_MAIN
         )
 
     @pytest.fixture
@@ -115,7 +114,7 @@ class Describe_Document(object):
 
     @pytest.fixture
     def document_part_(self, request):
-        return instance_mock(request, parts._Document)
+        return instance_mock(request, parts_Document)
 
     @pytest.fixture
     def package_(self, request):

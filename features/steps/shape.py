@@ -12,7 +12,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.shape import WD_INLINE_SHAPE
-from docx.parts import InlineShape, InlineShapes
+from docx.parts.document import InlineShape, InlineShapes
 
 from .helpers import test_docx, test_file_path
 

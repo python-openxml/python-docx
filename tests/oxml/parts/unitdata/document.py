@@ -4,7 +4,7 @@
 Test data builders for parts XML.
 """
 
-from ...unitdata import BaseBuilder
+from ....unitdata import BaseBuilder
 
 
 class CT_BodyBuilder(BaseBuilder):

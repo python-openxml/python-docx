@@ -4,11 +4,11 @@
 Test suite for the docx.oxml.parts module.
 """
 
-from docx.oxml.parts import CT_Body
+from docx.oxml.parts.document import CT_Body
 from docx.oxml.text import CT_P
 
-from .unitdata.parts import a_body, a_document
-from .unitdata.text import a_p, a_sectPr
+from .unitdata.document import a_body, a_document
+from ..unitdata.text import a_p, a_sectPr
 
 
 class DescribeCT_Body(object):

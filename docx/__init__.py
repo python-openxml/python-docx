@@ -10,7 +10,7 @@ __version__ = '0.3.0dev1'
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import PartFactory
 
-from docx.parts import _Document
+from docx.parts.document import _Document
 
 PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = _Document
 

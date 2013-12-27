@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 """
-Test suite for the docx.parts module
+Test suite for the docx.parts.document module
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
@@ -11,22 +11,23 @@ import pytest
 from mock import Mock
 
 from docx.enum.shape import WD_INLINE_SHAPE
-from docx.oxml.parts import CT_Body, CT_Document
+from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.shared import nsmap
 from docx.oxml.text import CT_R
-from docx.parts import _Body, _Document, Image, InlineShape, InlineShapes
+from docx.parts.document import _Body, _Document, InlineShape, InlineShapes
+from docx.parts.image import Image
 from docx.table import Table
 from docx.text import Paragraph
 
-from .oxml.unitdata.dml import (
+from ..oxml.unitdata.dml import (
     a_blip, a_blipFill, a_drawing, a_graphic, a_graphicData, a_pic, an_inline
 )
-from .oxml.unitdata.parts import a_body, a_document
-from .oxml.unitdata.table import (
+from ..oxml.parts.unitdata.document import a_body, a_document
+from ..oxml.unitdata.table import (
     a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tc, a_tr
 )
-from .oxml.unitdata.text import a_p, a_sectPr, an_r
-from .unitutil import (
+from ..oxml.unitdata.text import a_p, a_sectPr, an_r
+from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, property_mock
 )
 
@@ -90,7 +91,7 @@ class Describe_Document(object):
 
     @pytest.fixture
     def _Body_(self, request):
-        return class_mock(request, 'docx.parts._Body')
+        return class_mock(request, 'docx.parts.document._Body')
 
     @pytest.fixture
     def init(self, request):
@@ -98,7 +99,7 @@ class Describe_Document(object):
 
     @pytest.fixture
     def InlineShapes_(self, request):
-        return class_mock(request, 'docx.parts.InlineShapes')
+        return class_mock(request, 'docx.parts.document.InlineShapes')
 
     @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
@@ -112,11 +113,13 @@ class Describe_Document(object):
 
     @pytest.fixture
     def oxml_fromstring_(self, request):
-        return function_mock(request, 'docx.parts.oxml_fromstring')
+        return function_mock(request, 'docx.parts.document.oxml_fromstring')
 
     @pytest.fixture
     def serialize_part_xml_(self, request):
-        return function_mock(request, 'docx.parts.serialize_part_xml')
+        return function_mock(
+            request, 'docx.parts.document.serialize_part_xml'
+        )
 
 
 class Describe_Body(object):
@@ -408,7 +411,7 @@ class DescribeInlineShapes(object):
 
     @pytest.fixture
     def InlineShape_(self, request, new_picture_shape_):
-        InlineShape_ = class_mock(request, 'docx.parts.InlineShape')
+        InlineShape_ = class_mock(request, 'docx.parts.document.InlineShape')
         InlineShape_.new_picture.return_value = new_picture_shape_
         return InlineShape_
 

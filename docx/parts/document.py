@@ -119,13 +119,6 @@ class _Body(object):
         return [Table(tbl) for tbl in self._body.tbl_lst]
 
 
-class Image(Part):
-    """
-    An image part. Corresponds to the target part of a relationship with type
-    RELATIONSHIP_TYPE.IMAGE.
-    """
-
-
 class InlineShape(object):
     """
     Proxy for an ``<wp:inline>`` element, representing the container for an
