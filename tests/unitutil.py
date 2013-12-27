@@ -6,7 +6,7 @@ Utility functions for unit testing
 
 import os
 
-from mock import create_autospec, Mock, patch
+from mock import create_autospec, Mock, patch, PropertyMock
 
 from docx.oxml.shared import serialize_for_reading
 
@@ -102,6 +102,16 @@ def method_mock(request, cls, method_name, **kwargs):
     reversed after pytest uses it.
     """
     _patch = patch.object(cls, method_name, **kwargs)
+    request.addfinalizer(_patch.stop)
+    return _patch.start()
+
+
+def property_mock(request, cls, prop_name, **kwargs):
+    """
+    Return a mock for property *prop_name* on class *cls* where the patch is
+    reversed after pytest uses it.
+    """
+    _patch = patch.object(cls, prop_name, new_callable=PropertyMock, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 

@@ -23,6 +23,16 @@ class _Document(Part):
         )
         self._element = document_elm
 
+    def add_image(self, image_descriptor):
+        """
+        Return an ``(image_part, rId)`` 2-tuple for the image identified by
+        *image_descriptor*. *image_part* is an |Image| instance corresponding
+        to the image, newly created if not already present in document. *rId*
+        is the key for the relationship between this document part and the
+        image part, reused if already present, newly created if not.
+        """
+        raise NotImplementedError
+
     @property
     def blob(self):
         return serialize_part_xml(self._element)
@@ -47,6 +57,15 @@ class _Document(Part):
         document_elm = oxml_fromstring(blob)
         document = _Document(partname, content_type, document_elm, package)
         return document
+
+    @property
+    def next_id(self):
+        """
+        The next available positive integer id value in this document. Gaps
+        in id sequence are filled. The id attribute value is unique in the
+        document, without regard to the element type it appears on.
+        """
+        raise NotImplementedError
 
 
 class _Body(object):
@@ -100,6 +119,13 @@ class _Body(object):
         return [Table(tbl) for tbl in self._body.tbl_lst]
 
 
+class Image(Part):
+    """
+    An image part. Corresponds to the target part of a relationship with type
+    RELATIONSHIP_TYPE.IMAGE.
+    """
+
+
 class InlineShape(object):
     """
     Proxy for an ``<wp:inline>`` element, representing the container for an
@@ -108,6 +134,22 @@ class InlineShape(object):
     def __init__(self, inline):
         super(InlineShape, self).__init__()
         self._inline = inline
+
+    @classmethod
+    def new_picture(cls, r, image, rId, shape_id):
+        """
+        Return a new |InlineShape| instance containing an inline picture
+        placement of the image part *image* appended to run *r* and
+        uniquely identified by *shape_id*.
+        """
+        # width, height, filename = (
+        #     image.width, image.height, image.filename
+        # )
+        # pic = CT_Picture.new(filename, rId, width, height)
+        # inline = CT_Inline.new_inline(width, height, shape_id, pic)
+        # r.add_drawing(inline)
+        # return cls(inline)
+        raise NotImplementedError
 
     @property
     def type(self):
@@ -151,12 +193,26 @@ class InlineShapes(object):
     def __len__(self):
         return len(self._inline_lst)
 
-    def add_picture(self, image_path_or_stream):
+    def add_picture(self, image_descriptor):
         """
-        Add the image at *image_path_or_stream* to the document at its native
-        size. The picture is placed inline in a new paragraph at the end of
-        the document.
+        Add the image identified by *image_descriptor* to the document at its
+        native size. The picture is placed inline in a new paragraph at the
+        end of the document. *image_descriptor* can be a path (a string) or a
+        file-like object containing a binary image.
         """
+        rId, image = self.part.add_image(image_descriptor)
+        shape_id = self.part.next_id
+        r = self._body.add_p().add_r()
+        return InlineShape.new_picture(r, image, rId, shape_id)
+
+    @property
+    def part(self):
+        """
+        The package part containing this object, a |_Document| instance in
+        this case.
+        """
+        # return self._parent.part
+        raise NotImplementedError
 
     @property
     def _inline_lst(self):
