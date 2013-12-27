@@ -8,8 +8,8 @@ OpcPackage graph.
 
 import os
 
-from docx.opc.package import OpcPackage
 from docx.opc.constants import CONTENT_TYPE as CT
+from docx.package import Package
 
 
 thisdir = os.path.split(__file__)[0]
@@ -25,7 +25,7 @@ def Document(docx=None):
     """
     if docx is None:
         docx = _default_docx_path
-    pkg = OpcPackage.open(docx)
+    pkg = Package.open(docx)
     document_part = pkg.main_document
     if document_part.content_type != CT.WML_DOCUMENT_MAIN:
         tmpl = "file '%s' is not a Word file, content type is '%s'"

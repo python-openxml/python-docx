@@ -5,6 +5,7 @@ Document parts such as _Document, and closely related classes.
 """
 
 from docx.enum.shape import WD_INLINE_SHAPE
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
 from docx.oxml.shared import nsmap, oxml_fromstring
@@ -23,15 +24,18 @@ class _Document(Part):
         )
         self._element = document_elm
 
-    def add_image(self, image_descriptor):
+    def get_or_add_image_part(self, image_descriptor):
         """
         Return an ``(image_part, rId)`` 2-tuple for the image identified by
         *image_descriptor*. *image_part* is an |Image| instance corresponding
-        to the image, newly created if not already present in document. *rId*
+        to the image, newly created if no matching image part is found. *rId*
         is the key for the relationship between this document part and the
         image part, reused if already present, newly created if not.
         """
-        raise NotImplementedError
+        image_parts = self._package.image_parts
+        image_part = image_parts.get_or_add_image_part(image_descriptor)
+        rId = self.relate_to(image_part, RT.IMAGE)
+        return (image_part, rId)
 
     @property
     def blob(self):
@@ -202,7 +206,7 @@ class InlineShapes(Parented):
         end of the document. *image_descriptor* can be a path (a string) or a
         file-like object containing a binary image.
         """
-        rId, image = self.part.add_image(image_descriptor)
+        rId, image = self.part.get_or_add_image_part(image_descriptor)
         shape_id = self.part.next_id
         r = self._body.add_p().add_r()
         return InlineShape.new_picture(r, image, rId, shape_id)

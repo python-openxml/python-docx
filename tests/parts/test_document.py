@@ -11,11 +11,13 @@ import pytest
 from mock import Mock
 
 from docx.enum.shape import WD_INLINE_SHAPE
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.shared import nsmap
 from docx.oxml.text import CT_R
+from docx.package import ImageParts, Package
 from docx.parts.document import _Body, _Document, InlineShape, InlineShapes
-from docx.parts.image import Image
+from docx.parts.image import ImagePart
 from docx.table import Table
 from docx.text import Paragraph
 
@@ -29,7 +31,7 @@ from ..oxml.unitdata.table import (
 from ..oxml.unitdata.text import a_p, a_sectPr, an_r
 from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
-    property_mock
+    method_mock, property_mock
 )
 
 
@@ -52,6 +54,18 @@ class Describe_Document(object):
             partname, content_type, document_elm, package
         )
         assert isinstance(doc, _Document)
+
+    def it_can_add_an_image_part_to_the_document(
+            self, get_or_add_image_fixture):
+        (document, image_descriptor_, image_parts_, relate_to_, image_part_,
+         rId_) = get_or_add_image_fixture
+        image_part, rId = document.get_or_add_image_part(image_descriptor_)
+        image_parts_.get_or_add_image_part.assert_called_once_with(
+            image_descriptor_
+        )
+        relate_to_.assert_called_once_with(image_part_, RT.IMAGE)
+        assert image_part is image_part_
+        assert rId == rId_
 
     def it_has_a_body(self, document_body_fixture):
         document, _Body_, body_elm = document_body_fixture
@@ -102,6 +116,30 @@ class Describe_Document(object):
         return class_mock(request, 'docx.parts.document._Body')
 
     @pytest.fixture
+    def get_or_add_image_fixture(
+            self, request, package_, image_descriptor_, image_parts_,
+            relate_to_, image_part_, rId_):
+        document = _Document(None, None, None, package_)
+        return (
+            document, image_descriptor_, image_parts_, relate_to_,
+            image_part_, rId_
+        )
+
+    @pytest.fixture
+    def image_descriptor_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def image_part_(self, request):
+        return instance_mock(request, ImagePart)
+
+    @pytest.fixture
+    def image_parts_(self, request, image_part_):
+        image_parts_ = instance_mock(request, ImageParts)
+        image_parts_.get_or_add_image_part.return_value = image_part_
+        return image_parts_
+
+    @pytest.fixture
     def init(self, request):
         return initializer_mock(request, _Document)
 
@@ -122,6 +160,22 @@ class Describe_Document(object):
     @pytest.fixture
     def oxml_fromstring_(self, request):
         return function_mock(request, 'docx.parts.document.oxml_fromstring')
+
+    @pytest.fixture
+    def package_(self, request, image_parts_):
+        package_ = instance_mock(request, Package)
+        package_.image_parts = image_parts_
+        return package_
+
+    @pytest.fixture
+    def relate_to_(self, request, rId_):
+        relate_to_ = method_mock(request, _Document, 'relate_to')
+        relate_to_.return_value = rId_
+        return relate_to_
+
+    @pytest.fixture
+    def rId_(self, request):
+        return instance_mock(request, str)
 
     @pytest.fixture
     def serialize_part_xml_(self, request):
@@ -374,10 +428,15 @@ class DescribeInlineShapes(object):
 
     def it_can_add_an_inline_picture_to_the_document(
             self, add_picture_fixture):
+        # fixture ----------------------
         (inline_shapes, image_descriptor_, document_, InlineShape_, r_,
          image_, rId_, shape_id_, new_picture_shape_) = add_picture_fixture
+        # exercise ---------------------
         picture_shape = inline_shapes.add_picture(image_descriptor_)
-        document_.add_image.assert_called_once_with(image_descriptor_)
+        # verify -----------------------
+        document_.get_or_add_image_part.assert_called_once_with(
+            image_descriptor_
+        )
         InlineShape_.new_picture.assert_called_once_with(
             r_, image_, rId_, shape_id_
         )
@@ -393,12 +452,12 @@ class DescribeInlineShapes(object):
     @pytest.fixture
     def add_picture_fixture(
             self, request, body_, document_, image_descriptor_, InlineShape_,
-            r_, image_, rId_, shape_id_, new_picture_shape_):
+            r_, image_part_, rId_, shape_id_, new_picture_shape_):
         inline_shapes = InlineShapes(body_, None)
         property_mock(request, InlineShapes, 'part', return_value=document_)
         return (
             inline_shapes, image_descriptor_, document_, InlineShape_, r_,
-            image_, rId_, shape_id_, new_picture_shape_
+            image_part_, rId_, shape_id_, new_picture_shape_
         )
 
     @pytest.fixture
@@ -408,15 +467,15 @@ class DescribeInlineShapes(object):
         return body_
 
     @pytest.fixture
-    def document_(self, request, rId_, image_, shape_id_):
+    def document_(self, request, rId_, image_part_, shape_id_):
         document_ = instance_mock(request, _Document, name='document_')
-        document_.add_image.return_value = rId_, image_
+        document_.get_or_add_image_part.return_value = rId_, image_part_
         document_.next_id = shape_id_
         return document_
 
     @pytest.fixture
-    def image_(self, request):
-        return instance_mock(request, Image)
+    def image_part_(self, request):
+        return instance_mock(request, ImagePart)
 
     @pytest.fixture
     def image_descriptor_(self, request):

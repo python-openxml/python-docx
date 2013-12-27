@@ -8,7 +8,7 @@ import pytest
 
 from docx.api import Document, _Document
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.opc.package import OpcPackage
+from docx.package import Package
 from docx.parts.document import _Document as parts_Document, InlineShapes
 
 from .unitutil import class_mock, instance_mock, var_mock
@@ -17,18 +17,17 @@ from .unitutil import class_mock, instance_mock, var_mock
 class DescribeDocument(object):
 
     def it_opens_a_docx_file(self, open_fixture):
-        docx_, OpcPackage_, _Document_, package, document_part = open_fixture
+        docx_, Package_, _Document_, package, document_part = open_fixture
         _document = Document(docx_)
-        OpcPackage_.open.assert_called_once_with(docx_)
+        Package_.open.assert_called_once_with(docx_)
         _Document_.assert_called_once_with(package, document_part)
         assert _document is _Document_.return_value
 
-    def it_uses_default_if_no_file_provided(self, OpcPackage_, default_docx_):
+    def it_uses_default_if_no_file_provided(self, Package_, default_docx_):
         Document()
-        OpcPackage_.open.assert_called_once_with(default_docx_)
+        Package_.open.assert_called_once_with(default_docx_)
 
-    def it_should_raise_if_not_a_Word_file(
-            self, OpcPackage_, package_, docx_):
+    def it_should_raise_if_not_a_Word_file(self, Package_, package_, docx_):
         package_.main_document.content_type = 'foobar'
         with pytest.raises(ValueError):
             Document(docx_)
@@ -54,20 +53,20 @@ class DescribeDocument(object):
         return instance_mock(request, str)
 
     @pytest.fixture
-    def OpcPackage_(self, request, package_):
-        OpcPackage_ = class_mock(request, 'docx.api.OpcPackage')
-        OpcPackage_.open.return_value = package_
-        return OpcPackage_
+    def open_fixture(
+            self, request, docx_, Package_, _Document_, package_,
+            document_part_):
+        return docx_, Package_, _Document_, package_, document_part_
 
     @pytest.fixture
-    def open_fixture(
-            self, request, docx_, OpcPackage_, _Document_, package_,
-            document_part_):
-        return docx_, OpcPackage_, _Document_, package_, document_part_
+    def Package_(self, request, package_):
+        Package_ = class_mock(request, 'docx.api.Package')
+        Package_.open.return_value = package_
+        return Package_
 
     @pytest.fixture
     def package_(self, request, document_part_):
-        package_ = instance_mock(request, OpcPackage)
+        package_ = instance_mock(request, Package)
         package_.main_document = document_part_
         return package_
 
@@ -118,7 +117,7 @@ class Describe_Document(object):
 
     @pytest.fixture
     def package_(self, request):
-        return instance_mock(request, OpcPackage)
+        return instance_mock(request, Package)
 
     @pytest.fixture
     def save_fixture(self, request, package_):
