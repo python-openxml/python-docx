@@ -28,6 +28,18 @@ def absjoin(*paths):
     return os.path.abspath(os.path.join(*paths))
 
 
+def docx_path(name):
+    """
+    Return the absolute path to test .docx file with root name *name*.
+    """
+    return absjoin(_thisdir, 'test_files', '%s.docx' % name)
+
+
+# ===========================================================================
+# pytest mocking helpers
+# ===========================================================================
+
+
 def class_mock(request, q_class_name, autospec=True, **kwargs):
     """
     Return a mock patching the class with qualified name *q_class_name*.
