@@ -9,6 +9,25 @@ from __future__ import absolute_import, print_function, unicode_literals
 from docx.opc.package import Part
 
 
+class Image(object):
+    """
+    A helper object that knows how to analyze an image file.
+    """
+    @classmethod
+    def load(self, image_descriptor):
+        """
+        Return a new |Image| instance loaded from the image file identified
+        by *image_descriptor*, a path or file-like object.
+        """
+
+    @property
+    def sha1(self):
+        """
+        SHA1 hash digest of the image blob
+        """
+        raise NotImplementedError
+
+
 class ImagePart(Part):
     """
     An image part. Corresponds to the target part of a relationship with type
@@ -32,6 +51,13 @@ class ImagePart(Part):
         vertical dots per inch (dpi) when available. Default values are
         silently substituted when specific values cannot be parsed from the
         binary image byte stream.
+        """
+        raise NotImplementedError
+
+    @property
+    def sha1(self):
+        """
+        SHA1 hash digest of the blob of this image part.
         """
         raise NotImplementedError
 

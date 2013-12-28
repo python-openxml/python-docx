@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.package import OpcPackage
+from docx.parts.image import Image
 from docx.shared import lazyproperty
 
 
@@ -45,8 +46,8 @@ class Package(OpcPackage):
 
 class ImageParts(object):
     """
-    Collection of |ImagePart| instances containing all the image parts in the
-    package.
+    Collection of |ImagePart| instances corresponding to each image part in
+    the package.
     """
     def __init__(self):
         super(ImageParts, self).__init__()
@@ -67,3 +68,25 @@ class ImageParts(object):
         *image_descriptor*, newly created if a matching one is not present in
         the collection.
         """
+        image = Image.load(image_descriptor)
+        matching_image_part = self._get_by_sha1(image.sha1)
+        if matching_image_part is not None:
+            return matching_image_part
+        return self._add_image_part(image)
+
+    def _add_image_part(self, image):
+        """
+        Return the image part in this collection having a SHA1 hash matching
+        *sha1*, or |None| if not found.
+        """
+        raise NotImplementedError
+
+    def _get_by_sha1(self, sha1):
+        """
+        Return the image part in this collection having a SHA1 hash matching
+        *sha1*, or |None| if not found.
+        """
+        for image_part in self._image_parts:
+            if image_part.sha1 == sha1:
+                return image_part
+        return None
