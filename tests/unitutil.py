@@ -35,6 +35,13 @@ def docx_path(name):
     return absjoin(_thisdir, 'test_files', '%s.docx' % name)
 
 
+def test_file(name):
+    """
+    Return the absolute path to test file having *name*.
+    """
+    return absjoin(_thisdir, 'test_files', name)
+
+
 # ===========================================================================
 # pytest mocking helpers
 # ===========================================================================

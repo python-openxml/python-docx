@@ -6,26 +6,54 @@ The proxy class for an image part, and related objects.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import hashlib
+import os
+
 from docx.opc.package import Part
+from docx.shared import lazyproperty
 
 
 class Image(object):
     """
     A helper object that knows how to analyze an image file.
     """
+    def __init__(self, blob, filename):
+        super(Image, self).__init__()
+        self._blob = blob
+        self._filename = filename
+
+    @property
+    def filename(self):
+        """
+        Original image file name, if loaded from disk, or a generic filename
+        if loaded from an anonymous stream.
+        """
+        return self._filename
+
     @classmethod
-    def load(self, image_descriptor):
+    def load(cls, image_descriptor):
         """
         Return a new |Image| instance loaded from the image file identified
         by *image_descriptor*, a path or file-like object.
         """
+        if isinstance(image_descriptor, basestring):
+            path = image_descriptor
+            with open(path, 'rb') as f:
+                blob = f.read()
+            filename = os.path.basename(path)
+        else:
+            stream = image_descriptor
+            stream.seek(0)
+            blob = stream.read()
+            filename = None
+        return cls(blob, filename)
 
-    @property
+    @lazyproperty
     def sha1(self):
         """
         SHA1 hash digest of the image blob
         """
-        raise NotImplementedError
+        return hashlib.sha1(self._blob).hexdigest()
 
 
 class ImagePart(Part):
