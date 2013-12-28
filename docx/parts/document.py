@@ -8,6 +8,7 @@ from docx.enum.shape import WD_INLINE_SHAPE
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.package import Part
+from docx.oxml.shape import CT_Inline, CT_Picture
 from docx.oxml.shared import nsmap, oxml_fromstring
 from docx.shared import lazyproperty, Parented
 from docx.table import Table
@@ -146,20 +147,20 @@ class InlineShape(object):
         self._inline = inline
 
     @classmethod
-    def new_picture(cls, r, image, rId, shape_id):
+    def new_picture(cls, r, image_part, rId, shape_id):
         """
         Return a new |InlineShape| instance containing an inline picture
-        placement of the image part *image* appended to run *r* and
-        uniquely identified by *shape_id*.
+        placement of *image_part* appended to run *r* and uniquely identified
+        by *shape_id*.
         """
-        # width, height, filename = (
-        #     image.width, image.height, image.filename
-        # )
-        # pic = CT_Picture.new(filename, rId, width, height)
-        # inline = CT_Inline.new_inline(width, height, shape_id, pic)
-        # r.add_drawing(inline)
-        # return cls(inline)
-        raise NotImplementedError
+        width, height, filename = (
+            image_part.width, image_part.height, image_part.filename
+        )
+        pic_id = 0
+        pic = CT_Picture.new(pic_id, filename, rId, width, height)
+        inline = CT_Inline.new(width, height, shape_id, pic)
+        r.add_drawing(inline)
+        return cls(inline)
 
     @property
     def type(self):
@@ -210,10 +211,10 @@ class InlineShapes(Parented):
         end of the document. *image_descriptor* can be a path (a string) or a
         file-like object containing a binary image.
         """
-        rId, image = self.part.get_or_add_image_part(image_descriptor)
+        image_part, rId = self.part.get_or_add_image_part(image_descriptor)
         shape_id = self.part.next_id
         r = self._body.add_p().add_r()
-        return InlineShape.new_picture(r, image, rId, shape_id)
+        return InlineShape.new_picture(r, image_part, rId, shape_id)
 
     @property
     def _inline_lst(self):

@@ -22,7 +22,9 @@ from docx.table import Table
 from docx.text import Paragraph
 
 from ..oxml.unitdata.dml import (
-    a_blip, a_blipFill, a_drawing, a_graphic, a_graphicData, a_pic, an_inline
+    a_blip, a_blipFill, a_cNvPr, a_cNvPicPr, a_docPr, a_drawing, a_fillRect,
+    a_graphic, a_graphicData, a_pic, a_prstGeom, a_stretch, an_ext,
+    an_extent, an_inline, an_nvPicPr, an_off, an_spPr, an_xfrm
 )
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.table import (
@@ -350,7 +352,53 @@ class DescribeInlineShape(object):
         inline_shape, inline_shape_type = shape_type_fixture
         assert inline_shape.type == inline_shape_type
 
+    def it_can_contruct_a_new_inline_picture_shape(
+            self, new_picture_fixture):
+        inline_shape, r, image_part_, rId, shape_id, expected_inline_xml = (
+            new_picture_fixture
+        )
+        picture = inline_shape.new_picture(r, image_part_, rId, shape_id)
+        assert picture._inline.xml == expected_inline_xml
+        assert r[0][0] is picture._inline
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def image_params(self):
+        filename = 'foobar.garf'
+        rId = 'rId42'
+        cx, cy = 914422, 223344
+        return filename, rId, cx, cy
+
+    @pytest.fixture
+    def image_part_(self, request, image_params):
+        filename, rId, cx, cy = image_params
+        image_part_ = instance_mock(request, ImagePart)
+        image_part_.width = str(cx)
+        image_part_.height = str(cy)
+        image_part_.filename = filename
+        return image_part_
+
+    @pytest.fixture
+    def new_picture_fixture(self, request, image_part_, image_params):
+        filename, rId, cx, cy = image_params
+        inline_shape = InlineShape(None)
+        r = an_r().with_nsdecls().element
+        shape_id = 7
+        name = 'Picture %d' % shape_id
+        uri = nsmap['pic']
+        expected_inline = (
+            an_inline().with_nsdecls('r', 'wp', 'w').with_child(
+                an_extent().with_cx(cx).with_cy(cy)).with_child(
+                a_docPr().with_id(shape_id).with_name(name)).with_child(
+                a_graphic().with_nsdecls().with_child(
+                    a_graphicData().with_uri(uri).with_child(
+                        self._pic_bldr(filename, rId, cx, cy))))
+        ).element
+        expected_inline_xml = expected_inline.xml
+        return (
+            inline_shape, r, image_part_, rId, shape_id, expected_inline_xml
+        )
 
     @pytest.fixture(params=[
         'embed pic', 'link pic', 'link+embed pic', 'chart', 'smart art',
@@ -410,6 +458,23 @@ class DescribeInlineShape(object):
         ).element
         return inline
 
+    def _pic_bldr(self, name, rId, cx, cy):
+        return (
+            a_pic().with_nsdecls().with_child(
+                an_nvPicPr().with_child(
+                    a_cNvPr().with_id(0).with_name(name)).with_child(
+                    a_cNvPicPr())).with_child(
+                a_blipFill().with_child(
+                    a_blip().with_embed(rId)).with_child(
+                    a_stretch().with_child(
+                        a_fillRect()))).with_child(
+                an_spPr().with_child(
+                    an_xfrm().with_child(
+                        an_off().with_x(0).with_y(0)).with_child(
+                        an_ext().with_cx(cx).with_cy(cy))).with_child(
+                    a_prstGeom().with_prst('rect')))
+        )
+
 
 class DescribeInlineShapes(object):
 
@@ -447,8 +512,9 @@ class DescribeInlineShapes(object):
     def it_can_add_an_inline_picture_to_the_document(
             self, add_picture_fixture):
         # fixture ----------------------
-        (inline_shapes, image_descriptor_, document_, InlineShape_, r_,
-         image_, rId_, shape_id_, new_picture_shape_) = add_picture_fixture
+        (inline_shapes, image_descriptor_, document_, InlineShape_,
+         r_, image_part_, rId_, shape_id_, new_picture_shape_
+         ) = add_picture_fixture
         # exercise ---------------------
         picture_shape = inline_shapes.add_picture(image_descriptor_)
         # verify -----------------------
@@ -456,7 +522,7 @@ class DescribeInlineShapes(object):
             image_descriptor_
         )
         InlineShape_.new_picture.assert_called_once_with(
-            r_, image_, rId_, shape_id_
+            r_, image_part_, rId_, shape_id_
         )
         assert picture_shape is new_picture_shape_
 
@@ -487,7 +553,7 @@ class DescribeInlineShapes(object):
     @pytest.fixture
     def document_(self, request, rId_, image_part_, shape_id_):
         document_ = instance_mock(request, _Document, name='document_')
-        document_.get_or_add_image_part.return_value = rId_, image_part_
+        document_.get_or_add_image_part.return_value = image_part_, rId_
         document_.next_id = shape_id_
         return document_
 

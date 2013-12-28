@@ -84,6 +84,15 @@ def nsdecls(*prefixes):
     return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
 
 
+def nspfxmap(*nspfxs):
+    """
+    Return a dict containing the subset namespace prefix mappings specified by
+    *nspfxs*. Any number of namespace prefixes can be supplied, e.g.
+    namespaces('a', 'r', 'p').
+    """
+    return dict((pfx, nsmap[pfx]) for pfx in nspfxs)
+
+
 def OxmlElement(nsptag_str, attrs=None, nsmap=None):
     """
     Return a 'loose' lxml element having the tag specified by *nsptag_str*.

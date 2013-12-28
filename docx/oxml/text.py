@@ -6,7 +6,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 """
 
 from docx.oxml.shared import (
-    CT_String, nsdecls, OxmlBaseElement, oxml_fromstring, qn
+    CT_String, nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
 )
 
 
@@ -155,13 +155,15 @@ class CT_R(OxmlBaseElement):
     """
     ``<w:r>`` element, containing the properties and text for a run.
     """
-    @staticmethod
-    def new():
+    def add_drawing(self, inline_or_anchor):
         """
-        Return a new ``<w:r>`` element.
+        Return a newly appended ``CT_Drawing`` (``<w:drawing>``) child
+        element having *inline_or_anchor* as its child.
         """
-        xml = '<w:r %s/>' % nsdecls('w')
-        return oxml_fromstring(xml)
+        drawing = OxmlElement('w:drawing')
+        self.append(drawing)
+        drawing.append(inline_or_anchor)
+        return drawing
 
     def add_t(self, text):
         """
@@ -170,6 +172,13 @@ class CT_R(OxmlBaseElement):
         t = CT_Text.new(text)
         self.append(t)
         return t
+
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:r>`` element.
+        """
+        return OxmlElement('w:r')
 
     @property
     def t_lst(self):
