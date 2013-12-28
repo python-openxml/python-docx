@@ -64,9 +64,11 @@ class PackageReader(object):
         """
         sparts = []
         part_walker = PackageReader._walk_phys_parts(phys_reader, pkg_srels)
-        for partname, blob, srels in part_walker:
+        for partname, blob, reltype, srels in part_walker:
             content_type = content_types[partname]
-            spart = _SerializedPart(partname, content_type, blob, srels)
+            spart = _SerializedPart(
+                partname, content_type, reltype, blob, srels
+            )
             sparts.append(spart)
         return tuple(sparts)
 
@@ -83,8 +85,9 @@ class PackageReader(object):
     @staticmethod
     def _walk_phys_parts(phys_reader, srels, visited_partnames=None):
         """
-        Generate a 3-tuple `(partname, blob, srels)` for each of the parts in
-        *phys_reader* by walking the relationship graph rooted at srels.
+        Generate a 4-tuple `(partname, blob, reltype, srels)` for each of the
+        parts in *phys_reader* by walking the relationship graph rooted at
+        srels.
         """
         if visited_partnames is None:
             visited_partnames = []
@@ -95,12 +98,15 @@ class PackageReader(object):
             if partname in visited_partnames:
                 continue
             visited_partnames.append(partname)
+            reltype = srel.reltype
             part_srels = PackageReader._srels_for(phys_reader, partname)
             blob = phys_reader.blob_for(partname)
-            yield (partname, blob, part_srels)
-            for partname, blob, srels in PackageReader._walk_phys_parts(
-                    phys_reader, part_srels, visited_partnames):
-                yield (partname, blob, srels)
+            yield (partname, blob, reltype, part_srels)
+            next_walker = PackageReader._walk_phys_parts(
+                phys_reader, part_srels, visited_partnames
+            )
+            for partname, blob, reltype, srels in next_walker:
+                yield (partname, blob, reltype, srels)
 
 
 class _ContentTypeMap(object):
@@ -149,10 +155,11 @@ class _SerializedPart(object):
     Value object for an OPC package part. Provides access to the partname,
     content type, blob, and serialized relationships for the part.
     """
-    def __init__(self, partname, content_type, blob, srels):
+    def __init__(self, partname, content_type, reltype, blob, srels):
         super(_SerializedPart, self).__init__()
         self._partname = partname
         self._content_type = content_type
+        self._reltype = reltype
         self._blob = blob
         self._srels = srels
 
@@ -167,6 +174,13 @@ class _SerializedPart(object):
     @property
     def blob(self):
         return self._blob
+
+    @property
+    def reltype(self):
+        """
+        The referring relationship type of this part.
+        """
+        return self._reltype
 
     @property
     def srels(self):

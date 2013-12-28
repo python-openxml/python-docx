@@ -28,44 +28,6 @@ def oxml_fromstring(request):
 
 class DescribePackageReader(object):
 
-    @pytest.fixture
-    def from_xml(self, request):
-        return method_mock(request, _ContentTypeMap, 'from_xml')
-
-    @pytest.fixture
-    def init(self, request):
-        return initializer_mock(request, PackageReader)
-
-    @pytest.fixture
-    def _load_serialized_parts(self, request):
-        return method_mock(request, PackageReader, '_load_serialized_parts')
-
-    @pytest.fixture
-    def PhysPkgReader_(self, request):
-        _patch = patch(
-            'docx.opc.pkgreader.PhysPkgReader', spec_set=_ZipPkgReader
-        )
-        request.addfinalizer(_patch.stop)
-        return _patch.start()
-
-    @pytest.fixture
-    def _SerializedPart_(self, request):
-        return class_mock(request, 'docx.opc.pkgreader._SerializedPart')
-
-    @pytest.fixture
-    def _SerializedRelationshipCollection_(self, request):
-        return class_mock(
-            request, 'docx.opc.pkgreader._SerializedRelationshipCollection'
-        )
-
-    @pytest.fixture
-    def _srels_for(self, request):
-        return method_mock(request, PackageReader, '_srels_for')
-
-    @pytest.fixture
-    def _walk_phys_parts(self, request):
-        return method_mock(request, PackageReader, '_walk_phys_parts')
-
     def it_can_construct_from_pkg_file(self, init, PhysPkgReader_, from_xml,
                                        _srels_for, _load_serialized_parts):
         # mockery ----------------------
@@ -125,10 +87,12 @@ class DescribePackageReader(object):
     def it_can_load_serialized_parts(self, _SerializedPart_, _walk_phys_parts):
         # test data --------------------
         test_data = (
-            ('/part/name1.xml', 'app/vnd.type_1', '<Part_1/>', 'srels_1'),
-            ('/part/name2.xml', 'app/vnd.type_2', '<Part_2/>', 'srels_2'),
+            ('/part/name1.xml', 'app/vnd.type_1', 'reltype1', '<Part_1/>',
+             'srels_1'),
+            ('/part/name2.xml', 'app/vnd.type_2', 'reltype2', '<Part_2/>',
+             'srels_2'),
         )
-        iter_vals = [(t[0], t[2], t[3]) for t in test_data]
+        iter_vals = [(t[0], t[2], t[3], t[4]) for t in test_data]
         content_types = dict((t[0], t[1]) for t in test_data)
         # mockery ----------------------
         phys_reader = Mock(name='phys_reader')
@@ -138,12 +102,15 @@ class DescribePackageReader(object):
             Mock(name='spart_1'), Mock(name='spart_2')
         )
         # exercise ---------------------
-        retval = PackageReader._load_serialized_parts(phys_reader, pkg_srels,
-                                                      content_types)
+        retval = PackageReader._load_serialized_parts(
+            phys_reader, pkg_srels, content_types
+        )
         # verify -----------------------
         expected_calls = [
-            call('/part/name1.xml', 'app/vnd.type_1', '<Part_1/>', 'srels_1'),
-            call('/part/name2.xml', 'app/vnd.type_2', '<Part_2/>', 'srels_2'),
+            call('/part/name1.xml', 'app/vnd.type_1', '<Part_1/>',
+                 'reltype1', 'srels_1'),
+            call('/part/name2.xml', 'app/vnd.type_2', '<Part_2/>',
+                 'reltype2', 'srels_2'),
         ]
         assert _SerializedPart_.call_args_list == expected_calls
         assert retval == expected_sparts
@@ -164,12 +131,17 @@ class DescribePackageReader(object):
         part_1_blob, part_2_blob, part_3_blob = (
             '<Part_1/>', '<Part_2/>', '<Part_3/>'
         )
+        reltype1, reltype2, reltype3 = ('reltype1', 'reltype2', 'reltype3')
         srels = [
             Mock(name='rId1', is_external=True),
-            Mock(name='rId2', is_external=False, target_partname=partname_1),
-            Mock(name='rId3', is_external=False, target_partname=partname_2),
-            Mock(name='rId4', is_external=False, target_partname=partname_1),
-            Mock(name='rId5', is_external=False, target_partname=partname_3),
+            Mock(name='rId2', is_external=False, reltype=reltype1,
+                 target_partname=partname_1),
+            Mock(name='rId3', is_external=False, reltype=reltype2,
+                 target_partname=partname_2),
+            Mock(name='rId4', is_external=False, reltype=reltype1,
+                 target_partname=partname_1),
+            Mock(name='rId5', is_external=False, reltype=reltype3,
+                 target_partname=partname_3),
         ]
         pkg_srels = srels[:2]
         part_1_srels = srels[2:3]
@@ -182,13 +154,14 @@ class DescribePackageReader(object):
             part_1_blob, part_2_blob, part_3_blob
         ]
         # exercise ---------------------
-        generated_tuples = [t for t in PackageReader._walk_phys_parts(
-            phys_reader, pkg_srels)]
+        generated_tuples = list(
+            PackageReader._walk_phys_parts(phys_reader, pkg_srels)
+        )
         # verify -----------------------
         expected_tuples = [
-            (partname_1, part_1_blob, part_1_srels),
-            (partname_2, part_2_blob, part_2_srels),
-            (partname_3, part_3_blob, part_3_srels),
+            (partname_1, part_1_blob, reltype1, part_1_srels),
+            (partname_2, part_2_blob, reltype2, part_2_srels),
+            (partname_3, part_3_blob, reltype3, part_3_srels),
         ]
         assert generated_tuples == expected_tuples
 
@@ -206,6 +179,46 @@ class DescribePackageReader(object):
         phys_reader.rels_xml_for.assert_called_once_with(source_uri)
         load_from_xml.assert_called_once_with(source_uri.baseURI, rels_xml)
         assert retval == srels
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_xml(self, request):
+        return method_mock(request, _ContentTypeMap, 'from_xml')
+
+    @pytest.fixture
+    def init(self, request):
+        return initializer_mock(request, PackageReader)
+
+    @pytest.fixture
+    def _load_serialized_parts(self, request):
+        return method_mock(request, PackageReader, '_load_serialized_parts')
+
+    @pytest.fixture
+    def PhysPkgReader_(self, request):
+        _patch = patch(
+            'docx.opc.pkgreader.PhysPkgReader', spec_set=_ZipPkgReader
+        )
+        request.addfinalizer(_patch.stop)
+        return _patch.start()
+
+    @pytest.fixture
+    def _SerializedPart_(self, request):
+        return class_mock(request, 'docx.opc.pkgreader._SerializedPart')
+
+    @pytest.fixture
+    def _SerializedRelationshipCollection_(self, request):
+        return class_mock(
+            request, 'docx.opc.pkgreader._SerializedRelationshipCollection'
+        )
+
+    @pytest.fixture
+    def _srels_for(self, request):
+        return method_mock(request, PackageReader, '_srels_for')
+
+    @pytest.fixture
+    def _walk_phys_parts(self, request):
+        return method_mock(request, PackageReader, '_walk_phys_parts')
 
 
 class Describe_ContentTypeMap(object):
@@ -284,13 +297,15 @@ class Describe_SerializedPart(object):
         # test data --------------------
         partname = '/part/name.xml'
         content_type = 'app/vnd.type'
+        reltype = 'http://rel/type'
         blob = '<Part/>'
         srels = 'srels proxy'
         # exercise ---------------------
-        spart = _SerializedPart(partname, content_type, blob, srels)
+        spart = _SerializedPart(partname, content_type, reltype, blob, srels)
         # verify -----------------------
         assert spart.partname == partname
         assert spart.content_type == content_type
+        assert spart.reltype == reltype
         assert spart.blob == blob
         assert spart.srels == srels
 
