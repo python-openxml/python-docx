@@ -36,6 +36,16 @@ class DescribeImageParts(object):
         image_parts._add_image_part.assert_called_once_with(image_)
         assert image_part is image_part_
 
+    def it_can_really_add_a_new_image_part(
+            self, really_add_image_part_fixture):
+        image_parts, image_, ImagePart_, image_part_ = (
+            really_add_image_part_fixture
+        )
+        image_part = image_parts._add_image_part(image_)
+        ImagePart_.from_image.assert_called_once_with(image_)
+        assert image_part in image_parts
+        assert image_part is image_part_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -75,6 +85,12 @@ class DescribeImageParts(object):
         return instance_mock(request, str)
 
     @pytest.fixture
+    def ImagePart_(self, request, image_part_):
+        ImagePart_ = class_mock(request, 'docx.package.ImagePart')
+        ImagePart_.from_image.return_value = image_part_
+        return ImagePart_
+
+    @pytest.fixture
     def image_part_(self, request, sha1):
         image_part_ = instance_mock(request, ImagePart)
         image_part_.sha1 = sha1
@@ -83,6 +99,11 @@ class DescribeImageParts(object):
     @pytest.fixture
     def new_image_part_(self, request):
         return instance_mock(request, ImagePart)
+
+    @pytest.fixture
+    def really_add_image_part_fixture(self, image_, ImagePart_, image_part_):
+        image_parts = ImageParts()
+        return image_parts, image_, ImagePart_, image_part_
 
     @pytest.fixture
     def sha1(self):

@@ -72,6 +72,13 @@ class ImagePart(Part):
         """
         raise NotImplementedError
 
+    @classmethod
+    def from_image(cls, image):
+        """
+        Return an |ImagePart| instance newly created from *image*.
+        """
+        raise NotImplementedError
+
     @property
     def height(self):
         """

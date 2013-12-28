@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.package import OpcPackage
-from docx.parts.image import Image
+from docx.parts.image import Image, ImagePart
 from docx.shared import lazyproperty
 
 
@@ -76,10 +76,12 @@ class ImageParts(object):
 
     def _add_image_part(self, image):
         """
-        Return the image part in this collection having a SHA1 hash matching
-        *sha1*, or |None| if not found.
+        Return an |ImagePart| instance newly created from image and appended
+        to the collection.
         """
-        raise NotImplementedError
+        image_part = ImagePart.from_image(image)
+        self.append(image_part)
+        return image_part
 
     def _get_by_sha1(self, sha1):
         """
