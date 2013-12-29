@@ -16,7 +16,9 @@ from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.shared import nsmap
 from docx.oxml.text import CT_R
 from docx.package import ImageParts, Package
-from docx.parts.document import _Body, _Document, InlineShape, InlineShapes
+from docx.parts.document import (
+    _Body, DocumentPart, InlineShape, InlineShapes
+)
 from docx.parts.image import ImagePart
 from docx.table import Table
 from docx.text import Paragraph
@@ -49,13 +51,13 @@ class Describe_Document(object):
         )
         oxml_fromstring_.return_value = document_elm
         # exercise ---------------------
-        doc = _Document.load(partname, content_type, blob, package)
+        doc = DocumentPart.load(partname, content_type, blob, package)
         # verify -----------------------
         oxml_fromstring_.assert_called_once_with(blob)
         init.assert_called_once_with(
             partname, content_type, document_elm, package
         )
-        assert isinstance(doc, _Document)
+        assert isinstance(doc, DocumentPart)
 
     def it_can_add_an_image_part_to_the_document(
             self, get_or_add_image_fixture):
@@ -99,12 +101,12 @@ class Describe_Document(object):
 
     @pytest.fixture
     def document(self):
-        return _Document(None, None, None, None)
+        return DocumentPart(None, None, None, None)
 
     @pytest.fixture
     def document_blob_fixture(self, request, serialize_part_xml_):
         document_elm = instance_mock(request, CT_Document)
-        document = _Document(None, None, document_elm, None)
+        document = DocumentPart(None, None, document_elm, None)
         return document, document_elm, serialize_part_xml_
 
     @pytest.fixture
@@ -114,7 +116,7 @@ class Describe_Document(object):
                 a_body())
         ).element
         body_elm = document_elm[0]
-        document = _Document(None, None, document_elm, None)
+        document = DocumentPart(None, None, document_elm, None)
         return document, _Body_, body_elm
 
     @pytest.fixture
@@ -125,7 +127,7 @@ class Describe_Document(object):
     def get_or_add_image_fixture(
             self, request, package_, image_descriptor_, image_parts_,
             relate_to_, image_part_, rId_):
-        document = _Document(None, None, None, package_)
+        document = DocumentPart(None, None, None, package_)
         return (
             document, image_descriptor_, image_parts_, relate_to_,
             image_part_, rId_
@@ -147,7 +149,7 @@ class Describe_Document(object):
 
     @pytest.fixture
     def init(self, request):
-        return initializer_mock(request, _Document)
+        return initializer_mock(request, DocumentPart)
 
     @pytest.fixture
     def InlineShapes_(self, request):
@@ -160,7 +162,7 @@ class Describe_Document(object):
                 a_body())
         ).element
         body_elm = document_elm[0]
-        document = _Document(None, None, document_elm, None)
+        document = DocumentPart(None, None, document_elm, None)
         return document, InlineShapes_, body_elm
 
     @pytest.fixture(params=[
@@ -174,7 +176,7 @@ class Describe_Document(object):
             p = a_p().with_nsdecls().element
             p.set('id', str(n))
             document_elm.append(p)
-        document = _Document(None, None, document_elm, None)
+        document = DocumentPart(None, None, document_elm, None)
         return document, expected_id
 
     @pytest.fixture
@@ -189,7 +191,7 @@ class Describe_Document(object):
 
     @pytest.fixture
     def relate_to_(self, request, rId_):
-        relate_to_ = method_mock(request, _Document, 'relate_to')
+        relate_to_ = method_mock(request, DocumentPart, 'relate_to')
         relate_to_.return_value = rId_
         return relate_to_
 
@@ -552,7 +554,7 @@ class DescribeInlineShapes(object):
 
     @pytest.fixture
     def document_(self, request, rId_, image_part_, shape_id_):
-        document_ = instance_mock(request, _Document, name='document_')
+        document_ = instance_mock(request, DocumentPart, name='document_')
         document_.get_or_add_image_part.return_value = image_part_, rId_
         document_.next_id = shape_id_
         return document_

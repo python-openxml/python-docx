@@ -15,12 +15,12 @@ from docx.table import Table
 from docx.text import Paragraph
 
 
-class _Document(Part):
+class DocumentPart(Part):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
     def __init__(self, partname, content_type, document_elm, package):
-        super(_Document, self).__init__(
+        super(DocumentPart, self).__init__(
             partname, content_type, package=package
         )
         self._element = document_elm
@@ -57,10 +57,10 @@ class _Document(Part):
         """
         return InlineShapes(self._element.body, self)
 
-    @staticmethod
-    def load(partname, content_type, blob, package):
+    @classmethod
+    def load(cls, partname, content_type, blob, package):
         document_elm = oxml_fromstring(blob)
-        document = _Document(partname, content_type, document_elm, package)
+        document = cls(partname, content_type, document_elm, package)
         return document
 
     @property
