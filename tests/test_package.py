@@ -8,10 +8,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.opc.packuri import PackURI
 from docx.package import ImageParts, Package
 from docx.parts.image import Image, ImagePart
 
-from .unitutil import class_mock, docx_path, instance_mock, method_mock
+from .unitutil import (
+    docx_path, class_mock, instance_mock, method_mock, property_mock
+)
 
 
 class DescribePackage(object):
@@ -38,11 +41,11 @@ class DescribeImageParts(object):
 
     def it_can_really_add_a_new_image_part(
             self, really_add_image_part_fixture):
-        image_parts, image_, ImagePart_, image_part_ = (
+        image_parts, image_, ImagePart_, partname_, image_part_ = (
             really_add_image_part_fixture
         )
         image_part = image_parts._add_image_part(image_)
-        ImagePart_.from_image.assert_called_once_with(image_)
+        ImagePart_.from_image.assert_called_once_with(image_, partname_)
         assert image_part in image_parts
         assert image_part is image_part_
 
@@ -101,9 +104,20 @@ class DescribeImageParts(object):
         return instance_mock(request, ImagePart)
 
     @pytest.fixture
-    def really_add_image_part_fixture(self, image_, ImagePart_, image_part_):
+    def _next_image_partname_(self, request):
+        return property_mock(request, ImageParts, '_next_image_partname')
+
+    @pytest.fixture
+    def partname_(self, request):
+        return instance_mock(request, PackURI)
+
+    @pytest.fixture
+    def really_add_image_part_fixture(
+            self, _next_image_partname_, partname_, image_, ImagePart_,
+            image_part_):
         image_parts = ImageParts()
-        return image_parts, image_, ImagePart_, image_part_
+        _next_image_partname_.return_value = partname_
+        return image_parts, image_, ImagePart_, partname_, image_part_
 
     @pytest.fixture
     def sha1(self):

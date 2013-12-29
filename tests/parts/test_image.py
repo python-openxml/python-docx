@@ -14,7 +14,9 @@ from docx.opc.packuri import PackURI
 from docx.package import Package
 from docx.parts.image import Image, ImagePart
 
-from ..unitutil import instance_mock, method_mock, test_file
+from ..unitutil import (
+    initializer_mock, instance_mock, method_mock, test_file
+)
 
 
 class DescribeImage(object):
@@ -52,11 +54,31 @@ class DescribeImagePart(object):
         )
         assert part is image_part_
 
+    def it_can_construct_from_image_instance(self, from_image_fixture):
+        image_, partname_, ImagePart__init__ = from_image_fixture
+        image_part = ImagePart.from_image(image_, partname_)
+        ImagePart__init__.assert_called_once_with(
+            partname_, image_.content_type, image_.blob, image_
+        )
+        assert isinstance(image_part, ImagePart)
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def blob_(self, request):
         return instance_mock(request, str)
+
+    @pytest.fixture
+    def from_image_fixture(self, image_, partname_, ImagePart__init__):
+        return image_, partname_, ImagePart__init__
+
+    @pytest.fixture
+    def image_(self, request):
+        return instance_mock(request, Image)
+
+    @pytest.fixture
+    def ImagePart__init__(self, request):
+        return initializer_mock(request, ImagePart)
 
     @pytest.fixture
     def image_part_(self, request):

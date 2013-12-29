@@ -79,7 +79,8 @@ class ImageParts(object):
         Return an |ImagePart| instance newly created from image and appended
         to the collection.
         """
-        image_part = ImagePart.from_image(image)
+        partname = self._next_image_partname
+        image_part = ImagePart.from_image(image, partname)
         self.append(image_part)
         return image_part
 
@@ -92,3 +93,11 @@ class ImageParts(object):
             if image_part.sha1 == sha1:
                 return image_part
         return None
+
+    @property
+    def _next_image_partname(self):
+        """
+        The next available image partname, starting from
+        ``/word/media/image1.{ext}`` where unused numbers are reused.
+        """
+        raise NotImplementedError

@@ -23,6 +23,20 @@ class Image(object):
         self._filename = filename
 
     @property
+    def blob(self):
+        """
+        The bytes of the image 'file'
+        """
+        return self._blob
+
+    @property
+    def content_type(self):
+        """
+        The MIME type of the image, e.g. 'image/png'.
+        """
+        raise NotImplementedError
+
+    @property
     def filename(self):
         """
         Original image file name, if loaded from disk, or a generic filename
@@ -73,11 +87,12 @@ class ImagePart(Part):
         raise NotImplementedError
 
     @classmethod
-    def from_image(cls, image):
+    def from_image(cls, image, partname):
         """
-        Return an |ImagePart| instance newly created from *image*.
+        Return an |ImagePart| instance newly created from *image* and
+        assigned *partname*.
         """
-        raise NotImplementedError
+        return ImagePart(partname, image.content_type, image.blob, image)
 
     @property
     def height(self):
