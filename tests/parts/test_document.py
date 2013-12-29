@@ -11,7 +11,9 @@ import pytest
 from mock import Mock
 
 from docx.enum.shape import WD_INLINE_SHAPE
-from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
+from docx.opc.package import PartFactory
+from docx.opc.packuri import PackURI
 from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.shared import nsmap
 from docx.oxml.text import CT_R
@@ -39,7 +41,23 @@ from ..unitutil import (
 )
 
 
-class Describe_Document(object):
+class DescribeDocumentPart(object):
+
+    def it_is_used_by_PartFactory_to_construct_main_document_part(
+            self, part_load_fixture):
+        # fixture ----------------------
+        document_part_load_, partname_, blob_, package_, document_part_ = (
+            part_load_fixture
+        )
+        content_type = CT.WML_DOCUMENT_MAIN
+        reltype = RT.OFFICE_DOCUMENT
+        # exercise ---------------------
+        part = PartFactory(partname_, content_type, reltype, blob_, package_)
+        # verify -----------------------
+        document_part_load_.assert_called_once_with(
+            partname_, content_type, blob_, package_
+        )
+        assert part is document_part_
 
     def it_can_be_constructed_by_opc_part_factory(
             self, oxml_fromstring_, init):
@@ -100,6 +118,18 @@ class Describe_Document(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
+    def _Body_(self, request):
+        return class_mock(request, 'docx.parts.document._Body')
+
+    @pytest.fixture
+    def blob_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def content_type_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
     def document(self):
         return DocumentPart(None, None, None, None)
 
@@ -120,13 +150,18 @@ class Describe_Document(object):
         return document, _Body_, body_elm
 
     @pytest.fixture
-    def _Body_(self, request):
-        return class_mock(request, 'docx.parts.document._Body')
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def document_part_load_(self, request):
+        return method_mock(request, DocumentPart, 'load')
 
     @pytest.fixture
     def get_or_add_image_fixture(
             self, request, package_, image_descriptor_, image_parts_,
             relate_to_, image_part_, rId_):
+        package_.image_parts = image_parts_
         document = DocumentPart(None, None, None, package_)
         return (
             document, image_descriptor_, image_parts_, relate_to_,
@@ -185,9 +220,20 @@ class Describe_Document(object):
 
     @pytest.fixture
     def package_(self, request, image_parts_):
-        package_ = instance_mock(request, Package)
-        package_.image_parts = image_parts_
-        return package_
+        return instance_mock(request, Package)
+
+    @pytest.fixture
+    def part_load_fixture(
+            self, document_part_load_, partname_, blob_, package_,
+            document_part_):
+        document_part_load_.return_value = document_part_
+        return (
+            document_part_load_, partname_, blob_, package_, document_part_
+        )
+
+    @pytest.fixture
+    def partname_(self, request):
+        return instance_mock(request, PackURI)
 
     @pytest.fixture
     def relate_to_(self, request, rId_):

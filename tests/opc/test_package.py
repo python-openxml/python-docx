@@ -461,14 +461,6 @@ class DescribePartFactory(object):
         return CustomPartClass_
 
     @pytest.fixture
-    def part_of_custom_type_(self, request):
-        return instance_mock(request, Part)
-
-    @pytest.fixture
-    def part_of_default_type_(self, request):
-        return instance_mock(request, Part)
-
-    @pytest.fixture
     def DefaultPartClass_(self, request, part_of_default_type_):
         DefaultPartClass_ = cls_attr_mock(
             request, PartFactory, 'default_part_type'
@@ -483,6 +475,14 @@ class DescribePartFactory(object):
     @pytest.fixture
     def package_2_(self, request):
         return instance_mock(request, OpcPackage)
+
+    @pytest.fixture
+    def part_of_custom_type_(self, request):
+        return instance_mock(request, Part)
+
+    @pytest.fixture
+    def part_of_default_type_(self, request):
+        return instance_mock(request, Part)
 
     @pytest.fixture
     def partname_(self, request):
