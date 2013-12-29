@@ -317,13 +317,26 @@ class Part(object):
 class PartFactory(object):
     """
     Provides a way for client code to specify a subclass of |Part| to be
-    constructed by |Unmarshaller| based on its content type.
+    constructed by |Unmarshaller| based on its content type and/or a custom
+    callable. Setting ``PartFactory.part_class_selector`` to a callable
+    object will cause that object to be called with the parameters
+    ``content_type, reltype``, once for each part in the package. If the
+    callable returns an object, it is used as the class for that part. If it
+    returns |None|, part class selection falls back to the content type map
+    defined in ``PartFactory.part_type_for``. If no class is returned from
+    either of these, the class contained in ``PartFactory.default_part_type``
+    is used to construct the part, which is by default ``opc.package.Part``.
     """
+    part_class_selector = None
     part_type_for = {}
     default_part_type = Part
 
     def __new__(cls, partname, content_type, reltype, blob, package):
-        PartClass = cls._part_cls_for(content_type)
+        PartClass = None
+        if cls.part_class_selector is not None:
+            PartClass = cls.part_class_selector(content_type, reltype)
+        if PartClass is None:
+            PartClass = cls._part_cls_for(content_type)
         return PartClass.load(partname, content_type, blob, package)
 
     @classmethod

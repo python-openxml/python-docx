@@ -381,39 +381,88 @@ class DescribePartRelsProxyInterface(object):
 
 class DescribePartFactory(object):
 
+    def it_constructs_part_from_selector_if_defined(
+            self, cls_selector_fixture):
+        # fixture ----------------------
+        (cls_selector_fn_, partname, content_type, reltype, blob, package,
+         CustomPartClass_, part_of_custom_type_) = cls_selector_fixture
+        # exercise ---------------------
+        PartFactory.part_class_selector = cls_selector_fn_
+        part = PartFactory(partname, content_type, reltype, blob, package)
+        # verify -----------------------
+        cls_selector_fn_.assert_called_once_with(content_type, reltype)
+        CustomPartClass_.load.assert_called_once_with(
+            partname, content_type, blob, package
+        )
+        assert part is part_of_custom_type_
+
     def it_constructs_custom_part_type_for_registered_content_types(
             self, part_args_, CustomPartClass_, part_of_custom_type_):
         # fixture ----------------------
-        partname, content_type, reltype, pkg, blob = part_args_
+        partname, content_type, reltype, package, blob = part_args_
         # exercise ---------------------
         PartFactory.part_type_for[content_type] = CustomPartClass_
-        part = PartFactory(partname, content_type, reltype, pkg, blob)
+        part = PartFactory(partname, content_type, reltype, blob, package)
         # verify -----------------------
         CustomPartClass_.load.assert_called_once_with(
-            partname, content_type, pkg, blob
+            partname, content_type, blob, package
         )
         assert part is part_of_custom_type_
 
     def it_constructs_part_using_default_class_when_no_custom_registered(
             self, part_args_2_, DefaultPartClass_, part_of_default_type_):
-        partname, content_type, reltype, pkg, blob = part_args_2_
-        part = PartFactory(partname, content_type, reltype, pkg, blob)
+        partname, content_type, reltype, blob, package = part_args_2_
+        part = PartFactory(partname, content_type, reltype, blob, package)
         DefaultPartClass_.load.assert_called_once_with(
-            partname, content_type, pkg, blob
+            partname, content_type, blob, package
         )
         assert part is part_of_default_type_
 
     # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def part_of_custom_type_(self, request):
-        return instance_mock(request, Part)
+    def blob_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def blob_2_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def cls_selector_fixture(
+            self, request, cls_selector_fn_, partname_, content_type_,
+            reltype_, blob_, package_, CustomPartClass_,
+            part_of_custom_type_):
+        def reset_part_class_selector():
+            PartFactory.part_class_selector = original_part_class_selector
+        original_part_class_selector = PartFactory.part_class_selector
+        request.addfinalizer(reset_part_class_selector)
+        return (
+            cls_selector_fn_, partname_, content_type_, reltype_,
+            blob_, package_, CustomPartClass_, part_of_custom_type_
+        )
+
+    @pytest.fixture
+    def cls_selector_fn_(self, request, CustomPartClass_):
+        return loose_mock(request, return_value=CustomPartClass_)
+
+    @pytest.fixture
+    def content_type_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def content_type_2_(self, request):
+        return instance_mock(request, str)
 
     @pytest.fixture
     def CustomPartClass_(self, request, part_of_custom_type_):
         CustomPartClass_ = Mock(name='CustomPartClass', spec=Part)
         CustomPartClass_.load.return_value = part_of_custom_type_
         return CustomPartClass_
+
+    @pytest.fixture
+    def part_of_custom_type_(self, request):
+        return instance_mock(request, Part)
 
     @pytest.fixture
     def part_of_default_type_(self, request):
@@ -428,22 +477,40 @@ class DescribePartFactory(object):
         return DefaultPartClass_
 
     @pytest.fixture
-    def part_args_(self, request):
-        partname_ = PackURI('/foo/bar.xml')
-        content_type_ = 'content/type'
-        reltype_ = 'reltype1'
-        pkg_ = instance_mock(request, OpcPackage, name="pkg_")
-        blob_ = b'blob_'
-        return partname_, content_type_, reltype_, pkg_, blob_
+    def package_(self, request):
+        return instance_mock(request, OpcPackage)
 
     @pytest.fixture
-    def part_args_2_(self, request):
-        partname_2_ = PackURI('/bar/foo.xml')
-        content_type_2_ = 'foobar/type'
-        reltype_2_ = 'reltype2'
-        pkg_2_ = instance_mock(request, OpcPackage, name="pkg_2_")
-        blob_2_ = b'blob_2_'
-        return partname_2_, content_type_2_, reltype_2_, pkg_2_, blob_2_
+    def package_2_(self, request):
+        return instance_mock(request, OpcPackage)
+
+    @pytest.fixture
+    def partname_(self, request):
+        return instance_mock(request, PackURI)
+
+    @pytest.fixture
+    def partname_2_(self, request):
+        return instance_mock(request, PackURI)
+
+    @pytest.fixture
+    def part_args_(
+            self, request, partname_, content_type_, reltype_, package_,
+            blob_):
+        return partname_, content_type_, reltype_, blob_, package_
+
+    @pytest.fixture
+    def part_args_2_(
+            self, request, partname_2_, content_type_2_, reltype_2_,
+            package_2_, blob_2_):
+        return partname_2_, content_type_2_, reltype_2_, blob_2_, package_2_
+
+    @pytest.fixture
+    def reltype_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def reltype_2_(self, request):
+        return instance_mock(request, str)
 
 
 class Describe_Relationship(object):
