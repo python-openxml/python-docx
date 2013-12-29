@@ -322,7 +322,7 @@ class PartFactory(object):
     part_type_for = {}
     default_part_type = Part
 
-    def __new__(cls, partname, content_type, blob, package):
+    def __new__(cls, partname, content_type, reltype, blob, package):
         PartClass = cls._part_cls_for(content_type)
         return PartClass.load(partname, content_type, blob, package)
 
@@ -488,7 +488,7 @@ class Unmarshaller(object):
         parts = {}
         for partname, content_type, reltype, blob in pkg_reader.iter_sparts():
             parts[partname] = part_factory(
-                partname, content_type, blob, package
+                partname, content_type, reltype, blob, package
             )
         return parts
 

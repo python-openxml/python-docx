@@ -18,7 +18,6 @@ from docx.opc.package import (
 )
 from docx.opc.pkgreader import PackageReader
 
-# from ..oxml.unitdata.text import an_hlinkClick, an_rPr
 from ..unitutil import (
     cls_attr_mock, class_mock, instance_mock, loose_mock, method_mock
 )
@@ -385,10 +384,10 @@ class DescribePartFactory(object):
     def it_constructs_custom_part_type_for_registered_content_types(
             self, part_args_, CustomPartClass_, part_of_custom_type_):
         # fixture ----------------------
-        partname, content_type, pkg, blob = part_args_
+        partname, content_type, reltype, pkg, blob = part_args_
         # exercise ---------------------
         PartFactory.part_type_for[content_type] = CustomPartClass_
-        part = PartFactory(partname, content_type, pkg, blob)
+        part = PartFactory(partname, content_type, reltype, pkg, blob)
         # verify -----------------------
         CustomPartClass_.load.assert_called_once_with(
             partname, content_type, pkg, blob
@@ -397,8 +396,8 @@ class DescribePartFactory(object):
 
     def it_constructs_part_using_default_class_when_no_custom_registered(
             self, part_args_2_, DefaultPartClass_, part_of_default_type_):
-        partname, content_type, pkg, blob = part_args_2_
-        part = PartFactory(partname, content_type, pkg, blob)
+        partname, content_type, reltype, pkg, blob = part_args_2_
+        part = PartFactory(partname, content_type, reltype, pkg, blob)
         DefaultPartClass_.load.assert_called_once_with(
             partname, content_type, pkg, blob
         )
@@ -432,17 +431,19 @@ class DescribePartFactory(object):
     def part_args_(self, request):
         partname_ = PackURI('/foo/bar.xml')
         content_type_ = 'content/type'
+        reltype_ = 'reltype1'
         pkg_ = instance_mock(request, OpcPackage, name="pkg_")
         blob_ = b'blob_'
-        return partname_, content_type_, pkg_, blob_
+        return partname_, content_type_, reltype_, pkg_, blob_
 
     @pytest.fixture
     def part_args_2_(self, request):
         partname_2_ = PackURI('/bar/foo.xml')
         content_type_2_ = 'foobar/type'
+        reltype_2_ = 'reltype2'
         pkg_2_ = instance_mock(request, OpcPackage, name="pkg_2_")
         blob_2_ = b'blob_2_'
-        return partname_2_, content_type_2_, pkg_2_, blob_2_
+        return partname_2_, content_type_2_, reltype_2_, pkg_2_, blob_2_
 
 
 class Describe_Relationship(object):
@@ -625,10 +626,11 @@ class DescribeUnmarshaller(object):
 
     def it_can_unmarshal_parts(
             self, pkg_reader_, pkg_, part_factory_, parts_dict_, partnames_,
-            content_types_, blobs_):
+            content_types_, reltypes_, blobs_):
         # fixture ----------------------
         partname_, partname_2_ = partnames_
         content_type_, content_type_2_ = content_types_
+        reltype_, reltype_2_ = reltypes_
         blob_, blob_2_ = blobs_
         # exercise ---------------------
         parts = Unmarshaller._unmarshal_parts(
@@ -637,8 +639,8 @@ class DescribeUnmarshaller(object):
         # verify -----------------------
         assert (
             part_factory_.call_args_list == [
-                call(partname_, content_type_, blob_, pkg_),
-                call(partname_2_, content_type_2_, blob_2_, pkg_)
+                call(partname_, content_type_, reltype_, blob_, pkg_),
+                call(partname_2_, content_type_2_, reltype_2_, blob_2_, pkg_)
             ]
         )
         assert parts == parts_dict_
@@ -751,6 +753,7 @@ class DescribeUnmarshaller(object):
         return method_mock(request, Unmarshaller, '_unmarshal_relationships')
 
 
+# from ..oxml.unitdata.text import an_hlinkClick, an_rPr
 # from ..unitutil import (
 #     absjoin, class_mock, cls_attr_mock, instance_mock, loose_mock,
 #     method_mock, test_file_dir
