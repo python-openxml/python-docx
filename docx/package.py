@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.package import OpcPackage
+from docx.opc.packuri import PackURI
 from docx.parts.image import Image, ImagePart
 from docx.shared import lazyproperty
 
@@ -56,6 +57,9 @@ class ImageParts(object):
     def __contains__(self, item):
         return self._image_parts.__contains__(item)
 
+    def __iter__(self):
+        return self._image_parts.__iter__()
+
     def __len__(self):
         return self._image_parts.__len__()
 
@@ -79,7 +83,7 @@ class ImageParts(object):
         Return an |ImagePart| instance newly created from image and appended
         to the collection.
         """
-        partname = self._next_image_partname
+        partname = self._next_image_partname(image.ext)
         image_part = ImagePart.from_image(image, partname)
         self.append(image_part)
         return image_part
@@ -94,10 +98,17 @@ class ImageParts(object):
                 return image_part
         return None
 
-    @property
-    def _next_image_partname(self):
+    def _next_image_partname(self, ext):
         """
         The next available image partname, starting from
-        ``/word/media/image1.{ext}`` where unused numbers are reused.
+        ``/word/media/image1{ext}`` where unused numbers are reused. The
+        partname is unique by number, without regard to the extension. *ext*
+        must include the leading period.
         """
-        raise NotImplementedError
+        def image_partname(n):
+            return PackURI('/word/media/image%d%s' % (n, ext))
+        used_numbers = [image_part.partname.idx for image_part in self]
+        for n in range(1, len(self)+1):
+            if not n in used_numbers:
+                return image_partname(n)
+        return image_partname(len(self)+1)

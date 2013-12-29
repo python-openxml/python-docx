@@ -37,6 +37,15 @@ class Image(object):
         raise NotImplementedError
 
     @property
+    def ext(self):
+        """
+        The file extension for the image. If an actual one is available from
+        a load filename it is used. Otherwise a canonical extension is
+        assigned based on the content type.
+        """
+        raise NotImplementedError
+
+    @property
     def filename(self):
         """
         Original image file name, if loaded from disk, or a generic filename

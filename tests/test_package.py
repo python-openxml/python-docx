@@ -13,7 +13,7 @@ from docx.package import ImageParts, Package
 from docx.parts.image import Image, ImagePart
 
 from .unitutil import (
-    docx_path, class_mock, instance_mock, method_mock, property_mock
+    docx_path, class_mock, instance_mock, method_mock
 )
 
 
@@ -38,6 +38,13 @@ class DescribeImageParts(object):
         image_part = image_parts.get_or_add_image_part(image_descriptor)
         image_parts._add_image_part.assert_called_once_with(image_)
         assert image_part is image_part_
+
+    def it_knows_the_next_available_image_partname(
+            self, next_partname_fixture):
+        image_parts, ext, expected_partname = next_partname_fixture
+        assert image_parts._next_image_partname(ext) == expected_partname
+        print('\n%s' % image_parts._next_image_partname(ext))
+        print(expected_partname)
 
     def it_can_really_add_a_new_image_part(
             self, really_add_image_part_fixture):
@@ -99,13 +106,33 @@ class DescribeImageParts(object):
         image_part_.sha1 = sha1
         return image_part_
 
+    def _image_part_with_partname_(self, request, n):
+        partname = self._image_partname(n)
+        return instance_mock(request, ImagePart, partname=partname)
+
+    def _image_partname(self, n):
+        return PackURI('/word/media/image%d.png' % n)
+
     @pytest.fixture
     def new_image_part_(self, request):
         return instance_mock(request, ImagePart)
 
     @pytest.fixture
     def _next_image_partname_(self, request):
-        return property_mock(request, ImageParts, '_next_image_partname')
+        return method_mock(request, ImageParts, '_next_image_partname')
+
+    @pytest.fixture(params=[((2, 3), 1), ((1, 3), 2), ((1, 2), 3)])
+    def next_partname_fixture(self, request):
+        existing_partname_numbers, expected_partname_number = request.param
+        image_parts = ImageParts()
+        for n in existing_partname_numbers:
+            image_part_ = self._image_part_with_partname_(request, n)
+            image_parts.append(image_part_)
+        ext = '.png'
+        expected_image_partname = self._image_partname(
+            expected_partname_number
+        )
+        return image_parts, ext, expected_image_partname
 
     @pytest.fixture
     def partname_(self, request):
