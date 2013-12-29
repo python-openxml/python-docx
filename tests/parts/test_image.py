@@ -6,9 +6,15 @@ Test suite for docx.parts.image module
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.parts.image import Image
+import pytest
 
-from ..unitutil import test_file
+from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
+from docx.opc.package import PartFactory
+from docx.opc.packuri import PackURI
+from docx.package import Package
+from docx.parts.image import Image, ImagePart
+
+from ..unitutil import instance_mock, method_mock, test_file
 
 
 class DescribeImage(object):
@@ -27,3 +33,50 @@ class DescribeImage(object):
         assert isinstance(image, Image)
         assert image.sha1 == '79769f1e202add2e963158b532e36c2c0f76a70c'
         assert image.filename is None
+
+
+class DescribeImagePart(object):
+
+    def it_is_used_by_PartFactory_to_construct_image_part(self, load_fixture):
+        # fixture ----------------------
+        image_part_load_, partname_, blob_, package_, image_part_ = (
+            load_fixture
+        )
+        content_type = CT.JPEG
+        reltype = RT.IMAGE
+        # exercise ---------------------
+        part = PartFactory(partname_, content_type, reltype, blob_, package_)
+        # verify -----------------------
+        image_part_load_.assert_called_once_with(
+            partname_, content_type, blob_, package_
+        )
+        assert part is image_part_
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def blob_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def image_part_(self, request):
+        return instance_mock(request, ImagePart)
+
+    @pytest.fixture
+    def image_part_load_(self, request, image_part_):
+        return method_mock(
+            request, ImagePart, 'load', return_value=image_part_
+        )
+
+    @pytest.fixture
+    def load_fixture(
+            self, image_part_load_, partname_, blob_, package_, image_part_):
+        return image_part_load_, partname_, blob_, package_, image_part_
+
+    @pytest.fixture
+    def package_(self, request):
+        return instance_mock(request, Package)
+
+    @pytest.fixture
+    def partname_(self, request):
+        return instance_mock(request, PackURI)

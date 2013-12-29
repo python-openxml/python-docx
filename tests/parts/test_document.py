@@ -219,7 +219,7 @@ class DescribeDocumentPart(object):
         return function_mock(request, 'docx.parts.document.oxml_fromstring')
 
     @pytest.fixture
-    def package_(self, request, image_parts_):
+    def package_(self, request):
         return instance_mock(request, Package)
 
     @pytest.fixture

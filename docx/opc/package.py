@@ -334,7 +334,8 @@ class PartFactory(object):
     def __new__(cls, partname, content_type, reltype, blob, package):
         PartClass = None
         if cls.part_class_selector is not None:
-            PartClass = cls.part_class_selector(content_type, reltype)
+            part_class_selector = cls.part_class_selector.__func__
+            PartClass = part_class_selector(content_type, reltype)
         if PartClass is None:
             PartClass = cls._part_cls_for(content_type)
         return PartClass.load(partname, content_type, blob, package)

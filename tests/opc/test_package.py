@@ -390,7 +390,9 @@ class DescribePartFactory(object):
         PartFactory.part_class_selector = cls_selector_fn_
         part = PartFactory(partname, content_type, reltype, blob, package)
         # verify -----------------------
-        cls_selector_fn_.assert_called_once_with(content_type, reltype)
+        cls_selector_fn_.__func__.assert_called_once_with(
+            content_type, reltype
+        )
         CustomPartClass_.load.assert_called_once_with(
             partname, content_type, blob, package
         )
@@ -444,7 +446,11 @@ class DescribePartFactory(object):
 
     @pytest.fixture
     def cls_selector_fn_(self, request, CustomPartClass_):
-        return loose_mock(request, return_value=CustomPartClass_)
+        cls_selector_fn_ = loose_mock(request)
+        cls_selector_fn_.__func__ = loose_mock(
+            request, name='__func__', return_value=CustomPartClass_
+        )
+        return cls_selector_fn_
 
     @pytest.fixture
     def content_type_(self, request):
