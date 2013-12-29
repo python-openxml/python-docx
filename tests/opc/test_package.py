@@ -719,17 +719,25 @@ class DescribeUnmarshaller(object):
         return instance_mock(request, OpcPackage)
 
     @pytest.fixture
-    def pkg_reader_(self, request, partnames_, content_types_, blobs_):
+    def pkg_reader_(
+            self, request, partnames_, content_types_, reltypes_, blobs_):
         partname_, partname_2_ = partnames_
         content_type_, content_type_2_ = content_types_
+        reltype_, reltype_2_ = reltypes_
         blob_, blob_2_ = blobs_
-        spart_return_values = (
-            (partname_, content_type_, blob_),
-            (partname_2_, content_type_2_, blob_2_),
+        iter_spart_items = (
+            (partname_, content_type_, reltype_, blob_),
+            (partname_2_, content_type_2_, reltype_2_, blob_2_),
         )
         pkg_reader_ = instance_mock(request, PackageReader)
-        pkg_reader_.iter_sparts.return_value = spart_return_values
+        pkg_reader_.iter_sparts.return_value = iter_spart_items
         return pkg_reader_
+
+    @pytest.fixture
+    def reltypes_(self, request):
+        reltype_ = instance_mock(request, str, name='reltype_')
+        reltype_2_ = instance_mock(request, str, name='reltype_2')
+        return reltype_, reltype_2_
 
     @pytest.fixture
     def _unmarshal_parts(self, request, parts_dict_):

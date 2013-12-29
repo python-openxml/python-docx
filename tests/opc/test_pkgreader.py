@@ -16,20 +16,17 @@ from docx.opc.pkgreader import (
     _SerializedRelationshipCollection
 )
 
-from ..unitutil import class_mock, initializer_mock, method_mock
-
-
-@pytest.fixture
-def oxml_fromstring(request):
-    _patch = patch('docx.opc.pkgreader.oxml_fromstring')
-    request.addfinalizer(_patch.stop)
-    return _patch.start()
+from ..unitutil import (
+    initializer_mock, class_mock, function_mock, instance_mock, loose_mock,
+    method_mock
+)
 
 
 class DescribePackageReader(object):
 
-    def it_can_construct_from_pkg_file(self, init, PhysPkgReader_, from_xml,
-                                       _srels_for, _load_serialized_parts):
+    def it_can_construct_from_pkg_file(
+            self, init, PhysPkgReader_, from_xml, _srels_for,
+            _load_serialized_parts):
         # mockery ----------------------
         phys_reader = PhysPkgReader_.return_value
         content_types = from_xml.return_value
@@ -48,20 +45,10 @@ class DescribePackageReader(object):
         init.assert_called_once_with(content_types, pkg_srels, sparts)
         assert isinstance(pkg_reader, PackageReader)
 
-    def it_can_iterate_over_the_serialized_parts(self):
-        # mockery ----------------------
-        partname, content_type, blob = ('part/name.xml', 'app/vnd.type',
-                                        '<Part_1/>')
-        spart = Mock(name='spart', partname=partname,
-                     content_type=content_type, blob=blob)
-        pkg_reader = PackageReader(None, None, [spart])
-        iter_count = 0
-        # exercise ---------------------
-        for retval in pkg_reader.iter_sparts():
-            iter_count += 1
-        # verify -----------------------
-        assert retval == (partname, content_type, blob)
-        assert iter_count == 1
+    def it_can_iterate_over_the_serialized_parts(self, iter_sparts_fixture):
+        pkg_reader, expected_iter_spart_items = iter_sparts_fixture
+        iter_spart_items = list(pkg_reader.iter_sparts())
+        assert iter_spart_items == expected_iter_spart_items
 
     def it_can_iterate_over_all_the_srels(self):
         # mockery ----------------------
@@ -183,6 +170,18 @@ class DescribePackageReader(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
+    def blobs_(self, request):
+        blob_ = loose_mock(request, spec=str, name='blob_')
+        blob_2_ = loose_mock(request, spec=str, name='blob_2_')
+        return blob_, blob_2_
+
+    @pytest.fixture
+    def content_types_(self, request):
+        content_type_ = loose_mock(request, spec=str, name='content_type_')
+        content_type_2_ = loose_mock(request, spec=str, name='content_type_2_')
+        return content_type_, content_type_2_
+
+    @pytest.fixture
     def from_xml(self, request):
         return method_mock(request, _ContentTypeMap, 'from_xml')
 
@@ -191,8 +190,24 @@ class DescribePackageReader(object):
         return initializer_mock(request, PackageReader)
 
     @pytest.fixture
+    def iter_sparts_fixture(
+            self, sparts_, partnames_, content_types_, reltypes_, blobs_):
+        pkg_reader = PackageReader(None, None, sparts_)
+        expected_iter_spart_items = [
+            (partnames_[0], content_types_[0], reltypes_[0], blobs_[0]),
+            (partnames_[1], content_types_[1], reltypes_[1], blobs_[1]),
+        ]
+        return pkg_reader, expected_iter_spart_items
+
+    @pytest.fixture
     def _load_serialized_parts(self, request):
         return method_mock(request, PackageReader, '_load_serialized_parts')
+
+    @pytest.fixture
+    def partnames_(self, request):
+        partname_ = loose_mock(request, spec=str, name='partname_')
+        partname_2_ = loose_mock(request, spec=str, name='partname_2_')
+        return partname_, partname_2_
 
     @pytest.fixture
     def PhysPkgReader_(self, request):
@@ -201,6 +216,12 @@ class DescribePackageReader(object):
         )
         request.addfinalizer(_patch.stop)
         return _patch.start()
+
+    @pytest.fixture
+    def reltypes_(self, request):
+        reltype_ = instance_mock(request, str, name='reltype_')
+        reltype_2_ = instance_mock(request, str, name='reltype_2')
+        return reltype_, reltype_2_
 
     @pytest.fixture
     def _SerializedPart_(self, request):
@@ -213,6 +234,20 @@ class DescribePackageReader(object):
         )
 
     @pytest.fixture
+    def sparts_(
+            self, request, partnames_, content_types_, reltypes_, blobs_):
+        sparts_ = []
+        for idx in range(2):
+            name = 'spart_%s' % (('%d_' % (idx+1)) if idx else '')
+            spart_ = instance_mock(
+                request, _SerializedPart, name=name,
+                partname=partnames_[idx], content_type=content_types_[idx],
+                reltype=reltypes_[idx], blob=blobs_[idx]
+            )
+            sparts_.append(spart_)
+        return sparts_
+
+    @pytest.fixture
     def _srels_for(self, request):
         return method_mock(request, PackageReader, '_srels_for')
 
@@ -223,7 +258,7 @@ class DescribePackageReader(object):
 
 class Describe_ContentTypeMap(object):
 
-    def it_can_construct_from_types_xml(self, oxml_fromstring):
+    def it_can_construct_from_types_xml(self, oxml_fromstring_):
         # test data --------------------
         content_types = (
             'app/vnd.type1', 'app/vnd.type2', 'app/vnd.type3',
@@ -249,7 +284,7 @@ class Describe_ContentTypeMap(object):
         types_elm = Mock(
             name='types_elm', overrides=overrides, defaults=defaults
         )
-        oxml_fromstring.return_value = types_elm
+        oxml_fromstring_.return_value = types_elm
         # exercise ---------------------
         ct_map = _ContentTypeMap.from_xml(content_types_xml)
         # verify -----------------------
@@ -259,7 +294,7 @@ class Describe_ContentTypeMap(object):
         expected_defaults = {
             exts[0]: content_types[2], exts[1]: content_types[3]
         }
-        oxml_fromstring.assert_called_once_with(content_types_xml)
+        oxml_fromstring_.assert_called_once_with(content_types_xml)
         assert ct_map._overrides == expected_overrides
         assert ct_map._defaults == expected_defaults
 
@@ -289,6 +324,12 @@ class Describe_ContentTypeMap(object):
         ct_map._overrides = {PackURI('/part/name1.xml'): 'app/vnd.type1'}
         with pytest.raises(KeyError):
             ct_map['/part/name1.xml']
+
+    # fixtures ---------------------------------------------
+
+    @pytest.fixture
+    def oxml_fromstring_(self, request):
+        return function_mock(request, 'docx.opc.pkgreader.oxml_fromstring')
 
 
 class Describe_SerializedPart(object):
@@ -364,7 +405,8 @@ class Describe_SerializedRelationship(object):
 
 class Describe_SerializedRelationshipCollection(object):
 
-    def it_can_load_from_xml(self, oxml_fromstring, _SerializedRelationship_):
+    def it_can_load_from_xml(
+            self, oxml_fromstring_, _SerializedRelationship_):
         # mockery ----------------------
         baseURI, rels_item_xml, rel_elm_1, rel_elm_2 = (
             Mock(name='baseURI'), Mock(name='rels_item_xml'),
@@ -373,7 +415,7 @@ class Describe_SerializedRelationshipCollection(object):
         rels_elm = Mock(
             name='rels_elm', Relationship_lst=[rel_elm_1, rel_elm_2]
         )
-        oxml_fromstring.return_value = rels_elm
+        oxml_fromstring_.return_value = rels_elm
         # exercise ---------------------
         srels = _SerializedRelationshipCollection.load_from_xml(
             baseURI, rels_item_xml)
@@ -382,7 +424,7 @@ class Describe_SerializedRelationshipCollection(object):
             call(baseURI, rel_elm_1),
             call(baseURI, rel_elm_2),
         ]
-        oxml_fromstring.assert_called_once_with(rels_item_xml)
+        oxml_fromstring_.assert_called_once_with(rels_item_xml)
         assert _SerializedRelationship_.call_args_list == expected_calls
         assert isinstance(srels, _SerializedRelationshipCollection)
 
@@ -398,10 +440,8 @@ class Describe_SerializedRelationshipCollection(object):
     # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def oxml_fromstring(self, request):
-        _patch = patch('docx.opc.pkgreader.oxml_fromstring')
-        request.addfinalizer(_patch.stop)
-        return _patch.start()
+    def oxml_fromstring_(self, request):
+        return function_mock(request, 'docx.opc.pkgreader.oxml_fromstring')
 
     @pytest.fixture
     def _SerializedRelationship_(self, request):

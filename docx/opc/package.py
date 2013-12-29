@@ -486,7 +486,7 @@ class Unmarshaller(object):
         *pkg_reader* is constructed using *part_factory*.
         """
         parts = {}
-        for partname, content_type, blob in pkg_reader.iter_sparts():
+        for partname, content_type, reltype, blob in pkg_reader.iter_sparts():
             parts[partname] = part_factory(
                 partname, content_type, blob, package
             )

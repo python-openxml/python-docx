@@ -38,11 +38,11 @@ class PackageReader(object):
 
     def iter_sparts(self):
         """
-        Generate a 3-tuple `(partname, content_type, blob)` for each of the
-        serialized parts in the package.
+        Generate a 4-tuple `(partname, content_type, reltype, blob)` for each
+        of the serialized parts in the package.
         """
-        for spart in self._sparts:
-            yield (spart.partname, spart.content_type, spart.blob)
+        for s in self._sparts:
+            yield (s.partname, s.content_type, s.reltype, s.blob)
 
     def iter_srels(self):
         """
