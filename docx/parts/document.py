@@ -60,8 +60,8 @@ class DocumentPart(Part):
     @classmethod
     def load(cls, partname, content_type, blob, package):
         document_elm = oxml_fromstring(blob)
-        document = cls(partname, content_type, document_elm, package)
-        return document
+        document_part = cls(partname, content_type, document_elm, package)
+        return document_part
 
     @property
     def next_id(self):

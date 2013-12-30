@@ -196,6 +196,10 @@ class ImagePart(Part):
     An image part. Corresponds to the target part of a relationship with type
     RELATIONSHIP_TYPE.IMAGE.
     """
+    def __init__(self, partname, content_type, blob, image=None):
+        super(ImagePart, self).__init__(partname, content_type, blob)
+        self._image = image
+
     @property
     def filename(self):
         """
@@ -224,6 +228,15 @@ class ImagePart(Part):
         binary image byte stream.
         """
         raise NotImplementedError
+
+    @classmethod
+    def load(cls, partname, content_type, blob, package):
+        """
+        Called by ``docx.opc.package.PartFactory`` to load an image part from
+        a package being opened by ``Document(...)`` call.
+        """
+        image_part = cls(partname, content_type, blob)
+        return image_part
 
     @property
     def sha1(self):

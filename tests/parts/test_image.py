@@ -99,7 +99,7 @@ class DescribeImagePart(object):
         )
         assert part is image_part_
 
-    def it_can_construct_from_image_instance(self, from_image_fixture):
+    def it_can_construct_from_an_Image_instance(self, from_image_fixture):
         image_, partname_, ImagePart__init__ = from_image_fixture
         image_part = ImagePart.from_image(image_, partname_)
         ImagePart__init__.assert_called_once_with(
