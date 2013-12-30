@@ -15,6 +15,10 @@ class CT_Blip(OxmlBaseElement):
     alpha and tint.
     """
     @property
+    def embed(self):
+        return self.get(qn('r:embed'))
+
+    @property
     def link(self):
         return self.get(qn('r:link'))
 

@@ -3,7 +3,6 @@ Feature: Add inline picture
   As a python-docx developer
   I need the ability to add an inline picture to a document
 
-  @wip
   Scenario: Add inline picture to document
     Given a document
      When I add an inline picture to the document

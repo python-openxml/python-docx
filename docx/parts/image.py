@@ -259,8 +259,7 @@ class ImagePart(Part):
         Called by ``docx.opc.package.PartFactory`` to load an image part from
         a package being opened by ``Document(...)`` call.
         """
-        image_part = cls(partname, content_type, blob)
-        return image_part
+        return cls(partname, content_type, blob)
 
     @property
     def sha1(self):

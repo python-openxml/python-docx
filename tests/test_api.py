@@ -75,11 +75,11 @@ class Describe_Document(object):
 
     def it_provides_access_to_the_document_body(self, document):
         body = document.body
-        assert body is document._document.body
+        assert body is document._document_part.body
 
     def it_provides_access_to_the_document_inline_shapes(self, document):
         body = document.inline_shapes
-        assert body is document._document.inline_shapes
+        assert body is document._document_part.inline_shapes
 
     def it_can_add_an_inline_picture(self, add_picture_fixture):
         document, inline_shapes, image_path_or_stream_, picture_shape_ = (

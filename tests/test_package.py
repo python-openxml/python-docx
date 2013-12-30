@@ -21,7 +21,10 @@ class DescribePackage(object):
 
     def it_gathers_package_image_parts_after_unmarshalling(self):
         package = Package.open(docx_path('having-images'))
-        assert len(package.image_parts) == 3
+        image_parts = package.image_parts
+        assert len(image_parts) == 3
+        for image_part in image_parts:
+            assert isinstance(image_part, ImagePart)
 
 
 class DescribeImageParts(object):
