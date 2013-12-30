@@ -235,7 +235,9 @@ class ImagePart(Part):
         case a default extension is applied based on the detected MIME type
         of the image.
         """
-        raise NotImplementedError
+        if self._image is not None:
+            return self._image.filename
+        return 'image%s' % self.partname.ext
 
     @classmethod
     def from_image(cls, image, partname):

@@ -112,6 +112,10 @@ class DescribeImagePart(object):
         assert image_part.default_cx == cx
         assert image_part.default_cy == cy
 
+    def it_knows_its_filename(self, filename_fixture):
+        image_part, expected_filename = filename_fixture
+        assert image_part.filename == expected_filename
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -136,6 +140,18 @@ class DescribeImagePart(object):
             image_part = ImagePart.from_image(image, None)
 
         return image_part, expected_cx, expected_cy
+
+    @pytest.fixture(params=['loaded', 'new'])
+    def filename_fixture(self, request, image_):
+        partname = PackURI('/word/media/image666.png')
+        if request.param == 'loaded':
+            image_part = ImagePart(partname, None, None, None)
+            expected_filename = 'image.png'
+        elif request.param == 'new':
+            image_.filename = 'foobar.PXG'
+            image_part = ImagePart(partname, None, None, image_)
+            expected_filename = image_.filename
+        return image_part, expected_filename
 
     @pytest.fixture
     def from_image_fixture(self, image_, partname_, ImagePart__init__):
