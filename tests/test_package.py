@@ -81,7 +81,7 @@ class DescribeImageParts(object):
     @pytest.fixture
     def Image_(self, request, image_):
         Image_ = class_mock(request, 'docx.package.Image')
-        Image_.load.return_value = image_
+        Image_.from_file.return_value = image_
         return Image_
 
     @pytest.fixture

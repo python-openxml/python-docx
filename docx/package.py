@@ -72,7 +72,7 @@ class ImageParts(object):
         *image_descriptor*, newly created if a matching one is not present in
         the collection.
         """
-        image = Image.load(image_descriptor)
+        image = Image.from_file(image_descriptor)
         matching_image_part = self._get_by_sha1(image.sha1)
         if matching_image_part is not None:
             return matching_image_part

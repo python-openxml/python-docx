@@ -73,15 +73,26 @@ class Image(object):
     @classmethod
     def from_blob(cls, blob):
         stream = StringIO(blob)
-        content_type, px_width, px_height, horz_dpi, vert_dpi = (
-            cls._analyze_image(stream)
-        )
-        stream.close()
-        filename = 'image%s' % cls._def_mime_ext(content_type)
-        return cls(
-            blob, filename, content_type, px_width, px_height, horz_dpi,
-            vert_dpi
-        )
+        return cls._from_stream(stream, blob)
+
+    @classmethod
+    def from_file(cls, image_descriptor):
+        """
+        Return a new |Image| instance loaded from the image file identified
+        by *image_descriptor*, a path or file-like object.
+        """
+        if isinstance(image_descriptor, basestring):
+            path = image_descriptor
+            with open(path, 'rb') as f:
+                blob = f.read()
+                stream = StringIO(blob)
+            filename = os.path.basename(path)
+        else:
+            stream = image_descriptor
+            stream.seek(0)
+            blob = stream.read()
+            filename = None
+        return cls._from_stream(stream, blob, filename)
 
     @property
     def horz_dpi(self):
@@ -90,16 +101,6 @@ class Image(object):
         no dpi information is stored in the image, as is often the case.
         """
         return self._horz_dpi
-
-    @classmethod
-    def load(cls, image_descriptor):
-        """
-        Return a new |Image| instance loaded from the image file identified
-        by *image_descriptor*, a path or file-like object.
-        """
-        if isinstance(image_descriptor, basestring):
-            return cls._load_from_path(image_descriptor)
-        return cls._load_from_stream(image_descriptor)
 
     @property
     def px_width(self):
@@ -166,26 +167,12 @@ class Image(object):
         return format_content_types[format]
 
     @classmethod
-    def _load_from_path(cls, path):
-        with open(path, 'rb') as f:
-            blob = f.read()
-            content_type, px_width, px_height, horz_dpi, vert_dpi = (
-                cls._analyze_image(f)
-            )
-        filename = os.path.basename(path)
-        return cls(
-            blob, filename, content_type, px_width, px_height, horz_dpi,
-            vert_dpi
-        )
-
-    @classmethod
-    def _load_from_stream(cls, stream):
-        stream.seek(0)
-        blob = stream.read()
+    def _from_stream(cls, stream, blob, filename=None):
         content_type, px_width, px_height, horz_dpi, vert_dpi = (
             cls._analyze_image(stream)
         )
-        filename = 'image%s' % cls._def_mime_ext(content_type)
+        if filename is None:
+            filename = 'image%s' % cls._def_mime_ext(content_type)
         return cls(
             blob, filename, content_type, px_width, px_height, horz_dpi,
             vert_dpi

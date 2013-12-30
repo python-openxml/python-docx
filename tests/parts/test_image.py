@@ -23,7 +23,7 @@ class DescribeImage(object):
 
     def it_can_construct_from_an_image_path(self):
         image_file_path = test_file('monty-truth.png')
-        image = Image.load(image_file_path)
+        image = Image.from_file(image_file_path)
         assert isinstance(image, Image)
         assert image.sha1 == '79769f1e202add2e963158b532e36c2c0f76a70c'
         assert image.filename == 'monty-truth.png'
@@ -31,20 +31,20 @@ class DescribeImage(object):
     def it_can_construct_from_an_image_stream(self):
         image_file_path = test_file('monty-truth.png')
         with open(image_file_path, 'rb') as image_file_stream:
-            image = Image.load(image_file_stream)
+            image = Image.from_file(image_file_stream)
         assert isinstance(image, Image)
         assert image.sha1 == '79769f1e202add2e963158b532e36c2c0f76a70c'
         assert image.filename == 'image.png'
 
     def it_knows_the_extension_of_a_file_based_image(self):
         image_file_path = test_file('monty-truth.png')
-        image = Image.load(image_file_path)
+        image = Image.from_file(image_file_path)
         assert image.ext == '.png'
 
     def it_knows_the_extension_of_a_stream_based_image(self):
         image_file_path = test_file('monty-truth.png')
         with open(image_file_path, 'rb') as image_file_stream:
-            image = Image.load(image_file_stream)
+            image = Image.from_file(image_file_stream)
         assert image.ext == '.png'
 
     def it_correctly_characterizes_a_few_known_images(
@@ -54,7 +54,7 @@ class DescribeImage(object):
             characteristics
         )
         with open(test_file(image_path), 'rb') as stream:
-            image = Image.load(stream)
+            image = Image.from_file(stream)
             assert image.ext == ext
             assert image.content_type == content_type
             assert image.px_width == px_width
@@ -121,7 +121,7 @@ class DescribeImagePart(object):
     @pytest.fixture(params=['loaded', 'new'])
     def dimensions_fixture(self, request):
         image_file_path = test_file('monty-truth.png')
-        image = Image.load(image_file_path)
+        image = Image.from_file(image_file_path)
         expected_cx, expected_cy = 1905000, 2717800
 
         # case 1: image part is loaded by PartFactory w/no Image inst
