@@ -16,6 +16,8 @@ try:
 except ImportError:
     import Image as PIL_Image
 
+from StringIO import StringIO
+
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import Part
 from docx.shared import Emu, Inches, lazyproperty
@@ -67,6 +69,19 @@ class Image(object):
         if loaded from an anonymous stream.
         """
         return self._filename
+
+    @classmethod
+    def from_blob(cls, blob):
+        stream = StringIO(blob)
+        content_type, px_width, px_height, horz_dpi, vert_dpi = (
+            cls._analyze_image(stream)
+        )
+        stream.close()
+        filename = 'image%s' % cls._def_mime_ext(content_type)
+        return cls(
+            blob, filename, content_type, px_width, px_height, horz_dpi,
+            vert_dpi
+        )
 
     @property
     def horz_dpi(self):
@@ -208,8 +223,8 @@ class ImagePart(Part):
         Native width of this image, calculated from its width in pixels and
         horizontal dots per inch (dpi).
         """
-        px_width = self._image.px_width
-        horz_dpi = self._image.horz_dpi
+        px_width = self.image.px_width
+        horz_dpi = self.image.horz_dpi
         width_in_inches = px_width / horz_dpi
         return Inches(width_in_inches)
 
@@ -219,8 +234,8 @@ class ImagePart(Part):
         Native height of this image, calculated from its height in pixels and
         vertical dots per inch (dpi).
         """
-        px_height = self._image.px_height
-        horz_dpi = self._image.horz_dpi
+        px_height = self.image.px_height
+        horz_dpi = self.image.horz_dpi
         height_in_emu = 914400 * px_height / horz_dpi
         return Emu(height_in_emu)
 
@@ -242,6 +257,12 @@ class ImagePart(Part):
         assigned *partname*.
         """
         return ImagePart(partname, image.content_type, image.blob, image)
+
+    @property
+    def image(self):
+        if self._image is None:
+            self._image = Image.from_blob(self.blob)
+        return self._image
 
     @classmethod
     def load(cls, partname, content_type, blob, package):

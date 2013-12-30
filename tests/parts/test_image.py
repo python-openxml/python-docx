@@ -118,15 +118,24 @@ class DescribeImagePart(object):
     def blob_(self, request):
         return instance_mock(request, str)
 
-    # param for one known from test_files at 72 dpi and created with from_image
-    # param for one loaded by PartFactory with no Image instance
-    @pytest.fixture
-    def dimensions_fixture(self):
+    @pytest.fixture(params=['loaded', 'new'])
+    def dimensions_fixture(self, request):
         image_file_path = test_file('monty-truth.png')
         image = Image.load(image_file_path)
-        image_part = ImagePart.from_image(image, None)
-        cx, cy = 1905000, 2717800
-        return image_part, cx, cy
+        expected_cx, expected_cy = 1905000, 2717800
+
+        # case 1: image part is loaded by PartFactory w/no Image inst
+        if request.param == 'loaded':
+            partname = PackURI('/word/media/image1.png')
+            content_type = CT.PNG
+            image_part = ImagePart.load(
+                partname, content_type, image.blob, None
+            )
+        # case 2: image part is newly created from image file
+        elif request.param == 'new':
+            image_part = ImagePart.from_image(image, None)
+
+        return image_part, expected_cx, expected_cy
 
     @pytest.fixture
     def from_image_fixture(self, image_, partname_, ImagePart__init__):
