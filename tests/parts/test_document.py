@@ -422,8 +422,8 @@ class DescribeInlineShape(object):
     def image_part_(self, request, image_params):
         filename, rId, cx, cy = image_params
         image_part_ = instance_mock(request, ImagePart)
-        image_part_.width = str(cx)
-        image_part_.height = str(cy)
+        image_part_.default_cx = cx
+        image_part_.default_cy = cy
         image_part_.filename = filename
         return image_part_
 

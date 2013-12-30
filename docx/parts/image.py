@@ -4,7 +4,9 @@
 The proxy class for an image part, and related objects.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 import hashlib
 import os
@@ -16,7 +18,7 @@ except ImportError:
 
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import Part
-from docx.shared import lazyproperty
+from docx.shared import Emu, Inches, lazyproperty
 
 
 class Image(object):
@@ -201,6 +203,28 @@ class ImagePart(Part):
         self._image = image
 
     @property
+    def default_cx(self):
+        """
+        Native width of this image, calculated from its width in pixels and
+        horizontal dots per inch (dpi).
+        """
+        px_width = self._image.px_width
+        horz_dpi = self._image.horz_dpi
+        width_in_inches = px_width / horz_dpi
+        return Inches(width_in_inches)
+
+    @property
+    def default_cy(self):
+        """
+        Native height of this image, calculated from its height in pixels and
+        vertical dots per inch (dpi).
+        """
+        px_height = self._image.px_height
+        horz_dpi = self._image.horz_dpi
+        height_in_emu = 914400 * px_height / horz_dpi
+        return Emu(height_in_emu)
+
+    @property
     def filename(self):
         """
         Filename from which this image part was originally created. A generic
@@ -219,16 +243,6 @@ class ImagePart(Part):
         """
         return ImagePart(partname, image.content_type, image.blob, image)
 
-    @property
-    def height(self):
-        """
-        Native height of this image, calculated from its height in pixels and
-        vertical dots per inch (dpi) when available. Default values are
-        silently substituted when specific values cannot be parsed from the
-        binary image byte stream.
-        """
-        raise NotImplementedError
-
     @classmethod
     def load(cls, partname, content_type, blob, package):
         """
@@ -242,15 +256,5 @@ class ImagePart(Part):
     def sha1(self):
         """
         SHA1 hash digest of the blob of this image part.
-        """
-        raise NotImplementedError
-
-    @property
-    def width(self):
-        """
-        Native width of this image, calculated from its width in pixels and
-        horizontal dots per inch (dpi) when available. Default values are
-        silently substituted when specific values cannot be parsed from the
-        binary image byte stream.
         """
         raise NotImplementedError

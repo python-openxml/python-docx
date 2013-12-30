@@ -107,11 +107,26 @@ class DescribeImagePart(object):
         )
         assert isinstance(image_part, ImagePart)
 
+    def it_knows_its_default_dimensions_in_EMU(self, dimensions_fixture):
+        image_part, cx, cy = dimensions_fixture
+        assert image_part.default_cx == cx
+        assert image_part.default_cy == cy
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def blob_(self, request):
         return instance_mock(request, str)
+
+    # param for one known from test_files at 72 dpi and created with from_image
+    # param for one loaded by PartFactory with no Image instance
+    @pytest.fixture
+    def dimensions_fixture(self):
+        image_file_path = test_file('monty-truth.png')
+        image = Image.load(image_file_path)
+        image_part = ImagePart.from_image(image, None)
+        cx, cy = 1905000, 2717800
+        return image_part, cx, cy
 
     @pytest.fixture
     def from_image_fixture(self, image_, partname_, ImagePart__init__):

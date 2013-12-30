@@ -153,12 +153,12 @@ class InlineShape(object):
         placement of *image_part* appended to run *r* and uniquely identified
         by *shape_id*.
         """
-        width, height, filename = (
-            image_part.width, image_part.height, image_part.filename
+        cx, cy, filename = (
+            image_part.default_cx, image_part.default_cy, image_part.filename
         )
         pic_id = 0
-        pic = CT_Picture.new(pic_id, filename, rId, width, height)
-        inline = CT_Inline.new(width, height, shape_id, pic)
+        pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
+        inline = CT_Inline.new(cx, cy, shape_id, pic)
         r.add_drawing(inline)
         return cls(inline)
 

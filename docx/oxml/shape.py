@@ -85,7 +85,7 @@ class CT_Inline(OxmlBaseElement):
         return self.find(qn('a:graphic'))
 
     @classmethod
-    def new(cls, width, height, shape_id, pic):
+    def new(cls, cx, cy, shape_id, pic):
         """
         Return a new ``<wp:inline>`` element populated with the values passed
         as parameters.
@@ -94,7 +94,7 @@ class CT_Inline(OxmlBaseElement):
         uri = nsmap['pic']
 
         inline = OxmlElement('wp:inline', nsmap=nspfxmap('wp', 'r'))
-        inline.append(CT_PositiveSize2D.new('wp:extent', width, height))
+        inline.append(CT_PositiveSize2D.new('wp:extent', cx, cy))
         inline.append(CT_NonVisualDrawingProps.new(
             'wp:docPr', shape_id, name
         ))
