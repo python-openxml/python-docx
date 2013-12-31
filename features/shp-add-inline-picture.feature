@@ -8,3 +8,9 @@ Feature: Add inline picture
      When I add an inline picture to the document
      Then its inline shape type is WD_INLINE_SHAPE.PICTURE
       And the document contains the inline picture
+
+  Scenario: Add inline picture from stream
+    Given a document
+     When I add an inline picture from a file-like object
+     Then its inline shape type is WD_INLINE_SHAPE.PICTURE
+      And the document contains the inline picture

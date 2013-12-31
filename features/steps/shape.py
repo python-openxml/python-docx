@@ -48,6 +48,15 @@ def given_inline_shape_known_to_be_shape_of_type(context, shp_of_type):
 
 # when =====================================================
 
+@when('I add an inline picture from a file-like object')
+def when_add_inline_picture_from_file_like_object(context):
+    document = context.document
+    with open(test_file_path('monty-truth.png')) as f:
+        context.inline_shape = (
+            document.add_inline_picture(f)
+        )
+
+
 @when('I add an inline picture to the document')
 def when_add_inline_picture_to_document(context):
     document = context.document
