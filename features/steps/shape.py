@@ -13,6 +13,7 @@ from behave import given, then, when
 from docx import Document
 from docx.enum.shape import WD_INLINE_SHAPE
 from docx.parts.document import InlineShape, InlineShapes
+from docx.shared import Inches
 
 from .helpers import test_docx, test_file_path
 
@@ -71,6 +72,13 @@ def when_add_inline_picture_to_document(context):
     )
 
 
+@when('I change the dimensions of the inline shape')
+def when_change_dimensions_of_inline_shape(context):
+    inline_shape = context.inline_shape
+    inline_shape.width = Inches(1)
+    inline_shape.height = Inches(0.5)
+
+
 # then =====================================================
 
 @then('I can access each inline shape by index')
@@ -116,8 +124,15 @@ def then_inline_shape_type_is_shape_type(context, shape_type):
 @then('the dimensions of the inline shape match the known values')
 def then_dimensions_of_inline_shape_match_known_values(context):
     inline_shape = context.inline_shape
+    assert inline_shape.width == 1778000, 'got %s' % inline_shape.width
+    assert inline_shape.height == 711200, 'got %s' % inline_shape.height
+
+
+@then('the dimensions of the inline shape match the new values')
+def then_dimensions_of_inline_shape_match_new_values(context):
+    inline_shape = context.inline_shape
     assert inline_shape.width == 914400, 'got %s' % inline_shape.width
-    assert inline_shape.height == 914400, 'got %s' % inline_shape.height
+    assert inline_shape.height == 457200, 'got %s' % inline_shape.height
 
 
 @then('the document contains the inline picture')

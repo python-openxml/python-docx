@@ -7,6 +7,7 @@ Custom element classes for shape-related elements like ``<w:inline>``
 from docx.oxml.shared import (
     nsmap, nspfxmap, OxmlBaseElement, OxmlElement, qn
 )
+from docx.shared import Emu
 
 
 class CT_Blip(OxmlBaseElement):
@@ -84,6 +85,10 @@ class CT_Inline(OxmlBaseElement):
     """
     ``<w:inline>`` element, container for an inline shape.
     """
+    @property
+    def extent(self):
+        return self.find(qn('wp:extent'))
+
     @property
     def graphic(self):
         return self.find(qn('a:graphic'))
@@ -183,12 +188,24 @@ class CT_PositiveSize2D(OxmlBaseElement):
     Used for ``<wp:extent>`` element, and perhaps others later. Specifies the
     size of a DrawingML drawing.
     """
+    @property
+    def cx(self):
+        cx_str = self.get('cx')
+        cx = int(cx_str)
+        return Emu(cx)
+
+    @property
+    def cy(self):
+        cy_str = self.get('cy')
+        cy = int(cy_str)
+        return Emu(cy)
+
     @classmethod
     def new(cls, nsptagname_str, cx, cy):
-        elt = OxmlElement(nsptagname_str)
-        elt.set('cx', str(cx))
-        elt.set('cy', str(cy))
-        return elt
+        elm = OxmlElement(nsptagname_str)
+        elm.set('cx', str(cx))
+        elm.set('cy', str(cy))
+        return elm
 
 
 class CT_PresetGeometry2D(OxmlBaseElement):

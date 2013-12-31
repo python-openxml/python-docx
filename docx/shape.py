@@ -23,6 +23,20 @@ class InlineShape(object):
         super(InlineShape, self).__init__()
         self._inline = inline
 
+    @property
+    def height(self):
+        """
+        Return the display height of this inline shape as an |Emu| instance.
+        Length instances such as this behave like an int, but also have
+        built-in conversion properties, e.g.::
+
+            \>>> inline_shape.height
+            914400
+            \>>> inline_shape.height.inches
+            1.0
+        """
+        return self._inline.extent.cy
+
     @classmethod
     def new_picture(cls, r, image_part, rId, shape_id):
         """
@@ -41,6 +55,10 @@ class InlineShape(object):
 
     @property
     def type(self):
+        """
+        Return the member of ``docx.enum.shape.WD_INLINE_SHAPE`` denoting the
+        inline shape type, e.g. ``LINKED_PICTURE``.
+        """
         graphicData = self._inline.graphic.graphicData
         uri = graphicData.uri
         if uri == nsmap['pic']:
@@ -53,3 +71,10 @@ class InlineShape(object):
         if uri == nsmap['dgm']:
             return WD_INLINE_SHAPE.SMART_ART
         return WD_INLINE_SHAPE.NOT_IMPLEMENTED
+
+    @property
+    def width(self):
+        """
+        Return the display width of this inline shape as an |Emu| instance.
+        """
+        return self._inline.extent.cx

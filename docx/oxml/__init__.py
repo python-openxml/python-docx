@@ -23,13 +23,14 @@ from docx.oxml.shared import CT_String
 
 from docx.oxml.shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
-    CT_GraphicalObjectData, CT_Inline, CT_Picture
+    CT_GraphicalObjectData, CT_Inline, CT_Picture, CT_PositiveSize2D
 )
 register_custom_element_class('a:blip', CT_Blip)
 register_custom_element_class('a:graphic', CT_GraphicalObject)
 register_custom_element_class('a:graphicData', CT_GraphicalObjectData)
 register_custom_element_class('pic:blipFill', CT_BlipFillProperties)
 register_custom_element_class('pic:pic', CT_Picture)
+register_custom_element_class('wp:extent', CT_PositiveSize2D)
 register_custom_element_class('wp:inline', CT_Inline)
 
 from docx.oxml.parts.document import CT_Body, CT_Document
