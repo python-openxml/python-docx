@@ -13,6 +13,7 @@ Feature Analysis
    features/table
    features/shapes
    features/shapes-inline
+   features/shapes-inline-size
    features/picture
 
 
