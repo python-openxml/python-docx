@@ -7,7 +7,6 @@ Feature: Query and change dimensions of inline shape
     Given an inline shape of known dimensions
      Then the dimensions of the inline shape match the known values
 
-  @wip
   Scenario: Change inline shape dimensions
     Given an inline shape of known dimensions
      When I change the dimensions of the inline shape

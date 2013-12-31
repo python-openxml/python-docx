@@ -47,17 +47,31 @@ class DescribeInlineShape(object):
         assert isinstance(height, _BaseLength)
         assert height == cy
 
+    def it_can_change_its_display_dimensions(self, dimensions_set_fixture):
+        inline_shape, cx, cy, expected_xml = dimensions_set_fixture
+        inline_shape.width = cx
+        inline_shape.height = cy
+        assert inline_shape._inline.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def dimensions_get_fixture(self):
         cx, cy = 333, 666
-        inline = (
-            an_inline().with_nsdecls().with_child(
-                an_extent().with_cx(cx).with_cy(cy))
-        ).element
+        inline = self._inline_bldr_with_dimensions(cx, cy).element
         inline_shape = InlineShape(inline)
         return inline_shape, cx, cy
+
+    @pytest.fixture
+    def dimensions_set_fixture(self):
+        # inline_shape -----------------
+        cx, cy = 333, 666
+        inline = self._inline_bldr_with_dimensions(cx, cy).element
+        inline_shape = InlineShape(inline)
+        # expected_xml -----------------
+        cx, cy = cx + 111, cy + 222
+        expected_xml = self._inline_bldr_with_dimensions(cx, cy).xml()
+        return inline_shape, cx, cy, expected_xml
 
     @pytest.fixture
     def image_params(self):
@@ -126,6 +140,12 @@ class DescribeInlineShape(object):
             shape_type = WD_INLINE_SHAPE.NOT_IMPLEMENTED
 
         return InlineShape(inline), shape_type
+
+    def _inline_bldr_with_dimensions(self, cx, cy):
+        return (
+            an_inline().with_nsdecls().with_child(
+                an_extent().with_cx(cx).with_cy(cy))
+        )
 
     def _inline_with_picture(self, embed=False, link=False):
         picture_ns = nsmap['pic']

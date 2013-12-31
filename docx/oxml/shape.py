@@ -194,11 +194,21 @@ class CT_PositiveSize2D(OxmlBaseElement):
         cx = int(cx_str)
         return Emu(cx)
 
+    @cx.setter
+    def cx(self, cx):
+        cx_str = str(cx)
+        self.set('cx', cx_str)
+
     @property
     def cy(self):
         cy_str = self.get('cy')
         cy = int(cy_str)
         return Emu(cy)
+
+    @cy.setter
+    def cy(self, cy):
+        cy_str = str(cy)
+        self.set('cy', cy_str)
 
     @classmethod
     def new(cls, nsptagname_str, cx, cy):

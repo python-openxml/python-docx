@@ -37,6 +37,12 @@ class InlineShape(object):
         """
         return self._inline.extent.cy
 
+    @height.setter
+    def height(self, cy):
+        assert isinstance(cy, int)
+        assert 0 < cy
+        self._inline.extent.cy = cy
+
     @classmethod
     def new_picture(cls, r, image_part, rId, shape_id):
         """
@@ -78,3 +84,9 @@ class InlineShape(object):
         Return the display width of this inline shape as an |Emu| instance.
         """
         return self._inline.extent.cx
+
+    @width.setter
+    def width(self, cx):
+        assert isinstance(cx, int)
+        assert 0 < cx
+        self._inline.extent.cx = cx

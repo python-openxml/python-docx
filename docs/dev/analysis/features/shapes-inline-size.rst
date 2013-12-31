@@ -9,30 +9,9 @@ Overview
 The position of an inline shape is completely determined by the text it is
 inline with, however its dimensions can be specified. For some shape types,
 both the contained shape and the shape container specify a width and height.
-
-
-Unit tests
-----------
-
-DescribeInlineShape
-
-* it_knows_its_display_dimensions
-* it_can_change_its_display_dimensions
-
-
-Code sketches
--------------
-
-::
-
-    @property
-    def InlineShape.width(self):
-       assert isinstance(self._inline.extent.cx, _BaseLength)
-       return self._inline.extent.cx
-
-    @width.setter
-    def width(self, emu):
-       self._inline.extent = emu
+In the case of a picture, the dimensions of the inline shape (container)
+determine the display size while the dimension of the pic element determine the
+"original size" of the image.
 
 
 Candidate protocol -- inline shape access
