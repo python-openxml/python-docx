@@ -32,6 +32,12 @@ def given_inline_shape_collection_containing_two_shapes(context):
     context.inline_shapes = document.inline_shapes
 
 
+@given('an inline shape of known dimensions')
+def given_inline_shape_of_known_dimensions(context):
+    document = Document(test_docx('shp-inline-shape-access'))
+    context.inline_shape = document.inline_shapes[0]
+
+
 @given('an inline shape known to be {shp_of_type}')
 def given_inline_shape_known_to_be_shape_of_type(context, shp_of_type):
     inline_shape_idx = {
@@ -105,6 +111,13 @@ def then_inline_shape_type_is_shape_type(context, shape_type):
     }[shape_type]
     inline_shape = context.inline_shape
     assert inline_shape.type == expected_value
+
+
+@then('the dimensions of the inline shape match the known values')
+def then_dimensions_of_inline_shape_match_known_values(context):
+    inline_shape = context.inline_shape
+    assert inline_shape.width == 914400, 'got %s' % inline_shape.width
+    assert inline_shape.height == 914400, 'got %s' % inline_shape.height
 
 
 @then('the document contains the inline picture')
