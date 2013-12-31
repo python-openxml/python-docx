@@ -18,10 +18,9 @@ from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.shared import nsmap
 from docx.oxml.text import CT_R
 from docx.package import ImageParts, Package
-from docx.parts.document import (
-    _Body, DocumentPart, InlineShape, InlineShapes
-)
+from docx.parts.document import _Body, DocumentPart, InlineShapes
 from docx.parts.image import ImagePart
+from docx.shape import InlineShape
 from docx.table import Table
 from docx.text import Paragraph
 

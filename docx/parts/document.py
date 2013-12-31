@@ -4,15 +4,18 @@
 Document parts such as _Document, and closely related classes.
 """
 
-from docx.enum.shape import WD_INLINE_SHAPE
-from docx.opc.constants import RELATIONSHIP_TYPE as RT
-from docx.opc.oxml import serialize_part_xml
-from docx.opc.package import Part
-from docx.oxml.shape import CT_Inline, CT_Picture
-from docx.oxml.shared import nsmap, oxml_fromstring
-from docx.shared import lazyproperty, Parented
-from docx.table import Table
-from docx.text import Paragraph
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
+
+from ..opc.constants import RELATIONSHIP_TYPE as RT
+from ..opc.oxml import serialize_part_xml
+from ..opc.package import Part
+from ..oxml.shared import nsmap, oxml_fromstring
+from ..shape import InlineShape
+from ..shared import lazyproperty, Parented
+from ..table import Table
+from ..text import Paragraph
 
 
 class DocumentPart(Part):
@@ -135,47 +138,6 @@ class _Body(object):
         they appear.
         """
         return [Table(tbl) for tbl in self._body.tbl_lst]
-
-
-class InlineShape(object):
-    """
-    Proxy for an ``<wp:inline>`` element, representing the container for an
-    inline graphical object.
-    """
-    def __init__(self, inline):
-        super(InlineShape, self).__init__()
-        self._inline = inline
-
-    @classmethod
-    def new_picture(cls, r, image_part, rId, shape_id):
-        """
-        Return a new |InlineShape| instance containing an inline picture
-        placement of *image_part* appended to run *r* and uniquely identified
-        by *shape_id*.
-        """
-        cx, cy, filename = (
-            image_part.default_cx, image_part.default_cy, image_part.filename
-        )
-        pic_id = 0
-        pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
-        inline = CT_Inline.new(cx, cy, shape_id, pic)
-        r.add_drawing(inline)
-        return cls(inline)
-
-    @property
-    def type(self):
-        graphicData = self._inline.graphic.graphicData
-        uri = graphicData.uri
-        if uri == nsmap['pic']:
-            blip = graphicData.pic.blipFill.blip
-            if blip.link is not None:
-                return WD_INLINE_SHAPE.LINKED_PICTURE
-            return WD_INLINE_SHAPE.PICTURE
-        if uri == nsmap['c']:
-            return WD_INLINE_SHAPE.CHART
-        if uri == nsmap['dgm']:
-            return WD_INLINE_SHAPE.SMART_ART
-        return WD_INLINE_SHAPE.NOT_IMPLEMENTED
 
 
 class InlineShapes(Parented):
