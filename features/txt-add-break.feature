@@ -3,21 +3,18 @@ Feature: Add a line, page, or column break
   As an python-docx developer
   I need the ability to add a line, page, or column break
 
-  @wip
   Scenario: Add a line break
     Given a run
      When I add a line break
      Then the last item in the run is a break
       And it is a line break
 
-  @wip
   Scenario: Add a page break
     Given a run
      When I add a page break
      Then the last item in the run is a break
       And it is a page break
 
-  @wip
   Scenario: Add a column break
     Given a run
      When I add a column break

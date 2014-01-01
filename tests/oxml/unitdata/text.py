@@ -8,6 +8,12 @@ from ...unitdata import BaseBuilder
 from .shared import CT_StringBuilder
 
 
+class CT_BrBuilder(BaseBuilder):
+    __tag__ = 'w:br'
+    __nspfxs__ = ('w',)
+    __attrs__ = ('w:type', 'w:clear')
+
+
 class CT_PBuilder(BaseBuilder):
     __tag__ = 'w:p'
     __nspfxs__ = ('w',)
@@ -36,6 +42,10 @@ class CT_TextBuilder(BaseBuilder):
     __tag__ = 'w:t'
     __nspfxs__ = ('w',)
     __attrs__ = ()
+
+
+def a_br():
+    return CT_BrBuilder()
 
 
 def a_p():

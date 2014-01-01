@@ -10,6 +10,34 @@ from docx.oxml.shared import (
 )
 
 
+class CT_Br(OxmlBaseElement):
+    """
+    ``<w:br>`` element, indicating a line, page, or column break in a run.
+    """
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:br>`` element.
+        """
+        return OxmlElement('w:br')
+
+    @property
+    def clear(self):
+        self.get(qn('w:clear'))
+
+    @clear.setter
+    def clear(self, clear_str):
+        self.set(qn('w:clear'), clear_str)
+
+    @property
+    def type(self):
+        self.get(qn('w:type'))
+
+    @type.setter
+    def type(self, type_str):
+        self.set(qn('w:type'), type_str)
+
+
 class CT_P(OxmlBaseElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
@@ -155,6 +183,14 @@ class CT_R(OxmlBaseElement):
     """
     ``<w:r>`` element, containing the properties and text for a run.
     """
+    def add_br(self):
+        """
+        Return a newly appended CT_Br (<w:br>) child element.
+        """
+        br = CT_Br.new()
+        self.append(br)
+        return br
+
     def add_drawing(self, inline_or_anchor):
         """
         Return a newly appended ``CT_Drawing`` (``<w:drawing>``) child
@@ -192,10 +228,11 @@ class CT_Text(OxmlBaseElement):
     """
     ``<w:t>`` element, containing a sequence of characters within a run.
     """
-    @staticmethod
-    def new(text):
+    @classmethod
+    def new(cls, text):
         """
         Return a new ``<w:t>`` element.
         """
-        xml = '<w:t %s>%s</w:t>' % (nsdecls('w'), text)
-        return oxml_fromstring(xml)
+        t = OxmlElement('w:t')
+        t.text = text
+        return t

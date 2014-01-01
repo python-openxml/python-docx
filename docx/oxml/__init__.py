@@ -45,7 +45,8 @@ register_custom_element_class('w:tblStyle', CT_String)
 register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 
-from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_Text
+from docx.oxml.text import CT_Br, CT_P, CT_PPr, CT_R, CT_Text
+register_custom_element_class('w:br', CT_Br)
 register_custom_element_class('w:p', CT_P)
 register_custom_element_class('w:pPr', CT_PPr)
 register_custom_element_class('w:pStyle', CT_String)

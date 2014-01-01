@@ -46,8 +46,6 @@ class DescribeImageParts(object):
             self, next_partname_fixture):
         image_parts, ext, expected_partname = next_partname_fixture
         assert image_parts._next_image_partname(ext) == expected_partname
-        print('\n%s' % image_parts._next_image_partname(ext))
-        print(expected_partname)
 
     def it_can_really_add_a_new_image_part(
             self, really_add_image_part_fixture):

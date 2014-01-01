@@ -4,6 +4,10 @@
 Text-related proxy types for python-docx, such as Paragraph and Run.
 """
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from docx.enum.text import WD_BREAK
+
 
 class Paragraph(object):
     """
@@ -48,6 +52,24 @@ class Run(object):
     def __init__(self, r_elm):
         super(Run, self).__init__()
         self._r = r_elm
+
+    def add_break(self, break_type=WD_BREAK.LINE):
+        """
+        Add a break element of *break_type* to this run.
+        """
+        type_, clear = {
+            WD_BREAK.LINE:             (None,           None),
+            WD_BREAK.PAGE:             ('page',         None),
+            WD_BREAK.COLUMN:           ('column',       None),
+            WD_BREAK.LINE_CLEAR_LEFT:  ('textWrapping', 'left'),
+            WD_BREAK.LINE_CLEAR_RIGHT: ('textWrapping', 'right'),
+            WD_BREAK.LINE_CLEAR_ALL:   ('textWrapping', 'all'),
+        }[break_type]
+        br = self._r.add_br()
+        if type_ is not None:
+            br.type = type_
+        if clear is not None:
+            br.clear = clear
 
     def add_text(self, text):
         """
