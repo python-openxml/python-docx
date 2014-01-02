@@ -28,14 +28,27 @@ class Table(object):
 
     @lazyproperty
     def columns(self):
+        """
+        |_ColumnCollection| instance containing the sequence of rows in this
+        table.
+        """
         return _ColumnCollection(self._tbl)
 
     @lazyproperty
     def rows(self):
+        """
+        |_RowCollection| instance containing the sequence of rows in this
+        table.
+        """
         return _RowCollection(self._tbl)
 
     @property
     def style(self):
+        """
+        String name of style to be applied to this table, e.g.
+        'LightShading-Accent1'. Name is derived by removing spaces from the
+        table style name displayed in the Word UI.
+        """
         tblStyle = self._tblPr.tblStyle
         if tblStyle is None:
             return None
@@ -64,6 +77,11 @@ class _Cell(object):
 
     @property
     def paragraphs(self):
+        """
+        List of paragraphs in the cell. A table cell is required to contain
+        at least one block-level element. By default this is a single
+        paragraph.
+        """
         return [Paragraph(p) for p in self._tc.p_lst]
 
     @write_only_property
@@ -91,8 +109,8 @@ class _Column(object):
     @lazyproperty
     def cells(self):
         """
-        |_ColumnCellCollection| instance containing sequence of |_Cell|
-        instances corresponding to cells in this column.
+        Sequence of |_Cell| instances corresponding to cells in this column.
+        Supports ``len()``, iteration and indexed access.
         """
         return _ColumnCellCollection(self._tbl, self._gridCol)
 
@@ -140,6 +158,7 @@ class _ColumnCellCollection(object):
 class _ColumnCollection(object):
     """
     Sequence of |_Column| instances corresponding to the columns in a table.
+    Supports ``len()``, iteration and indexed access.
     """
     def __init__(self, tbl):
         super(_ColumnCollection, self).__init__()
@@ -193,7 +212,8 @@ class _Row(object):
     @lazyproperty
     def cells(self):
         """
-        Sequence of |_Cell| instances corresponding to the cells in this row.
+        Sequence of |_Cell| instances corresponding to cells in this row.
+        Supports ``len()``, iteration and indexed access.
         """
         return _RowCellCollection(self._tr)
 
@@ -227,6 +247,7 @@ class _RowCellCollection(object):
 class _RowCollection(object):
     """
     Sequence of |_Row| instances corresponding to the rows in a table.
+    Supports ``len()``, iteration and indexed access.
     """
     def __init__(self, tbl):
         super(_RowCollection, self).__init__()

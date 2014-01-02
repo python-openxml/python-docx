@@ -7,9 +7,12 @@ Objects shared by docx modules.
 from __future__ import absolute_import, print_function, unicode_literals
 
 
-class _BaseLength(int):
+class Length(int):
     """
-    Base class for length classes Inches, Cm, Mm, Px, and Emu
+    Base class for length constructor classes Inches, Cm, Mm, Px, and Emu.
+    Behaves as an int count of English Metric Units, 914400 to the inch,
+    36000 to the cm. Provides convenience unit conversion methods in the form
+    of read-only properties. Immutable.
     """
     _EMUS_PER_INCH = 914400
     _EMUS_PER_CM = 360000
@@ -21,14 +24,23 @@ class _BaseLength(int):
 
     @property
     def inches(self):
+        """
+        The equivalent length expressed in inches (float).
+        """
         return self / float(self._EMUS_PER_INCH)
 
     @property
     def cm(self):
+        """
+        The equivalent length expressed in centimeters (float).
+        """
         return self / float(self._EMUS_PER_CM)
 
     @property
     def mm(self):
+        """
+        The equivalent length expressed in millimeters (float).
+        """
         return self / float(self._EMUS_PER_MM)
 
     @property
@@ -39,38 +51,55 @@ class _BaseLength(int):
 
     @property
     def emu(self):
+        """
+        The equivalent length expressed in English Metric Units (int).
+        """
         return self
 
 
-class Inches(_BaseLength):
-    """Convenience constructor for length in inches."""
+class Inches(Length):
+    """
+    Convenience constructor for length in inches, e.g.
+    ``width = Inches(0.5)``.
+    """
     def __new__(cls, inches):
-        emu = int(inches * _BaseLength._EMUS_PER_INCH)
-        return _BaseLength.__new__(cls, emu)
+        emu = int(inches * Length._EMUS_PER_INCH)
+        return Length.__new__(cls, emu)
 
 
-class Cm(_BaseLength):
-    """Convenience constructor for length in centimeters."""
+class Cm(Length):
+    """
+    Convenience constructor for length in centimeters, e.g.
+    ``height = Cm(12)``.
+    """
     def __new__(cls, cm):
-        emu = int(cm * _BaseLength._EMUS_PER_CM)
-        return _BaseLength.__new__(cls, emu)
+        emu = int(cm * Length._EMUS_PER_CM)
+        return Length.__new__(cls, emu)
 
 
-class Emu(_BaseLength):
-    """Convenience constructor for length in english metric units."""
+class Emu(Length):
+    """
+    Convenience constructor for length in English Metric Units, e.g.
+    ``width = Emu(457200)``.
+    """
     def __new__(cls, emu):
-        return _BaseLength.__new__(cls, int(emu))
+        return Length.__new__(cls, int(emu))
 
 
-class Mm(_BaseLength):
-    """Convenience constructor for length in millimeters."""
+class Mm(Length):
+    """
+    Convenience constructor for length in millimeters, e.g.
+    ``width = Mm(240.5)``.
+    """
     def __new__(cls, mm):
-        emu = int(mm * _BaseLength._EMUS_PER_MM)
-        return _BaseLength.__new__(cls, emu)
+        emu = int(mm * Length._EMUS_PER_MM)
+        return Length.__new__(cls, emu)
 
 
 class Pt(int):
-    """Convenience class for setting font sizes in points"""
+    """
+    Convenience class for setting font sizes in points
+    """
     _UNITS_PER_POINT = 100
 
     def __new__(cls, pts):
@@ -78,11 +107,13 @@ class Pt(int):
         return int.__new__(cls, units)
 
 
-class Px(_BaseLength):
-    """Convenience constructor for length in pixels."""
+class Px(Length):
+    """
+    Convenience constructor for length in pixels.
+    """
     def __new__(cls, px):
-        emu = int(px * _BaseLength._EMUS_PER_PX)
-        return _BaseLength.__new__(cls, emu)
+        emu = int(px * Length._EMUS_PER_PX)
+        return Length.__new__(cls, emu)
 
 
 def lazyproperty(f):

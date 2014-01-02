@@ -12,7 +12,7 @@ from docx.enum.shape import WD_INLINE_SHAPE
 from docx.oxml.shared import nsmap
 from docx.parts.image import ImagePart
 from docx.shape import InlineShape
-from docx.shared import _BaseLength
+from docx.shared import Length
 
 from .oxml.unitdata.dml import (
     a_blip, a_blipFill, a_cNvPr, a_cNvPicPr, a_docPr, a_fillRect, a_graphic,
@@ -42,9 +42,9 @@ class DescribeInlineShape(object):
         inline_shape, cx, cy = dimensions_get_fixture
         width = inline_shape.width
         height = inline_shape.height
-        assert isinstance(width, _BaseLength)
+        assert isinstance(width, Length)
         assert width == cx
-        assert isinstance(height, _BaseLength)
+        assert isinstance(height, Length)
         assert height == cy
 
     def it_can_change_its_display_dimensions(self, dimensions_set_fixture):

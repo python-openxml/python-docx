@@ -27,13 +27,6 @@ class InlineShape(object):
     def height(self):
         """
         Return the display height of this inline shape as an |Emu| instance.
-        Length instances such as this behave like an int, but also have
-        built-in conversion properties, e.g.::
-
-            \>>> inline_shape.height
-            914400
-            \>>> inline_shape.height.inches
-            1.0
         """
         return self._inline.extent.cy
 

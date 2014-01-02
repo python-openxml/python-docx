@@ -17,7 +17,7 @@ from docx.oxml.shared import qn
 
 @given('a run')
 def given_a_run(context):
-    p = Document().body.paragraphs[0]
+    p = Document().body.add_paragraph()
     context.run = p.add_run()
 
 

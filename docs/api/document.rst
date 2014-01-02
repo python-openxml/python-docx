@@ -15,4 +15,3 @@ Document objects
 
 .. autoclass:: _Document
    :members:
-

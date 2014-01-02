@@ -46,6 +46,7 @@ Resources
 
 * `Document Members (Word) on MSDN`_
 * `InlineShape Members (Word) on MSDN`_
+* `InlineShapes Members (Word) on MSDN`_
 * `Shape Members (Word) on MSDN`_
 
 .. _Document Members (Word) on MSDN:
@@ -53,6 +54,9 @@ Resources
 
 .. _InlineShape Members (Word) on MSDN:
    http://msdn.microsoft.com/en-us/library/office/ff840794.aspx
+
+.. _InlineShapes Members (Word) on MSDN:
+   http://msdn.microsoft.com/en-us/library/office/ff836984.aspx
 
 .. _Shape Members (Word) on MSDN:
    http://msdn.microsoft.com/en-us/library/office/ff195191.aspx

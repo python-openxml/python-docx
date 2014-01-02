@@ -19,7 +19,9 @@ import sys
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../../python-opc'))
+
+from docx import __version__
+
 
 # -- General configuration ---------------------------------------------------
 
@@ -57,21 +59,39 @@ copyright = u'2013, Steve Canny'
 # built documents.
 #
 # The short X.Y version.
-version = '0.3'
+version = __version__
 # The full version, including alpha/beta/rc tags.
-release = '0.3.0d1'
+release = __version__
 
 # A string of reStructuredText that will be included at the end of every source
 # file that is read. This is the right place to add substitutions that should
 # be available in every file.
 rst_epilog = """
+.. |api-Document| replace:: :class:`docx.api.Document`
+
 .. |_Body| replace:: :class:`_Body`
+
+.. |_Cell| replace:: :class:`_Cell`
+
+.. |_Column| replace:: :class:`_Column`
+
+.. |_ColumnCollection| replace:: :class:`_ColumnCollection`
 
 .. |Document| replace:: :class:`Document`
 
 .. |_Document| replace:: :class:`_Document`
 
+.. |docx| replace:: ``python-docx``
+
+.. |Emu| replace:: :class:`Emu`
+
+.. |InlineShape| replace:: :class:`InlineShape`
+
 .. |InlineShapes| replace:: :class:`InlineShapes`
+
+.. |int| replace:: :class:`int`
+
+.. |Length| replace:: :class:`.Length`
 
 .. |OpcPackage| replace:: :class:`OpcPackage`
 
@@ -85,9 +105,15 @@ rst_epilog = """
 
 .. |RelationshipCollection| replace:: :class:`_RelationshipCollection`
 
-.. |docx| replace:: ``python-docx``
+.. |_Row| replace:: :class:`_Row`
 
-.. |python-docx| replace:: ``python-docx``
+.. |_RowCollection| replace:: :class:`_RowCollection`
+
+.. |Run| replace:: :class:`Run`
+
+.. |Table| replace:: :class:`Table`
+
+.. |Text| replace:: :class:`Text`
 """
 
 
@@ -162,6 +188,10 @@ html_static_path = ['_static']
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = {
+    '**': ['localtoc.html', 'relations.html', 'sidebarlinks.html',
+           'searchbox.html']
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
