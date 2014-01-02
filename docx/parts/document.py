@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 """
-Document parts such as _Document, and closely related classes.
+|DocumentPart| and closely related objects
 """
 
 from __future__ import (

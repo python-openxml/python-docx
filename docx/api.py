@@ -12,33 +12,17 @@ from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 
 
-thisdir = os.path.split(__file__)[0]
-_default_docx_path = os.path.join(thisdir, 'templates', 'default.docx')
+_thisdir = os.path.split(__file__)[0]
+_default_docx_path = os.path.join(_thisdir, 'templates', 'default.docx')
 
 
-def Document(docx=None):
-    """
-    Return a |_Document| instance loaded from *docx*, where *docx* can be
-    either a path to a ``.docx`` file (a string) or a file-like object. If
-    *docx* is missing or ``None``, the built-in default document "template"
-    is loaded.
-    """
-    if docx is None:
-        docx = _default_docx_path
-    pkg = Package.open(docx)
-    document_part = pkg.main_document
-    if document_part.content_type != CT.WML_DOCUMENT_MAIN:
-        tmpl = "file '%s' is not a Word file, content type is '%s'"
-        raise ValueError(tmpl % (docx, document_part.content_type))
-    return _Document(pkg, document_part)
-
-
-class _Document(object):
+class Document(object):
     """
     API class representing a Word document.
     """
-    def __init__(self, package, document_part):
-        super(_Document, self).__init__()
+    def __init__(self, docx=None):
+        super(Document, self).__init__()
+        document_part, package = self._open(docx)
         self._document_part = document_part
         self._package = package
 
@@ -70,3 +54,19 @@ class _Document(object):
         a file (a string) or a file-like object.
         """
         self._package.save(file_)
+
+    @staticmethod
+    def _open(docx):
+        """
+        Return a (document_part, package) 2-tuple loaded from *docx*, where
+        *docx* can be either a path to a ``.docx`` file (a string) or a
+        file-like object. If *docx* is ``None``, the built-in default
+        document "template" is loaded.
+        """
+        docx = _default_docx_path if docx is None else docx
+        package = Package.open(docx)
+        document_part = package.main_document
+        if document_part.content_type != CT.WML_DOCUMENT_MAIN:
+            tmpl = "file '%s' is not a Word file, content type is '%s'"
+            raise ValueError(tmpl % (docx, document_part.content_type))
+        return document_part, package

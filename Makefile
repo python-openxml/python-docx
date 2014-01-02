@@ -1,14 +1,16 @@
-PYTHON      = python
-BEHAVE      = behave
-SETUP       = $(PYTHON) ./setup.py
+BEHAVE = behave
+MAKE   = make
+PYTHON = python
+SETUP  = $(PYTHON) ./setup.py
 
-.PHONY: accept clean coverage readme register sdist test upload
+.PHONY: accept clean coverage docs readme register sdist test upload
 
 help:
 	@echo "Please use \`make <target>' where <target> is one or more of"
 	@echo "  accept    run acceptance tests using behave"
 	@echo "  clean     delete intermediate work product and start fresh"
 	@echo "  coverage  run nosetests with coverage"
+	@echo "  docs      generate documentation
 	@echo "  readme    update README.html from README.rst"
 	@echo "  register  update metadata (README.rst) on PyPI"
 	@echo "  test      run tests using setup.py"
@@ -24,6 +26,9 @@ clean:
 
 coverage:
 	py.test --cov-report term-missing --cov=docx tests/
+
+docs:
+	$(MAKE) -C docs clean html
 
 readme:
 	rst2html README.rst >README.html

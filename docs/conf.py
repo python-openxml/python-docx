@@ -79,8 +79,6 @@ rst_epilog = """
 
 .. |Document| replace:: :class:`Document`
 
-.. |_Document| replace:: :class:`_Document`
-
 .. |docx| replace:: ``python-docx``
 
 .. |Emu| replace:: :class:`Emu`
