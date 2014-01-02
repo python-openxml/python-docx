@@ -7,14 +7,14 @@ Test data for relationship-related unit tests.
 from __future__ import absolute_import
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
-from docx.opc.package import RelationshipCollection
+from docx.opc.package import Relationships
 
 from docx.opc.constants import NAMESPACE as NS
 from docx.opc.oxml import oxml_fromstring
 
 
-class RelationshipCollectionBuilder(object):
-    """Builder class for test RelationshipCollections"""
+class RelationshipsBuilder(object):
+    """Builder class for test Relationships"""
     partname_tmpls = {
         RT.SLIDE_MASTER: '/ppt/slideMasters/slideMaster%d.xml',
         RT.SLIDE:        '/ppt/slides/slide%d.xml',
@@ -44,7 +44,7 @@ class RelationshipCollectionBuilder(object):
         return partname_tmpl % partnum
 
     def build(self):
-        rels = RelationshipCollection()
+        rels = Relationships()
         for rel in self.relationships:
             rels.add_rel(rel)
         return rels
@@ -54,7 +54,7 @@ def a_rels():
     """
     Return a PartBuilder instance.
     """
-    return RelationshipCollectionBuilder()
+    return RelationshipsBuilder()
 
 
 class BaseBuilder(object):

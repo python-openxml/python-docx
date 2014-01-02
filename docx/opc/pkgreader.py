@@ -75,11 +75,11 @@ class PackageReader(object):
     @staticmethod
     def _srels_for(phys_reader, source_uri):
         """
-        Return |_SerializedRelationshipCollection| instance populated with
+        Return |_SerializedRelationships| instance populated with
         relationships for source identified by *source_uri*.
         """
         rels_xml = phys_reader.rels_xml_for(source_uri)
-        return _SerializedRelationshipCollection.load_from_xml(
+        return _SerializedRelationships.load_from_xml(
             source_uri.baseURI, rels_xml)
 
     @staticmethod
@@ -256,13 +256,13 @@ class _SerializedRelationship(object):
         return self._target_partname
 
 
-class _SerializedRelationshipCollection(object):
+class _SerializedRelationships(object):
     """
     Read-only sequence of |_SerializedRelationship| instances corresponding
     to the relationships item XML passed to constructor.
     """
     def __init__(self):
-        super(_SerializedRelationshipCollection, self).__init__()
+        super(_SerializedRelationships, self).__init__()
         self._srels = []
 
     def __iter__(self):
@@ -272,11 +272,11 @@ class _SerializedRelationshipCollection(object):
     @staticmethod
     def load_from_xml(baseURI, rels_item_xml):
         """
-        Return |_SerializedRelationshipCollection| instance loaded with the
+        Return |_SerializedRelationships| instance loaded with the
         relationships contained in *rels_item_xml*. Returns an empty
         collection if *rels_item_xml* is |None|.
         """
-        srels = _SerializedRelationshipCollection()
+        srels = _SerializedRelationships()
         if rels_item_xml is not None:
             rels_elm = oxml_fromstring(rels_item_xml)
             for rel_elm in rels_elm.Relationship_lst:

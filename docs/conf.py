@@ -75,7 +75,7 @@ rst_epilog = """
 
 .. |_Column| replace:: :class:`_Column`
 
-.. |_ColumnCollection| replace:: :class:`_ColumnCollection`
+.. |_Columns| replace:: :class:`_Columns`
 
 .. |Document| replace:: :class:`Document`
 
@@ -103,11 +103,11 @@ rst_epilog = """
 
 .. |_Relationship| replace:: :class:`_Relationship`
 
-.. |RelationshipCollection| replace:: :class:`_RelationshipCollection`
+.. |Relationships| replace:: :class:`_Relationships`
 
 .. |_Row| replace:: :class:`_Row`
 
-.. |_RowCollection| replace:: :class:`_RowCollection`
+.. |_Rows| replace:: :class:`_Rows`
 
 .. |Run| replace:: :class:`Run`
 

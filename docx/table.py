@@ -29,18 +29,16 @@ class Table(object):
     @lazyproperty
     def columns(self):
         """
-        |_ColumnCollection| instance containing the sequence of rows in this
-        table.
+        |_Columns| instance containing the sequence of rows in this table.
         """
-        return _ColumnCollection(self._tbl)
+        return _Columns(self._tbl)
 
     @lazyproperty
     def rows(self):
         """
-        |_RowCollection| instance containing the sequence of rows in this
-        table.
+        |_Rows| instance containing the sequence of rows in this table.
         """
-        return _RowCollection(self._tbl)
+        return _Rows(self._tbl)
 
     @property
     def style(self):
@@ -112,16 +110,16 @@ class _Column(object):
         Sequence of |_Cell| instances corresponding to cells in this column.
         Supports ``len()``, iteration and indexed access.
         """
-        return _ColumnCellCollection(self._tbl, self._gridCol)
+        return _ColumnCells(self._tbl, self._gridCol)
 
 
-class _ColumnCellCollection(object):
+class _ColumnCells(object):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table
     column.
     """
     def __init__(self, tbl, gridCol):
-        super(_ColumnCellCollection, self).__init__()
+        super(_ColumnCells, self).__init__()
         self._tbl = tbl
         self._gridCol = gridCol
 
@@ -155,13 +153,13 @@ class _ColumnCellCollection(object):
         return self._tbl.tr_lst
 
 
-class _ColumnCollection(object):
+class _Columns(object):
     """
     Sequence of |_Column| instances corresponding to the columns in a table.
     Supports ``len()``, iteration and indexed access.
     """
     def __init__(self, tbl):
-        super(_ColumnCollection, self).__init__()
+        super(_Columns, self).__init__()
         self._tbl = tbl
 
     def __getitem__(self, idx):
@@ -215,15 +213,15 @@ class _Row(object):
         Sequence of |_Cell| instances corresponding to cells in this row.
         Supports ``len()``, iteration and indexed access.
         """
-        return _RowCellCollection(self._tr)
+        return _RowCells(self._tr)
 
 
-class _RowCellCollection(object):
+class _RowCells(object):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table row.
     """
     def __init__(self, tr):
-        super(_RowCellCollection, self).__init__()
+        super(_RowCells, self).__init__()
         self._tr = tr
 
     def __getitem__(self, idx):
@@ -244,13 +242,13 @@ class _RowCellCollection(object):
         return len(self._tr.tc_lst)
 
 
-class _RowCollection(object):
+class _Rows(object):
     """
     Sequence of |_Row| instances corresponding to the rows in a table.
     Supports ``len()``, iteration and indexed access.
     """
     def __init__(self, tbl):
-        super(_RowCollection, self).__init__()
+        super(_Rows, self).__init__()
         self._tbl = tbl
 
     def __getitem__(self, idx):

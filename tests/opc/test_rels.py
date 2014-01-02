@@ -12,7 +12,7 @@ from mock import call, Mock, patch, PropertyMock
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.oxml import CT_Relationships
-from docx.opc.package import Part, _Relationship, RelationshipCollection
+from docx.opc.package import Part, _Relationship, Relationships
 from docx.opc.packuri import PackURI
 
 from ..unitutil import class_mock, instance_mock, loose_mock
@@ -55,7 +55,7 @@ class Describe_Relationship(object):
         assert rel.target_ref == '../media/image1.png'
 
 
-class DescribeRelationshipCollection(object):
+class DescribeRelationships(object):
 
     def it_also_has_dict_style_get_rel_by_rId(self, rels_with_known_rel):
         rels, rId, known_rel = rels_with_known_rel
@@ -72,7 +72,7 @@ class DescribeRelationshipCollection(object):
         baseURI, rId, reltype, target, is_external = (
             'baseURI', 'rId9', 'reltype', 'target', False
         )
-        rels = RelationshipCollection(baseURI)
+        rels = Relationships(baseURI)
         rel = rels.add_relationship(reltype, target, rId, is_external)
         _Relationship_.assert_called_once_with(
             rId, reltype, target, baseURI, is_external
@@ -140,7 +140,7 @@ class DescribeRelationshipCollection(object):
 
     @pytest.fixture
     def rels(self, _baseURI):
-        return RelationshipCollection(_baseURI)
+        return Relationships(_baseURI)
 
     @pytest.fixture
     def rels_elm(self, request):
@@ -168,10 +168,10 @@ class DescribeRelationshipCollection(object):
     @pytest.fixture
     def rels_with_known_rels(self):
         """
-        Populated RelationshipCollection instance that will exercise the
-        rels.xml property.
+        Populated Relationships instance that will exercise the rels.xml
+        property.
         """
-        rels = RelationshipCollection('/baseURI')
+        rels = Relationships('/baseURI')
         rels.add_relationship(
             reltype='http://rt-hyperlink', target='http://some/link',
             rId='rId1', is_external=True

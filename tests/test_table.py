@@ -9,8 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.table import (
-    _Cell, _Column, _ColumnCellCollection, _ColumnCollection, _Row,
-    _RowCellCollection, _RowCollection, Table
+    _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows, Table
 )
 from docx.text import Paragraph
 
@@ -24,11 +23,11 @@ class DescribeTable(object):
 
     def it_provides_access_to_the_table_rows(self, table):
         rows = table.rows
-        assert isinstance(rows, _RowCollection)
+        assert isinstance(rows, _Rows)
 
     def it_provides_access_to_the_table_columns(self, table):
         columns = table.columns
-        assert isinstance(columns, _ColumnCollection)
+        assert isinstance(columns, _Columns)
 
     def it_provides_access_to_a_cell_by_row_and_col_indices(self, table):
         for row_idx in range(2):
@@ -139,7 +138,7 @@ class Describe_Column(object):
 
     def it_provides_access_to_the_column_cells(self, column):
         cells = column.cells
-        assert isinstance(cells, _ColumnCellCollection)
+        assert isinstance(cells, _ColumnCells)
 
     # fixtures -------------------------------------------------------
 
@@ -148,7 +147,7 @@ class Describe_Column(object):
         return _Column(None, None)
 
 
-class Describe_ColumnCellCollection(object):
+class Describe_ColumnCells(object):
 
     def it_knows_how_many_cells_it_contains(self, cells_fixture):
         cells, cell_count = cells_fixture
@@ -184,11 +183,11 @@ class Describe_ColumnCellCollection(object):
         cell_count = 2
         tbl = _tbl_bldr(rows=cell_count, cols=1).element
         gridCol = tbl.tblGrid.gridCol_lst[0]
-        cells = _ColumnCellCollection(tbl, gridCol)
+        cells = _ColumnCells(tbl, gridCol)
         return cells, cell_count
 
 
-class Describe_ColumnCollection(object):
+class Describe_Columns(object):
 
     def it_knows_how_many_columns_it_contains(self, columns_fixture):
         columns, column_count = columns_fixture
@@ -228,7 +227,7 @@ class Describe_ColumnCollection(object):
     @pytest.fixture
     def add_column_fixture(self):
         tbl = _tbl_bldr(2, 1).element
-        columns = _ColumnCollection(tbl)
+        columns = _Columns(tbl)
         expected_xml = _tbl_bldr(2, 2).xml()
         return columns, expected_xml
 
@@ -236,7 +235,7 @@ class Describe_ColumnCollection(object):
     def columns_fixture(self):
         column_count = 2
         tbl = _tbl_bldr(rows=2, cols=column_count).element
-        columns = _ColumnCollection(tbl)
+        columns = _Columns(tbl)
         return columns, column_count
 
 
@@ -245,7 +244,7 @@ class Describe_Row(object):
     def it_provides_access_to_the_row_cells(self, cells_access_fixture):
         row = cells_access_fixture
         cells = row.cells
-        assert isinstance(cells, _RowCellCollection)
+        assert isinstance(cells, _RowCells)
 
     # fixtures -------------------------------------------------------
 
@@ -256,7 +255,7 @@ class Describe_Row(object):
         return row
 
 
-class Describe_RowCellCollection(object):
+class Describe_RowCells(object):
 
     def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
         cells, cell_count = cell_count_fixture
@@ -294,11 +293,11 @@ class Describe_RowCellCollection(object):
         for idx in range(cell_count):
             tr_bldr.with_child(a_tc())
         tr = tr_bldr.element
-        cells = _RowCellCollection(tr)
+        cells = _RowCells(tr)
         return cells, cell_count
 
 
-class Describe_RowCollection(object):
+class Describe_Rows(object):
 
     def it_knows_how_many_rows_it_contains(self, rows_fixture):
         rows, row_count = rows_fixture
@@ -338,7 +337,7 @@ class Describe_RowCollection(object):
     @pytest.fixture
     def add_row_fixture(self):
         tbl = _tbl_bldr(rows=1, cols=2).element
-        rows = _RowCollection(tbl)
+        rows = _Rows(tbl)
         expected_xml = _tbl_bldr(rows=2, cols=2).xml()
         return rows, expected_xml
 
@@ -346,7 +345,7 @@ class Describe_RowCollection(object):
     def rows_fixture(self):
         row_count = 2
         tbl = _tbl_bldr(rows=row_count, cols=2).element
-        rows = _RowCollection(tbl)
+        rows = _Rows(tbl)
         return rows, row_count
 
 

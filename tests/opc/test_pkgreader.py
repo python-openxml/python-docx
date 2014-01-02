@@ -13,7 +13,7 @@ from docx.opc.packuri import PackURI
 from docx.opc.phys_pkg import _ZipPkgReader
 from docx.opc.pkgreader import (
     _ContentTypeMap, PackageReader, _SerializedPart, _SerializedRelationship,
-    _SerializedRelationshipCollection
+    _SerializedRelationships
 )
 
 from ..unitutil import (
@@ -153,12 +153,12 @@ class DescribePackageReader(object):
         assert generated_tuples == expected_tuples
 
     def it_can_retrieve_srels_for_a_source_uri(
-            self, _SerializedRelationshipCollection_):
+            self, _SerializedRelationships_):
         # mockery ----------------------
         phys_reader = Mock(name='phys_reader')
         source_uri = Mock(name='source_uri')
         rels_xml = phys_reader.rels_xml_for.return_value
-        load_from_xml = _SerializedRelationshipCollection_.load_from_xml
+        load_from_xml = _SerializedRelationships_.load_from_xml
         srels = load_from_xml.return_value
         # exercise ---------------------
         retval = PackageReader._srels_for(phys_reader, source_uri)
@@ -228,9 +228,9 @@ class DescribePackageReader(object):
         return class_mock(request, 'docx.opc.pkgreader._SerializedPart')
 
     @pytest.fixture
-    def _SerializedRelationshipCollection_(self, request):
+    def _SerializedRelationships_(self, request):
         return class_mock(
-            request, 'docx.opc.pkgreader._SerializedRelationshipCollection'
+            request, 'docx.opc.pkgreader._SerializedRelationships'
         )
 
     @pytest.fixture
@@ -403,7 +403,7 @@ class Describe_SerializedRelationship(object):
             srel.target_partname
 
 
-class Describe_SerializedRelationshipCollection(object):
+class Describe_SerializedRelationships(object):
 
     def it_can_load_from_xml(
             self, oxml_fromstring_, _SerializedRelationship_):
@@ -417,7 +417,7 @@ class Describe_SerializedRelationshipCollection(object):
         )
         oxml_fromstring_.return_value = rels_elm
         # exercise ---------------------
-        srels = _SerializedRelationshipCollection.load_from_xml(
+        srels = _SerializedRelationships.load_from_xml(
             baseURI, rels_item_xml)
         # verify -----------------------
         expected_calls = [
@@ -426,15 +426,15 @@ class Describe_SerializedRelationshipCollection(object):
         ]
         oxml_fromstring_.assert_called_once_with(rels_item_xml)
         assert _SerializedRelationship_.call_args_list == expected_calls
-        assert isinstance(srels, _SerializedRelationshipCollection)
+        assert isinstance(srels, _SerializedRelationships)
 
     def it_should_be_iterable(self):
-        srels = _SerializedRelationshipCollection()
+        srels = _SerializedRelationships()
         try:
             for x in srels:
                 pass
         except TypeError:
-            msg = "_SerializedRelationshipCollection object is not iterable"
+            msg = "_SerializedRelationships object is not iterable"
             pytest.fail(msg)
 
     # fixtures ---------------------------------------------

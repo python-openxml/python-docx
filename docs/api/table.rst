@@ -56,15 +56,15 @@ Protocol example::
    :members:
 
 
-|_RowCollection| objects
-------------------------
+|_Rows| objects
+---------------
 
-.. autoclass:: _RowCollection
+.. autoclass:: _Rows
    :members:
 
 
-|_ColumnCollection| objects
----------------------------
+|_Columns| objects
+------------------
 
-.. autoclass:: _ColumnCollection
+.. autoclass:: _Columns
    :members:

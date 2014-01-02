@@ -10,8 +10,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.table import (
-    _Cell, _Column, _ColumnCellCollection, _ColumnCollection, _Row,
-    _RowCellCollection, _RowCollection
+    _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows
 )
 
 from .helpers import test_docx
@@ -144,28 +143,28 @@ def then_can_access_row_cell_by_index(context):
 def then_can_access_cell_collection_of_column(context):
     column = context.column
     cells = column.cells
-    assert isinstance(cells, _ColumnCellCollection)
+    assert isinstance(cells, _ColumnCells)
 
 
 @then('I can access the cell collection of the row')
 def then_can_access_cell_collection_of_row(context):
     row = context.row
     cells = row.cells
-    assert isinstance(cells, _RowCellCollection)
+    assert isinstance(cells, _RowCells)
 
 
 @then('I can access the column collection of the table')
 def then_can_access_column_collection_of_table(context):
     table = context.table_
     columns = table.columns
-    assert isinstance(columns, _ColumnCollection)
+    assert isinstance(columns, _Columns)
 
 
 @then('I can access the row collection of the table')
 def then_can_access_row_collection_of_table(context):
     table = context.table_
     rows = table.rows
-    assert isinstance(rows, _RowCollection)
+    assert isinstance(rows, _Rows)
 
 
 @then('I can get the length of the column cell collection')

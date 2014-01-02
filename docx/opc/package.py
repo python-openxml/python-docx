@@ -135,10 +135,10 @@ class OpcPackage(object):
     @lazyproperty
     def rels(self):
         """
-        Return a reference to the |RelationshipCollection| holding the
-        relationships for this package.
+        Return a reference to the |Relationships| instance holding the
+        collection of relationships for this package.
         """
-        return RelationshipCollection(PACKAGE_URI.baseURI)
+        return Relationships(PACKAGE_URI.baseURI)
 
     def save(self, pkg_file):
         """
@@ -282,10 +282,9 @@ class Part(object):
     @lazyproperty
     def rels(self):
         """
-        |RelationshipCollection| instance holding the relationships for this
-        part.
+        |Relationships| instance holding the relationships for this part.
         """
-        return RelationshipCollection(self._partname.baseURI)
+        return Relationships(self._partname.baseURI)
 
     def target_ref(self, rId):
         """
@@ -352,12 +351,12 @@ class PartFactory(object):
         return cls.default_part_type
 
 
-class RelationshipCollection(dict):
+class Relationships(dict):
     """
     Collection object for |_Relationship| instances, having list semantics.
     """
     def __init__(self, baseURI):
-        super(RelationshipCollection, self).__init__()
+        super(Relationships, self).__init__()
         self._baseURI = baseURI
         self._target_parts_by_rId = {}
 

@@ -13,7 +13,7 @@ from mock import call, Mock, patch, PropertyMock
 from docx.opc.oxml import CT_Relationships
 from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.package import (
-    OpcPackage, Part, PartFactory, _Relationship, RelationshipCollection,
+    OpcPackage, Part, PartFactory, _Relationship, Relationships,
     Unmarshaller
 )
 from docx.opc.pkgreader import PackageReader
@@ -39,11 +39,11 @@ class DescribeOpcPackage(object):
         assert isinstance(pkg, OpcPackage)
 
     def it_initializes_its_rels_collection_on_first_reference(
-            self, RelationshipCollection_):
+            self, Relationships_):
         pkg = OpcPackage()
         rels = pkg.rels
-        RelationshipCollection_.assert_called_once_with(PACKAGE_URI.baseURI)
-        assert rels == RelationshipCollection_.return_value
+        Relationships_.assert_called_once_with(PACKAGE_URI.baseURI)
+        assert rels == Relationships_.return_value
 
     def it_can_add_a_relationship_to_a_part(self, pkg_with_rels_, rel_attrs_):
         reltype, target, rId = rel_attrs_
@@ -160,8 +160,8 @@ class DescribeOpcPackage(object):
         return pkg
 
     @pytest.fixture
-    def RelationshipCollection_(self, request):
-        return class_mock(request, 'docx.opc.package.RelationshipCollection')
+    def Relationships_(self, request):
+        return class_mock(request, 'docx.opc.package.Relationships')
 
     @pytest.fixture
     def rel_attrs_(self, request):
@@ -189,7 +189,7 @@ class DescribeOpcPackage(object):
 
     @pytest.fixture
     def rels_(self, request):
-        return instance_mock(request, RelationshipCollection)
+        return instance_mock(request, Relationships)
 
     @pytest.fixture
     def reltype(self, request):
@@ -258,17 +258,17 @@ class DescribePartLoadSaveInterface(object):
 
     @pytest.fixture
     def rels_(self, request):
-        return instance_mock(request, RelationshipCollection)
+        return instance_mock(request, Relationships)
 
 
 class DescribePartRelsProxyInterface(object):
 
     def it_has_a_rels_collection_initialized_on_first_reference(
-            self, RelationshipCollection_):
+            self, Relationships_):
         partname = PackURI('/foo/bar.xml')
         part = Part(partname, None, None)
-        assert part.rels is RelationshipCollection_.return_value
-        RelationshipCollection_.assert_called_once_with(partname.baseURI)
+        assert part.rels is Relationships_.return_value
+        Relationships_.assert_called_once_with(partname.baseURI)
 
     def it_can_establish_a_relationship_to_another_part(
             self, relate_to_part_fixture_):
@@ -331,14 +331,14 @@ class DescribePartRelsProxyInterface(object):
     #     return part, rId, rId_2, rId3
 
     @pytest.fixture
-    def RelationshipCollection_(self, request):
-        return class_mock(request, 'docx.opc.package.RelationshipCollection')
+    def Relationships_(self, request):
+        return class_mock(request, 'docx.opc.package.Relationships')
 
     @pytest.fixture
     def relate_to_part_fixture_(self, request, part, reltype):
         rId = 'rId99'
         related_part_ = instance_mock(request, Part, name='related_part_')
-        rels_ = instance_mock(request, RelationshipCollection, name='rels_')
+        rels_ = instance_mock(request, Relationships, name='rels_')
         rel_ = instance_mock(request, _Relationship, name='rel_', rId=rId)
         rels_.get_or_add.return_value = rel_
         part._rels = rels_
@@ -348,7 +348,7 @@ class DescribePartRelsProxyInterface(object):
     def relate_to_url_fixture_(self, request, part, reltype):
         rId = 'rId21'
         url = 'https://github.com/scanny/python-docx'
-        rels_ = instance_mock(request, RelationshipCollection, name='rels_')
+        rels_ = instance_mock(request, Relationships, name='rels_')
         rels_.get_or_add_ext_rel.return_value = rId
         part._rels = rels_
         return part, url, reltype, rId
@@ -356,7 +356,7 @@ class DescribePartRelsProxyInterface(object):
     @pytest.fixture
     def related_part_fixture_(self, request, part, reltype):
         related_part_ = instance_mock(request, Part, name='related_part_')
-        rels_ = instance_mock(request, RelationshipCollection, name='rels_')
+        rels_ = instance_mock(request, Relationships, name='rels_')
         rels_.part_with_reltype.return_value = related_part_
         part._rels = rels_
         return part, reltype, related_part_
@@ -367,13 +367,13 @@ class DescribePartRelsProxyInterface(object):
 
     @pytest.fixture
     def rels_(self, request):
-        return instance_mock(request, RelationshipCollection)
+        return instance_mock(request, Relationships)
 
     @pytest.fixture
     def target_ref_fixture_(self, request, part):
         rId = 'rId246'
         url = 'https://github.com/scanny/python-docx'
-        rels = RelationshipCollection(None)
+        rels = Relationships(None)
         rels.add_relationship(None, url, rId, is_external=True)
         part._rels = rels
         return part, rId, url
@@ -556,20 +556,20 @@ class Describe_Relationship(object):
         assert rel.target_ref == '../media/image1.png'
 
 
-class DescribeRelationshipCollection(object):
+class DescribeRelationships(object):
 
     def it_has_a_len(self):
-        rels = RelationshipCollection(None)
+        rels = Relationships(None)
         assert len(rels) == 0
 
     def it_has_dict_style_lookup_of_rel_by_rId(self):
         rel = Mock(name='rel', rId='foobar')
-        rels = RelationshipCollection(None)
+        rels = Relationships(None)
         rels['foobar'] = rel
         assert rels['foobar'] == rel
 
     def it_should_raise_on_failed_lookup_by_rId(self):
-        rels = RelationshipCollection(None)
+        rels = Relationships(None)
         with pytest.raises(KeyError):
             rels['barfoo']
 
@@ -577,7 +577,7 @@ class DescribeRelationshipCollection(object):
         baseURI, rId, reltype, target, external = (
             'baseURI', 'rId9', 'reltype', 'target', False
         )
-        rels = RelationshipCollection(baseURI)
+        rels = Relationships(baseURI)
         rel = rels.add_relationship(reltype, target, rId, external)
         _Relationship_.assert_called_once_with(
             rId, reltype, target, baseURI, external
@@ -621,13 +621,13 @@ class DescribeRelationshipCollection(object):
 
     @pytest.fixture
     def add_ext_rel_fixture_(self, reltype, url):
-        rels = RelationshipCollection(None)
+        rels = Relationships(None)
         return rels, reltype, url
 
     @pytest.fixture
     def add_matching_ext_rel_fixture_(self, request, reltype, url):
         rId = 'rId369'
-        rels = RelationshipCollection(None)
+        rels = Relationships(None)
         rels.add_relationship(reltype, url, rId, is_external=True)
         return rels, reltype, url, rId
 
@@ -638,10 +638,10 @@ class DescribeRelationshipCollection(object):
     @pytest.fixture
     def rels(self):
         """
-        Populated RelationshipCollection instance that will exercise the
-        rels.xml property.
+        Populated Relationships instance that will exercise the rels.xml
+        property.
         """
-        rels = RelationshipCollection('/baseURI')
+        rels = Relationships('/baseURI')
         rels.add_relationship(
             reltype='http://rt-hyperlink', target='http://some/link',
             rId='rId1', is_external=True
