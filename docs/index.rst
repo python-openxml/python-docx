@@ -21,42 +21,44 @@ A post-alpha release is expected within a few weeks, say Feb 1, 2014.
 What it can do
 --------------
 
+.. |img| image:: /_static/img/example-docx-01.png
+
 Here's an example of what |docx| can do:
 
-.. figure:: /_static/img/example-docx-01.png
+======  ======================================================================
+|img|   ::
 
-|
+          from docx import Document
 
-::
+          document = Document()
 
-    from docx import Document
+          document.add_heading('Document Title', 0)
+          document.add_paragraph('A plain paragraph.')
 
-    document = Document()
+          document.add_heading('Heading, level 1', level=1)
+          document.add_paragraph('Intense quote', style='IntenseQuote')
 
-    document.add_heading('Document Title', 0)
-    document.add_paragraph('A plain paragraph.')
-    document.add_heading('Heading, level 1', level=1)
-    document.add_paragraph('Intense quote', style='IntenseQuote')
-    document.add_bullet('first item in unordered list')
-    document.add_list_item('first item in ordered list')
+          document.add_bullet('first item in unordered list')
+          document.add_list_item('first item in ordered list')
 
-    document.add_picture('monty-truth.png')
+          document.add_picture('monty-truth.png')
 
-    table = document.add_table(rows=1, cols=3)
-    table.style = 'LightShading-Accent1'
-    header_cells = table.rows[0].cells
-    header_cells[0].text = 'Qty'
-    header_cells[1].text = 'Id'
-    header_cells[2].text = 'Desc'
-    for item in recordset:
-        row_cells = table.add_row().cells
-        row_cells[0].text = str(item.qty)
-        row_cells[1].text = str(item.id)
-        row_cells[2].text = item.desc
-    
-    document.add_page_break()
+          table = document.add_table(rows=1, cols=3)
+          table.style = 'LightShading-Accent1'
+          header_cells = table.rows[0].cells
+          header_cells[0].text = 'Qty'
+          header_cells[1].text = 'Id'
+          header_cells[2].text = 'Desc'
+          for item in recordset:
+              row_cells = table.add_row().cells
+              row_cells[0].text = str(item.qty)
+              row_cells[1].text = str(item.id)
+              row_cells[2].text = item.desc
 
-    document.save('demo.docx')
+          document.add_page_break()
+
+          document.save('demo.docx')
+======  ======================================================================
 
 
 User Guide
@@ -70,6 +72,7 @@ User Guide
    user/api-concepts
    user/styles
    user/tables
+   user/shapes
    user/text
 
 

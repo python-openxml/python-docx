@@ -18,7 +18,10 @@ _default_docx_path = os.path.join(_thisdir, 'templates', 'default.docx')
 
 class Document(object):
     """
-    API class representing a Word document.
+    Return a |Document| instance loaded from *docx*, where *docx* can be
+    either a path to a ``.docx`` file (a string) or a file-like object. If
+    *docx* is missing or ``None``, the built-in default document "template"
+    is loaded.
     """
     def __init__(self, docx=None):
         super(Document, self).__init__()
@@ -48,12 +51,12 @@ class Document(object):
         """
         return self._document_part.inline_shapes
 
-    def save(self, file_):
+    def save(self, path_or_stream):
         """
-        Save this document to *file_*, where *file_* can be either a path to
-        a file (a string) or a file-like object.
+        Save this document to *path_or_stream*, which can be either a path to
+        a filesystem location (a string) or a file-like object.
         """
-        self._package.save(file_)
+        self._package.save(path_or_stream)
 
     @staticmethod
     def _open(docx):

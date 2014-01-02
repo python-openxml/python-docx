@@ -10,8 +10,9 @@ Document objects
 .. currentmodule:: docx.api
 
 
-|_Document| objects
--------------------
+|Document| objects
+------------------
 
-.. autoclass:: _Document
+
+.. autoclass:: Document
    :members:
