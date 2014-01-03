@@ -37,6 +37,19 @@ class Document(object):
         """
         return self.inline_shapes.add_picture(image_path_or_stream)
 
+    def add_paragraph(self, text='', style=None):
+        """
+        Return a paragraph newly added to the end of the document, populated
+        with *text* and having paragraph style *style*.
+        """
+        p = self._document_part.add_paragraph()
+        if text:
+            r = p.add_run()
+            r.add_text(text)
+        if style is not None:
+            p.style = style
+        return p
+
     @property
     def body(self):
         """

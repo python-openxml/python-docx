@@ -28,6 +28,23 @@ class DocumentPart(Part):
         )
         self._element = document_elm
 
+    def add_paragraph(self):
+        """
+        Return a paragraph newly added to the end of body content.
+        """
+        raise NotImplementedError
+
+    @property
+    def blob(self):
+        return serialize_part_xml(self._element)
+
+    @property
+    def body(self):
+        """
+        The |_Body| instance containing the content for this document.
+        """
+        return _Body(self._element.body)
+
     def get_or_add_image_part(self, image_descriptor):
         """
         Return an ``(image_part, rId)`` 2-tuple for the image identified by
@@ -40,17 +57,6 @@ class DocumentPart(Part):
         image_part = image_parts.get_or_add_image_part(image_descriptor)
         rId = self.relate_to(image_part, RT.IMAGE)
         return (image_part, rId)
-
-    @property
-    def blob(self):
-        return serialize_part_xml(self._element)
-
-    @property
-    def body(self):
-        """
-        The |_Body| instance containing the content for this document.
-        """
-        return _Body(self._element.body)
 
     @lazyproperty
     def inline_shapes(self):
