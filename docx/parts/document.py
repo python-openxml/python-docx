@@ -32,13 +32,13 @@ class DocumentPart(Part):
         """
         Return a paragraph newly added to the end of body content.
         """
-        raise NotImplementedError
+        return self.body.add_paragraph()
 
     @property
     def blob(self):
         return serialize_part_xml(self._element)
 
-    @property
+    @lazyproperty
     def body(self):
         """
         The |_Body| instance containing the content for this document.

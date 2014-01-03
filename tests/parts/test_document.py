@@ -70,6 +70,12 @@ class DescribeDocumentPart(object):
         )
         assert isinstance(doc, DocumentPart)
 
+    def it_can_add_a_paragraph(self, add_paragraph_fixture):
+        document_part, body_, p_ = add_paragraph_fixture
+        p = document_part.add_paragraph()
+        body_.add_paragraph.assert_called_once_with()
+        assert p is p_
+
     def it_can_add_an_image_part_to_the_document(
             self, get_or_add_image_fixture):
         (document, image_descriptor_, image_parts_, relate_to_, image_part_,
@@ -89,8 +95,10 @@ class DescribeDocumentPart(object):
         assert _body is _Body_.return_value
 
     def it_can_serialize_to_xml(self, document_blob_fixture):
-        document, document_elm, serialize_part_xml_ = document_blob_fixture
-        blob = document.blob
+        document_part, document_elm, serialize_part_xml_ = (
+            document_blob_fixture
+        )
+        blob = document_part.blob
         serialize_part_xml_.assert_called_once_with(document_elm)
         assert blob is serialize_part_xml_.return_value
 
@@ -111,8 +119,19 @@ class DescribeDocumentPart(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
+    def add_paragraph_fixture(self, document_part_body_, body_, p_):
+        document_part = DocumentPart(None, None, None, None)
+        return document_part, body_, p_
+
+    @pytest.fixture
     def _Body_(self, request):
         return class_mock(request, 'docx.parts.document._Body')
+
+    @pytest.fixture
+    def body_(self, request, p_):
+        body_ = instance_mock(request, _Body)
+        body_.add_paragraph.return_value = p_
+        return body_
 
     @pytest.fixture
     def blob_(self, request):
@@ -129,8 +148,8 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def document_blob_fixture(self, request, serialize_part_xml_):
         document_elm = instance_mock(request, CT_Document)
-        document = DocumentPart(None, None, document_elm, None)
-        return document, document_elm, serialize_part_xml_
+        document_part = DocumentPart(None, None, document_elm, None)
+        return document_part, document_elm, serialize_part_xml_
 
     @pytest.fixture
     def document_body_fixture(self, request, _Body_):
@@ -145,6 +164,12 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def document_part_body_(self, request, body_):
+        return property_mock(
+            request, DocumentPart, 'body', return_value=body_
+        )
 
     @pytest.fixture
     def document_part_load_(self, request):
@@ -210,6 +235,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def oxml_fromstring_(self, request):
         return function_mock(request, 'docx.parts.document.oxml_fromstring')
+
+    @pytest.fixture
+    def p_(self, request):
+        return instance_mock(request, Paragraph)
 
     @pytest.fixture
     def package_(self, request):
