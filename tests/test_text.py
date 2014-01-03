@@ -14,7 +14,7 @@ import pytest
 
 from mock import call, create_autospec, Mock
 
-from .oxml.unitdata.text import a_br, a_t, an_r
+from .oxml.unitdata.text import a_br, a_t, a_p, an_r
 from .unitutil import class_mock
 
 
@@ -68,6 +68,24 @@ class DescribeParagraph(object):
             p = Paragraph(p_elm)
             p.style = style
             assert p_elm.style == expected_setting
+
+    def it_knows_the_text_it_contains(self, text_prop_fixture):
+        p, expected_text = text_prop_fixture
+        assert p.text == expected_text
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def text_prop_fixture(self):
+        p = (
+            a_p().with_nsdecls().with_child(
+                an_r().with_child(
+                    a_t().with_text('foo'))).with_child(
+                an_r().with_child(
+                    a_t().with_text(' de bar')))
+        ).element
+        paragraph = Paragraph(p)
+        return paragraph, 'foo de bar'
 
 
 class DescribeRun(object):

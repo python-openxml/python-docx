@@ -44,6 +44,17 @@ class Paragraph(object):
     def style(self, style):
         self._p.style = None if style == 'Normal' else style
 
+    @property
+    def text(self):
+        """
+        A string formed by concatenating the text of each run in the
+        paragraph.
+        """
+        text = ''
+        for run in self.runs:
+            text += run.text
+        return text
+
 
 class Run(object):
     """
