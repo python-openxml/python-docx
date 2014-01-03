@@ -102,6 +102,12 @@ class DescribeDocumentPart(object):
         serialize_part_xml_.assert_called_once_with(document_elm)
         assert blob is serialize_part_xml_.return_value
 
+    def it_provides_access_to_the_document_paragraphs(
+            self, paragraphs_fixture):
+        document_part, paragraphs_ = paragraphs_fixture
+        paragraphs = document_part.paragraphs
+        assert paragraphs is paragraphs_
+
     def it_provides_access_to_the_inline_shapes_in_the_document(
             self, inline_shapes_fixture):
         document, InlineShapes_, body_elm = inline_shapes_fixture
@@ -243,6 +249,16 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def package_(self, request):
         return instance_mock(request, Package)
+
+    @pytest.fixture
+    def paragraphs_(self, request):
+        return instance_mock(request, list)
+
+    @pytest.fixture
+    def paragraphs_fixture(self, document_part_body_, body_, paragraphs_):
+        document_part = DocumentPart(None, None, None, None)
+        body_.paragraphs = paragraphs_
+        return document_part, paragraphs_
 
     @pytest.fixture
     def part_load_fixture(

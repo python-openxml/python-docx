@@ -92,8 +92,7 @@ class DocumentPart(Part):
         the document, in document order. Note that paragraphs within revision
         marks such as inserted or deleted do not appear in this list.
         """
-        # return self.body.paragraphs
-        raise NotImplementedError
+        return self.body.paragraphs
 
     @property
     def part(self):
