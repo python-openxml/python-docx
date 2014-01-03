@@ -37,6 +37,20 @@ class Document(object):
         """
         return self.inline_shapes.add_picture(image_path_or_stream)
 
+    def add_heading(self, text='', level=1):
+        """
+        Return a heading paragraph newly added to the end of the document,
+        populated with *text* and having the heading paragraph style
+        determined by *level*. If *level* is 0, the style is set to
+        ``'Title'``. If *level* is 1 (or not present), ``'Heading1'`` is used.
+        Otherwise the style is set to ``'Heading{level}'``. If *level* is
+        outside the range 0-9, |ValueError| is raised.
+        """
+        if not 0 <= level <= 9:
+            raise ValueError("level must be in range 0-9, got %d" % level)
+        style = 'Title' if level == 0 else 'Heading%d' % level
+        return self.add_paragraph(text, style)
+
     def add_paragraph(self, text='', style=None):
         """
         Return a paragraph newly added to the end of the document, populated

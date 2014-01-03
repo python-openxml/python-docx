@@ -40,6 +40,18 @@ class DescribeDocument(object):
         with pytest.raises(ValueError):
             Document._open(docx_)
 
+    def it_can_add_a_heading(self, add_heading_fixture):
+        document, add_paragraph_, p_, text, level, style = add_heading_fixture
+        p = document.add_heading(text, level)
+        add_paragraph_.assert_called_once_with(text, style)
+        assert p is p_
+
+    def it_should_raise_on_heading_level_out_of_range(self, document):
+        with pytest.raises(ValueError):
+            document.add_heading(level=-1)
+        with pytest.raises(ValueError):
+            document.add_heading(level=10)
+
     def it_can_add_an_empty_paragraph(self, add_empty_paragraph_fixture):
         document, document_part_, p_ = add_empty_paragraph_fixture
         p = document.add_paragraph()
@@ -88,9 +100,22 @@ class DescribeDocument(object):
 
     # fixtures -------------------------------------------------------
 
+    @pytest.fixture(params=[0, 1, 2, 5, 9])
+    def add_heading_fixture(self, request, document, add_paragraph_, p_):
+        level = request.param
+        text = 'Spam vs. Bacon'
+        style = 'Title' if level == 0 else 'Heading%d' % level
+        return document, add_paragraph_, p_, text, level, style
+
     @pytest.fixture
     def add_empty_paragraph_fixture(self, document, document_part_, p_):
         return document, document_part_, p_
+
+    @pytest.fixture
+    def add_paragraph_(self, request, p_):
+        return method_mock(
+            request, Document, 'add_paragraph', return_value=p_
+        )
 
     @pytest.fixture
     def add_picture_fixture(self, request, open_, document_part_):
