@@ -64,6 +64,15 @@ class Document(object):
         """
         return self._document_part.inline_shapes
 
+    @property
+    def paragraphs(self):
+        """
+        A list of |Paragraph| instances corresponding to the paragraphs in
+        the document, in document order. Note that paragraphs within revision
+        marks such as inserted or deleted do not appear in this list.
+        """
+        return self._document_part.paragraphs
+
     def save(self, path_or_stream):
         """
         Save this document to *path_or_stream*, which can be either a path to
