@@ -105,8 +105,8 @@ def then_document_contains_2x2_table(context):
     table = document.tables[-1]
     assert isinstance(table, Table)
     assert len(table.rows) == 2
-    assert len(table.cols) == 2
-    context.table = table
+    assert len(table.columns) == 2
+    context.table_ = table
 
 
 @then('the last paragraph contains only a page break')
@@ -189,5 +189,5 @@ def then_style_of_last_paragraph_is_style(context, style):
 
 @then('the table style is \'{style}\'')
 def then_table_style_is_style(context, style):
-    table = context.table
+    table = context.table_
     assert table.style == style

@@ -114,6 +114,11 @@ class DescribeDocumentPart(object):
         paragraphs = document_part.paragraphs
         assert paragraphs is paragraphs_
 
+    def it_provides_access_to_the_document_tables(self, tables_fixture):
+        document_part, tables_ = tables_fixture
+        tables = document_part.tables
+        assert tables is tables_
+
     def it_provides_access_to_the_inline_shapes_in_the_document(
             self, inline_shapes_fixture):
         document, InlineShapes_, body_elm = inline_shapes_fixture
@@ -305,6 +310,16 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def table_(self, request):
         return instance_mock(request, Table)
+
+    @pytest.fixture
+    def tables_(self, request):
+        return instance_mock(request, list)
+
+    @pytest.fixture
+    def tables_fixture(self, document_part_body_, body_, tables_):
+        document_part = DocumentPart(None, None, None, None)
+        body_.tables = tables_
+        return document_part, tables_
 
 
 class Describe_Body(object):

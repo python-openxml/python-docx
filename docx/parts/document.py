@@ -117,7 +117,7 @@ class DocumentPart(Part):
         document, in document order. Note that tables within revision marks
         such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
-        raise NotImplementedError
+        return self.body.tables
 
 
 class _Body(object):
