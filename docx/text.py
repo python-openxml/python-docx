@@ -106,6 +106,15 @@ class Run(object):
             return None
         return b.val
 
+    @bold.setter
+    def bold(self, value):
+        rPr = self._r.get_or_add_rPr()
+        rPr.remove_b()
+        if value is not None:
+            b = rPr.add_b()
+            if bool(value) is False:
+                b.val = False
+
     @property
     def text(self):
         """

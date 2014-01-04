@@ -186,6 +186,15 @@ class CT_OnOff(OxmlBaseElement):
             return True
         raise ValidationError("expected xsd:boolean, got '%s'" % val)
 
+    @val.setter
+    def val(self, value):
+        val = qn('w:val')
+        if bool(value) is True:
+            if val in self.attrib:
+                del self.attrib[val]
+        else:
+            self.set(val, '0')
+
 
 class CT_String(OxmlBaseElement):
     """

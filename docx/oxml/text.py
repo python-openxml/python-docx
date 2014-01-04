@@ -209,6 +209,15 @@ class CT_R(OxmlBaseElement):
         self.append(t)
         return t
 
+    def get_or_add_rPr(self):
+        """
+        Return the rPr child element, newly added if not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            rPr = self._add_rPr()
+        return rPr
+
     @classmethod
     def new(cls):
         """
@@ -230,17 +239,45 @@ class CT_R(OxmlBaseElement):
         """
         return self.findall(qn('w:t'))
 
+    def _add_rPr(self):
+        """
+        Return a newly added rPr child element. Assumes one is not present.
+        """
+        rPr = CT_RPr.new()
+        self.insert(0, rPr)
+        return rPr
+
 
 class CT_RPr(OxmlBaseElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
     """
+    def add_b(self):
+        """
+        Return a newly added <w:b/> child element.
+        """
+        b = OxmlElement('w:b')
+        self.insert(0, b)
+        return b
+
     @property
     def b(self):
         """
         First ``<w:b>`` child element or None if none are present.
         """
         return self.find(qn('w:b'))
+
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:rPr>`` element.
+        """
+        return OxmlElement('w:rPr')
+
+    def remove_b(self):
+        b_lst = self.findall(qn('w:b'))
+        for b in b_lst:
+            self.remove(b)
 
 
 class CT_Text(OxmlBaseElement):

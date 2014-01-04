@@ -99,7 +99,6 @@ class DescribeDocument(object):
             add_table_fixture
         )
         table = document.add_table(rows, cols, style)
-        print(table)
         document_part_.add_table.assert_called_once_with(rows, cols)
         assert table.style == expected_style
         assert table == table_

@@ -90,10 +90,14 @@ class DescribeParagraph(object):
 
 class DescribeRun(object):
 
-    def it_knows_if_its_bold(self, bold_fixture):
-        run, is_bold = bold_fixture
-        print('\n%s' % run._r.xml)
+    def it_knows_if_its_bold(self, bold_get_fixture):
+        run, is_bold = bold_get_fixture
         assert run.bold == is_bold
+
+    def it_can_change_its_bold_setting(self, bold_set_fixture):
+        run, bold_value, expected_xml = bold_set_fixture
+        run.bold = bold_value
+        assert run._r.xml == expected_xml
 
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
@@ -143,7 +147,7 @@ class DescribeRun(object):
         return run, text_str, expected_xml, Text_
 
     @pytest.fixture(params=[True, False, None])
-    def bold_fixture(self, request):
+    def bold_get_fixture(self, request):
         is_bold = request.param
         r_bldr = an_r().with_nsdecls()
         if is_bold is not None:
@@ -155,6 +159,23 @@ class DescribeRun(object):
         r = r_bldr.element
         run = Run(r)
         return run, is_bold
+
+    @pytest.fixture(params=[True, False, None])
+    def bold_set_fixture(self, request):
+        # run --------------------------
+        r = an_r().with_nsdecls().element
+        run = Run(r)
+        # bold_value -------------------
+        bold_value = request.param
+        # expected_xml -----------------
+        rPr_bldr = an_rPr()
+        if bold_value is not None:
+            b_bldr = a_b()
+            if bold_value is False:
+                b_bldr.with_val(0)
+            rPr_bldr.with_child(b_bldr)
+        expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
+        return run, bold_value, expected_xml
 
     @pytest.fixture
     def run(self):
