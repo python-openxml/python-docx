@@ -15,7 +15,7 @@ from docx import Document
 
 @given('a table cell')
 def given_a_table_cell(context):
-    table = Document().body.add_table(rows=2, cols=2)
+    table = Document().add_table(rows=2, cols=2)
     context.cell = table.cell(0, 0)
 
 

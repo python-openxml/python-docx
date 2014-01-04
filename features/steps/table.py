@@ -27,28 +27,28 @@ def given_a_2x2_table(context):
 def given_a_column_cell_collection_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.cells = document.body.tables[0].columns[0].cells
+    context.cells = document.tables[0].columns[0].cells
 
 
 @given('a column collection having two columns')
 def given_a_column_collection_having_two_columns(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.columns = document.body.tables[0].columns
+    context.columns = document.tables[0].columns
 
 
 @given('a row cell collection having two cells')
 def given_a_row_cell_collection_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.cells = document.body.tables[0].rows[0].cells
+    context.cells = document.tables[0].rows[0].cells
 
 
 @given('a row collection having two rows')
 def given_a_row_collection_having_two_rows(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.rows = document.body.tables[0].rows
+    context.rows = document.tables[0].rows
 
 
 @given('a table')
@@ -60,7 +60,7 @@ def given_a_table(context):
 def given_a_table_having_an_applied_style(context):
     docx_path = test_docx('tbl-having-applied-style')
     document = Document(docx_path)
-    context.table_ = document.body.tables[0]
+    context.table_ = document.tables[0]
 
 
 @given('a table having two columns')
@@ -69,28 +69,28 @@ def given_a_table_having_two_columns(context):
     document = Document(docx_path)
     # context.table is used internally by behave, underscore added
     # to distinguish this one
-    context.table_ = document.body.tables[0]
+    context.table_ = document.tables[0]
 
 
 @given('a table having two rows')
 def given_a_table_having_two_rows(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.table_ = document.body.tables[0]
+    context.table_ = document.tables[0]
 
 
 @given('a table column having two cells')
 def given_a_table_column_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.column = document.body.tables[0].columns[0]
+    context.column = document.tables[0].columns[0]
 
 
 @given('a table row having two cells')
 def given_a_table_row_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
-    context.row = document.body.tables[0].rows[0]
+    context.row = document.tables[0].rows[0]
 
 
 # when =====================================================

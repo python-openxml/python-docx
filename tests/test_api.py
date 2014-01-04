@@ -104,10 +104,6 @@ class DescribeDocument(object):
         assert table.style == expected_style
         assert table == table_
 
-    def it_provides_access_to_the_document_body(self, document):
-        body = document.body
-        assert body is document._document_part.body
-
     def it_provides_access_to_the_document_inline_shapes(self, document):
         body = document.inline_shapes
         assert body is document._document_part.inline_shapes

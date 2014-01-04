@@ -109,13 +109,6 @@ class Document(object):
         return table
 
     @property
-    def body(self):
-        """
-        Return a reference to the |_Body| instance for this document.
-        """
-        return self._document_part.body
-
-    @property
     def inline_shapes(self):
         """
         Return a reference to the |InlineShapes| instance for this document.

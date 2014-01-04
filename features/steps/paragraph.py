@@ -13,9 +13,6 @@ from .helpers import saved_docx_path, test_text
 test_style = 'Heading1'
 
 
-# given ===================================================
-
-
 # when ====================================================
 
 @when('I add a run to the paragraph')
@@ -39,8 +36,7 @@ def step_when_set_paragraph_style(context):
 @then('the document contains the text I added')
 def step_then_document_contains_text_I_added(context):
     document = Document(saved_docx_path)
-    body = document.body
-    paragraphs = body.paragraphs
+    paragraphs = document.paragraphs
     p = paragraphs[-1]
     r = p.runs[0]
     assert r.text == test_text
@@ -49,7 +45,6 @@ def step_then_document_contains_text_I_added(context):
 @then('the paragraph has the style I set')
 def step_then_paragraph_has_the_style_I_set(context):
     document = Document(saved_docx_path)
-    body = document.body
-    paragraphs = body.paragraphs
+    paragraphs = document.paragraphs
     p = paragraphs[-1]
     assert p.style == test_style
