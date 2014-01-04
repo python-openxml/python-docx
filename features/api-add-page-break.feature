@@ -3,7 +3,6 @@ Feature: Add a page break
   As a programmer using the basic python-docx API
   I need a method that adds a hard page break on its own paragraph
 
-  @wip
   Scenario: Add a hard page break paragraph
     Given a document
      When I add a page break to the document

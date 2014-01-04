@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
+from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 
@@ -44,6 +45,16 @@ class Document(object):
             raise ValueError("level must be in range 0-9, got %d" % level)
         style = 'Title' if level == 0 else 'Heading%d' % level
         return self.add_paragraph(text, style)
+
+    def add_page_break(self):
+        """
+        Return a paragraph newly added to the end of the document and
+        containing only a page break.
+        """
+        p = self._document_part.add_paragraph()
+        r = p.add_run()
+        r.add_break(WD_BREAK.PAGE)
+        return p
 
     def add_paragraph(self, text='', style=None):
         """

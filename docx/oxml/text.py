@@ -31,7 +31,7 @@ class CT_Br(OxmlBaseElement):
 
     @property
     def type(self):
-        self.get(qn('w:type'))
+        return self.get(qn('w:type'))
 
     @type.setter
     def type(self, type_str):

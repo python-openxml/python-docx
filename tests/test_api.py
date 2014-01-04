@@ -7,6 +7,7 @@ Test suite for the docx.api module
 import pytest
 
 from docx.api import Document
+from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
@@ -71,6 +72,14 @@ class DescribeDocument(object):
         p = document.add_paragraph(style=style)
         assert p.style == style
 
+    def it_can_add_a_page_break(self, add_page_break_fixture):
+        document, document_part_, p_, r_ = add_page_break_fixture
+        p = document.add_page_break()
+        document_part_.add_paragraph.assert_called_once_with()
+        p_.add_run.assert_called_once_with()
+        r_.add_break.assert_called_once_with(WD_BREAK.PAGE)
+        assert p is p_
+
     def it_can_add_a_picture(self, add_picture_fixture):
         (document, image_path, width, height, inline_shapes_, expected_width,
          expected_height, picture_) = add_picture_fixture
@@ -111,6 +120,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def add_empty_paragraph_fixture(self, document, document_part_, p_):
         return document, document_part_, p_
+
+    @pytest.fixture
+    def add_page_break_fixture(self, document, document_part_, p_, r_):
+        return document, document_part_, p_, r_
 
     @pytest.fixture
     def add_paragraph_(self, request, p_):

@@ -91,7 +91,7 @@ def then_last_paragraph_contains_only_a_page_break(context):
     document = context.document
     p = document.paragraphs[-1]
     assert len(p.runs) == 1
-    assert len(p.runs[0]) == 1
+    assert len(p.runs[0]._r) == 1
     assert p.runs[0]._r[0].type == 'page'
 
 
