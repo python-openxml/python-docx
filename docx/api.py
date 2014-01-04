@@ -97,6 +97,17 @@ class Document(object):
 
         return picture
 
+    def add_table(self, rows, cols, style='LightShading-Accent1'):
+        """
+        Add a table having row and column counts of *rows* and *cols*
+        respectively and table style of *style*. If *style* is |None|, a
+        table with no style is produced.
+        """
+        table = self._document_part.add_table(rows, cols)
+        if style:
+            table.style = style
+        return table
+
     @property
     def body(self):
         """

@@ -34,6 +34,13 @@ class DocumentPart(Part):
         """
         return self.body.add_paragraph()
 
+    def add_table(self, rows, cols):
+        """
+        Return a table having *rows* rows and *cols* columns, newly appended
+        to the main document story.
+        """
+        raise NotImplementedError
+
     @property
     def blob(self):
         return serialize_part_xml(self._element)

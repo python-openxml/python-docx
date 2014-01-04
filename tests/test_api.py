@@ -4,6 +4,10 @@
 Test suite for the docx.api module
 """
 
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
+
 import pytest
 
 from docx.api import Document
@@ -11,6 +15,7 @@ from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
+from docx.table import Table
 from docx.text import Paragraph, Run
 
 from .unitutil import (
@@ -89,6 +94,16 @@ class DescribeDocument(object):
         assert picture.height == expected_height
         assert picture is picture_
 
+    def it_can_add_a_table(self, add_table_fixture):
+        document, rows, cols, style, document_part_, expected_style, table_ = (
+            add_table_fixture
+        )
+        table = document.add_table(rows, cols, style)
+        print(table)
+        document_part_.add_table.assert_called_once_with(rows, cols)
+        assert table.style == expected_style
+        assert table == table_
+
     def it_provides_access_to_the_document_body(self, document):
         body = document.body
         assert body is document._document_part.body
@@ -154,6 +169,15 @@ class DescribeDocument(object):
         style = 'foobaresque'
         return document, style, p_
 
+    @pytest.fixture(params=[None, 'LightShading-Accent1', 'foobar'])
+    def add_table_fixture(self, request, document, document_part_, table_):
+        rows, cols = 4, 2
+        style = expected_style = request.param
+        return (
+            document, rows, cols, style, document_part_, expected_style,
+            table_
+        )
+
     @pytest.fixture
     def add_text_paragraph_fixture(self, document, p_, r_):
         text = 'foobar\rbarfoo'
@@ -174,11 +198,12 @@ class DescribeDocument(object):
         return Document()
 
     @pytest.fixture
-    def document_part_(self, request, p_, paragraphs_):
+    def document_part_(self, request, p_, paragraphs_, table_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
         document_part_.add_paragraph.return_value = p_
+        document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
         return document_part_
 
@@ -240,3 +265,7 @@ class DescribeDocument(object):
         file_ = instance_mock(request, str)
         document = Document()
         return document, package_, file_
+
+    @pytest.fixture
+    def table_(self, request):
+        return instance_mock(request, Table, style=None)
