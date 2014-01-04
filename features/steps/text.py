@@ -21,6 +21,13 @@ def given_a_run(context):
     context.run = p.add_run()
 
 
+@given('a run having bold set on')
+def given_a_run_having_bold_set_on(context):
+    run = Document().add_paragraph().add_run()
+    run.bold = True
+    context.run = run
+
+
 # when ====================================================
 
 @when('I add a column break')
@@ -39,6 +46,13 @@ def when_add_line_break(context):
 def when_add_page_break(context):
     run = context.run
     run.add_break(WD_BREAK.PAGE)
+
+
+@when('I assign {value_str} to its bold property')
+def when_assign_true_to_its_bold_property(context, value_str):
+    value = {'True': True, 'False': False, 'None': None}[value_str]
+    run = context.run
+    run.bold = value
 
 
 # then =====================================================
@@ -69,3 +83,21 @@ def then_last_item_in_run_is_a_break(context):
         '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}br'
     )
     assert context.last_child.tag == expected_tag
+
+
+@then('the run appears in bold typeface')
+def then_run_appears_in_bold_typeface(context):
+    run = context.run
+    assert run.bold is True
+
+
+@then('the run appears with its inherited bold setting')
+def then_run_appears_with_its_inherited_bold_setting(context):
+    run = context.run
+    assert run.bold is None
+
+
+@then('the run appears without bold regardless of its style hierarchy')
+def then_run_appears_without_bold_regardless(context):
+    run = context.run
+    assert run.bold is False

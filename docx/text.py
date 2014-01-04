@@ -90,6 +90,17 @@ class Run(object):
         return Text(t)
 
     @property
+    def bold(self):
+        """
+        Read/write. The bold setting for this run, one of |True|, |False|, or
+        |None|. When |True|, the run will appear in bold unconditionally.
+        When |False| it will appear without bold unconditionally. When
+        |None|, the run will inherit its bold setting from its style
+        hierarchy.
+        """
+        raise NotImplementedError
+
+    @property
     def text(self):
         """
         A string formed by concatenating all the <w:t> elements present in
