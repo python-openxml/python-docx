@@ -27,6 +27,12 @@ def when_add_heading_specifying_only_its_text(context):
     document.add_heading(context.heading_text)
 
 
+@when('I add a page break to the document')
+def when_add_page_break_to_document(context):
+    document = context.document
+    document.add_page_break()
+
+
 @when('I add a paragraph specifying its style')
 def when_add_paragraph_specifying_style(context):
     document = context.document
@@ -79,6 +85,15 @@ def when_add_picture_specifying_only_image_file(context):
 
 
 # then =====================================================
+
+@then('the last paragraph contains only a page break')
+def then_last_paragraph_contains_only_a_page_break(context):
+    document = context.document
+    p = document.paragraphs[-1]
+    assert len(p.runs) == 1
+    assert len(p.runs[0]) == 1
+    assert p.runs[0]._r[0].type == 'page'
+
 
 @then('the last paragraph contains the heading text')
 def then_last_p_contains_heading_text(context):

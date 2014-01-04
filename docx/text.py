@@ -60,9 +60,9 @@ class Run(object):
     """
     Proxy object wrapping ``<w:r>`` element.
     """
-    def __init__(self, r_elm):
+    def __init__(self, r):
         super(Run, self).__init__()
-        self._r = r_elm
+        self._r = r
 
     def add_break(self, break_type=WD_BREAK.LINE):
         """
