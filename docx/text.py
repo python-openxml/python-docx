@@ -116,6 +116,16 @@ class Run(object):
                 b.val = False
 
     @property
+    def italic(self):
+        """
+        Read/write. The italic setting for this run, one of |True|, |False|,
+        or |None|. When |True|, the run will appear in italic
+        unconditionally. When |False| it will appear without italic
+        unconditionally. When |None|, the run will inherit its italic setting
+        from its style hierarchy.
+        """
+
+    @property
     def text(self):
         """
         A string formed by concatenating all the <w:t> elements present in

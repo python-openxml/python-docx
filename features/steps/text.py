@@ -28,6 +28,13 @@ def given_a_run_having_bold_set_on(context):
     context.run = run
 
 
+@given('a run having italic set on')
+def given_a_run_having_italic_set_on(context):
+    run = Document().add_paragraph().add_run()
+    run.italic = True
+    context.run = run
+
+
 # when ====================================================
 
 @when('I add a column break')
@@ -53,6 +60,13 @@ def when_assign_true_to_its_bold_property(context, value_str):
     value = {'True': True, 'False': False, 'None': None}[value_str]
     run = context.run
     run.bold = value
+
+
+@when('I assign {value_str} to its italic property')
+def when_assign_true_to_its_italic_property(context, value_str):
+    value = {'True': True, 'False': False, 'None': None}[value_str]
+    run = context.run
+    run.italic = value
 
 
 # then =====================================================
@@ -91,13 +105,31 @@ def then_run_appears_in_bold_typeface(context):
     assert run.bold is True
 
 
+@then('the run appears in italic typeface')
+def then_run_appears_in_italic_typeface(context):
+    run = context.run
+    assert run.italic is True
+
+
 @then('the run appears with its inherited bold setting')
 def then_run_appears_with_its_inherited_bold_setting(context):
     run = context.run
     assert run.bold is None
 
 
+@then('the run appears with its inherited italic setting')
+def then_run_appears_with_its_inherited_italic_setting(context):
+    run = context.run
+    assert run.italic is None
+
+
 @then('the run appears without bold regardless of its style hierarchy')
 def then_run_appears_without_bold_regardless(context):
     run = context.run
     assert run.bold is False
+
+
+@then('the run appears without italic regardless of its style hierarchy')
+def then_run_appears_without_italic_regardless(context):
+    run = context.run
+    assert run.italic is False
