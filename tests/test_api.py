@@ -118,6 +118,11 @@ class DescribeDocument(object):
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
 
+    def it_provides_access_to_the_document_tables(self, tables_fixture):
+        document, tables_ = tables_fixture
+        tables = document.tables
+        assert tables is tables_
+
     def it_can_save_the_package(self, save_fixture):
         document, package_, file_ = save_fixture
         document.save(file_)
@@ -198,13 +203,14 @@ class DescribeDocument(object):
         return Document()
 
     @pytest.fixture
-    def document_part_(self, request, p_, paragraphs_, table_):
+    def document_part_(self, request, p_, paragraphs_, table_, tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
         document_part_.add_paragraph.return_value = p_
         document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
+        document_part_.tables = tables_
         return document_part_
 
     @pytest.fixture
@@ -269,3 +275,11 @@ class DescribeDocument(object):
     @pytest.fixture
     def table_(self, request):
         return instance_mock(request, Table, style=None)
+
+    @pytest.fixture
+    def tables_(self, request):
+        return instance_mock(request, list)
+
+    @pytest.fixture
+    def tables_fixture(self, document, tables_):
+        return document, tables_

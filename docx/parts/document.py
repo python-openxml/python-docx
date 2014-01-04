@@ -39,7 +39,7 @@ class DocumentPart(Part):
         Return a table having *rows* rows and *cols* columns, newly appended
         to the main document story.
         """
-        raise NotImplementedError
+        return self.body.add_table(rows, cols)
 
     @property
     def blob(self):
@@ -109,6 +109,15 @@ class DocumentPart(Part):
         chain of delegation ends here for document child objects.
         """
         return self
+
+    @property
+    def tables(self):
+        """
+        A list of |Table| instances corresponding to the tables in the
+        document, in document order. Note that tables within revision marks
+        such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
+        """
+        raise NotImplementedError
 
 
 class _Body(object):

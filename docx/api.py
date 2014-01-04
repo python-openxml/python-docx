@@ -127,7 +127,7 @@ class Document(object):
         """
         A list of |Paragraph| instances corresponding to the paragraphs in
         the document, in document order. Note that paragraphs within revision
-        marks such as inserted or deleted do not appear in this list.
+        marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self._document_part.paragraphs
 
@@ -137,6 +137,15 @@ class Document(object):
         a filesystem location (a string) or a file-like object.
         """
         self._package.save(path_or_stream)
+
+    @property
+    def tables(self):
+        """
+        A list of |Table| instances corresponding to the tables in the
+        document, in document order. Note that tables within revision marks
+        such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
+        """
+        return self._document_part.tables
 
     @staticmethod
     def _open(docx):

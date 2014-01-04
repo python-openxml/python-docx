@@ -76,6 +76,12 @@ class DescribeDocumentPart(object):
         body_.add_paragraph.assert_called_once_with()
         assert p is p_
 
+    def it_can_add_a_table(self, add_table_fixture):
+        document_part, rows, cols, body_, table_ = add_table_fixture
+        table = document_part.add_table(rows, cols)
+        body_.add_table.assert_called_once_with(rows, cols)
+        assert table is table_
+
     def it_can_add_an_image_part_to_the_document(
             self, get_or_add_image_fixture):
         (document, image_descriptor_, image_parts_, relate_to_, image_part_,
@@ -130,13 +136,20 @@ class DescribeDocumentPart(object):
         return document_part, body_, p_
 
     @pytest.fixture
+    def add_table_fixture(self, document_part_body_, body_, table_):
+        document_part = DocumentPart(None, None, None, None)
+        rows, cols = 2, 4
+        return document_part, rows, cols, body_, table_
+
+    @pytest.fixture
     def _Body_(self, request):
         return class_mock(request, 'docx.parts.document._Body')
 
     @pytest.fixture
-    def body_(self, request, p_):
+    def body_(self, request, p_, table_):
         body_ = instance_mock(request, _Body)
         body_.add_paragraph.return_value = p_
+        body_.add_table.return_value = table_
         return body_
 
     @pytest.fixture
@@ -288,6 +301,10 @@ class DescribeDocumentPart(object):
         return function_mock(
             request, 'docx.parts.document.serialize_part_xml'
         )
+
+    @pytest.fixture
+    def table_(self, request):
+        return instance_mock(request, Table)
 
 
 class Describe_Body(object):
