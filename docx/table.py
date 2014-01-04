@@ -18,12 +18,23 @@ class Table(object):
         super(Table, self).__init__()
         self._tbl = tbl
 
+    def add_column(self):
+        """
+        Return a |_Column| instance, newly added rightmost to the table.
+        """
+        tblGrid = self._tbl.tblGrid
+        gridCol = tblGrid.add_gridCol()
+        for tr in self._tbl.tr_lst:
+            tr.add_tc()
+        return _Column(gridCol, self._tbl)
+
     def add_row(self):
         """
         Return a |_Row| instance, newly added bottom-most to the table.
         """
-        tr = self._tbl.add_tr()
-        for gridCol in self._tbl.tblGrid.gridCol_lst:
+        tbl = self._tbl
+        tr = tbl.add_tr()
+        for gridCol in tbl.tblGrid.gridCol_lst:
             tr.add_tc()
         return _Row(tr)
 
@@ -196,16 +207,6 @@ class _Columns(object):
         """
         tblGrid = self._tbl.tblGrid
         return tblGrid.gridCol_lst
-
-    def add(self):
-        """
-        Return a |_Column| instance, newly added rightmost to the table.
-        """
-        tblGrid = self._tbl.tblGrid
-        gridCol = tblGrid.add_gridCol()
-        for tr in self._tbl.tr_lst:
-            tr.add_tc()
-        return _Column(gridCol, self._tbl)
 
 
 class _Row(object):

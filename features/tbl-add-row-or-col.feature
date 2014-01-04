@@ -9,7 +9,6 @@ Feature: Add a row or column to a table
       Then the table has 3 rows
        And the new row has 2 cells
 
-  @wip
   Scenario: Add a column to a table
      Given a 2 x 2 table
       When I add a column to the table

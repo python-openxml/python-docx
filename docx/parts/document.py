@@ -144,7 +144,7 @@ class _Body(object):
         tbl = self._body.add_tbl()
         table = Table(tbl)
         for i in range(cols):
-            table.columns.add()
+            table.add_column()
         for i in range(rows):
             table.add_row()
         return table

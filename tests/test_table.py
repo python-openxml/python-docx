@@ -38,6 +38,20 @@ class DescribeTable(object):
                 tc = tr.tc_lst[col_idx]
                 assert tc is cell._tc
 
+    def it_can_add_a_row(self, add_row_fixture):
+        table, expected_xml = add_row_fixture
+        row = table.add_row()
+        assert table._tbl.xml == expected_xml
+        assert isinstance(row, _Row)
+        assert row._tr is table._tbl.tr_lst[1]
+
+    def it_can_add_a_column(self, add_column_fixture):
+        table, expected_xml = add_column_fixture
+        column = table.add_column()
+        assert table._tbl.xml == expected_xml
+        assert isinstance(column, _Column)
+        assert column._gridCol is table._tbl.tblGrid.gridCol_lst[1]
+
     def it_knows_its_table_style(self, table_style_fixture):
         table, style = table_style_fixture
         assert table.style == style
@@ -47,14 +61,14 @@ class DescribeTable(object):
         table.style = style_name
         assert table._tbl.xml == expected_xml
 
-    def it_can_add_a_row(self, add_row_fixture):
-        table, expected_xml = add_row_fixture
-        row = table.add_row()
-        assert table._tbl.xml == expected_xml
-        assert isinstance(row, _Row)
-        assert row._tr is table._tbl.tr_lst[1]
-
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def add_column_fixture(self):
+        tbl = _tbl_bldr(2, 1).element
+        table = Table(tbl)
+        expected_xml = _tbl_bldr(2, 2).xml()
+        return table, expected_xml
 
     @pytest.fixture
     def add_row_fixture(self):
@@ -230,20 +244,7 @@ class Describe_Columns(object):
         with pytest.raises(IndexError):
             columns[too_high]
 
-    def it_can_add_a_column(self, add_column_fixture):
-        columns, expected_xml = add_column_fixture
-        column = columns.add()
-        assert columns._tbl.xml == expected_xml
-        assert isinstance(column, _Column)
-
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_column_fixture(self):
-        tbl = _tbl_bldr(2, 1).element
-        columns = _Columns(tbl)
-        expected_xml = _tbl_bldr(2, 2).xml()
-        return columns, expected_xml
 
     @pytest.fixture
     def columns_fixture(self):
