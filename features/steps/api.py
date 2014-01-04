@@ -7,11 +7,24 @@ Step implementations for basic API features
 from behave import then, when
 
 from docx.shared import Inches
+from docx.table import Table
 
 from .helpers import test_file_path
 
 
 # when ====================================================
+
+@when('I add a 2 x 2 table specifying only row and column count')
+def when_add_2x2_table_specifying_only_row_and_col_count(context):
+    document = context.document
+    document.add_table(rows=2, cols=2)
+
+
+@when('I add a 2 x 2 table specifying style \'foobar\'')
+def when_add_2x2_table_specifying_style_foobar(context):
+    document = context.document
+    document.add_table(rows=2, cols=2, style='foobar')
+
 
 @when('I add a heading specifying level={level_str}')
 def when_add_heading_specifying_level(context, level_str):
@@ -85,6 +98,16 @@ def when_add_picture_specifying_only_image_file(context):
 
 
 # then =====================================================
+
+@then('the document contains a 2 x 2 table')
+def then_document_contains_2x2_table(context):
+    document = context.document
+    table = document.tables[-1]
+    assert isinstance(table, Table)
+    assert len(table.rows) == 2
+    assert len(table.cols) == 2
+    context.table = table
+
 
 @then('the last paragraph contains only a page break')
 def then_last_paragraph_contains_only_a_page_break(context):
@@ -162,3 +185,9 @@ def then_style_of_last_paragraph_is_style(context, style):
     document = context.document
     p = document.paragraphs[-1]
     assert p.style == style
+
+
+@then('the table style is \'{style}\'')
+def then_table_style_is_style(context, style):
+    table = context.table
+    assert table.style == style
