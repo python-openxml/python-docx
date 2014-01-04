@@ -47,7 +47,21 @@ class DescribeTable(object):
         table.style = style_name
         assert table._tbl.xml == expected_xml
 
+    def it_can_add_a_row(self, add_row_fixture):
+        table, expected_xml = add_row_fixture
+        row = table.add_row()
+        assert table._tbl.xml == expected_xml
+        assert isinstance(row, _Row)
+        assert row._tr is table._tbl.tr_lst[1]
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def add_row_fixture(self):
+        tbl = _tbl_bldr(rows=1, cols=2).element
+        table = Table(tbl)
+        expected_xml = _tbl_bldr(rows=2, cols=2).xml()
+        return table, expected_xml
 
     @pytest.fixture
     def table(self):
@@ -326,20 +340,7 @@ class Describe_Rows(object):
             too_high = row_count
             rows[too_high]
 
-    def it_can_add_a_row(self, add_row_fixture):
-        rows, expected_xml = add_row_fixture
-        row = rows.add()
-        assert rows._tbl.xml == expected_xml
-        assert isinstance(row, _Row)
-
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_row_fixture(self):
-        tbl = _tbl_bldr(rows=1, cols=2).element
-        rows = _Rows(tbl)
-        expected_xml = _tbl_bldr(rows=2, cols=2).xml()
-        return rows, expected_xml
 
     @pytest.fixture
     def rows_fixture(self):

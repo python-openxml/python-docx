@@ -146,7 +146,7 @@ class _Body(object):
         for i in range(cols):
             table.columns.add()
         for i in range(rows):
-            table.rows.add()
+            table.add_row()
         return table
 
     def clear_content(self):

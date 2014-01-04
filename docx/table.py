@@ -18,6 +18,15 @@ class Table(object):
         super(Table, self).__init__()
         self._tbl = tbl
 
+    def add_row(self):
+        """
+        Return a |_Row| instance, newly added bottom-most to the table.
+        """
+        tr = self._tbl.add_tr()
+        for gridCol in self._tbl.tblGrid.gridCol_lst:
+            tr.add_tc()
+        return _Row(tr)
+
     def cell(self, row_idx, col_idx):
         """
         Return |_Cell| instance correponding to table cell at *row_idx*,
@@ -267,13 +276,3 @@ class _Rows(object):
 
     def __len__(self):
         return len(self._tbl.tr_lst)
-
-    def add(self):
-        """
-        Return a |_Row| instance, newly added bottom-most to the table.
-        """
-        tbl = self._tbl
-        tr = tbl.add_tr()
-        for gridCol in tbl.tblGrid.gridCol_lst:
-            tr.add_tc()
-        return _Row(tr)
