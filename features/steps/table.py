@@ -18,6 +18,11 @@ from .helpers import test_docx
 
 # given ===================================================
 
+@given('a 2 x 2 table')
+def given_a_2x2_table(context):
+    context.table_ = Document().add_table(rows=2, cols=2)
+
+
 @given('a column cell collection having two cells')
 def given_a_column_cell_collection_having_two_cells(context):
     docx_path = test_docx('blk-containing-table')
@@ -48,7 +53,7 @@ def given_a_row_collection_having_two_rows(context):
 
 @given('a table')
 def given_a_table(context):
-    context.table_ = Document().body.add_table(rows=2, cols=2)
+    context.table_ = Document().add_table(rows=2, cols=2)
 
 
 @given('a table having an applied style')
@@ -89,6 +94,18 @@ def given_a_table_row_having_two_cells(context):
 
 
 # when =====================================================
+
+@when('I add a column to the table')
+def when_add_column_to_table(context):
+    table = context.table_
+    context.column = table.add_column()
+
+
+@when('I add a row to the table')
+def when_add_row_to_table(context):
+    table = context.table_
+    context.row = table.add_row()
+
 
 @when('I apply a style to the table')
 def when_apply_style_to_table(context):
@@ -240,8 +257,32 @@ def then_len_of_row_collection_is_2(context):
     assert len(rows) == 2
 
 
+@then('the new column has 2 cells')
+def then_new_column_has_2_cells(context):
+    assert len(context.column.cells) == 2
+
+
+@then('the new row has 2 cells')
+def then_new_row_has_2_cells(context):
+    assert len(context.row.cells) == 2
+
+
 @then('the table style matches the name I applied')
 def then_table_style_matches_name_applied(context):
     table = context.table_
     tmpl = "table.style doesn't match, got '%s'"
     assert table.style == 'LightShading-Accent1', tmpl % table.style
+
+
+@then('the table has {count} columns')
+def then_table_has_count_columns(context, count):
+    column_count = int(count)
+    columns = context.table_.columns
+    assert len(columns) == column_count
+
+
+@then('the table has {count} rows')
+def then_table_has_count_rows(context, count):
+    row_count = int(count)
+    rows = context.table_.rows
+    assert len(rows) == row_count
