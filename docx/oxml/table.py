@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from docx.oxml.shared import OxmlBaseElement, OxmlElement, qn
 
-from . import ValidationError
+from .exceptions import ValidationError
 from .shared import CT_String
 from .text import CT_P
 

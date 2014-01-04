@@ -217,11 +217,30 @@ class CT_R(OxmlBaseElement):
         return OxmlElement('w:r')
 
     @property
+    def rPr(self):
+        """
+        ``<w:rPr>`` child element or None if not present.
+        """
+        return self.find(qn('w:rPr'))
+
+    @property
     def t_lst(self):
         """
         Sequence of <w:t> elements in this paragraph.
         """
         return self.findall(qn('w:t'))
+
+
+class CT_RPr(OxmlBaseElement):
+    """
+    ``<w:rPr>`` element, containing the properties for a run.
+    """
+    @property
+    def b(self):
+        """
+        First ``<w:b>`` child element or None if none are present.
+        """
+        return self.find(qn('w:b'))
 
 
 class CT_Text(OxmlBaseElement):

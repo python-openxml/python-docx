@@ -98,7 +98,13 @@ class Run(object):
         |None|, the run will inherit its bold setting from its style
         hierarchy.
         """
-        raise NotImplementedError
+        rPr = self._r.rPr
+        if rPr is None:
+            return None
+        b = rPr.b
+        if b is None:
+            return None
+        return b.val
 
     @property
     def text(self):

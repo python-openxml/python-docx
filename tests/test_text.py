@@ -14,7 +14,7 @@ import pytest
 
 from mock import call, create_autospec, Mock
 
-from .oxml.unitdata.text import a_br, a_t, a_p, an_r
+from .oxml.unitdata.text import a_b, a_br, a_t, a_p, an_r, an_rPr
 from .unitutil import class_mock
 
 
@@ -90,6 +90,11 @@ class DescribeParagraph(object):
 
 class DescribeRun(object):
 
+    def it_knows_if_its_bold(self, bold_fixture):
+        run, is_bold = bold_fixture
+        print('\n%s' % run._r.xml)
+        assert run.bold == is_bold
+
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
         _text = run.add_text(text_str)
@@ -136,6 +141,20 @@ class DescribeRun(object):
                 a_t().with_text(text_str))
         ).xml()
         return run, text_str, expected_xml, Text_
+
+    @pytest.fixture(params=[True, False, None])
+    def bold_fixture(self, request):
+        is_bold = request.param
+        r_bldr = an_r().with_nsdecls()
+        if is_bold is not None:
+            b_bldr = a_b()
+            if is_bold is False:
+                b_bldr.with_val('off')
+            rPr_bldr = an_rPr().with_child(b_bldr)
+            r_bldr.with_child(rPr_bldr)
+        r = r_bldr.element
+        run = Run(r)
+        return run, is_bold
 
     @pytest.fixture
     def run(self):

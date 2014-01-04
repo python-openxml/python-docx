@@ -8,18 +8,11 @@ corresponding to Open XML elements.
 from docx.oxml.shared import register_custom_element_class
 
 
-class ValidationError(Exception):
-    """
-    Raised when invalid XML is encountered, such as on attempt to access a
-    missing required child element
-    """
-
-
 # ===========================================================================
 # custom element class mappings
 # ===========================================================================
 
-from docx.oxml.shared import CT_String
+from docx.oxml.shared import CT_OnOff, CT_String
 
 from docx.oxml.shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
@@ -45,10 +38,12 @@ register_custom_element_class('w:tblStyle', CT_String)
 register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 
-from docx.oxml.text import CT_Br, CT_P, CT_PPr, CT_R, CT_Text
+from docx.oxml.text import CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text
+register_custom_element_class('w:b', CT_OnOff)
 register_custom_element_class('w:br', CT_Br)
 register_custom_element_class('w:p', CT_P)
 register_custom_element_class('w:pPr', CT_PPr)
 register_custom_element_class('w:pStyle', CT_String)
 register_custom_element_class('w:r', CT_R)
+register_custom_element_class('w:rPr', CT_RPr)
 register_custom_element_class('w:t', CT_Text)

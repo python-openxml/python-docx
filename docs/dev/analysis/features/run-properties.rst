@@ -87,7 +87,7 @@ below when it writes the file.::
   <xsd:complexType name="CT_R">  <!-- denormalized -->
     <xsd:sequence>
       <xsd:element name="rPr" type="CT_RPr" minOccurs="0"/>
-      <xsd:group   ref="EG_RunInnerContent"   minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:group   ref="EG_RunInnerContent" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
     <xsd:attribute name="rsidRPr" type="ST_LongHexNumber"/>
     <xsd:attribute name="rsidDel" type="ST_LongHexNumber"/>

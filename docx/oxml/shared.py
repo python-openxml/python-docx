@@ -6,6 +6,8 @@ Objects shared by modules in the docx.oxml subpackage.
 
 from lxml import etree
 
+from .exceptions import ValidationError
+
 
 nsmap = {
     'a':   ('http://schemas.openxmlformats.org/drawingml/2006/main'),
@@ -166,6 +168,23 @@ class OxmlBaseElement(etree.ElementBase):
         top.
         """
         return serialize_for_reading(self)
+
+
+class CT_OnOff(OxmlBaseElement):
+    """
+    Used for ``<w:b>``, ``<w:i>`` elements and others, containing a bool-ish
+    string in its ``val`` attribute, xsd:boolean plus 'on' and 'off'.
+    """
+    @property
+    def val(self):
+        val = self.get(qn('w:val'))
+        if val is None:
+            return True
+        elif val in ('0', 'false', 'off'):
+            return False
+        elif val in ('1', 'true', 'on'):
+            return True
+        raise ValidationError("expected xsd:boolean, got '%s'" % val)
 
 
 class CT_String(OxmlBaseElement):
