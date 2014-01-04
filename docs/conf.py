@@ -112,6 +112,8 @@ rst_epilog = """
 .. |Table| replace:: :class:`Table`
 
 .. |Text| replace:: :class:`Text`
+
+.. |ValueError| replace:: :class:`ValueError`
 """
 
 

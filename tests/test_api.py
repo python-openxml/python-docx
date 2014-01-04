@@ -12,7 +12,9 @@ from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.text import Paragraph, Run
 
-from .unitutil import class_mock, instance_mock, method_mock, var_mock
+from .unitutil import (
+    instance_mock, class_mock, method_mock, property_mock, var_mock
+)
 
 
 class DescribeDocument(object):
@@ -69,6 +71,15 @@ class DescribeDocument(object):
         p = document.add_paragraph(style=style)
         assert p.style == style
 
+    def it_can_add_a_picture(self, add_picture_fixture):
+        (document, image_path, width, height, inline_shapes_, expected_width,
+         expected_height, picture_) = add_picture_fixture
+        picture = document.add_picture(image_path, width, height)
+        inline_shapes_.add_picture.assert_called_once_with(image_path)
+        assert picture.width == expected_width
+        assert picture.height == expected_height
+        assert picture is picture_
+
     def it_provides_access_to_the_document_body(self, document):
         body = document.body
         assert body is document._document_part.body
@@ -82,16 +93,6 @@ class DescribeDocument(object):
         document, paragraphs_ = paragraphs_fixture
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
-
-    def it_can_add_an_inline_picture(self, add_picture_fixture):
-        document, inline_shapes, image_path_or_stream_, inline_picture_ = (
-            add_picture_fixture
-        )
-        inline_picture = document.add_inline_picture(image_path_or_stream_)
-        inline_shapes.add_picture.assert_called_once_with(
-            image_path_or_stream_
-        )
-        assert inline_picture is inline_picture_
 
     def it_can_save_the_package(self, save_fixture):
         document, package_, file_ = save_fixture
@@ -117,14 +118,23 @@ class DescribeDocument(object):
             request, Document, 'add_paragraph', return_value=p_
         )
 
-    @pytest.fixture
-    def add_picture_fixture(self, request, open_, document_part_):
+    @pytest.fixture(params=[
+        (None, None,  200,  100),
+        (1000, 500,  1000,  500),
+        (2000, None, 2000, 1000),
+        (None, 2000, 4000, 2000),
+    ])
+    def add_picture_fixture(
+            self, request, Document_inline_shapes_, inline_shapes_):
+        width, height, expected_width, expected_height = request.param
         document = Document()
-        inline_shapes = instance_mock(request, InlineShapes)
-        document_part_.inline_shapes = inline_shapes
-        image_path_ = instance_mock(request, str)
-        picture_shape_ = inline_shapes.add_picture.return_value
-        return document, inline_shapes, image_path_, picture_shape_
+        image_path_ = instance_mock(request, str, name='image_path_')
+        picture_ = inline_shapes_.add_picture.return_value
+        picture_.width, picture_.height = 200, 100
+        return (
+            document, image_path_, width, height, inline_shapes_,
+            expected_width, expected_height, picture_
+        )
 
     @pytest.fixture
     def add_styled_paragraph_fixture(self, document, p_):
@@ -139,6 +149,12 @@ class DescribeDocument(object):
     @pytest.fixture
     def default_docx_(self, request):
         return var_mock(request, 'docx.api._default_docx_path')
+
+    @pytest.fixture
+    def Document_inline_shapes_(self, request, inline_shapes_):
+        return property_mock(
+            request, Document, 'inline_shapes', return_value=inline_shapes_
+        )
 
     @pytest.fixture
     def document(self, open_):
@@ -160,6 +176,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def init_fixture(self, docx_, open_):
         return docx_, open_
+
+    @pytest.fixture
+    def inline_shapes_(self, request):
+        return instance_mock(request, InlineShapes)
 
     @pytest.fixture
     def open_(self, request, document_part_, package_):

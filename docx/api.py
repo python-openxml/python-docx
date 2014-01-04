@@ -6,6 +6,8 @@ Provides a syntactically more convenient API for interacting with the
 OpcPackage graph.
 """
 
+from __future__ import absolute_import, division, print_function
+
 import os
 
 from docx.opc.constants import CONTENT_TYPE as CT
@@ -28,14 +30,6 @@ class Document(object):
         document_part, package = self._open(docx)
         self._document_part = document_part
         self._package = package
-
-    def add_inline_picture(self, image_path_or_stream):
-        """
-        Add the image at *image_path_or_stream* to the document at its native
-        size. The picture is placed inline in a new paragraph at the end of
-        the document.
-        """
-        return self.inline_shapes.add_picture(image_path_or_stream)
 
     def add_heading(self, text='', level=1):
         """
@@ -63,6 +57,34 @@ class Document(object):
         if style is not None:
             p.style = style
         return p
+
+    def add_picture(self, image_path_or_stream, width=None, height=None):
+        """
+        Add the image at *image_path_or_stream* in a new paragraph at the end
+        of the document. If neither width nor height is specified, the
+        picture appears at its native size. If only one is specified, it is
+        used to compute a scaling factor that is then applied to the
+        unspecified dimension, preserving the aspect ratio of the image. The
+        native size of the picture is calculated using the dots-per-inch
+        (dpi) value specified in the image file, defaulting to 72 dpi if no
+        value is specified, as is often the case.
+        """
+        picture = self.inline_shapes.add_picture(image_path_or_stream)
+
+        # scale picture dimensions if width and/or height provided
+        if width is not None or height is not None:
+            native_width, native_height = picture.width, picture.height
+            if width is None:
+                scaling_factor = float(height) / float(native_height)
+                width = int(round(native_width * scaling_factor))
+            elif height is None:
+                scaling_factor = float(width) / float(native_width)
+                height = int(round(native_height * scaling_factor))
+            # set picture to scaled dimensions
+            picture.width = width
+            picture.height = height
+
+        return picture
 
     @property
     def body(self):
