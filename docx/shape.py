@@ -26,7 +26,8 @@ class InlineShape(object):
     @property
     def height(self):
         """
-        Return the display height of this inline shape as an |Emu| instance.
+        Read/write. The display height of this inline shape as an |Emu|
+        instance.
         """
         return self._inline.extent.cy
 
@@ -55,8 +56,9 @@ class InlineShape(object):
     @property
     def type(self):
         """
-        Return the member of ``docx.enum.shape.WD_INLINE_SHAPE`` denoting the
-        inline shape type, e.g. ``LINKED_PICTURE``.
+        The type of this inline shape as a member of
+        ``docx.enum.shape.WD_INLINE_SHAPE``, e.g. ``LINKED_PICTURE``.
+        Read-only.
         """
         graphicData = self._inline.graphic.graphicData
         uri = graphicData.uri
@@ -74,7 +76,8 @@ class InlineShape(object):
     @property
     def width(self):
         """
-        Return the display width of this inline shape as an |Emu| instance.
+        Read/write. The display width of this inline shape as an |Emu|
+        instance.
         """
         return self._inline.extent.cx
 

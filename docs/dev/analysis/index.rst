@@ -17,6 +17,7 @@ Feature Analysis
    features/shapes-inline
    features/shapes-inline-size
    features/picture
+   features/run-properties
 
 
 Schema Analysis

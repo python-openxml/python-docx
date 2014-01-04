@@ -43,8 +43,9 @@ Here's an example of what |docx| can do:
 
           document.add_picture('monty-truth.png')
 
-          table = document.add_table(rows=1, cols=3)
-          table.style = 'LightShading-Accent1'
+          table = document.add_table(
+              rows=1, cols=3, table.style='LightShading-Accent1'
+          )
           header_cells = table.rows[0].cells
           header_cells[0].text = 'Qty'
           header_cells[1].text = 'Id'

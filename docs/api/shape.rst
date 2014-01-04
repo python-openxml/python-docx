@@ -4,6 +4,16 @@
 Shape-related objects
 =====================
 
+.. currentmodule:: docx.parts.document
+
+
+|InlineShapes| objects
+----------------------
+
+.. autoclass:: InlineShapes
+   :members:
+
+
 .. currentmodule:: docx.shape
 
 

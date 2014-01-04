@@ -81,11 +81,11 @@ rst_epilog = """
 
 .. |docx| replace:: ``python-docx``
 
-.. |Emu| replace:: :class:`Emu`
+.. |Emu| replace:: :class:`.Emu`
 
-.. |InlineShape| replace:: :class:`InlineShape`
+.. |InlineShape| replace:: :class:`.InlineShape`
 
-.. |InlineShapes| replace:: :class:`InlineShapes`
+.. |InlineShapes| replace:: :class:`.InlineShapes`
 
 .. |int| replace:: :class:`int`
 
@@ -93,11 +93,11 @@ rst_epilog = """
 
 .. |OpcPackage| replace:: :class:`OpcPackage`
 
-.. |Paragraph| replace:: :class:`Paragraph`
+.. |None| replace:: ``None``
+
+.. |Paragraph| replace:: :class:`.Paragraph`
 
 .. |Part| replace:: :class:`Part`
-
-.. |Presentation| replace:: :class:`Presentation`
 
 .. |_Relationship| replace:: :class:`_Relationship`
 
@@ -109,7 +109,7 @@ rst_epilog = """
 
 .. |Run| replace:: :class:`Run`
 
-.. |Table| replace:: :class:`Table`
+.. |Table| replace:: :class:`.Table`
 
 .. |Text| replace:: :class:`Text`
 
