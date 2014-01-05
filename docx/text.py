@@ -124,6 +124,13 @@ class Run(object):
         unconditionally. When |None|, the run will inherit its italic setting
         from its style hierarchy.
         """
+        rPr = self._r.rPr
+        if rPr is None:
+            return None
+        i = rPr.i
+        if i is None:
+            return None
+        return i.val
 
     @property
     def text(self):

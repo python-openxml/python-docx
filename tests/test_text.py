@@ -14,7 +14,7 @@ import pytest
 
 from mock import call, create_autospec, Mock
 
-from .oxml.unitdata.text import a_b, a_br, a_t, a_p, an_r, an_rPr
+from .oxml.unitdata.text import a_b, a_br, a_t, a_p, an_i, an_r, an_rPr
 from .unitutil import class_mock
 
 
@@ -94,6 +94,10 @@ class DescribeRun(object):
         run, is_bold = bold_get_fixture
         assert run.bold == is_bold
 
+    def it_knows_if_its_italic(self, italic_get_fixture):
+        run, is_italic = italic_get_fixture
+        assert run.italic == is_italic
+
     def it_can_change_its_bold_setting(self, bold_set_fixture):
         run, bold_value, expected_xml = bold_set_fixture
         run.bold = bold_value
@@ -159,6 +163,20 @@ class DescribeRun(object):
         r = r_bldr.element
         run = Run(r)
         return run, is_bold
+
+    @pytest.fixture(params=[True, False, None])
+    def italic_get_fixture(self, request):
+        is_italic = request.param
+        r_bldr = an_r().with_nsdecls()
+        if is_italic is not None:
+            i_bldr = an_i()
+            if is_italic is False:
+                i_bldr.with_val('off')
+            rPr_bldr = an_rPr().with_child(i_bldr)
+            r_bldr.with_child(rPr_bldr)
+        r = r_bldr.element
+        run = Run(r)
+        return run, is_italic
 
     @pytest.fixture(params=[True, False, None])
     def bold_set_fixture(self, request):

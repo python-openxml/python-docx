@@ -78,6 +78,10 @@ def a_t():
     return CT_TextBuilder()
 
 
+def an_i():
+    return CT_OnOffBuilder('w:i')
+
+
 def an_r():
     return CT_RBuilder()
 

@@ -267,6 +267,13 @@ class CT_RPr(OxmlBaseElement):
         """
         return self.find(qn('w:b'))
 
+    @property
+    def i(self):
+        """
+        First ``<w:i>`` child element or None if none are present.
+        """
+        return self.find(qn('w:i'))
+
     @classmethod
     def new(cls):
         """
