@@ -103,6 +103,11 @@ class DescribeRun(object):
         run.bold = bold_value
         assert run._r.xml == expected_xml
 
+    def it_can_change_its_italic_setting(self, italic_set_fixture):
+        run, italic_value, expected_xml = italic_set_fixture
+        run.italic = italic_value
+        assert run._r.xml == expected_xml
+
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
         _text = run.add_text(text_str)
@@ -194,6 +199,23 @@ class DescribeRun(object):
             rPr_bldr.with_child(b_bldr)
         expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
         return run, bold_value, expected_xml
+
+    @pytest.fixture(params=[True, False, None])
+    def italic_set_fixture(self, request):
+        # run --------------------------
+        r = an_r().with_nsdecls().element
+        run = Run(r)
+        # italic_value -------------------
+        italic_value = request.param
+        # expected_xml -----------------
+        rPr_bldr = an_rPr()
+        if italic_value is not None:
+            i_bldr = an_i()
+            if italic_value is False:
+                i_bldr.with_val(0)
+            rPr_bldr.with_child(i_bldr)
+        expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
+        return run, italic_value, expected_xml
 
     @pytest.fixture
     def run(self):

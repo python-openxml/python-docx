@@ -132,6 +132,15 @@ class Run(object):
             return None
         return i.val
 
+    @italic.setter
+    def italic(self, value):
+        rPr = self._r.get_or_add_rPr()
+        rPr.remove_i()
+        if value is not None:
+            i = rPr.add_i()
+            if bool(value) is False:
+                i.val = False
+
     @property
     def text(self):
         """

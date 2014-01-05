@@ -18,19 +18,16 @@ Feature: Apply bold or italic to run
      When I assign False to its bold property
      Then the run appears without bold regardless of its style hierarchy
 
-  @wip
   Scenario: Apply italic to a run
     Given a run
      When I assign True to its italic property
      Then the run appears in italic typeface
 
-  @wip
   Scenario: Remove italic from a run
     Given a run having italic set on
      When I assign None to its italic property
      Then the run appears with its inherited italic setting
 
-  @wip
   Scenario: Set italic off unconditionally
     Given a run
      When I assign False to its italic property

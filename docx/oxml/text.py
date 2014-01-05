@@ -260,6 +260,14 @@ class CT_RPr(OxmlBaseElement):
         self.insert(0, b)
         return b
 
+    def add_i(self):
+        """
+        Return a newly added <w:i/> child element.
+        """
+        i = OxmlElement('w:i')
+        self.insert(0, i)
+        return i
+
     @property
     def b(self):
         """
@@ -285,6 +293,11 @@ class CT_RPr(OxmlBaseElement):
         b_lst = self.findall(qn('w:b'))
         for b in b_lst:
             self.remove(b)
+
+    def remove_i(self):
+        i_lst = self.findall(qn('w:i'))
+        for i in i_lst:
+            self.remove(i)
 
 
 class CT_Text(OxmlBaseElement):
