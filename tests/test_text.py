@@ -30,10 +30,7 @@ class DescribeParagraph(object):
 
     def it_can_add_a_run_to_itself(self, add_run_fixture):
         paragraph, text, expected_xml = add_run_fixture
-        if text is None:
-            run = paragraph.add_run()
-        else:
-            run = paragraph.add_run(text)
+        run = paragraph.add_run(text)
         assert paragraph._p.xml == expected_xml
         assert isinstance(run, Run)
         assert run._r is paragraph._p.r_lst[0]
@@ -180,13 +177,13 @@ class DescribeRun(object):
         expected_xml = an_r().with_nsdecls().with_child(br_bldr).xml()
         return run, break_type, expected_xml
 
-    @pytest.fixture
-    def add_text_fixture(self, run, Text_):
-        text_str = 'foobar'
-        expected_xml = (
-            an_r().with_nsdecls().with_child(
-                a_t().with_text(text_str))
-        ).xml()
+    @pytest.fixture(params=['foobar', ' foo bar', 'bar foo '])
+    def add_text_fixture(self, request, run, Text_):
+        text_str = request.param
+        t_bldr = a_t().with_text(text_str)
+        if text_str.startswith(' ') or text_str.endswith(' '):
+            t_bldr.with_space('preserve')
+        expected_xml = an_r().with_nsdecls().with_child(t_bldr).xml()
         return run, text_str, expected_xml, Text_
 
     @pytest.fixture(params=[True, False, None])

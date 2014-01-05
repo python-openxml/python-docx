@@ -19,6 +19,7 @@ nsmap = {
     'w':   ('http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
     'wp':  ('http://schemas.openxmlformats.org/drawingml/2006/wordprocessing'
             'Drawing'),
+    'xml': ('http://www.w3.org/XML/1998/namespace')
 }
 
 # configure XML parser

@@ -49,6 +49,10 @@ class CT_TextBuilder(BaseBuilder):
     __nspfxs__ = ('w',)
     __attrs__ = ()
 
+    def with_space(self, value):
+        self._set_xmlattr('xml:space', str(value))
+        return self
+
 
 def a_b():
     return CT_OnOffBuilder('w:b')

@@ -206,6 +206,8 @@ class CT_R(OxmlBaseElement):
         Return a newly added CT_T (<w:t>) element containing *text*.
         """
         t = CT_Text.new(text)
+        if len(text.strip()) < len(text):
+            t.set(qn('xml:space'), 'preserve')
         self.append(t)
         return t
 
