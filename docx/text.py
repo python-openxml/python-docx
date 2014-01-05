@@ -17,12 +17,15 @@ class Paragraph(object):
         super(Paragraph, self).__init__()
         self._p = p
 
-    def add_run(self):
+    def add_run(self, text=None):
         """
         Append a run to this paragraph.
         """
         r = self._p.add_r()
-        return Run(r)
+        run = Run(r)
+        if text:
+            run.add_text(text)
+        return run
 
     @property
     def runs(self):
