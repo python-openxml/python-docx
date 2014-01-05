@@ -83,6 +83,8 @@ rst_epilog = """
 
 .. |Emu| replace:: :class:`.Emu`
 
+.. |False| replace:: ``False``
+
 .. |InlineShape| replace:: :class:`.InlineShape`
 
 .. |InlineShapes| replace:: :class:`.InlineShapes`
@@ -112,6 +114,8 @@ rst_epilog = """
 .. |Table| replace:: :class:`.Table`
 
 .. |Text| replace:: :class:`Text`
+
+.. |True| replace:: ``True``
 
 .. |ValueError| replace:: :class:`ValueError`
 """
