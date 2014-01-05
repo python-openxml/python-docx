@@ -13,9 +13,9 @@ class Paragraph(object):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
-    def __init__(self, p_elm):
+    def __init__(self, p):
         super(Paragraph, self).__init__()
-        self._p = p_elm
+        self._p = p
 
     def add_run(self):
         """

@@ -4,50 +4,36 @@
 Test suite for the docx.text module
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 from docx.enum.text import WD_BREAK
-from docx.oxml.text import CT_P
+from docx.oxml.text import CT_P, CT_R
 from docx.text import Paragraph, Run
 
 import pytest
 
-from mock import call, create_autospec, Mock
+from mock import call, Mock
 
 from .oxml.unitdata.text import a_b, a_br, a_t, a_p, an_i, an_r, an_rPr
-from .unitutil import class_mock
+from .unitutil import class_mock, instance_mock
 
 
 class DescribeParagraph(object):
 
-    @pytest.fixture
-    def Run_(self, request):
-        return class_mock(request, 'docx.text.Run')
+    def it_has_a_sequence_of_the_runs_it_contains(self, runs_fixture):
+        paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
+        runs = paragraph.runs
+        assert Run_.mock_calls == [call(r_), call(r_2_)]
+        assert runs == [run_, run_2_]
 
-    def it_has_a_sequence_of_the_runs_it_contains(self, Run_):
-        p_elm = Mock(name='p_elm')
-        r1, r2 = (Mock(name='r1'), Mock(name='r2'))
-        R1, R2 = (Mock(name='Run1'), Mock(name='Run2'))
-        p_elm.r_lst = [r1, r2]
-        p = Paragraph(p_elm)
-        Run_.side_effect = [R1, R2]
-        # exercise ---------------------
-        runs = p.runs
-        # verify -----------------------
-        assert Run_.mock_calls == [call(r1), call(r2)]
-        assert runs == [R1, R2]
-
-    def it_can_add_a_run_to_itself(self, Run_):
-        # mockery ----------------------
-        p_elm = create_autospec(CT_P)
-        p_elm.add_r.return_value = r_elm = Mock(name='r_elm')
-        p = Paragraph(p_elm)
-        # exercise ---------------------
-        r = p.add_run()
-        # verify -----------------------
-        p_elm.add_r.assert_called_once_with()
-        Run_.assert_called_once_with(r_elm)
-        assert r is Run_.return_value
+    def it_can_add_a_run_to_itself(self, add_run_fixture):
+        paragraph, expected_xml = add_run_fixture
+        run = paragraph.add_run()
+        assert paragraph._p.xml == expected_xml
+        assert isinstance(run, Run)
+        assert run._r is paragraph._p.r_lst[0]
 
     def it_knows_its_paragraph_style(self):
         cases = (
@@ -74,6 +60,47 @@ class DescribeParagraph(object):
         assert p.text == expected_text
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def add_run_fixture(self, paragraph):
+        expected_xml = a_p().with_nsdecls().with_child(an_r()).xml()
+        return paragraph, expected_xml
+
+    @pytest.fixture
+    def p_(self, request, r_, r_2_):
+        return instance_mock(request, CT_P, r_lst=(r_, r_2_))
+
+    @pytest.fixture
+    def paragraph(self, request):
+        p = a_p().with_nsdecls().element
+        return Paragraph(p)
+
+    @pytest.fixture
+    def Run_(self, request, runs_):
+        run_, run_2_ = runs_
+        return class_mock(
+            request, 'docx.text.Run', side_effect=[run_, run_2_]
+        )
+
+    @pytest.fixture
+    def r_(self, request):
+        return instance_mock(request, CT_R)
+
+    @pytest.fixture
+    def r_2_(self, request):
+        return instance_mock(request, CT_R)
+
+    @pytest.fixture
+    def runs_(self, request):
+        run_ = instance_mock(request, Run, name='run_')
+        run_2_ = instance_mock(request, Run, name='run_2_')
+        return run_, run_2_
+
+    @pytest.fixture
+    def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
+        paragraph = Paragraph(p_)
+        run_, run_2_ = runs_
+        return paragraph, Run_, r_, r_2_, run_, run_2_
 
     @pytest.fixture
     def text_prop_fixture(self):
