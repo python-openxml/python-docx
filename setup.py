@@ -5,13 +5,25 @@ import re
 
 from setuptools import find_packages, setup
 
+
+def text_of(relpath):
+    """
+    Return string containing the contents of the file at *relpath* relative to
+    this file.
+    """
+    thisdir = os.path.dirname(__file__)
+    file_path = os.path.join(thisdir, os.path.normpath(relpath))
+    with open(file_path) as f:
+        text = f.read()
+    text.decode('ascii')  # result discarded, just make sure no non-ascii chars
+    return text
+
 # Read the version from docx.__version__ without importing the package
 # (and thus attempting to import packages it depends on that may not be
 # installed yet)
-thisdir = os.path.dirname(__file__)
-init_py = os.path.join(thisdir, 'docx', '__init__.py')
-version = re.search("__version__ = '([^']+)'", open(init_py).read()).group(1)
-license = os.path.join(thisdir, 'LICENSE')
+version = re.search(
+    "__version__ = '([^']+)'", text_of('docx/__init__.py')
+).group(1)
 
 
 NAME = 'python-docx'
@@ -21,7 +33,7 @@ KEYWORDS = 'docx office openxml word'
 AUTHOR = 'Steve Canny'
 AUTHOR_EMAIL = 'python-docx@googlegroups.com'
 URL = 'https://github.com/python-openxml/python-docx'
-LICENSE = open(license).read()
+LICENSE = text_of('LICENSE')
 PACKAGES = find_packages(exclude=['tests', 'tests.*'])
 PACKAGE_DATA = {'docx': ['templates/*']}
 
@@ -46,9 +58,7 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries'
 ]
 
-readme = os.path.join(thisdir, 'README.rst')
-history = os.path.join(thisdir, 'HISTORY.rst')
-LONG_DESCRIPTION = open(readme).read() + '\n\n' + open(history).read()
+LONG_DESCRIPTION = text_of('README.rst') + '\n\n' + text_of('HISTORY.rst')
 
 
 params = {
