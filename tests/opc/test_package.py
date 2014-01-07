@@ -19,7 +19,8 @@ from docx.opc.package import (
 from docx.opc.pkgreader import PackageReader
 
 from ..unitutil import (
-    cls_attr_mock, class_mock, instance_mock, loose_mock, method_mock
+    cls_attr_mock, class_mock, function_mock, instance_mock, loose_mock,
+    method_mock
 )
 
 
@@ -384,15 +385,14 @@ class DescribePartFactory(object):
     def it_constructs_part_from_selector_if_defined(
             self, cls_selector_fixture):
         # fixture ----------------------
-        (cls_selector_fn_, partname, content_type, reltype, blob, package,
-         CustomPartClass_, part_of_custom_type_) = cls_selector_fixture
+        (cls_selector_fn_, part_load_params, CustomPartClass_,
+         part_of_custom_type_) = cls_selector_fixture
+        partname, content_type, reltype, blob, package = part_load_params
         # exercise ---------------------
         PartFactory.part_class_selector = cls_selector_fn_
         part = PartFactory(partname, content_type, reltype, blob, package)
         # verify -----------------------
-        cls_selector_fn_.__func__.assert_called_once_with(
-            content_type, reltype
-        )
+        cls_selector_fn_.assert_called_once_with(content_type, reltype)
         CustomPartClass_.load.assert_called_once_with(
             partname, content_type, blob, package
         )
@@ -431,24 +431,33 @@ class DescribePartFactory(object):
         return instance_mock(request, str)
 
     @pytest.fixture
+    def cls_method_fn_(self, request, cls_selector_fn_):
+        return function_mock(
+            request, 'docx.opc.package.cls_method_fn',
+            return_value=cls_selector_fn_
+        )
+
+    @pytest.fixture
     def cls_selector_fixture(
-            self, request, cls_selector_fn_, partname_, content_type_,
-            reltype_, blob_, package_, CustomPartClass_,
-            part_of_custom_type_):
+            self, request, cls_selector_fn_, cls_method_fn_, part_load_params,
+            CustomPartClass_, part_of_custom_type_):
         def reset_part_class_selector():
             PartFactory.part_class_selector = original_part_class_selector
         original_part_class_selector = PartFactory.part_class_selector
         request.addfinalizer(reset_part_class_selector)
         return (
-            cls_selector_fn_, partname_, content_type_, reltype_,
-            blob_, package_, CustomPartClass_, part_of_custom_type_
+            cls_selector_fn_, part_load_params, CustomPartClass_,
+            part_of_custom_type_
         )
 
     @pytest.fixture
     def cls_selector_fn_(self, request, CustomPartClass_):
         cls_selector_fn_ = loose_mock(request)
+        # Python 3 version
+        cls_selector_fn_.return_value = CustomPartClass_
+        # Python 2 version
         cls_selector_fn_.__func__ = loose_mock(
-            request, name='__func__', return_value=CustomPartClass_
+            request, name='__func__', return_value=cls_selector_fn_
         )
         return cls_selector_fn_
 
@@ -481,6 +490,11 @@ class DescribePartFactory(object):
     @pytest.fixture
     def package_2_(self, request):
         return instance_mock(request, OpcPackage)
+
+    @pytest.fixture
+    def part_load_params(
+            self, partname_, content_type_, reltype_, blob_, package_):
+        return partname_, content_type_, reltype_, blob_, package_
 
     @pytest.fixture
     def part_of_custom_type_(self, request):

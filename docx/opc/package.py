@@ -7,6 +7,7 @@ writing presentations to and from a .pptx file.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from .compat import cls_method_fn
 from .constants import RELATIONSHIP_TYPE as RT
 from .oxml import CT_Relationships, nsmap, serialize_part_xml
 from .packuri import PACKAGE_URI, PackURI
@@ -333,7 +334,7 @@ class PartFactory(object):
     def __new__(cls, partname, content_type, reltype, blob, package):
         PartClass = None
         if cls.part_class_selector is not None:
-            part_class_selector = cls.part_class_selector.__func__
+            part_class_selector = cls_method_fn(cls, 'part_class_selector')
             PartClass = part_class_selector(content_type, reltype)
         if PartClass is None:
             PartClass = cls._part_cls_for(content_type)
