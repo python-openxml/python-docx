@@ -8,7 +8,7 @@ from behave import then, when
 
 from docx import Document
 
-from .helpers import saved_docx_path, test_text
+from helpers import saved_docx_path, test_text
 
 test_style = 'Heading1'
 

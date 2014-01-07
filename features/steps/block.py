@@ -9,7 +9,7 @@ from behave import given, then, when
 from docx import Document
 from docx.table import Table
 
-from .helpers import test_docx
+from helpers import test_docx
 
 
 # given ===================================================

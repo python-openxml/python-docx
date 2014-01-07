@@ -9,7 +9,7 @@ from behave import then, when
 from docx.shared import Inches
 from docx.table import Table
 
-from .helpers import test_file_path
+from helpers import test_file_path
 
 
 # when ====================================================

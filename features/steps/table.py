@@ -13,7 +13,7 @@ from docx.table import (
     _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows
 )
 
-from .helpers import test_docx
+from helpers import test_docx
 
 
 # given ===================================================
