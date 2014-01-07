@@ -18,6 +18,12 @@ if sys.version_info >= (3, 0):
 
     from io import BytesIO
 
+    def is_string(obj):
+        """
+        Return True if *obj* is a string, False otherwise.
+        """
+        return isinstance(obj, str)
+
 # ===========================================================================
 # Python 2 versions
 # ===========================================================================
@@ -25,3 +31,9 @@ if sys.version_info >= (3, 0):
 else:
 
     from StringIO import StringIO as BytesIO  # noqa
+
+    def is_string(obj):
+        """
+        Return True if *obj* is a string, False otherwise.
+        """
+        return isinstance(obj, basestring)

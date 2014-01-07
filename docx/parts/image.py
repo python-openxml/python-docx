@@ -16,7 +16,7 @@ try:
 except ImportError:
     import Image as PIL_Image
 
-from docx.compat import BytesIO
+from docx.compat import BytesIO, is_string
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import Part
 from docx.shared import Emu, Inches, lazyproperty
@@ -80,7 +80,7 @@ class Image(object):
         Return a new |Image| instance loaded from the image file identified
         by *image_descriptor*, a path or file-like object.
         """
-        if isinstance(image_descriptor, basestring):
+        if is_string(image_descriptor):
             path = image_descriptor
             with open(path, 'rb') as f:
                 blob = f.read()
