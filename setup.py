@@ -15,7 +15,6 @@ def text_of(relpath):
     file_path = os.path.join(thisdir, os.path.normpath(relpath))
     with open(file_path) as f:
         text = f.read()
-    text.decode('ascii')  # result discarded, just make sure no non-ascii chars
     return text
 
 # Read the version from docx.__version__ without importing the package

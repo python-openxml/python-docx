@@ -16,8 +16,7 @@ try:
 except ImportError:
     import Image as PIL_Image
 
-from StringIO import StringIO
-
+from docx.compat import BytesIO
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import Part
 from docx.shared import Emu, Inches, lazyproperty
@@ -72,7 +71,7 @@ class Image(object):
 
     @classmethod
     def from_blob(cls, blob):
-        stream = StringIO(blob)
+        stream = BytesIO(blob)
         return cls._from_stream(stream, blob)
 
     @classmethod
@@ -85,7 +84,7 @@ class Image(object):
             path = image_descriptor
             with open(path, 'rb') as f:
                 blob = f.read()
-                stream = StringIO(blob)
+                stream = BytesIO(blob)
             filename = os.path.basename(path)
         else:
             stream = image_descriptor
