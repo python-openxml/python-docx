@@ -116,6 +116,11 @@ class DescribeImagePart(object):
         image_part, expected_filename = filename_fixture
         assert image_part.filename == expected_filename
 
+    def it_knows_the_sha1_of_its_image(self):
+        blob = b'fO0Bar'
+        image_part = ImagePart(None, None, blob)
+        assert image_part.sha1 == '4921e7002ddfba690a937d54bda226a7b8bdeb68'
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

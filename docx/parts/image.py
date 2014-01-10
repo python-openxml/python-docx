@@ -265,4 +265,4 @@ class ImagePart(Part):
         """
         SHA1 hash digest of the blob of this image part.
         """
-        raise NotImplementedError
+        return hashlib.sha1(self._blob).hexdigest()

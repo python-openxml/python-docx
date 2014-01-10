@@ -3,15 +3,24 @@
 Release History
 ---------------
 
+0.3.0a5 (2014-01-10)
+++++++++++++++++++++++
+
+- Hotfix: issue #4, Document.add_picture() fails on second and subsequent
+  images.
+
+
 0.3.0a4 (2014-01-07)
 ++++++++++++++++++++++
 
 - Complete Python 3 support, tested on Python 3.3
 
+
 0.3.0a3 (2014-01-06)
 ++++++++++++++++++++++
 
 - Fix setup.py error on some Windows installs
+
 
 0.3.0a1 (2014-01-05)
 ++++++++++++++++++++++
@@ -24,6 +33,7 @@ Release History
 - picture: add inline picture, auto-scaling
 - breaks: add page break
 - tests: full pytest and behave-based 2-layer test suite
+
 
 0.3.0dev1 (2013-12-14)
 ++++++++++++++++++++++
