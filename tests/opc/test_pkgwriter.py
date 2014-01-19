@@ -12,6 +12,7 @@ from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.oxml import oxml_fromstring
 from docx.opc.package import Part
 from docx.opc.packuri import PackURI
+from docx.opc.phys_pkg import _ZipPkgWriter
 from docx.opc.pkgwriter import _ContentTypesItem, PackageWriter
 
 from .unitdata.types import a_Default, a_Types, an_Override
@@ -38,16 +39,13 @@ class DescribePackageWriter(object):
         assert _write_methods.mock_calls == expected_calls
         phys_writer.close.assert_called_once_with()
 
-    def it_can_write_a_content_types_stream(self, xml_for):
-        # mockery ----------------------
-        phys_writer = Mock(name='phys_writer')
-        parts = Mock(name='parts')
-        # exercise ---------------------
-        PackageWriter._write_content_types_stream(phys_writer, parts)
-        # verify -----------------------
-        xml_for.assert_called_once_with(parts)
-        phys_writer.write.assert_called_once_with('/[Content_Types].xml',
-                                                  xml_for.return_value)
+    def it_can_write_a_content_types_stream(self, write_cti_fixture):
+        phys_pkg_writer_, parts_, xml_for_ = write_cti_fixture
+        PackageWriter._write_content_types_stream(phys_pkg_writer_, parts_)
+        xml_for_.assert_called_once_with(parts_)
+        phys_pkg_writer_.write.assert_called_once_with(
+            '/[Content_Types].xml', xml_for_.return_value
+        )
 
     def it_can_write_a_pkg_rels_item(self):
         # mockery ----------------------
@@ -79,10 +77,22 @@ class DescribePackageWriter(object):
     # fixtures ---------------------------------------------
 
     @pytest.fixture
+    def parts_(self, request):
+        return instance_mock(request, list)
+
+    @pytest.fixture
     def PhysPkgWriter_(self, request):
         _patch = patch('docx.opc.pkgwriter.PhysPkgWriter')
         request.addfinalizer(_patch.stop)
         return _patch.start()
+
+    @pytest.fixture
+    def phys_pkg_writer_(self, request):
+        return instance_mock(request, _ZipPkgWriter)
+
+    @pytest.fixture
+    def write_cti_fixture(self, phys_pkg_writer_, parts_, xml_for_):
+        return phys_pkg_writer_, parts_, xml_for_
 
     @pytest.fixture
     def _write_methods(self, request):
@@ -104,7 +114,7 @@ class DescribePackageWriter(object):
         return root_mock
 
     @pytest.fixture
-    def xml_for(self, request):
+    def xml_for_(self, request):
         return method_mock(request, _ContentTypesItem, 'xml_for')
 
 
