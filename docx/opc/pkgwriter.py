@@ -11,6 +11,7 @@ from .constants import CONTENT_TYPE as CT
 from .oxml import CT_Types, serialize_part_xml
 from .packuri import CONTENT_TYPES_URI, PACKAGE_URI
 from .phys_pkg import PhysPkgWriter
+from .shared import CaseInsensitiveDict
 from .spec import default_content_types
 
 
@@ -75,7 +76,9 @@ class _ContentTypesItem(object):
         appropriate content type and suitable for storage as
         ``[Content_Types].xml`` in an OPC package.
         """
-        defaults = dict((('.rels', CT.OPC_RELATIONSHIPS), ('.xml', CT.XML)))
+        defaults = CaseInsensitiveDict()
+        defaults['.rels'] = CT.OPC_RELATIONSHIPS
+        defaults['.xml'] = CT.XML
         overrides = dict()
         for part in parts:
             _ContentTypesItem._add_content_type(
@@ -90,7 +93,7 @@ class _ContentTypesItem(object):
         using a default or override as appropriate.
         """
         ext = partname.ext
-        if (ext, content_type) in default_content_types:
+        if (ext.lower(), content_type) in default_content_types:
             defaults[ext] = content_type
         else:
             overrides[partname] = content_type

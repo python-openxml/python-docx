@@ -126,7 +126,7 @@ class Describe_ContentTypesItem(object):
         )
 
     @pytest.fixture(params=[
-        # ('Default',  '/ppt/MEDIA/image.PNG',   CT.PNG),
+        ('Default',  '/ppt/MEDIA/image.PNG',   CT.PNG),
         ('Default',  '/ppt/media/image.xml',   CT.XML),
         ('Default',  '/ppt/media/image.rels',  CT.OPC_RELATIONSHIPS),
         ('Default',  '/ppt/media/image.jpeg',  CT.JPEG),
