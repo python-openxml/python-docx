@@ -2,8 +2,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .image import Image
 
-class Png(object):
+
+class Png(Image):
     """
     Image header parser for PNG images
     """

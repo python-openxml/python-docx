@@ -5,14 +5,11 @@ Provides objects that can characterize image streams as to content type and
 size, as a required step in including them in a document.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function
 
 import os
 
 from docx.compat import BytesIO, is_string
-from docx.image import image_cls_that_can_parse
 
 
 class Image(object):
@@ -45,5 +42,7 @@ class Image(object):
         Return an instance of the |Image| subclass corresponding to the
         format of the image in *stream*.
         """
+        # import at execution time to avoid circular import
+        from docx.image import image_cls_that_can_parse
         ImageSubclass = image_cls_that_can_parse(stream)
         return ImageSubclass(stream, blob, filename)

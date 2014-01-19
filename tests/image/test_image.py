@@ -12,6 +12,7 @@ from docx.compat import BytesIO
 from docx.exceptions import UnrecognizedImageError
 from docx.image import image_cls_that_can_parse, Image_OLD
 from docx.image.image import Image
+from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.opc.constants import CONTENT_TYPE as CT
 
@@ -36,7 +37,9 @@ class Describe_image_cls_that_can_parse(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        ('python-icon.png', Png),
+        ('python-icon.png',  Png),
+        ('python-icon.jpeg', Jfif),
+        ('exif-420-dpi.jpg', Exif),
     ])
     def image_cls_lookup_fixture(self, request):
         image_filename, expected_class = request.param
@@ -130,7 +133,7 @@ class DescribeImage(object):
     @pytest.fixture
     def image_cls_that_can_parse_(self, request, image_cls_):
         return function_mock(
-            request, 'docx.image.image.image_cls_that_can_parse',
+            request, 'docx.image.image_cls_that_can_parse',
             return_value=image_cls_
         )
 
