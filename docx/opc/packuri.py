@@ -44,11 +44,12 @@ class PackURI(str):
     @property
     def ext(self):
         """
-        The extension portion of this pack URI, e.g. ``'.xml'`` for
-        ``'/ppt/slides/slide1.xml'``. Note that the period is included,
-        consistent with the behavior of :meth:`posixpath.ext`.
+        The extension portion of this pack URI, e.g. ``'xml'`` for
+        ``'/word/document.xml'``. Note the period is not included.
         """
-        return posixpath.splitext(self)[1]
+        # raw_ext is either empty string or starts with period, e.g. '.xml'
+        raw_ext = posixpath.splitext(self)[1]
+        return raw_ext[1:] if raw_ext.startswith('.') else raw_ext
 
     @property
     def filename(self):

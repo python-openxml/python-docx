@@ -43,7 +43,7 @@ class DescribePackURI(object):
             assert pack_uri.baseURI == expected_baseURI
 
     def it_can_calculate_extension(self):
-        expected_values = ('', '.xml', '.xml')
+        expected_values = ('', 'xml', 'xml')
         for pack_uri, expected_ext in self.cases(expected_values):
             assert pack_uri.ext == expected_ext
 

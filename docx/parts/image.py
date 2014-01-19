@@ -236,7 +236,7 @@ class ImagePart(Part):
         """
         if self._image is not None:
             return self._image.filename
-        return 'image%s' % self.partname.ext
+        return 'image.%s' % self.partname.ext
 
     @classmethod
     def from_image(cls, image, partname):

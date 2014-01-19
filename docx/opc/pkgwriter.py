@@ -91,8 +91,8 @@ class _ContentTypesItem(object):
         ``[Content_Types].xml`` in an OPC package.
         """
         cti = cls()
-        cti._defaults['.rels'] = CT.OPC_RELATIONSHIPS
-        cti._defaults['.xml'] = CT.XML
+        cti._defaults['rels'] = CT.OPC_RELATIONSHIPS
+        cti._defaults['xml'] = CT.XML
         for part in parts:
             cti._add_content_type(part.partname, part.content_type)
         return cti

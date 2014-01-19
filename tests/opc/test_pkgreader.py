@@ -306,7 +306,7 @@ class Describe_ContentTypeMap(object):
         expected_overrides = {}
         for entry in entries:
             if entry[0] == 'Default':
-                ext = ('.%s' % entry[1]).lower()
+                ext = entry[1].lower()
                 content_type = entry[2]
                 expected_defaults[ext] = content_type
             elif entry[0] == 'Override':

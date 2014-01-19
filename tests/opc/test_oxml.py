@@ -23,7 +23,7 @@ class DescribeCT_Default(object):
         assert default.content_type == 'application/xml'
 
     def it_can_construct_a_new_default_element(self):
-        default = CT_Default.new('.xml', 'application/xml')
+        default = CT_Default.new('xml', 'application/xml')
         expected_xml = a_Default().xml
         assert default.xml == expected_xml
 
@@ -124,8 +124,8 @@ class DescribeCT_Types(object):
 
     def it_can_build_types_element_incrementally(self):
         types = CT_Types.new()
-        types.add_default('.xml', 'application/xml')
-        types.add_default('.jpeg', 'image/jpeg')
+        types.add_default('xml', 'application/xml')
+        types.add_default('jpeg', 'image/jpeg')
         types.add_override('/docProps/core.xml', 'app/vnd.type1')
         types.add_override('/ppt/presentation.xml', 'app/vnd.type2')
         types.add_override('/docProps/thumbnail.jpeg', 'image/jpeg')

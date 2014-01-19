@@ -113,7 +113,7 @@ class CT_Default(OxmlBaseElement):
         """
         xml = '<Default xmlns="%s"/>' % nsmap['ct']
         default = oxml_fromstring(xml)
-        default.set('Extension', ext[1:])
+        default.set('Extension', ext)
         default.set('ContentType', content_type)
         return default
 

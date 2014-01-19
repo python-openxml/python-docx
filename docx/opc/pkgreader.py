@@ -32,8 +32,9 @@ class PackageReader(object):
         phys_reader = PhysPkgReader(pkg_file)
         content_types = _ContentTypeMap.from_xml(phys_reader.content_types_xml)
         pkg_srels = PackageReader._srels_for(phys_reader, PACKAGE_URI)
-        sparts = PackageReader._load_serialized_parts(phys_reader, pkg_srels,
-                                                      content_types)
+        sparts = PackageReader._load_serialized_parts(
+            phys_reader, pkg_srels, content_types
+        )
         phys_reader.close()
         return PackageReader(content_types, pkg_srels, sparts)
 
@@ -153,8 +154,7 @@ class _ContentTypeMap(object):
         Add the default mapping of *extension* to *content_type* to this
         content type mapping.
         """
-        ext = '.%s' % extension
-        self._defaults[ext] = content_type
+        self._defaults[extension] = content_type
 
     def _add_override(self, partname, content_type):
         """
