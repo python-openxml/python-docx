@@ -12,6 +12,7 @@ from __future__ import (
 import os
 
 from docx.compat import BytesIO, is_string
+from docx.image import image_cls_that_can_parse
 
 
 class Image(object):
@@ -44,3 +45,5 @@ class Image(object):
         Return an instance of the |Image| subclass corresponding to the
         format of the image in *stream*.
         """
+        ImageSubclass = image_cls_that_can_parse(stream)
+        return ImageSubclass(stream, blob, filename)

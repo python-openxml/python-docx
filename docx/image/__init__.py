@@ -22,6 +22,14 @@ from docx.opc.constants import CONTENT_TYPE as CT
 from docx.shared import lazyproperty
 
 
+def image_cls_that_can_parse(stream):
+    """
+    Return the |Image| subclass that can parse the headers of the image file
+    contained in *stream*.
+    """
+    raise NotImplementedError
+
+
 class Image_OLD(object):
     """
     A helper object that knows how to analyze an image file.

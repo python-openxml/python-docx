@@ -13,7 +13,10 @@ from docx.image import Image_OLD
 from docx.image.image import Image
 from docx.opc.constants import CONTENT_TYPE as CT
 
-from ..unitutil import class_mock, instance_mock, method_mock, test_file
+from ..unitutil import (
+    function_mock, class_mock, instance_mock, loose_mock, method_mock,
+    test_file
+)
 
 
 class DescribeImage(object):
@@ -26,19 +29,43 @@ class DescribeImage(object):
         _from_stream_.assert_called_once_with(stream_, blob, filename)
         assert image is image_
 
-    def it_can_construct_from_an_image_stream(self, from_stream_fixture):
-        image_stream, _from_stream_, blob, image_ = from_stream_fixture
+    def it_can_construct_from_an_image_file_like(self, from_filelike_fixture):
+        image_stream, _from_stream_, blob, image_ = from_filelike_fixture
         image = Image.from_file(image_stream)
         _from_stream_.assert_called_once_with(image_stream, blob, None)
         assert image is image_
 
+    def it_can_construct_from_an_image_stream(self, from_stream_fixture):
+        (stream_, blob_, filename_, image_, image_cls_that_can_parse_,
+         image_cls_) = from_stream_fixture
+        image = Image._from_stream(stream_, blob_, filename_)
+        image_cls_that_can_parse_.assert_called_once_with(stream_)
+        image_cls_.assert_called_once_with(stream_, blob_, filename_)
+        assert image is image_
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def blob_(self, request):
+        return instance_mock(request, str)
 
     @pytest.fixture
     def BytesIO_(self, request, stream_):
         return class_mock(
             request, 'docx.image.image.BytesIO', return_value=stream_
         )
+
+    @pytest.fixture
+    def filename_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def from_filelike_fixture(self, _from_stream_, image_):
+        image_path = test_file('python-icon.png')
+        with open(image_path, 'rb') as f:
+            blob = f.read()
+        image_stream = BytesIO(blob)
+        return image_stream, _from_stream_, blob, image_
 
     @pytest.fixture
     def from_path_fixture(self, _from_stream_, BytesIO_, stream_, image_):
@@ -49,12 +76,13 @@ class DescribeImage(object):
         return image_path, _from_stream_, stream_, blob, filename, image_
 
     @pytest.fixture
-    def from_stream_fixture(self, _from_stream_, image_):
-        image_path = test_file('python-icon.png')
-        with open(image_path, 'rb') as f:
-            blob = f.read()
-        image_stream = BytesIO(blob)
-        return image_stream, _from_stream_, blob, image_
+    def from_stream_fixture(
+            self, stream_, blob_, filename_, image_,
+            image_cls_that_can_parse_, image_cls_):
+        return (
+            stream_, blob_, filename_, image_, image_cls_that_can_parse_,
+            image_cls_
+        )
 
     @pytest.fixture
     def _from_stream_(self, request, image_):
@@ -65,6 +93,17 @@ class DescribeImage(object):
     @pytest.fixture
     def image_(self, request):
         return instance_mock(request, Image)
+
+    @pytest.fixture
+    def image_cls_(self, request, image_):
+        return loose_mock(request, return_value=image_)
+
+    @pytest.fixture
+    def image_cls_that_can_parse_(self, request, image_cls_):
+        return function_mock(
+            request, 'docx.image.image.image_cls_that_can_parse',
+            return_value=image_cls_
+        )
 
     @pytest.fixture
     def stream_(self, request):
