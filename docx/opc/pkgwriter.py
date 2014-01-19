@@ -41,7 +41,8 @@ class PackageWriter(object):
         Write ``[Content_Types].xml`` part to the physical package with an
         appropriate content type lookup target for each part in *parts*.
         """
-        phys_writer.write(CONTENT_TYPES_URI, _ContentTypesItem.xml_for(parts))
+        cti = _ContentTypesItem.from_parts(parts)
+        phys_writer.write(CONTENT_TYPES_URI, cti.blob)
 
     @staticmethod
     def _write_parts(phys_writer, parts):
@@ -74,8 +75,16 @@ class _ContentTypesItem(object):
         self._defaults = CaseInsensitiveDict()
         self._overrides = dict()
 
+    @property
+    def blob(self):
+        """
+        Return XML form of this content types item, suitable for storage as
+        ``[Content_Types].xml`` in an OPC package.
+        """
+        return serialize_part_xml(self._element)
+
     @classmethod
-    def xml_for(cls, parts):
+    def from_parts(cls, parts):
         """
         Return content types XML mapping each part in *parts* to the
         appropriate content type and suitable for storage as
@@ -86,7 +95,7 @@ class _ContentTypesItem(object):
         cti._defaults['.xml'] = CT.XML
         for part in parts:
             cti._add_content_type(part.partname, part.content_type)
-        return cti._xml()
+        return cti
 
     def _add_content_type(self, partname, content_type):
         """
@@ -99,7 +108,8 @@ class _ContentTypesItem(object):
         else:
             self._overrides[partname] = content_type
 
-    def _xml(self):
+    @property
+    def _element(self):
         """
         Return XML form of this content types item, suitable for storage as
         ``[Content_Types].xml`` in an OPC package. Although the sequence of
@@ -112,4 +122,4 @@ class _ContentTypesItem(object):
             _types_elm.add_default(ext, self._defaults[ext])
         for partname in sorted(self._overrides.keys()):
             _types_elm.add_override(partname, self._overrides[partname])
-        return serialize_part_xml(_types_elm)
+        return _types_elm

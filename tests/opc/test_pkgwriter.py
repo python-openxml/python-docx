@@ -9,14 +9,13 @@ import pytest
 from mock import call, MagicMock, Mock, patch
 
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.opc.oxml import oxml_fromstring
 from docx.opc.package import Part
 from docx.opc.packuri import PackURI
 from docx.opc.phys_pkg import _ZipPkgWriter
 from docx.opc.pkgwriter import _ContentTypesItem, PackageWriter
 
 from .unitdata.types import a_Default, a_Types, an_Override
-from ..unitutil import instance_mock, method_mock
+from ..unitutil import class_mock, instance_mock, method_mock
 
 
 class DescribePackageWriter(object):
@@ -40,11 +39,13 @@ class DescribePackageWriter(object):
         phys_writer.close.assert_called_once_with()
 
     def it_can_write_a_content_types_stream(self, write_cti_fixture):
-        phys_pkg_writer_, parts_, xml_for_ = write_cti_fixture
+        _ContentTypesItem_, parts_, phys_pkg_writer_, blob_ = (
+            write_cti_fixture
+        )
         PackageWriter._write_content_types_stream(phys_pkg_writer_, parts_)
-        xml_for_.assert_called_once_with(parts_)
+        _ContentTypesItem_.from_parts.assert_called_once_with(parts_)
         phys_pkg_writer_.write.assert_called_once_with(
-            '/[Content_Types].xml', xml_for_.return_value
+            '/[Content_Types].xml', blob_
         )
 
     def it_can_write_a_pkg_rels_item(self):
@@ -77,6 +78,22 @@ class DescribePackageWriter(object):
     # fixtures ---------------------------------------------
 
     @pytest.fixture
+    def blob_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def cti_(self, request, blob_):
+        return instance_mock(request, _ContentTypesItem, blob=blob_)
+
+    @pytest.fixture
+    def _ContentTypesItem_(self, request, cti_):
+        _ContentTypesItem_ = class_mock(
+            request, 'docx.opc.pkgwriter._ContentTypesItem'
+        )
+        _ContentTypesItem_.from_parts.return_value = cti_
+        return _ContentTypesItem_
+
+    @pytest.fixture
     def parts_(self, request):
         return instance_mock(request, list)
 
@@ -91,8 +108,9 @@ class DescribePackageWriter(object):
         return instance_mock(request, _ZipPkgWriter)
 
     @pytest.fixture
-    def write_cti_fixture(self, phys_pkg_writer_, parts_, xml_for_):
-        return phys_pkg_writer_, parts_, xml_for_
+    def write_cti_fixture(
+            self, _ContentTypesItem_, parts_, phys_pkg_writer_, blob_):
+        return _ContentTypesItem_, parts_, phys_pkg_writer_, blob_
 
     @pytest.fixture
     def _write_methods(self, request):
@@ -120,10 +138,9 @@ class DescribePackageWriter(object):
 
 class Describe_ContentTypesItem(object):
 
-    def it_can_compose_content_types_xml(self, xml_for_fixture):
-        parts, expected_xml = xml_for_fixture
-        types_xml = _ContentTypesItem.xml_for(parts)
-        types_elm = oxml_fromstring(types_xml)
+    def it_can_compose_content_types_element(self, xml_for_fixture):
+        cti, expected_xml = xml_for_fixture
+        types_elm = cti._element
         assert types_elm.xml == expected_xml
 
     # fixtures ---------------------------------------------
@@ -147,6 +164,7 @@ class Describe_ContentTypesItem(object):
     def xml_for_fixture(self, request):
         elm_type, partname_str, content_type = request.param
         part_ = self._mock_part(request, 'part_', partname_str, content_type)
+        cti = _ContentTypesItem.from_parts([part_])
         # expected_xml -----------------
         types_bldr = a_Types().with_nsdecls()
         ext = partname_str.split('.')[-1].lower()
@@ -171,4 +189,4 @@ class Describe_ContentTypesItem(object):
             types_bldr.with_child(override_bldr)
 
         expected_xml = types_bldr.xml()
-        return [part_], expected_xml
+        return cti, expected_xml
