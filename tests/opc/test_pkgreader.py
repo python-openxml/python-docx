@@ -271,14 +271,8 @@ class Describe_ContentTypeMap(object):
         assert ct_map._defaults == expected_defaults
         assert ct_map._overrides == expected_overrides
 
-    def it_matches_overrides(self):
-        # test data --------------------
-        partname = PackURI('/part/name1.xml')
-        content_type = 'app/vnd.type1'
-        # fixture ----------------------
-        ct_map = _ContentTypeMap()
-        ct_map._overrides = {partname: content_type}
-        # verify -----------------------
+    def it_matches_an_override_on_partname(self, match_override_fixture):
+        ct_map, partname, content_type = match_override_fixture
         assert ct_map[partname] == content_type
 
     def it_falls_back_to_defaults(self):
@@ -319,6 +313,18 @@ class Describe_ContentTypeMap(object):
                 partname, content_type = entry[1:]
                 expected_overrides[partname] = content_type
         return content_types_xml, expected_defaults, expected_overrides
+
+    @pytest.fixture(params=[
+        ('/foo/bar.xml', '/foo/bar.xml'),
+    ])
+    def match_override_fixture(self, request):
+        partname_str, should_match_partname_str = request.param
+        partname = PackURI(partname_str)
+        should_match_partname = PackURI(should_match_partname_str)
+        content_type = 'appl/vnd-foobar'
+        ct_map = _ContentTypeMap()
+        ct_map._add_override(partname, content_type)
+        return ct_map, should_match_partname, content_type
 
     def _xml_from(self, entries):
         """
