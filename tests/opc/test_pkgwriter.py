@@ -9,10 +9,13 @@ import pytest
 from mock import call, MagicMock, Mock, patch
 
 from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.oxml import oxml_fromstring
+from docx.opc.package import Part
 from docx.opc.packuri import PackURI
 from docx.opc.pkgwriter import _ContentTypesItem, PackageWriter
 
-from ..unitutil import function_mock, method_mock
+from .unitdata.types import a_Default, a_Types, an_Override
+from ..unitutil import instance_mock, method_mock
 
 
 class DescribePackageWriter(object):
@@ -107,55 +110,55 @@ class DescribePackageWriter(object):
 
 class Describe_ContentTypesItem(object):
 
-    def it_can_compose_content_types_xml(
-            self, parts, types, serialize_part_xml_):
-        # exercise ---------------------
-        _ContentTypesItem.xml_for(parts)
-        # verify -----------------------
-        expected_types_calls = [
-            call.add_default('.jpeg', CT.JPEG),
-            call.add_default('.rels', CT.OPC_RELATIONSHIPS),
-            call.add_default('.xml',  CT.XML),
-            call.add_override('/docProps/core.xml',     'app/vnd.core'),
-            call.add_override('/ppt/slides/slide1.xml', 'app/vnd.ct_sld'),
-            call.add_override('/ppt/slides/slide2.xml', 'app/vnd.ct_sld'),
-            call.add_override('/zebra/foo.bar',         'app/vnd.foobar'),
-        ]
-        assert types.mock_calls == expected_types_calls
-        serialize_part_xml_.assert_called_once_with(types)
+    def it_can_compose_content_types_xml(self, xml_for_fixture):
+        parts, expected_xml = xml_for_fixture
+        types_xml = _ContentTypesItem.xml_for(parts)
+        types_elm = oxml_fromstring(types_xml)
+        assert types_elm.xml == expected_xml
 
     # fixtures ---------------------------------------------
 
-    @pytest.fixture
-    def serialize_part_xml_(self, request):
-        return function_mock(request, 'docx.opc.pkgwriter.serialize_part_xml')
+    def _mock_part(self, request, name, partname_str, content_type):
+        partname = PackURI(partname_str)
+        return instance_mock(
+            request, Part, name=name, partname=partname,
+            content_type=content_type
+        )
 
-    @pytest.fixture
-    def parts(self):
-        """
-        list of parts that will exercise _ContentTypesItem.xml_for()
-        """
-        return [
-            Mock(name='part_1', partname=PackURI('/docProps/core.xml'),
-                 content_type='app/vnd.core'),
-            Mock(name='part_2', partname=PackURI('/docProps/thumbnail.jpeg'),
-                 content_type=CT.JPEG),
-            Mock(name='part_3', partname=PackURI('/ppt/slides/slide2.xml'),
-                 content_type='app/vnd.ct_sld'),
-            Mock(name='part_4', partname=PackURI('/ppt/slides/slide1.xml'),
-                 content_type='app/vnd.ct_sld'),
-            Mock(name='part_5', partname=PackURI('/zebra/foo.bar'),
-                 content_type='app/vnd.foobar'),
-        ]
+    @pytest.fixture(params=[
+        # ('Default',  '/ppt/MEDIA/image.PNG',   CT.PNG),
+        ('Default',  '/ppt/media/image.xml',   CT.XML),
+        ('Default',  '/ppt/media/image.rels',  CT.OPC_RELATIONSHIPS),
+        ('Default',  '/ppt/media/image.jpeg',  CT.JPEG),
+        ('Override', '/docProps/core.xml',     'app/vnd.core'),
+        ('Override', '/ppt/slides/slide1.xml', 'app/vnd.ct_sld'),
+        ('Override', '/zebra/foo.bar',         'app/vnd.foobar'),
+    ])
+    def xml_for_fixture(self, request):
+        elm_type, partname_str, content_type = request.param
+        part_ = self._mock_part(request, 'part_', partname_str, content_type)
+        # expected_xml -----------------
+        types_bldr = a_Types().with_nsdecls()
+        ext = partname_str.split('.')[-1].lower()
+        if elm_type == 'Default' and ext not in ('rels', 'xml'):
+            default_bldr = a_Default()
+            default_bldr.with_Extension(ext)
+            default_bldr.with_ContentType(content_type)
+            types_bldr.with_child(default_bldr)
 
-    @pytest.fixture
-    def types(self, request):
-        """
-        Mock returned by CT_Types.new() call
-        """
-        types = Mock(name='types')
-        _patch = patch('docx.opc.pkgwriter.CT_Types')
-        CT_Types = _patch.start()
-        CT_Types.new.return_value = types
-        request.addfinalizer(_patch.stop)
-        return types
+        types_bldr.with_child(
+            a_Default().with_Extension('rels')
+                       .with_ContentType(CT.OPC_RELATIONSHIPS)
+        )
+        types_bldr.with_child(
+            a_Default().with_Extension('xml').with_ContentType(CT.XML)
+        )
+
+        if elm_type == 'Override':
+            override_bldr = an_Override()
+            override_bldr.with_PartName(partname_str)
+            override_bldr.with_ContentType(content_type)
+            types_bldr.with_child(override_bldr)
+
+        expected_xml = types_bldr.xml()
+        return [part_], expected_xml
