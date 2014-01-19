@@ -22,14 +22,14 @@ from docx.opc.constants import CONTENT_TYPE as CT
 from docx.shared import lazyproperty
 
 
-class Image(object):
+class Image_OLD(object):
     """
     A helper object that knows how to analyze an image file.
     """
     def __init__(
             self, blob, filename, content_type, px_width, px_height,
             horz_dpi, vert_dpi):
-        super(Image, self).__init__()
+        super(Image_OLD, self).__init__()
         self._blob = blob
         self._filename = filename
         self._content_type = content_type
