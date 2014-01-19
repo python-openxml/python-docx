@@ -8,10 +8,67 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.compat import BytesIO
 from docx.image import Image_OLD
+from docx.image.image import Image
 from docx.opc.constants import CONTENT_TYPE as CT
 
-from ..unitutil import test_file
+from ..unitutil import class_mock, instance_mock, method_mock, test_file
+
+
+class DescribeImage(object):
+
+    def it_can_construct_from_an_image_path(self, from_path_fixture):
+        image_path, _from_stream_, stream_, blob, filename, image_ = (
+            from_path_fixture
+        )
+        image = Image.from_file(image_path)
+        _from_stream_.assert_called_once_with(stream_, blob, filename)
+        assert image is image_
+
+    def it_can_construct_from_an_image_stream(self, from_stream_fixture):
+        image_stream, _from_stream_, blob, image_ = from_stream_fixture
+        image = Image.from_file(image_stream)
+        _from_stream_.assert_called_once_with(image_stream, blob, None)
+        assert image is image_
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def BytesIO_(self, request, stream_):
+        return class_mock(
+            request, 'docx.image.image.BytesIO', return_value=stream_
+        )
+
+    @pytest.fixture
+    def from_path_fixture(self, _from_stream_, BytesIO_, stream_, image_):
+        filename = 'python-icon.png'
+        image_path = test_file(filename)
+        with open(image_path, 'rb') as f:
+            blob = f.read()
+        return image_path, _from_stream_, stream_, blob, filename, image_
+
+    @pytest.fixture
+    def from_stream_fixture(self, _from_stream_, image_):
+        image_path = test_file('python-icon.png')
+        with open(image_path, 'rb') as f:
+            blob = f.read()
+        image_stream = BytesIO(blob)
+        return image_stream, _from_stream_, blob, image_
+
+    @pytest.fixture
+    def _from_stream_(self, request, image_):
+        return method_mock(
+            request, Image, '_from_stream', return_value=image_
+        )
+
+    @pytest.fixture
+    def image_(self, request):
+        return instance_mock(request, Image)
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
 
 
 class DescribeImage_OLD(object):
