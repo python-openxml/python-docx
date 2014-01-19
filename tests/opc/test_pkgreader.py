@@ -4,11 +4,15 @@
 Test suite for opc.pkgreader module
 """
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 import pytest
 
 from mock import call, Mock, patch
 
-from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
+from docx.opc.constants import (
+    CONTENT_TYPE as CT, RELATIONSHIP_TARGET_MODE as RTM
+)
 from docx.opc.packuri import PackURI
 from docx.opc.phys_pkg import _ZipPkgReader
 from docx.opc.pkgreader import (
@@ -16,6 +20,7 @@ from docx.opc.pkgreader import (
     _SerializedRelationships
 )
 
+from .unitdata.types import a_Default, a_Types, an_Override
 from ..unitutil import (
     initializer_mock, class_mock, function_mock, instance_mock, loose_mock,
     method_mock
@@ -258,45 +263,13 @@ class DescribePackageReader(object):
 
 class Describe_ContentTypeMap(object):
 
-    def it_can_construct_from_types_xml(self, oxml_fromstring_):
-        # test data --------------------
-        content_types = (
-            'app/vnd.type1', 'app/vnd.type2', 'app/vnd.type3',
-            'app/vnd.type4',
+    def it_can_construct_from_ct_item_xml(self, from_xml_fixture):
+        content_types_xml, expected_defaults, expected_overrides = (
+            from_xml_fixture
         )
-        content_types_xml = '<DontCare/>'
-        extensions = ('rels', 'xml')
-        exts = tuple(['.%s' % extension for extension in extensions])
-        partnames = ('/part/name1.xml', '/part/name2.xml')
-        # mockery ----------------------
-        overrides = (
-            Mock(name='override_elm_1', partname=partnames[0],
-                 content_type=content_types[0]),
-            Mock(name='override_elm_2', partname=partnames[1],
-                 content_type=content_types[1]),
-        )
-        defaults = (
-            Mock(name='default_elm_1', extension=extensions[0],
-                 content_type=content_types[2]),
-            Mock(name='default_elm_2', extension=extensions[1],
-                 content_type=content_types[3]),
-        )
-        types_elm = Mock(
-            name='types_elm', overrides=overrides, defaults=defaults
-        )
-        oxml_fromstring_.return_value = types_elm
-        # exercise ---------------------
         ct_map = _ContentTypeMap.from_xml(content_types_xml)
-        # verify -----------------------
-        expected_overrides = {
-            partnames[0]: content_types[0], partnames[1]: content_types[1]
-        }
-        expected_defaults = {
-            exts[0]: content_types[2], exts[1]: content_types[3]
-        }
-        oxml_fromstring_.assert_called_once_with(content_types_xml)
-        assert ct_map._overrides == expected_overrides
         assert ct_map._defaults == expected_defaults
+        assert ct_map._overrides == expected_overrides
 
     def it_matches_overrides(self):
         # test data --------------------
@@ -328,8 +301,44 @@ class Describe_ContentTypeMap(object):
     # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def oxml_fromstring_(self, request):
-        return function_mock(request, 'docx.opc.pkgreader.oxml_fromstring')
+    def from_xml_fixture(self):
+        entries = (
+            ('Default', 'xml', CT.XML),
+            # ('Default', 'PNG', CT.PNG),
+            ('Override', '/ppt/presentation.xml', CT.PML_PRESENTATION_MAIN),
+        )
+        content_types_xml = self._xml_from(entries)
+        expected_defaults = {}
+        expected_overrides = {}
+        for entry in entries:
+            if entry[0] == 'Default':
+                ext = ('.%s' % entry[1]).lower()
+                content_type = entry[2]
+                expected_defaults[ext] = content_type
+            elif entry[0] == 'Override':
+                partname, content_type = entry[1:]
+                expected_overrides[partname] = content_type
+        return content_types_xml, expected_defaults, expected_overrides
+
+    def _xml_from(self, entries):
+        """
+        Return XML for a [Content_Types].xml based on items in *entries*.
+        """
+        types_bldr = a_Types().with_nsdecls()
+        for entry in entries:
+            if entry[0] == 'Default':
+                ext, content_type = entry[1:]
+                default_bldr = a_Default()
+                default_bldr.with_Extension(ext)
+                default_bldr.with_ContentType(content_type)
+                types_bldr.with_child(default_bldr)
+            elif entry[0] == 'Override':
+                partname, content_type = entry[1:]
+                override_bldr = an_Override()
+                override_bldr.with_PartName(partname)
+                override_bldr.with_ContentType(content_type)
+                types_bldr.with_child(override_bldr)
+        return types_bldr.xml()
 
 
 class Describe_SerializedPart(object):
