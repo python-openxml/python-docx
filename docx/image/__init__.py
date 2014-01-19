@@ -19,6 +19,7 @@ except ImportError:
 
 from docx.compat import BytesIO, is_string
 from docx.exceptions import UnrecognizedImageError
+from docx.image.gif import Gif
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.opc.constants import CONTENT_TYPE as CT
@@ -30,6 +31,8 @@ SIGNATURES = (
     (Png,  0, b'\x89PNG\x0D\x0A\x1A\x0A'),
     (Jfif, 6, b'JFIF'),
     (Exif, 6, b'Exif'),
+    (Gif,  0, b'GIF87a'),
+    (Gif,  0, b'GIF89a'),
 )
 
 

@@ -11,6 +11,7 @@ import pytest
 from docx.compat import BytesIO
 from docx.exceptions import UnrecognizedImageError
 from docx.image import image_cls_that_can_parse, Image_OLD
+from docx.image.gif import Gif
 from docx.image.image import Image
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
@@ -40,6 +41,7 @@ class Describe_image_cls_that_can_parse(object):
         ('python-icon.png',  Png),
         ('python-icon.jpeg', Jfif),
         ('exif-420-dpi.jpg', Exif),
+        ('sonic.gif',        Gif),
     ])
     def image_cls_lookup_fixture(self, request):
         image_filename, expected_class = request.param
