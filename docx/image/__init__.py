@@ -19,6 +19,7 @@ except ImportError:
 
 from docx.compat import BytesIO, is_string
 from docx.exceptions import UnrecognizedImageError
+from docx.image.bmp import Bmp
 from docx.image.gif import Gif
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
@@ -36,6 +37,7 @@ SIGNATURES = (
     (Gif,  0, b'GIF89a'),
     (Tiff, 0, b'MM\x00*'),  # big-endian (Motorola) TIFF
     (Tiff, 0, b'II*\x00'),  # little-endian (Intel) TIFF
+    (Bmp,  0, b'BM'),
 )
 
 
