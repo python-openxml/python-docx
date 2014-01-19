@@ -66,50 +66,50 @@ class PackageWriter(object):
 class _ContentTypesItem(object):
     """
     Service class that composes a content types item ([Content_Types].xml)
-    based on a list of parts. Not meant to be instantiated, its single
-    interface method is xml_for(), e.g. ``_ContentTypesItem.xml_for(parts)``.
+    based on a list of parts. Not meant to be instantiated directly, its
+    single interface method is xml_for(), e.g.
+    ``_ContentTypesItem.xml_for(parts)``.
     """
-    @staticmethod
-    def xml_for(parts):
+    def __init__(self):
+        self._defaults = CaseInsensitiveDict()
+        self._overrides = dict()
+
+    @classmethod
+    def xml_for(cls, parts):
         """
         Return content types XML mapping each part in *parts* to the
         appropriate content type and suitable for storage as
         ``[Content_Types].xml`` in an OPC package.
         """
-        defaults = CaseInsensitiveDict()
-        defaults['.rels'] = CT.OPC_RELATIONSHIPS
-        defaults['.xml'] = CT.XML
-        overrides = dict()
+        cti = cls()
+        cti._defaults['.rels'] = CT.OPC_RELATIONSHIPS
+        cti._defaults['.xml'] = CT.XML
         for part in parts:
-            _ContentTypesItem._add_content_type(
-                defaults, overrides, part.partname, part.content_type
-            )
-        return _ContentTypesItem._xml(defaults, overrides)
+            cti._add_content_type(part.partname, part.content_type)
+        return cti._xml()
 
-    @staticmethod
-    def _add_content_type(defaults, overrides, partname, content_type):
+    def _add_content_type(self, partname, content_type):
         """
         Add a content type for the part with *partname* and *content_type*,
         using a default or override as appropriate.
         """
         ext = partname.ext
         if (ext.lower(), content_type) in default_content_types:
-            defaults[ext] = content_type
+            self._defaults[ext] = content_type
         else:
-            overrides[partname] = content_type
+            self._overrides[partname] = content_type
 
-    @staticmethod
-    def _xml(defaults, overrides):
+    def _xml(self):
         """
-        XML form of this content types item, suitable for storage as
+        Return XML form of this content types item, suitable for storage as
         ``[Content_Types].xml`` in an OPC package. Although the sequence of
         elements is not strictly significant, as an aid to testing and
         readability Default elements are sorted by extension and Override
         elements are sorted by partname.
         """
         _types_elm = CT_Types.new()
-        for ext in sorted(defaults.keys()):
-            _types_elm.add_default(ext, defaults[ext])
-        for partname in sorted(overrides.keys()):
-            _types_elm.add_override(partname, overrides[partname])
+        for ext in sorted(self._defaults.keys()):
+            _types_elm.add_default(ext, self._defaults[ext])
+        for partname in sorted(self._overrides.keys()):
+            _types_elm.add_override(partname, self._overrides[partname])
         return serialize_part_xml(_types_elm)
