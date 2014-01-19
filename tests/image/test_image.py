@@ -15,6 +15,7 @@ from docx.image.gif import Gif
 from docx.image.image import Image
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
+from docx.image.tiff import Tiff
 from docx.opc.constants import CONTENT_TYPE as CT
 
 from ..unitutil import (
@@ -38,10 +39,12 @@ class Describe_image_cls_that_can_parse(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        ('python-icon.png',  Png),
-        ('python-icon.jpeg', Jfif),
-        ('exif-420-dpi.jpg', Exif),
-        ('sonic.gif',        Gif),
+        ('python-icon.png',   Png),
+        ('python-icon.jpeg',  Jfif),
+        ('exif-420-dpi.jpg',  Exif),
+        ('sonic.gif',         Gif),
+        ('72-dpi.tiff',       Tiff),
+        ('little-endian.tif', Tiff),
     ])
     def image_cls_lookup_fixture(self, request):
         image_filename, expected_class = request.param
