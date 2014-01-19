@@ -9,14 +9,43 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.compat import BytesIO
-from docx.image import Image_OLD
+from docx.exceptions import UnrecognizedImageError
+from docx.image import image_cls_that_can_parse, Image_OLD
 from docx.image.image import Image
+from docx.image.png import Png
 from docx.opc.constants import CONTENT_TYPE as CT
 
 from ..unitutil import (
     function_mock, class_mock, instance_mock, loose_mock, method_mock,
     test_file
 )
+
+
+class Describe_image_cls_that_can_parse(object):
+
+    def it_can_recognize_an_image_stream(self, image_cls_lookup_fixture):
+        stream, expected_class = image_cls_lookup_fixture
+        ImageSubclass = image_cls_that_can_parse(stream)
+        assert ImageSubclass is expected_class
+
+    def it_raises_on_unrecognized_image_stream(self):
+        stream = BytesIO(b'foobar 666 not an image stream')
+        with pytest.raises(UnrecognizedImageError):
+            image_cls_that_can_parse(stream)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('python-icon.png', Png),
+    ])
+    def image_cls_lookup_fixture(self, request):
+        image_filename, expected_class = request.param
+        image_path = test_file(image_filename)
+        with open(image_path, 'rb') as f:
+            blob = f.read()
+        image_stream = BytesIO(blob)
+        image_stream.seek(666)
+        return image_stream, expected_class
 
 
 class DescribeImage(object):

@@ -18,8 +18,16 @@ except ImportError:
     import Image as PIL_Image
 
 from docx.compat import BytesIO, is_string
+from docx.exceptions import UnrecognizedImageError
+from docx.image.png import Png
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.shared import lazyproperty
+
+
+SIGNATURES = (
+    # class, offset, signature_bytes
+    (Png, 0, b'\x89PNG\x0D\x0A\x1A\x0A'),
+)
 
 
 def image_cls_that_can_parse(stream):
@@ -27,7 +35,17 @@ def image_cls_that_can_parse(stream):
     Return the |Image| subclass that can parse the headers of the image file
     contained in *stream*.
     """
-    raise NotImplementedError
+    def read_32(stream):
+        stream.seek(0)
+        return stream.read(32)
+
+    header = read_32(stream)
+    for cls, offset, signature_bytes in SIGNATURES:
+        end = offset + len(signature_bytes)
+        found_bytes = header[offset:end]
+        if found_bytes == signature_bytes:
+            return cls
+    raise UnrecognizedImageError
 
 
 class Image_OLD(object):
