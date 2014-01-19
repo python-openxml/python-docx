@@ -276,11 +276,10 @@ class Describe_ContentTypeMap(object):
         ct_map, partname, content_type = match_override_fixture
         assert ct_map[partname] == content_type
 
-    def it_falls_back_to_defaults(self):
-        ct_map = _ContentTypeMap()
-        ct_map._overrides = {PackURI('/part/name1.xml'): 'app/vnd.type1'}
-        ct_map._defaults = {'.xml': 'application/xml'}
-        assert ct_map[PackURI('/part/name2.xml')] == 'application/xml'
+    def it_falls_back_to_case_insensitive_extension_default_match(
+            self, match_default_fixture):
+        ct_map, partname, content_type = match_default_fixture
+        assert ct_map[partname] == content_type
 
     def it_should_raise_on_partname_not_found(self):
         ct_map = _ContentTypeMap()
@@ -299,7 +298,7 @@ class Describe_ContentTypeMap(object):
     def from_xml_fixture(self):
         entries = (
             ('Default', 'xml', CT.XML),
-            # ('Default', 'PNG', CT.PNG),
+            ('Default', 'PNG', CT.PNG),
             ('Override', '/ppt/presentation.xml', CT.PML_PRESENTATION_MAIN),
         )
         content_types_xml = self._xml_from(entries)
@@ -314,6 +313,19 @@ class Describe_ContentTypeMap(object):
                 partname, content_type = entry[1:]
                 expected_overrides[partname] = content_type
         return content_types_xml, expected_defaults, expected_overrides
+
+    @pytest.fixture(params=[
+        ('/foo/bar.xml', 'xml', 'application/xml'),
+        ('/foo/bar.PNG', 'png', 'image/png'),
+        ('/foo/bar.jpg', 'JPG', 'image/jpeg'),
+    ])
+    def match_default_fixture(self, request):
+        partname_str, ext, content_type = request.param
+        partname = PackURI(partname_str)
+        ct_map = _ContentTypeMap()
+        ct_map._add_override(PackURI('/bar/foo.xyz'), 'application/xyz')
+        ct_map._add_default(ext, content_type)
+        return ct_map, partname, content_type
 
     @pytest.fixture(params=[
         ('/foo/bar.xml', '/foo/bar.xml'),

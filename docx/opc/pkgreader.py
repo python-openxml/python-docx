@@ -118,7 +118,7 @@ class _ContentTypeMap(object):
     def __init__(self):
         super(_ContentTypeMap, self).__init__()
         self._overrides = CaseInsensitiveDict()
-        self._defaults = dict()
+        self._defaults = CaseInsensitiveDict()
 
     def __getitem__(self, partname):
         """
