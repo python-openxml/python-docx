@@ -7,10 +7,11 @@ Provides a low-level, read-only API to a serialized Open Packaging Convention
 
 from __future__ import absolute_import
 
+from .constants import RELATIONSHIP_TARGET_MODE as RTM
 from .oxml import oxml_fromstring
 from .packuri import PACKAGE_URI, PackURI
 from .phys_pkg import PhysPkgReader
-from .constants import RELATIONSHIP_TARGET_MODE as RTM
+from .shared import CaseInsensitiveDict
 
 
 class PackageReader(object):
@@ -116,7 +117,7 @@ class _ContentTypeMap(object):
     """
     def __init__(self):
         super(_ContentTypeMap, self).__init__()
-        self._overrides = dict()
+        self._overrides = CaseInsensitiveDict()
         self._defaults = dict()
 
     def __getitem__(self, partname):

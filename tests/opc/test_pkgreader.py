@@ -271,7 +271,8 @@ class Describe_ContentTypeMap(object):
         assert ct_map._defaults == expected_defaults
         assert ct_map._overrides == expected_overrides
 
-    def it_matches_an_override_on_partname(self, match_override_fixture):
+    def it_matches_an_override_on_case_insensitive_partname(
+            self, match_override_fixture):
         ct_map, partname, content_type = match_override_fixture
         assert ct_map[partname] == content_type
 
@@ -316,6 +317,8 @@ class Describe_ContentTypeMap(object):
 
     @pytest.fixture(params=[
         ('/foo/bar.xml', '/foo/bar.xml'),
+        ('/foo/bar.xml', '/FOO/Bar.XML'),
+        ('/FoO/bAr.XmL', '/foo/bar.xml'),
     ])
     def match_override_fixture(self, request):
         partname_str, should_match_partname_str = request.param
