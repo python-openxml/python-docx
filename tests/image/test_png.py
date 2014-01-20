@@ -61,6 +61,11 @@ class DescribePng(object):
         with pytest.raises(InvalidImageStreamError):
             Png._parse_chunks(stream_, chunk_offsets)
 
+    def it_can_parse_an_IHDR_chunk(self, parse_IHDR_fixture):
+        stream, offset, expected_attrs = parse_IHDR_fixture
+        attrs = Png._parse_IHDR(stream, offset)
+        assert attrs == expected_attrs
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -127,6 +132,15 @@ class DescribePng(object):
             stream_rdr_, chunk_offsets, _parse_IHDR_, ihdr_offset,
             _parse_pHYs_, phys_offset, expected_attrs
         )
+
+    @pytest.fixture
+    def parse_IHDR_fixture(self):
+        bytes_ = b'\x00\x00\x00\x2A\x00\x00\x00\x18'
+        stream = BytesIO(bytes_)
+        stream_rdr = StreamReader(stream, BIG_ENDIAN)
+        offset = 0
+        expected_attrs = {TAG.PX_WIDTH: 42, TAG.PX_HEIGHT: 24}
+        return stream_rdr, offset, expected_attrs
 
     @pytest.fixture
     def parse_png_fixture(

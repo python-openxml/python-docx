@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .constants import TAG
 from .exceptions import InvalidImageStreamError
 from .helpers import StreamReader
 from .image import Image
@@ -98,7 +99,10 @@ class Png(Image):
         Return a dict containing values for TAG.PX_WIDTH and TAG.PX_HEIGHT
         extracted from the IHDR chunk in *stream* at *offset*.
         """
-        raise NotImplementedError
+        return {
+            TAG.PX_WIDTH:  stream.read_long(offset),
+            TAG.PX_HEIGHT: stream.read_long(offset, 4)
+        }
 
     @classmethod
     def _parse_pHYs(cls, stream, offset):
