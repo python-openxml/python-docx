@@ -42,7 +42,30 @@ class Png(Image):
         *stream*. The offsets for a chunk type that may appear more than once
         are returned as a list regardless of their actual number in *stream*.
         """
-        raise NotImplementedError
+        chunk_offsets = {}
+        for chunk_type, offset in cls._iter_chunk_offsets(stream):
+            # this would need to be more sophisticated if we needed any of
+            # the chunks that can appear multiple times
+            chunk_offsets[chunk_type] = offset
+        return chunk_offsets
+
+    @staticmethod
+    def _iter_chunk_offsets(stream):
+        """
+        Generate a (chunk_type, chunk_offset) 2-tuple for each of the chunks
+        in the PNG image stream. Iteration stops after the IEND chunk is
+        returned.
+        """
+        chunk_offset = 8
+        while True:
+            chunk_data_len = stream.read_long(chunk_offset)
+            chunk_type = stream.read_str(4, chunk_offset, 4)
+            data_offset = chunk_offset + 8
+            yield chunk_type, data_offset
+            if chunk_type == 'IEND':
+                break
+            # incr offset for chunk len long, chunk type, chunk data, and CRC
+            chunk_offset += (4 + 4 + chunk_data_len + 4)
 
     @classmethod
     def _parse_chunks(cls, stream, chunk_offsets):

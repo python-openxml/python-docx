@@ -10,11 +10,11 @@ import pytest
 
 from docx.compat import BytesIO
 from docx.image.exceptions import InvalidImageStreamError
-from docx.image.helpers import StreamReader
+from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.png import Png
 
 from ..unitutil import (
-    initializer_mock, class_mock, instance_mock, method_mock
+    initializer_mock, class_mock, instance_mock, method_mock, test_file
 )
 
 
@@ -45,6 +45,12 @@ class DescribePng(object):
         with pytest.raises(InvalidImageStreamError):
             Png._parse_png_headers(stream_)
 
+    def it_parses_chunk_offsets_to_help_chunk_parser(
+            self, chunk_offset_fixture):
+        stream, expected_chunk_offsets = chunk_offset_fixture
+        chunk_offsets = Png._parse_chunk_offsets(stream)
+        assert chunk_offsets == expected_chunk_offsets
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -58,6 +64,22 @@ class DescribePng(object):
     @pytest.fixture
     def blob_(self, request):
         return instance_mock(request, bytes)
+
+    @pytest.fixture(params=[
+        ('150-dpi.png', {
+            'IHDR': 16, 'pHYs': 41, 'iCCP': 62, 'cHRM': 2713, 'IDAT': 2757,
+            'IEND': 146888}),
+        ('300-dpi.png', {
+            'IHDR': 16, 'pHYs': 41, 'tEXt': 62, 'IDAT': 99, 'IEND': 39917}),
+    ])
+    def chunk_offset_fixture(self, request):
+        filename, expected_chunk_offsets = request.param
+        path = test_file(filename)
+        with open(path, 'rb') as f:
+            blob = f.read()
+        stream = BytesIO(blob)
+        stream_rdr = StreamReader(stream, BIG_ENDIAN)
+        return stream_rdr, expected_chunk_offsets
 
     @pytest.fixture
     def chunk_offsets_(self, request):
