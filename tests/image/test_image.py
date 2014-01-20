@@ -79,14 +79,16 @@ class DescribeImage(object):
          image_cls_) = from_stream_fixture
         image = Image._from_stream(stream_, blob_, filename_)
         image_cls_that_can_parse_.assert_called_once_with(stream_)
-        image_cls_.assert_called_once_with(stream_, blob_, filename_)
+        image_cls_.from_stream.assert_called_once_with(
+            stream_, blob_, filename_
+        )
         assert image is image_
 
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def blob_(self, request):
-        return instance_mock(request, str)
+        return instance_mock(request, bytes)
 
     @pytest.fixture
     def BytesIO_(self, request, stream_):
@@ -135,7 +137,9 @@ class DescribeImage(object):
 
     @pytest.fixture
     def image_cls_(self, request, image_):
-        return loose_mock(request, return_value=image_)
+        image_cls_ = loose_mock(request)
+        image_cls_.from_stream.return_value = image_
+        return image_cls_
 
     @pytest.fixture
     def image_cls_that_can_parse_(self, request, image_cls_):

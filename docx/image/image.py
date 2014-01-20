@@ -45,4 +45,4 @@ class Image(object):
         # import at execution time to avoid circular import
         from docx.image import image_cls_that_can_parse
         ImageSubclass = image_cls_that_can_parse(stream)
-        return ImageSubclass(stream, blob, filename)
+        return ImageSubclass.from_stream(stream, blob, filename)
