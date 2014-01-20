@@ -39,6 +39,22 @@ class Png(Image):
         cx, cy = attrs.pop('px_width'), attrs.pop('px_height')
         return Png(blob, filename, cx, cy, attrs)
 
+    @property
+    def horz_dpi(self):
+        """
+        Integer dots per inch for the width of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        units_specifier = self._attrs.get(TAG.UNITS_SPECIFIER)
+        horz_px_per_unit = self._attrs.get(TAG.HORZ_PX_PER_UNIT)
+
+        if units_specifier == 1 and horz_px_per_unit is not None:
+            horz_dpi = int(round(horz_px_per_unit * 0.0254))
+        else:
+            horz_dpi = 72
+
+        return horz_dpi
+
     @classmethod
     def _parse_png_headers(cls, stream):
         """
