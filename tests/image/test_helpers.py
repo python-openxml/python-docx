@@ -10,7 +10,7 @@ import pytest
 
 from docx.compat import BytesIO
 from docx.image.exceptions import UnexpectedEndOfFileError
-from docx.image.helpers import BIG_ENDIAN, StreamReader
+from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 
 
 class DescribeStreamReader(object):
@@ -26,7 +26,22 @@ class DescribeStreamReader(object):
         with pytest.raises(UnexpectedEndOfFileError):
             stream_rdr.read_str(9, 2)
 
+    def it_can_read_a_long(self, read_long_fixture):
+        stream_rdr, offset, expected_int = read_long_fixture
+        l = stream_rdr.read_long(offset)
+        assert l == expected_int
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (BIG_ENDIAN,    b'\xBE\x00\x00\x00\x2A\xEF', 1, 42),
+        (LITTLE_ENDIAN, b'\xBE\xEF\x2A\x00\x00\x00', 2, 42),
+    ])
+    def read_long_fixture(self, request):
+        byte_order, bytes_, offset, expected_int = request.param
+        stream = BytesIO(bytes_)
+        stream_rdr = StreamReader(stream, byte_order)
+        return stream_rdr, offset, expected_int
 
     @pytest.fixture
     def read_str_fixture(self):

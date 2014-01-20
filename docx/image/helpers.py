@@ -25,6 +25,16 @@ class StreamReader(object):
         )
         self._base_offset = base_offset
 
+    def read_long(self, base=None, offset=0):
+        """
+        Return the int value of the four bytes at the file position defined by
+        self._base_offset + *base* + *offset*. If *base* is None, the long is
+        read from the current position in the stream. The endian setting of
+        this instance is used to interpret the byte layout of the long.
+        """
+        fmt = '<L' if self._byte_order is LITTLE_ENDIAN else '>L'
+        return self._read_int(fmt, base, offset)
+
     def read_str(self, char_count, base, offset=0):
         """
         Return a string containing the *char_count* bytes at the file
@@ -48,6 +58,12 @@ class StreamReader(object):
         if len(bytes_) < byte_count:
             raise UnexpectedEndOfFileError
         return bytes_
+
+    def _read_int(self, fmt, base, offset):
+        struct = Struct(fmt)
+        if base is None:
+            base = self._stream.tell() - self._base_offset
+        return self._unpack_item(struct, base, offset)
 
     def _unpack_item(self, struct, base, offset):
         bytes_ = self._read_bytes(struct.size, base, offset)
