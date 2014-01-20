@@ -44,6 +44,20 @@ class Image(object):
             filename = None
         return cls._from_stream(stream, blob, filename)
 
+    @property
+    def px_width(self):
+        """
+        The horizontal pixel dimension of the image
+        """
+        return self._px_width
+
+    @property
+    def px_height(self):
+        """
+        The vertical pixel dimension of the image
+        """
+        return self._px_height
+
     @classmethod
     def _from_stream(cls, stream, blob, filename=None):
         """

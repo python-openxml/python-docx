@@ -14,5 +14,5 @@ Feature: Characterize an image file
       And the image has <vert_dpi> vertical dpi
 
    Examples: Image file characteristics
-     | filename | mime_type | cx | cy | horz_dpi | vert_dpi |
-     | test.png | image/png | 11 | 22 |   333    |   444    |
+     | filename | mime_type | cx  |  cy  | horz_dpi | vert_dpi |
+     | test.png | image/png | 901 | 1350 |   333    |   444    |

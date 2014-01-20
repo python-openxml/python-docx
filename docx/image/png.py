@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .constants import TAG
+from .constants import MIME_TYPE, TAG
 from .exceptions import InvalidImageStreamError
 from .helpers import StreamReader
 from .image import Image
@@ -19,6 +19,14 @@ class Png(Image):
     """
     def __init__(self, blob, filename, cx, cy, attrs):
         super(Png, self).__init__(blob, filename, cx, cy, attrs)
+
+    @property
+    def content_type(self):
+        """
+        MIME content type for this image, unconditionally `image/png` for
+        PNG images.
+        """
+        return MIME_TYPE.PNG
 
     @classmethod
     def from_stream(cls, stream, blob, filename):
