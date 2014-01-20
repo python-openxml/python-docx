@@ -17,6 +17,14 @@ class Image(object):
     Graphical image stream such as JPEG, PNG, or GIF with properties and
     methods required by ImagePart.
     """
+    def __init__(self, blob, filename, px_width, px_height, attrs):
+        super(Image, self).__init__()
+        self._blob = blob
+        self._filename = filename
+        self._px_width = px_width
+        self._px_height = px_height
+        self._attrs = attrs
+
     @classmethod
     def from_file(cls, image_descriptor):
         """

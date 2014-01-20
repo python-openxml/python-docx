@@ -17,6 +17,9 @@ class Png(Image):
     """
     Image header parser for PNG images
     """
+    def __init__(self, blob, filename, cx, cy, attrs):
+        super(Png, self).__init__(blob, filename, cx, cy, attrs)
+
     @classmethod
     def from_stream(cls, stream, blob, filename):
         """
@@ -79,6 +82,7 @@ class Png(Image):
         """
         attrs = {}
 
+        # IHDR chunk -------------------
         if _CHUNK_TYPE_IHDR not in chunk_offsets:
             # IHDR chunk is mandatory, invalid if not present
             raise InvalidImageStreamError('no IHDR chunk in PNG image')
@@ -86,6 +90,7 @@ class Png(Image):
         ihdr_attrs = cls._parse_IHDR(stream, ihdr_offset)
         attrs.update(ihdr_attrs)
 
+        # pHYs chunk -------------------
         if _CHUNK_TYPE_pHYs in chunk_offsets:
             phys_offset = chunk_offsets[_CHUNK_TYPE_pHYs]
             phys_attrs = cls._parse_pHYs(stream, phys_offset)
