@@ -15,4 +15,4 @@ Feature: Characterize an image file
 
    Examples: Image file characteristics
      | filename | mime_type | cx  |  cy  | horz_dpi | vert_dpi |
-     | test.png | image/png | 901 | 1350 |   150    |   444    |
+     | test.png | image/png | 901 | 1350 |   150    |   150    |

@@ -47,13 +47,27 @@ class Png(Image):
         """
         units_specifier = self._attrs.get(TAG.UNITS_SPECIFIER)
         horz_px_per_unit = self._attrs.get(TAG.HORZ_PX_PER_UNIT)
+        return self._dpi(units_specifier, horz_px_per_unit)
 
-        if units_specifier == 1 and horz_px_per_unit is not None:
-            horz_dpi = int(round(horz_px_per_unit * 0.0254))
-        else:
-            horz_dpi = 72
+    @property
+    def vert_dpi(self):
+        """
+        Integer dots per inch for the height of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        units_specifier = self._attrs.get(TAG.UNITS_SPECIFIER)
+        vert_px_per_unit = self._attrs.get(TAG.VERT_PX_PER_UNIT)
+        return self._dpi(units_specifier, vert_px_per_unit)
 
-        return horz_dpi
+    @staticmethod
+    def _dpi(units_specifier, px_per_unit):
+        """
+        Return dots per inch value calculated from *units_specifier* and
+        *px_per_unit*.
+        """
+        if units_specifier == 1 and px_per_unit is not None:
+            return int(round(px_per_unit * 0.0254))
+        return 72
 
     @classmethod
     def _parse_png_headers(cls, stream):

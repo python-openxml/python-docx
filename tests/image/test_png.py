@@ -71,9 +71,10 @@ class DescribePng(object):
         attrs = Png._parse_pHYs(stream, offset)
         assert attrs == expected_attrs
 
-    def it_knows_its_horizontal_dpi(self, horz_dpi_fixture):
-        png, expected_horz_dpi = horz_dpi_fixture
-        assert png.horz_dpi == expected_horz_dpi
+    def it_knows_its_dpi(self, dpi_fixture):
+        png, expected_dpi = dpi_fixture
+        assert png.horz_dpi == expected_dpi
+        assert png.vert_dpi == expected_dpi
 
     # fixtures -------------------------------------------------------
 
@@ -109,6 +110,20 @@ class DescribePng(object):
     def chunk_offsets(self, request):
         return dict()
 
+    @pytest.fixture(params=[
+        (5906, 1, 150), (11811, 1, 300), (5906, 0, 72), (None, 0, 72),
+        (666, 0, 72), (2835, 1, 72)
+    ])
+    def dpi_fixture(self, request):
+        px_per_unit, units_specifier, expected_dpi = request.param
+        attrs = {
+            TAG.HORZ_PX_PER_UNIT: px_per_unit,
+            TAG.VERT_PX_PER_UNIT: px_per_unit,
+            TAG.UNITS_SPECIFIER:  units_specifier
+        }
+        png = Png(None, None, None, None, attrs)
+        return png, expected_dpi
+
     @pytest.fixture
     def filename_(self, request):
         return instance_mock(request, str)
@@ -123,19 +138,6 @@ class DescribePng(object):
             stream_, blob_, filename_, StreamReader_, _parse_png_headers_,
             stream_rdr_, Png__init__, cx, cy, attrs, png_
         )
-
-    @pytest.fixture(params=[
-        (5906, 1, 150), (11811, 1, 300), (5906, 0, 72), (None, 0, 72),
-        (666, 0, 72), (2835, 1, 72)
-    ])
-    def horz_dpi_fixture(self, request):
-        horz_px_per_unit, units_specifier, expected_horz_dpi = request.param
-        attrs = {
-            TAG.HORZ_PX_PER_UNIT: horz_px_per_unit,
-            TAG.UNITS_SPECIFIER:  units_specifier
-        }
-        png = Png(None, None, None, None, attrs)
-        return png, expected_horz_dpi
 
     @pytest.fixture
     def no_IHDR_fixture(self, stream_, chunk_offsets):
