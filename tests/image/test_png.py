@@ -66,6 +66,11 @@ class DescribePng(object):
         attrs = Png._parse_IHDR(stream, offset)
         assert attrs == expected_attrs
 
+    def it_can_parse_an_pHYs_chunk(self, parse_pHYs_fixture):
+        stream, offset, expected_attrs = parse_pHYs_fixture
+        attrs = Png._parse_pHYs(stream, offset)
+        assert attrs == expected_attrs
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -140,6 +145,18 @@ class DescribePng(object):
         stream_rdr = StreamReader(stream, BIG_ENDIAN)
         offset = 0
         expected_attrs = {TAG.PX_WIDTH: 42, TAG.PX_HEIGHT: 24}
+        return stream_rdr, offset, expected_attrs
+
+    @pytest.fixture
+    def parse_pHYs_fixture(self):
+        bytes_ = b'\x00\x00\x17\x12\x00\x00\x1E\xC2\x01'
+        stream = BytesIO(bytes_)
+        stream_rdr = StreamReader(stream, BIG_ENDIAN)
+        offset = 0
+        expected_attrs = {
+            TAG.HORZ_PX_PER_UNIT: 5906, TAG.VERT_PX_PER_UNIT: 7874,
+            TAG.UNITS_SPECIFIER: 1
+        }
         return stream_rdr, offset, expected_attrs
 
     @pytest.fixture

@@ -25,6 +25,15 @@ class StreamReader(object):
         )
         self._base_offset = base_offset
 
+    def read_byte(self, base=None, offset=0):
+        """
+        Return the int value of the byte at the file position defined by
+        self._base_offset + *base* + *offset*. If *base* is None, the byte is
+        read from the current position in the stream.
+        """
+        fmt = 'B'
+        return self._read_int(fmt, base, offset)
+
     def read_long(self, base=None, offset=0):
         """
         Return the int value of the four bytes at the file position defined by

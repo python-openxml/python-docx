@@ -111,4 +111,8 @@ class Png(Image):
         TAG.VERT_PX_PER_UNIT, and TAG.UNITS_SPECIFIER parsed from the pHYs
         chunk at *offset* in *stream*.
         """
-        raise NotImplementedError
+        return {
+            TAG.HORZ_PX_PER_UNIT: stream.read_long(offset),
+            TAG.VERT_PX_PER_UNIT: stream.read_long(offset, 4),
+            TAG.UNITS_SPECIFIER:  stream.read_byte(offset, 8)
+        }
