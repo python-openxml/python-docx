@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function
 import pytest
 
 from docx.compat import BytesIO
+from docx.image.constants import TAG
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.png import Png
@@ -33,23 +34,32 @@ class DescribePng(object):
         assert isinstance(png, Png)
 
     def it_parses_PNG_headers_to_access_attrs(self, parse_png_fixture):
-        (stream_, _parse_chunk_offsets_, _parse_chunks_, chunk_offsets_,
+        (stream_, _parse_chunk_offsets_, _parse_chunks_, chunk_offsets,
          attrs_) = parse_png_fixture
         attrs = Png._parse_png_headers(stream_)
         _parse_chunk_offsets_.assert_called_once_with(stream_)
-        _parse_chunks_.assert_called_once_with(stream_, chunk_offsets_)
+        _parse_chunks_.assert_called_once_with(stream_, chunk_offsets)
         assert attrs == attrs_
-
-    def it_raises_on_png_having_no_IHDR_chunk(self, no_IHDR_fixture):
-        stream_ = no_IHDR_fixture
-        with pytest.raises(InvalidImageStreamError):
-            Png._parse_png_headers(stream_)
 
     def it_parses_chunk_offsets_to_help_chunk_parser(
             self, chunk_offset_fixture):
         stream, expected_chunk_offsets = chunk_offset_fixture
         chunk_offsets = Png._parse_chunk_offsets(stream)
         assert chunk_offsets == expected_chunk_offsets
+
+    def it_parses_chunks_to_extract_fields(self, parse_chunks_fixture):
+        (stream_, chunk_offsets, _parse_IHDR_, ihdr_offset, _parse_pHYs_,
+         phys_offset, expected_attrs) = parse_chunks_fixture
+        attrs = Png._parse_chunks(stream_, chunk_offsets)
+        _parse_IHDR_.assert_called_once_with(stream_, ihdr_offset)
+        if phys_offset is not None:
+            _parse_pHYs_.assert_called_once_with(stream_, phys_offset)
+        assert attrs == expected_attrs
+
+    def it_raises_on_png_having_no_IHDR_chunk(self, no_IHDR_fixture):
+        stream_, chunk_offsets = no_IHDR_fixture
+        with pytest.raises(InvalidImageStreamError):
+            Png._parse_chunks(stream_, chunk_offsets)
 
     # fixtures -------------------------------------------------------
 
@@ -82,7 +92,7 @@ class DescribePng(object):
         return stream_rdr, expected_chunk_offsets
 
     @pytest.fixture
-    def chunk_offsets_(self, request):
+    def chunk_offsets(self, request):
         return dict()
 
     @pytest.fixture
@@ -101,30 +111,60 @@ class DescribePng(object):
         )
 
     @pytest.fixture
-    def no_IHDR_fixture(
-            self, stream_, _parse_chunk_offsets_, _parse_chunks_):
-        return stream_
+    def no_IHDR_fixture(self, stream_, chunk_offsets):
+        return stream_, chunk_offsets
+
+    @pytest.fixture(params=[(42, 24), (42, None)])
+    def parse_chunks_fixture(
+            self, request, stream_rdr_, _parse_IHDR_, _parse_pHYs_):
+        ihdr_offset, phys_offset = request.param
+        chunk_offsets = {'IHDR': ihdr_offset}
+        expected_attrs = dict(_parse_IHDR_.return_value)
+        if phys_offset is not None:
+            chunk_offsets['pHYs'] = phys_offset
+            expected_attrs.update(_parse_pHYs_.return_value)
+        return (
+            stream_rdr_, chunk_offsets, _parse_IHDR_, ihdr_offset,
+            _parse_pHYs_, phys_offset, expected_attrs
+        )
 
     @pytest.fixture
     def parse_png_fixture(
             self, stream_rdr_, _parse_chunk_offsets_, _parse_chunks_,
-            chunk_offsets_, attrs_):
-        chunk_offsets_['IHDR'] = 666
+            chunk_offsets, attrs_):
+        chunk_offsets['IHDR'] = 666
         return (
             stream_rdr_, _parse_chunk_offsets_, _parse_chunks_,
-            chunk_offsets_, attrs_
+            chunk_offsets, attrs_
         )
 
     @pytest.fixture
-    def _parse_chunk_offsets_(self, request, chunk_offsets_):
+    def _parse_chunk_offsets_(self, request, chunk_offsets):
         return method_mock(
-            request, Png, '_parse_chunk_offsets', return_value=chunk_offsets_
+            request, Png, '_parse_chunk_offsets', return_value=chunk_offsets
         )
 
     @pytest.fixture
     def _parse_chunks_(self, request, attrs_):
         return method_mock(
             request, Png, '_parse_chunks', return_value=attrs_
+        )
+
+    @pytest.fixture
+    def _parse_IHDR_(self, request):
+        return method_mock(
+            request, Png, '_parse_IHDR', return_value={
+                TAG.PX_WIDTH: 12, TAG.PX_HEIGHT: 34
+            }
+        )
+
+    @pytest.fixture
+    def _parse_pHYs_(self, request):
+        return method_mock(
+            request, Png, '_parse_pHYs', return_value={
+                TAG.HORZ_PX_PER_UNIT: 56, TAG.VERT_PX_PER_UNIT: 78,
+                TAG.UNITS_SPECIFIER: 1
+            }
         )
 
     @pytest.fixture

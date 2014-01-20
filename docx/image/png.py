@@ -7,6 +7,11 @@ from .helpers import StreamReader
 from .image import Image
 
 
+_CHUNK_TYPE_IHDR = 'IHDR'
+_CHUNK_TYPE_pHYs = 'pHYs'
+_CHUNK_TYPE_IEND = 'IEND'
+
+
 class Png(Image):
     """
     Image header parser for PNG images
@@ -29,9 +34,6 @@ class Png(Image):
         *stream*.
         """
         chunk_offsets = cls._parse_chunk_offsets(stream)
-        # IHDR chunk is mandatory, invalid if not present
-        if 'IHDR' not in chunk_offsets:
-            raise InvalidImageStreamError('no IHDR chunk in PNG image')
         attrs = cls._parse_chunks(stream, chunk_offsets)
         return attrs
 
@@ -62,7 +64,7 @@ class Png(Image):
             chunk_type = stream.read_str(4, chunk_offset, 4)
             data_offset = chunk_offset + 8
             yield chunk_type, data_offset
-            if chunk_type == 'IEND':
+            if chunk_type == _CHUNK_TYPE_IEND:
                 break
             # incr offset for chunk len long, chunk type, chunk data, and CRC
             chunk_offset += (4 + 4 + chunk_data_len + 4)
@@ -70,7 +72,39 @@ class Png(Image):
     @classmethod
     def _parse_chunks(cls, stream, chunk_offsets):
         """
-        Return a dict of field, value pairs parsed from the chunks in
-        *stream* having offsets in *chunk_offsets*.
+        Return a dict of field, value pairs parsed from selected chunks in
+        the PNG image in *stream*, using *chunk_offsets* to locate the
+        desired chunks.
+        """
+        attrs = {}
+
+        if _CHUNK_TYPE_IHDR not in chunk_offsets:
+            # IHDR chunk is mandatory, invalid if not present
+            raise InvalidImageStreamError('no IHDR chunk in PNG image')
+        ihdr_offset = chunk_offsets[_CHUNK_TYPE_IHDR]
+        ihdr_attrs = cls._parse_IHDR(stream, ihdr_offset)
+        attrs.update(ihdr_attrs)
+
+        if _CHUNK_TYPE_pHYs in chunk_offsets:
+            phys_offset = chunk_offsets[_CHUNK_TYPE_pHYs]
+            phys_attrs = cls._parse_pHYs(stream, phys_offset)
+            attrs.update(phys_attrs)
+
+        return attrs
+
+    @classmethod
+    def _parse_IHDR(cls, stream, offset):
+        """
+        Return a dict containing values for TAG.PX_WIDTH and TAG.PX_HEIGHT
+        extracted from the IHDR chunk in *stream* at *offset*.
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def _parse_pHYs(cls, stream, offset):
+        """
+        Return a dict containing values for TAG.HORZ_PX_PER_UNIT,
+        TAG.VERT_PX_PER_UNIT, and TAG.UNITS_SPECIFIER parsed from the pHYs
+        chunk at *offset* in *stream*.
         """
         raise NotImplementedError
