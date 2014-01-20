@@ -2,9 +2,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from struct import Struct
 
-_BIG_ENDIAN = '>'
-_LITTLE_ENDIAN = '<'
+from .exceptions import UnexpectedEndOfFileError
+
+
+BIG_ENDIAN = '>'
+LITTLE_ENDIAN = '<'
 
 
 class StreamReader(object):
@@ -17,6 +21,34 @@ class StreamReader(object):
         super(StreamReader, self).__init__()
         self._stream = stream
         self._byte_order = (
-            _LITTLE_ENDIAN if byte_order == _LITTLE_ENDIAN else _BIG_ENDIAN
+            LITTLE_ENDIAN if byte_order == LITTLE_ENDIAN else BIG_ENDIAN
         )
         self._base_offset = base_offset
+
+    def read_str(self, char_count, base, offset=0):
+        """
+        Return a string containing the *char_count* bytes at the file
+        position determined by self._base_offset + *base* + *offset*.
+        """
+        def str_struct(char_count):
+            format_ = '%ds' % char_count
+            return Struct(format_)
+        struct = str_struct(char_count)
+        chars = self._unpack_item(struct, base, offset)
+        unicode_str = chars.decode('UTF-8')
+        return unicode_str
+
+    def seek(self, base, offset=0):
+        location = self._base_offset + base + offset
+        self._stream.seek(location)
+
+    def _read_bytes(self, byte_count, base, offset):
+        self.seek(base, offset)
+        bytes_ = self._stream.read(byte_count)
+        if len(bytes_) < byte_count:
+            raise UnexpectedEndOfFileError
+        return bytes_
+
+    def _unpack_item(self, struct, base, offset):
+        bytes_ = self._read_bytes(struct.size, base, offset)
+        return struct.unpack(bytes_)[0]

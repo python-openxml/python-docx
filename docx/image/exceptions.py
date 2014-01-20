@@ -7,6 +7,12 @@ class InvalidImageStreamError(Exception):
     """
 
 
+class UnexpectedEndOfFileError(Exception):
+    """
+    EOF was unexpectedly encountered while reading an image stream.
+    """
+
+
 class UnrecognizedImageError(Exception):
     """
     The provided image stream could not be recognized.
