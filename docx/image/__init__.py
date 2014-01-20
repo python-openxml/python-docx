@@ -18,8 +18,8 @@ except ImportError:
     import Image as PIL_Image
 
 from docx.compat import BytesIO, is_string
-from docx.exceptions import UnrecognizedImageError
 from docx.image.bmp import Bmp
+from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png

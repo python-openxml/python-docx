@@ -9,9 +9,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.compat import BytesIO
-from docx.exceptions import UnrecognizedImageError
 from docx.image import image_cls_that_can_parse, Image_OLD
 from docx.image.bmp import Bmp
+from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
 from docx.image.image import Image
 from docx.image.jpeg import Exif, Jfif

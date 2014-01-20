@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function
 import pytest
 
 from docx.compat import BytesIO
+from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import StreamReader
 from docx.image.png import Png
 
@@ -31,6 +32,19 @@ class DescribePng(object):
         Png__init__.assert_called_once_with(blob_, filename_, cx, cy, attrs)
         assert isinstance(png, Png)
 
+    def it_parses_PNG_headers_to_access_attrs(self, parse_png_fixture):
+        (stream_, _parse_chunk_offsets_, _parse_chunks_, chunk_offsets_,
+         attrs_) = parse_png_fixture
+        attrs = Png._parse_png_headers(stream_)
+        _parse_chunk_offsets_.assert_called_once_with(stream_)
+        _parse_chunks_.assert_called_once_with(stream_, chunk_offsets_)
+        assert attrs == attrs_
+
+    def it_raises_on_png_having_no_IHDR_chunk(self, no_IHDR_fixture):
+        stream_ = no_IHDR_fixture
+        with pytest.raises(InvalidImageStreamError):
+            Png._parse_png_headers(stream_)
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -38,8 +52,16 @@ class DescribePng(object):
         return dict()
 
     @pytest.fixture
+    def attrs_(self, request):
+        return instance_mock(request, dict)
+
+    @pytest.fixture
     def blob_(self, request):
         return instance_mock(request, bytes)
+
+    @pytest.fixture
+    def chunk_offsets_(self, request):
+        return dict()
 
     @pytest.fixture
     def filename_(self, request):
@@ -57,14 +79,41 @@ class DescribePng(object):
         )
 
     @pytest.fixture
-    def Png__init__(self, request):
-        return initializer_mock(request, Png)
+    def no_IHDR_fixture(
+            self, stream_, _parse_chunk_offsets_, _parse_chunks_):
+        return stream_
+
+    @pytest.fixture
+    def parse_png_fixture(
+            self, stream_rdr_, _parse_chunk_offsets_, _parse_chunks_,
+            chunk_offsets_, attrs_):
+        chunk_offsets_['IHDR'] = 666
+        return (
+            stream_rdr_, _parse_chunk_offsets_, _parse_chunks_,
+            chunk_offsets_, attrs_
+        )
+
+    @pytest.fixture
+    def _parse_chunk_offsets_(self, request, chunk_offsets_):
+        return method_mock(
+            request, Png, '_parse_chunk_offsets', return_value=chunk_offsets_
+        )
+
+    @pytest.fixture
+    def _parse_chunks_(self, request, attrs_):
+        return method_mock(
+            request, Png, '_parse_chunks', return_value=attrs_
+        )
 
     @pytest.fixture
     def _parse_png_headers_(self, request, attrs):
         return method_mock(
             request, Png, '_parse_png_headers', return_value=attrs
         )
+
+    @pytest.fixture
+    def Png__init__(self, request):
+        return initializer_mock(request, Png)
 
     @pytest.fixture
     def png_(self, request):
