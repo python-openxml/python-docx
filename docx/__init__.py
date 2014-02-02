@@ -12,6 +12,7 @@ from docx.opc.package import PartFactory
 
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
+from docx.parts.numbering import NumberingPart
 
 
 def part_class_selector(content_type, reltype):
@@ -22,5 +23,6 @@ def part_class_selector(content_type, reltype):
 
 PartFactory.part_class_selector = part_class_selector
 PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
+PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 
 del CT, DocumentPart, PartFactory, part_class_selector
