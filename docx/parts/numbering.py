@@ -10,6 +10,7 @@ from __future__ import (
 
 from ..opc.package import Part
 from ..oxml.shared import oxml_fromstring
+from ..shared import lazyproperty
 
 
 class NumberingPart(Part):
@@ -39,3 +40,21 @@ class NumberingPart(Part):
         ``<w:numbering>`` element.
         """
         raise NotImplementedError
+
+    @lazyproperty
+    def numbering_definitions(self):
+        """
+        The |_NumberingDefinitions| instance containing the numbering
+        definitions (<w:num> element proxies) for this numbering part.
+        """
+        return _NumberingDefinitions(self._element)
+
+
+class _NumberingDefinitions(object):
+    """
+    Collection of |_NumberingDefinition| instances corresponding to the
+    ``<w:num>`` elements in a numbering part.
+    """
+    def __init__(self, numbering_elm):
+        super(_NumberingDefinitions, self).__init__()
+        self._numbering = numbering_elm
