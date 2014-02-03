@@ -10,6 +10,7 @@ from __future__ import (
 
 from ..opc.package import Part
 from ..oxml.shared import oxml_fromstring
+from ..shared import lazyproperty
 
 
 class StylesPart(Part):
@@ -39,3 +40,21 @@ class StylesPart(Part):
         ``<w:styles>`` element.
         """
         raise NotImplementedError
+
+    @lazyproperty
+    def styles(self):
+        """
+        The |_Styles| instance containing the styles (<w:style> element
+        proxies) for this styles part.
+        """
+        return _Styles(self._element)
+
+
+class _Styles(object):
+    """
+    Collection of |_Style| instances corresponding to the ``<w:style>``
+    elements in a styles part.
+    """
+    def __init__(self, styles_elm):
+        super(_Styles, self).__init__()
+        self._styles_elm = styles_elm

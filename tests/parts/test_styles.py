@@ -13,10 +13,10 @@ from docx.opc.package import PartFactory
 from docx.opc.packuri import PackURI
 from docx.oxml.parts.styles import CT_Styles
 from docx.package import Package
-from docx.parts.styles import StylesPart
+from docx.parts.styles import StylesPart, _Styles
 
 from ..unitutil import (
-    function_mock, initializer_mock, instance_mock, method_mock
+    function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
 
 
@@ -50,6 +50,12 @@ class DescribeStylesPart(object):
             partname_, content_type_, styles_elm_, package_
         )
         assert isinstance(styles_part, StylesPart)
+
+    def it_provides_access_to_the_styles(self, styles_fixture):
+        styles_part, _Styles_, styles_elm_, styles_ = styles_fixture
+        styles = styles_part.styles
+        _Styles_.assert_called_once_with(styles_elm_)
+        assert styles is styles_
 
     # fixtures -------------------------------------------------------
 
@@ -99,8 +105,23 @@ class DescribeStylesPart(object):
         return instance_mock(request, PackURI)
 
     @pytest.fixture
+    def _Styles_(self, request, styles_):
+        return class_mock(
+            request, 'docx.parts.styles._Styles', return_value=styles_
+        )
+
+    @pytest.fixture
+    def styles_(self, request):
+        return instance_mock(request, _Styles)
+
+    @pytest.fixture
     def styles_elm_(self, request):
         return instance_mock(request, CT_Styles)
+
+    @pytest.fixture
+    def styles_fixture(self, _Styles_, styles_elm_, styles_):
+        styles_part = StylesPart(None, None, styles_elm_, None)
+        return styles_part, _Styles_, styles_elm_, styles_
 
     @pytest.fixture
     def styles_part_(self, request):
