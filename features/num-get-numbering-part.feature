@@ -1,5 +1,5 @@
 Feature: Get the document numbering part
-  In order query and modify numbering settings
+  In order to query and modify numbering settings
   As a programmer using the advanced python-docx API
   I need access to the numbering part of the document
 
