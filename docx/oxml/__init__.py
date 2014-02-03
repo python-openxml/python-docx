@@ -30,6 +30,9 @@ from docx.oxml.parts.document import CT_Body, CT_Document
 register_custom_element_class('w:body', CT_Body)
 register_custom_element_class('w:document', CT_Document)
 
+from docx.oxml.parts.numbering import CT_Numbering
+register_custom_element_class('w:numbering', CT_Numbering)
+
 from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc
 register_custom_element_class('w:tbl', CT_Tbl)
 register_custom_element_class('w:tblGrid', CT_TblGrid)

@@ -15,6 +15,7 @@ from docx.oxml.parts.numbering import CT_Numbering
 from docx.package import Package
 from docx.parts.numbering import NumberingPart, _NumberingDefinitions
 
+from ..oxml.unitdata.numbering import a_num, a_numbering
 from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
@@ -138,3 +139,23 @@ class DescribeNumberingPart(object):
     @pytest.fixture
     def partname_(self, request):
         return instance_mock(request, PackURI)
+
+
+class Describe_NumberingDefinitions(object):
+
+    def it_knows_how_many_numbering_definitions_it_contains(
+            self, len_fixture):
+        numbering_definitions, numbering_definition_count = len_fixture
+        assert len(numbering_definitions) == numbering_definition_count
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[0, 1, 2, 3])
+    def len_fixture(self, request):
+        numbering_definition_count = request.param
+        numbering_bldr = a_numbering().with_nsdecls()
+        for idx in range(numbering_definition_count):
+            numbering_bldr.with_child(a_num())
+        numbering_elm = numbering_bldr.element
+        numbering_definitions = _NumberingDefinitions(numbering_elm)
+        return numbering_definitions, numbering_definition_count

@@ -58,3 +58,6 @@ class _NumberingDefinitions(object):
     def __init__(self, numbering_elm):
         super(_NumberingDefinitions, self).__init__()
         self._numbering = numbering_elm
+
+    def __len__(self):
+        return len(self._numbering.num_lst)
