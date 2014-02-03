@@ -15,6 +15,7 @@ from docx.oxml.parts.styles import CT_Styles
 from docx.package import Package
 from docx.parts.styles import StylesPart, _Styles
 
+from ..oxml.unitdata.styles import a_style, a_styles
 from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
@@ -130,3 +131,22 @@ class DescribeStylesPart(object):
     @pytest.fixture
     def styles_part_load_(self, request):
         return method_mock(request, StylesPart, 'load')
+
+
+class Describe_Styles(object):
+
+    def it_knows_how_many_styles_it_contains(self, len_fixture):
+        styles, style_count = len_fixture
+        assert len(styles) == style_count
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[0, 1, 2, 3])
+    def len_fixture(self, request):
+        style_count = request.param
+        styles_bldr = a_styles().with_nsdecls()
+        for idx in range(style_count):
+            styles_bldr.with_child(a_style())
+        styles_elm = styles_bldr.element
+        styles = _Styles(styles_elm)
+        return styles, style_count

@@ -58,3 +58,6 @@ class _Styles(object):
     def __init__(self, styles_elm):
         super(_Styles, self).__init__()
         self._styles_elm = styles_elm
+
+    def __len__(self):
+        return len(self._styles_elm.style_lst)
