@@ -12,7 +12,7 @@ from docx.oxml.shared import register_custom_element_class
 # custom element class mappings
 # ===========================================================================
 
-from docx.oxml.shared import CT_OnOff, CT_String
+from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
 
 from docx.oxml.shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
@@ -30,7 +30,10 @@ from docx.oxml.parts.document import CT_Body, CT_Document
 register_custom_element_class('w:body', CT_Body)
 register_custom_element_class('w:document', CT_Document)
 
-from docx.oxml.parts.numbering import CT_Numbering
+from docx.oxml.parts.numbering import CT_Num, CT_Numbering, CT_NumLvl
+register_custom_element_class('w:abstractNumId', CT_DecimalNumber)
+register_custom_element_class('w:lvlOverride', CT_NumLvl)
+register_custom_element_class('w:num', CT_Num)
 register_custom_element_class('w:numbering', CT_Numbering)
 
 from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc

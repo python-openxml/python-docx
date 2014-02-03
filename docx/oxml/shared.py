@@ -229,6 +229,17 @@ class OxmlBaseElement(etree.ElementBase):
     Base class for all custom element classes, to add standardized behavior
     to all classes in one place.
     """
+    def first_child_found_in(self, *tagnames):
+        """
+        Return the first child found with tag in *tagnames*, or None if
+        not found.
+        """
+        for tagname in tagnames:
+            child = self.find(qn(tagname))
+            if child is not None:
+                return child
+        return None
+
     @property
     def xml(self):
         """
@@ -237,6 +248,29 @@ class OxmlBaseElement(etree.ElementBase):
         top.
         """
         return serialize_for_reading(self)
+
+
+class CT_DecimalNumber(OxmlBaseElement):
+    """
+    Used for ``<w:numId>``, ``<w:ilvl>``, ``<w:abstractNumId>`` and several
+    others, containing a text representation of a decimal number (e.g. 42) in
+    its ``val`` attribute.
+    """
+    @classmethod
+    def new(cls, nsptagname, val):
+        """
+        Return a new ``CT_DecimalNumber`` element having tagname *nsptagname*
+        and ``val`` attribute set to *val*.
+        """
+        return OxmlElement(nsptagname, attrs={qn('w:val'): str(val)})
+
+    @property
+    def val(self):
+        """
+        Required attribute containing a decimal integer
+        """
+        number_str = self.get(qn('w:val'))
+        return int(number_str)
 
 
 class CT_OnOff(OxmlBaseElement):
