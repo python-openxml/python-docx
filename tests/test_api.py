@@ -16,6 +16,7 @@ from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
+from docx.parts.styles import StylesPart
 from docx.table import Table
 from docx.text import Paragraph, Run
 
@@ -141,6 +142,24 @@ class DescribeDocument(object):
             numbering_part_, RT.NUMBERING
         )
         assert numbering_part is numbering_part_
+
+    def it_provides_access_to_the_styles_part(self, styles_part_get_fixture):
+        document, document_part_, styles_part_ = styles_part_get_fixture
+        styles_part = document.styles_part
+        document_part_.part_related_by.assert_called_once_with(RT.STYLES)
+        assert styles_part is styles_part_
+
+    def it_creates_styles_part_on_first_access_if_not_present(
+            self, styles_part_create_fixture):
+        document, StylesPart_, document_part_, styles_part_ = (
+            styles_part_create_fixture
+        )
+        styles_part = document.styles_part
+        StylesPart_.new.assert_called_once_with()
+        document_part_.relate_to.assert_called_once_with(
+            styles_part_, RT.STYLES
+        )
+        assert styles_part is styles_part_
 
     # fixtures -------------------------------------------------------
 
@@ -306,6 +325,27 @@ class DescribeDocument(object):
         file_ = instance_mock(request, str)
         document = Document()
         return document, package_, file_
+
+    @pytest.fixture
+    def StylesPart_(self, request, styles_part_):
+        StylesPart_ = class_mock(request, 'docx.api.StylesPart')
+        StylesPart_.new.return_value = styles_part_
+        return StylesPart_
+
+    @pytest.fixture
+    def styles_part_(self, request):
+        return instance_mock(request, StylesPart)
+
+    @pytest.fixture
+    def styles_part_create_fixture(
+            self, document, StylesPart_, document_part_, styles_part_):
+        document_part_.part_related_by.side_effect = KeyError
+        return document, StylesPart_, document_part_, styles_part_
+
+    @pytest.fixture
+    def styles_part_get_fixture(self, document, document_part_, styles_part_):
+        document_part_.part_related_by.return_value = styles_part_
+        return document, document_part_, styles_part_
 
     @pytest.fixture
     def table_(self, request):
