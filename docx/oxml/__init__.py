@@ -30,13 +30,19 @@ from docx.oxml.parts.document import CT_Body, CT_Document
 register_custom_element_class('w:body', CT_Body)
 register_custom_element_class('w:document', CT_Document)
 
-from docx.oxml.parts.numbering import CT_Num, CT_Numbering, CT_NumLvl
+from docx.oxml.parts.numbering import (
+    CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
+)
 register_custom_element_class('w:abstractNumId', CT_DecimalNumber)
+register_custom_element_class('w:ilvl', CT_DecimalNumber)
 register_custom_element_class('w:lvlOverride', CT_NumLvl)
 register_custom_element_class('w:num', CT_Num)
+register_custom_element_class('w:numId', CT_DecimalNumber)
+register_custom_element_class('w:numPr', CT_NumPr)
 register_custom_element_class('w:numbering', CT_Numbering)
 
-from docx.oxml.parts.styles import CT_Styles
+from docx.oxml.parts.styles import CT_Style, CT_Styles
+register_custom_element_class('w:style', CT_Style)
 register_custom_element_class('w:styles', CT_Styles)
 
 from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc

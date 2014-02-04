@@ -5,6 +5,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
+from docx.oxml.parts.numbering import CT_NumPr
 from docx.oxml.shared import (
     CT_String, nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
 )
@@ -115,6 +116,15 @@ class CT_PPr(OxmlBaseElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
+    def get_or_add_numPr(self):
+        """
+        Return the numPr child element, newly added if not present.
+        """
+        numPr = self.numPr
+        if numPr is None:
+            numPr = self._add_numPr()
+        return numPr
+
     def get_or_add_pStyle(self):
         """
         Return the pStyle child element, newly added if not present.
@@ -132,6 +142,13 @@ class CT_PPr(OxmlBaseElement):
         xml = '<w:pPr %s/>' % nsdecls('w')
         pPr = oxml_fromstring(xml)
         return pPr
+
+    @property
+    def numPr(self):
+        """
+        ``<w:numPr>`` child element or None if not present.
+        """
+        return self.find(qn('w:numPr'))
 
     @property
     def pStyle(self):
@@ -170,9 +187,25 @@ class CT_PPr(OxmlBaseElement):
         else:
             self.pStyle.val = style
 
+    def _add_numPr(self):
+        numPr = CT_NumPr.new()
+        return self._insert_numPr(numPr)
+
     def _add_pStyle(self, style):
         pStyle = CT_String.new_pStyle(style)
         return self._insert_pStyle(pStyle)
+
+    def _insert_numPr(self, numPr):
+        return self.insert_element_before(
+            numPr, 'w:suppressLineNumbers', 'w:pBdr', 'w:shd', 'w:tabs',
+            'w:suppressAutoHyphens', 'w:kinsoku', 'w:wordWrap',
+            'w:overflowPunct', 'w:topLinePunct', 'w:autoSpaceDE',
+            'w:autoSpaceDN', 'w:bidi', 'w:adjustRightInd', 'w:snapToGrid',
+            'w:spacing', 'w:ind', 'w:contextualSpacing', 'w:mirrorIndents',
+            'w:suppressOverlap', 'w:jc', 'w:textDirection',
+            'w:textAlignment', 'w:textboxTightWrap', 'w:outlineLvl',
+            'w:divId', 'w:cnfStyle', 'w:rPr', 'w:sectPr', 'w:pPrChange'
+        )
 
     def _insert_pStyle(self, pStyle):
         self.insert(0, pStyle)

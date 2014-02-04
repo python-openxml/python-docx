@@ -240,6 +240,14 @@ class OxmlBaseElement(etree.ElementBase):
                 return child
         return None
 
+    def insert_element_before(self, elm, *tagnames):
+        successor = self.first_child_found_in(*tagnames)
+        if successor is not None:
+            successor.addprevious(elm)
+        else:
+            self.append(elm)
+        return elm
+
     @property
     def xml(self):
         """
@@ -271,6 +279,11 @@ class CT_DecimalNumber(OxmlBaseElement):
         """
         number_str = self.get(qn('w:val'))
         return int(number_str)
+
+    @val.setter
+    def val(self, val):
+        decimal_number_str = '%d' % val
+        self.set(qn('w:val'), decimal_number_str)
 
 
 class CT_OnOff(OxmlBaseElement):
