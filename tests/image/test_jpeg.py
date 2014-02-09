@@ -10,6 +10,7 @@ import pytest
 
 from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE
+from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
     _App0Marker, Jfif, _JfifMarkers, _Marker, _MarkerParser, _SofMarker
 )
@@ -145,3 +146,42 @@ class Describe_JfifMarkers(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+
+class Describe_MarkerParser(object):
+
+    def it_can_construct_from_a_jfif_stream(self, from_stream_fixture):
+        stream_, StreamReader_, _MarkerParser__init_, stream_reader_ = (
+            from_stream_fixture
+        )
+        marker_parser = _MarkerParser.from_stream(stream_)
+        StreamReader_.assert_called_once_with(stream_, BIG_ENDIAN)
+        _MarkerParser__init_.assert_called_once_with(stream_reader_)
+        assert isinstance(marker_parser, _MarkerParser)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, stream_, StreamReader_, _MarkerParser__init_,
+            stream_reader_):
+        return stream_, StreamReader_, _MarkerParser__init_, stream_reader_
+
+    @pytest.fixture
+    def _MarkerParser__init_(self, request):
+        return initializer_mock(request, _MarkerParser)
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def StreamReader_(self, request, stream_reader_):
+        return class_mock(
+            request, 'docx.image.jpeg.StreamReader',
+            return_value=stream_reader_
+        )
+
+    @pytest.fixture
+    def stream_reader_(self, request):
+        return instance_mock(request, StreamReader)

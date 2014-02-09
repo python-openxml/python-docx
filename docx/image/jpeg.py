@@ -8,6 +8,7 @@ sub-formats.
 from __future__ import absolute_import, division, print_function
 
 from .constants import JPEG_MARKER_CODE
+from .helpers import BIG_ENDIAN, StreamReader
 from .image import Image
 
 
@@ -104,21 +105,39 @@ class _MarkerParser(object):
     Service class that knows how to parse a JFIF stream and iterate over its
     markers.
     """
+    def __init__(self, stream_reader):
+        super(_MarkerParser, self).__init__()
+        self._stream = stream_reader
+
     @classmethod
     def from_stream(cls, stream):
         """
         Return a |_MarkerParser| instance to parse JFIF markers from
         *stream*.
         """
-        raise NotImplementedError
+        stream_reader = StreamReader(stream, BIG_ENDIAN)
+        return cls(stream_reader)
 
     def iter_markers(self):
         """
-        Generate a (marker_code, segment_offset) 3-tuple for each marker in
-        the JPEG byte stream in *stream*, in the order they occur in the
-        stream.
+        Generate a (marker_code, segment_offset) 2-tuple for each marker in
+        the JPEG *stream*, in the order they occur in the stream.
         """
         raise NotImplementedError
+
+
+class _MarkerFinder(object):
+    """
+    Service class that knows how to find the next JFIF marker in a stream.
+    """
+
+
+def _MarkerFactory(marker_code, stream, offset):
+    """
+    Return |_Marker| or subclass instance appropriate for marker at *offset*
+    in *stream* having *marker_code*.
+    """
+    raise NotImplementedError
 
 
 class _Marker(object):
