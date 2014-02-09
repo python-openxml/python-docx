@@ -14,8 +14,8 @@ from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
-    _App0Marker, Jfif, _JfifMarkers, _Marker, _MarkerFinder, _MarkerParser,
-    _SofMarker
+    _App0Marker, Jfif, _JfifMarkers, _Marker, _MarkerFactory, _MarkerFinder,
+    _MarkerParser, _SofMarker
 )
 
 from ..unitutil import class_mock, initializer_mock, instance_mock
@@ -145,6 +145,57 @@ class Describe_JfifMarkers(object):
         return instance_mock(
             request, _Marker, marker_code=JPEG_MARKER_CODE.SOS
         )
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
+
+
+class Describe_MarkerFactory(object):
+
+    def it_constructs_the_appropriate_marker_object(self, call_fixture):
+        marker_code, stream_, offset_, marker_cls_ = call_fixture
+        marker = _MarkerFactory(marker_code, stream_, offset_)
+        marker_cls_.from_stream.assert_called_once_with(
+            stream_, marker_code, offset_
+        )
+        assert marker is marker_cls_.from_stream.return_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        JPEG_MARKER_CODE.APP0,
+        JPEG_MARKER_CODE.SOF0,
+        JPEG_MARKER_CODE.SOF7,
+        JPEG_MARKER_CODE.SOS,
+    ])
+    def call_fixture(
+            self, request, stream_, offset_, _App0Marker_, _SofMarker_,
+            _Marker_):
+        marker_code = request.param
+        if marker_code == JPEG_MARKER_CODE.APP0:
+            marker_cls_ = _App0Marker_
+        elif marker_code in JPEG_MARKER_CODE.SOF_MARKER_CODES:
+            marker_cls_ = _SofMarker_
+        else:
+            marker_cls_ = _Marker_
+        return marker_code, stream_, offset_, marker_cls_
+
+    @pytest.fixture
+    def _App0Marker_(self, request):
+        return class_mock(request, 'docx.image.jpeg._App0Marker')
+
+    @pytest.fixture
+    def _Marker_(self, request):
+        return class_mock(request, 'docx.image.jpeg._Marker')
+
+    @pytest.fixture
+    def offset_(self, request):
+        return instance_mock(request, int)
+
+    @pytest.fixture
+    def _SofMarker_(self, request):
+        return class_mock(request, 'docx.image.jpeg._SofMarker')
 
     @pytest.fixture
     def stream_(self, request):

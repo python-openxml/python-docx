@@ -215,7 +215,12 @@ def _MarkerFactory(marker_code, stream, offset):
     Return |_Marker| or subclass instance appropriate for marker at *offset*
     in *stream* having *marker_code*.
     """
-    raise NotImplementedError
+    if marker_code == JPEG_MARKER_CODE.APP0:
+        return _App0Marker.from_stream(stream, marker_code, offset)
+    elif marker_code in JPEG_MARKER_CODE.SOF_MARKER_CODES:
+        return _SofMarker.from_stream(stream, marker_code, offset)
+    else:
+        return _Marker.from_stream(stream, marker_code, offset)
 
 
 class _Marker(object):
@@ -223,6 +228,14 @@ class _Marker(object):
     Base class for JFIF marker classes. Represents a marker and its segment
     occuring in a JPEG byte stream.
     """
+    @classmethod
+    def from_stream(cls, stream, marker_code, offset):
+        """
+        Return a generic |_Marker| instance for the marker at *offset* in
+        *stream* having *marker_code*.
+        """
+        raise NotImplementedError
+
     @property
     def marker_code(self):
         """
@@ -243,9 +256,23 @@ class _App0Marker(_Marker):
     """
     Represents a JFIF APP0 marker segment.
     """
+    @classmethod
+    def from_stream(cls, stream, marker_code, offset):
+        """
+        Return an |_App0Marker| instance for the APP0 marker at *offset* in
+        *stream*.
+        """
+        raise NotImplementedError
 
 
 class _SofMarker(_Marker):
     """
     Represents a JFIF start of frame (SOFx) marker segment.
     """
+    @classmethod
+    def from_stream(cls, stream, marker_code, offset):
+        """
+        Return an |_SofMarker| instance for the SOFn marker at *offset* in
+        stream.
+        """
+        raise NotImplementedError
