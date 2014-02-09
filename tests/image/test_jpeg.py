@@ -178,6 +178,35 @@ class Describe_Marker(object):
         return initializer_mock(request, _Marker)
 
 
+class Describe_App0Marker(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
+        (stream, marker_code, offset, _App0Marker__init_, length,
+         density_units, x_density, y_density) = from_stream_fixture
+        app0_marker = _App0Marker.from_stream(stream, marker_code, offset)
+        _App0Marker__init_.assert_called_once_with(
+            marker_code, offset, length, density_units, x_density, y_density
+        )
+        assert isinstance(app0_marker, _App0Marker)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(self, request, _App0Marker__init_):
+        bytes_ = b'\x00\x10JFIF\x00\x01\x01\x01\x00\x2A\x00\x18'
+        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        marker_code, offset, length = JPEG_MARKER_CODE.APP0, 0, 16
+        density_units, x_density, y_density = 1, 42, 24
+        return (
+            stream_reader, marker_code, offset, _App0Marker__init_, length,
+            density_units, x_density, y_density
+        )
+
+    @pytest.fixture
+    def _App0Marker__init_(self, request):
+        return initializer_mock(request, _App0Marker)
+
+
 class Describe_MarkerFactory(object):
 
     def it_constructs_the_appropriate_marker_object(self, call_fixture):

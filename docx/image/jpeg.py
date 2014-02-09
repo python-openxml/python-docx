@@ -266,13 +266,37 @@ class _App0Marker(_Marker):
     """
     Represents a JFIF APP0 marker segment.
     """
+    def __init__(
+            self, marker_code, offset, length, density_units, x_density,
+            y_density):
+        super(_App0Marker, self).__init__(marker_code, offset, length)
+        self._density_units = density_units
+        self._x_density = x_density
+        self._y_density = y_density
+
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
         Return an |_App0Marker| instance for the APP0 marker at *offset* in
         *stream*.
         """
-        raise NotImplementedError
+        # field               off  type   notes
+        # ------------------  ---  -----  -------------------
+        # segment length       0   short
+        # JFIF identifier      2   5 chr  'JFIF\x00'
+        # major JPEG version   7   byte   typically 1
+        # minor JPEG version   8   byte   typically 1 or 2
+        # density units        9   byte   1=inches, 2=cm
+        # horz dots per unit  10   short
+        # vert dots per unit  12   short
+        # ------------------  ---  -----  -------------------
+        length = stream.read_short(offset)
+        density_units = stream.read_byte(offset, 9)
+        x_density = stream.read_short(offset, 10)
+        y_density = stream.read_short(offset, 12)
+        return cls(
+            marker_code, offset, length, density_units, x_density, y_density
+        )
 
 
 class _SofMarker(_Marker):
