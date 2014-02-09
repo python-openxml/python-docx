@@ -139,12 +139,16 @@ class _MarkerFinder(object):
     """
     Service class that knows how to find the next JFIF marker in a stream.
     """
+    def __init__(self, stream):
+        super(_MarkerFinder, self).__init__()
+        self._stream = stream
+
     @classmethod
     def from_stream(cls, stream):
         """
         Return a |_MarkerFinder| instance to find JFIF markers in *stream*.
         """
-        raise NotImplementedError
+        return cls(stream)
 
     def next(self, start):
         """

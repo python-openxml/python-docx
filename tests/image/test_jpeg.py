@@ -151,6 +151,29 @@ class Describe_JfifMarkers(object):
         return instance_mock(request, BytesIO)
 
 
+class Describe_MarkerFinder(object):
+
+    def it_can_construct_from_a_stream(self, from_stream_fixture):
+        stream_, _MarkerFinder__init_ = from_stream_fixture
+        marker_finder = _MarkerFinder.from_stream(stream_)
+        _MarkerFinder__init_.assert_called_once_with(stream_)
+        assert isinstance(marker_finder, _MarkerFinder)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(self, stream_, _MarkerFinder__init_):
+        return stream_, _MarkerFinder__init_
+
+    @pytest.fixture
+    def _MarkerFinder__init_(self, request):
+        return initializer_mock(request, _MarkerFinder)
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
+
+
 class Describe_MarkerParser(object):
 
     def it_can_construct_from_a_jfif_stream(self, from_stream_fixture):
