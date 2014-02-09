@@ -260,6 +260,11 @@ class Describe_SofMarker(object):
         )
         assert isinstance(sof_marker, _SofMarker)
 
+    def it_knows_the_image_width_and_height(self):
+        sof = _SofMarker(None, None, None, 42, 24)
+        assert sof.px_width == 42
+        assert sof.px_height == 24
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

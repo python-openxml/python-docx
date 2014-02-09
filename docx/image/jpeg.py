@@ -333,3 +333,17 @@ class _SofMarker(_Marker):
         px_height = stream.read_short(offset, 3)
         px_width = stream.read_short(offset, 5)
         return cls(marker_code, offset, segment_length, px_width, px_height)
+
+    @property
+    def px_height(self):
+        """
+        Image height in pixels
+        """
+        return self._px_height
+
+    @property
+    def px_width(self):
+        """
+        Image width in pixels
+        """
+        return self._px_width
