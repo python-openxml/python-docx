@@ -159,6 +159,11 @@ class Describe_MarkerFinder(object):
         _MarkerFinder__init_.assert_called_once_with(stream_)
         assert isinstance(marker_finder, _MarkerFinder)
 
+    def it_can_find_the_next_marker_after_a_given_offset(self, next_fixture):
+        marker_finder, start, expected_code_and_offset = next_fixture
+        marker_code, segment_offset = marker_finder.next(start)
+        assert (marker_code, segment_offset) == expected_code_and_offset
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -168,6 +173,23 @@ class Describe_MarkerFinder(object):
     @pytest.fixture
     def _MarkerFinder__init_(self, request):
         return initializer_mock(request, _MarkerFinder)
+
+    @pytest.fixture(params=[
+        (0, JPEG_MARKER_CODE.SOI,   2),
+        (1, JPEG_MARKER_CODE.APP0,  4),
+        (2, JPEG_MARKER_CODE.APP0,  4),
+        (3, JPEG_MARKER_CODE.EOI,  12),
+        (4, JPEG_MARKER_CODE.EOI,  12),
+        (6, JPEG_MARKER_CODE.EOI,  12),
+        (8, JPEG_MARKER_CODE.EOI,  12),
+    ])
+    def next_fixture(self, request):
+        start, marker_code, segment_offset = request.param
+        bytes_ = b'\xFF\xD8\xFF\xE0\x00\x01\xFF\x00\xFF\xFF\xFF\xD9'
+        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        marker_finder = _MarkerFinder(stream_reader)
+        expected_code_and_offset = (marker_code, segment_offset)
+        return marker_finder, start, expected_code_and_offset
 
     @pytest.fixture
     def stream_(self, request):

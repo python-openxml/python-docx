@@ -25,6 +25,12 @@ class StreamReader(object):
         )
         self._base_offset = base_offset
 
+    def read(self, count):
+        """
+        Allow pass-through read() call
+        """
+        return self._stream.read(count)
+
     def read_byte(self, base=None, offset=0):
         """
         Return the int value of the byte at the file position defined by
@@ -60,6 +66,12 @@ class StreamReader(object):
     def seek(self, base, offset=0):
         location = self._base_offset + base + offset
         self._stream.seek(location)
+
+    def tell(self):
+        """
+        Allow pass-through tell() call
+        """
+        return self._stream.tell()
 
     def _read_bytes(self, byte_count, base, offset):
         self.seek(base, offset)

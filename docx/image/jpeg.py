@@ -158,7 +158,56 @@ class _MarkerFinder(object):
         following the 2-byte marker code, the start of the marker segment,
         for those markers that have a segment.
         """
-        raise NotImplementedError
+        position = start
+        while True:
+            # skip over any non-\xFF bytes
+            position = self._offset_of_next_ff_byte(start=position)
+            # skip over any \xFF padding bytes
+            position, byte_ = self._next_non_ff_byte(start=position+1)
+            # 'FF 00' sequence is not a marker, start over if found
+            if byte_ == b'\x00':
+                continue
+            # this is a marker, gather return values and break out of scan
+            marker_code, segment_offset = byte_, position+1
+            break
+        return marker_code, segment_offset
+
+    def _next_non_ff_byte(self, start):
+        """
+        Return an offset, byte 2-tuple for the next byte in *stream* that is
+        not '\xFF', starting with the byte at offset *start*. If the byte at
+        offset *start* is not '\xFF', *start* and the returned *offset* will
+        be the same.
+        """
+        self._stream.seek(start)
+        byte_ = self._read_byte()
+        while byte_ == b'\xFF':
+            byte_ = self._read_byte()
+        offset_of_non_ff_byte = self._stream.tell() - 1
+        return offset_of_non_ff_byte, byte_
+
+    def _offset_of_next_ff_byte(self, start):
+        """
+        Return the offset of the next '\xFF' byte in *stream* starting with
+        the byte at offset *start*. Returns *start* if the byte at that
+        offset is a hex 255; it does not necessarily advance in the stream.
+        """
+        self._stream.seek(start)
+        byte_ = self._read_byte()
+        while byte_ != b'\xFF':
+            byte_ = self._read_byte()
+        offset_of_ff_byte = self._stream.tell() - 1
+        return offset_of_ff_byte
+
+    def _read_byte(self):
+        """
+        Return the next byte read from stream. Raise Exception if stream is
+        at end of file.
+        """
+        byte_ = self._stream.read(1)
+        if not byte_:
+            raise Exception('unexpected end of file')
+        return byte_
 
 
 def _MarkerFactory(marker_code, stream, offset):
