@@ -87,6 +87,16 @@ class Describe_JfifMarkers(object):
         _JfifMarkers__init_.assert_called_once_with(marker_lst)
         assert isinstance(jfif_markers, _JfifMarkers)
 
+    def it_can_find_the_APP0_marker(self, app0_fixture):
+        jfif_markers, app0_ = app0_fixture
+        app0 = jfif_markers.app0
+        assert app0 is app0_
+
+    def it_raises_if_it_cant_find_the_APP0_marker(self, no_app0_fixture):
+        jfif_markers = no_app0_fixture
+        with pytest.raises(KeyError):
+            jfif_markers.app0
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -94,6 +104,12 @@ class Describe_JfifMarkers(object):
         return instance_mock(
             request, _App0Marker, marker_code=JPEG_MARKER_CODE.APP0
         )
+
+    @pytest.fixture
+    def app0_fixture(self, soi_, app0_, eoi_):
+        markers = (soi_, app0_, eoi_)
+        jfif_markers = _JfifMarkers(markers)
+        return jfif_markers, app0_
 
     @pytest.fixture
     def eoi_(self, request):
@@ -127,6 +143,11 @@ class Describe_JfifMarkers(object):
     @pytest.fixture
     def markers_all_(self, request, soi_, app0_, sof_, sos_, eoi_):
         return [soi_, app0_, sof_, sos_, eoi_]
+
+    @pytest.fixture
+    def no_app0_fixture(self, soi_, eoi_):
+        markers = (soi_, eoi_)
+        return _JfifMarkers(markers)
 
     @pytest.fixture
     def sof_(self, request):

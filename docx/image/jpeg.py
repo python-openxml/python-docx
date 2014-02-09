@@ -90,7 +90,10 @@ class _JfifMarkers(object):
         """
         First APP0 marker in image markers.
         """
-        raise NotImplementedError
+        for m in self._markers:
+            if m.marker_code == JPEG_MARKER_CODE.APP0:
+                return m
+        raise KeyError('no APP0 marker in image')
 
     @property
     def sof(self):
