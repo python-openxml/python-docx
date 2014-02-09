@@ -97,6 +97,16 @@ class Describe_JfifMarkers(object):
         with pytest.raises(KeyError):
             jfif_markers.app0
 
+    def it_can_find_the_SOF_marker(self, sof_fixture):
+        jfif_markers, sof_ = sof_fixture
+        sof = jfif_markers.sof
+        assert sof is sof_
+
+    def it_raises_if_it_cant_find_the_SOF_marker(self, no_sof_fixture):
+        jfif_markers = no_sof_fixture
+        with pytest.raises(KeyError):
+            jfif_markers.sof
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -150,10 +160,21 @@ class Describe_JfifMarkers(object):
         return _JfifMarkers(markers)
 
     @pytest.fixture
+    def no_sof_fixture(self, soi_, eoi_):
+        markers = (soi_, eoi_)
+        return _JfifMarkers(markers)
+
+    @pytest.fixture
     def sof_(self, request):
         return instance_mock(
             request, _SofMarker, marker_code=JPEG_MARKER_CODE.SOF0
         )
+
+    @pytest.fixture
+    def sof_fixture(self, soi_, sof_, eoi_):
+        markers = (soi_, sof_, eoi_)
+        jfif_markers = _JfifMarkers(markers)
+        return jfif_markers, sof_
 
     @pytest.fixture
     def soi_(self, request):

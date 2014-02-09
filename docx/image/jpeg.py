@@ -100,7 +100,10 @@ class _JfifMarkers(object):
         """
         First start of frame (SOFn) marker in this sequence.
         """
-        raise NotImplementedError
+        for m in self._markers:
+            if m.marker_code in JPEG_MARKER_CODE.SOF_MARKER_CODES:
+                return m
+        raise KeyError('no start of frame (SOFn) marker in image')
 
 
 class _MarkerParser(object):
