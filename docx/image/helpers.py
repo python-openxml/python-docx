@@ -50,6 +50,14 @@ class StreamReader(object):
         fmt = '<L' if self._byte_order is LITTLE_ENDIAN else '>L'
         return self._read_int(fmt, base, offset)
 
+    def read_short(self, base=None, offset=0):
+        """
+        Return the int value of the two bytes at the file position determined
+        by *base* and *offset*, similarly to ``read_long()`` above.
+        """
+        fmt = b'<H' if self._byte_order is LITTLE_ENDIAN else b'>H'
+        return self._read_int(fmt, base, offset)
+
     def read_str(self, char_count, base, offset=0):
         """
         Return a string containing the *char_count* bytes at the file

@@ -151,6 +151,33 @@ class Describe_JfifMarkers(object):
         return instance_mock(request, BytesIO)
 
 
+class Describe_Marker(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
+        stream, marker_code, offset, _Marker__init_, length = (
+            from_stream_fixture
+        )
+        marker = _Marker.from_stream(stream, marker_code, offset)
+        _Marker__init_.assert_called_once_with(marker_code, offset, length)
+        assert isinstance(marker, _Marker)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (JPEG_MARKER_CODE.SOI,  2,  0),
+        (JPEG_MARKER_CODE.APP0, 4, 16),
+    ])
+    def from_stream_fixture(self, request, _Marker__init_):
+        marker_code, offset, length = request.param
+        bytes_ = b'\xFF\xD8\xFF\xE0\x00\x10'
+        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        return stream_reader, marker_code, offset, _Marker__init_, length
+
+    @pytest.fixture
+    def _Marker__init_(self, request):
+        return initializer_mock(request, _Marker)
+
+
 class Describe_MarkerFactory(object):
 
     def it_constructs_the_appropriate_marker_object(self, call_fixture):

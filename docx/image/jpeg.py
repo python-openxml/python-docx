@@ -228,13 +228,23 @@ class _Marker(object):
     Base class for JFIF marker classes. Represents a marker and its segment
     occuring in a JPEG byte stream.
     """
+    def __init__(self, marker_code, offset, segment_length):
+        super(_Marker, self).__init__()
+        self._marker_code = marker_code
+        self._offset = offset
+        self._segment_length = segment_length
+
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
         Return a generic |_Marker| instance for the marker at *offset* in
         *stream* having *marker_code*.
         """
-        raise NotImplementedError
+        if JPEG_MARKER_CODE.is_standalone(marker_code):
+            segment_length = 0
+        else:
+            segment_length = stream.read_short(offset)
+        return cls(marker_code, offset, segment_length)
 
     @property
     def marker_code(self):
@@ -242,14 +252,14 @@ class _Marker(object):
         The single-byte code that identifies the type of this marker, e.g.
         ``'\xE0'`` for start of image (SOI).
         """
-        raise NotImplementedError
+        return self._marker_code
 
     @property
     def segment_length(self):
         """
         The length in bytes of this marker's segment
         """
-        raise NotImplementedError
+        return self._segment_length
 
 
 class _App0Marker(_Marker):
