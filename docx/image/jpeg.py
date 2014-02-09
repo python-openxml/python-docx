@@ -7,7 +7,7 @@ sub-formats.
 
 from __future__ import absolute_import, division, print_function
 
-from .constants import JPEG_MARKER_CODE
+from .constants import JPEG_MARKER_CODE, MIME_TYPE
 from .helpers import BIG_ENDIAN, StreamReader
 from .image import Image
 
@@ -16,6 +16,13 @@ class Jpeg(Image):
     """
     Base class for JFIF and EXIF subclasses.
     """
+    @property
+    def content_type(self):
+        """
+        MIME content type for this image, unconditionally `image/jpeg` for
+        JPEG images.
+        """
+        return MIME_TYPE.JPEG
 
 
 class Exif(Jpeg):

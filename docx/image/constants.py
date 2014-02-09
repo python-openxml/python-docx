@@ -97,6 +97,7 @@ class MIME_TYPE(object):
     """
     Image content types.
     """
+    JPEG = 'image/jpeg'
     PNG = 'image/png'
 
 

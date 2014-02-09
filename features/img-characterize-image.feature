@@ -3,7 +3,6 @@ Feature: Characterize an image file
   As a programmer using the advanced python-docx API
   I need a way to determine the image content type and size
 
-  @wip
   Scenario Outline: Characterize an image file
     Given the image file '<filename>'
      When I construct an image using the image path
@@ -18,3 +17,4 @@ Feature: Characterize an image file
      | test.png         | image/png  |  901 | 1350 |   150    |   150    |
      | monty-truth.png  | image/png  |  150 |  214 |    72    |    72    |
      | jfif-300-dpi.jpg | image/jpeg | 1504 | 1936 |   300    |   300    |
+     | lena_std.jpg     | image/jpeg |  512 |  512 |    72    |    72    |

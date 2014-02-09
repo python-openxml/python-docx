@@ -11,14 +11,21 @@ import pytest
 from mock import call
 
 from docx.compat import BytesIO
-from docx.image.constants import JPEG_MARKER_CODE
+from docx.image.constants import JPEG_MARKER_CODE, MIME_TYPE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
-    _App0Marker, Jfif, _JfifMarkers, _Marker, _MarkerFactory, _MarkerFinder,
-    _MarkerParser, _SofMarker
+    _App0Marker, Jfif, _JfifMarkers, Jpeg, _Marker, _MarkerFactory,
+    _MarkerFinder, _MarkerParser, _SofMarker
 )
 
 from ..unitutil import class_mock, initializer_mock, instance_mock
+
+
+class DescribeJpeg(object):
+
+    def it_knows_its_content_type(self):
+        jpeg = Jpeg(None, None, None, None, None)
+        assert jpeg.content_type == MIME_TYPE.JPEG
 
 
 class DescribeJfif(object):
