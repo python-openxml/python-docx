@@ -123,13 +123,38 @@ class _MarkerParser(object):
         Generate a (marker_code, segment_offset) 2-tuple for each marker in
         the JPEG *stream*, in the order they occur in the stream.
         """
-        raise NotImplementedError
+        marker_finder = _MarkerFinder.from_stream(self._stream)
+        start = 0
+        marker_code = None
+        while marker_code != JPEG_MARKER_CODE.EOI:
+            marker_code, segment_offset = marker_finder.next(start)
+            marker = _MarkerFactory(
+                marker_code, self._stream, segment_offset
+            )
+            yield marker
+            start = segment_offset + marker.segment_length
 
 
 class _MarkerFinder(object):
     """
     Service class that knows how to find the next JFIF marker in a stream.
     """
+    @classmethod
+    def from_stream(cls, stream):
+        """
+        Return a |_MarkerFinder| instance to find JFIF markers in *stream*.
+        """
+        raise NotImplementedError
+
+    def next(self, start):
+        """
+        Return a (marker_code, segment_offset) 2-tuple identifying and
+        locating the first marker in *stream* occuring after offset *start*.
+        The returned *segment_offset* points to the position immediately
+        following the 2-byte marker code, the start of the marker segment,
+        for those markers that have a segment.
+        """
+        raise NotImplementedError
 
 
 def _MarkerFactory(marker_code, stream, offset):
@@ -150,6 +175,13 @@ class _Marker(object):
         """
         The single-byte code that identifies the type of this marker, e.g.
         ``'\xE0'`` for start of image (SOI).
+        """
+        raise NotImplementedError
+
+    @property
+    def segment_length(self):
+        """
+        The length in bytes of this marker's segment
         """
         raise NotImplementedError
 

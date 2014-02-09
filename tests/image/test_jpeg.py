@@ -8,11 +8,14 @@ from __future__ import absolute_import, print_function
 
 import pytest
 
+from mock import call
+
 from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
-    _App0Marker, Jfif, _JfifMarkers, _Marker, _MarkerParser, _SofMarker
+    _App0Marker, Jfif, _JfifMarkers, _Marker, _MarkerFinder, _MarkerParser,
+    _SofMarker
 )
 
 from ..unitutil import class_mock, initializer_mock, instance_mock
@@ -159,7 +162,32 @@ class Describe_MarkerParser(object):
         _MarkerParser__init_.assert_called_once_with(stream_reader_)
         assert isinstance(marker_parser, _MarkerParser)
 
+    def it_can_iterate_over_the_jfif_markers_in_its_stream(
+            self, iter_markers_fixture):
+        (marker_parser, stream_, _MarkerFinder_, marker_finder_,
+         _MarkerFactory_, marker_codes, offsets,
+         marker_lst) = iter_markers_fixture
+        markers = [marker for marker in marker_parser.iter_markers()]
+        _MarkerFinder_.from_stream.assert_called_once_with(stream_)
+        assert marker_finder_.next.call_args_list == [
+            call(0), call(2), call(20)
+        ]
+        assert _MarkerFactory_.call_args_list == [
+            call(marker_codes[0], stream_, offsets[0]),
+            call(marker_codes[1], stream_, offsets[1]),
+            call(marker_codes[2], stream_, offsets[2]),
+        ]
+        assert markers == marker_lst
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def app0_(self, request):
+        return instance_mock(request, _App0Marker, segment_length=16)
+
+    @pytest.fixture
+    def eoi_(self, request):
+        return instance_mock(request, _Marker, segment_length=0)
 
     @pytest.fixture
     def from_stream_fixture(
@@ -168,8 +196,49 @@ class Describe_MarkerParser(object):
         return stream_, StreamReader_, _MarkerParser__init_, stream_reader_
 
     @pytest.fixture
+    def iter_markers_fixture(
+            self, stream_reader_, _MarkerFinder_, marker_finder_,
+            _MarkerFactory_, soi_, app0_, eoi_):
+        marker_parser = _MarkerParser(stream_reader_)
+        offsets = [2, 4, 22]
+        marker_lst = [soi_, app0_, eoi_]
+        marker_finder_.next.side_effect = [
+            (JPEG_MARKER_CODE.SOI,  offsets[0]),
+            (JPEG_MARKER_CODE.APP0, offsets[1]),
+            (JPEG_MARKER_CODE.EOI,  offsets[2]),
+        ]
+        marker_codes = [
+            JPEG_MARKER_CODE.SOI, JPEG_MARKER_CODE.APP0, JPEG_MARKER_CODE.EOI
+        ]
+        return (
+            marker_parser, stream_reader_, _MarkerFinder_, marker_finder_,
+            _MarkerFactory_, marker_codes, offsets, marker_lst
+        )
+
+    @pytest.fixture
+    def _MarkerFactory_(self, request, soi_, app0_, eoi_):
+        return class_mock(
+            request, 'docx.image.jpeg._MarkerFactory',
+            side_effect=[soi_, app0_, eoi_]
+        )
+
+    @pytest.fixture
+    def _MarkerFinder_(self, request, marker_finder_):
+        _MarkerFinder_ = class_mock(request, 'docx.image.jpeg._MarkerFinder')
+        _MarkerFinder_.from_stream.return_value = marker_finder_
+        return _MarkerFinder_
+
+    @pytest.fixture
+    def marker_finder_(self, request):
+        return instance_mock(request, _MarkerFinder)
+
+    @pytest.fixture
     def _MarkerParser__init_(self, request):
         return initializer_mock(request, _MarkerParser)
+
+    @pytest.fixture
+    def soi_(self, request):
+        return instance_mock(request, _Marker, segment_length=0)
 
     @pytest.fixture
     def stream_(self, request):
