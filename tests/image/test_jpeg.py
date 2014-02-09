@@ -231,7 +231,30 @@ class Describe_App0Marker(object):
         )
         assert isinstance(app0_marker, _App0Marker)
 
+    def it_knows_the_image_dpi(self, dpi_fixture):
+        density_units, x_density, y_density, horz_dpi, vert_dpi = dpi_fixture
+        app0 = _App0Marker(
+            None, None, None, density_units, x_density, y_density
+        )
+        assert app0.horz_dpi == horz_dpi
+        assert app0.vert_dpi == vert_dpi
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def _App0Marker__init_(self, request):
+        return initializer_mock(request, _App0Marker)
+
+    @pytest.fixture(params=[
+        (0, 100, 200,  72,  72),
+        (1, 100, 200, 100, 200),
+        (2, 100, 200, 254, 508),
+    ])
+    def dpi_fixture(self, request):
+        density_units, x_density, y_density, horz_dpi, vert_dpi = (
+            request.param
+        )
+        return density_units, x_density, y_density, horz_dpi, vert_dpi
 
     @pytest.fixture
     def from_stream_fixture(self, request, _App0Marker__init_):
@@ -243,10 +266,6 @@ class Describe_App0Marker(object):
             stream_reader, marker_code, offset, _App0Marker__init_, length,
             density_units, x_density, y_density
         )
-
-    @pytest.fixture
-    def _App0Marker__init_(self, request):
-        return initializer_mock(request, _App0Marker)
 
 
 class Describe_SofMarker(object):

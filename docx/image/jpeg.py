@@ -280,6 +280,34 @@ class _App0Marker(_Marker):
         self._x_density = x_density
         self._y_density = y_density
 
+    @property
+    def horz_dpi(self):
+        """
+        Horizontal dots per inch specified in this marker, defaults to 72 if
+        not specified.
+        """
+        return self._dpi(self._x_density)
+
+    @property
+    def vert_dpi(self):
+        """
+        Vertical dots per inch specified in this marker, defaults to 72 if
+        not specified.
+        """
+        return self._dpi(self._y_density)
+
+    def _dpi(self, density):
+        """
+        Return dots per inch corresponding to *density* value.
+        """
+        if self._density_units == 1:
+            dpi = density
+        elif self._density_units == 2:
+            dpi = int(round(density * 2.54))
+        else:
+            dpi = 72
+        return dpi
+
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
