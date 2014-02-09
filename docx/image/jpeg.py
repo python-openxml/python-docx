@@ -7,6 +7,7 @@ sub-formats.
 
 from __future__ import absolute_import, division, print_function
 
+from .constants import JPEG_MARKER_CODE
 from .image import Image
 
 
@@ -65,13 +66,23 @@ class _JfifMarkers(object):
     Sequence of markers in a JPEG file, perhaps truncated at first SOS marker
     for performance reasons.
     """
+    def __init__(self, markers):
+        super(_JfifMarkers, self).__init__()
+        self._markers = list(markers)
+
     @classmethod
     def from_stream(cls, stream):
         """
-        Return a |_JfifMarkers| instance containing a |_JfifMarker| instance
-        for each marker in *stream*.
+        Return a |_JfifMarkers| instance containing a |_JfifMarker| subclass
+        instance for each marker in *stream*.
         """
-        raise NotImplementedError
+        marker_parser = _MarkerParser.from_stream(stream)
+        markers = []
+        for marker in marker_parser.iter_markers():
+            markers.append(marker)
+            if marker.marker_code == JPEG_MARKER_CODE.SOS:
+                break
+        return cls(markers)
 
     @property
     def app0(self):
@@ -86,3 +97,51 @@ class _JfifMarkers(object):
         First start of frame (SOFn) marker in this sequence.
         """
         raise NotImplementedError
+
+
+class _MarkerParser(object):
+    """
+    Service class that knows how to parse a JFIF stream and iterate over its
+    markers.
+    """
+    @classmethod
+    def from_stream(cls, stream):
+        """
+        Return a |_MarkerParser| instance to parse JFIF markers from
+        *stream*.
+        """
+        raise NotImplementedError
+
+    def iter_markers(self):
+        """
+        Generate a (marker_code, segment_offset) 3-tuple for each marker in
+        the JPEG byte stream in *stream*, in the order they occur in the
+        stream.
+        """
+        raise NotImplementedError
+
+
+class _Marker(object):
+    """
+    Base class for JFIF marker classes. Represents a marker and its segment
+    occuring in a JPEG byte stream.
+    """
+    @property
+    def marker_code(self):
+        """
+        The single-byte code that identifies the type of this marker, e.g.
+        ``'\xE0'`` for start of image (SOI).
+        """
+        raise NotImplementedError
+
+
+class _App0Marker(_Marker):
+    """
+    Represents a JFIF APP0 marker segment.
+    """
+
+
+class _SofMarker(_Marker):
+    """
+    Represents a JFIF start of frame (SOFx) marker segment.
+    """
