@@ -290,12 +290,13 @@ class _App0Marker(_Marker):
         # horz dots per unit  10   short
         # vert dots per unit  12   short
         # ------------------  ---  -----  -------------------
-        length = stream.read_short(offset)
+        segment_length = stream.read_short(offset)
         density_units = stream.read_byte(offset, 9)
         x_density = stream.read_short(offset, 10)
         y_density = stream.read_short(offset, 12)
         return cls(
-            marker_code, offset, length, density_units, x_density, y_density
+            marker_code, offset, segment_length, density_units, x_density,
+            y_density
         )
 
 
@@ -303,10 +304,26 @@ class _SofMarker(_Marker):
     """
     Represents a JFIF start of frame (SOFx) marker segment.
     """
+    def __init__(
+            self, marker_code, offset, segment_length, px_width, px_height):
+        super(_SofMarker, self).__init__(marker_code, offset, segment_length)
+        self._px_width = px_width
+        self._px_height = px_height
+
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
         Return an |_SofMarker| instance for the SOFn marker at *offset* in
         stream.
         """
-        raise NotImplementedError
+        # field                 off  type   notes
+        # ------------------  ---  -----  ----------------------------
+        # segment length       0   short
+        # Data precision       2   byte
+        # Vertical lines       3   short  px_height
+        # Horizontal lines     5   short  px_width
+        # ------------------  ---  -----  ----------------------------
+        segment_length = stream.read_short(offset)
+        px_height = stream.read_short(offset, 3)
+        px_width = stream.read_short(offset, 5)
+        return cls(marker_code, offset, segment_length, px_width, px_height)
