@@ -205,14 +205,14 @@ class _IfdEntry(object):
         """
         Short int code that identifies this IFD entry
         """
-        raise NotImplementedError
+        return self._tag_code
 
     @property
     def value(self):
         """
         Value of this tag, its type being dependent on the tag.
         """
-        raise NotImplementedError
+        return self._value
 
 
 class _AsciiIfdEntry(_IfdEntry):

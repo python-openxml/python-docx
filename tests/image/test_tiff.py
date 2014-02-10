@@ -343,6 +343,11 @@ class Describe_IfdEntry(object):
         _IfdEntry__init_.assert_called_once_with(tag_code, value_)
         assert isinstance(ifd_entry, _IfdEntry)
 
+    def it_provides_read_only_access_to_the_directory_entry(self):
+        tag_code, value = 1, 2
+        ifd_entry = _IfdEntry(tag_code, value)
+        assert (ifd_entry.tag, ifd_entry.value) == (tag_code, value)
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
