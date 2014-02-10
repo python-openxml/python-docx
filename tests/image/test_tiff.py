@@ -17,7 +17,8 @@ from docx.image.tiff import (
 )
 
 from ..unitutil import (
-    function_mock, class_mock, initializer_mock, instance_mock, method_mock
+    function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
+    method_mock
 )
 
 
@@ -328,3 +329,43 @@ class Describe_IfdEntryFactory(object):
     @pytest.fixture
     def offset_(self, request):
         return instance_mock(request, int)
+
+
+class Describe_IfdEntry(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
+        (stream_rdr, offset, _parse_value_, value_count, value_offset,
+         _IfdEntry__init_, tag_code, value_) = from_stream_fixture
+        ifd_entry = _IfdEntry.from_stream(stream_rdr, offset)
+        _parse_value_.assert_called_once_with(
+            stream_rdr, offset, value_count, value_offset
+        )
+        _IfdEntry__init_.assert_called_once_with(tag_code, value_)
+        assert isinstance(ifd_entry, _IfdEntry)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, _parse_value_, _IfdEntry__init_, value_):
+        bytes_ = b'\x00\x01\x66\x66\x00\x00\x00\x02\x00\x00\x00\x03'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        offset, tag_code, value_count, value_offset = 0, 1, 2, 3
+        return (
+            stream_rdr, offset, _parse_value_, value_count, value_offset,
+            _IfdEntry__init_, tag_code, value_
+        )
+
+    @pytest.fixture
+    def _IfdEntry__init_(self, request):
+        return initializer_mock(request, _IfdEntry)
+
+    @pytest.fixture
+    def _parse_value_(self, request, value_):
+        return method_mock(
+            request, _IfdEntry, '_parse_value', return_value=value_
+        )
+
+    @pytest.fixture
+    def value_(self, request):
+        return loose_mock(request)

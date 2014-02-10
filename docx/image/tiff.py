@@ -171,15 +171,34 @@ class _IfdEntry(object):
     Base class for IFD entry classes. Subclasses are differentiated by value
     type, e.g. ASCII, long int, etc.
     """
+    def __init__(self, tag_code, value):
+        super(_IfdEntry, self).__init__()
+        self._tag_code = tag_code
+        self._value = value
+
     @classmethod
     def from_stream(cls, stream_rdr, offset):
         """
-        Return an |_IfdEntry| subclass instance parsed from *stream_rdr* at
-        *offset*. Note this method is common to all subclasses. Override the
-        ``_parse_value()`` method to provide distinctive behavior based on
-        field type.
+        Return an |_IfdEntry| subclass instance containing the tag and value
+        of the tag parsed from *stream_rdr* at *offset*. Note this method is
+        common to all subclasses. Override the ``_parse_value()`` method to
+        provide distinctive behavior based on field type.
         """
-        raise NotImplementedError
+        tag_code = stream_rdr.read_short(offset, 0)
+        value_count = stream_rdr.read_long(offset, 4)
+        value_offset = stream_rdr.read_long(offset, 8)
+        value = cls._parse_value(
+            stream_rdr, offset, value_count, value_offset
+        )
+        return cls(tag_code, value)
+
+    @classmethod
+    def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
+        """
+        Return the value of this field parsed from *stream_rdr* at *offset*.
+        Intended to be overridden by subclasses.
+        """
+        return 'UNIMPLEMENTED FIELD TYPE'
 
     @property
     def tag(self):
