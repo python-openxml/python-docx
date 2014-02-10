@@ -113,4 +113,44 @@ class _IfdEntries(object):
         Return a new |_IfdEntries| instance parsed from *stream* starting at
         *offset*.
         """
+        ifd_parser = _IfdParser(stream, offset)
+        entries = dict((e.tag, e.value) for e in ifd_parser.iter_entries())
+        return cls(entries)
+
+
+class _IfdParser(object):
+    """
+    Service object that knows how to extract directory entries from an Image
+    File Directory (IFD)
+    """
+    def __init__(self, stream_rdr, offset):
+        super(_IfdParser, self).__init__()
+        self._stream_rdr = stream_rdr
+        self._offset = offset
+
+    def iter_entries(self):
+        """
+        Generate an |_IfdEntry| instance corresponding to each entry in the
+        directory.
+        """
+        raise NotImplementedError
+
+
+class _IfdEntry(object):
+    """
+    Base class for IFD entry classes. Subclasses are differentiated by value
+    type, e.g. ASCII, long int, etc.
+    """
+    @property
+    def tag(self):
+        """
+        Short int code that identifies this IFD entry
+        """
+        raise NotImplementedError
+
+    @property
+    def value(self):
+        """
+        Value of this tag, its type being dependent on the tag.
+        """
         raise NotImplementedError

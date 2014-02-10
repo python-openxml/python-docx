@@ -10,7 +10,9 @@ import pytest
 
 from docx.compat import BytesIO
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
-from docx.image.tiff import _IfdEntries, Tiff, _TiffParser
+from docx.image.tiff import (
+    _IfdEntries, _IfdEntry, _IfdParser, Tiff, _TiffParser
+)
 
 from ..unitutil import (
     initializer_mock, class_mock, instance_mock, method_mock
@@ -153,3 +155,55 @@ class Describe_TiffParser(object):
     @pytest.fixture
     def _TiffParser__init_(self, request):
         return initializer_mock(request, _TiffParser)
+
+
+class Describe_IfdEntries(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
+        stream_, offset_, _IfdParser_, _IfdEntries__init_, entries_ = (
+            from_stream_fixture
+        )
+        ifd_entries = _IfdEntries.from_stream(stream_, offset_)
+        _IfdParser_.assert_called_once_with(stream_, offset_)
+        _IfdEntries__init_.assert_called_once_with(entries_)
+        assert isinstance(ifd_entries, _IfdEntries)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, stream_, offset_, _IfdParser_, ifd_parser_,
+            _IfdEntries__init_, ifd_entry_, ifd_entry_2_):
+        ifd_parser_.iter_entries.return_value = [ifd_entry_, ifd_entry_2_]
+        entries_ = {1: 42, 2: 24}
+        return stream_, offset_, _IfdParser_, _IfdEntries__init_, entries_
+
+    @pytest.fixture
+    def ifd_entry_(self, request):
+        return instance_mock(request, _IfdEntry, tag=1, value=42)
+
+    @pytest.fixture
+    def ifd_entry_2_(self, request):
+        return instance_mock(request, _IfdEntry, tag=2, value=24)
+
+    @pytest.fixture
+    def _IfdEntries__init_(self, request):
+        return initializer_mock(request, _IfdEntries)
+
+    @pytest.fixture
+    def _IfdParser_(self, request, ifd_parser_):
+        return class_mock(
+            request, 'docx.image.tiff._IfdParser', return_value=ifd_parser_
+        )
+
+    @pytest.fixture
+    def ifd_parser_(self, request):
+        return instance_mock(request, _IfdParser)
+
+    @pytest.fixture
+    def offset_(self, request):
+        return instance_mock(request, int)
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
