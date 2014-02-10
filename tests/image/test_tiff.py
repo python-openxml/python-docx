@@ -9,9 +9,12 @@ from __future__ import absolute_import, print_function
 import pytest
 
 from docx.compat import BytesIO
-from docx.image.tiff import Tiff, _TiffParser
+from docx.image.helpers import StreamReader
+from docx.image.tiff import _IfdEntries, Tiff, _TiffParser
 
-from ..unitutil import class_mock, initializer_mock, instance_mock
+from ..unitutil import (
+    initializer_mock, class_mock, instance_mock, method_mock
+)
 
 
 class DescribeTiff(object):
@@ -68,3 +71,64 @@ class DescribeTiff(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+
+class Describe_TiffParser(object):
+
+    def it_can_parse_the_properties_from_a_tiff_stream(
+            self, from_stream_fixture):
+        (stream_, _make_stream_reader_, _IfdEntries_, ifd0_offset_,
+         stream_rdr_, _TiffParser__init_, ifd_entries_) = from_stream_fixture
+        tiff_parser = _TiffParser.parse(stream_)
+        _make_stream_reader_.assert_called_once_with(stream_)
+        _IfdEntries_.from_stream.assert_called_once_with(
+            stream_rdr_, ifd0_offset_
+        )
+        _TiffParser__init_.assert_called_once_with(ifd_entries_)
+        assert isinstance(tiff_parser, _TiffParser)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, stream_, _make_stream_reader_, _IfdEntries_, ifd0_offset_,
+            stream_rdr_, _TiffParser__init_, ifd_entries_):
+        return (
+            stream_, _make_stream_reader_, _IfdEntries_, ifd0_offset_,
+            stream_rdr_, _TiffParser__init_, ifd_entries_
+        )
+
+    @pytest.fixture
+    def _IfdEntries_(self, request, ifd_entries_):
+        _IfdEntries_ = class_mock(request, 'docx.image.tiff._IfdEntries')
+        _IfdEntries_.from_stream.return_value = ifd_entries_
+        return _IfdEntries_
+
+    @pytest.fixture
+    def ifd_entries_(self, request):
+        return instance_mock(request, _IfdEntries)
+
+    @pytest.fixture
+    def ifd0_offset_(self, request):
+        return instance_mock(request, int)
+
+    @pytest.fixture
+    def _make_stream_reader_(self, request, stream_rdr_):
+        return method_mock(
+            request, _TiffParser, '_make_stream_reader',
+            return_value=stream_rdr_
+        )
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def stream_rdr_(self, request, ifd0_offset_):
+        stream_rdr_ = instance_mock(request, StreamReader)
+        stream_rdr_.read_long.return_value = ifd0_offset_
+        return stream_rdr_
+
+    @pytest.fixture
+    def _TiffParser__init_(self, request):
+        return initializer_mock(request, _TiffParser)

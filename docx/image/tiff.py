@@ -29,13 +29,20 @@ class _TiffParser(object):
     Parses a TIFF image stream to extract the image properties found in its
     main image file directory (IFD)
     """
+    def __init__(self, ifd):
+        super(_TiffParser, self).__init__()
+        self._ifd = ifd
+
     @classmethod
     def parse(cls, stream):
         """
         Return an instance of |_TiffParser| containing the properties parsed
         from the TIFF image in *stream*.
         """
-        raise NotImplementedError
+        stream_rdr = cls._make_stream_reader(stream)
+        ifd0_offset = stream_rdr.read_long(4)
+        ifd_entries = _IfdEntries.from_stream(stream_rdr, ifd0_offset)
+        return cls(ifd_entries)
 
     @property
     def horz_dpi(self):
@@ -70,5 +77,28 @@ class _TiffParser(object):
         The vertical dots per inch value calculated from the XResolution and
         ResolutionUnit tags of the IFD; defaults to 72 if those tags are not
         present.
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def _make_stream_reader(cls, stream):
+        """
+        Return a |StreamReader| instance with wrapping *stream* and having
+        "endian-ness" determined by the 'MM' or 'II' indicator in the TIFF
+        stream header.
+        """
+        raise NotImplementedError
+
+
+class _IfdEntries(object):
+    """
+    Image File Directory for a TIFF image, having mapping (dict) semantics
+    allowing "tag" values to be retrieved by tag code.
+    """
+    @classmethod
+    def from_stream(cls, stream, offset):
+        """
+        Return a new |_IfdEntries| instance parsed from *stream* starting at
+        *offset*.
         """
         raise NotImplementedError
