@@ -111,3 +111,22 @@ class TAG(object):
     HORZ_PX_PER_UNIT = 'horz_px_per_unit'
     VERT_PX_PER_UNIT = 'vert_px_per_unit'
     UNITS_SPECIFIER = 'units_specifier'
+
+
+class TIFF_FLD_TYPE(object):
+    """
+    Tag codes for TIFF Image File Directory (IFD) entries.
+    """
+    BYTE = 1
+    ASCII = 2
+    SHORT = 3
+    LONG = 4
+    RATIONAL = 5
+
+    field_type_names = {
+        1: 'BYTE', 2: 'ASCII char', 3: 'SHORT', 4: 'LONG',
+        5: 'RATIONAL'
+    }
+
+
+TIFF_FLD = TIFF_FLD_TYPE

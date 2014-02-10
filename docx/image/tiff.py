@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .constants import TIFF_FLD
 from .helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from .image import Image
 
@@ -151,7 +152,18 @@ def _IfdEntryFactory(stream_rdr, offset):
     Return an |_IfdEntry| subclass instance containing the value of the
     directory entry at *offset* in *stream_rdr*.
     """
-    raise NotImplementedError
+    ifd_entry_classes = {
+        TIFF_FLD.ASCII:    _AsciiIfdEntry,
+        TIFF_FLD.SHORT:    _ShortIfdEntry,
+        TIFF_FLD.LONG:     _LongIfdEntry,
+        TIFF_FLD.RATIONAL: _RationalIfdEntry,
+    }
+    field_type = stream_rdr.read_short(offset, 2)
+    if field_type in ifd_entry_classes:
+        entry_cls = ifd_entry_classes[field_type]
+    else:
+        entry_cls = _IfdEntry
+    return entry_cls.from_stream(stream_rdr, offset)
 
 
 class _IfdEntry(object):
@@ -159,6 +171,16 @@ class _IfdEntry(object):
     Base class for IFD entry classes. Subclasses are differentiated by value
     type, e.g. ASCII, long int, etc.
     """
+    @classmethod
+    def from_stream(cls, stream_rdr, offset):
+        """
+        Return an |_IfdEntry| subclass instance parsed from *stream_rdr* at
+        *offset*. Note this method is common to all subclasses. Override the
+        ``_parse_value()`` method to provide distinctive behavior based on
+        field type.
+        """
+        raise NotImplementedError
+
     @property
     def tag(self):
         """
@@ -172,3 +194,27 @@ class _IfdEntry(object):
         Value of this tag, its type being dependent on the tag.
         """
         raise NotImplementedError
+
+
+class _AsciiIfdEntry(_IfdEntry):
+    """
+    IFD entry having the form of a NULL-terminated ASCII string
+    """
+
+
+class _ShortIfdEntry(_IfdEntry):
+    """
+    IFD entry expressed as a short (2-byte) integer
+    """
+
+
+class _LongIfdEntry(_IfdEntry):
+    """
+    IFD entry expressed as a long (4-byte) integer
+    """
+
+
+class _RationalIfdEntry(_IfdEntry):
+    """
+    IFD entry expressed as a numerator, denominator pair
+    """

@@ -13,7 +13,7 @@ from mock import call
 from docx.compat import BytesIO
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
-    _IfdEntries, _IfdEntry, _IfdParser, Tiff, _TiffParser
+    _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser, Tiff, _TiffParser
 )
 
 from ..unitutil import (
@@ -251,3 +251,80 @@ class Describe_IfdParser(object):
             ifd_parser, _IfdEntryFactory_, stream_rdr, offsets,
             expected_entries
         )
+
+
+class Describe_IfdEntryFactory(object):
+
+    def it_constructs_the_right_class_for_a_given_ifd_entry(self, fixture):
+        stream_rdr, offset, entry_cls_, ifd_entry_ = fixture
+        ifd_entry = _IfdEntryFactory(stream_rdr, offset)
+        entry_cls_.from_stream.assert_called_once_with(stream_rdr, offset)
+        assert ifd_entry is ifd_entry_
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (b'\x66\x66\x00\x01', 'BYTE'),
+        (b'\x66\x66\x00\x02', 'ASCII'),
+        (b'\x66\x66\x00\x03', 'SHORT'),
+        (b'\x66\x66\x00\x04', 'LONG'),
+        (b'\x66\x66\x00\x05', 'RATIONAL'),
+        (b'\x66\x66\x00\x06', 'CUSTOM'),
+    ])
+    def fixture(
+            self, request, ifd_entry_, _IfdEntry_, _AsciiIfdEntry_,
+            _ShortIfdEntry_, _LongIfdEntry_, _RationalIfdEntry_):
+        bytes_, entry_type = request.param
+        entry_cls_ = {
+            'BYTE':     _IfdEntry_,
+            'ASCII':    _AsciiIfdEntry_,
+            'SHORT':    _ShortIfdEntry_,
+            'LONG':     _LongIfdEntry_,
+            'RATIONAL': _RationalIfdEntry_,
+            'CUSTOM':   _IfdEntry_,
+        }[entry_type]
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        offset = 0
+        return stream_rdr, offset, entry_cls_, ifd_entry_
+
+    @pytest.fixture
+    def ifd_entry_(self, request):
+        return instance_mock(request, _IfdEntry)
+
+    @pytest.fixture
+    def _IfdEntry_(self, request, ifd_entry_):
+        _IfdEntry_ = class_mock(request, 'docx.image.tiff._IfdEntry')
+        _IfdEntry_.from_stream.return_value = ifd_entry_
+        return _IfdEntry_
+
+    @pytest.fixture
+    def _AsciiIfdEntry_(self, request, ifd_entry_):
+        _AsciiIfdEntry_ = class_mock(
+            request, 'docx.image.tiff._AsciiIfdEntry')
+        _AsciiIfdEntry_.from_stream.return_value = ifd_entry_
+        return _AsciiIfdEntry_
+
+    @pytest.fixture
+    def _ShortIfdEntry_(self, request, ifd_entry_):
+        _ShortIfdEntry_ = class_mock(
+            request, 'docx.image.tiff._ShortIfdEntry')
+        _ShortIfdEntry_.from_stream.return_value = ifd_entry_
+        return _ShortIfdEntry_
+
+    @pytest.fixture
+    def _LongIfdEntry_(self, request, ifd_entry_):
+        _LongIfdEntry_ = class_mock(
+            request, 'docx.image.tiff._LongIfdEntry')
+        _LongIfdEntry_.from_stream.return_value = ifd_entry_
+        return _LongIfdEntry_
+
+    @pytest.fixture
+    def _RationalIfdEntry_(self, request, ifd_entry_):
+        _RationalIfdEntry_ = class_mock(
+            request, 'docx.image.tiff._RationalIfdEntry')
+        _RationalIfdEntry_.from_stream.return_value = ifd_entry_
+        return _RationalIfdEntry_
+
+    @pytest.fixture
+    def offset_(self, request):
+        return instance_mock(request, int)
