@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function
 import pytest
 
 from docx.compat import BytesIO
-from docx.image.helpers import StreamReader
+from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import _IfdEntries, Tiff, _TiffParser
 
 from ..unitutil import (
@@ -87,6 +87,12 @@ class Describe_TiffParser(object):
         _TiffParser__init_.assert_called_once_with(ifd_entries_)
         assert isinstance(tiff_parser, _TiffParser)
 
+    def it_makes_a_stream_reader_to_help_parse(self, mk_stream_rdr_fixture):
+        stream, StreamReader_, endian, stream_rdr_ = mk_stream_rdr_fixture
+        stream_rdr = _TiffParser._make_stream_reader(stream)
+        StreamReader_.assert_called_once_with(stream, endian)
+        assert stream_rdr is stream_rdr_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -119,9 +125,24 @@ class Describe_TiffParser(object):
             return_value=stream_rdr_
         )
 
+    @pytest.fixture(params=[
+        (b'MM\x00*', BIG_ENDIAN),
+        (b'II*\x00', LITTLE_ENDIAN),
+    ])
+    def mk_stream_rdr_fixture(self, request, StreamReader_, stream_rdr_):
+        bytes_, endian = request.param
+        stream = BytesIO(bytes_)
+        return stream, StreamReader_, endian, stream_rdr_
+
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def StreamReader_(self, request, stream_rdr_):
+        return class_mock(
+            request, 'docx.image.tiff.StreamReader', return_value=stream_rdr_
+        )
 
     @pytest.fixture
     def stream_rdr_(self, request, ifd0_offset_):

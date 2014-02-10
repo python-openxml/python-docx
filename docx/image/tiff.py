@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from .image import Image
 
 
@@ -81,13 +82,24 @@ class _TiffParser(object):
         raise NotImplementedError
 
     @classmethod
+    def _detect_endian(cls, stream):
+        """
+        Return either BIG_ENDIAN or LITTLE_ENDIAN depending on the endian
+        indicator found in the TIFF *stream* header, either 'MM' or 'II'.
+        """
+        stream.seek(0)
+        endian_str = stream.read(2)
+        return BIG_ENDIAN if endian_str == b'MM' else LITTLE_ENDIAN
+
+    @classmethod
     def _make_stream_reader(cls, stream):
         """
         Return a |StreamReader| instance with wrapping *stream* and having
         "endian-ness" determined by the 'MM' or 'II' indicator in the TIFF
         stream header.
         """
-        raise NotImplementedError
+        endian = cls._detect_endian(stream)
+        return StreamReader(stream, endian)
 
 
 class _IfdEntries(object):
