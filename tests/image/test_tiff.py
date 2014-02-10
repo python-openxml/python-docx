@@ -8,6 +8,8 @@ from __future__ import absolute_import, print_function
 
 import pytest
 
+from mock import call
+
 from docx.compat import BytesIO
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
@@ -15,7 +17,7 @@ from docx.image.tiff import (
 )
 
 from ..unitutil import (
-    initializer_mock, class_mock, instance_mock, method_mock
+    function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
 
 
@@ -207,3 +209,45 @@ class Describe_IfdEntries(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+
+class Describe_IfdParser(object):
+
+    def it_can_iterate_through_the_directory_entries_in_an_IFD(
+            self, iter_fixture):
+        (ifd_parser, _IfdEntryFactory_, stream_rdr, offsets,
+         expected_entries) = iter_fixture
+        entries = [e for e in ifd_parser.iter_entries()]
+        assert _IfdEntryFactory_.call_args_list == [
+            call(stream_rdr, offsets[0]),
+            call(stream_rdr, offsets[1]),
+        ]
+        assert entries == expected_entries
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def ifd_entry_(self, request):
+        return instance_mock(request, _IfdEntry, tag=1, value=42)
+
+    @pytest.fixture
+    def ifd_entry_2_(self, request):
+        return instance_mock(request, _IfdEntry, tag=2, value=24)
+
+    @pytest.fixture
+    def _IfdEntryFactory_(self, request, ifd_entry_, ifd_entry_2_):
+        return function_mock(
+            request, 'docx.image.tiff._IfdEntryFactory',
+            side_effect=[ifd_entry_, ifd_entry_2_]
+        )
+
+    @pytest.fixture
+    def iter_fixture(self, _IfdEntryFactory_, ifd_entry_, ifd_entry_2_):
+        stream_rdr = StreamReader(BytesIO(b'\x00\x02'), BIG_ENDIAN)
+        offsets = [2, 14]
+        ifd_parser = _IfdParser(stream_rdr, offset=0)
+        expected_entries = [ifd_entry_, ifd_entry_2_]
+        return (
+            ifd_parser, _IfdEntryFactory_, stream_rdr, offsets,
+            expected_entries
+        )

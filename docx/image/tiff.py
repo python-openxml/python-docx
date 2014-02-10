@@ -133,7 +133,25 @@ class _IfdParser(object):
         Generate an |_IfdEntry| instance corresponding to each entry in the
         directory.
         """
-        raise NotImplementedError
+        for idx in range(self._entry_count):
+            dir_entry_offset = self._offset + 2 + (idx*12)
+            ifd_entry = _IfdEntryFactory(self._stream_rdr, dir_entry_offset)
+            yield ifd_entry
+
+    @property
+    def _entry_count(self):
+        """
+        The count of directory entries, read from the top of the IFD header
+        """
+        return self._stream_rdr.read_short(self._offset)
+
+
+def _IfdEntryFactory(stream_rdr, offset):
+    """
+    Return an |_IfdEntry| subclass instance containing the value of the
+    directory entry at *offset* in *stream_rdr*.
+    """
+    raise NotImplementedError
 
 
 class _IfdEntry(object):
