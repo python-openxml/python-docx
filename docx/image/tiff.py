@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .constants import TIFF_FLD
+from .constants import TIFF_FLD, TIFF_TAG
 from .helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from .image import Image
 
@@ -31,9 +31,9 @@ class _TiffParser(object):
     Parses a TIFF image stream to extract the image properties found in its
     main image file directory (IFD)
     """
-    def __init__(self, ifd):
+    def __init__(self, ifd_entries):
         super(_TiffParser, self).__init__()
-        self._ifd = ifd
+        self._ifd_entries = ifd_entries
 
     @classmethod
     def parse(cls, stream):
@@ -62,7 +62,7 @@ class _TiffParser(object):
         contains no ``ImageLength`` tag, the expected case when the TIFF is
         embeded in an Exif image.
         """
-        raise NotImplementedError
+        return self._ifd_entries.get(TIFF_TAG.IMAGE_LENGTH)
 
     @property
     def px_width(self):
@@ -71,7 +71,7 @@ class _TiffParser(object):
         contains no ``ImageWidth`` tag, the expected case when the TIFF is
         embeded in an Exif image.
         """
-        raise NotImplementedError
+        return self._ifd_entries.get(TIFF_TAG.IMAGE_WIDTH)
 
     @property
     def vert_dpi(self):
@@ -108,6 +108,10 @@ class _IfdEntries(object):
     Image File Directory for a TIFF image, having mapping (dict) semantics
     allowing "tag" values to be retrieved by tag code.
     """
+    def __init__(self, entries):
+        super(_IfdEntries, self).__init__()
+        self._entries = entries
+
     @classmethod
     def from_stream(cls, stream, offset):
         """
@@ -117,6 +121,13 @@ class _IfdEntries(object):
         ifd_parser = _IfdParser(stream, offset)
         entries = dict((e.tag, e.value) for e in ifd_parser.iter_entries())
         return cls(entries)
+
+    def get(self, tag_code, default=None):
+        """
+        Return value of IFD entry having tag matching *tag_code*, or
+        *default* if no matching tag found.
+        """
+        return self._entries.get(tag_code, default)
 
 
 class _IfdParser(object):

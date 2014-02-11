@@ -130,3 +130,40 @@ class TIFF_FLD_TYPE(object):
 
 
 TIFF_FLD = TIFF_FLD_TYPE
+
+
+class TIFF_TAG(object):
+    """
+    Tag codes for TIFF Image File Directory (IFD) entries.
+    """
+    IMAGE_WIDTH = 0x0100
+    IMAGE_LENGTH = 0x0101
+    X_RESOLUTION = 0x011A
+    Y_RESOLUTION = 0x011B
+    RESOLUTION_UNIT = 0x0128
+
+    tag_names = {
+        0x00FE: 'NewSubfileType',
+        0x0100: 'ImageWidth',
+        0x0101: 'ImageLength',
+        0x0102: 'BitsPerSample',
+        0x0103: 'Compression',
+        0x0106: 'PhotometricInterpretation',
+        0x010E: 'ImageDescription',
+        0x010F: 'Make',
+        0x0110: 'Model',
+        0x0111: 'StripOffsets',
+        0x0112: 'Orientation',
+        0x0115: 'SamplesPerPixel',
+        0x0117: 'StripByteCounts',
+        0x011A: 'XResolution',
+        0x011B: 'YResolution',
+        0x011C: 'PlanarConfiguration',
+        0x0128: 'ResolutionUnit',
+        0x0131: 'Software',
+        0x0132: 'DateTime',
+        0x0213: 'YCbCrPositioning',
+        0x8769: 'ExifTag',
+        0x8825: 'GPS IFD',
+        0xC4A5: 'PrintImageMatching',
+    }

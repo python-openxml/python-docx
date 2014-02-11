@@ -11,6 +11,7 @@ import pytest
 from mock import call
 
 from docx.compat import BytesIO
+from docx.image.constants import TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
     _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser, Tiff, _TiffParser
@@ -97,6 +98,17 @@ class Describe_TiffParser(object):
         stream_rdr = _TiffParser._make_stream_reader(stream)
         StreamReader_.assert_called_once_with(stream, endian)
         assert stream_rdr is stream_rdr_
+
+    def it_knows_image_width_and_height_after_parsing(self):
+        px_width, px_height = 42, 24
+        entries = {
+            TIFF_TAG.IMAGE_WIDTH:  px_width,
+            TIFF_TAG.IMAGE_LENGTH: px_height,
+        }
+        ifd_entries = _IfdEntries(entries)
+        tiff_parser = _TiffParser(ifd_entries)
+        assert tiff_parser.px_width == px_width
+        assert tiff_parser.px_height == px_height
 
     # fixtures -------------------------------------------------------
 
