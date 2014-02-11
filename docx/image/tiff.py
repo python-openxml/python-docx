@@ -294,6 +294,16 @@ class _LongIfdEntry(_IfdEntry):
     """
     IFD entry expressed as a long (4-byte) integer
     """
+    @classmethod
+    def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
+        """
+        Return the long int value contained in the *value_offset* field of
+        this entry. Only supports single values at present.
+        """
+        if value_count == 1:
+            return stream_rdr.read_long(offset, 8)
+        else:
+            return 'Multi-value long integer NOT IMPLEMENTED'
 
 
 class _RationalIfdEntry(_IfdEntry):
