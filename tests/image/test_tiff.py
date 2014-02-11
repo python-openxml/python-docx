@@ -218,6 +218,13 @@ class Describe_IfdEntries(object):
         _IfdEntries__init_.assert_called_once_with(entries_)
         assert isinstance(ifd_entries, _IfdEntries)
 
+    def it_has_basic_mapping_semantics(self):
+        key, value = 1, 'foobar'
+        entries = {key: value}
+        ifd_entries = _IfdEntries(entries)
+        assert key in ifd_entries
+        assert ifd_entries[key] == value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

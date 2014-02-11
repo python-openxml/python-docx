@@ -265,7 +265,7 @@ class _IfdEntry(object):
         Return the value of this field parsed from *stream_rdr* at *offset*.
         Intended to be overridden by subclasses.
         """
-        return 'UNIMPLEMENTED FIELD TYPE'
+        return 'UNIMPLEMENTED FIELD TYPE'  # pragma: no cover
 
     @property
     def tag(self):
@@ -308,7 +308,7 @@ class _ShortIfdEntry(_IfdEntry):
         """
         if value_count == 1:
             return stream_rdr.read_short(offset, 8)
-        else:
+        else:  # pragma: no cover
             return 'Multi-value short integer NOT IMPLEMENTED'
 
 
@@ -324,7 +324,7 @@ class _LongIfdEntry(_IfdEntry):
         """
         if value_count == 1:
             return stream_rdr.read_long(offset, 8)
-        else:
+        else:  # pragma: no cover
             return 'Multi-value long integer NOT IMPLEMENTED'
 
 
@@ -343,5 +343,5 @@ class _RationalIfdEntry(_IfdEntry):
             numerator = stream_rdr.read_long(value_offset)
             denominator = stream_rdr.read_long(value_offset, 4)
             return numerator / denominator
-        else:
+        else:  # pragma: no cover
             return 'Multi-value Rational NOT IMPLEMENTED'
