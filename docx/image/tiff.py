@@ -38,6 +38,20 @@ class Tiff(Image):
         vert_dpi = parser.vert_dpi
         return cls(blob, filename, px_width, px_height, horz_dpi, vert_dpi)
 
+    @property
+    def horz_dpi(self):
+        """
+        The intended print density of the image's pixels along the x-axis
+        """
+        return self._horz_dpi
+
+    @property
+    def vert_dpi(self):
+        """
+        The intended print density of the image's pixels along the y-axis
+        """
+        return self._vert_dpi
+
 
 class _TiffParser(object):
     """

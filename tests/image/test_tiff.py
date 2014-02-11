@@ -40,6 +40,12 @@ class DescribeTiff(object):
         tiff = Tiff(None, None, None, None, None, None)
         assert tiff.content_type == MIME_TYPE.TIFF
 
+    def it_knows_the_horz_and_vert_dpi_of_the_tiff_image(self):
+        horz_dpi, vert_dpi = 42, 24
+        tiff = Tiff(None, None, None, None, horz_dpi, vert_dpi)
+        assert tiff.horz_dpi == horz_dpi
+        assert tiff.vert_dpi == vert_dpi
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
