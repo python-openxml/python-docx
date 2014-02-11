@@ -53,7 +53,16 @@ class _TiffParser(object):
         and ResolutionUnit tags of the IFD; defaults to 72 if those tags are
         not present.
         """
-        raise NotImplementedError
+        return self._dpi(TIFF_TAG.X_RESOLUTION)
+
+    @property
+    def vert_dpi(self):
+        """
+        The vertical dots per inch value calculated from the XResolution and
+        ResolutionUnit tags of the IFD; defaults to 72 if those tags are not
+        present.
+        """
+        return self._dpi(TIFF_TAG.Y_RESOLUTION)
 
     @property
     def px_height(self):
@@ -73,15 +82,6 @@ class _TiffParser(object):
         """
         return self._ifd_entries.get(TIFF_TAG.IMAGE_WIDTH)
 
-    @property
-    def vert_dpi(self):
-        """
-        The vertical dots per inch value calculated from the XResolution and
-        ResolutionUnit tags of the IFD; defaults to 72 if those tags are not
-        present.
-        """
-        raise NotImplementedError
-
     @classmethod
     def _detect_endian(cls, stream):
         """
@@ -91,6 +91,23 @@ class _TiffParser(object):
         stream.seek(0)
         endian_str = stream.read(2)
         return BIG_ENDIAN if endian_str == b'MM' else LITTLE_ENDIAN
+
+    def _dpi(self, resolution_tag):
+        """
+        Return the dpi value calculated for *resolution_tag*, which can be
+        either TIFF_TAG.X_RESOLUTION or TIFF_TAG.Y_RESOLUTION. The
+        calculation is based on the values of both that tag and the
+        TIFF_TAG.RESOLUTION_UNIT tag in this parser's |_IfdEntries| instance.
+        """
+        if resolution_tag not in self._ifd_entries:
+            return 72
+        resolution_unit = self._ifd_entries[TIFF_TAG.RESOLUTION_UNIT]
+        if resolution_unit == 1:  # aspect ratio only
+            return 72
+        # resolution_unit == 2 for inches, 3 for centimeters
+        units_per_inch = 1 if resolution_unit == 2 else 2.54
+        dots_per_unit = self._ifd_entries[resolution_tag]
+        return int(round(dots_per_unit * units_per_inch))
 
     @classmethod
     def _make_stream_reader(cls, stream):
@@ -111,6 +128,18 @@ class _IfdEntries(object):
     def __init__(self, entries):
         super(_IfdEntries, self).__init__()
         self._entries = entries
+
+    def __contains__(self, key):
+        """
+        Provides ``in`` operator, e.g. ``tag in ifd_entries``
+        """
+        return self._entries.__contains__(key)
+
+    def __getitem__(self, key):
+        """
+        Provides indexed access, e.g. ``tag_value = ifd_entries[tag_code]``
+        """
+        return self._entries.__getitem__(key)
 
     @classmethod
     def from_stream(cls, stream, offset):

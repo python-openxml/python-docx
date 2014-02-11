@@ -110,7 +110,31 @@ class Describe_TiffParser(object):
         assert tiff_parser.px_width == px_width
         assert tiff_parser.px_height == px_height
 
+    def it_knows_the_horz_and_vert_dpi_after_parsing(self, dpi_fixture):
+        tiff_parser, expected_horz_dpi, expected_vert_dpi = dpi_fixture
+        assert tiff_parser.horz_dpi == expected_horz_dpi
+        assert tiff_parser.vert_dpi == expected_vert_dpi
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (1,  150,  240,  72,  72),
+        (2,   42,   24,  42,  24),
+        (3,  100,  200, 254, 508),
+        (6, None, None,  72,  72),
+    ])
+    def dpi_fixture(self, request):
+        resolution_unit, x_resolution, y_resolution = request.param[:3]
+        expected_horz_dpi, expected_vert_dpi = request.param[3:]
+
+        entries = {TIFF_TAG.RESOLUTION_UNIT: resolution_unit}
+        if x_resolution is not None:
+            entries[TIFF_TAG.X_RESOLUTION] = x_resolution
+        if y_resolution is not None:
+            entries[TIFF_TAG.Y_RESOLUTION] = y_resolution
+
+        tiff_parser = _TiffParser(entries)
+        return tiff_parser, expected_horz_dpi, expected_vert_dpi
 
     @pytest.fixture
     def from_stream_fixture(
