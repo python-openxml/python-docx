@@ -286,6 +286,14 @@ class _AsciiIfdEntry(_IfdEntry):
     """
     IFD entry having the form of a NULL-terminated ASCII string
     """
+    @classmethod
+    def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
+        """
+        Return the ASCII string parsed from *stream_rdr* at *value_offset*.
+        The length of the string, including a terminating '\x00' (NUL)
+        character, is in *value_count*.
+        """
+        return stream_rdr.read_str(value_count-1, value_offset)
 
 
 class _ShortIfdEntry(_IfdEntry):
