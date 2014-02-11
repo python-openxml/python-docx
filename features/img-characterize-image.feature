@@ -20,3 +20,4 @@ Feature: Characterize an image file
      | jfif-300-dpi.jpg | image/jpeg | 1504 | 1936 |   300    |   300    |
      | lena_std.jpg     | image/jpeg |  512 |  512 |    72    |    72    |
      | lena.tif         | image/tiff |  512 |  512 |    72    |    72    |
+     | sample.tif       | image/tiff | 1600 | 2100 |   200    |   200    |

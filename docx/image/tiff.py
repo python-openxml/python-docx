@@ -324,3 +324,16 @@ class _RationalIfdEntry(_IfdEntry):
     """
     IFD entry expressed as a numerator, denominator pair
     """
+    @classmethod
+    def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
+        """
+        Return the rational (numerator / denominator) value at *value_offset*
+        in *stream_rdr* as a floating-point number. Only supports single
+        values at present.
+        """
+        if value_count == 1:
+            numerator = stream_rdr.read_long(value_offset)
+            denominator = stream_rdr.read_long(value_offset, 4)
+            return numerator / denominator
+        else:
+            return 'Multi-value Rational NOT IMPLEMENTED'

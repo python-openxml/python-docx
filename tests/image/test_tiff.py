@@ -15,7 +15,7 @@ from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
     _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser, _LongIfdEntry,
-    _ShortIfdEntry, Tiff, _TiffParser
+    _RationalIfdEntry, _ShortIfdEntry, Tiff, _TiffParser
 )
 
 from ..unitutil import (
@@ -439,3 +439,12 @@ class Describe_LongIfdEntry(object):
         stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
         val = _LongIfdEntry._parse_value(stream_rdr, 0, 1, None)
         assert val == 42
+
+
+class Describe_RationalIfdEntry(object):
+
+    def it_can_parse_a_rational_IFD_entry(self):
+        bytes_ = b'\x00\x00\x00\x2A\x00\x00\x00\x54'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        val = _RationalIfdEntry._parse_value(stream_rdr, None, 1, 0)
+        assert val == 0.5
