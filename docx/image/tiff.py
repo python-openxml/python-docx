@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .constants import TIFF_FLD, TIFF_TAG
+from .constants import MIME_TYPE, TIFF_FLD, TIFF_TAG
 from .helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from .image import Image
 
@@ -12,6 +12,19 @@ class Tiff(Image):
     Image header parser for TIFF images. Handles both big and little endian
     byte ordering.
     """
+    def __init__(self, blob, filename, cx, cy, horz_dpi, vert_dpi):
+        super(Tiff, self).__init__(blob, filename, cx, cy, {})
+        self._horz_dpi = horz_dpi
+        self._vert_dpi = vert_dpi
+
+    @property
+    def content_type(self):
+        """
+        Return the MIME type of this TIFF image, unconditionally the string
+        ``image/tiff``.
+        """
+        return MIME_TYPE.TIFF
+
     @classmethod
     def from_stream(cls, stream, blob, filename):
         """

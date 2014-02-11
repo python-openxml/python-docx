@@ -95,10 +95,11 @@ class JPEG_MARKER_CODE(object):
 
 class MIME_TYPE(object):
     """
-    Image content types.
+    Image content types
     """
     JPEG = 'image/jpeg'
     PNG = 'image/png'
+    TIFF = 'image/tiff'
 
 
 class TAG(object):

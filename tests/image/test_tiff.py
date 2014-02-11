@@ -11,7 +11,7 @@ import pytest
 from mock import call
 
 from docx.compat import BytesIO
-from docx.image.constants import TIFF_TAG
+from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
     _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser, Tiff, _TiffParser
@@ -34,6 +34,10 @@ class DescribeTiff(object):
             blob_, filename_, px_width, px_height, horz_dpi, vert_dpi
         )
         assert isinstance(tiff, Tiff)
+
+    def it_knows_its_content_type(self):
+        tiff = Tiff(None, None, None, None, None, None)
+        assert tiff.content_type == MIME_TYPE.TIFF
 
     # fixtures -------------------------------------------------------
 
