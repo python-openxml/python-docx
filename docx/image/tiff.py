@@ -278,6 +278,16 @@ class _ShortIfdEntry(_IfdEntry):
     """
     IFD entry expressed as a short (2-byte) integer
     """
+    @classmethod
+    def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
+        """
+        Return the short int value contained in the *value_offset* field of
+        this entry. Only supports single values at present.
+        """
+        if value_count == 1:
+            return stream_rdr.read_short(offset, 8)
+        else:
+            return 'Multi-value short integer NOT IMPLEMENTED'
 
 
 class _LongIfdEntry(_IfdEntry):

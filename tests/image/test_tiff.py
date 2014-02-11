@@ -14,7 +14,8 @@ from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
-    _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser, Tiff, _TiffParser
+    _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser, _ShortIfdEntry,
+    Tiff, _TiffParser
 )
 
 from ..unitutil import (
@@ -414,3 +415,12 @@ class Describe_IfdEntry(object):
     @pytest.fixture
     def value_(self, request):
         return loose_mock(request)
+
+
+class Describe_ShortIfdEntry(object):
+
+    def it_can_parse_a_short_int_IFD_entry(self):
+        bytes_ = b'foobaroo\x00\x2A'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        val = _ShortIfdEntry._parse_value(stream_rdr, 0, 1, None)
+        assert val == 42
