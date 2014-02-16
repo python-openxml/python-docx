@@ -383,6 +383,12 @@ class Describe_App1Marker(object):
         Tiff_.from_stream.assert_called_once_with(substream_, None, None)
         assert tiff is tiff_
 
+    def it_knows_the_image_dpi(self):
+        horz_dpi, vert_dpi = 42, 24
+        app1 = _App1Marker(None, None, None, horz_dpi, vert_dpi)
+        assert app1.horz_dpi == horz_dpi
+        assert app1.vert_dpi == vert_dpi
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

@@ -399,6 +399,11 @@ class _App1Marker(_Marker):
     """
     Represents a JFIF APP1 (Exif) marker segment.
     """
+    def __init__(self, marker_code, offset, length, horz_dpi, vert_dpi):
+        super(_App1Marker, self).__init__(marker_code, offset, length)
+        self._horz_dpi = horz_dpi
+        self._vert_dpi = vert_dpi
+
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
@@ -420,6 +425,22 @@ class _App1Marker(_Marker):
         return cls(
             marker_code, offset, segment_length, tiff.horz_dpi, tiff.vert_dpi
         )
+
+    @property
+    def horz_dpi(self):
+        """
+        Horizontal dots per inch specified in this marker, defaults to 72 if
+        not specified.
+        """
+        return self._horz_dpi
+
+    @property
+    def vert_dpi(self):
+        """
+        Vertical dots per inch specified in this marker, defaults to 72 if
+        not specified.
+        """
+        return self._vert_dpi
 
     @classmethod
     def _is_non_Exif_APP1_segment(cls, stream, offset):
