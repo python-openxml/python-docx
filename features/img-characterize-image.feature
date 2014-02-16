@@ -21,3 +21,4 @@ Feature: Characterize an image file
      | lena_std.jpg     | image/jpeg |  512 |  512 |    72    |    72    |
      | lena.tif         | image/tiff |  512 |  512 |    72    |    72    |
      | sample.tif       | image/tiff | 1600 | 2100 |   200    |   200    |
+     | jpeg420exif.jpg  | image/jpeg | 2048 | 1536 |    72    |    72    |
