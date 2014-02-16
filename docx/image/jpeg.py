@@ -397,6 +397,46 @@ class _App1Marker(_Marker):
     """
     Represents a JFIF APP1 (Exif) marker segment.
     """
+    @classmethod
+    def from_stream(cls, stream, marker_code, offset):
+        """
+        Extract the horizontal and vertical dots-per-inch value from the APP1
+        header at *offset* in *stream*.
+        """
+        # field                 off  len  type   notes
+        # --------------------  ---  ---  -----  ----------------------------
+        # segment length         0    2   short
+        # Exif identifier        2    6   6 chr  'Exif\x00\x00'
+        # TIFF byte order        8    2   2 chr  'II'=little 'MM'=big endian
+        # meaning of universe   10    2   2 chr  '*\x00' or '\x00*' depending
+        # IFD0 off fr/II or MM  10   16   long   relative to ...?
+        # --------------------  ---  ---  -----  ----------------------------
+        segment_length = stream.read_short(offset)
+        if cls._is_non_Exif_APP1_segment(stream, offset):
+            return cls(marker_code, offset, segment_length, 72, 72)
+        tiff = cls._tiff_from_exif_segment(stream, offset, segment_length)
+        return cls(
+            marker_code, offset, segment_length, tiff.horz_dpi, tiff.vert_dpi
+        )
+
+    @classmethod
+    def _is_non_Exif_APP1_segment(cls, stream, offset):
+        """
+        Return True if the APP1 segment at *offset* in *stream* is NOT an
+        Exif segment, as determined by the ``'Exif\x00\x00'`` signature at
+        offset 2 in the segment.
+        """
+        stream.seek(offset+2)
+        exif_signature = stream.read(6)
+        return exif_signature != b'Exif\x00\x00'
+
+    @classmethod
+    def _tiff_from_exif_segment(cls, stream, offset, segment_length):
+        """
+        Return a |Tiff| instance parsed from the Exif APP1 segment of
+        *segment_length* at *offset* in *stream*.
+        """
+        raise NotImplementedError
 
 
 class _SofMarker(_Marker):

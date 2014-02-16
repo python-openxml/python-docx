@@ -17,8 +17,11 @@ from docx.image.jpeg import (
     _App0Marker, _App1Marker, Exif, Jfif, _JfifMarkers, Jpeg, _Marker,
     _MarkerFactory, _MarkerFinder, _MarkerParser, _SofMarker
 )
+from docx.image.tiff import Tiff
 
-from ..unitutil import class_mock, initializer_mock, instance_mock
+from ..unitutil import (
+    initializer_mock, class_mock, instance_mock, method_mock
+)
 
 
 class DescribeJpeg(object):
@@ -344,6 +347,66 @@ class Describe_App0Marker(object):
         return (
             stream_reader, marker_code, offset, _App0Marker__init_, length,
             density_units, x_density, y_density
+        )
+
+
+class Describe_App1Marker(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
+        (stream, marker_code, offset, _App1Marker__init_, length,
+         _tiff_from_exif_segment_, horz_dpi, vert_dpi) = from_stream_fixture
+        app1_marker = _App1Marker.from_stream(stream, marker_code, offset)
+        _tiff_from_exif_segment_.assert_called_once_with(
+            stream, offset, length
+        )
+        _App1Marker__init_.assert_called_once_with(
+            marker_code, offset, length, horz_dpi, vert_dpi
+        )
+        assert isinstance(app1_marker, _App1Marker)
+
+    def it_can_construct_from_non_Exif_APP1_segment(self, non_Exif_fixture):
+        stream, marker_code, offset = non_Exif_fixture[:3]
+        _App1Marker__init_, length = non_Exif_fixture[3:]
+        app1_marker = _App1Marker.from_stream(stream, marker_code, offset)
+        _App1Marker__init_.assert_called_once_with(
+            marker_code, offset, length, 72, 72
+        )
+        assert isinstance(app1_marker, _App1Marker)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def _App1Marker__init_(self, request):
+        return initializer_mock(request, _App1Marker)
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, request, _App1Marker__init_, _tiff_from_exif_segment_):
+        bytes_ = b'\x00\x42Exif\x00\x00'
+        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
+        horz_dpi, vert_dpi = 42, 24
+        return (
+            stream_reader, marker_code, offset, _App1Marker__init_, length,
+            _tiff_from_exif_segment_, horz_dpi, vert_dpi
+        )
+
+    @pytest.fixture
+    def non_Exif_fixture(self, request, _App1Marker__init_):
+        bytes_ = b'\x00\x42Foobar'
+        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
+        return stream_reader, marker_code, offset, _App1Marker__init_, length
+
+    @pytest.fixture
+    def tiff_(self, request):
+        return instance_mock(request, Tiff, horz_dpi=42, vert_dpi=24)
+
+    @pytest.fixture
+    def _tiff_from_exif_segment_(self, request, tiff_):
+        return method_mock(
+            request, _App1Marker, '_tiff_from_exif_segment',
+            return_value=tiff_
         )
 
 
