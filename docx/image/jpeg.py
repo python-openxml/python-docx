@@ -270,11 +270,14 @@ def _MarkerFactory(marker_code, stream, offset):
     in *stream* having *marker_code*.
     """
     if marker_code == JPEG_MARKER_CODE.APP0:
-        return _App0Marker.from_stream(stream, marker_code, offset)
+        marker_cls = _App0Marker
+    elif marker_code == JPEG_MARKER_CODE.APP1:
+        marker_cls = _App1Marker
     elif marker_code in JPEG_MARKER_CODE.SOF_MARKER_CODES:
-        return _SofMarker.from_stream(stream, marker_code, offset)
+        marker_cls = _SofMarker
     else:
-        return _Marker.from_stream(stream, marker_code, offset)
+        marker_cls = _Marker
+    return marker_cls.from_stream(stream, marker_code, offset)
 
 
 class _Marker(object):

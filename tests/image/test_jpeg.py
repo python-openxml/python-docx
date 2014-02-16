@@ -395,16 +395,19 @@ class Describe_MarkerFactory(object):
 
     @pytest.fixture(params=[
         JPEG_MARKER_CODE.APP0,
+        JPEG_MARKER_CODE.APP1,
         JPEG_MARKER_CODE.SOF0,
         JPEG_MARKER_CODE.SOF7,
         JPEG_MARKER_CODE.SOS,
     ])
     def call_fixture(
-            self, request, stream_, offset_, _App0Marker_, _SofMarker_,
-            _Marker_):
+            self, request, stream_, offset_, _App0Marker_, _App1Marker_,
+            _SofMarker_, _Marker_):
         marker_code = request.param
         if marker_code == JPEG_MARKER_CODE.APP0:
             marker_cls_ = _App0Marker_
+        elif marker_code == JPEG_MARKER_CODE.APP1:
+            marker_cls_ = _App1Marker_
         elif marker_code in JPEG_MARKER_CODE.SOF_MARKER_CODES:
             marker_cls_ = _SofMarker_
         else:
@@ -414,6 +417,10 @@ class Describe_MarkerFactory(object):
     @pytest.fixture
     def _App0Marker_(self, request):
         return class_mock(request, 'docx.image.jpeg._App0Marker')
+
+    @pytest.fixture
+    def _App1Marker_(self, request):
+        return class_mock(request, 'docx.image.jpeg._App1Marker')
 
     @pytest.fixture
     def _Marker_(self, request):
