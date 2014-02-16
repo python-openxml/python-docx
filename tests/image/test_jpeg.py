@@ -373,11 +373,27 @@ class Describe_App1Marker(object):
         )
         assert isinstance(app1_marker, _App1Marker)
 
+    def it_gets_a_tiff_from_its_Exif_segment_to_help_construct(
+            self, get_tiff_fixture):
+        stream, offset, length = get_tiff_fixture[:3]
+        BytesIO_, segment_bytes, substream_ = get_tiff_fixture[3:6]
+        Tiff_, tiff_ = get_tiff_fixture[6:]
+        tiff = _App1Marker._tiff_from_exif_segment(stream, offset, length)
+        BytesIO_.assert_called_once_with(segment_bytes)
+        Tiff_.from_stream.assert_called_once_with(substream_, None, None)
+        assert tiff is tiff_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def _App1Marker__init_(self, request):
         return initializer_mock(request, _App1Marker)
+
+    @pytest.fixture
+    def BytesIO_(self, request, substream_):
+        return class_mock(
+            request, 'docx.image.jpeg.BytesIO', return_value=substream_
+        )
 
     @pytest.fixture
     def from_stream_fixture(
@@ -392,11 +408,31 @@ class Describe_App1Marker(object):
         )
 
     @pytest.fixture
+    def get_tiff_fixture(self, request, BytesIO_, substream_, Tiff_, tiff_):
+        bytes_ = b'xfillerxMM\x00*\x00\x00\x00\x42'
+        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        offset, segment_length, segment_bytes = 0, 16, bytes_[8:]
+        return (
+            stream_reader, offset, segment_length, BytesIO_, segment_bytes,
+            substream_, Tiff_, tiff_
+        )
+
+    @pytest.fixture
     def non_Exif_fixture(self, request, _App1Marker__init_):
         bytes_ = b'\x00\x42Foobar'
         stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
         marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
         return stream_reader, marker_code, offset, _App1Marker__init_, length
+
+    @pytest.fixture
+    def substream_(self, request):
+        return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def Tiff_(self, request, tiff_):
+        Tiff_ = class_mock(request, 'docx.image.jpeg.Tiff')
+        Tiff_.from_stream.return_value = tiff_
+        return Tiff_
 
     @pytest.fixture
     def tiff_(self, request):

@@ -7,9 +7,11 @@ sub-formats.
 
 from __future__ import absolute_import, division, print_function
 
+from ..compat import BytesIO
 from .constants import JPEG_MARKER_CODE, MIME_TYPE
 from .helpers import BIG_ENDIAN, StreamReader
 from .image import Image
+from .tiff import Tiff
 
 
 class Jpeg(Image):
@@ -436,7 +438,11 @@ class _App1Marker(_Marker):
         Return a |Tiff| instance parsed from the Exif APP1 segment of
         *segment_length* at *offset* in *stream*.
         """
-        raise NotImplementedError
+        # wrap full segment in its own stream and feed to Tiff()
+        stream.seek(offset+8)
+        segment_bytes = stream.read(segment_length-8)
+        substream = BytesIO(segment_bytes)
+        return Tiff.from_stream(substream, None, None)
 
 
 class _SofMarker(_Marker):
