@@ -1,9 +1,8 @@
 Feature: Characterize an image file
-  In order add a picture to a document
+  In order to add a picture to a document
   As a programmer using the advanced python-docx API
   I need a way to determine the image content type and size
 
-  @wip
   Scenario Outline: Characterize an image file
     Given the image file '<filename>'
      When I construct an image using the image path
@@ -22,3 +21,4 @@ Feature: Characterize an image file
      | lena.tif         | image/tiff |  512 |  512 |    72    |    72    |
      | sample.tif       | image/tiff | 1600 | 2100 |   200    |   200    |
      | jpeg420exif.jpg  | image/jpeg | 2048 | 1536 |    72    |    72    |
+     | court-exif.jpg   | image/jpeg |  500 |  375 |   256    |   256    |
