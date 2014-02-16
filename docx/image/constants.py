@@ -72,7 +72,7 @@ class JPEG_MARKER_CODE(object):
         SOFE, SOFF
     )
 
-    names = {
+    marker_names = {
         b'\x00': 'UNKNOWN',
         b'\xC0': 'SOF0',
         b'\xC2': 'SOF2',

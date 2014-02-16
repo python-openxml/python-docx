@@ -14,7 +14,7 @@ from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE, MIME_TYPE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
-    _App0Marker, Jfif, _JfifMarkers, Jpeg, _Marker, _MarkerFactory,
+    _App0Marker, Exif, Jfif, _JfifMarkers, Jpeg, _Marker, _MarkerFactory,
     _MarkerFinder, _MarkerParser, _SofMarker
 )
 
@@ -24,8 +24,63 @@ from ..unitutil import class_mock, initializer_mock, instance_mock
 class DescribeJpeg(object):
 
     def it_knows_its_content_type(self):
-        jpeg = Jpeg(None, None, None, None, None)
+        jpeg = Jpeg(None, None, None, None, None, None)
         assert jpeg.content_type == MIME_TYPE.JPEG
+
+
+class DescribeExif(object):
+
+    def it_can_construct_from_an_exif_stream(self, from_stream_fixture):
+        # fixture ----------------------
+        (stream_, blob_, filename_, _JfifMarkers_, px_width, px_height,
+         horz_dpi, vert_dpi) = from_stream_fixture
+        # exercise ---------------------
+        exif = Exif.from_stream(stream_, blob_, filename_)
+        # verify -----------------------
+        _JfifMarkers_.from_stream.assert_called_once_with(stream_)
+        assert isinstance(exif, Exif)
+        assert exif.px_width == px_width
+        assert exif.px_height == px_height
+        assert exif.horz_dpi == horz_dpi
+        assert exif.vert_dpi == vert_dpi
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def blob_(self, request):
+        return instance_mock(request, bytes)
+
+    @pytest.fixture
+    def filename_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, stream_, blob_, filename_, _JfifMarkers_, jfif_markers_):
+        px_width, px_height = 111, 222
+        horz_dpi, vert_dpi = 333, 444
+        jfif_markers_.sof.px_width = px_width
+        jfif_markers_.sof.px_height = px_height
+        jfif_markers_.app1.horz_dpi = horz_dpi
+        jfif_markers_.app1.vert_dpi = vert_dpi
+        return (
+            stream_, blob_, filename_, _JfifMarkers_, px_width, px_height,
+            horz_dpi, vert_dpi
+        )
+
+    @pytest.fixture
+    def _JfifMarkers_(self, request, jfif_markers_):
+        _JfifMarkers_ = class_mock(request, 'docx.image.jpeg._JfifMarkers')
+        _JfifMarkers_.from_stream.return_value = jfif_markers_
+        return _JfifMarkers_
+
+    @pytest.fixture
+    def jfif_markers_(self, request):
+        return instance_mock(request, _JfifMarkers)
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
 
 
 class DescribeJfif(object):

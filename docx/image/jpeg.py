@@ -16,6 +16,11 @@ class Jpeg(Image):
     """
     Base class for JFIF and EXIF subclasses.
     """
+    def __init__(self, blob, filename, cx, cy, horz_dpi, vert_dpi):
+        super(Jpeg, self).__init__(blob, filename, cx, cy, attrs={})
+        self._horz_dpi = horz_dpi
+        self._vert_dpi = vert_dpi
+
     @property
     def content_type(self):
         """
@@ -23,34 +28,6 @@ class Jpeg(Image):
         JPEG images.
         """
         return MIME_TYPE.JPEG
-
-
-class Exif(Jpeg):
-    """
-    Image header parser for Exif image format
-    """
-
-
-class Jfif(Jpeg):
-    """
-    Image header parser for JFIF image format
-    """
-    def __init__(self, blob, filename, cx, cy, horz_dpi, vert_dpi):
-        super(Jfif, self).__init__(blob, filename, cx, cy, attrs={})
-        self._horz_dpi = horz_dpi
-        self._vert_dpi = vert_dpi
-
-    @classmethod
-    def from_stream(cls, stream, blob, filename):
-        """
-        Return a |Jfif| instance having header properties parsed from image
-        in *stream*.
-        """
-        markers = _JfifMarkers.from_stream(stream)
-        sof, app0 = markers.sof, markers.app0
-        cx, cy = sof.px_width, sof.px_height
-        horz_dpi, vert_dpi = app0.horz_dpi, app0.vert_dpi
-        return cls(blob, filename, cx, cy, horz_dpi, vert_dpi)
 
     @property
     def horz_dpi(self):
@@ -69,6 +46,44 @@ class Jfif(Jpeg):
         return self._vert_dpi
 
 
+class Exif(Jpeg):
+    """
+    Image header parser for Exif image format
+    """
+    @classmethod
+    def from_stream(cls, stream, blob, filename):
+        """
+        Return |Exif| instance having header properties parsed from Exif
+        image in *stream*.
+        """
+        markers = _JfifMarkers.from_stream(stream)
+        # print('\n%s' % markers)
+
+        px_width = markers.sof.px_width
+        px_height = markers.sof.px_height
+        horz_dpi = markers.app1.horz_dpi
+        vert_dpi = markers.app1.vert_dpi
+
+        return cls(blob, filename, px_width, px_height, horz_dpi, vert_dpi)
+
+
+class Jfif(Jpeg):
+    """
+    Image header parser for JFIF image format
+    """
+    @classmethod
+    def from_stream(cls, stream, blob, filename):
+        """
+        Return a |Jfif| instance having header properties parsed from image
+        in *stream*.
+        """
+        markers = _JfifMarkers.from_stream(stream)
+        sof, app0 = markers.sof, markers.app0
+        cx, cy = sof.px_width, sof.px_height
+        horz_dpi, vert_dpi = app0.horz_dpi, app0.vert_dpi
+        return cls(blob, filename, cx, cy, horz_dpi, vert_dpi)
+
+
 class _JfifMarkers(object):
     """
     Sequence of markers in a JPEG file, perhaps truncated at first SOS marker
@@ -77,6 +92,22 @@ class _JfifMarkers(object):
     def __init__(self, markers):
         super(_JfifMarkers, self).__init__()
         self._markers = list(markers)
+
+    def __str__(self):
+        """
+        Returns a tabular listing of the markers in this instance, which can
+        be handy for debugging and perhaps other uses.
+        """
+        header = ' offset  seglen  mc  name\n=======  ======  ==  ====='
+        tmpl = '%7d  %6d  %02X  %s'
+        rows = []
+        for marker in self._markers:
+            rows.append(tmpl % (
+                marker.offset, marker.segment_length,
+                ord(marker.marker_code), marker.name
+            ))
+        lines = [header] + rows
+        return '\n'.join(lines)
 
     @classmethod
     def from_stream(cls, stream):
@@ -101,6 +132,13 @@ class _JfifMarkers(object):
             if m.marker_code == JPEG_MARKER_CODE.APP0:
                 return m
         raise KeyError('no APP0 marker in image')
+
+    @property
+    def app1(self):
+        """
+        First APP1 marker in image markers.
+        """
+        raise NotImplementedError
 
     @property
     def sof(self):
@@ -266,6 +304,14 @@ class _Marker(object):
         ``'\xE0'`` for start of image (SOI).
         """
         return self._marker_code
+
+    @property
+    def name(self):
+        return JPEG_MARKER_CODE.marker_names[self._marker_code]
+
+    @property
+    def offset(self):
+        return self._offset
 
     @property
     def segment_length(self):
