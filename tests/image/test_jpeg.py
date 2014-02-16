@@ -14,8 +14,8 @@ from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE, MIME_TYPE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
-    _App0Marker, Exif, Jfif, _JfifMarkers, Jpeg, _Marker, _MarkerFactory,
-    _MarkerFinder, _MarkerParser, _SofMarker
+    _App0Marker, _App1Marker, Exif, Jfif, _JfifMarkers, Jpeg, _Marker,
+    _MarkerFactory, _MarkerFinder, _MarkerParser, _SofMarker
 )
 
 from ..unitutil import class_mock, initializer_mock, instance_mock
@@ -154,6 +154,11 @@ class Describe_JfifMarkers(object):
         app0 = jfif_markers.app0
         assert app0 is app0_
 
+    def it_can_find_the_APP1_marker(self, app1_fixture):
+        jfif_markers, app1_ = app1_fixture
+        app1 = jfif_markers.app1
+        assert app1 is app1_
+
     def it_raises_if_it_cant_find_the_APP0_marker(self, no_app0_fixture):
         jfif_markers = no_app0_fixture
         with pytest.raises(KeyError):
@@ -178,10 +183,22 @@ class Describe_JfifMarkers(object):
         )
 
     @pytest.fixture
+    def app1_(self, request):
+        return instance_mock(
+            request, _App1Marker, marker_code=JPEG_MARKER_CODE.APP1
+        )
+
+    @pytest.fixture
     def app0_fixture(self, soi_, app0_, eoi_):
         markers = (soi_, app0_, eoi_)
         jfif_markers = _JfifMarkers(markers)
         return jfif_markers, app0_
+
+    @pytest.fixture
+    def app1_fixture(self, soi_, app1_, eoi_):
+        markers = (soi_, app1_, eoi_)
+        jfif_markers = _JfifMarkers(markers)
+        return jfif_markers, app1_
 
     @pytest.fixture
     def eoi_(self, request):

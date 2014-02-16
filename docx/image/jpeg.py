@@ -138,7 +138,10 @@ class _JfifMarkers(object):
         """
         First APP1 marker in image markers.
         """
-        raise NotImplementedError
+        for m in self._markers:
+            if m.marker_code == JPEG_MARKER_CODE.APP1:
+                return m
+        raise KeyError('no APP1 marker in image')
 
     @property
     def sof(self):
@@ -385,6 +388,12 @@ class _App0Marker(_Marker):
             marker_code, offset, segment_length, density_units, x_density,
             y_density
         )
+
+
+class _App1Marker(_Marker):
+    """
+    Represents a JFIF APP1 (Exif) marker segment.
+    """
 
 
 class _SofMarker(_Marker):
