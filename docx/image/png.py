@@ -292,7 +292,14 @@ class _Chunk(object):
         """
         Return a default _Chunk instance that only knows its chunk type.
         """
-        raise NotImplementedError
+        return cls(chunk_type)
+
+    @property
+    def type_name(self):
+        """
+        The chunk type name, e.g. 'IHDR', 'pHYs', etc.
+        """
+        return self._chunk_type
 
 
 class _IHDRChunk(_Chunk):

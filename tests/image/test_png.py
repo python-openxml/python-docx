@@ -506,6 +506,15 @@ class Describe_ChunkFactory(object):
         return instance_mock(request, StreamReader)
 
 
+class Describe_Chunk(object):
+
+    def it_can_construct_from_a_stream_and_offset(self):
+        chunk_type = 'fOOB'
+        chunk = _Chunk.from_offset(chunk_type, None, None)
+        assert isinstance(chunk, _Chunk)
+        assert chunk.type_name == chunk_type
+
+
 class Describe_IHDRChunk(object):
 
     def it_can_construct_from_a_stream_and_offset(self, from_offset_fixture):
