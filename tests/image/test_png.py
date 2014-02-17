@@ -523,3 +523,30 @@ class Describe_IHDRChunk(object):
         stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
         offset, px_width, px_height = 0, 42, 24
         return stream_rdr, offset, px_width, px_height
+
+
+class Describe_pHYsChunk(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_offset_fixture):
+        stream_rdr, offset = from_offset_fixture[:2]
+        horz_px_per_unit, vert_px_per_unit = from_offset_fixture[2:4]
+        units_specifier = from_offset_fixture[4]
+        pHYs_chunk = _pHYsChunk.from_offset(None, stream_rdr, offset)
+        assert isinstance(pHYs_chunk, _pHYsChunk)
+        assert pHYs_chunk.horz_px_per_unit == horz_px_per_unit
+        assert pHYs_chunk.vert_px_per_unit == vert_px_per_unit
+        assert pHYs_chunk.units_specifier == units_specifier
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_offset_fixture(self):
+        bytes_ = b'\x00\x00\x00\x2A\x00\x00\x00\x18\x01'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        offset, horz_px_per_unit, vert_px_per_unit, units_specifier = (
+            0, 42, 24, 1
+        )
+        return (
+            stream_rdr, offset, horz_px_per_unit, vert_px_per_unit,
+            units_specifier
+        )

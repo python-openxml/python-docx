@@ -327,10 +327,34 @@ class _pHYsChunk(_Chunk):
     """
     pYHs chunk, contains the image dpi information
     """
+    def __init__(self, chunk_type, horz_px_per_unit, vert_px_per_unit,
+                 units_specifier):
+        super(_pHYsChunk, self).__init__(chunk_type)
+        self._horz_px_per_unit = horz_px_per_unit
+        self._vert_px_per_unit = vert_px_per_unit
+        self._units_specifier = units_specifier
+
     @classmethod
     def from_offset(cls, chunk_type, stream_rdr, offset):
         """
         Return a _pHYsChunk instance containing the image resolution
         extracted from the pHYs chunk in *stream* at *offset*.
         """
-        raise NotImplementedError
+        horz_px_per_unit = stream_rdr.read_long(offset)
+        vert_px_per_unit = stream_rdr.read_long(offset, 4)
+        units_specifier = stream_rdr.read_byte(offset, 8)
+        return cls(
+            chunk_type, horz_px_per_unit, vert_px_per_unit, units_specifier
+        )
+
+    @property
+    def horz_px_per_unit(self):
+        return self._horz_px_per_unit
+
+    @property
+    def vert_px_per_unit(self):
+        return self._vert_px_per_unit
+
+    @property
+    def units_specifier(self):
+        return self._units_specifier
