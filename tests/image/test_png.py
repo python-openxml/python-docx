@@ -266,6 +266,11 @@ class Describe_PngParser(object):
         _PngParser__init_.assert_called_once_with(chunks_)
         assert isinstance(png_parser, _PngParser)
 
+    def it_knows_the_image_width_and_height(self, dimensions_fixture):
+        png_parser, px_width, px_height = dimensions_fixture
+        assert png_parser.px_width == px_width
+        assert png_parser.px_height == px_height
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -277,6 +282,14 @@ class Describe_PngParser(object):
     @pytest.fixture
     def chunks_(self, request):
         return instance_mock(request, _Chunks)
+
+    @pytest.fixture
+    def dimensions_fixture(self, chunks_):
+        px_width, px_height = 12, 34
+        chunks_.IHDR.px_width = px_width
+        chunks_.IHDR.px_height = px_height
+        png_parser = _PngParser(chunks_)
+        return png_parser, px_width, px_height
 
     @pytest.fixture
     def parse_fixture(self, stream_, _Chunks_, _PngParser__init_, chunks_):

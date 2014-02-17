@@ -167,6 +167,10 @@ class _PngParser(object):
     Parses a PNG image stream to extract the image properties found in its
     chunks.
     """
+    def __init__(self, chunks):
+        super(_PngParser, self).__init__()
+        self._chunks = chunks
+
     @classmethod
     def parse(cls, stream):
         """
@@ -181,14 +185,16 @@ class _PngParser(object):
         """
         The number of pixels in each row of the image.
         """
-        raise NotImplementedError
+        IHDR = self._chunks.IHDR
+        return IHDR.px_width
 
     @property
     def px_height(self):
         """
         The number of stacked rows of pixels in the image.
         """
-        raise NotImplementedError
+        IHDR = self._chunks.IHDR
+        return IHDR.px_height
 
     @property
     def horz_dpi(self):
@@ -211,6 +217,10 @@ class _Chunks(object):
     """
     Collection of the chunks parsed from a PNG image stream
     """
+    def __init__(self, chunk_lst):
+        super(_Chunks, self).__init__()
+        self._chunks = chunk_lst
+
     @classmethod
     def from_stream(cls, stream):
         """
@@ -219,6 +229,13 @@ class _Chunks(object):
         chunk_parser = _ChunkParser.from_stream(stream)
         chunk_lst = [chunk for chunk in chunk_parser.iter_chunks()]
         return cls(chunk_lst)
+
+    @property
+    def IHDR(self):
+        """
+        IHDR chunk in PNG image
+        """
+        raise NotImplementedError
 
 
 class _ChunkParser(object):
