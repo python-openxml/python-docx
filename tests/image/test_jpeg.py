@@ -30,28 +30,41 @@ class DescribeJpeg(object):
         jpeg = Jpeg(None, None, None, None)
         assert jpeg.content_type == MIME_TYPE.JPEG
 
+    class DescribeExif(object):
 
-class DescribeExif(object):
+        def it_can_construct_from_an_exif_stream(self, from_exif_fixture):
+            # fixture ----------------------
+            stream_, _JfifMarkers_, cx, cy, horz_dpi, vert_dpi = (
+                from_exif_fixture
+            )
+            # exercise ---------------------
+            exif = Exif.from_stream(stream_)
+            # verify -----------------------
+            _JfifMarkers_.from_stream.assert_called_once_with(stream_)
+            assert isinstance(exif, Exif)
+            assert exif.px_width == cx
+            assert exif.px_height == cy
+            assert exif.horz_dpi == horz_dpi
+            assert exif.vert_dpi == vert_dpi
 
-    def it_can_construct_from_an_exif_stream(self, from_stream_fixture):
-        # fixture ----------------------
-        stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi = (
-            from_stream_fixture
-        )
-        # exercise ---------------------
-        exif = Exif.from_stream(stream_)
-        # verify -----------------------
-        _JfifMarkers_.from_stream.assert_called_once_with(stream_)
-        assert isinstance(exif, Exif)
-        assert exif.px_width == px_width
-        assert exif.px_height == px_height
-        assert exif.horz_dpi == horz_dpi
-        assert exif.vert_dpi == vert_dpi
+    class DescribeJfif(object):
+
+        def it_can_construct_from_a_jfif_stream(self, from_jfif_fixture):
+            stream_, _JfifMarkers_, cx, cy, horz_dpi, vert_dpi = (
+                from_jfif_fixture
+            )
+            jfif = Jfif.from_stream(stream_)
+            _JfifMarkers_.from_stream.assert_called_once_with(stream_)
+            assert isinstance(jfif, Jfif)
+            assert jfif.px_width == cx
+            assert jfif.px_height == cy
+            assert jfif.horz_dpi == horz_dpi
+            assert jfif.vert_dpi == vert_dpi
 
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def from_stream_fixture(self, stream_, _JfifMarkers_, jfif_markers_):
+    def from_exif_fixture(self, stream_, _JfifMarkers_, jfif_markers_):
         px_width, px_height = 111, 222
         horz_dpi, vert_dpi = 333, 444
         jfif_markers_.sof.px_width = px_width
@@ -63,38 +76,7 @@ class DescribeExif(object):
         )
 
     @pytest.fixture
-    def _JfifMarkers_(self, request, jfif_markers_):
-        _JfifMarkers_ = class_mock(request, 'docx.image.jpeg._JfifMarkers')
-        _JfifMarkers_.from_stream.return_value = jfif_markers_
-        return _JfifMarkers_
-
-    @pytest.fixture
-    def jfif_markers_(self, request):
-        return instance_mock(request, _JfifMarkers)
-
-    @pytest.fixture
-    def stream_(self, request):
-        return instance_mock(request, BytesIO)
-
-
-class DescribeJfif(object):
-
-    def it_can_construct_from_a_jfif_stream(self, from_stream_fixture):
-        stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi = (
-            from_stream_fixture
-        )
-        jfif = Jfif.from_stream(stream_)
-        _JfifMarkers_.from_stream.assert_called_once_with(stream_)
-        assert isinstance(jfif, Jfif)
-        assert jfif.px_width == px_width
-        assert jfif.px_height == px_height
-        assert jfif.horz_dpi == horz_dpi
-        assert jfif.vert_dpi == vert_dpi
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def from_stream_fixture(self, stream_, _JfifMarkers_, jfif_markers_):
+    def from_jfif_fixture(self, stream_, _JfifMarkers_, jfif_markers_):
         px_width, px_height = 111, 222
         horz_dpi, vert_dpi = 333, 444
         jfif_markers_.sof.px_width = px_width
