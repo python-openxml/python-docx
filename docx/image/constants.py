@@ -108,7 +108,6 @@ class TAG(object):
     """
     Identifiers for image attribute tags.
     """
-
     PX_WIDTH = 'px_width'
     PX_HEIGHT = 'px_height'
     HORZ_PX_PER_UNIT = 'horz_px_per_unit'

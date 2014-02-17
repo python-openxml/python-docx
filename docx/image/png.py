@@ -4,7 +4,6 @@ from __future__ import absolute_import, division, print_function
 
 from .constants import MIME_TYPE, TAG
 from .exceptions import InvalidImageStreamError
-from .helpers import StreamReader
 from .image import BaseImageHeader
 
 
@@ -17,10 +16,6 @@ class Png(BaseImageHeader):
     """
     Image header parser for PNG images
     """
-    def __init__(self, cx, cy, attrs):
-        super(Png, self).__init__(cx, cy, None, None)
-        self._attrs = attrs
-
     @property
     def content_type(self):
         """
@@ -35,10 +30,14 @@ class Png(BaseImageHeader):
         Return a |Png| instance having header properties parsed from image in
         *stream*.
         """
-        stream_rdr = StreamReader(stream, '>')
-        attrs = cls._parse_png_headers(stream_rdr)
-        cx, cy = attrs.pop('px_width'), attrs.pop('px_height')
-        return Png(cx, cy, attrs)
+        parser = _PngParser.parse(stream)
+
+        px_width = parser.px_width
+        px_height = parser.px_height
+        horz_dpi = parser.horz_dpi
+        vert_dpi = parser.vert_dpi
+
+        return cls(px_width, px_height, horz_dpi, vert_dpi)
 
     @property
     def horz_dpi(self):
@@ -160,3 +159,47 @@ class Png(BaseImageHeader):
             TAG.VERT_PX_PER_UNIT: stream.read_long(offset, 4),
             TAG.UNITS_SPECIFIER:  stream.read_byte(offset, 8)
         }
+
+
+class _PngParser(object):
+    """
+    Parses a PNG image stream to extract the image properties found in its
+    chunks.
+    """
+    @classmethod
+    def parse(cls, stream):
+        """
+        Return a |_PngParser| instance containing the header properties
+        parsed from the PNG image in *stream*.
+        """
+        raise NotImplementedError
+
+    @property
+    def px_width(self):
+        """
+        The number of pixels in each row of the image.
+        """
+        raise NotImplementedError
+
+    @property
+    def px_height(self):
+        """
+        The number of stacked rows of pixels in the image.
+        """
+        raise NotImplementedError
+
+    @property
+    def horz_dpi(self):
+        """
+        Integer dots per inch for the width of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        raise NotImplementedError
+
+    @property
+    def vert_dpi(self):
+        """
+        Integer dots per inch for the height of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        raise NotImplementedError
