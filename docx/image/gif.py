@@ -2,6 +2,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+from struct import Struct
+
+from .constants import MIME_TYPE
 from .image import BaseImageHeader
 
 
@@ -17,4 +20,21 @@ class Gif(BaseImageHeader):
         Return |Gif| instance having header properties parsed from GIF image
         in *stream*.
         """
-        return cls(None, None, None, None)
+        px_width, px_height = cls._dimensions_from_stream(stream)
+        return cls(px_width, px_height, 72, 72)
+
+    @property
+    def content_type(self):
+        """
+        MIME content type for this image, unconditionally `image/png` for
+        PNG images.
+        """
+        return MIME_TYPE.GIF
+
+    @classmethod
+    def _dimensions_from_stream(cls, stream):
+        stream.seek(6)
+        bytes_ = stream.read(4)
+        struct = Struct('<HH')
+        px_width, px_height = struct.unpack(bytes_)
+        return px_width, px_height

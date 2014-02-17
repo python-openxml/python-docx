@@ -22,3 +22,4 @@ Feature: Characterize an image file
      | sample.tif       | image/tiff | 1600 | 2100 |   200    |   200    |
      | jpeg420exif.jpg  | image/jpeg | 2048 | 1536 |    72    |    72    |
      | court-exif.jpg   | image/jpeg |  500 |  375 |   256    |   256    |
+     | lena.gif         | image/gif  |  256 |  256 |    72    |    72    |

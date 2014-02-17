@@ -97,6 +97,7 @@ class MIME_TYPE(object):
     """
     Image content types
     """
+    GIF = 'image/gif'
     JPEG = 'image/jpeg'
     PNG = 'image/png'
     TIFF = 'image/tiff'
