@@ -104,6 +104,15 @@ class MIME_TYPE(object):
     TIFF = 'image/tiff'
 
 
+class PNG_CHUNK_TYPE(object):
+    """
+    PNG chunk type names
+    """
+    IHDR = 'IHDR'
+    pHYs = 'pHYs'
+    IEND = 'IEND'
+
+
 class TAG(object):
     """
     Identifiers for image attribute tags.

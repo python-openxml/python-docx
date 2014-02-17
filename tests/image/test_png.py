@@ -8,14 +8,17 @@ from __future__ import absolute_import, print_function
 
 import pytest
 
+from mock import call
+
 from docx.compat import BytesIO
-from docx.image.constants import MIME_TYPE, TAG
+from docx.image.constants import MIME_TYPE, PNG_CHUNK_TYPE, TAG
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
-from docx.image.png import _Chunks, _ChunkParser, Png, _PngParser
+from docx.image.png import _Chunk, _Chunks, _ChunkParser, Png, _PngParser
 
 from ..unitutil import (
-    initializer_mock, class_mock, instance_mock, method_mock, test_file
+    function_mock, class_mock, initializer_mock, instance_mock, method_mock,
+    test_file
 )
 
 
@@ -338,7 +341,44 @@ class Describe_ChunkParser(object):
         _ChunkParser__init_.assert_called_once_with(stream_rdr_)
         assert isinstance(chunk_parser, _ChunkParser)
 
+    def it_can_iterate_over_the_chunks_in_its_png_stream(self, iter_fixture):
+        # fixture ----------------------
+        chunk_parser, _iter_chunk_offsets_, _ChunkFactory_ = iter_fixture[:3]
+        stream_rdr_, offsets, chunk_lst = iter_fixture[3:]
+        # exercise ---------------------
+        chunks = [chunk for chunk in chunk_parser.iter_chunks()]
+        # verify -----------------------
+        _iter_chunk_offsets_.assert_called_once_with()
+        assert _ChunkFactory_.call_args_list == [
+            call(PNG_CHUNK_TYPE.IHDR, stream_rdr_, offsets[0]),
+            call(PNG_CHUNK_TYPE.pHYs, stream_rdr_, offsets[1]),
+        ]
+        assert chunks == chunk_lst
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def chunk_(self, request):
+        return instance_mock(request, _Chunk)
+
+    @pytest.fixture
+    def chunk_2_(self, request):
+        return instance_mock(request, _Chunk)
+
+    @pytest.fixture
+    def _ChunkFactory_(self, request, chunk_lst_):
+        return function_mock(
+            request, 'docx.image.png._ChunkFactory',
+            side_effect=chunk_lst_
+        )
+
+    @pytest.fixture
+    def chunk_lst_(self, chunk_, chunk_2_):
+        return [chunk_, chunk_2_]
+
+    @pytest.fixture
+    def _ChunkParser__init_(self, request):
+        return initializer_mock(request, _ChunkParser)
 
     @pytest.fixture
     def from_stream_fixture(
@@ -346,8 +386,27 @@ class Describe_ChunkParser(object):
         return stream_, StreamReader_, stream_rdr_, _ChunkParser__init_
 
     @pytest.fixture
-    def _ChunkParser__init_(self, request):
-        return initializer_mock(request, _ChunkParser)
+    def _iter_chunk_offsets_(self, request):
+        chunk_offsets = (
+            (PNG_CHUNK_TYPE.IHDR, 2),
+            (PNG_CHUNK_TYPE.pHYs, 4),
+        )
+        return method_mock(
+            request, _ChunkParser, '_iter_chunk_offsets',
+            return_value=iter(chunk_offsets)
+        )
+
+    @pytest.fixture
+    def iter_fixture(
+            self, _iter_chunk_offsets_, _ChunkFactory_, stream_rdr_, chunk_,
+            chunk_2_):
+        chunk_parser = _ChunkParser(stream_rdr_)
+        offsets = [2, 4, 6]
+        chunk_lst = [chunk_, chunk_2_]
+        return (
+            chunk_parser, _iter_chunk_offsets_, _ChunkFactory_, stream_rdr_,
+            offsets, chunk_lst
+        )
 
     @pytest.fixture
     def StreamReader_(self, request, stream_rdr_):

@@ -243,4 +243,29 @@ class _ChunkParser(object):
         Generate a |_Chunk| subclass instance for each chunk in this parser's
         PNG stream, in the order encountered in the stream.
         """
+        for chunk_type, offset in self._iter_chunk_offsets():
+            chunk = _ChunkFactory(chunk_type, self._stream_rdr, offset)
+            yield chunk
+
+    def _iter_chunk_offsets(self):
+        """
+        Generate a (chunk_type, chunk_offset) 2-tuple for each of the chunks
+        in the PNG image stream. Iteration stops after the IEND chunk is
+        returned.
+        """
         raise NotImplementedError
+
+
+def _ChunkFactory(chunk_type, stream_rdr, offset):
+    """
+    Return a |_Chunk| subclass instance appropriate to *chunk_type* parsed
+    from *stream_rdr* at *offset*.
+    """
+    raise NotImplementedError
+
+
+class _Chunk(object):
+    """
+    Base class for specific chunk types. Also serves as the default chunk
+    type.
+    """
