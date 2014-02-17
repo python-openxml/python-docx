@@ -283,6 +283,10 @@ class _Chunk(object):
     Base class for specific chunk types. Also serves as the default chunk
     type.
     """
+    def __init__(self, chunk_type):
+        super(_Chunk, self).__init__()
+        self._chunk_type = chunk_type
+
     @classmethod
     def from_offset(cls, chunk_type, stream_rdr, offset):
         """
@@ -295,13 +299,28 @@ class _IHDRChunk(_Chunk):
     """
     IHDR chunk, contains the image dimensions
     """
+    def __init__(self, chunk_type, px_width, px_height):
+        super(_IHDRChunk, self).__init__(chunk_type)
+        self._px_width = px_width
+        self._px_height = px_height
+
     @classmethod
     def from_offset(cls, chunk_type, stream_rdr, offset):
         """
         Return an _IHDRChunk instance containing the image dimensions
         extracted from the IHDR chunk in *stream* at *offset*.
         """
-        raise NotImplementedError
+        px_width = stream_rdr.read_long(offset)
+        px_height = stream_rdr.read_long(offset, 4)
+        return cls(chunk_type, px_width, px_height)
+
+    @property
+    def px_width(self):
+        return self._px_width
+
+    @property
+    def px_height(self):
+        return self._px_height
 
 
 class _pHYsChunk(_Chunk):

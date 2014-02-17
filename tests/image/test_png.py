@@ -504,3 +504,22 @@ class Describe_ChunkFactory(object):
     @pytest.fixture
     def stream_rdr_(self, request):
         return instance_mock(request, StreamReader)
+
+
+class Describe_IHDRChunk(object):
+
+    def it_can_construct_from_a_stream_and_offset(self, from_offset_fixture):
+        stream_rdr, offset, px_width, px_height = from_offset_fixture
+        ihdr_chunk = _IHDRChunk.from_offset(None, stream_rdr, offset)
+        assert isinstance(ihdr_chunk, _IHDRChunk)
+        assert ihdr_chunk.px_width == px_width
+        assert ihdr_chunk.px_height == px_height
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_offset_fixture(self):
+        bytes_ = b'\x00\x00\x00\x2A\x00\x00\x00\x18'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        offset, px_width, px_height = 0, 42, 24
+        return stream_rdr, offset, px_width, px_height
