@@ -325,3 +325,40 @@ class Describe_Chunks(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+
+class Describe_ChunkParser(object):
+
+    def it_can_construct_from_a_stream(self, from_stream_fixture):
+        stream_, StreamReader_, stream_rdr_, _ChunkParser__init_ = (
+            from_stream_fixture
+        )
+        chunk_parser = _ChunkParser.from_stream(stream_)
+        StreamReader_.assert_called_once_with(stream_, BIG_ENDIAN)
+        _ChunkParser__init_.assert_called_once_with(stream_rdr_)
+        assert isinstance(chunk_parser, _ChunkParser)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, stream_, StreamReader_, stream_rdr_, _ChunkParser__init_):
+        return stream_, StreamReader_, stream_rdr_, _ChunkParser__init_
+
+    @pytest.fixture
+    def _ChunkParser__init_(self, request):
+        return initializer_mock(request, _ChunkParser)
+
+    @pytest.fixture
+    def StreamReader_(self, request, stream_rdr_):
+        return class_mock(
+            request, 'docx.image.png.StreamReader', return_value=stream_rdr_
+        )
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def stream_rdr_(self, request):
+        return instance_mock(request, StreamReader)

@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 from .constants import MIME_TYPE, TAG
 from .exceptions import InvalidImageStreamError
+from .helpers import BIG_ENDIAN, StreamReader
 from .image import BaseImageHeader
 
 
@@ -224,13 +225,18 @@ class _ChunkParser(object):
     """
     Extracts chunks from a PNG image stream
     """
+    def __init__(self, stream_rdr):
+        super(_ChunkParser, self).__init__()
+        self._stream_rdr = stream_rdr
+
     @classmethod
     def from_stream(cls, stream):
         """
         Return a |_ChunkParser| instance that can extract the chunks from the
         PNG image in *stream*.
         """
-        raise NotImplementedError
+        stream_rdr = StreamReader(stream, BIG_ENDIAN)
+        return cls(stream_rdr)
 
     def iter_chunks(self):
         """
