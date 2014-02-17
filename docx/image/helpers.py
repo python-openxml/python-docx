@@ -31,7 +31,7 @@ class StreamReader(object):
         """
         return self._stream.read(count)
 
-    def read_byte(self, base=None, offset=0):
+    def read_byte(self, base, offset=0):
         """
         Return the int value of the byte at the file position defined by
         self._base_offset + *base* + *offset*. If *base* is None, the byte is
@@ -40,7 +40,7 @@ class StreamReader(object):
         fmt = 'B'
         return self._read_int(fmt, base, offset)
 
-    def read_long(self, base=None, offset=0):
+    def read_long(self, base, offset=0):
         """
         Return the int value of the four bytes at the file position defined by
         self._base_offset + *base* + *offset*. If *base* is None, the long is
@@ -50,7 +50,7 @@ class StreamReader(object):
         fmt = '<L' if self._byte_order is LITTLE_ENDIAN else '>L'
         return self._read_int(fmt, base, offset)
 
-    def read_short(self, base=None, offset=0):
+    def read_short(self, base, offset=0):
         """
         Return the int value of the two bytes at the file position determined
         by *base* and *offset*, similarly to ``read_long()`` above.
@@ -90,8 +90,6 @@ class StreamReader(object):
 
     def _read_int(self, fmt, base, offset):
         struct = Struct(fmt)
-        if base is None:
-            base = self._stream.tell() - self._base_offset
         return self._unpack_item(struct, base, offset)
 
     def _unpack_item(self, struct, base, offset):

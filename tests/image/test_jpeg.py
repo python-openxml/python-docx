@@ -128,6 +128,11 @@ class Describe_JfifMarkers(object):
         with pytest.raises(KeyError):
             jfif_markers.app0
 
+    def it_raises_if_it_cant_find_the_APP1_marker(self, no_app1_fixture):
+        jfif_markers = no_app1_fixture
+        with pytest.raises(KeyError):
+            jfif_markers.app1
+
     def it_can_find_the_SOF_marker(self, sof_fixture):
         jfif_markers, sof_ = sof_fixture
         sof = jfif_markers.sof
@@ -199,6 +204,11 @@ class Describe_JfifMarkers(object):
 
     @pytest.fixture
     def no_app0_fixture(self, soi_, eoi_):
+        markers = (soi_, eoi_)
+        return _JfifMarkers(markers)
+
+    @pytest.fixture
+    def no_app1_fixture(self, soi_, eoi_):
         markers = (soi_, eoi_)
         return _JfifMarkers(markers)
 

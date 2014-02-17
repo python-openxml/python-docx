@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function
 import pytest
 
 from docx.compat import BytesIO
-from docx.image.constants import TAG
+from docx.image.constants import MIME_TYPE, TAG
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.png import Png
@@ -70,6 +70,10 @@ class DescribePng(object):
         stream, offset, expected_attrs = parse_pHYs_fixture
         attrs = Png._parse_pHYs(stream, offset)
         assert attrs == expected_attrs
+
+    def it_knows_its_content_type(self):
+        png = Png(None, None, None)
+        assert png.content_type == MIME_TYPE.PNG
 
     def it_knows_its_dpi(self, dpi_fixture):
         png, expected_dpi = dpi_fixture

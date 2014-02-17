@@ -197,6 +197,11 @@ class Describe_ImageHeaderFactory(object):
 
 class DescribeBaseImageHeader(object):
 
+    def it_defines_content_type_as_an_abstract_property(self):
+        base_image_header = BaseImageHeader(None, None, None, None)
+        with pytest.raises(NotImplementedError):
+            base_image_header.content_type
+
     def it_knows_the_image_dimensions(self):
         px_width, px_height = 42, 24
         image_header = BaseImageHeader(px_width, px_height, None, None)

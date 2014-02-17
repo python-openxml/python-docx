@@ -77,7 +77,7 @@ class _JfifMarkers(object):
         super(_JfifMarkers, self).__init__()
         self._markers = list(markers)
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         """
         Returns a tabular listing of the markers in this instance, which can
         be handy for debugging and perhaps other uses.
@@ -243,7 +243,7 @@ class _MarkerFinder(object):
         at end of file.
         """
         byte_ = self._stream.read(1)
-        if not byte_:
+        if not byte_:  # pragma: no cover
             raise Exception('unexpected end of file')
         return byte_
 
@@ -296,11 +296,11 @@ class _Marker(object):
         return self._marker_code
 
     @property
-    def name(self):
+    def name(self):  # pragma: no cover
         return JPEG_MARKER_CODE.marker_names[self._marker_code]
 
     @property
-    def offset(self):
+    def offset(self):  # pragma: no cover
         return self._offset
 
     @property
