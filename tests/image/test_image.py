@@ -9,11 +9,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.compat import BytesIO
-from docx.image import image_cls_that_can_parse, Image_OLD
+from docx.image import Image_OLD
 from docx.image.bmp import Bmp
 from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
-from docx.image.image import BaseImageHeader, Image
+from docx.image.image import BaseImageHeader, Image, _ImageHeaderFactory
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.image.tiff import Tiff
@@ -23,39 +23,6 @@ from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, method_mock,
     test_file
 )
-
-
-class Describe_image_cls_that_can_parse(object):
-
-    def it_can_recognize_an_image_stream(self, image_cls_lookup_fixture):
-        stream, expected_class = image_cls_lookup_fixture
-        ImageSubclass = image_cls_that_can_parse(stream)
-        assert ImageSubclass is expected_class
-
-    def it_raises_on_unrecognized_image_stream(self):
-        stream = BytesIO(b'foobar 666 not an image stream')
-        with pytest.raises(UnrecognizedImageError):
-            image_cls_that_can_parse(stream)
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture(params=[
-        ('python-icon.png',   Png),
-        ('python-icon.jpeg',  Jfif),
-        ('exif-420-dpi.jpg',  Exif),
-        ('sonic.gif',         Gif),
-        ('72-dpi.tiff',       Tiff),
-        ('little-endian.tif', Tiff),
-        ('python.bmp',        Bmp),
-    ])
-    def image_cls_lookup_fixture(self, request):
-        image_filename, expected_class = request.param
-        image_path = test_file(image_filename)
-        with open(image_path, 'rb') as f:
-            blob = f.read()
-        image_stream = BytesIO(blob)
-        image_stream.seek(666)
-        return image_stream, expected_class
 
 
 class DescribeImage(object):
@@ -86,6 +53,23 @@ class DescribeImage(object):
         Image__init_.assert_called_once_with(blob_, filename_, image_header_)
         assert isinstance(image, Image)
 
+    def it_knows_the_image_content_type(self, content_type_fixture):
+        image_header_, content_type = content_type_fixture
+        image = Image(None, None, image_header_)
+        assert image.content_type == content_type
+
+    def it_knows_the_image_dimensions(self, dimensions_fixture):
+        image_header_, px_width, px_height = dimensions_fixture
+        image = Image(None, None, image_header_)
+        assert image.px_width == px_width
+        assert image.px_height == px_height
+
+    def it_knows_the_horz_and_vert_dpi_of_the_image(self, dpi_fixture):
+        image_header_, horz_dpi, vert_dpi = dpi_fixture
+        image = Image(None, None, image_header_)
+        assert image.horz_dpi == horz_dpi
+        assert image.vert_dpi == vert_dpi
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -97,6 +81,26 @@ class DescribeImage(object):
         return class_mock(
             request, 'docx.image.image.BytesIO', return_value=stream_
         )
+
+    @pytest.fixture
+    def content_type_fixture(self, image_header_):
+        content_type = 'image/foobar'
+        image_header_.content_type = content_type
+        return image_header_, content_type
+
+    @pytest.fixture
+    def dimensions_fixture(self, image_header_):
+        px_width, px_height = 111, 222
+        image_header_.px_width = px_width
+        image_header_.px_height = px_height
+        return image_header_, px_width, px_height
+
+    @pytest.fixture
+    def dpi_fixture(self, image_header_):
+        horz_dpi, vert_dpi = 333, 444
+        image_header_.horz_dpi = horz_dpi
+        image_header_.vert_dpi = vert_dpi
+        return image_header_, horz_dpi, vert_dpi
 
     @pytest.fixture
     def filename_(self, request):
@@ -155,6 +159,40 @@ class DescribeImage(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+
+class Describe_ImageHeaderFactory(object):
+
+    def it_constructs_the_right_class_for_a_given_image_stream(
+            self, call_fixture):
+        stream, expected_class = call_fixture
+        image_header = _ImageHeaderFactory(stream)
+        assert isinstance(image_header, expected_class)
+
+    def it_raises_on_unrecognized_image_stream(self):
+        stream = BytesIO(b'foobar 666 not an image stream')
+        with pytest.raises(UnrecognizedImageError):
+            _ImageHeaderFactory(stream)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('python-icon.png',   Png),
+        ('python-icon.jpeg',  Jfif),
+        ('exif-420-dpi.jpg',  Exif),
+        ('sonic.gif',         Gif),
+        ('72-dpi.tiff',       Tiff),
+        ('little-endian.tif', Tiff),
+        ('python.bmp',        Bmp),
+    ])
+    def call_fixture(self, request):
+        image_filename, expected_class = request.param
+        image_path = test_file(image_filename)
+        with open(image_path, 'rb') as f:
+            blob = f.read()
+        image_stream = BytesIO(blob)
+        image_stream.seek(666)
+        return image_stream, expected_class
 
 
 class DescribeBaseImageHeader(object):

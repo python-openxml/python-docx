@@ -23,14 +23,14 @@ class DescribePng(object):
 
     def it_can_construct_from_a_png_stream(self, from_stream_fixture):
         # fixture ----------------------
-        (stream_, blob_, filename_, StreamReader_, _parse_png_headers_,
-         stream_rdr_, Png__init__, cx, cy, attrs, png_) = from_stream_fixture
+        (stream_, StreamReader_, _parse_png_headers_, stream_rdr_,
+         Png__init__, cx, cy, attrs, png_) = from_stream_fixture
         # exercise ---------------------
-        png = Png.from_stream(stream_, blob_, filename_)
+        png = Png.from_stream(stream_)
         # verify -----------------------
         StreamReader_.assert_called_once_with(stream_, '>')
         _parse_png_headers_.assert_called_once_with(stream_rdr_)
-        Png__init__.assert_called_once_with(blob_, filename_, cx, cy, attrs)
+        Png__init__.assert_called_once_with(cx, cy, attrs)
         assert isinstance(png, Png)
 
     def it_parses_PNG_headers_to_access_attrs(self, parse_png_fixture):
@@ -86,10 +86,6 @@ class DescribePng(object):
     def attrs_(self, request):
         return instance_mock(request, dict)
 
-    @pytest.fixture
-    def blob_(self, request):
-        return instance_mock(request, bytes)
-
     @pytest.fixture(params=[
         ('150-dpi.png', {
             'IHDR': 16, 'pHYs': 41, 'iCCP': 62, 'cHRM': 2713, 'IDAT': 2757,
@@ -121,22 +117,18 @@ class DescribePng(object):
             TAG.VERT_PX_PER_UNIT: px_per_unit,
             TAG.UNITS_SPECIFIER:  units_specifier
         }
-        png = Png(None, None, None, None, attrs)
+        png = Png(None, None, attrs)
         return png, expected_dpi
 
     @pytest.fixture
-    def filename_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
     def from_stream_fixture(
-            self, stream_, blob_, filename_, StreamReader_,
-            _parse_png_headers_, stream_rdr_, Png__init__, attrs, png_):
+            self, stream_, StreamReader_, _parse_png_headers_, stream_rdr_,
+            Png__init__, attrs, png_):
         cx, cy = 42, 24
         attrs.update({'px_width': cx, 'px_height': cy})
         return (
-            stream_, blob_, filename_, StreamReader_, _parse_png_headers_,
-            stream_rdr_, Png__init__, cx, cy, attrs, png_
+            stream_, StreamReader_, _parse_png_headers_, stream_rdr_,
+            Png__init__, cx, cy, attrs, png_
         )
 
     @pytest.fixture

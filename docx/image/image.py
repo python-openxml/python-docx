@@ -9,7 +9,8 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-from docx.compat import BytesIO, is_string
+from ..compat import BytesIO, is_string
+from .exceptions import UnrecognizedImageError
 
 
 class Image(object):
@@ -43,18 +44,42 @@ class Image(object):
         return cls._from_stream(stream, blob, filename)
 
     @property
+    def content_type(self):
+        """
+        MIME content type for this image, e.g. ``'image/jpeg'`` for a JPEG
+        image
+        """
+        return self._image_header.content_type
+
+    @property
     def px_width(self):
         """
         The horizontal pixel dimension of the image
         """
-        return self._px_width
+        return self._image_header.px_width
 
     @property
     def px_height(self):
         """
         The vertical pixel dimension of the image
         """
-        return self._px_height
+        return self._image_header.px_height
+
+    @property
+    def horz_dpi(self):
+        """
+        Integer dots per inch for the width of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        return self._image_header.horz_dpi
+
+    @property
+    def vert_dpi(self):
+        """
+        Integer dots per inch for the height of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        return self._image_header.vert_dpi
 
     @classmethod
     def _from_stream(cls, stream, blob, filename=None):
@@ -71,7 +96,19 @@ def _ImageHeaderFactory(stream):
     Return a |BaseImageHeader| subclass instance that knows how to parse the
     headers of the image in *stream*.
     """
-    raise NotImplementedError
+    from docx.image import SIGNATURES
+
+    def read_32(stream):
+        stream.seek(0)
+        return stream.read(32)
+
+    header = read_32(stream)
+    for cls, offset, signature_bytes in SIGNATURES:
+        end = offset + len(signature_bytes)
+        found_bytes = header[offset:end]
+        if found_bytes == signature_bytes:
+            return cls.from_stream(stream)
+    raise UnrecognizedImageError
 
 
 class BaseImageHeader(object):
@@ -83,6 +120,16 @@ class BaseImageHeader(object):
         self._px_height = px_height
         self._horz_dpi = horz_dpi
         self._vert_dpi = vert_dpi
+
+    @property
+    def content_type(self):
+        """
+        Abstract property definition, must be implemented by all subclasses.
+        """
+        raise NotImplementedError(
+            'content_type property must be implemented by all subclasses of '
+            'BaseImageHeader'
+        )
 
     @property
     def px_width(self):

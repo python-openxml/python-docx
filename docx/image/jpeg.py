@@ -32,7 +32,7 @@ class Exif(Jpeg):
     Image header parser for Exif image format
     """
     @classmethod
-    def from_stream(cls, stream, blob, filename):
+    def from_stream(cls, stream):
         """
         Return |Exif| instance having header properties parsed from Exif
         image in *stream*.
@@ -53,7 +53,7 @@ class Jfif(Jpeg):
     Image header parser for JFIF image format
     """
     @classmethod
-    def from_stream(cls, stream, blob, filename):
+    def from_stream(cls, stream):
         """
         Return a |Jfif| instance having header properties parsed from image
         in *stream*.
@@ -445,7 +445,7 @@ class _App1Marker(_Marker):
         stream.seek(offset+8)
         segment_bytes = stream.read(segment_length-8)
         substream = BytesIO(segment_bytes)
-        return Tiff.from_stream(substream, None, None)
+        return Tiff.from_stream(substream)
 
 
 class _SofMarker(_Marker):

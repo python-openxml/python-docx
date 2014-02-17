@@ -19,7 +19,6 @@ except ImportError:
 
 from docx.compat import BytesIO, is_string
 from docx.image.bmp import Bmp
-from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
@@ -39,24 +38,6 @@ SIGNATURES = (
     (Tiff, 0, b'II*\x00'),  # little-endian (Intel) TIFF
     (Bmp,  0, b'BM'),
 )
-
-
-def image_cls_that_can_parse(stream):
-    """
-    Return the |Image| subclass that can parse the headers of the image file
-    contained in *stream*.
-    """
-    def read_32(stream):
-        stream.seek(0)
-        return stream.read(32)
-
-    header = read_32(stream)
-    for cls, offset, signature_bytes in SIGNATURES:
-        end = offset + len(signature_bytes)
-        found_bytes = header[offset:end]
-        if found_bytes == signature_bytes:
-            return cls
-    raise UnrecognizedImageError
 
 
 class Image_OLD(object):

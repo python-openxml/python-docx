@@ -17,7 +17,7 @@ class Png(BaseImageHeader):
     """
     Image header parser for PNG images
     """
-    def __init__(self, blob, filename, cx, cy, attrs):
+    def __init__(self, cx, cy, attrs):
         super(Png, self).__init__(cx, cy, None, None)
         self._attrs = attrs
 
@@ -30,7 +30,7 @@ class Png(BaseImageHeader):
         return MIME_TYPE.PNG
 
     @classmethod
-    def from_stream(cls, stream, blob, filename):
+    def from_stream(cls, stream):
         """
         Return a |Png| instance having header properties parsed from image in
         *stream*.
@@ -38,7 +38,7 @@ class Png(BaseImageHeader):
         stream_rdr = StreamReader(stream, '>')
         attrs = cls._parse_png_headers(stream_rdr)
         cx, cy = attrs.pop('px_width'), attrs.pop('px_height')
-        return Png(blob, filename, cx, cy, attrs)
+        return Png(cx, cy, attrs)
 
     @property
     def horz_dpi(self):

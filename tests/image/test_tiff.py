@@ -27,9 +27,9 @@ from ..unitutil import (
 class DescribeTiff(object):
 
     def it_can_construct_from_a_tiff_stream(self, from_stream_fixture):
-        (stream_, blob_, filename_, _TiffParser_, Tiff__init_, px_width,
-         px_height, horz_dpi, vert_dpi) = from_stream_fixture
-        tiff = Tiff.from_stream(stream_, blob_, filename_)
+        (stream_, _TiffParser_, Tiff__init_, px_width, px_height, horz_dpi,
+         vert_dpi) = from_stream_fixture
+        tiff = Tiff.from_stream(stream_)
         _TiffParser_.parse.assert_called_once_with(stream_)
         Tiff__init_.assert_called_once_with(
             px_width, px_height, horz_dpi, vert_dpi
@@ -43,17 +43,8 @@ class DescribeTiff(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def blob_(self, request):
-        return instance_mock(request, bytes)
-
-    @pytest.fixture
-    def filename_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
     def from_stream_fixture(
-            self, stream_, blob_, filename_, _TiffParser_, tiff_parser_,
-            Tiff__init_):
+            self, stream_, _TiffParser_, tiff_parser_, Tiff__init_):
         px_width, px_height = 111, 222
         horz_dpi, vert_dpi = 333, 444
         tiff_parser_.px_width = px_width
@@ -61,8 +52,8 @@ class DescribeTiff(object):
         tiff_parser_.horz_dpi = horz_dpi
         tiff_parser_.vert_dpi = vert_dpi
         return (
-            stream_, blob_, filename_, _TiffParser_, Tiff__init_, px_width,
-            px_height, horz_dpi, vert_dpi
+            stream_, _TiffParser_, Tiff__init_, px_width, px_height,
+            horz_dpi, vert_dpi
         )
 
     @pytest.fixture

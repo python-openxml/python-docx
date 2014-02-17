@@ -35,10 +35,11 @@ class DescribeExif(object):
 
     def it_can_construct_from_an_exif_stream(self, from_stream_fixture):
         # fixture ----------------------
-        (stream_, blob_, filename_, _JfifMarkers_, px_width, px_height,
-         horz_dpi, vert_dpi) = from_stream_fixture
+        stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi = (
+            from_stream_fixture
+        )
         # exercise ---------------------
-        exif = Exif.from_stream(stream_, blob_, filename_)
+        exif = Exif.from_stream(stream_)
         # verify -----------------------
         _JfifMarkers_.from_stream.assert_called_once_with(stream_)
         assert isinstance(exif, Exif)
@@ -50,16 +51,7 @@ class DescribeExif(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def blob_(self, request):
-        return instance_mock(request, bytes)
-
-    @pytest.fixture
-    def filename_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, blob_, filename_, _JfifMarkers_, jfif_markers_):
+    def from_stream_fixture(self, stream_, _JfifMarkers_, jfif_markers_):
         px_width, px_height = 111, 222
         horz_dpi, vert_dpi = 333, 444
         jfif_markers_.sof.px_width = px_width
@@ -67,8 +59,7 @@ class DescribeExif(object):
         jfif_markers_.app1.horz_dpi = horz_dpi
         jfif_markers_.app1.vert_dpi = vert_dpi
         return (
-            stream_, blob_, filename_, _JfifMarkers_, px_width, px_height,
-            horz_dpi, vert_dpi
+            stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi
         )
 
     @pytest.fixture
@@ -89,12 +80,10 @@ class DescribeExif(object):
 class DescribeJfif(object):
 
     def it_can_construct_from_a_jfif_stream(self, from_stream_fixture):
-        # fixture ----------------------
-        (stream_, blob_, filename_, _JfifMarkers_, px_width, px_height,
-         horz_dpi, vert_dpi) = from_stream_fixture
-        # exercise ---------------------
-        jfif = Jfif.from_stream(stream_, blob_, filename_)
-        # verify -----------------------
+        stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi = (
+            from_stream_fixture
+        )
+        jfif = Jfif.from_stream(stream_)
         _JfifMarkers_.from_stream.assert_called_once_with(stream_)
         assert isinstance(jfif, Jfif)
         assert jfif.px_width == px_width
@@ -105,16 +94,7 @@ class DescribeJfif(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def blob_(self, request):
-        return instance_mock(request, bytes)
-
-    @pytest.fixture
-    def filename_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, blob_, filename_, _JfifMarkers_, jfif_markers_):
+    def from_stream_fixture(self, stream_, _JfifMarkers_, jfif_markers_):
         px_width, px_height = 111, 222
         horz_dpi, vert_dpi = 333, 444
         jfif_markers_.sof.px_width = px_width
@@ -122,8 +102,7 @@ class DescribeJfif(object):
         jfif_markers_.app0.horz_dpi = horz_dpi
         jfif_markers_.app0.vert_dpi = vert_dpi
         return (
-            stream_, blob_, filename_, _JfifMarkers_, px_width, px_height,
-            horz_dpi, vert_dpi
+            stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi
         )
 
     @pytest.fixture
@@ -380,7 +359,7 @@ class Describe_App1Marker(object):
         Tiff_, tiff_ = get_tiff_fixture[6:]
         tiff = _App1Marker._tiff_from_exif_segment(stream, offset, length)
         BytesIO_.assert_called_once_with(segment_bytes)
-        Tiff_.from_stream.assert_called_once_with(substream_, None, None)
+        Tiff_.from_stream.assert_called_once_with(substream_)
         assert tiff is tiff_
 
     def it_knows_the_image_dpi(self):

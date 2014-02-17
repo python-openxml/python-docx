@@ -21,7 +21,7 @@ class Tiff(BaseImageHeader):
         return MIME_TYPE.TIFF
 
     @classmethod
-    def from_stream(cls, stream, blob, filename):
+    def from_stream(cls, stream):
         """
         Return a |Tiff| instance containing the properties of the TIFF image
         in *stream*.
