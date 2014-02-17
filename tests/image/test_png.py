@@ -316,6 +316,19 @@ class Describe_Chunks(object):
         _Chunks__init_.assert_called_once_with(chunk_lst)
         assert isinstance(chunks, _Chunks)
 
+    def it_provides_access_to_the_IHDR_chunk(self, IHDR_fixture):
+        chunks, IHDR_chunk_ = IHDR_fixture
+        assert chunks.IHDR == IHDR_chunk_
+
+    def it_provides_access_to_the_pHYs_chunk(self, pHYs_fixture):
+        chunks, expected_chunk = pHYs_fixture
+        assert chunks.pHYs == expected_chunk
+
+    def it_raises_if_theres_no_IHDR_chunk(self, no_IHDR_fixture):
+        chunks = no_IHDR_fixture
+        with pytest.raises(InvalidImageStreamError):
+            chunks.IHDR
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -340,6 +353,40 @@ class Describe_Chunks(object):
     @pytest.fixture
     def _Chunks__init_(self, request):
         return initializer_mock(request, _Chunks)
+
+    @pytest.fixture
+    def IHDR_fixture(self, IHDR_chunk_, pHYs_chunk_):
+        chunks = (IHDR_chunk_, pHYs_chunk_)
+        chunks = _Chunks(chunks)
+        return chunks, IHDR_chunk_
+
+    @pytest.fixture
+    def IHDR_chunk_(self, request):
+        return instance_mock(
+            request, _IHDRChunk, type_name=PNG_CHUNK_TYPE.IHDR
+        )
+
+    @pytest.fixture
+    def no_IHDR_fixture(self, pHYs_chunk_):
+        chunks = (pHYs_chunk_,)
+        chunks = _Chunks(chunks)
+        return chunks
+
+    @pytest.fixture
+    def pHYs_chunk_(self, request):
+        return instance_mock(
+            request, _pHYsChunk, type_name=PNG_CHUNK_TYPE.pHYs
+        )
+
+    @pytest.fixture(params=[True, False])
+    def pHYs_fixture(self, request, IHDR_chunk_, pHYs_chunk_):
+        has_pHYs_chunk = request.param
+        chunks = [IHDR_chunk_]
+        if has_pHYs_chunk:
+            chunks.append(pHYs_chunk_)
+        expected_chunk = pHYs_chunk_ if has_pHYs_chunk else None
+        chunks = _Chunks(chunks)
+        return chunks, expected_chunk
 
     @pytest.fixture
     def stream_(self, request):

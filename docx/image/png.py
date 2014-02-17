@@ -217,9 +217,9 @@ class _Chunks(object):
     """
     Collection of the chunks parsed from a PNG image stream
     """
-    def __init__(self, chunk_lst):
+    def __init__(self, chunk_iterable):
         super(_Chunks, self).__init__()
-        self._chunks = chunk_lst
+        self._chunks = list(chunk_iterable)
 
     @classmethod
     def from_stream(cls, stream):
@@ -227,15 +227,37 @@ class _Chunks(object):
         Return a |_Chunks| instance containing the PNG chunks in *stream*.
         """
         chunk_parser = _ChunkParser.from_stream(stream)
-        chunk_lst = [chunk for chunk in chunk_parser.iter_chunks()]
-        return cls(chunk_lst)
+        chunks = [chunk for chunk in chunk_parser.iter_chunks()]
+        return cls(chunks)
 
     @property
     def IHDR(self):
         """
         IHDR chunk in PNG image
         """
-        raise NotImplementedError
+        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.IHDR
+        IHDR = self._find_first(match)
+        if IHDR is None:
+            raise InvalidImageStreamError('no IHDR chunk in PNG image')
+        return IHDR
+
+    @property
+    def pHYs(self):
+        """
+        pHYs chunk in PNG image, or |None| if not present
+        """
+        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.pHYs
+        return self._find_first(match)
+
+    def _find_first(self, match):
+        """
+        Return first chunk in stream order returning True for function
+        *match*.
+        """
+        for chunk in self._chunks:
+            if match(chunk):
+                return chunk
+        return None
 
 
 class _ChunkParser(object):
