@@ -172,7 +172,8 @@ class _PngParser(object):
         Return a |_PngParser| instance containing the header properties
         parsed from the PNG image in *stream*.
         """
-        raise NotImplementedError
+        chunks = _Chunks.from_stream(stream)
+        return cls(chunks)
 
     @property
     def px_width(self):
@@ -201,5 +202,17 @@ class _PngParser(object):
         """
         Integer dots per inch for the height of this image. Defaults to 72
         when not present in the file, as is often the case.
+        """
+        raise NotImplementedError
+
+
+class _Chunks(object):
+    """
+    Collection of the chunks parsed from a PNG image stream
+    """
+    @classmethod
+    def from_stream(cls, stream):
+        """
+        Return a |_Chunks| instance containing the PNG chunks in *stream*.
         """
         raise NotImplementedError
