@@ -253,7 +253,16 @@ class _ChunkParser(object):
         in the PNG image stream. Iteration stops after the IEND chunk is
         returned.
         """
-        raise NotImplementedError
+        chunk_offset = 8
+        while True:
+            chunk_data_len = self._stream_rdr.read_long(chunk_offset)
+            chunk_type = self._stream_rdr.read_str(4, chunk_offset, 4)
+            data_offset = chunk_offset + 8
+            yield chunk_type, data_offset
+            if chunk_type == 'IEND':
+                break
+            # incr offset for chunk len long, chunk type, chunk data, and CRC
+            chunk_offset += (4 + 4 + chunk_data_len + 4)
 
 
 def _ChunkFactory(chunk_type, stream_rdr, offset):

@@ -355,6 +355,12 @@ class Describe_ChunkParser(object):
         ]
         assert chunks == chunk_lst
 
+    def it_iterates_over_the_chunk_offsets_to_help_parse(
+            self, iter_offsets_fixture):
+        chunk_parser, expected_chunk_offsets = iter_offsets_fixture
+        chunk_offsets = [co for co in chunk_parser._iter_chunk_offsets()]
+        assert chunk_offsets == expected_chunk_offsets
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -407,6 +413,17 @@ class Describe_ChunkParser(object):
             chunk_parser, _iter_chunk_offsets_, _ChunkFactory_, stream_rdr_,
             offsets, chunk_lst
         )
+
+    @pytest.fixture
+    def iter_offsets_fixture(self):
+        bytes_ = b'-filler-\x00\x00\x00\x00IHDRxxxx\x00\x00\x00\x00IEND'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        chunk_parser = _ChunkParser(stream_rdr)
+        expected_chunk_offsets = [
+            (PNG_CHUNK_TYPE.IHDR, 16),
+            (PNG_CHUNK_TYPE.IEND, 28),
+        ]
+        return chunk_parser, expected_chunk_offsets
 
     @pytest.fixture
     def StreamReader_(self, request, stream_rdr_):
