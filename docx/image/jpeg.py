@@ -10,19 +10,14 @@ from __future__ import absolute_import, division, print_function
 from ..compat import BytesIO
 from .constants import JPEG_MARKER_CODE, MIME_TYPE
 from .helpers import BIG_ENDIAN, StreamReader
-from .image import Image
+from .image import BaseImageHeader
 from .tiff import Tiff
 
 
-class Jpeg(Image):
+class Jpeg(BaseImageHeader):
     """
     Base class for JFIF and EXIF subclasses.
     """
-    def __init__(self, blob, filename, cx, cy, horz_dpi, vert_dpi):
-        super(Jpeg, self).__init__(blob, filename, cx, cy, attrs={})
-        self._horz_dpi = horz_dpi
-        self._vert_dpi = vert_dpi
-
     @property
     def content_type(self):
         """
@@ -30,22 +25,6 @@ class Jpeg(Image):
         JPEG images.
         """
         return MIME_TYPE.JPEG
-
-    @property
-    def horz_dpi(self):
-        """
-        Integer dots per inch for the width of this image. Defaults to 72
-        when not present in the file, as is often the case.
-        """
-        return self._horz_dpi
-
-    @property
-    def vert_dpi(self):
-        """
-        Integer dots per inch for the height of this image. Defaults to 72
-        when not present in the file, as is often the case.
-        """
-        return self._vert_dpi
 
 
 class Exif(Jpeg):
@@ -66,7 +45,7 @@ class Exif(Jpeg):
         horz_dpi = markers.app1.horz_dpi
         vert_dpi = markers.app1.vert_dpi
 
-        return cls(blob, filename, px_width, px_height, horz_dpi, vert_dpi)
+        return cls(px_width, px_height, horz_dpi, vert_dpi)
 
 
 class Jfif(Jpeg):
@@ -80,10 +59,13 @@ class Jfif(Jpeg):
         in *stream*.
         """
         markers = _JfifMarkers.from_stream(stream)
-        sof, app0 = markers.sof, markers.app0
-        cx, cy = sof.px_width, sof.px_height
-        horz_dpi, vert_dpi = app0.horz_dpi, app0.vert_dpi
-        return cls(blob, filename, cx, cy, horz_dpi, vert_dpi)
+
+        px_width = markers.sof.px_width
+        px_height = markers.sof.px_height
+        horz_dpi = markers.app0.horz_dpi
+        vert_dpi = markers.app0.vert_dpi
+
+        return cls(px_width, px_height, horz_dpi, vert_dpi)
 
 
 class _JfifMarkers(object):

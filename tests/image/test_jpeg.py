@@ -27,7 +27,7 @@ from ..unitutil import (
 class DescribeJpeg(object):
 
     def it_knows_its_content_type(self):
-        jpeg = Jpeg(None, None, None, None, None, None)
+        jpeg = Jpeg(None, None, None, None)
         assert jpeg.content_type == MIME_TYPE.JPEG
 
 

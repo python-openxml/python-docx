@@ -32,19 +32,13 @@ class DescribeTiff(object):
         tiff = Tiff.from_stream(stream_, blob_, filename_)
         _TiffParser_.parse.assert_called_once_with(stream_)
         Tiff__init_.assert_called_once_with(
-            blob_, filename_, px_width, px_height, horz_dpi, vert_dpi
+            px_width, px_height, horz_dpi, vert_dpi
         )
         assert isinstance(tiff, Tiff)
 
     def it_knows_its_content_type(self):
-        tiff = Tiff(None, None, None, None, None, None)
+        tiff = Tiff(None, None, None, None)
         assert tiff.content_type == MIME_TYPE.TIFF
-
-    def it_knows_the_horz_and_vert_dpi_of_the_tiff_image(self):
-        horz_dpi, vert_dpi = 42, 24
-        tiff = Tiff(None, None, None, None, horz_dpi, vert_dpi)
-        assert tiff.horz_dpi == horz_dpi
-        assert tiff.vert_dpi == vert_dpi
 
     # fixtures -------------------------------------------------------
 

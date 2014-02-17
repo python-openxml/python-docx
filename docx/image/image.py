@@ -17,13 +17,11 @@ class Image(object):
     Graphical image stream such as JPEG, PNG, or GIF with properties and
     methods required by ImagePart.
     """
-    def __init__(self, blob, filename, px_width, px_height, attrs):
+    def __init__(self, blob, filename, image_header):
         super(Image, self).__init__()
         self._blob = blob
         self._filename = filename
-        self._px_width = px_width
-        self._px_height = px_height
-        self._attrs = attrs
+        self._image_header = image_header
 
     @classmethod
     def from_file(cls, image_descriptor):
@@ -64,7 +62,54 @@ class Image(object):
         Return an instance of the |Image| subclass corresponding to the
         format of the image in *stream*.
         """
-        # import at execution time to avoid circular import
-        from docx.image import image_cls_that_can_parse
-        ImageSubclass = image_cls_that_can_parse(stream)
-        return ImageSubclass.from_stream(stream, blob, filename)
+        image_header = _ImageHeaderFactory(stream)
+        return cls(blob, filename, image_header)
+
+
+def _ImageHeaderFactory(stream):
+    """
+    Return a |BaseImageHeader| subclass instance that knows how to parse the
+    headers of the image in *stream*.
+    """
+    raise NotImplementedError
+
+
+class BaseImageHeader(object):
+    """
+    Base class for image header subclasses like |Jpeg| and |Tiff|.
+    """
+    def __init__(self, px_width, px_height, horz_dpi, vert_dpi):
+        self._px_width = px_width
+        self._px_height = px_height
+        self._horz_dpi = horz_dpi
+        self._vert_dpi = vert_dpi
+
+    @property
+    def px_width(self):
+        """
+        The horizontal pixel dimension of the image
+        """
+        return self._px_width
+
+    @property
+    def px_height(self):
+        """
+        The vertical pixel dimension of the image
+        """
+        return self._px_height
+
+    @property
+    def horz_dpi(self):
+        """
+        Integer dots per inch for the width of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        return self._horz_dpi
+
+    @property
+    def vert_dpi(self):
+        """
+        Integer dots per inch for the height of this image. Defaults to 72
+        when not present in the file, as is often the case.
+        """
+        return self._vert_dpi

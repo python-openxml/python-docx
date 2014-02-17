@@ -13,14 +13,14 @@ from docx.image import image_cls_that_can_parse, Image_OLD
 from docx.image.bmp import Bmp
 from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
-from docx.image.image import Image
+from docx.image.image import BaseImageHeader, Image
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.image.tiff import Tiff
 from docx.opc.constants import CONTENT_TYPE as CT
 
 from ..unitutil import (
-    function_mock, class_mock, instance_mock, loose_mock, method_mock,
+    function_mock, class_mock, initializer_mock, instance_mock, method_mock,
     test_file
 )
 
@@ -75,14 +75,16 @@ class DescribeImage(object):
         assert image is image_
 
     def it_can_construct_from_an_image_stream(self, from_stream_fixture):
-        (stream_, blob_, filename_, image_, image_cls_that_can_parse_,
-         image_cls_) = from_stream_fixture
+        # fixture ----------------------
+        stream_, blob_, filename_ = from_stream_fixture[:3]
+        _ImageHeaderFactory_, image_header_ = from_stream_fixture[3:5]
+        Image__init_ = from_stream_fixture[5]
+        # exercise ---------------------
         image = Image._from_stream(stream_, blob_, filename_)
-        image_cls_that_can_parse_.assert_called_once_with(stream_)
-        image_cls_.from_stream.assert_called_once_with(
-            stream_, blob_, filename_
-        )
-        assert image is image_
+        # verify -----------------------
+        _ImageHeaderFactory_.assert_called_once_with(stream_)
+        Image__init_.assert_called_once_with(blob_, filename_, image_header_)
+        assert isinstance(image, Image)
 
     # fixtures -------------------------------------------------------
 
@@ -118,11 +120,11 @@ class DescribeImage(object):
 
     @pytest.fixture
     def from_stream_fixture(
-            self, stream_, blob_, filename_, image_,
-            image_cls_that_can_parse_, image_cls_):
+            self, stream_, blob_, filename_, _ImageHeaderFactory_,
+            image_header_, Image__init_):
         return (
-            stream_, blob_, filename_, image_, image_cls_that_can_parse_,
-            image_cls_
+            stream_, blob_, filename_, _ImageHeaderFactory_, image_header_,
+            Image__init_
         )
 
     @pytest.fixture
@@ -136,21 +138,38 @@ class DescribeImage(object):
         return instance_mock(request, Image)
 
     @pytest.fixture
-    def image_cls_(self, request, image_):
-        image_cls_ = loose_mock(request)
-        image_cls_.from_stream.return_value = image_
-        return image_cls_
+    def _ImageHeaderFactory_(self, request, image_header_):
+        return function_mock(
+            request, 'docx.image.image._ImageHeaderFactory',
+            return_value=image_header_
+        )
 
     @pytest.fixture
-    def image_cls_that_can_parse_(self, request, image_cls_):
-        return function_mock(
-            request, 'docx.image.image_cls_that_can_parse',
-            return_value=image_cls_
-        )
+    def image_header_(self, request):
+        return instance_mock(request, BaseImageHeader)
+
+    @pytest.fixture
+    def Image__init_(self, request):
+        return initializer_mock(request, Image)
 
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+
+class DescribeBaseImageHeader(object):
+
+    def it_knows_the_image_dimensions(self):
+        px_width, px_height = 42, 24
+        image_header = BaseImageHeader(px_width, px_height, None, None)
+        assert image_header.px_width == px_width
+        assert image_header.px_height == px_height
+
+    def it_knows_the_horz_and_vert_dpi_of_the_image(self):
+        horz_dpi, vert_dpi = 42, 24
+        image_header = BaseImageHeader(None, None, horz_dpi, vert_dpi)
+        assert image_header.horz_dpi == horz_dpi
+        assert image_header.vert_dpi == vert_dpi
 
 
 class DescribeImage_OLD(object):

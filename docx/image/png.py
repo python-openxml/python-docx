@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, print_function
 from .constants import MIME_TYPE, TAG
 from .exceptions import InvalidImageStreamError
 from .helpers import StreamReader
-from .image import Image
+from .image import BaseImageHeader
 
 
 _CHUNK_TYPE_IHDR = 'IHDR'
@@ -13,12 +13,13 @@ _CHUNK_TYPE_pHYs = 'pHYs'
 _CHUNK_TYPE_IEND = 'IEND'
 
 
-class Png(Image):
+class Png(BaseImageHeader):
     """
     Image header parser for PNG images
     """
     def __init__(self, blob, filename, cx, cy, attrs):
-        super(Png, self).__init__(blob, filename, cx, cy, attrs)
+        super(Png, self).__init__(cx, cy, None, None)
+        self._attrs = attrs
 
     @property
     def content_type(self):

@@ -4,19 +4,14 @@ from __future__ import absolute_import, division, print_function
 
 from .constants import MIME_TYPE, TIFF_FLD, TIFF_TAG
 from .helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
-from .image import Image
+from .image import BaseImageHeader
 
 
-class Tiff(Image):
+class Tiff(BaseImageHeader):
     """
     Image header parser for TIFF images. Handles both big and little endian
     byte ordering.
     """
-    def __init__(self, blob, filename, cx, cy, horz_dpi, vert_dpi):
-        super(Tiff, self).__init__(blob, filename, cx, cy, {})
-        self._horz_dpi = horz_dpi
-        self._vert_dpi = vert_dpi
-
     @property
     def content_type(self):
         """
@@ -32,25 +27,13 @@ class Tiff(Image):
         in *stream*.
         """
         parser = _TiffParser.parse(stream)
+
         px_width = parser.px_width
         px_height = parser.px_height
         horz_dpi = parser.horz_dpi
         vert_dpi = parser.vert_dpi
-        return cls(blob, filename, px_width, px_height, horz_dpi, vert_dpi)
 
-    @property
-    def horz_dpi(self):
-        """
-        The intended print density of the image's pixels along the x-axis
-        """
-        return self._horz_dpi
-
-    @property
-    def vert_dpi(self):
-        """
-        The intended print density of the image's pixels along the y-axis
-        """
-        return self._vert_dpi
+        return cls(px_width, px_height, horz_dpi, vert_dpi)
 
 
 class _TiffParser(object):
