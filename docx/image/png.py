@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .constants import MIME_TYPE, TAG
+from .constants import MIME_TYPE, PNG_CHUNK_TYPE, TAG
 from .exceptions import InvalidImageStreamError
 from .helpers import BIG_ENDIAN, StreamReader
 from .image import BaseImageHeader
@@ -270,7 +270,12 @@ def _ChunkFactory(chunk_type, stream_rdr, offset):
     Return a |_Chunk| subclass instance appropriate to *chunk_type* parsed
     from *stream_rdr* at *offset*.
     """
-    raise NotImplementedError
+    chunk_cls_map = {
+        PNG_CHUNK_TYPE.IHDR: _IHDRChunk,
+        PNG_CHUNK_TYPE.pHYs: _pHYsChunk,
+    }
+    chunk_cls = chunk_cls_map.get(chunk_type, _Chunk)
+    return chunk_cls.from_offset(chunk_type, stream_rdr, offset)
 
 
 class _Chunk(object):
@@ -278,3 +283,35 @@ class _Chunk(object):
     Base class for specific chunk types. Also serves as the default chunk
     type.
     """
+    @classmethod
+    def from_offset(cls, chunk_type, stream_rdr, offset):
+        """
+        Return a default _Chunk instance that only knows its chunk type.
+        """
+        raise NotImplementedError
+
+
+class _IHDRChunk(_Chunk):
+    """
+    IHDR chunk, contains the image dimensions
+    """
+    @classmethod
+    def from_offset(cls, chunk_type, stream_rdr, offset):
+        """
+        Return an _IHDRChunk instance containing the image dimensions
+        extracted from the IHDR chunk in *stream* at *offset*.
+        """
+        raise NotImplementedError
+
+
+class _pHYsChunk(_Chunk):
+    """
+    pYHs chunk, contains the image dpi information
+    """
+    @classmethod
+    def from_offset(cls, chunk_type, stream_rdr, offset):
+        """
+        Return a _pHYsChunk instance containing the image resolution
+        extracted from the pHYs chunk in *stream* at *offset*.
+        """
+        raise NotImplementedError

@@ -14,7 +14,10 @@ from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, PNG_CHUNK_TYPE, TAG
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
-from docx.image.png import _Chunk, _Chunks, _ChunkParser, Png, _PngParser
+from docx.image.png import (
+    _Chunk, _Chunks, _ChunkFactory, _ChunkParser, _IHDRChunk, _pHYsChunk,
+    Png, _PngParser
+)
 
 from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, method_mock,
@@ -434,6 +437,69 @@ class Describe_ChunkParser(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def stream_rdr_(self, request):
+        return instance_mock(request, StreamReader)
+
+
+class Describe_ChunkFactory(object):
+
+    def it_constructs_the_appropriate_Chunk_subclass(self, call_fixture):
+        chunk_type, stream_rdr_, offset, chunk_cls_ = call_fixture
+        chunk = _ChunkFactory(chunk_type, stream_rdr_, offset)
+        chunk_cls_.from_offset.assert_called_once_with(
+            chunk_type, stream_rdr_, offset
+        )
+        assert isinstance(chunk, _Chunk)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        PNG_CHUNK_TYPE.IHDR,
+        PNG_CHUNK_TYPE.pHYs,
+        PNG_CHUNK_TYPE.IEND,
+    ])
+    def call_fixture(
+            self, request, _IHDRChunk_, _pHYsChunk_, _Chunk_, stream_rdr_):
+        chunk_type = request.param
+        chunk_cls_ = {
+            PNG_CHUNK_TYPE.IHDR: _IHDRChunk_,
+            PNG_CHUNK_TYPE.pHYs: _pHYsChunk_,
+            PNG_CHUNK_TYPE.IEND: _Chunk_,
+        }[chunk_type]
+        offset = 999
+        return chunk_type, stream_rdr_, offset, chunk_cls_
+
+    @pytest.fixture
+    def _Chunk_(self, request, chunk_):
+        _Chunk_ = class_mock(request, 'docx.image.png._Chunk')
+        _Chunk_.from_offset.return_value = chunk_
+        return _Chunk_
+
+    @pytest.fixture
+    def chunk_(self, request):
+        return instance_mock(request, _Chunk)
+
+    @pytest.fixture
+    def _IHDRChunk_(self, request, ihdr_chunk_):
+        _IHDRChunk_ = class_mock(request, 'docx.image.png._IHDRChunk')
+        _IHDRChunk_.from_offset.return_value = ihdr_chunk_
+        return _IHDRChunk_
+
+    @pytest.fixture
+    def ihdr_chunk_(self, request):
+        return instance_mock(request, _IHDRChunk)
+
+    @pytest.fixture
+    def _pHYsChunk_(self, request, phys_chunk_):
+        _pHYsChunk_ = class_mock(request, 'docx.image.png._pHYsChunk')
+        _pHYsChunk_.from_offset.return_value = phys_chunk_
+        return _pHYsChunk_
+
+    @pytest.fixture
+    def phys_chunk_(self, request):
+        return instance_mock(request, _pHYsChunk)
 
     @pytest.fixture
     def stream_rdr_(self, request):
