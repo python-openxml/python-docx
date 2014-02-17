@@ -215,4 +215,26 @@ class _Chunks(object):
         """
         Return a |_Chunks| instance containing the PNG chunks in *stream*.
         """
+        chunk_parser = _ChunkParser.from_stream(stream)
+        chunk_lst = [chunk for chunk in chunk_parser.iter_chunks()]
+        return cls(chunk_lst)
+
+
+class _ChunkParser(object):
+    """
+    Extracts chunks from a PNG image stream
+    """
+    @classmethod
+    def from_stream(cls, stream):
+        """
+        Return a |_ChunkParser| instance that can extract the chunks from the
+        PNG image in *stream*.
+        """
+        raise NotImplementedError
+
+    def iter_chunks(self):
+        """
+        Generate a |_Chunk| subclass instance for each chunk in this parser's
+        PNG stream, in the order encountered in the stream.
+        """
         raise NotImplementedError

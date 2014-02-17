@@ -12,7 +12,7 @@ from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, TAG
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
-from docx.image.png import _Chunks, Png, _PngParser
+from docx.image.png import _Chunks, _ChunkParser, Png, _PngParser
 
 from ..unitutil import (
     initializer_mock, class_mock, instance_mock, method_mock, test_file
@@ -251,7 +251,7 @@ class DescribePng(object):
         return instance_mock(request, StreamReader)
 
 
-class DescribePngParser(object):
+class Describe_PngParser(object):
 
     def it_can_parse_the_headers_of_a_PNG_stream(self, parse_fixture):
         stream_, _Chunks_, _PngParser__init_, chunks_ = parse_fixture
@@ -279,6 +279,48 @@ class DescribePngParser(object):
     @pytest.fixture
     def _PngParser__init_(self, request):
         return initializer_mock(request, _PngParser)
+
+    @pytest.fixture
+    def stream_(self, request):
+        return instance_mock(request, BytesIO)
+
+
+class Describe_Chunks(object):
+
+    def it_can_construct_from_a_stream(self, from_stream_fixture):
+        stream_, _ChunkParser_, chunk_parser_, _Chunks__init_, chunk_lst = (
+            from_stream_fixture
+        )
+        chunks = _Chunks.from_stream(stream_)
+        _ChunkParser_.from_stream.assert_called_once_with(stream_)
+        chunk_parser_.iter_chunks.assert_called_once_with()
+        _Chunks__init_.assert_called_once_with(chunk_lst)
+        assert isinstance(chunks, _Chunks)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_stream_fixture(
+            self, stream_, _ChunkParser_, chunk_parser_, _Chunks__init_):
+        chunk_lst = [1, 2]
+        chunk_parser_.iter_chunks.return_value = iter(chunk_lst)
+        return (
+            stream_, _ChunkParser_, chunk_parser_, _Chunks__init_, chunk_lst
+        )
+
+    @pytest.fixture
+    def _ChunkParser_(self, request, chunk_parser_):
+        _ChunkParser_ = class_mock(request, 'docx.image.png._ChunkParser')
+        _ChunkParser_.from_stream.return_value = chunk_parser_
+        return _ChunkParser_
+
+    @pytest.fixture
+    def chunk_parser_(self, request):
+        return instance_mock(request, _ChunkParser)
+
+    @pytest.fixture
+    def _Chunks__init_(self, request):
+        return initializer_mock(request, _Chunks)
 
     @pytest.fixture
     def stream_(self, request):
