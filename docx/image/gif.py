@@ -26,8 +26,8 @@ class Gif(BaseImageHeader):
     @property
     def content_type(self):
         """
-        MIME content type for this image, unconditionally `image/png` for
-        PNG images.
+        MIME content type for this image, unconditionally `image/gif` for
+        GIF images.
         """
         return MIME_TYPE.GIF
 

@@ -126,10 +126,11 @@ class BaseImageHeader(object):
         """
         Abstract property definition, must be implemented by all subclasses.
         """
-        raise NotImplementedError(
+        msg = (
             'content_type property must be implemented by all subclasses of '
             'BaseImageHeader'
         )
+        raise NotImplementedError(msg)
 
     @property
     def px_width(self):

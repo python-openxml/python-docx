@@ -23,3 +23,5 @@ Feature: Characterize an image file
      | jpeg420exif.jpg  | image/jpeg | 2048 | 1536 |    72    |    72    |
      | court-exif.jpg   | image/jpeg |  500 |  375 |   256    |   256    |
      | lena.gif         | image/gif  |  256 |  256 |    72    |    72    |
+     | lena.bmp         | image/bmp  |  512 |  512 |    96    |    96    |
+     | mountain.bmp     | image/bmp  |  640 |  480 |   300    |   300    |
