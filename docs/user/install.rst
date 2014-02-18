@@ -32,10 +32,9 @@ and running ``setup.py``::
     cd python-docx-{version}
     python setup.py install
 
-|docx| depends on the ``lxml`` package and the ``Pillow`` Imaging Library.
-Both ``pip`` and ``easy_install`` will take care of satisfying those
-dependencies for you, but if you use this last method you will need to install
-those yourself.
+|docx| depends on the ``lxml`` package. Both ``pip`` and ``easy_install``
+will take care of satisfying those dependencies for you, but if you use this
+last method you will need to install those yourself.
 
 
 Dependencies
@@ -43,4 +42,3 @@ Dependencies
 
 * Python 2.6, 2.7, 3.3, or 3.4
 * lxml >= 2.3.2
-* Pillow >= 2.0
