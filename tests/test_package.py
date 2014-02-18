@@ -8,9 +8,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.image.image import Image
 from docx.opc.packuri import PackURI
 from docx.package import ImageParts, Package
-from docx.parts.image import Image_OLD, ImagePart
+from docx.parts.image import ImagePart
 
 from .unitutil import (
     docx_path, class_mock, instance_mock, method_mock
@@ -81,13 +82,13 @@ class DescribeImageParts(object):
 
     @pytest.fixture
     def Image_(self, request, image_):
-        Image_ = class_mock(request, 'docx.package.Image_OLD')
+        Image_ = class_mock(request, 'docx.package.Image')
         Image_.from_file.return_value = image_
         return Image_
 
     @pytest.fixture
     def image_(self, request, sha1):
-        image_ = instance_mock(request, Image_OLD)
+        image_ = instance_mock(request, Image)
         image_.sha1 = sha1
         return image_
 

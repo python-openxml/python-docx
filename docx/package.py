@@ -6,10 +6,11 @@ WordprocessingML Package class and related objects
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.package import OpcPackage
 from docx.opc.packuri import PackURI
-from docx.parts.image import Image_OLD, ImagePart
+from docx.parts.image import ImagePart
 from docx.shared import lazyproperty
 
 
@@ -72,7 +73,7 @@ class ImageParts(object):
         *image_descriptor*, newly created if a matching one is not present in
         the collection.
         """
-        image = Image_OLD.from_file(image_descriptor)
+        image = Image.from_file(image_descriptor)
         matching_image_part = self._get_by_sha1(image.sha1)
         if matching_image_part is not None:
             return matching_image_part

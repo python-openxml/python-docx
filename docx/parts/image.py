@@ -10,7 +10,7 @@ from __future__ import (
 
 import hashlib
 
-from docx.image import Image_OLD
+from docx.image.image import Image
 from docx.opc.package import Part
 from docx.shared import Emu, Inches
 
@@ -70,7 +70,7 @@ class ImagePart(Part):
     @property
     def image(self):
         if self._image is None:
-            self._image = Image_OLD.from_blob(self.blob)
+            self._image = Image.from_blob(self.blob)
         return self._image
 
     @classmethod

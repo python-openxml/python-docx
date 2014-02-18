@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.image import Image_OLD
+from docx.image.image import Image
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.opc.package import PartFactory
 from docx.opc.packuri import PackURI
@@ -68,7 +68,7 @@ class DescribeImagePart(object):
     @pytest.fixture(params=['loaded', 'new'])
     def dimensions_fixture(self, request):
         image_file_path = test_file('monty-truth.png')
-        image = Image_OLD.from_file(image_file_path)
+        image = Image.from_file(image_file_path)
         expected_cx, expected_cy = 1905000, 2717800
 
         # case 1: image part is loaded by PartFactory w/no Image inst
@@ -102,7 +102,7 @@ class DescribeImagePart(object):
 
     @pytest.fixture
     def image_(self, request):
-        return instance_mock(request, Image_OLD)
+        return instance_mock(request, Image)
 
     @pytest.fixture
     def ImagePart__init__(self, request):
