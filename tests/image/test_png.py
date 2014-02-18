@@ -271,6 +271,16 @@ class Describe_PngParser(object):
         assert png_parser.px_width == px_width
         assert png_parser.px_height == px_height
 
+    def it_knows_the_image_dpi(self, dpi_fixture):
+        png_parser, horz_dpi, vert_dpi = dpi_fixture
+        assert png_parser.horz_dpi == horz_dpi
+        assert png_parser.vert_dpi == vert_dpi
+
+    def it_defaults_image_dpi_to_72(self, no_dpi_fixture):
+        png_parser = no_dpi_fixture
+        assert png_parser.horz_dpi == 72
+        assert png_parser.vert_dpi == 72
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -290,6 +300,34 @@ class Describe_PngParser(object):
         chunks_.IHDR.px_height = px_height
         png_parser = _PngParser(chunks_)
         return png_parser, px_width, px_height
+
+    @pytest.fixture
+    def dpi_fixture(self, chunks_):
+        horz_px_per_unit, vert_px_per_unit, units_specifier = 1654, 945, 1
+        horz_dpi, vert_dpi = 42, 24
+        chunks_.pHYs.horz_px_per_unit = horz_px_per_unit
+        chunks_.pHYs.vert_px_per_unit = vert_px_per_unit
+        chunks_.pHYs.units_specifier = units_specifier
+        png_parser = _PngParser(chunks_)
+        return png_parser, horz_dpi, vert_dpi
+
+    @pytest.fixture(params=[
+        (-1, -1), (0, 1000), (None, 1000), (1, 0), (1, None)
+    ])
+    def no_dpi_fixture(self, request, chunks_):
+        """
+        Scenarios are: 1) no pHYs chunk in PNG stream, 2) units specifier
+        other than 1; 3) px_per_unit is 0; 4) px_per_unit is None
+        """
+        units_specifier, px_per_unit = request.param
+        if units_specifier == -1:
+            chunks_.pHYs = None
+        else:
+            chunks_.pHYs.horz_px_per_unit = px_per_unit
+            chunks_.pHYs.vert_px_per_unit = px_per_unit
+            chunks_.pHYs.units_specifier = units_specifier
+        png_parser = _PngParser(chunks_)
+        return png_parser
 
     @pytest.fixture
     def parse_fixture(self, stream_, _Chunks_, _PngParser__init_, chunks_):

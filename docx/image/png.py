@@ -40,36 +40,6 @@ class Png(BaseImageHeader):
 
         return cls(px_width, px_height, horz_dpi, vert_dpi)
 
-    @property
-    def horz_dpi(self):
-        """
-        Integer dots per inch for the width of this image. Defaults to 72
-        when not present in the file, as is often the case.
-        """
-        units_specifier = self._attrs.get(TAG.UNITS_SPECIFIER)
-        horz_px_per_unit = self._attrs.get(TAG.HORZ_PX_PER_UNIT)
-        return self._dpi(units_specifier, horz_px_per_unit)
-
-    @property
-    def vert_dpi(self):
-        """
-        Integer dots per inch for the height of this image. Defaults to 72
-        when not present in the file, as is often the case.
-        """
-        units_specifier = self._attrs.get(TAG.UNITS_SPECIFIER)
-        vert_px_per_unit = self._attrs.get(TAG.VERT_PX_PER_UNIT)
-        return self._dpi(units_specifier, vert_px_per_unit)
-
-    @staticmethod
-    def _dpi(units_specifier, px_per_unit):
-        """
-        Return dots per inch value calculated from *units_specifier* and
-        *px_per_unit*.
-        """
-        if units_specifier == 1 and px_per_unit is not None:
-            return int(round(px_per_unit * 0.0254))
-        return 72
-
     @classmethod
     def _parse_png_headers(cls, stream):
         """
@@ -202,7 +172,10 @@ class _PngParser(object):
         Integer dots per inch for the width of this image. Defaults to 72
         when not present in the file, as is often the case.
         """
-        raise NotImplementedError
+        pHYs = self._chunks.pHYs
+        if pHYs is None:
+            return 72
+        return self._dpi(pHYs.units_specifier, pHYs.horz_px_per_unit)
 
     @property
     def vert_dpi(self):
@@ -210,7 +183,20 @@ class _PngParser(object):
         Integer dots per inch for the height of this image. Defaults to 72
         when not present in the file, as is often the case.
         """
-        raise NotImplementedError
+        pHYs = self._chunks.pHYs
+        if pHYs is None:
+            return 72
+        return self._dpi(pHYs.units_specifier, pHYs.vert_px_per_unit)
+
+    @staticmethod
+    def _dpi(units_specifier, px_per_unit):
+        """
+        Return dots per inch value calculated from *units_specifier* and
+        *px_per_unit*.
+        """
+        if units_specifier == 1 and px_per_unit:
+            return int(round(px_per_unit * 0.0254))
+        return 72
 
 
 class _Chunks(object):
