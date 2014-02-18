@@ -27,6 +27,13 @@ from ..unitutil import (
 
 class DescribeImage(object):
 
+    def it_can_construct_from_an_image_blob(self, from_blob_fixture):
+        blob_, BytesIO_, _from_stream_, stream_, image_ = from_blob_fixture
+        image = Image.from_blob(blob_)
+        BytesIO_.assert_called_once_with(blob_)
+        _from_stream_.assert_called_once_with(stream_, blob_)
+        assert image is image_
+
     def it_can_construct_from_an_image_path(self, from_path_fixture):
         image_path, _from_stream_, stream_, blob, filename, image_ = (
             from_path_fixture
@@ -114,6 +121,11 @@ class DescribeImage(object):
     @pytest.fixture
     def filename_(self, request):
         return instance_mock(request, str)
+
+    @pytest.fixture
+    def from_blob_fixture(
+            self, blob_, BytesIO_, _from_stream_, stream_, image_):
+        return blob_, BytesIO_, _from_stream_, stream_, image_
 
     @pytest.fixture
     def from_filelike_fixture(self, _from_stream_, image_):

@@ -27,6 +27,15 @@ class Image(object):
         self._image_header = image_header
 
     @classmethod
+    def from_blob(cls, blob):
+        """
+        Return a new |Image| subclass instance parsed from the image binary
+        contained in *blob*.
+        """
+        stream = BytesIO(blob)
+        return cls._from_stream(stream, blob)
+
+    @classmethod
     def from_file(cls, image_descriptor):
         """
         Return a new |Image| subclass instance loaded from the image file
