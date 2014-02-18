@@ -77,7 +77,7 @@ class Image_OLD(object):
         a load filename it is used. Otherwise a canonical extension is
         assigned based on the content type.
         """
-        return os.path.splitext(self._filename)[1]
+        return os.path.splitext(self._filename)[1][1:]
 
     @property
     def filename(self):

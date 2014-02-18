@@ -101,12 +101,12 @@ class ImageParts(object):
     def _next_image_partname(self, ext):
         """
         The next available image partname, starting from
-        ``/word/media/image1{ext}`` where unused numbers are reused. The
+        ``/word/media/image1.{ext}`` where unused numbers are reused. The
         partname is unique by number, without regard to the extension. *ext*
-        must include the leading period.
+        does not include the leading period.
         """
         def image_partname(n):
-            return PackURI('/word/media/image%d%s' % (n, ext))
+            return PackURI('/word/media/image%d.%s' % (n, ext))
         used_numbers = [image_part.partname.idx for image_part in self]
         for n in range(1, len(self)+1):
             if not n in used_numbers:

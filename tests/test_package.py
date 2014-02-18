@@ -129,7 +129,7 @@ class DescribeImageParts(object):
         for n in existing_partname_numbers:
             image_part_ = self._image_part_with_partname_(request, n)
             image_parts.append(image_part_)
-        ext = '.png'
+        ext = 'png'
         expected_image_partname = self._image_partname(
             expected_partname_number
         )

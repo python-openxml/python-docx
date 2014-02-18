@@ -53,6 +53,16 @@ class Image(object):
         """
         return self._image_header.content_type
 
+    @lazyproperty
+    def ext(self):
+        """
+        The file extension for the image. If an actual one is available from
+        a load filename it is used. Otherwise a canonical extension is
+        assigned based on the content type. Does not contain the leading
+        period, e.g. 'jpg', not '.jpg'.
+        """
+        return os.path.splitext(self._filename)[1][1:]
+
     @property
     def px_width(self):
         """
