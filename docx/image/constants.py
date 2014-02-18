@@ -113,17 +113,6 @@ class PNG_CHUNK_TYPE(object):
     IEND = 'IEND'
 
 
-class TAG(object):
-    """
-    Identifiers for image attribute tags.
-    """
-    PX_WIDTH = 'px_width'
-    PX_HEIGHT = 'px_height'
-    HORZ_PX_PER_UNIT = 'horz_px_per_unit'
-    VERT_PX_PER_UNIT = 'vert_px_per_unit'
-    UNITS_SPECIFIER = 'units_specifier'
-
-
 class TIFF_FLD_TYPE(object):
     """
     Tag codes for TIFF Image File Directory (IFD) entries.
