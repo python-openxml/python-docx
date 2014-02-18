@@ -76,6 +76,11 @@ class DescribeImage(object):
         assert image.px_width == px_width
         assert image.px_height == px_height
 
+    def it_knows_the_image_filename(self):
+        filename = 'foobar.png'
+        image = Image(None, filename, None)
+        assert image.filename == filename
+
     def it_knows_the_image_filename_extension(self):
         image = Image(None, 'foobar.png', None)
         assert image.ext == 'png'

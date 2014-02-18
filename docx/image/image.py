@@ -80,6 +80,14 @@ class Image(object):
         return os.path.splitext(self._filename)[1][1:]
 
     @property
+    def filename(self):
+        """
+        Original image file name, if loaded from disk, or a generic filename
+        if loaded from an anonymous stream.
+        """
+        return self._filename
+
+    @property
     def px_width(self):
         """
         The horizontal pixel dimension of the image
