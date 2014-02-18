@@ -163,11 +163,11 @@ class DescribeImage(object):
 
 class Describe_ImageHeaderFactory(object):
 
-    # def it_constructs_the_right_class_for_a_given_image_stream(
-    #         self, call_fixture):
-    #     stream, expected_class = call_fixture
-    #     image_header = _ImageHeaderFactory(stream)
-    #     assert isinstance(image_header, expected_class)
+    def it_constructs_the_right_class_for_a_given_image_stream(
+            self, call_fixture):
+        stream, expected_class = call_fixture
+        image_header = _ImageHeaderFactory(stream)
+        assert isinstance(image_header, expected_class)
 
     def it_raises_on_unrecognized_image_stream(self):
         stream = BytesIO(b'foobar 666 not an image stream')
