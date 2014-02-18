@@ -7,9 +7,11 @@ size, as a required step in including them in a document.
 
 from __future__ import absolute_import, division, print_function
 
+import hashlib
 import os
 
 from ..compat import BytesIO, is_string
+from ..shared import lazyproperty
 from .exceptions import UnrecognizedImageError
 
 
@@ -80,6 +82,13 @@ class Image(object):
         when not present in the file, as is often the case.
         """
         return self._image_header.vert_dpi
+
+    @lazyproperty
+    def sha1(self):
+        """
+        SHA1 hash digest of the image blob
+        """
+        return hashlib.sha1(self._blob).hexdigest()
 
     @classmethod
     def _from_stream(cls, stream, blob, filename=None):

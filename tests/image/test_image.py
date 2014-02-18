@@ -70,6 +70,11 @@ class DescribeImage(object):
         assert image.horz_dpi == horz_dpi
         assert image.vert_dpi == vert_dpi
 
+    def it_knows_the_sha1_of_its_image(self):
+        blob = b'fO0Bar'
+        image = Image(blob, None, None)
+        assert image.sha1 == '4921e7002ddfba690a937d54bda226a7b8bdeb68'
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
