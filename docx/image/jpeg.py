@@ -26,6 +26,13 @@ class Jpeg(BaseImageHeader):
         """
         return MIME_TYPE.JPEG
 
+    @property
+    def default_ext(self):
+        """
+        Default filename extension, always 'jpg' for JPG images.
+        """
+        return 'jpg'
+
 
 class Exif(Jpeg):
     """

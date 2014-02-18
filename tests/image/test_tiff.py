@@ -40,6 +40,10 @@ class DescribeTiff(object):
         tiff = Tiff(None, None, None, None)
         assert tiff.content_type == MIME_TYPE.TIFF
 
+    def it_knows_its_default_ext(self):
+        tiff = Tiff(None, None, None, None)
+        assert tiff.default_ext == 'tiff'
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

@@ -27,6 +27,10 @@ class DescribeBmp(object):
         bmp = Bmp(None, None, None, None)
         assert bmp.content_type == MIME_TYPE.BMP
 
+    def it_knows_its_default_ext(self):
+        bmp = Bmp(None, None, None, None)
+        assert bmp.default_ext == 'bmp'
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

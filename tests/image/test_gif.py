@@ -27,6 +27,10 @@ class DescribeGif(object):
         gif = Gif(None, None, None, None)
         assert gif.content_type == MIME_TYPE.GIF
 
+    def it_knows_its_default_ext(self):
+        gif = Gif(None, None, None, None)
+        assert gif.default_ext == 'gif'
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture

@@ -131,6 +131,8 @@ class Image(object):
         format of the image in *stream*.
         """
         image_header = _ImageHeaderFactory(stream)
+        if filename is None:
+            filename = 'image.%s' % image_header.default_ext
         return cls(blob, filename, image_header)
 
 
@@ -171,6 +173,18 @@ class BaseImageHeader(object):
         """
         msg = (
             'content_type property must be implemented by all subclasses of '
+            'BaseImageHeader'
+        )
+        raise NotImplementedError(msg)
+
+    @property
+    def default_ext(self):
+        """
+        Default filename extension for images of this type. An abstract
+        property definition, must be implemented by all subclasses.
+        """
+        msg = (
+            'default_ext property must be implemented by all subclasses of '
             'BaseImageHeader'
         )
         raise NotImplementedError(msg)

@@ -8,11 +8,6 @@ from .helpers import BIG_ENDIAN, StreamReader
 from .image import BaseImageHeader
 
 
-_CHUNK_TYPE_IHDR = 'IHDR'
-_CHUNK_TYPE_pHYs = 'pHYs'
-_CHUNK_TYPE_IEND = 'IEND'
-
-
 class Png(BaseImageHeader):
     """
     Image header parser for PNG images
@@ -24,6 +19,13 @@ class Png(BaseImageHeader):
         PNG images.
         """
         return MIME_TYPE.PNG
+
+    @property
+    def default_ext(self):
+        """
+        Default filename extension, always 'png' for PNG images.
+        """
+        return 'png'
 
     @classmethod
     def from_stream(cls, stream):

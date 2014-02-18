@@ -20,6 +20,13 @@ class Tiff(BaseImageHeader):
         """
         return MIME_TYPE.TIFF
 
+    @property
+    def default_ext(self):
+        """
+        Default filename extension, always 'tiff' for TIFF images.
+        """
+        return 'tiff'
+
     @classmethod
     def from_stream(cls, stream):
         """

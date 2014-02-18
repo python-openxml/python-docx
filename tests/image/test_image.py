@@ -50,14 +50,16 @@ class DescribeImage(object):
 
     def it_can_construct_from_an_image_stream(self, from_stream_fixture):
         # fixture ----------------------
-        stream_, blob_, filename_ = from_stream_fixture[:3]
+        stream_, blob_, filename_in = from_stream_fixture[:3]
         _ImageHeaderFactory_, image_header_ = from_stream_fixture[3:5]
-        Image__init_ = from_stream_fixture[5]
+        Image__init_, filename_out = from_stream_fixture[5:]
         # exercise ---------------------
-        image = Image._from_stream(stream_, blob_, filename_)
+        image = Image._from_stream(stream_, blob_, filename_in)
         # verify -----------------------
         _ImageHeaderFactory_.assert_called_once_with(stream_)
-        Image__init_.assert_called_once_with(blob_, filename_, image_header_)
+        Image__init_.assert_called_once_with(
+            blob_, filename_out, image_header_
+        )
         assert isinstance(image, Image)
 
     def it_provides_access_to_the_image_blob(self):
@@ -153,13 +155,15 @@ class DescribeImage(object):
             blob = f.read()
         return image_path, _from_stream_, stream_, blob, filename, image_
 
-    @pytest.fixture
+    @pytest.fixture(params=['foobar.png', None])
     def from_stream_fixture(
-            self, stream_, blob_, filename_, _ImageHeaderFactory_,
+            self, request, stream_, blob_, _ImageHeaderFactory_,
             image_header_, Image__init_):
+        filename_in = request.param
+        filename_out = 'image.png' if filename_in is None else filename_in
         return (
-            stream_, blob_, filename_, _ImageHeaderFactory_, image_header_,
-            Image__init_
+            stream_, blob_, filename_in, _ImageHeaderFactory_, image_header_,
+            Image__init_, filename_out
         )
 
     @pytest.fixture
@@ -181,7 +185,7 @@ class DescribeImage(object):
 
     @pytest.fixture
     def image_header_(self, request):
-        return instance_mock(request, BaseImageHeader)
+        return instance_mock(request, BaseImageHeader, default_ext='png')
 
     @pytest.fixture
     def Image__init_(self, request):
@@ -232,6 +236,11 @@ class DescribeBaseImageHeader(object):
         base_image_header = BaseImageHeader(None, None, None, None)
         with pytest.raises(NotImplementedError):
             base_image_header.content_type
+
+    def it_defines_default_ext_as_an_abstract_property(self):
+        base_image_header = BaseImageHeader(None, None, None, None)
+        with pytest.raises(NotImplementedError):
+            base_image_header.default_ext
 
     def it_knows_the_image_dimensions(self):
         px_width, px_height = 42, 24

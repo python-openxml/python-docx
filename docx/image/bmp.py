@@ -38,6 +38,13 @@ class Bmp(BaseImageHeader):
         """
         return MIME_TYPE.BMP
 
+    @property
+    def default_ext(self):
+        """
+        Default filename extension, always 'bmp' for BMP images.
+        """
+        return 'bmp'
+
     @staticmethod
     def _dpi(px_per_meter):
         """

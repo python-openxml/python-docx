@@ -31,6 +31,13 @@ class Gif(BaseImageHeader):
         """
         return MIME_TYPE.GIF
 
+    @property
+    def default_ext(self):
+        """
+        Default filename extension, always 'gif' for GIF images.
+        """
+        return 'gif'
+
     @classmethod
     def _dimensions_from_stream(cls, stream):
         stream.seek(6)

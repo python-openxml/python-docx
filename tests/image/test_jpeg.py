@@ -30,6 +30,10 @@ class DescribeJpeg(object):
         jpeg = Jpeg(None, None, None, None)
         assert jpeg.content_type == MIME_TYPE.JPEG
 
+    def it_knows_its_default_ext(self):
+        jpeg = Jpeg(None, None, None, None)
+        assert jpeg.default_ext == 'jpg'
+
     class DescribeExif(object):
 
         def it_can_construct_from_an_exif_stream(self, from_exif_fixture):

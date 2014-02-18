@@ -39,6 +39,10 @@ class DescribePng(object):
         png = Png(None, None, None, None)
         assert png.content_type == MIME_TYPE.PNG
 
+    def it_knows_its_default_ext(self):
+        png = Png(None, None, None, None)
+        assert png.default_ext == 'png'
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
