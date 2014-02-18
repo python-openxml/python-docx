@@ -55,6 +55,13 @@ class Image(object):
         return cls._from_stream(stream, blob, filename)
 
     @property
+    def blob(self):
+        """
+        The bytes of the image 'file'
+        """
+        return self._blob
+
+    @property
     def content_type(self):
         """
         MIME content type for this image, e.g. ``'image/jpeg'`` for a JPEG

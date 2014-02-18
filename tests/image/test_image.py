@@ -60,6 +60,11 @@ class DescribeImage(object):
         Image__init_.assert_called_once_with(blob_, filename_, image_header_)
         assert isinstance(image, Image)
 
+    def it_provides_access_to_the_image_blob(self):
+        blob = b'foobar'
+        image = Image(blob, None, None)
+        assert image.blob == blob
+
     def it_knows_the_image_content_type(self, content_type_fixture):
         image_header_, content_type = content_type_fixture
         image = Image(None, None, image_header_)
