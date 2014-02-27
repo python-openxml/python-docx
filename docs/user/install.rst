@@ -12,9 +12,9 @@ depends on what installation utilities you have installed.
 
 |docx| may be installed with ``pip`` if you have it available::
 
-    pip install -pre python-docx
+    pip install --pre python-docx
 
-Note the ``-pre`` flag, which is required by recent versions of ``pip`` to
+Note the ``--pre`` flag, which is required by recent versions of ``pip`` to
 install pre-release versions, those with a version string having an alpha
 suffix like ``0.3.0a1``. This protects the unsuspecting from upgrading to
 a pre-release version.
