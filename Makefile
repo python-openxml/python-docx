@@ -10,7 +10,7 @@ help:
 	@echo "  accept    run acceptance tests using behave"
 	@echo "  clean     delete intermediate work product and start fresh"
 	@echo "  coverage  run nosetests with coverage"
-	@echo "  docs      generate documentation
+	@echo "  docs      generate documentation"
 	@echo "  readme    update README.html from README.rst"
 	@echo "  register  update metadata (README.rst) on PyPI"
 	@echo "  test      run tests using setup.py"

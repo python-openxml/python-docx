@@ -4,20 +4,14 @@ Installing
 ==========
 
 .. note:: python-docx versions 0.3.0 and later are not API-compatible with
-   prior versions. Alpha users are encouraged to install in a virtualenv if
-   they wish to continue using an installed prior version.
+   prior versions.
 
 |docx| is hosted on PyPI, so installation is relatively simple, and just
 depends on what installation utilities you have installed.
 
 |docx| may be installed with ``pip`` if you have it available::
 
-    pip install --pre python-docx
-
-Note the ``--pre`` flag, which is required by recent versions of ``pip`` to
-install pre-release versions, those with a version string having an alpha
-suffix like ``0.3.0a1``. This protects the unsuspecting from upgrading to
-a pre-release version.
+    pip install python-docx
 
 |docx| can also be installed using ``easy_install``, although this is
 discouraged::

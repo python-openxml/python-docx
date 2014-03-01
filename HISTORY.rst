@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+0.4.0 (2014-03-01)
+++++++++++++++++++
+
+- Advance from alpha to beta status.
+- Add pure-python image header parsing; drop Pillow dependency
+
+
 0.3.0a5 (2014-01-10)
 ++++++++++++++++++++++
 
