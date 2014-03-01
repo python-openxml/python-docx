@@ -7,17 +7,6 @@ Release v\ |version| (:ref:`Installation <install>`)
 .. include:: ../README.rst
 
 
-Status
-------
-
-|docx| is very usable, but still in pre-release status. We are very interested
-in alpha users who can provide real-life use cases with which to exercise the
-API. The code is thoroughly tested, so finding bugs is not our purpose. We
-believe tests should do that job, not users. However, API changes become
-painful after release, so we'd like to get it as right as we can before that.
-A post-alpha release is expected within a few weeks, say Feb 1, 2014.
-
-
 What it can do
 --------------
 

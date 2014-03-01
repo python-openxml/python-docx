@@ -17,7 +17,7 @@ Feature Analysis
    features/shapes-inline
    features/shapes-inline-size
    features/picture
-   features/run-properties
+   features/bool-run-props
 
 
 Schema Analysis
