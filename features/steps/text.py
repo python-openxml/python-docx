@@ -21,17 +21,10 @@ def given_a_run(context):
     context.run = p.add_run()
 
 
-@given('a run having bold set on')
-def given_a_run_having_bold_set_on(context):
+@given('a run having {bool_prop_name} set on')
+def given_a_run_having_bool_prop_set_on(context, bool_prop_name):
     run = Document().add_paragraph().add_run()
-    run.bold = True
-    context.run = run
-
-
-@given('a run having italic set on')
-def given_a_run_having_italic_set_on(context):
-    run = Document().add_paragraph().add_run()
-    run.italic = True
+    setattr(run, bool_prop_name, True)
     context.run = run
 
 
@@ -55,18 +48,11 @@ def when_add_page_break(context):
     run.add_break(WD_BREAK.PAGE)
 
 
-@when('I assign {value_str} to its bold property')
-def when_assign_true_to_its_bold_property(context, value_str):
+@when('I assign {value_str} to its {bool_prop_name} property')
+def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
     run = context.run
-    run.bold = value
-
-
-@when('I assign {value_str} to its italic property')
-def when_assign_true_to_its_italic_property(context, value_str):
-    value = {'True': True, 'False': False, 'None': None}[value_str]
-    run = context.run
-    run.italic = value
+    setattr(run, bool_prop_name, value)
 
 
 # then =====================================================
@@ -99,37 +85,19 @@ def then_last_item_in_run_is_a_break(context):
     assert context.last_child.tag == expected_tag
 
 
-@then('the run appears in bold typeface')
-def then_run_appears_in_bold_typeface(context):
+@then('the run appears in {boolean_prop_name} unconditionally')
+def then_run_appears_in_boolean_prop_name(context, boolean_prop_name):
     run = context.run
-    assert run.bold is True
+    assert getattr(run, boolean_prop_name) is True
 
 
-@then('the run appears in italic typeface')
-def then_run_appears_in_italic_typeface(context):
+@then('the run appears with its inherited {boolean_prop_name} setting')
+def then_run_inherits_bool_prop_value(context, boolean_prop_name):
     run = context.run
-    assert run.italic is True
+    assert getattr(run, boolean_prop_name) is None
 
 
-@then('the run appears with its inherited bold setting')
-def then_run_appears_with_its_inherited_bold_setting(context):
+@then('the run appears without {boolean_prop_name} unconditionally')
+def then_run_appears_without_bool_prop(context, boolean_prop_name):
     run = context.run
-    assert run.bold is None
-
-
-@then('the run appears with its inherited italic setting')
-def then_run_appears_with_its_inherited_italic_setting(context):
-    run = context.run
-    assert run.italic is None
-
-
-@then('the run appears without bold regardless of its style hierarchy')
-def then_run_appears_without_bold_regardless(context):
-    run = context.run
-    assert run.bold is False
-
-
-@then('the run appears without italic regardless of its style hierarchy')
-def then_run_appears_without_italic_regardless(context):
-    run = context.run
-    assert run.italic is False
+    assert getattr(run, boolean_prop_name) is False
