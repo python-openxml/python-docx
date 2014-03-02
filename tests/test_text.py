@@ -16,7 +16,12 @@ import pytest
 
 from mock import call, Mock
 
-from .oxml.unitdata.text import a_b, a_br, a_t, a_p, an_i, an_r, an_rPr
+from .oxml.unitdata.text import (
+    a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
+    a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
+    an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
+    an_r, an_rPr, an_rtl
+)
 from .unitutil import class_mock, instance_mock
 
 
@@ -121,22 +126,13 @@ class DescribeParagraph(object):
 
 class DescribeRun(object):
 
-    def it_knows_if_its_bold(self, bold_get_fixture):
-        run, is_bold = bold_get_fixture
-        assert run.bold == is_bold
+    def it_knows_its_bool_prop_states(self, bool_prop_get_fixture):
+        run, prop_name, expected_state = bool_prop_get_fixture
+        assert getattr(run, prop_name) == expected_state
 
-    def it_knows_if_its_italic(self, italic_get_fixture):
-        run, is_italic = italic_get_fixture
-        assert run.italic == is_italic
-
-    def it_can_change_its_bold_setting(self, bold_set_fixture):
-        run, bold_value, expected_xml = bold_set_fixture
-        run.bold = bold_value
-        assert run._r.xml == expected_xml
-
-    def it_can_change_its_italic_setting(self, italic_set_fixture):
-        run, italic_value, expected_xml = italic_set_fixture
-        run.italic = italic_value
+    def it_can_change_its_bool_prop_settings(self, bool_prop_set_fixture):
+        run, prop_name, value, expected_xml = bool_prop_set_fixture
+        setattr(run, prop_name, value)
         assert run._r.xml == expected_xml
 
     def it_can_add_text(self, add_text_fixture):
@@ -186,67 +182,129 @@ class DescribeRun(object):
         expected_xml = an_r().with_nsdecls().with_child(t_bldr).xml()
         return run, text_str, expected_xml, Text_
 
-    @pytest.fixture(params=[True, False, None])
-    def bold_get_fixture(self, request):
-        is_bold = request.param
+    @pytest.fixture(params=[
+        ('all_caps', True), ('all_caps', False), ('all_caps', None),
+        ('bold', True), ('bold', False), ('bold', None),
+        ('italic', True), ('italic', False), ('italic', None),
+        ('complex_script', True), ('complex_script', False),
+        ('complex_script', None),
+        ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
+        ('cs_italic', True), ('cs_italic', False), ('cs_italic', None),
+        ('double_strike', True), ('double_strike', False),
+        ('double_strike', None),
+        ('emboss', True), ('emboss', False), ('emboss', None),
+        ('hidden', True), ('hidden', False), ('hidden', None),
+        ('italic', True), ('italic', False), ('italic', None),
+        ('imprint', True), ('imprint', False), ('imprint', None),
+        ('math', True), ('math', False), ('math', None),
+        ('no_proof', True), ('no_proof', False), ('no_proof', None),
+        ('outline', True), ('outline', False), ('outline', None),
+        ('rtl', True), ('rtl', False), ('rtl', None),
+        ('shadow', True), ('shadow', False), ('shadow', None),
+        ('small_caps', True), ('small_caps', False), ('small_caps', None),
+        ('snap_to_grid', True), ('snap_to_grid', False),
+        ('snap_to_grid', None),
+        ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
+        ('strike', True), ('strike', False), ('strike', None),
+        ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
+    ])
+    def bool_prop_get_fixture(self, request):
+        bool_prop_name, expected_state = request.param
+        bool_prop_bldr = {
+            'all_caps':       a_caps,
+            'bold':           a_b,
+            'complex_script': a_cs,
+            'cs_bold':        a_bCs,
+            'cs_italic':      an_iCs,
+            'double_strike':  a_dstrike,
+            'emboss':         an_emboss,
+            'hidden':         a_vanish,
+            'italic':         an_i,
+            'imprint':        an_imprint,
+            'math':           an_oMath,
+            'no_proof':       a_noProof,
+            'outline':        an_outline,
+            'rtl':            an_rtl,
+            'shadow':         a_shadow,
+            'small_caps':     a_smallCaps,
+            'snap_to_grid':   a_snapToGrid,
+            'spec_vanish':    a_specVanish,
+            'strike':         a_strike,
+            'web_hidden':     a_webHidden,
+        }[bool_prop_name]
         r_bldr = an_r().with_nsdecls()
-        if is_bold is not None:
-            b_bldr = a_b()
-            if is_bold is False:
-                b_bldr.with_val('off')
-            rPr_bldr = an_rPr().with_child(b_bldr)
+        if expected_state is not None:
+            child_bldr = bool_prop_bldr()
+            if expected_state is False:
+                child_bldr.with_val('off')
+            rPr_bldr = an_rPr().with_child(child_bldr)
             r_bldr.with_child(rPr_bldr)
         r = r_bldr.element
         run = Run(r)
-        return run, is_bold
+        return run, bool_prop_name, expected_state
 
-    @pytest.fixture(params=[True, False, None])
-    def italic_get_fixture(self, request):
-        is_italic = request.param
-        r_bldr = an_r().with_nsdecls()
-        if is_italic is not None:
-            i_bldr = an_i()
-            if is_italic is False:
-                i_bldr.with_val('off')
-            rPr_bldr = an_rPr().with_child(i_bldr)
-            r_bldr.with_child(rPr_bldr)
-        r = r_bldr.element
-        run = Run(r)
-        return run, is_italic
-
-    @pytest.fixture(params=[True, False, None])
-    def bold_set_fixture(self, request):
+    @pytest.fixture(params=[
+        ('all_caps', True), ('all_caps', False), ('all_caps', None),
+        ('bold', True), ('bold', False), ('bold', None),
+        ('italic', True), ('italic', False), ('italic', None),
+        ('complex_script', True), ('complex_script', False),
+        ('complex_script', None),
+        ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
+        ('cs_italic', True), ('cs_italic', False), ('cs_italic', None),
+        ('double_strike', True), ('double_strike', False),
+        ('double_strike', None),
+        ('emboss', True), ('emboss', False), ('emboss', None),
+        ('hidden', True), ('hidden', False), ('hidden', None),
+        ('italic', True), ('italic', False), ('italic', None),
+        ('imprint', True), ('imprint', False), ('imprint', None),
+        ('math', True), ('math', False), ('math', None),
+        ('no_proof', True), ('no_proof', False), ('no_proof', None),
+        ('outline', True), ('outline', False), ('outline', None),
+        ('rtl', True), ('rtl', False), ('rtl', None),
+        ('shadow', True), ('shadow', False), ('shadow', None),
+        ('small_caps', True), ('small_caps', False), ('small_caps', None),
+        ('snap_to_grid', True), ('snap_to_grid', False),
+        ('snap_to_grid', None),
+        ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
+        ('strike', True), ('strike', False), ('strike', None),
+        ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
+    ])
+    def bool_prop_set_fixture(self, request):
+        bool_prop_name, value = request.param
+        bool_prop_bldr = {
+            'all_caps':       a_caps,
+            'bold':           a_b,
+            'complex_script': a_cs,
+            'cs_bold':        a_bCs,
+            'cs_italic':      an_iCs,
+            'double_strike':  a_dstrike,
+            'emboss':         an_emboss,
+            'hidden':         a_vanish,
+            'italic':         an_i,
+            'imprint':        an_imprint,
+            'math':           an_oMath,
+            'no_proof':       a_noProof,
+            'outline':        an_outline,
+            'rtl':            an_rtl,
+            'shadow':         a_shadow,
+            'small_caps':     a_smallCaps,
+            'snap_to_grid':   a_snapToGrid,
+            'spec_vanish':    a_specVanish,
+            'strike':         a_strike,
+            'web_hidden':     a_webHidden,
+        }[bool_prop_name]
         # run --------------------------
         r = an_r().with_nsdecls().element
         run = Run(r)
-        # bold_value -------------------
-        bold_value = request.param
         # expected_xml -----------------
         rPr_bldr = an_rPr()
-        if bold_value is not None:
-            b_bldr = a_b()
-            if bold_value is False:
-                b_bldr.with_val(0)
-            rPr_bldr.with_child(b_bldr)
+        if value is not None:
+            child_bldr = bool_prop_bldr()
+            if value is False:
+                child_bldr.with_val(0)
+            rPr_bldr.with_child(child_bldr)
         expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
-        return run, bold_value, expected_xml
-
-    @pytest.fixture(params=[True, False, None])
-    def italic_set_fixture(self, request):
-        # run --------------------------
-        r = an_r().with_nsdecls().element
-        run = Run(r)
-        # italic_value -------------------
-        italic_value = request.param
-        # expected_xml -----------------
-        rPr_bldr = an_rPr()
-        if italic_value is not None:
-            i_bldr = an_i()
-            if italic_value is False:
-                i_bldr.with_val(0)
-            rPr_bldr.with_child(i_bldr)
-        expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
-        return run, italic_value, expected_xml
+        return run, bool_prop_name, value, expected_xml
 
     @pytest.fixture
     def run(self):

@@ -58,8 +58,56 @@ def a_b():
     return CT_OnOffBuilder('w:b')
 
 
+def a_bCs():
+    return CT_OnOffBuilder('w:bCs')
+
+
 def a_br():
     return CT_BrBuilder()
+
+
+def a_caps():
+    return CT_OnOffBuilder('w:caps')
+
+
+def a_cs():
+    return CT_OnOffBuilder('w:cs')
+
+
+def a_dstrike():
+    return CT_OnOffBuilder('w:dstrike')
+
+
+def a_noProof():
+    return CT_OnOffBuilder('w:noProof')
+
+
+def a_shadow():
+    return CT_OnOffBuilder('w:shadow')
+
+
+def a_smallCaps():
+    return CT_OnOffBuilder('w:smallCaps')
+
+
+def a_snapToGrid():
+    return CT_OnOffBuilder('w:snapToGrid')
+
+
+def a_specVanish():
+    return CT_OnOffBuilder('w:specVanish')
+
+
+def a_strike():
+    return CT_OnOffBuilder('w:strike')
+
+
+def a_vanish():
+    return CT_OnOffBuilder('w:vanish')
+
+
+def a_webHidden():
+    return CT_OnOffBuilder('w:webHidden')
 
 
 def a_p():
@@ -82,8 +130,28 @@ def a_t():
     return CT_TextBuilder()
 
 
+def an_emboss():
+    return CT_OnOffBuilder('w:emboss')
+
+
 def an_i():
     return CT_OnOffBuilder('w:i')
+
+
+def an_iCs():
+    return CT_OnOffBuilder('w:iCs')
+
+
+def an_imprint():
+    return CT_OnOffBuilder('w:imprint')
+
+
+def an_oMath():
+    return CT_OnOffBuilder('w:oMath')
+
+
+def an_outline():
+    return CT_OnOffBuilder('w:outline')
 
 
 def an_r():
@@ -92,3 +160,7 @@ def an_r():
 
 def an_rPr():
     return CT_RPrBuilder()
+
+
+def an_rtl():
+    return CT_OnOffBuilder('w:rtl')

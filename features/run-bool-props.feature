@@ -3,7 +3,6 @@ Feature: Query or apply boolean property to a run
   As a python-docx developer
   I need a way to query and set the boolean properties on a run
 
-  @wip
   Scenario Outline: Apply boolean property to a run
     Given a run
      When I assign True to its <boolean_prop_name> property
@@ -32,7 +31,6 @@ Feature: Query or apply boolean property to a run
       | strike            |
       | web_hidden        |
 
-  @wip
   Scenario Outline: Set <boolean_prop_name> off unconditionally
     Given a run
      When I assign False to its <boolean_prop_name> property
@@ -61,7 +59,6 @@ Feature: Query or apply boolean property to a run
       | strike            |
       | web_hidden        |
 
-  @wip
   Scenario Outline: Remove boolean property from a run
     Given a run having <boolean_prop_name> set on
      When I assign None to its <boolean_prop_name> property

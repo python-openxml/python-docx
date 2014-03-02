@@ -97,6 +97,8 @@ rst_epilog = """
 
 .. |None| replace:: ``None``
 
+.. |NumberingPart| replace:: :class:`NumberingPart`
+
 .. |Paragraph| replace:: :class:`.Paragraph`
 
 .. |Part| replace:: :class:`Part`
@@ -110,6 +112,8 @@ rst_epilog = """
 .. |_Rows| replace:: :class:`_Rows`
 
 .. |Run| replace:: :class:`Run`
+
+.. |StylesPart| replace:: :class:`StylesPart`
 
 .. |Table| replace:: :class:`.Table`
 

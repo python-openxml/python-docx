@@ -295,6 +295,46 @@ class CT_RPr(OxmlBaseElement):
         self.insert(0, b)
         return b
 
+    def add_bCs(self):
+        """
+        Return a newly added <w:bCs/> child element.
+        """
+        bCs = OxmlElement('w:bCs')
+        self.insert(0, bCs)
+        return bCs
+
+    def add_caps(self):
+        """
+        Return a newly added <w:caps/> child element.
+        """
+        caps = OxmlElement('w:caps')
+        self.insert(0, caps)
+        return caps
+
+    def add_cs(self):
+        """
+        Return a newly added <w:cs/> child element.
+        """
+        cs = OxmlElement('w:cs')
+        self.insert(0, cs)
+        return cs
+
+    def add_dstrike(self):
+        """
+        Return a newly added <w:dstrike/> child element.
+        """
+        dstrike = OxmlElement('w:dstrike')
+        self.insert(0, dstrike)
+        return dstrike
+
+    def add_emboss(self):
+        """
+        Return a newly added <w:emboss/> child element.
+        """
+        emboss = OxmlElement('w:emboss')
+        self.insert(0, emboss)
+        return emboss
+
     def add_i(self):
         """
         Return a newly added <w:i/> child element.
@@ -302,6 +342,110 @@ class CT_RPr(OxmlBaseElement):
         i = OxmlElement('w:i')
         self.insert(0, i)
         return i
+
+    def add_iCs(self):
+        """
+        Return a newly added <w:iCs/> child element.
+        """
+        iCs = OxmlElement('w:iCs')
+        self.insert(0, iCs)
+        return iCs
+
+    def add_imprint(self):
+        """
+        Return a newly added <w:imprint/> child element.
+        """
+        imprint = OxmlElement('w:imprint')
+        self.insert(0, imprint)
+        return imprint
+
+    def add_noProof(self):
+        """
+        Return a newly added <w:noProof/> child element.
+        """
+        noProof = OxmlElement('w:noProof')
+        self.insert(0, noProof)
+        return noProof
+
+    def add_oMath(self):
+        """
+        Return a newly added <w:oMath/> child element.
+        """
+        oMath = OxmlElement('w:oMath')
+        self.insert(0, oMath)
+        return oMath
+
+    def add_outline(self):
+        """
+        Return a newly added <w:outline/> child element.
+        """
+        outline = OxmlElement('w:outline')
+        self.insert(0, outline)
+        return outline
+
+    def add_rtl(self):
+        """
+        Return a newly added <w:rtl/> child element.
+        """
+        rtl = OxmlElement('w:rtl')
+        self.insert(0, rtl)
+        return rtl
+
+    def add_shadow(self):
+        """
+        Return a newly added <w:shadow/> child element.
+        """
+        shadow = OxmlElement('w:shadow')
+        self.insert(0, shadow)
+        return shadow
+
+    def add_smallCaps(self):
+        """
+        Return a newly added <w:smallCaps/> child element.
+        """
+        smallCaps = OxmlElement('w:smallCaps')
+        self.insert(0, smallCaps)
+        return smallCaps
+
+    def add_snapToGrid(self):
+        """
+        Return a newly added <w:snapToGrid/> child element.
+        """
+        snapToGrid = OxmlElement('w:snapToGrid')
+        self.insert(0, snapToGrid)
+        return snapToGrid
+
+    def add_specVanish(self):
+        """
+        Return a newly added <w:specVanish/> child element.
+        """
+        specVanish = OxmlElement('w:specVanish')
+        self.insert(0, specVanish)
+        return specVanish
+
+    def add_strike(self):
+        """
+        Return a newly added <w:strike/> child element.
+        """
+        strike = OxmlElement('w:strike')
+        self.insert(0, strike)
+        return strike
+
+    def add_vanish(self):
+        """
+        Return a newly added <w:vanish/> child element.
+        """
+        vanish = OxmlElement('w:vanish')
+        self.insert(0, vanish)
+        return vanish
+
+    def add_webHidden(self):
+        """
+        Return a newly added <w:webHidden/> child element.
+        """
+        webHidden = OxmlElement('w:webHidden')
+        self.insert(0, webHidden)
+        return webHidden
 
     @property
     def b(self):
@@ -311,11 +455,60 @@ class CT_RPr(OxmlBaseElement):
         return self.find(qn('w:b'))
 
     @property
+    def bCs(self):
+        """
+        First ``<w:bCs>`` child element or None if none are present.
+        """
+        return self.find(qn('w:bCs'))
+
+    @property
+    def caps(self):
+        """
+        First ``<w:caps>`` child element or None if none are present.
+        """
+        return self.find(qn('w:caps'))
+
+    @property
+    def cs(self):
+        """
+        First ``<w:cs>`` child element or None if none are present.
+        """
+        return self.find(qn('w:cs'))
+
+    @property
+    def dstrike(self):
+        """
+        First ``<w:dstrike>`` child element or None if none are present.
+        """
+        return self.find(qn('w:dstrike'))
+
+    @property
+    def emboss(self):
+        """
+        First ``<w:emboss>`` child element or None if none are present.
+        """
+        return self.find(qn('w:emboss'))
+
+    @property
     def i(self):
         """
         First ``<w:i>`` child element or None if none are present.
         """
         return self.find(qn('w:i'))
+
+    @property
+    def iCs(self):
+        """
+        First ``<w:iCs>`` child element or None if none are present.
+        """
+        return self.find(qn('w:iCs'))
+
+    @property
+    def imprint(self):
+        """
+        First ``<w:imprint>`` child element or None if none are present.
+        """
+        return self.find(qn('w:imprint'))
 
     @classmethod
     def new(cls):
@@ -324,15 +517,182 @@ class CT_RPr(OxmlBaseElement):
         """
         return OxmlElement('w:rPr')
 
+    @property
+    def noProof(self):
+        """
+        First ``<w:noProof>`` child element or None if none are present.
+        """
+        return self.find(qn('w:noProof'))
+
+    @property
+    def oMath(self):
+        """
+        First ``<w:oMath>`` child element or None if none are present.
+        """
+        return self.find(qn('w:oMath'))
+
+    @property
+    def outline(self):
+        """
+        First ``<w:outline>`` child element or None if none are present.
+        """
+        return self.find(qn('w:outline'))
+
     def remove_b(self):
         b_lst = self.findall(qn('w:b'))
         for b in b_lst:
             self.remove(b)
 
+    def remove_bCs(self):
+        bCs_lst = self.findall(qn('w:bCs'))
+        for bCs in bCs_lst:
+            self.remove(bCs)
+
+    def remove_caps(self):
+        caps_lst = self.findall(qn('w:caps'))
+        for caps in caps_lst:
+            self.remove(caps)
+
+    def remove_cs(self):
+        cs_lst = self.findall(qn('w:cs'))
+        for cs in cs_lst:
+            self.remove(cs)
+
+    def remove_dstrike(self):
+        dstrike_lst = self.findall(qn('w:dstrike'))
+        for dstrike in dstrike_lst:
+            self.remove(dstrike)
+
+    def remove_emboss(self):
+        emboss_lst = self.findall(qn('w:emboss'))
+        for emboss in emboss_lst:
+            self.remove(emboss)
+
     def remove_i(self):
         i_lst = self.findall(qn('w:i'))
         for i in i_lst:
             self.remove(i)
+
+    def remove_iCs(self):
+        iCs_lst = self.findall(qn('w:iCs'))
+        for iCs in iCs_lst:
+            self.remove(iCs)
+
+    def remove_imprint(self):
+        imprint_lst = self.findall(qn('w:imprint'))
+        for imprint in imprint_lst:
+            self.remove(imprint)
+
+    def remove_noProof(self):
+        noProof_lst = self.findall(qn('w:noProof'))
+        for noProof in noProof_lst:
+            self.remove(noProof)
+
+    def remove_oMath(self):
+        oMath_lst = self.findall(qn('w:oMath'))
+        for oMath in oMath_lst:
+            self.remove(oMath)
+
+    def remove_outline(self):
+        outline_lst = self.findall(qn('w:outline'))
+        for outline in outline_lst:
+            self.remove(outline)
+
+    def remove_rtl(self):
+        rtl_lst = self.findall(qn('w:rtl'))
+        for rtl in rtl_lst:
+            self.remove(rtl)
+
+    def remove_shadow(self):
+        shadow_lst = self.findall(qn('w:shadow'))
+        for shadow in shadow_lst:
+            self.remove(shadow)
+
+    def remove_smallCaps(self):
+        smallCaps_lst = self.findall(qn('w:smallCaps'))
+        for smallCaps in smallCaps_lst:
+            self.remove(smallCaps)
+
+    def remove_snapToGrid(self):
+        snapToGrid_lst = self.findall(qn('w:snapToGrid'))
+        for snapToGrid in snapToGrid_lst:
+            self.remove(snapToGrid)
+
+    def remove_specVanish(self):
+        specVanish_lst = self.findall(qn('w:specVanish'))
+        for specVanish in specVanish_lst:
+            self.remove(specVanish)
+
+    def remove_strike(self):
+        strike_lst = self.findall(qn('w:strike'))
+        for strike in strike_lst:
+            self.remove(strike)
+
+    def remove_vanish(self):
+        vanish_lst = self.findall(qn('w:vanish'))
+        for vanish in vanish_lst:
+            self.remove(vanish)
+
+    def remove_webHidden(self):
+        webHidden_lst = self.findall(qn('w:webHidden'))
+        for webHidden in webHidden_lst:
+            self.remove(webHidden)
+
+    @property
+    def rtl(self):
+        """
+        First ``<w:rtl>`` child element or None if none are present.
+        """
+        return self.find(qn('w:rtl'))
+
+    @property
+    def shadow(self):
+        """
+        First ``<w:shadow>`` child element or None if none are present.
+        """
+        return self.find(qn('w:shadow'))
+
+    @property
+    def smallCaps(self):
+        """
+        First ``<w:smallCaps>`` child element or None if none are present.
+        """
+        return self.find(qn('w:smallCaps'))
+
+    @property
+    def snapToGrid(self):
+        """
+        First ``<w:snapToGrid>`` child element or None if none are present.
+        """
+        return self.find(qn('w:snapToGrid'))
+
+    @property
+    def specVanish(self):
+        """
+        First ``<w:specVanish>`` child element or None if none are present.
+        """
+        return self.find(qn('w:specVanish'))
+
+    @property
+    def strike(self):
+        """
+        First ``<w:strike>`` child element or None if none are present.
+        """
+        return self.find(qn('w:strike'))
+
+    @property
+    def vanish(self):
+        """
+        First ``<w:vanish>`` child element or None if none are present.
+        """
+        return self.find(qn('w:vanish'))
+
+    @property
+    def webHidden(self):
+        """
+        First ``<w:webHidden>`` child element or None if none are present.
+        """
+        return self.find(qn('w:webHidden'))
 
 
 class CT_Text(OxmlBaseElement):

@@ -80,20 +80,20 @@ applying run-level properties::
 
 The semantics of the three values are as follows:
 
-+-------+-------------------------------------------------------------+
-| value | meaning                                                     |
-+=======+=============================================================+
-| True  | The effective value of the property is unconditional *on*.  |
-|       | Contrary settings in the style hierarchy have no effect.    |
-+-------+-------------------------------------------------------------+
-| False | The effective value of the property is unconditional *off*. |
-|       | Contrary settings in the style hierarchy have no effect.    |
-+-------+-------------------------------------------------------------+
-| None  | The element is not present. The effective value is          |
-|       | inherited from the style hierarchy. If no value for this    |
-|       | property is present in the style hierarchy, the effective   |
-|       | value is *off*.                                             |
-+-------+-------------------------------------------------------------+
++-------+---------------------------------------------------------------+
+| value | meaning                                                       |
++=======+===============================================================+
+| True  | The effective value of the property is unconditionally *on*.  |
+|       | Contrary settings in the style hierarchy have no effect.      |
++-------+---------------------------------------------------------------+
+| False | The effective value of the property is unconditionally *off*. |
+|       | Contrary settings in the style hierarchy have no effect.      |
++-------+---------------------------------------------------------------+
+| None  | The element is not present. The effective value is            |
+|       | inherited from the style hierarchy. If no value for this      |
+|       | property is present in the style hierarchy, the effective     |
+|       | value is *off*.                                               |
++-------+---------------------------------------------------------------+
 
 
 Specimen XML
