@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+0.5.0 (2014-03-02)
+++++++++++++++++++
+
+- Add 20 tri-state properties on Run, including all-caps, double-strike,
+  hidden, shadow, small-caps, and 15 others.
+
+
 0.4.0 (2014-03-01)
 ++++++++++++++++++
 
