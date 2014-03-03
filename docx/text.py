@@ -146,6 +146,12 @@ class Run(object):
         t = self._r.add_t(text)
         return Text(t)
 
+    def clear_texts(self):
+        """
+        Remove all text in this run.
+        """
+        self._r.clear_t()
+
     @boolproperty
     def all_caps(self):
         """

@@ -260,6 +260,13 @@ class CT_R(OxmlBaseElement):
             rPr = self._add_rPr()
         return rPr
 
+    def clear_t(self):
+        """
+        Remove all text elements in this run.
+        """
+        for t in self.t_lst:
+            self.remove(r)
+
     @classmethod
     def new(cls):
         """
