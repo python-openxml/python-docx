@@ -67,6 +67,12 @@ class Paragraph(object):
         if text:
             run.add_text(text)
         return run
+        
+    def clear_runs(self):
+        """
+        Remove all runs in this paragraph.
+        """
+        self._p.clear_r()
 
     @property
     def runs(self):

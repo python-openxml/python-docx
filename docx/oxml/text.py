@@ -59,6 +59,13 @@ class CT_P(OxmlBaseElement):
         if pPr is None:
             pPr = self._add_pPr()
         return pPr
+        
+    def clear_r(self):
+        """
+        Remove all run elements in this paragraph.
+        """
+        for r in self.r_lst:
+            self.remove(r)
 
     @staticmethod
     def new():
