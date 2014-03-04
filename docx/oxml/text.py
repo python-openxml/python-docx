@@ -265,7 +265,7 @@ class CT_R(OxmlBaseElement):
         Remove all text elements in this run.
         """
         for t in self.t_lst:
-            self.remove(r)
+            self.remove(t)
 
     @classmethod
     def new(cls):
