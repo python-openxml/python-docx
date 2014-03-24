@@ -342,6 +342,16 @@ class CT_RPr(OxmlBaseElement):
         i = OxmlElement('w:i')
         self.insert(0, i)
         return i
+        
+    def add_u(self, type = 'dashed'):
+        """
+        Return a newly added <w:u/> child element.
+        type can be: single, double, thick, 
+        """
+        u = OxmlElement('w:u')
+        u.set(qn('w:val'), type)
+        self.insert(0, u)
+        return u
 
     def add_iCs(self):
         """
@@ -572,6 +582,11 @@ class CT_RPr(OxmlBaseElement):
         i_lst = self.findall(qn('w:i'))
         for i in i_lst:
             self.remove(i)
+            
+    def remove_u(self):
+        u_lst = self.findall(qn('w:u'))
+        for u in u_lst:
+            self.remove(u)
 
     def remove_iCs(self):
         iCs_lst = self.findall(qn('w:iCs'))
