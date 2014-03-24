@@ -211,6 +211,14 @@ class Run(object):
         to appear in italics.
         """
         return 'i'
+        
+    @boolproperty
+    def underline(self):
+        """
+        Read/write tri-state value. When |True|, causes the text of the run
+        to appear underlined.
+        """
+        return 'u'
 
     @boolproperty
     def imprint(self):
