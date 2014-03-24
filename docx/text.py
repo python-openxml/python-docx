@@ -217,6 +217,10 @@ class Run(object):
         """
         Read/write tri-state value. When |True|, causes the text of the run
         to appear underlined.
+        
+        TODO: Need to support: single, words, double, thick, dotted, dottedHeavy, dash,
+        dashedHeavy, dashLong, dashLongHeavy, dotDash, dashDotHeavy, dotDotDash, dashDotDotHeavy,
+        wave, wavyHeavy, wavyDouble, none
         """
         return 'u'
 
