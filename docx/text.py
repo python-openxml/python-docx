@@ -212,17 +212,41 @@ class Run(object):
         """
         return 'i'
         
-    @boolproperty
+    @property
     def underline(self):
         """
-        Read/write tri-state value. When |True|, causes the text of the run
-        to appear underlined.
+        String name of underline style to be applied. If "none" or False, then no underline
+        is applied. If True, single underline is applied.
         
-        TODO: Need to support: single, words, double, thick, dotted, dottedHeavy, dash,
-        dashedHeavy, dashLong, dashLongHeavy, dotDash, dashDotHeavy, dotDotDash, dashDotDotHeavy,
-        wave, wavyHeavy, wavyDouble, none
+        Valid Values: True, False, 'single', 'words', 'double', 'thick', 'dotted', 'dottedHeavy',
+        'dash', 'dashedHeavy', 'dashLong', 'dashLongHeavy', 'dotDash', 'dashDotHeavy',
+        'dotDotDash', 'dashDotDotHeavy', 'wave', 'wavyHeavy', 'wavyDouble', 'none'
         """
-        return 'u'
+        u = self._r.get_or_add_rPr().underline
+        if u is None:
+            return None
+        return u.val
+
+    @underline.setter
+    def underline(self, style):
+        # interperate style
+        if style is None:
+            style = 'none'
+        if type(style)==bool:
+            style = 'single' if style else 'none'
+        
+        validStyles = ['single', 'words', 'double', 'thick', 'dotted', 'dottedHeavy', 'dash',
+        'dashedHeavy', 'dashLong', 'dashLongHeavy', 'dotDash', 'dashDotHeavy', 'dotDotDash', 'dashDotDotHeavy',
+        'wave', 'wavyHeavy', 'wavyDouble', 'none']        
+        
+        if style not in validStyles:
+            raise ValueError('"'+style+'" is not valid. Needs to be: '+', '.join(validStyles))
+        
+        u = self._r.get_or_add_rPr().underline
+        if u is None:
+            self._r.get_or_add_rPr().add_underline(style)
+        else:
+            u.val = style
 
     @boolproperty
     def imprint(self):
