@@ -287,6 +287,23 @@ class CT_RPr(OxmlBaseElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
     """
+    
+    @property
+    def underline(self):
+        """
+        First ``<w:u>`` child element or None if none are present.
+        """
+        return self.find(qn('w:u'))
+        
+    def add_underline(self, style):
+        """
+        Return a newly added <w:u w:val=style/> child element.
+        """
+        u = OxmlElement('w:u')
+        u.set(qn('w:val'), style)
+        self.insert(0, u)
+        return u
+        
     def add_b(self):
         """
         Return a newly added <w:b/> child element.
@@ -342,16 +359,6 @@ class CT_RPr(OxmlBaseElement):
         i = OxmlElement('w:i')
         self.insert(0, i)
         return i
-        
-    def add_u(self, type = 'dashed'):
-        """
-        Return a newly added <w:u/> child element.
-        type can be: single, double, thick, 
-        """
-        u = OxmlElement('w:u')
-        u.set(qn('w:val'), type)
-        self.insert(0, u)
-        return u
 
     def add_iCs(self):
         """
@@ -582,11 +589,6 @@ class CT_RPr(OxmlBaseElement):
         i_lst = self.findall(qn('w:i'))
         for i in i_lst:
             self.remove(i)
-            
-    def remove_u(self):
-        u_lst = self.findall(qn('w:u'))
-        for u in u_lst:
-            self.remove(u)
 
     def remove_iCs(self):
         iCs_lst = self.findall(qn('w:iCs'))
