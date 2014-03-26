@@ -163,7 +163,7 @@ class DescribeRun(object):
         'single','thick','wavy','wavyDouble','wavyHeavy','words',
     ])
     def add_underline_fixture(self, request, run):
-        type_, underline_type = {
+        underline_type = {
             'dash':WD_UNDERLINE.DASH,
             'dashHeavy':WD_UNDERLINE.DASH_HEAVY,
             'dashLong':WD_UNDERLINE.DASH_LONG,
