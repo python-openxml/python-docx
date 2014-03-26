@@ -236,8 +236,6 @@ class Run(object):
             style = WD_UNDERLINE.NONE
         if type(style)==bool:
             style = WD_UNDERLINE.SINGLE if style else WD_UNDERLINE.NONE
-            
-        style = WD_UNDERLINE.stringDict[style]
         
         u = self._r.get_or_add_rPr().underline
         if u is None:

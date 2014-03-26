@@ -9,7 +9,7 @@ from docx.oxml.parts.numbering import CT_NumPr
 from docx.oxml.shared import (
     CT_String, nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
 )
-
+from docx.enum.text import WD_UNDERLINE
 
 class CT_Br(OxmlBaseElement):
     """
@@ -299,7 +299,7 @@ class CT_RPr(OxmlBaseElement):
         """
         Return a newly added <w:u w:val=style/> child element.
         """
-        u = CT_String.new('w:u', str(style))
+        u = CT_String.new('w:u', WD_UNDERLINE.stringDict[style]))
         self.insert(0, u)
         return u
         

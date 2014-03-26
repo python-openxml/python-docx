@@ -136,7 +136,9 @@ def an_emboss():
 
 def an_i():
     return CT_OnOffBuilder('w:i')
-
+    
+def an_underline():
+    return CT_OnOffBuilder('w:u')
 
 def an_iCs():
     return CT_OnOffBuilder('w:iCs')

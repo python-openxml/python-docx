@@ -20,7 +20,7 @@ from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
     a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
-    an_r, an_rPr, an_rtl
+    an_r, an_rPr, an_rtl, an_underline
 )
 from .unitutil import class_mock, instance_mock
 
@@ -186,6 +186,7 @@ class DescribeRun(object):
         ('all_caps', True), ('all_caps', False), ('all_caps', None),
         ('bold', True), ('bold', False), ('bold', None),
         ('italic', True), ('italic', False), ('italic', None),
+        ('underline', True), ('underline', False), ('underline', None),
         ('complex_script', True), ('complex_script', False),
         ('complex_script', None),
         ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
@@ -231,6 +232,7 @@ class DescribeRun(object):
             'spec_vanish':    a_specVanish,
             'strike':         a_strike,
             'web_hidden':     a_webHidden,
+            'underline':      an_underline,
         }[bool_prop_name]
         r_bldr = an_r().with_nsdecls()
         if expected_state is not None:
@@ -247,6 +249,7 @@ class DescribeRun(object):
         ('all_caps', True), ('all_caps', False), ('all_caps', None),
         ('bold', True), ('bold', False), ('bold', None),
         ('italic', True), ('italic', False), ('italic', None),
+        ('underline', True), ('underline', False), ('underline', None),
         ('complex_script', True), ('complex_script', False),
         ('complex_script', None),
         ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
@@ -292,6 +295,7 @@ class DescribeRun(object):
             'spec_vanish':    a_specVanish,
             'strike':         a_strike,
             'web_hidden':     a_webHidden,
+            'underline':      an_underline,
         }[bool_prop_name]
         # run --------------------------
         r = an_r().with_nsdecls().element
