@@ -251,3 +251,52 @@ class CT_Tc(OxmlBaseElement):
         <w:tcPr> child element or |None| if not present.
         """
         return self.find(qn('w:tcPr'))
+        
+    def get_or_add_tcPr(self):
+        """
+        Return the tcPr child element, newly added if not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            tcPr = self._add_tcPr()
+        return tcPr
+        
+    def _add_tcPr(self):
+        """
+        Return a newly added tcPr child element. Assumes one is not present.
+        """
+        tcPr = CT_TcPr.new()
+        self.append(tcPr)
+        return tcPr
+        
+class CT_TcPr(OxmlBaseElement):
+    """
+    ``<w:tcPr>`` element, child of ``<w:tc>``, holds child elements that
+    define cell properties such as gridSpan.
+    """
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tcPr>`` element.
+        """
+        return OxmlElement('w:tcPr')
+        
+    def add_gridSpan(self, span):
+        """
+        Return a new <w:gridSpan> element newly inserted in sequence among
+        the existing child elements.gridSpan
+        """
+        gridSpan = CT_String.new('w:gridSpan', str(span))
+        self.append(gridSpan) # append or insert?
+        return gridSpan
+
+    @property
+    def gridSpan(self):
+        """
+        Optional <w:gridSpan> child element, or |None| if not present.
+        """
+        return self.find(qn('w:gridSpan'))
+        
+    
+        
+    

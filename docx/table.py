@@ -113,7 +113,24 @@ class _Cell(object):
         p = tc.add_p()
         r = p.add_r()
         r.add_t(text)
-
+        
+    @property
+    def colSpan(self):
+        """
+        Set the column span
+        """
+        span = self._tc.get_or_add_tcPr().gridSpan
+        if span is None:
+            return None
+        return span.val
+        
+    @colSpan.setter
+    def colSpan(self, val):
+        span = self._tc.get_or_add_tcPr().gridSpan
+        if span is None:
+            self._tc.get_or_add_tcPr().add_gridSpan(val)
+        else:
+            span.val = val  
 
 class _Column(object):
     """

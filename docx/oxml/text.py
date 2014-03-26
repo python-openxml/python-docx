@@ -299,7 +299,7 @@ class CT_RPr(OxmlBaseElement):
         """
         Return a newly added <w:u w:val=style/> child element.
         """
-        u = CT_String.new('w:u', style)
+        u = CT_String.new('w:u', str(style))
         self.insert(0, u)
         return u
         

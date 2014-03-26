@@ -6,7 +6,7 @@ Text-related proxy types for python-docx, such as Paragraph and Run.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_BREAK, WD_UNDERLINE
 
 
 def boolproperty(f):
@@ -215,12 +215,14 @@ class Run(object):
     @property
     def underline(self):
         """
-        String name of underline style to be applied. If "none" or False, then no underline
-        is applied. If True, single underline is applied.
+        Underline text with style of *underline_type*. *underline_type* can
+        take the values `WD_UNDERLINE.SINGLE`, `WD_UNDERLINE.DOUBLE`, etc.
+        where `WD_UNDERLINE` is imported from `docx.enum.text`.
         
-        Valid Values: True, False, 'single', 'words', 'double', 'thick', 'dotted', 'dottedHeavy',
-        'dash', 'dashedHeavy', 'dashLong', 'dashLongHeavy', 'dotDash', 'dashDotHeavy',
-        'dotDotDash', 'dashDotDotHeavy', 'wave', 'wavyHeavy', 'wavyDouble', 'none'
+        Shorthand:
+        setting to True results in `WD_UNDERLINE.SINGLE`.
+        setting to False results in `WD_UNDERLINE.NONE`.
+        setting to None results in `WD_UNDERLINE.NONE`.
         """
         u = self._r.get_or_add_rPr().underline
         if u is None:
@@ -231,16 +233,11 @@ class Run(object):
     def underline(self, style):
         # interperate style
         if style is None:
-            style = 'none'
+            style = WD_UNDERLINE.NONE
         if type(style)==bool:
-            style = 'single' if style else 'none'
-        
-        validStyles = ['single', 'words', 'double', 'thick', 'dotted', 'dottedHeavy', 'dash',
-        'dashedHeavy', 'dashLong', 'dashLongHeavy', 'dotDash', 'dashDotHeavy', 'dotDotDash', 'dashDotDotHeavy',
-        'wave', 'wavyHeavy', 'wavyDouble', 'none']        
-        
-        if style not in validStyles:
-            raise ValueError('"'+style+'" is not valid. Needs to be: '+', '.join(validStyles))
+            style = WD_UNDERLINE.SINGLE if style else WD_UNDERLINE.NONE
+            
+        style = WD_UNDERLINE.stringDict[style]
         
         u = self._r.get_or_add_rPr().underline
         if u is None:
