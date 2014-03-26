@@ -20,7 +20,7 @@ from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
     a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
-    an_r, an_rPr, an_rtl, an_underline
+    an_r, an_rPr, an_rtl, an_underline, an_u
 )
 from .unitutil import class_mock, instance_mock
 
@@ -145,12 +145,48 @@ class DescribeRun(object):
         run, break_type, expected_xml = add_break_fixture
         run.add_break(break_type)
         assert run._r.xml == expected_xml
+        
+    def it_can_underline_text(self, add_underline_fixture):
+        run, underline_type, expected_xml = add_underline_fixture
+        run.add_break(underline_type)
+        assert run._r.xml == expected_xml
 
     def it_knows_the_text_it_contains(self, text_prop_fixture):
         run, expected_text = text_prop_fixture
         assert run.text == expected_text
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        'dash','dashHeavy','dashLong','longHeavy','dotDash','dotDashHeavy',
+        'dotDotDash','dotDotDashHeavy','dotted','dottedHeavy','double','none',
+        'single','thick','wavy','wavyDouble','wavyHeavy','words',
+    ])
+    def add_underline_fixture(self, request, run):
+        type_, underline_type = {
+            'dash':WD_UNDERLINE.DASH,
+            'dashHeavy':WD_UNDERLINE.DASH_HEAVY,
+            'dashLong':WD_UNDERLINE.DASH_LONG,
+            'longHeavy':WD_UNDERLINE.LONG_HEAVY,
+            'dotDash':WD_UNDERLINE.DOT_DASH,
+            'dotDashHeavy':WD_UNDERLINE.DOT_DASH_HEAVY,
+            'dotDotDash':WD_UNDERLINE.DOT_DOT_DASH,
+            'dotDotDashHeavy':WD_UNDERLINE.DOT_DOT_DASH_HEAVY,
+            'dotted':WD_UNDERLINE.DOTTED,
+            'dottedHeavy':WD_UNDERLINE.DOTTED_HEAVY,
+            'double':WD_UNDERLINE.DOUBLE,
+            'none':WD_UNDERLINE.NONE,
+            'single':WD_UNDERLINE.SINGLE,
+            'thick':WD_UNDERLINE.THICK,
+            'wavy':WD_UNDERLINE.WAVY,
+            'wavyDouble':WD_UNDERLINE.WAVY_DOUBLE,
+            'wavyHeavy':WD_UNDERLINE.WAVY_HEAVY,
+            'words':WD_UNDERLINE.WORDS,
+        }[request.param]
+        u_bldr = an_u()
+        expected_xml = an_r().with_nsdecls().with_child(u_bldr).xml()
+        return run, underline_type, expected_xml
+        
 
     @pytest.fixture(params=[
         'line', 'page', 'column', 'clr_lt', 'clr_rt', 'clr_all'
@@ -186,7 +222,6 @@ class DescribeRun(object):
         ('all_caps', True), ('all_caps', False), ('all_caps', None),
         ('bold', True), ('bold', False), ('bold', None),
         ('italic', True), ('italic', False), ('italic', None),
-        ('underline', True), ('underline', False), ('underline', None),
         ('complex_script', True), ('complex_script', False),
         ('complex_script', None),
         ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
@@ -232,7 +267,6 @@ class DescribeRun(object):
             'spec_vanish':    a_specVanish,
             'strike':         a_strike,
             'web_hidden':     a_webHidden,
-            'underline':      an_underline,
         }[bool_prop_name]
         r_bldr = an_r().with_nsdecls()
         if expected_state is not None:
@@ -249,7 +283,6 @@ class DescribeRun(object):
         ('all_caps', True), ('all_caps', False), ('all_caps', None),
         ('bold', True), ('bold', False), ('bold', None),
         ('italic', True), ('italic', False), ('italic', None),
-        ('underline', True), ('underline', False), ('underline', None),
         ('complex_script', True), ('complex_script', False),
         ('complex_script', None),
         ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
@@ -269,7 +302,7 @@ class DescribeRun(object):
         ('snap_to_grid', True), ('snap_to_grid', False),
         ('snap_to_grid', None),
         ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
-        ('strike', True), ('strikregister_custom_element_class('w:tcPr', CT_TcPr)e', False), ('strike', None),
+        ('strike', True), ('strie', False), ('strike', None),
         ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
     ])
     def bool_prop_set_fixture(self, request):
@@ -295,7 +328,6 @@ class DescribeRun(object):
             'spec_vanish':    a_specVanish,
             'strike':         a_strike,
             'web_hidden':     a_webHidden,
-            'underline':      an_underline,
         }[bool_prop_name]
         # run --------------------------
         r = an_r().with_nsdecls().element
