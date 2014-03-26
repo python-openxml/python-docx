@@ -297,6 +297,22 @@ class CT_TcPr(OxmlBaseElement):
         """
         return self.find(qn('w:gridSpan'))
         
+    def add_gridSpan(self, span):
+        """
+        Return a new <w:gridSpan> element newly inserted in sequence among
+        the existing child elements.gridSpan
+        """
+        gridSpan = CT_String.new('w:gridSpan', str(span))
+        self.append(gridSpan) # append or insert?
+        return gridSpan
+
+    @property
+    def gridSpan(self):
+        """
+        Optional <w:gridSpan> child element, or |None| if not present.
+        """
+        return self.find(qn('w:gridSpan'))
+        
     
         
     
