@@ -20,7 +20,7 @@ from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
     a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
-    an_r, an_rPr, an_rtl, an_underline, an_u
+    an_r, an_rPr, an_rtl, an_u
 )
 from .unitutil import class_mock, instance_mock
 
@@ -302,7 +302,7 @@ class DescribeRun(object):
         ('snap_to_grid', True), ('snap_to_grid', False),
         ('snap_to_grid', None),
         ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
-        ('strike', True), ('strie', False), ('strike', None),
+        ('strike', True), ('strike', False), ('strike', None),
         ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
     ])
     def bool_prop_set_fixture(self, request):
