@@ -340,3 +340,92 @@ class CT_String(OxmlBaseElement):
     @val.setter
     def val(self, val):
         return self.set(qn('w:val'), val)
+        
+        
+class CT_Shading(OxmlBaseElement):
+    @classmethod
+    def new(cls, nsptagname, valDict):
+        """
+        Return a new ``CT_Shading`` element with tagname *nsptagname* and
+        attributes set by key, value pairs in  *valDict*.
+        """
+        attrsDict = {}
+        for k, v in valDict.iteritems():
+            attrsDict[qn('w:'+str(k))] = v
+        return OxmlElement(nsptagname, attrs=attrsDict)
+        
+    @property
+    def valDict(self):
+        valDict={}
+        for val in ['val','color', 'themeColor','themeTint', 'themeShade',
+                    'fill', 'themeFill', 'themeFillTint', 'themeFillSHade']:
+            valDict[val] = self.get(qn('w:'+val))
+        return valDict
+    @valDict.setter
+    def valDict(self, valDict):
+        for k, v in valDict:
+            self.set(qn('w:'+str(k)), v)
+        return
+        
+    @property
+    def val(self):
+        return self.get(qn('w:val'))
+    @val.setter
+    def val(self, val):
+        return self.set(qn('w:val'), val)
+        
+    @property
+    def color(self):
+        return self.get(qn('w:color'))
+    @color.setter
+    def color(self, color):
+        return self.set(qn('w:color'), color)
+        
+    @property
+    def themeColor(self):
+        return self.get(qn('w:themeColor'))
+    @themeColor.setter
+    def themeColor(self, themeColor):
+        return self.set(qn('w:themeColor'), themeColor)
+        
+    @property
+    def themeTint(self):
+        return self.get(qn('w:themeTint'))
+    @themeTint.setter
+    def themeTint(self, themeTint):
+        return self.set(qn('w:themeTint'), themeTint)
+    
+    @property
+    def themeShade(self):
+        return self.get(qn('w:themeShade'))
+    @themeShade.setter
+    def themeShade(self, themeShade):
+        return self.set(qn('w:themeShade'), themeShade)
+        
+    @property
+    def fill(self):
+        return self.get(qn('w:fill'))
+    @fill.setter
+    def fill(self, fill):
+        return self.set(qn('w:fill'), fill)
+        
+    @property
+    def themeFill(self):
+        return self.get(qn('w:themFill'))
+    @themeFill.setter
+    def themeFill(self, themeFill):
+        return self.set(qn('w:themeFill'), themeFill)
+        
+    @property
+    def themeFillTint(self):
+        return self.get(qn('w:themeFillTint'))
+    @themeFillTint.setter
+    def themeFillTint(self, themeFillTint):
+        return self.set(qn('w:themeFillTint'), themeFillTint)
+        
+    @property
+    def themeFillShade(self):
+        return self.get(qn('w:themeFillShade'))
+    @themeFillShade.setter
+    def themeFillShade(self, themeFillShade):
+        return self.set(qn('w:themeFillShade'), themeFillShade)

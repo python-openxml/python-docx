@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from docx.oxml.shared import OxmlBaseElement, OxmlElement, qn
 
 from .exceptions import ValidationError
-from .shared import CT_String
+from .shared import CT_String, CT_DecimalNumber, CT_Shading
 from .text import CT_P
 
 
@@ -286,7 +286,7 @@ class CT_TcPr(OxmlBaseElement):
         Return a new <w:gridSpan> element newly inserted in sequence among
         the existing child elements.gridSpan
         """
-        gridSpan = CT_String.new('w:gridSpan', str(span))
+        gridSpan = CT_DecimalNumber.new('w:gridSpan', span)
         self.append(gridSpan) # append or insert?
         return gridSpan
 
@@ -297,21 +297,21 @@ class CT_TcPr(OxmlBaseElement):
         """
         return self.find(qn('w:gridSpan'))
         
-    def add_gridSpan(self, span):
+    def add_shading(self, argDict):
         """
-        Return a new <w:gridSpan> element newly inserted in sequence among
+        Return a new <w:shd> element newly inserted in sequence among
         the existing child elements.gridSpan
         """
-        gridSpan = CT_String.new('w:gridSpan', str(span))
-        self.append(gridSpan) # append or insert?
-        return gridSpan
+        shading = CT_Shading.new('w:shd', argDict)
+        self.append(shading) # append or insert?
+        return shading
 
     @property
-    def gridSpan(self):
+    def shading(self):
         """
-        Optional <w:gridSpan> child element, or |None| if not present.
+        Optional <w:shd> child element, or |None| if not present.
         """
-        return self.find(qn('w:gridSpan'))
+        return self.find(qn('w:shd'))
         
     
         

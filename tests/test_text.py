@@ -269,7 +269,7 @@ class DescribeRun(object):
         ('snap_to_grid', True), ('snap_to_grid', False),
         ('snap_to_grid', None),
         ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
-        ('strike', True), ('strike', False), ('strike', None),
+        ('strike', True), ('strikregister_custom_element_class('w:tcPr', CT_TcPr)e', False), ('strike', None),
         ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
     ])
     def bool_prop_set_fixture(self, request):

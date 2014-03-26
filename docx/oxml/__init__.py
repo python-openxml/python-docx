@@ -12,7 +12,7 @@ from docx.oxml.shared import register_custom_element_class
 # custom element class mappings
 # ===========================================================================
 
-from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
+from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String, CT_Shading
 
 from docx.oxml.shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
@@ -53,6 +53,8 @@ register_custom_element_class('w:tblStyle', CT_String)
 register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 register_custom_element_class('w:tcPr', CT_TcPr)
+register_custom_element_class('w:gridSpan', CT_DecimalNumber)
+register_custom_element_class('w:shd', CT_Shading)
 
 from docx.oxml.text import CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text
 register_custom_element_class('w:b', CT_OnOff)

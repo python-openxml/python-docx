@@ -130,7 +130,51 @@ class _Cell(object):
         if span is None:
             self._tc.get_or_add_tcPr().add_gridSpan(val)
         else:
-            span.val = val  
+            span.val = val
+            
+    @property
+    def shading(self):
+        """
+        Set the cell shading.
+        """
+        shading = self._tc.get_or_add_tcPr().shading
+        if shading is None:
+            return None
+        return shading.valDict
+        
+    @shading.setter
+    def shading(self, valDict):
+        shading = self._tc.get_or_add_tcPr().shading
+        if shading is None:
+            self._tc.get_or_add_tcPr().add_shading(valDict)
+        else:
+            shading.valDict = valDict
+            
+    def set_shading(self, val = None, color = None, themeColor = None,
+                    themeTint = None, themeShade = None, fill = None, 
+                    themeFill = None, themeFillTint = None, 
+                    themeFillShade = None, argDict = None):
+        """
+        Convienence method for setting individual values of the shading dict.
+        It only replaces values that are not `None`.
+        """
+        if self.shading is None:
+            valDict = {}
+            
+        argDict = {'val':val,'color':color, 'themeColor':themeColor,
+                       'themeTint':themeTint, 'themeShade':themeShade,
+                       'fill':fill, 'themeFill':themeFill,
+                       'themeFillTint':themeFillTint,
+                       'themeFillShade':themeFillShade,
+                       }
+                       
+        for k, v in argDict.iteritems():
+            if v is not None:
+                valDict[k]=v
+                
+        self.shading = valDict
+            
+                       
 
 class _Column(object):
     """
