@@ -230,18 +230,18 @@ class Run(object):
         return u.val
 
     @underline.setter
-    def underline(self, style):
+    def underline(self, utype):
         # interperate style
-        if style is None:
-            style = WD_UNDERLINE.NONE
-        if type(style)==bool:
-            style = WD_UNDERLINE.SINGLE if style else WD_UNDERLINE.NONE
+        if utype is None:
+            utype = WD_UNDERLINE.NONE
+        if type(utype)==bool:
+            utype = WD_UNDERLINE.SINGLE if utype else WD_UNDERLINE.NONE
         
         u = self._r.get_or_add_rPr().underline
         if u is None:
-            self._r.get_or_add_rPr().add_underline(style)
+            self._r.get_or_add_rPr().add_underline(utype)
         else:
-            u.val = style
+            u.val = utype
 
     @boolproperty
     def imprint(self):

@@ -5,7 +5,7 @@ Test data builders for text XML elements
 """
 
 from ...unitdata import BaseBuilder
-from .shared import CT_OnOffBuilder, CT_StringBuilder
+from .shared import CT_OnOffBuilder, CT_StringBuilder, CT_Underline
 
 
 class CT_BrBuilder(BaseBuilder):
@@ -137,8 +137,8 @@ def an_emboss():
 def an_i():
     return CT_OnOffBuilder('w:i')
     
-def an_u():
-    return CT_StringBuilder('w:u')
+def a_u():
+    return CT_Underline('w:u')
 
 def an_iCs():
     return CT_OnOffBuilder('w:iCs')

@@ -342,11 +342,11 @@ class CT_String(OxmlBaseElement):
         return self.set(qn('w:val'), val)
         
         
-class CT_Shading(OxmlBaseElement):
+class CT_Shd(OxmlBaseElement):
     @classmethod
     def new(cls, nsptagname, valDict):
         """
-        Return a new ``CT_Shading`` element with tagname *nsptagname* and
+        Return a new ``CT_Shd`` element with tagname *nsptagname* and
         attributes set by key, value pairs in  *valDict*.
         """
         attrsDict = {}

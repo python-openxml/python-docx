@@ -288,20 +288,7 @@ class CT_RPr(OxmlBaseElement):
     ``<w:rPr>`` element, containing the properties for a run.
     """
     
-    @property
-    def underline(self):
-        """
-        First ``<w:u>`` child element or None if none are present.
-        """
-        return self.find(qn('w:u'))
-        
-    def add_underline(self, style):
-        """
-        Return a newly added <w:u w:val=style/> child element.
-        """
-        u = CT_String.new('w:u', WD_UNDERLINE.stringDict[style])
-        self.insert(0, u)
-        return u
+    
         
     def add_b(self):
         """
@@ -462,6 +449,14 @@ class CT_RPr(OxmlBaseElement):
         webHidden = OxmlElement('w:webHidden')
         self.insert(0, webHidden)
         return webHidden
+        
+    def add_underline(self, utype):
+        """
+        Return a newly added <w:u w:val=utype/> child element.
+        """
+        u = CT_String.new('w:u', WD_UNDERLINE.stringDict[utype])
+        self.insert(0, u)
+        return u
 
     @property
     def b(self):
@@ -653,6 +648,11 @@ class CT_RPr(OxmlBaseElement):
         webHidden_lst = self.findall(qn('w:webHidden'))
         for webHidden in webHidden_lst:
             self.remove(webHidden)
+            
+    def remove_underline(self):
+        underline_lst = self.findall(qn('w:u'))
+        for underline in underline_lst:
+            self.remove(underline)
 
     @property
     def rtl(self):
@@ -709,6 +709,13 @@ class CT_RPr(OxmlBaseElement):
         First ``<w:webHidden>`` child element or None if none are present.
         """
         return self.find(qn('w:webHidden'))
+        
+    @property
+    def underline(self):
+        """
+        First ``<w:u>`` child element or None if none are present.
+        """
+        return self.find(qn('w:u'))
 
 
 class CT_Text(OxmlBaseElement):

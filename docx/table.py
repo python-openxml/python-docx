@@ -156,7 +156,7 @@ class _Cell(object):
                     themeFillShade = None, argDict = None):
         """
         Convienence method for setting individual values of the shading dict.
-        It only replaces values that are not `None`.
+        It only replaces values that are not None.
         """
         if self.shading is None:
             valDict = {}

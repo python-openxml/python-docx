@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from docx.oxml.shared import OxmlBaseElement, OxmlElement, qn
 
 from .exceptions import ValidationError
-from .shared import CT_String, CT_DecimalNumber, CT_Shading
+from .shared import CT_String, CT_DecimalNumber, CT_Shd
 from .text import CT_P
 
 
@@ -287,7 +287,7 @@ class CT_TcPr(OxmlBaseElement):
         the existing child elements.gridSpan
         """
         gridSpan = CT_DecimalNumber.new('w:gridSpan', span)
-        self.append(gridSpan) # append or insert?
+        self.insert(0, gridSpan)
         return gridSpan
 
     @property
@@ -302,8 +302,8 @@ class CT_TcPr(OxmlBaseElement):
         Return a new <w:shd> element newly inserted in sequence among
         the existing child elements.gridSpan
         """
-        shading = CT_Shading.new('w:shd', argDict)
-        self.append(shading) # append or insert?
+        shading = CT_Shd.new('w:shd', argDict)
+        self.insert(0, shading)
         return shading
 
     @property

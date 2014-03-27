@@ -31,3 +31,15 @@ class CT_StringBuilder(BaseBuilder):
     def with_val(self, value):
         self._set_xmlattr('w:val', str(value))
         return self
+
+class CT_Underline(BaseBuilder):
+    __nspfxs__ = ('w',)
+    __attrs__ = ('w:val')
+
+    def __init__(self, tag):
+        self.__tag__ = tag
+        super(CT_Underline, self).__init__()
+
+    def with_val(self, value):
+        self._set_xmlattr('w:val', str(value))
+        return self
