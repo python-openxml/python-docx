@@ -87,6 +87,18 @@ class Paragraph(object):
     @style.setter
     def style(self, style):
         self._p.style = None if style == 'Normal' else style
+        
+    @property
+    def jc(self):
+        """
+        Justification for this paragraph. Read/Write.
+        """
+        jc = self._p.jc
+        return jc if jc is not None else 'start'
+
+    @jc.setter
+    def jc(self, jc):
+        self._p.jc = jc
 
     @property
     def text(self):
