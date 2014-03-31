@@ -148,7 +148,7 @@ class DescribeRun(object):
         
     def it_can_underline_text(self, add_underline_fixture):
         run, underline_type, expected_xml = add_underline_fixture
-        run.add_break(underline_type)
+        run.underline(underline_type)
         assert run._r.xml == expected_xml
 
     def it_knows_the_text_it_contains(self, text_prop_fixture):
