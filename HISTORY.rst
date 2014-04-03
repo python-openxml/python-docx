@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+0.5.1 (2014-04-02)
+++++++++++++++++++
+
+- Fix issue #23, `Document.add_picture()` raises ValueError when document
+  contains VML drawing.
+
+
 0.5.0 (2014-03-02)
 ++++++++++++++++++
 

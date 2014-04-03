@@ -244,7 +244,7 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture(params=[
         ((), 1), ((1,), 2), ((2,), 1), ((1, 2, 3), 4), ((1, 2, 4), 3),
-        ((0, 0), 1), ((0, 0, 1, 3), 2),
+        ((0, 0), 1), ((0, 0, 1, 3), 2), (('foo', 1, 2), 3), ((1, 'bar'), 2)
     ])
     def next_id_fixture(self, request):
         existing_ids, expected_id = request.param
