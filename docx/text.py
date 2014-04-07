@@ -58,7 +58,7 @@ class Paragraph(object):
         super(Paragraph, self).__init__()
         self._p = p
 
-    def add_run(self, text=None):
+    def add_run(self, text=None, style=None):
         """
         Append a run to this paragraph.
         """
@@ -66,6 +66,8 @@ class Paragraph(object):
         run = Run(r)
         if text:
             run.add_text(text)
+        if style is not None:
+            r.style = style
         return run
 
     @property
@@ -319,6 +321,19 @@ class Run(object):
         page view.
         """
         return 'webHidden'
+
+    @property
+    def style(self):
+        """
+        Paragraph style for this paragraph. Read/Write.
+        """
+        style = self._r.style
+        return style if style is not None else 'Normal'
+
+    @style.setter
+    def style(self, style):
+        self._r.style = None if style == 'Normal' else style
+
 
 
 class Text(object):
