@@ -225,6 +225,37 @@ Again, the style name is formed by removing the spaces in the name as it
 appears in the Word UI. So the style 'List Number 3' would be specified as
 ``'ListNumber3'``.
 
+And beware: if you are using a localized version of Word
+you still have to use the english names.
+
+Applying a character style
+--------------------------
+
+As with paragraph styles for the whole paragraph, there are styles
+for text fragments inside a paragraph. You could directly use 'bold'
+or 'italics' (see below), but you can use styles like 'Emphasis',
+which are easily changed for the whole document. You can define your
+own styles, but beware the style *must* be available in the base document
+(see :doc:`styles`).
+
+You can apply a character style right when you add a 'Run':
+
+    p = document.add_paragraph('normal text ')
+    p.add_run("text with emphasis", "Emphasis")
+
+This particular style is normally simply defined as adding the 'italics' attribute.
+
+You can also apply a style afterward. These two lines are equivalent to
+the one above::
+
+    p = document.add_paragraph('normal text ')
+    r = p.add_run("text with emphasis")
+    r.style = 'Emphasis'
+
+Again, the style name is formed by removing the spaces in the name as it
+appears in the Word UI. So the style 'Subtle Emphasis' would be specified as
+``'SubtleEmphasis'``. And beware: if you are using a localized version of Word
+you still have to use the english names.
 
 Applying bold and italic
 ------------------------

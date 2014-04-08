@@ -117,9 +117,15 @@ def a_p():
 def a_pPr():
     return CT_PPrBuilder()
 
+def a_rPr():
+    return CT_RPrBuilder()
+
 
 def a_pStyle():
     return CT_StringBuilder('w:pStyle')
+
+def a_rStyle():
+    return CT_StringBuilder('w:rStyle')
 
 
 def a_sectPr():

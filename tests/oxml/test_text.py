@@ -6,7 +6,7 @@ Test suite for the docx.oxml.text module.
 
 from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_Text
 
-from .unitdata.text import a_p, a_pPr, a_pStyle, a_t, an_r
+from .unitdata.text import a_p, a_pPr, a_pStyle, a_t, an_r, a_rPr, a_rStyle
 
 
 class DescribeCT_P(object):
@@ -121,6 +121,31 @@ class DescribeCT_R(object):
             assert len(r.t_lst) == expected_len
             for t in r.t_lst:
                 assert isinstance(t, CT_Text)
+
+    def it_knows_its_character_style(self):
+        rPr_bldr = a_rPr().with_child(a_rStyle().with_val('foobar'))
+        cases = (
+            (an_r(), None),
+            (an_r().with_child(rPr_bldr), 'foobar'),
+        )
+        for builder, expected_value in cases:
+            r = builder.with_nsdecls().element
+            assert r.style == expected_value
+
+    def it_can_set_its_character_style(self):
+        rPr1 = a_rPr().with_child(a_rStyle().with_val('foobar'))
+        rPr2 = a_rPr().with_child(a_rStyle().with_val('barfoo'))
+        cases = (
+            (1, an_r(), None, an_r().with_child(a_rPr())),
+            (2, an_r(), 'foobar', an_r().with_child(rPr1)),
+            (3, an_r().with_child(rPr1), None, an_r().with_child(a_rPr())),
+            (4, an_r().with_child(rPr1), 'barfoo', an_r().with_child(rPr2)),
+        )
+        for case_nmbr, before_bldr, new_style, after_bldr in cases:
+            r = before_bldr.with_nsdecls().element
+            r.style = new_style
+            expected_xml = after_bldr.with_nsdecls().xml()
+            assert r.xml == expected_xml
 
 
 class DescribeCT_Text(object):

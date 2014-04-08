@@ -186,17 +186,4 @@ class Document(object):
         return document_part, package
 
 
-if __name__ == "__main__":
-    print("start")
-    document = Document()
-    p = document.add_paragraph('A plain paragraph having some ', 'heading 1')
-    p.style = "heading 2"
-    r = p.add_run("blah")
-    r.style = 'Emphasis'
-    r.bold = True
-    r.style = 'Strong'
-    r = p.add_run(" blah", "Emphasis")
-    r.style = None
-    r.bold = True
-    document.save("dummy.docx")
 
