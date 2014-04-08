@@ -325,14 +325,14 @@ class Run(object):
     @property
     def style(self):
         """
-        Paragraph style for this paragraph. Read/Write.
+        Character style for this run. Read/Write.
         """
         style = self._r.style
-        return style if style is not None else 'Normal'
+        return style if style is not None else None
 
     @style.setter
     def style(self, style):
-        self._r.style = None if style == 'Normal' else style
+        self._r.style = None if style == 'DefaultParagraphFont' else style
 
 
 

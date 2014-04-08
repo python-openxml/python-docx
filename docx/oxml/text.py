@@ -717,7 +717,7 @@ class CT_RPr(OxmlBaseElement):
 
     def get_or_add_rStyle(self):
         """
-        Return the pStyle child element, newly added if not present.
+        Return the rStyle child element, newly added if not present.
         """
         rStyle = self.rStyle
         if rStyle is None:
@@ -739,7 +739,7 @@ class CT_RPr(OxmlBaseElement):
     @property
     def style(self):
         """
-        String contained in <w:pStyle> child, or None if that element is not
+        String contained in <w:rStyle> child, or None if that element is not
         present.
         """
         rStyle = self.rStyle
@@ -750,8 +750,8 @@ class CT_RPr(OxmlBaseElement):
     @style.setter
     def style(self, style):
         """
-        Set val attribute of <w:pStyle> child element to *style*, adding a
-        new element if necessary. If *style* is |None|, remove the <w:pStyle>
+        Set val attribute of <w:rStyle> child element to *style*, adding a
+        new element if necessary. If *style* is |None|, remove the <w:rStyle>
         element if present.
         """
         if style is None:
