@@ -184,6 +184,7 @@ class DescribeRun(object):
             'words':           WD_UNDERLINE.WORDS,
         }[request.param]
         u_bldr = a_u()
+        u_bldr.with_val(underline_type)
         expected_xml = an_r().with_nsdecls().with_child(u_bldr).xml()
         return run, underline_type, expected_xml
         

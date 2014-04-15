@@ -5,7 +5,7 @@ Test data builders for text XML elements
 """
 
 from ...unitdata import BaseBuilder
-from .shared import CT_OnOffBuilder, CT_StringBuilder, CT_Underline
+from .shared import CT_OnOffBuilder, CT_StringBuilder
 
 
 class CT_BrBuilder(BaseBuilder):
@@ -51,6 +51,18 @@ class CT_TextBuilder(BaseBuilder):
 
     def with_space(self, value):
         self._set_xmlattr('xml:space', str(value))
+        return self
+        
+class CT_Underline(BaseBuilder):
+    __nspfxs__ = ('w',)
+    __attrs__ = ('w:val')
+
+    def __init__(self, tag):
+        self.__tag__ = tag
+        super(CT_Underline, self).__init__()
+
+    def with_val(self, value):
+        self._set_xmlattr('w:val', str(value))
         return self
 
 
