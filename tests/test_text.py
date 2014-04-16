@@ -163,25 +163,26 @@ class DescribeRun(object):
         'single','thick','wavy','wavyDouble','wavyHeavy','words',
     ])
     def add_underline_fixture(self, request, run):
-        underline_type = {
-            'dash':            WD_UNDERLINE.DASH,
-            'dashHeavy':       WD_UNDERLINE.DASH_HEAVY,
-            'dashLong':        WD_UNDERLINE.DASH_LONG,
-            'longHeavy':       WD_UNDERLINE.LONG_HEAVY,
-            'dotDash':         WD_UNDERLINE.DOT_DASH,
-            'dotDashHeavy':    WD_UNDERLINE.DOT_DASH_HEAVY,
-            'dotDotDash':      WD_UNDERLINE.DOT_DOT_DASH,
-            'dotDotDashHeavy': WD_UNDERLINE.DOT_DOT_DASH_HEAVY,
-            'dotted':          WD_UNDERLINE.DOTTED,
-            'dottedHeavy':     WD_UNDERLINE.DOTTED_HEAVY,
-            'double':          WD_UNDERLINE.DOUBLE,
-            'none':            WD_UNDERLINE.NONE,
-            'single':          WD_UNDERLINE.SINGLE,
-            'thick':           WD_UNDERLINE.THICK,
-            'wavy':            WD_UNDERLINE.WAVY,
-            'wavyDouble':      WD_UNDERLINE.WAVY_DOUBLE,
-            'wavyHeavy':       WD_UNDERLINE.WAVY_HEAVY,
-            'words':           WD_UNDERLINE.WORDS,
+        type_, underline_type = {
+            'dash':            ('dash',            WD_UNDERLINE.DASH),
+            'dashHeavy':       ('dashHeavy',       WD_UNDERLINE.DASH_HEAVY),
+            'dashLong':        ('dashLong',        WD_UNDERLINE.DASH_LONG),
+            'longHeavy':       ('longHeavy',       WD_UNDERLINE.LONG_HEAVY),
+            'dotDash':         ('dotDash',         WD_UNDERLINE.DOT_DASH),
+            'dotDashHeavy':    ('dotDashHeavy',    
+                                WD_UNDERLINE.DOT_DASH_HEAVY),
+            'dotDotDash':      ('dotDotDash',      WD_UNDERLINE.DOT_DOT_DASH),
+            'dotDotDashHeavy': ('dotDotDashHeavy', WD_UNDERLINE.DOT_DOT_DASH_HEAVY),
+            'dotted':          ('dotted',          WD_UNDERLINE.DOTTED),
+            'dottedHeavy':     ('dottedHeavy',     WD_UNDERLINE.DOTTED_HEAVY),
+            'double':          ('double',          WD_UNDERLINE.DOUBLE),
+            'none':            ('none',            WD_UNDERLINE.NONE),
+            'single':          ('single',          WD_UNDERLINE.SINGLE),
+            'thick':           ('thick',           WD_UNDERLINE.THICK),
+            'wavy':            ('wavy',            WD_UNDERLINE.WAVY),
+            'wavyDouble':      ('wavyDouble',      WD_UNDERLINE.WAVY_DOUBLE),
+            'wavyHeavy':       ('wavyHeavy',       WD_UNDERLINE.WAVY_HEAVY),
+            'words':           ('words',           WD_UNDERLINE.WORDS),
         }[request.param]
         
         # run
@@ -191,7 +192,7 @@ class DescribeRun(object):
         # expected xml
         r_bldr = an_r().with_nsdecls()
         child_bldr = a_u()
-        child_bldr.with_val(underline_type)
+        child_bldr.with_val(type_)
         rPr_bldr = an_rPr().with_child(child_bldr)
         r_bldr.with_child(rPr_bldr)
         expected_xml = r_bldr.xml()
