@@ -12,7 +12,7 @@ from docx.oxml.shared import register_custom_element_class
 # custom element class mappings
 # ===========================================================================
 
-from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
+from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String, CT_Shd
 
 from docx.oxml.shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
@@ -45,13 +45,16 @@ from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_custom_element_class('w:style', CT_Style)
 register_custom_element_class('w:styles', CT_Styles)
 
-from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc
+from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc, CT_TcPr
 register_custom_element_class('w:tbl', CT_Tbl)
 register_custom_element_class('w:tblGrid', CT_TblGrid)
 register_custom_element_class('w:tblPr', CT_TblPr)
 register_custom_element_class('w:tblStyle', CT_String)
 register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
+register_custom_element_class('w:tcPr', CT_TcPr)
+register_custom_element_class('w:gridSpan', CT_DecimalNumber)
+register_custom_element_class('w:shd', CT_Shd)
 
 from docx.oxml.text import CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text
 register_custom_element_class('w:b', CT_OnOff)
@@ -62,6 +65,7 @@ register_custom_element_class('w:cs', CT_OnOff)
 register_custom_element_class('w:dstrike', CT_OnOff)
 register_custom_element_class('w:emboss', CT_OnOff)
 register_custom_element_class('w:i', CT_OnOff)
+register_custom_element_class('w:u', CT_String)
 register_custom_element_class('w:iCs', CT_OnOff)
 register_custom_element_class('w:imprint', CT_OnOff)
 register_custom_element_class('w:noProof', CT_OnOff)

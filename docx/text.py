@@ -6,7 +6,7 @@ Text-related proxy types for python-docx, such as Paragraph and Run.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_BREAK, WD_UNDERLINE
 
 
 def boolproperty(f):
@@ -87,6 +87,18 @@ class Paragraph(object):
     @style.setter
     def style(self, style):
         self._p.style = None if style == 'Normal' else style
+        
+    @property
+    def jc(self):
+        """
+        Justification for this paragraph. Read/Write.
+        """
+        jc = self._p.jc
+        return jc if jc is not None else 'start'
+
+    @jc.setter
+    def jc(self, jc):
+        self._p.jc = jc
 
     @property
     def text(self):
@@ -211,6 +223,37 @@ class Run(object):
         to appear in italics.
         """
         return 'i'
+        
+    @property
+    def underline(self):
+        """
+        Underline text with style of *underline_type*. *underline_type* can
+        take the values `WD_UNDERLINE.SINGLE`, `WD_UNDERLINE.DOUBLE`, etc.
+        where `WD_UNDERLINE` is imported from `docx.enum.text`.
+        
+        Shorthand:
+        setting to True results in `WD_UNDERLINE.SINGLE`.
+        setting to False results in `WD_UNDERLINE.NONE`.
+        setting to None results in `WD_UNDERLINE.NONE`.
+        """
+        u = self._r.get_or_add_rPr().underline
+        if u is None:
+            return None
+        return u.val
+
+    @underline.setter
+    def underline(self, utype):
+        # interperate style
+        if utype is None:
+            utype = WD_UNDERLINE.NONE
+        if type(utype)==bool:
+            utype = WD_UNDERLINE.SINGLE if utype else WD_UNDERLINE.NONE
+        
+        u = self._r.get_or_add_rPr().underline
+        if u is None:
+            self._r.get_or_add_rPr().add_underline(utype)
+        else:
+            u.val = utype
 
     @boolproperty
     def imprint(self):

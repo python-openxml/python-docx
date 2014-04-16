@@ -52,6 +52,18 @@ class CT_TextBuilder(BaseBuilder):
     def with_space(self, value):
         self._set_xmlattr('xml:space', str(value))
         return self
+        
+class CT_Underline(BaseBuilder):
+    __nspfxs__ = ('w',)
+    __attrs__ = ('w:val')
+
+    def __init__(self, tag):
+        self.__tag__ = tag
+        super(CT_Underline, self).__init__()
+
+    def with_val(self, value):
+        self._set_xmlattr('w:val', str(value))
+        return self
 
 
 def a_b():
@@ -136,7 +148,9 @@ def an_emboss():
 
 def an_i():
     return CT_OnOffBuilder('w:i')
-
+    
+def a_u():
+    return CT_Underline('w:u')
 
 def an_iCs():
     return CT_OnOffBuilder('w:iCs')

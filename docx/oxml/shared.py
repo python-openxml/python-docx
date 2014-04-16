@@ -340,3 +340,201 @@ class CT_String(OxmlBaseElement):
     @val.setter
     def val(self, val):
         return self.set(qn('w:val'), val)
+        
+class CT_Ind(OxmlBaseElement):
+    @classmethod
+    def new(cls, nsptagname, valDict):
+        """
+        Return a new ``CT_Ind`` element with tagname *nsptagname* and
+        attributes set by key, value pairs in  *valDict*.
+        """
+        attrsDict = {}
+        for k, v in valDict.iteritems():
+            attrsDict[qn('w:'+str(k))] = v
+        return OxmlElement(nsptagname, attrs=attrsDict)
+        
+    @property
+    def valDict(self):
+        valDict={}
+        for val in ['start','startChars','end','endChars','left','leftChars',
+                    'right','rightChars','hanging','hangingChars','firstLine',
+                    'firstLineChars']:
+            valDict[val] = self.get(qn('w:'+val))
+        return valDict
+    @valDict.setter
+    def valDict(self, valDict):
+        for k, v in valDict:
+            self.set(qn('w:'+str(k)), v)
+        return
+        
+    @property
+    def start(self):
+        return self.get(qn('w:start'))
+    @start.setter
+    def start(self, start):
+        return self.set(qn('w:start'), start)
+        
+    @property
+    def startChars(self):
+        return self.get(qn('w:startChars'))
+    @startChars.setter
+    def startChars(self, startChars):
+        return self.set(qn('w:startChars'), startChars)
+        
+    @property
+    def end(self):
+        return self.get(qn('w:end'))
+    @end.setter
+    def end(self, end):
+        return self.set(qn('w:end'), end)
+        
+    @property
+    def endChars(self):
+        return self.get(qn('w:endChars'))
+    @endChars.setter
+    def endChars(self, endChars):
+        return self.set(qn('w:endChars'), endChars)
+        
+    @property
+    def left(self):
+        return self.get(qn('w:left'))
+    @left.setter
+    def left(self, left):
+        return self.set(qn('w:left'), left)
+        
+    @property
+    def leftChars(self):
+        return self.get(qn('w:leftChars'))
+    @leftChars.setter
+    def leftChars(self, leftChars):
+        return self.set(qn('w:leftChars'), leftChars)
+    
+    @property
+    def right(self):
+        return self.get(qn('w:right'))
+    @right.setter
+    def right(self, right):
+        return self.set(qn('w:right'), right)
+        
+    @property
+    def rightChars(self):
+        return self.get(qn('w:rightChars'))
+    @rightChars.setter
+    def rightChars(self, rightChars):
+        return self.set(qn('w:rightChars'), rightChars)
+    
+    @property
+    def hanging(self):
+        return self.get(qn('w:hanging'))
+    @hanging.setter
+    def hanging(self, hanging):
+        return self.set(qn('w:hanging'), hanging)
+        
+    @property
+    def hangingChars(self):
+        return self.get(qn('w:hangingChars'))
+    @hangingChars.setter
+    def hangingChars(self, hangingChars):
+        return self.set(qn('w:hangingChars'), hangingChars)
+        
+    @property
+    def firstLine(self):
+        return self.get(qn('w:firstLine'))
+    @firstLine.setter
+    def firstLine(self, firstLine):
+        return self.set(qn('w:firstLine'), firstLine)
+        
+    @property
+    def firstLineChars(self):
+        return self.get(qn('w:firstLineChars'))
+    @firstLineChars.setter
+    def firstLineChars(self, firstLineChars):
+        return self.set(qn('w:firstLineChars'), firstLineChars)
+        
+class CT_Shd(OxmlBaseElement):
+    @classmethod
+    def new(cls, nsptagname, valDict):
+        """
+        Return a new ``CT_Shd`` element with tagname *nsptagname* and
+        attributes set by key, value pairs in  *valDict*.
+        """
+        attrsDict = {}
+        for k, v in valDict.iteritems():
+            attrsDict[qn('w:'+str(k))] = v
+        return OxmlElement(nsptagname, attrs=attrsDict)
+        
+    @property
+    def valDict(self):
+        valDict={}
+        for val in ['val','color', 'themeColor','themeTint', 'themeShade',
+                    'fill', 'themeFill', 'themeFillTint', 'themeFillSHade']:
+            valDict[val] = self.get(qn('w:'+val))
+        return valDict
+    @valDict.setter
+    def valDict(self, valDict):
+        for k, v in valDict:
+            self.set(qn('w:'+str(k)), v)
+        return
+        
+    @property
+    def val(self):
+        return self.get(qn('w:val'))
+    @val.setter
+    def val(self, val):
+        return self.set(qn('w:val'), val)
+        
+    @property
+    def color(self):
+        return self.get(qn('w:color'))
+    @color.setter
+    def color(self, color):
+        return self.set(qn('w:color'), color)
+        
+    @property
+    def themeColor(self):
+        return self.get(qn('w:themeColor'))
+    @themeColor.setter
+    def themeColor(self, themeColor):
+        return self.set(qn('w:themeColor'), themeColor)
+        
+    @property
+    def themeTint(self):
+        return self.get(qn('w:themeTint'))
+    @themeTint.setter
+    def themeTint(self, themeTint):
+        return self.set(qn('w:themeTint'), themeTint)
+    
+    @property
+    def themeShade(self):
+        return self.get(qn('w:themeShade'))
+    @themeShade.setter
+    def themeShade(self, themeShade):
+        return self.set(qn('w:themeShade'), themeShade)
+        
+    @property
+    def fill(self):
+        return self.get(qn('w:fill'))
+    @fill.setter
+    def fill(self, fill):
+        return self.set(qn('w:fill'), fill)
+        
+    @property
+    def themeFill(self):
+        return self.get(qn('w:themFill'))
+    @themeFill.setter
+    def themeFill(self, themeFill):
+        return self.set(qn('w:themeFill'), themeFill)
+        
+    @property
+    def themeFillTint(self):
+        return self.get(qn('w:themeFillTint'))
+    @themeFillTint.setter
+    def themeFillTint(self, themeFillTint):
+        return self.set(qn('w:themeFillTint'), themeFillTint)
+        
+    @property
+    def themeFillShade(self):
+        return self.get(qn('w:themeFillShade'))
+    @themeFillShade.setter
+    def themeFillShade(self, themeFillShade):
+        return self.set(qn('w:themeFillShade'), themeFillShade)

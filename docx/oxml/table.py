@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from docx.oxml.shared import OxmlBaseElement, OxmlElement, qn
 
 from .exceptions import ValidationError
-from .shared import CT_String
+from .shared import CT_String, CT_DecimalNumber, CT_Shd
 from .text import CT_P
 
 
@@ -251,3 +251,68 @@ class CT_Tc(OxmlBaseElement):
         <w:tcPr> child element or |None| if not present.
         """
         return self.find(qn('w:tcPr'))
+        
+    def get_or_add_tcPr(self):
+        """
+        Return the tcPr child element, newly added if not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            tcPr = self._add_tcPr()
+        return tcPr
+        
+    def _add_tcPr(self):
+        """
+        Return a newly added tcPr child element. Assumes one is not present.
+        """
+        tcPr = CT_TcPr.new()
+        self.append(tcPr)
+        return tcPr
+        
+class CT_TcPr(OxmlBaseElement):
+    """
+    ``<w:tcPr>`` element, child of ``<w:tc>``, holds child elements that
+    define cell properties such as gridSpan.
+    """
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tcPr>`` element.
+        """
+        return OxmlElement('w:tcPr')
+        
+    def add_gridSpan(self, span):
+        """
+        Return a new <w:gridSpan> element newly inserted in sequence among
+        the existing child elements.gridSpan
+        """
+        gridSpan = CT_DecimalNumber.new('w:gridSpan', span)
+        self.insert(0, gridSpan)
+        return gridSpan
+
+    @property
+    def gridSpan(self):
+        """
+        Optional <w:gridSpan> child element, or |None| if not present.
+        """
+        return self.find(qn('w:gridSpan'))
+        
+    def add_shading(self, argDict):
+        """
+        Return a new <w:shd> element newly inserted in sequence among
+        the existing child elements.gridSpan
+        """
+        shading = CT_Shd.new('w:shd', argDict)
+        self.insert(0, shading)
+        return shading
+
+    @property
+    def shading(self):
+        """
+        Optional <w:shd> child element, or |None| if not present.
+        """
+        return self.find(qn('w:shd'))
+        
+    
+        
+    

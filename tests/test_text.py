@@ -8,7 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.text import CT_P, CT_R
 from docx.text import Paragraph, Run
 
@@ -20,7 +20,7 @@ from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
     a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
-    an_r, an_rPr, an_rtl
+    an_r, an_rPr, an_rtl, a_u
 )
 from .unitutil import class_mock, instance_mock
 
@@ -145,12 +145,60 @@ class DescribeRun(object):
         run, break_type, expected_xml = add_break_fixture
         run.add_break(break_type)
         assert run._r.xml == expected_xml
+        
+    def it_can_underline_text(self, add_underline_fixture):
+        run, underline_type, expected_xml = add_underline_fixture
+        run.underline = underline_type
+        assert run._r.xml == expected_xml
 
     def it_knows_the_text_it_contains(self, text_prop_fixture):
         run, expected_text = text_prop_fixture
         assert run.text == expected_text
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        'dash','dashHeavy','dashLong','longHeavy','dotDash','dotDashHeavy',
+        'dotDotDash','dotDotDashHeavy','dotted','dottedHeavy','double','none',
+        'single','thick','wavy','wavyDouble','wavyHeavy','words',
+    ])
+    def add_underline_fixture(self, request, run):
+        type_, underline_type = {
+            'dash':            ('dash',            WD_UNDERLINE.DASH),
+            'dashHeavy':       ('dashHeavy',       WD_UNDERLINE.DASH_HEAVY),
+            'dashLong':        ('dashLong',        WD_UNDERLINE.DASH_LONG),
+            'longHeavy':       ('longHeavy',       WD_UNDERLINE.LONG_HEAVY),
+            'dotDash':         ('dotDash',         WD_UNDERLINE.DOT_DASH),
+            'dotDashHeavy':    ('dotDashHeavy',    
+                                WD_UNDERLINE.DOT_DASH_HEAVY),
+            'dotDotDash':      ('dotDotDash',      WD_UNDERLINE.DOT_DOT_DASH),
+            'dotDotDashHeavy': ('dotDotDashHeavy', WD_UNDERLINE.DOT_DOT_DASH_HEAVY),
+            'dotted':          ('dotted',          WD_UNDERLINE.DOTTED),
+            'dottedHeavy':     ('dottedHeavy',     WD_UNDERLINE.DOTTED_HEAVY),
+            'double':          ('double',          WD_UNDERLINE.DOUBLE),
+            'none':            ('none',            WD_UNDERLINE.NONE),
+            'single':          ('single',          WD_UNDERLINE.SINGLE),
+            'thick':           ('thick',           WD_UNDERLINE.THICK),
+            'wavy':            ('wavy',            WD_UNDERLINE.WAVY),
+            'wavyDouble':      ('wavyDouble',      WD_UNDERLINE.WAVY_DOUBLE),
+            'wavyHeavy':       ('wavyHeavy',       WD_UNDERLINE.WAVY_HEAVY),
+            'words':           ('words',           WD_UNDERLINE.WORDS),
+        }[request.param]
+        
+        # run
+        r = an_r().with_nsdecls().element
+        run = Run(r)
+        
+        # expected xml
+        r_bldr = an_r().with_nsdecls()
+        child_bldr = a_u()
+        child_bldr.with_val(type_)
+        rPr_bldr = an_rPr().with_child(child_bldr)
+        r_bldr.with_child(rPr_bldr)
+        expected_xml = r_bldr.xml()
+        
+        return run, underline_type, expected_xml
+        
 
     @pytest.fixture(params=[
         'line', 'page', 'column', 'clr_lt', 'clr_rt', 'clr_all'
