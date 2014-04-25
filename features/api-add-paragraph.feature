@@ -17,3 +17,8 @@ Feature: Add a paragraph with optional text and style
     Given a document
      When I add a paragraph specifying its style
      Then the last paragraph has the style I specified
+
+  Scenario: Add a run specifying its style
+    Given a document
+    When I add a paragraph specifying its style
+    Then the last paragraph has the style I specified
