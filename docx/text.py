@@ -301,6 +301,14 @@ class Run(object):
         return 'strike'
 
     @property
+    def style(self):
+        """
+        The string name of the character style applied to this run, or |None|
+        if it has no directly-applied character style.
+        """
+        raise NotImplementedError
+
+    @property
     def text(self):
         """
         A string formed by concatenating all the <w:t> elements present in

@@ -12,6 +12,8 @@ from docx import Document
 from docx.enum.text import WD_BREAK
 from docx.oxml.shared import qn
 
+from .helpers import test_docx
+
 
 # given ===================================================
 
@@ -26,6 +28,15 @@ def given_a_run_having_bool_prop_set_on(context, bool_prop_name):
     run = Document().add_paragraph().add_run()
     setattr(run, bool_prop_name, True)
     context.run = run
+
+
+@given('a run having style {char_style}')
+def given_a_run_having_style_char_style(context, char_style):
+    run_idx = {
+        'None': 0, 'Emphasis': 1, 'Strong': 2
+    }[char_style]
+    document = Document(test_docx('run-char-style'))
+    context.run = document.paragraphs[0].runs[run_idx]
 
 
 # when ====================================================
@@ -53,6 +64,14 @@ def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
     run = context.run
     setattr(run, bool_prop_name, value)
+
+
+@when('I set the character style of the run to {char_style}')
+def when_I_set_the_character_style_of_the_run(context, char_style):
+    style_value = {
+        'None': None, 'Emphasis': 'Emphasis', 'Strong': 'Strong'
+    }[char_style]
+    context.run.style = style_value
 
 
 # then =====================================================
@@ -101,3 +120,11 @@ def then_run_inherits_bool_prop_value(context, boolean_prop_name):
 def then_run_appears_without_bool_prop(context, boolean_prop_name):
     run = context.run
     assert getattr(run, boolean_prop_name) is False
+
+
+@then('the style of the run is {char_style}')
+def then_the_style_of_the_run_is_char_style(context, char_style):
+    expected_value = {
+        'None': None, 'Emphasis': 'Emphasis', 'Strong': 'Strong'
+    }[char_style]
+    assert context.run.style == expected_value
