@@ -187,13 +187,13 @@ class CT_PPr(OxmlBaseElement):
         else:
             self.pStyle.val = style
 
-    def _add_numPr(self):
-        numPr = CT_NumPr.new()
-        return self._insert_numPr(numPr)
-
     def _add_pStyle(self, style):
         pStyle = CT_String.new_pStyle(style)
         return self._insert_pStyle(pStyle)
+
+    def _add_numPr(self):
+        numPr = CT_NumPr.new()
+        return self._insert_numPr(numPr)
 
     def _insert_numPr(self, numPr):
         return self.insert_element_before(
@@ -266,6 +266,27 @@ class CT_R(OxmlBaseElement):
         ``<w:rPr>`` child element or None if not present.
         """
         return self.find(qn('w:rPr'))
+
+    @property
+    def style(self):
+        """
+        String contained in w:val attribute of <w:pPr><w:pStyle> child, or
+        None if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.style
+
+    @style.setter
+    def style(self, style):
+        """
+        Set style of this <w:p> element to *style*. If *style* is None,
+        remove the style element.
+        """
+        rPr = self.get_or_add_rPr()
+        rPr.style = style
+
 
     @property
     def t_lst(self):
@@ -694,6 +715,59 @@ class CT_RPr(OxmlBaseElement):
         """
         return self.find(qn('w:webHidden'))
 
+    def get_or_add_rStyle(self):
+        """
+        Return the rStyle child element, newly added if not present.
+        """
+        rStyle = self.rStyle
+        if rStyle is None:
+            pStyle = self._add_rStyle()
+        return rStyle
+
+    @property
+    def rStyle(self):
+        """
+        ``<w:rStyle>`` child element or None if not present.
+        """
+        return self.find(qn('w:rStyle'))
+
+    def remove_rStyle(self):
+        rStyle = self.rStyle
+        if rStyle is not None:
+            self.remove(rStyle)
+
+    @property
+    def style(self):
+        """
+        String contained in <w:rStyle> child, or None if that element is not
+        present.
+        """
+        rStyle = self.rStyle
+        if rStyle is None:
+            return None
+        return rStyle.get(qn('w:val'))
+
+    @style.setter
+    def style(self, style):
+        """
+        Set val attribute of <w:rStyle> child element to *style*, adding a
+        new element if necessary. If *style* is |None|, remove the <w:rStyle>
+        element if present.
+        """
+        if style is None:
+            self.remove_rStyle()
+        elif self.rStyle is None:
+            self._add_rStyle(style)
+        else:
+            self.rStyle.val = style
+
+    def _add_rStyle(self, style):
+        rStyle = CT_String.new_rStyle(style)
+        return self._insert_rStyle(rStyle)
+
+    def _insert_rStyle(self, rStyle):
+        self.insert(0, rStyle)
+        return rStyle
 
 class CT_Text(OxmlBaseElement):
     """

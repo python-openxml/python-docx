@@ -184,3 +184,6 @@ class Document(object):
             tmpl = "file '%s' is not a Word file, content type is '%s'"
             raise ValueError(tmpl % (docx, document_part.content_type))
         return document_part, package
+
+
+

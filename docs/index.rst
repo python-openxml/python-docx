@@ -29,6 +29,9 @@ Here's an example of what |docx| can do:
           p.add_run(' and some ')
           p.add_run('italic.').italic = True
 
+          p.add_run(" normal text ")
+          p.add_run("emphasis", style="Emphasis")
+
           document.add_heading('Heading, level 1', level=1)
           document.add_paragraph('Intense quote', style='IntenseQuote')
 

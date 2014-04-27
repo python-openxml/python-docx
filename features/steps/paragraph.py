@@ -10,7 +10,8 @@ from docx import Document
 
 from helpers import saved_docx_path, test_text
 
-test_style = 'Heading1'
+test_pStyle = 'Heading1'
+test_rStyle = 'Emphasis'
 
 
 # when ====================================================
@@ -28,7 +29,13 @@ def step_when_add_new_text_to_run(context):
 @when('I set the paragraph style')
 def step_when_set_paragraph_style(context):
     context.p.add_run().add_text(test_text)
-    context.p.style = test_style
+    context.p.style = test_pStyle
+
+@when('I set the character style')
+def step_when_set_character_style(context):
+    context.r = context.p.add_run()
+    context.r.add_text(test_text)
+    context.r.style = test_rStyle
 
 
 # then =====================================================
@@ -47,4 +54,13 @@ def step_then_paragraph_has_the_style_I_set(context):
     document = Document(saved_docx_path)
     paragraphs = document.paragraphs
     p = paragraphs[-1]
-    assert p.style == test_style
+    assert p.style == test_pStyle
+
+@then('the run has the style I set')
+def step_then_run_has_the_style_I_set(context):
+    document = Document(saved_docx_path)
+    paragraphs = document.paragraphs
+    p = paragraphs[-1]
+    r = p.runs[-1]
+    print("XXX" + str(r.text))
+    assert r.style == test_rStyle
