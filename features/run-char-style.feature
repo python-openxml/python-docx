@@ -4,7 +4,6 @@ Feature: Each run has a read/write style
   I need the ability to get and set the character style of a run
 
 
-  @wip
   Scenario Outline: Get the character style of a run
     Given a run having style <char style>
      Then the style of the run is <char style>

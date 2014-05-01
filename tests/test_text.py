@@ -20,7 +20,7 @@ from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
     a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
-    an_r, an_rPr, an_rtl
+    an_r, an_rPr, an_rStyle, an_rtl
 )
 from .unitutil import class_mock, instance_mock
 
@@ -134,6 +134,10 @@ class DescribeRun(object):
         run, prop_name, value, expected_xml = bool_prop_set_fixture
         setattr(run, prop_name, value)
         assert run._r.xml == expected_xml
+
+    def it_knows_its_character_style(self, style_get_fixture):
+        run, expected_style = style_get_fixture
+        assert run.style == expected_style
 
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
@@ -306,14 +310,18 @@ class DescribeRun(object):
         expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
         return run, bool_prop_name, value, expected_xml
 
-    @pytest.fixture
-    def run(self):
-        r = an_r().with_nsdecls().element
-        return Run(r)
-
-    @pytest.fixture
-    def Text_(self, request):
-        return class_mock(request, 'docx.text.Text')
+    @pytest.fixture(params=['Foobar', None])
+    def style_get_fixture(self, request):
+        style = request.param
+        r_bldr = an_r().with_nsdecls()
+        if style is not None:
+            r_bldr.with_child(
+                an_rPr().with_child(
+                    an_rStyle().with_val(style))
+            )
+        r = r_bldr.element
+        run = Run(r)
+        return run, style
 
     @pytest.fixture
     def text_prop_fixture(self, Text_):
@@ -324,3 +332,14 @@ class DescribeRun(object):
         ).element
         run = Run(r)
         return run, 'foobar'
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def run(self):
+        r = an_r().with_nsdecls().element
+        return Run(r)
+
+    @pytest.fixture
+    def Text_(self, request):
+        return class_mock(request, 'docx.text.Text')

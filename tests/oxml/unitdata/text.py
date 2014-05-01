@@ -162,5 +162,9 @@ def an_rPr():
     return CT_RPrBuilder()
 
 
+def an_rStyle():
+    return CT_StringBuilder('w:rStyle')
+
+
 def an_rtl():
     return CT_OnOffBuilder('w:rtl')

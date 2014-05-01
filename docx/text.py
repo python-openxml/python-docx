@@ -303,10 +303,10 @@ class Run(object):
     @property
     def style(self):
         """
-        The string name of the character style applied to this run, or |None|
-        if it has no directly-applied character style.
+        Read/write. The string name of the character style applied to this
+        run, or |None| if it has no directly-applied character style.
         """
-        raise NotImplementedError
+        return self._r.style
 
     @property
     def text(self):

@@ -268,6 +268,17 @@ class CT_R(OxmlBaseElement):
         return self.find(qn('w:rPr'))
 
     @property
+    def style(self):
+        """
+        String contained in w:val attribute of <w:pStyle> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.style
+
+    @property
     def t_lst(self):
         """
         Sequence of <w:t> elements in this paragraph.
@@ -639,6 +650,13 @@ class CT_RPr(OxmlBaseElement):
             self.remove(webHidden)
 
     @property
+    def rStyle(self):
+        """
+        ``<w:rStyle>`` child element or None if not present.
+        """
+        return self.find(qn('w:rStyle'))
+
+    @property
     def rtl(self):
         """
         First ``<w:rtl>`` child element or None if none are present.
@@ -679,6 +697,17 @@ class CT_RPr(OxmlBaseElement):
         First ``<w:strike>`` child element or None if none are present.
         """
         return self.find(qn('w:strike'))
+
+    @property
+    def style(self):
+        """
+        String contained in <w:rStyle> child, or None if that element is not
+        present.
+        """
+        rStyle = self.rStyle
+        if rStyle is None:
+            return None
+        return rStyle.val
 
     @property
     def vanish(self):
