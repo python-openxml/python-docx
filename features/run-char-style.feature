@@ -15,7 +15,6 @@ Feature: Each run has a read/write style
       | Strong     |
 
 
-  @wip
   Scenario Outline: Set the style of a run
     Given a run having style <char style>
      When I set the character style of the run to <new char style>

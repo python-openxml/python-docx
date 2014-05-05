@@ -304,9 +304,16 @@ class Run(object):
     def style(self):
         """
         Read/write. The string name of the character style applied to this
-        run, or |None| if it has no directly-applied character style.
+        run, or |None| if it has no directly-applied character style. Setting
+        this property to |None| causes any directly-applied character style
+        to be removed such that the run inherits character formatting from
+        its containing paragraph.
         """
         return self._r.style
+
+    @style.setter
+    def style(self, char_style):
+        self._r.style = char_style
 
     @property
     def text(self):

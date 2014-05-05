@@ -270,13 +270,22 @@ class CT_R(OxmlBaseElement):
     @property
     def style(self):
         """
-        String contained in w:val attribute of <w:pStyle> grandchild, or
+        String contained in w:val attribute of <w:rStyle> grandchild, or
         |None| if that element is not present.
         """
         rPr = self.rPr
         if rPr is None:
             return None
         return rPr.style
+
+    @style.setter
+    def style(self, style):
+        """
+        Set the character style of this <w:r> element to *style*. If *style*
+        is None, remove the style element.
+        """
+        rPr = self.get_or_add_rPr()
+        rPr.style = style
 
     @property
     def t_lst(self):
@@ -609,6 +618,11 @@ class CT_RPr(OxmlBaseElement):
         for outline in outline_lst:
             self.remove(outline)
 
+    def remove_rStyle(self):
+        rStyle = self.rStyle
+        if rStyle is not None:
+            self.remove(rStyle)
+
     def remove_rtl(self):
         rtl_lst = self.findall(qn('w:rtl'))
         for rtl in rtl_lst:
@@ -709,6 +723,20 @@ class CT_RPr(OxmlBaseElement):
             return None
         return rStyle.val
 
+    @style.setter
+    def style(self, style):
+        """
+        Set val attribute of <w:rStyle> child element to *style*, adding a
+        new element if necessary. If *style* is |None|, remove the <w:rStyle>
+        element if present.
+        """
+        if style is None:
+            self.remove_rStyle()
+        elif self.rStyle is None:
+            self._add_rStyle(style)
+        else:
+            self.rStyle.val = style
+
     @property
     def vanish(self):
         """
@@ -722,6 +750,11 @@ class CT_RPr(OxmlBaseElement):
         First ``<w:webHidden>`` child element or None if none are present.
         """
         return self.find(qn('w:webHidden'))
+
+    def _add_rStyle(self, style):
+        rStyle = CT_String.new_rStyle(style)
+        self.insert(0, rStyle)
+        return rStyle
 
 
 class CT_Text(OxmlBaseElement):

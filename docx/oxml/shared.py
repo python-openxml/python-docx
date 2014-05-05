@@ -333,6 +333,14 @@ class CT_String(OxmlBaseElement):
         """
         return OxmlElement('w:pStyle', attrs={qn('w:val'): val})
 
+    @classmethod
+    def new_rStyle(cls, val):
+        """
+        Return a new ``<w:rStyle>`` element with ``val`` attribute set to
+        *val*.
+        """
+        return OxmlElement('w:rStyle', attrs={qn('w:val'): val})
+
     @property
     def val(self):
         return self.get(qn('w:val'))

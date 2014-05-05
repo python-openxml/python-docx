@@ -139,6 +139,11 @@ class DescribeRun(object):
         run, expected_style = style_get_fixture
         assert run.style == expected_style
 
+    def it_can_change_its_character_style(self, style_set_fixture):
+        run, style, expected_xml = style_set_fixture
+        run.style = style
+        assert run._r.xml == expected_xml
+
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
         _text = run.add_text(text_str)
@@ -313,15 +318,23 @@ class DescribeRun(object):
     @pytest.fixture(params=['Foobar', None])
     def style_get_fixture(self, request):
         style = request.param
-        r_bldr = an_r().with_nsdecls()
-        if style is not None:
-            r_bldr.with_child(
-                an_rPr().with_child(
-                    an_rStyle().with_val(style))
-            )
-        r = r_bldr.element
+        r = self.r_bldr_with_style(style).element
         run = Run(r)
         return run, style
+
+    @pytest.fixture(params=[
+        (None, None),
+        (None, 'Foobar'),
+        ('Foobar', None),
+        ('Foobar', 'Foobar'),
+        ('Foobar', 'Barfoo'),
+    ])
+    def style_set_fixture(self, request):
+        before_style, after_style = request.param
+        r = self.r_bldr_with_style(before_style).element
+        run = Run(r)
+        expected_xml = self.r_bldr_with_style(after_style).xml()
+        return run, after_style, expected_xml
 
     @pytest.fixture
     def text_prop_fixture(self, Text_):
@@ -339,6 +352,13 @@ class DescribeRun(object):
     def run(self):
         r = an_r().with_nsdecls().element
         return Run(r)
+
+    def r_bldr_with_style(self, style):
+        rPr_bldr = an_rPr()
+        if style is not None:
+            rPr_bldr.with_child(an_rStyle().with_val(style))
+        r_bldr = an_r().with_nsdecls().with_child(rPr_bldr)
+        return r_bldr
 
     @pytest.fixture
     def Text_(self, request):
