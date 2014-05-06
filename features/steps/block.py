@@ -23,7 +23,7 @@ def given_a_document_containing_a_table(context):
 @given('a paragraph')
 def given_a_paragraph(context):
     context.document = Document()
-    context.p = context.document.add_paragraph()
+    context.paragraph = context.document.add_paragraph()
 
 
 # when ====================================================

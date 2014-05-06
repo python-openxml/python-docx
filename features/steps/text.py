@@ -12,7 +12,7 @@ from docx import Document
 from docx.enum.text import WD_BREAK
 from docx.oxml.shared import qn
 
-from .helpers import test_docx
+from .helpers import test_docx, test_text
 
 
 # given ===================================================
@@ -57,6 +57,16 @@ def when_add_line_break(context):
 def when_add_page_break(context):
     run = context.run
     run.add_break(WD_BREAK.PAGE)
+
+
+@when('I add a run specifying its text')
+def when_I_add_a_run_specifying_its_text(context):
+    context.run = context.paragraph.add_run(test_text)
+
+
+@when('I add a run specifying the character style Emphasis')
+def when_I_add_a_run_specifying_the_character_style_Emphasis(context):
+    context.run = context.paragraph.add_run(test_text, 'Emphasis')
 
 
 @when('I assign {value_str} to its {bool_prop_name} property')
@@ -120,6 +130,11 @@ def then_run_inherits_bool_prop_value(context, boolean_prop_name):
 def then_run_appears_without_bool_prop(context, boolean_prop_name):
     run = context.run
     assert getattr(run, boolean_prop_name) is False
+
+
+@then('the run contains the text I specified')
+def then_the_run_contains_the_text_I_specified(context):
+    assert context.run.text == test_text
 
 
 @then('the style of the run is {char_style}')
