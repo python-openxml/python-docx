@@ -8,7 +8,6 @@ Feature: Add a run with optional text and style
      When I add a run specifying its text
      Then the run contains the text I specified
 
-  @wip
   Scenario: Add a run specifying its style
     Given a paragraph
      When I add a run specifying the character style Emphasis

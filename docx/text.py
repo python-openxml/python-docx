@@ -58,14 +58,17 @@ class Paragraph(object):
         super(Paragraph, self).__init__()
         self._p = p
 
-    def add_run(self, text=None):
+    def add_run(self, text=None, style=None):
         """
-        Append a run to this paragraph.
+        Append a run to this paragraph containing *text* and having character
+        style identified by style ID *style*.
         """
         r = self._p.add_r()
         run = Run(r)
         if text:
             run.add_text(text)
+        if style:
+            run.style = style
         return run
 
     @property

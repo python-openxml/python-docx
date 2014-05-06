@@ -34,8 +34,8 @@ class DescribeParagraph(object):
         assert runs == [run_, run_2_]
 
     def it_can_add_a_run_to_itself(self, add_run_fixture):
-        paragraph, text, expected_xml = add_run_fixture
-        run = paragraph.add_run(text)
+        paragraph, text, style, expected_xml = add_run_fixture
+        run = paragraph.add_run(text, style)
         assert paragraph._p.xml == expected_xml
         assert isinstance(run, Run)
         assert run._r is paragraph._p.r_lst[0]
@@ -66,21 +66,29 @@ class DescribeParagraph(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[None, '', 'foobar'])
+    @pytest.fixture(params=[
+        (None, None), (None, 'Strong'), ('foobar', None), ('foobar', 'Strong')
+    ])
     def add_run_fixture(self, request, paragraph):
-        text = request.param
+        text, style = request.param
         r_bldr = an_r()
+        if style:
+            r_bldr.with_child(
+                an_rPr().with_child(an_rStyle().with_val(style))
+            )
         if text:
             r_bldr.with_child(a_t().with_text(text))
         expected_xml = a_p().with_nsdecls().with_child(r_bldr).xml()
-        return paragraph, text, expected_xml
+        return paragraph, text, style, expected_xml
+
+    # fixture components ---------------------------------------------
 
     @pytest.fixture
     def p_(self, request, r_, r_2_):
         return instance_mock(request, CT_P, r_lst=(r_, r_2_))
 
     @pytest.fixture
-    def paragraph(self, request):
+    def paragraph(self):
         p = a_p().with_nsdecls().element
         return Paragraph(p)
 
