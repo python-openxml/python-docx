@@ -10,6 +10,7 @@ Feature Analysis
 .. toctree::
    :maxdepth: 1
 
+   features/char-style
    features/breaks
    features/sections
    features/table

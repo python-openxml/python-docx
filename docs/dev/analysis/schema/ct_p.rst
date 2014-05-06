@@ -1,6 +1,6 @@
 
-CT_P
-====
+``CT_P``
+========
 
 .. csv-table::
    :header-rows: 0
