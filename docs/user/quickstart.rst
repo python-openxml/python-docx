@@ -221,9 +221,12 @@ the one above::
     p = document.add_paragraph('Lorem ipsum dolor sit amet.')
     p.style = 'ListBullet'
 
-Again, the style name is formed by removing the spaces in the name as it
-appears in the Word UI. So the style 'List Number 3' would be specified as
-``'ListNumber3'``.
+The style is specified using its style ID, 'ListBullet' in this example.
+Generally, the style ID is formed by removing the spaces in the style name as
+it appears in the Word user interface (UI). So the style 'List Number 3'
+would be specified as ``'ListNumber3'``. However, note that if you are using
+a localized version of Word, the style ID may be derived from the English
+style name and may not correspond so neatly to its style name in the Word UI.
 
 
 Applying bold and italic
@@ -285,3 +288,32 @@ make your code simpler if you're building the paragraph up from runs anyway::
     p.add_run('Lorem ipsum ')
     p.add_run('dolor').bold = True
     p.add_run(' sit amet.')
+ 
+
+Applying a character style
+--------------------------
+
+In addition to paragraph styles, which specify a group of paragraph-level
+settings, Word has *character styles* which specify a group of run-level
+settings. In general you can think of a character style as specifying a font,
+including its typeface, size, color, bold, italic, etc.
+
+Like paragraph styles, a character style must already be defined in the document you open with the ``Document()`` call (*see* :doc:`styles`).
+
+A character style can be specified when adding a new run::
+
+    p = document.add_paragraph('Normal text, ')
+    p.add_run('text with emphasis.', 'Emphasis')
+
+You can also apply a style to a run after it is created. This code produces
+the same result as the lines above::
+
+    p = document.add_paragraph('Normal text, ')
+    r = p.add_run('text with emphasis.')
+    r.style = 'Emphasis'
+
+As with a paragraph style, the style ID is formed by removing the spaces in
+the name as it appears in the Word UI. So the style 'Subtle Emphasis' would
+be specified as ``'SubtleEmphasis'``. Note that if you are using
+a localized version of Word, the style ID may be derived from the English
+style name and may not correspond to its style name in the Word UI.

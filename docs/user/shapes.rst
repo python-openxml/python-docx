@@ -6,7 +6,7 @@ Conceptually, Word documents have two *layers*, a *text layer* and a *drawing
 layer*. In the text layer, text objects are flowed from left to right and from
 top to bottom, starting a new page when the prior one is filled. In the drawing
 layer, drawing objects, called *shapes*, are placed at arbitrary positions.
-and are sometimes referred to as *floating* shapes.
+These are sometimes referred to as *floating* shapes.
 
 A picture is a shape that can appear in either the text or drawing layer. When
 it appears in the text layer it is called an *inline shape*, or more
