@@ -122,9 +122,9 @@ Schema excerpt
 
   <xsd:group name="EG_RPrBase">
     <xsd:choice>
-      <xsd:element name="rStyle"          type="CT_String"/>
-      <xsd:element name="rFonts"          type="CT_Fonts"/>
-      <xsd:element name="b"               type="CT_OnOff"/>
+      <xsd:element name="rStyle" type="CT_String"/>
+      <xsd:element name="rFonts" type="CT_Fonts"/>
+      <xsd:element name="b"      type="CT_OnOff"/>
       <!-- 36 others -->
     </xsd:choice>
   </xsd:group>
