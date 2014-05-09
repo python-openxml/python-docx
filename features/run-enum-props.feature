@@ -4,7 +4,6 @@ Feature: Query or apply enumerated run property
   I need a way to query and set the enumerated properties on a run
 
 
-  @wip
   Scenario Outline: Get underline value of a run
     Given a run having <underline-type> underline
      Then the run underline property value is <underline-value>

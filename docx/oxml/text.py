@@ -5,6 +5,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
+from docx.enum.text import WD_UNDERLINE
 from docx.oxml.parts.numbering import CT_NumPr
 from docx.oxml.shared import (
     CT_String, nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
@@ -293,6 +294,17 @@ class CT_R(OxmlBaseElement):
         Sequence of <w:t> elements in this paragraph.
         """
         return self.findall(qn('w:t'))
+
+    @property
+    def underline(self):
+        """
+        String contained in w:val attribute of <w:u> grandchild, or |None| if
+        that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.underline
 
     def _add_rPr(self):
         """
@@ -738,6 +750,24 @@ class CT_RPr(OxmlBaseElement):
             self.rStyle.val = style
 
     @property
+    def u(self):
+        """
+        First ``<w:u>`` child element or |None| if none are present.
+        """
+        return self.find(qn('w:u'))
+
+    @property
+    def underline(self):
+        """
+        Underline type specified in <w:u> child, or None if that element is
+        not present.
+        """
+        u = self.u
+        if u is None:
+            return None
+        return u.val
+
+    @property
     def vanish(self):
         """
         First ``<w:vanish>`` child element or None if none are present.
@@ -769,3 +799,37 @@ class CT_Text(OxmlBaseElement):
         t = OxmlElement('w:t')
         t.text = text
         return t
+
+
+class CT_Underline(OxmlBaseElement):
+    """
+    ``<w:u>`` element, specifying the underlining style for a run.
+    """
+    @property
+    def val(self):
+        """
+        The underline type corresponding to the ``w:val`` attribute value.
+        """
+        underline_type_map = {
+            None:              None,
+            'none':            False,
+            'single':          True,
+            'words':           WD_UNDERLINE.WORDS,
+            'double':          WD_UNDERLINE.DOUBLE,
+            'dotted':          WD_UNDERLINE.DOTTED,
+            'thick':           WD_UNDERLINE.THICK,
+            'dash':            WD_UNDERLINE.DASH,
+            'dotDash':         WD_UNDERLINE.DOT_DASH,
+            'dotDotDash':      WD_UNDERLINE.DOT_DOT_DASH,
+            'wave':            WD_UNDERLINE.WAVY,
+            'dottedHeavy':     WD_UNDERLINE.DOTTED_HEAVY,
+            'dashedHeavy':     WD_UNDERLINE.DASH_HEAVY,
+            'dashDotHeavy':    WD_UNDERLINE.DOT_DASH_HEAVY,
+            'dashDotDotHeavy': WD_UNDERLINE.DOT_DOT_DASH_HEAVY,
+            'wavyHeavy':       WD_UNDERLINE.WAVY_HEAVY,
+            'dashLong':        WD_UNDERLINE.DASH_LONG,
+            'wavyDouble':      WD_UNDERLINE.WAVY_DOUBLE,
+            'dashLongHeavy':   WD_UNDERLINE.DASH_LONG_HEAVY,
+        }
+        val = self.get(qn('w:val'))
+        return underline_type_map[val]

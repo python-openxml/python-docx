@@ -53,7 +53,9 @@ register_custom_element_class('w:tblStyle', CT_String)
 register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 
-from docx.oxml.text import CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text
+from docx.oxml.text import (
+    CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
+)
 register_custom_element_class('w:b', CT_OnOff)
 register_custom_element_class('w:bCs', CT_OnOff)
 register_custom_element_class('w:br', CT_Br)
@@ -80,5 +82,6 @@ register_custom_element_class('w:snapToGrid', CT_OnOff)
 register_custom_element_class('w:specVanish', CT_OnOff)
 register_custom_element_class('w:strike', CT_OnOff)
 register_custom_element_class('w:t', CT_Text)
+register_custom_element_class('w:u', CT_Underline)
 register_custom_element_class('w:vanish', CT_OnOff)
 register_custom_element_class('w:webHidden', CT_OnOff)

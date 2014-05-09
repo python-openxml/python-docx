@@ -54,6 +54,14 @@ class CT_TextBuilder(BaseBuilder):
         return self
 
 
+class CT_Underline(BaseBuilder):
+    __tag__ = 'w:u'
+    __nspfxs__ = ('w',)
+    __attrs__ = (
+        'w:val', 'w:color', 'w:themeColor', 'w:themeTint', 'w:themeShade'
+    )
+
+
 def a_b():
     return CT_OnOffBuilder('w:b')
 
@@ -128,6 +136,10 @@ def a_sectPr():
 
 def a_t():
     return CT_TextBuilder()
+
+
+def a_u():
+    return CT_Underline()
 
 
 def an_emboss():

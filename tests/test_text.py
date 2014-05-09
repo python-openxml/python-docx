@@ -8,7 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.text import CT_P, CT_R
 from docx.text import Paragraph, Run
 
@@ -18,7 +18,7 @@ from mock import call, Mock
 
 from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
-    a_snapToGrid, a_specVanish, a_strike, a_t, a_vanish, a_webHidden,
+    a_snapToGrid, a_specVanish, a_strike, a_t, a_u, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
     an_r, an_rPr, an_rStyle, an_rtl
 )
@@ -151,6 +151,10 @@ class DescribeRun(object):
         run, style, expected_xml = style_set_fixture
         run.style = style
         assert run._r.xml == expected_xml
+
+    def it_knows_its_underline_type(self, underline_get_fixture):
+        run, expected_value = underline_get_fixture
+        assert run.underline == expected_value
 
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
@@ -354,6 +358,18 @@ class DescribeRun(object):
         run = Run(r)
         return run, 'foobar'
 
+    @pytest.fixture(params=[
+        (None,     None),
+        ('single', True),
+        ('none',   False),
+        ('double', WD_UNDERLINE.DOUBLE),
+    ])
+    def underline_get_fixture(self, request):
+        underline_type, expected_prop_value = request.param
+        r = self.r_bldr_with_underline(underline_type).element
+        run = Run(r)
+        return run, expected_prop_value
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -365,6 +381,13 @@ class DescribeRun(object):
         rPr_bldr = an_rPr()
         if style is not None:
             rPr_bldr.with_child(an_rStyle().with_val(style))
+        r_bldr = an_r().with_nsdecls().with_child(rPr_bldr)
+        return r_bldr
+
+    def r_bldr_with_underline(self, underline_type):
+        rPr_bldr = an_rPr()
+        if underline_type is not None:
+            rPr_bldr.with_child(a_u().with_val(underline_type))
         r_bldr = an_r().with_nsdecls().with_child(rPr_bldr)
         return r_bldr
 
