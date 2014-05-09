@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.shared import qn
 
 from .helpers import test_docx, test_text
@@ -28,6 +28,15 @@ def given_a_run_having_bool_prop_set_on(context, bool_prop_name):
     run = Document().add_paragraph().add_run()
     setattr(run, bool_prop_name, True)
     context.run = run
+
+
+@given('a run having {underline_type} underline')
+def given_a_run_having_underline_type(context, underline_type):
+    run_idx = {
+        'inherited': 0, 'no': 1, 'single': 2, 'double': 3
+    }[underline_type]
+    document = Document(test_docx('run-enumerated-props'))
+    context.run = document.paragraphs[0].runs[run_idx]
 
 
 @given('a run having style {char_style}')
@@ -135,6 +144,15 @@ def then_run_appears_without_bool_prop(context, boolean_prop_name):
 @then('the run contains the text I specified')
 def then_the_run_contains_the_text_I_specified(context):
     assert context.run.text == test_text
+
+
+@then('the run underline property value is {underline_value}')
+def then_the_run_underline_property_value_is(context, underline_value):
+    expected_value = {
+        'None': None, 'False': False, 'True': True,
+        'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE
+    }[underline_value]
+    assert context.run.underline == expected_value
 
 
 @then('the style of the run is {char_style}')
