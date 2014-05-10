@@ -14,3 +14,23 @@ Feature: Query or apply enumerated run property
       | no             | False               |
       | single         | True                |
       | double         | WD_UNDERLINE.DOUBLE |
+
+
+  @wip
+  Scenario Outline: Change underline setting for a run
+    Given a run having <underline-type> underline
+     When I set the run underline to <new-underline-value>
+     Then the run underline property value is <expected-underline-value>
+
+    Examples: underline property values
+      | underline-type | new-underline-value | expected-underline-value |
+      | inherited      | True                | True                     |
+      | inherited      | False               | False                    |
+      | inherited      | None                | None                     |
+      | inherited      | WD_UNDERLINE.SINGLE | True                     |
+      | inherited      | WD_UNDERLINE.DOUBLE | WD_UNDERLINE.DOUBLE      |
+      | single         | None                | None                     |
+      | single         | True                | True                     |
+      | single         | False               | False                    |
+      | single         | WD_UNDERLINE.SINGLE | True                     |
+      | single         | WD_UNDERLINE.DOUBLE | WD_UNDERLINE.DOUBLE      |

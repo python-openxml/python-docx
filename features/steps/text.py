@@ -93,6 +93,16 @@ def when_I_set_the_character_style_of_the_run(context, char_style):
     context.run.style = style_value
 
 
+@when('I set the run underline to {underline_value}')
+def when_I_set_the_run_underline_to_value(context, underline_value):
+    new_value = {
+        'True': True, 'False': False, 'None': None,
+        'WD_UNDERLINE.SINGLE': WD_UNDERLINE.SINGLE,
+        'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE,
+    }[underline_value]
+    context.run.underline = new_value
+
+
 # then =====================================================
 
 @then('it is a column break')
