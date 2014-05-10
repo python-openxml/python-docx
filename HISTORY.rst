@@ -3,10 +3,16 @@
 Release History
 ---------------
 
+0.5.3 (2014-05-10)
+++++++++++++++++++
+
+- Add feature #19: Run.underline property
+
+
 0.5.2 (2014-05-06)
 ++++++++++++++++++
 
-- Add #17 feature: character style
+- Add feature #17: character style
 
 
 0.5.1 (2014-04-02)
