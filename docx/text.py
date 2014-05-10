@@ -344,6 +344,10 @@ class Run(object):
         """
         return self._r.underline
 
+    @underline.setter
+    def underline(self, value):
+        self._r.underline = value
+
     @boolproperty
     def web_hidden(self):
         """

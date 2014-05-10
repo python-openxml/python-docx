@@ -306,6 +306,11 @@ class CT_R(OxmlBaseElement):
             return None
         return rPr.underline
 
+    @underline.setter
+    def underline(self, value):
+        rPr = self.get_or_add_rPr()
+        rPr.underline = value
+
     def _add_rPr(self):
         """
         Return a newly added rPr child element. Assumes one is not present.
@@ -665,6 +670,11 @@ class CT_RPr(OxmlBaseElement):
         for strike in strike_lst:
             self.remove(strike)
 
+    def remove_u(self):
+        u_lst = self.findall(qn('w:u'))
+        for u in u_lst:
+            self.remove(u)
+
     def remove_vanish(self):
         vanish_lst = self.findall(qn('w:vanish'))
         for vanish in vanish_lst:
@@ -767,6 +777,13 @@ class CT_RPr(OxmlBaseElement):
             return None
         return u.val
 
+    @underline.setter
+    def underline(self, value):
+        self.remove_u()
+        if value is not None:
+            u = self._add_u()
+            u.val = value
+
     @property
     def vanish(self):
         """
@@ -785,6 +802,14 @@ class CT_RPr(OxmlBaseElement):
         rStyle = CT_String.new_rStyle(style)
         self.insert(0, rStyle)
         return rStyle
+
+    def _add_u(self):
+        """
+        Return a newly added <w:u/> child element.
+        """
+        u = OxmlElement('w:u')
+        self.insert(0, u)
+        return u
 
 
 class CT_Text(OxmlBaseElement):
@@ -833,3 +858,28 @@ class CT_Underline(OxmlBaseElement):
         }
         val = self.get(qn('w:val'))
         return underline_type_map[val]
+
+    @val.setter
+    def val(self, value):
+        underline_vals = {
+            True:                            'single',
+            False:                           'none',
+            WD_UNDERLINE.WORDS:              'words',
+            WD_UNDERLINE.DOUBLE:             'double',
+            WD_UNDERLINE.DOTTED:             'dotted',
+            WD_UNDERLINE.THICK:              'thick',
+            WD_UNDERLINE.DASH:               'dash',
+            WD_UNDERLINE.DOT_DASH:           'dotDash',
+            WD_UNDERLINE.DOT_DOT_DASH:       'dotDotDash',
+            WD_UNDERLINE.WAVY:               'wave',
+            WD_UNDERLINE.DOTTED_HEAVY:       'dottedHeavy',
+            WD_UNDERLINE.DASH_HEAVY:         'dashedHeavy',
+            WD_UNDERLINE.DOT_DASH_HEAVY:     'dashDotHeavy',
+            WD_UNDERLINE.DOT_DOT_DASH_HEAVY: 'dashDotDotHeavy',
+            WD_UNDERLINE.WAVY_HEAVY:         'wavyHeavy',
+            WD_UNDERLINE.DASH_LONG:          'dashLong',
+            WD_UNDERLINE.WAVY_DOUBLE:        'wavyDouble',
+            WD_UNDERLINE.DASH_LONG_HEAVY:    'dashLongHeavy',
+        }
+        val = underline_vals[value]
+        self.set(qn('w:val'), val)

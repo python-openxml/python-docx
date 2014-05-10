@@ -156,6 +156,11 @@ class DescribeRun(object):
         run, expected_value = underline_get_fixture
         assert run.underline == expected_value
 
+    def it_can_change_its_underline_type(self, underline_set_fixture):
+        run, underline, expected_xml = underline_set_fixture
+        run.underline = underline
+        assert run._r.xml == expected_xml
+
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
         _text = run.add_text(text_str)
@@ -369,6 +374,25 @@ class DescribeRun(object):
         r = self.r_bldr_with_underline(underline_type).element
         run = Run(r)
         return run, expected_prop_value
+
+    @pytest.fixture(params=[
+        (None,     True,                'single'),
+        (None,     False,               'none'),
+        (None,     None,                None),
+        (None,     WD_UNDERLINE.SINGLE, 'single'),
+        (None,     WD_UNDERLINE.WAVY,   'wave'),
+        ('single', True,                'single'),
+        ('single', False,               'none'),
+        ('single', None,                None),
+        ('single', WD_UNDERLINE.SINGLE, 'single'),
+        ('single', WD_UNDERLINE.DOTTED, 'dotted'),
+    ])
+    def underline_set_fixture(self, request):
+        before_val, underline, expected_val = request.param
+        r = self.r_bldr_with_underline(before_val).element
+        run = Run(r)
+        expected_xml = self.r_bldr_with_underline(expected_val).xml()
+        return run, underline, expected_xml
 
     # fixture components ---------------------------------------------
 

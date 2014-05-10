@@ -16,7 +16,6 @@ Feature: Query or apply enumerated run property
       | double         | WD_UNDERLINE.DOUBLE |
 
 
-  @wip
   Scenario Outline: Change underline setting for a run
     Given a run having <underline-type> underline
      When I set the run underline to <new-underline-value>
