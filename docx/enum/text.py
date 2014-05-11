@@ -6,6 +6,8 @@ Enumerations related to text in WordprocessingML files
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from .base import XmlEnumeration, XmlMappedEnumMember
+
 
 class WD_BREAK_TYPE(object):
     """
@@ -27,26 +29,75 @@ class WD_BREAK_TYPE(object):
 WD_BREAK = WD_BREAK_TYPE
 
 
-class WD_UNDERLINE(object):
+class WD_UNDERLINE(XmlEnumeration):
     """
-    Corresponds to WdUnderline enumeration
-    http://msdn.microsoft.com/en-us/library/office/ff822388.aspx
+    Specifies the style of underline applied to a run of characters.
     """
-    NONE = 0
-    SINGLE = 1
-    WORDS = 2
-    DOUBLE = 3
-    DOTTED = 4
-    THICK = 6
-    DASH = 7
-    DOT_DASH = 9
-    DOT_DOT_DASH = 10
-    WAVY = 11
-    DOTTED_HEAVY = 20
-    DASH_HEAVY = 23
-    DOT_DASH_HEAVY = 25
-    DOT_DOT_DASH_HEAVY = 26
-    WAVY_HEAVY = 27
-    DASH_LONG = 39
-    WAVY_DOUBLE = 43
-    DASH_LONG_HEAVY = 55
+
+    __ms_name__ = 'WdUnderline'
+
+    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff822388.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'NONE', 0, 'none', 'No underline. This setting overrides any inh'
+            'erited underline value, so can be used to remove underline from'
+            ' a run that inherits underlining from its containing paragraph.'
+        ),
+        XmlMappedEnumMember(
+            'SINGLE', 1, 'single', 'A single line (default). Note that this '
+            'setting is write-only in the sense that |True| (rather than 1) '
+            'is returned for a run having this setting.'
+        ),
+        XmlMappedEnumMember(
+            'WORDS', 2, 'words', 'Underline individual words only.'
+        ),
+        XmlMappedEnumMember(
+            'DOUBLE', 3, 'double', 'A double line.'
+        ),
+        XmlMappedEnumMember(
+            'DOTTED', 4, 'dotted', 'Dots.'
+        ),
+        XmlMappedEnumMember(
+            'THICK', 6, 'thick', 'A single thick line.'
+        ),
+        XmlMappedEnumMember(
+            'DASH', 7, 'dash', 'Dashes.'
+        ),
+        XmlMappedEnumMember(
+            'DOT_DASH', 9, 'dotDash', 'Alternating dots and dashes.'
+        ),
+        XmlMappedEnumMember(
+            'DOT_DOT_DASH', 10, 'dotDotDash', 'An alternating dot-dot-dash p'
+            'attern.'
+        ),
+        XmlMappedEnumMember(
+            'WAVY', 11, 'wave', 'A single wavy line.'
+        ),
+        XmlMappedEnumMember(
+            'DOTTED_HEAVY', 20, 'dottedHeavy', 'Heavy dots.'
+        ),
+        XmlMappedEnumMember(
+            'DASH_HEAVY', 23, 'dashedHeavy', 'Heavy dashes.'
+        ),
+        XmlMappedEnumMember(
+            'DOT_DASH_HEAVY', 25, 'dashDotHeavy', 'Alternating heavy dots an'
+            'd heavy dashes.'
+        ),
+        XmlMappedEnumMember(
+            'DOT_DOT_DASH_HEAVY', 26, 'dashDotDotHeavy', 'An alternating hea'
+            'vy dot-dot-dash pattern.'
+        ),
+        XmlMappedEnumMember(
+            'WAVY_HEAVY', 27, 'wavyHeavy', 'A heavy wavy line.'
+        ),
+        XmlMappedEnumMember(
+            'DASH_LONG', 39, 'dashLong', 'Long dashes.'
+        ),
+        XmlMappedEnumMember(
+            'WAVY_DOUBLE', 43, 'wavyDouble', 'A double wavy line.'
+        ),
+        XmlMappedEnumMember(
+            'DASH_LONG_HEAVY', 55, 'dashLongHeavy', 'Long heavy dashes.'
+        ),
+    )
