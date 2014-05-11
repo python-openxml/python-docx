@@ -835,29 +835,13 @@ class CT_Underline(OxmlBaseElement):
         """
         The underline type corresponding to the ``w:val`` attribute value.
         """
-        underline_type_map = {
-            None:              None,
-            'none':            False,
-            'single':          True,
-            'words':           WD_UNDERLINE.WORDS,
-            'double':          WD_UNDERLINE.DOUBLE,
-            'dotted':          WD_UNDERLINE.DOTTED,
-            'thick':           WD_UNDERLINE.THICK,
-            'dash':            WD_UNDERLINE.DASH,
-            'dotDash':         WD_UNDERLINE.DOT_DASH,
-            'dotDotDash':      WD_UNDERLINE.DOT_DOT_DASH,
-            'wave':            WD_UNDERLINE.WAVY,
-            'dottedHeavy':     WD_UNDERLINE.DOTTED_HEAVY,
-            'dashedHeavy':     WD_UNDERLINE.DASH_HEAVY,
-            'dashDotHeavy':    WD_UNDERLINE.DOT_DASH_HEAVY,
-            'dashDotDotHeavy': WD_UNDERLINE.DOT_DOT_DASH_HEAVY,
-            'wavyHeavy':       WD_UNDERLINE.WAVY_HEAVY,
-            'dashLong':        WD_UNDERLINE.DASH_LONG,
-            'wavyDouble':      WD_UNDERLINE.WAVY_DOUBLE,
-            'dashLongHeavy':   WD_UNDERLINE.DASH_LONG_HEAVY,
-        }
         val = self.get(qn('w:val'))
-        return underline_type_map[val]
+        underline = WD_UNDERLINE.from_xml(val)
+        if underline == WD_UNDERLINE.SINGLE:
+            return True
+        if underline == WD_UNDERLINE.NONE:
+            return False
+        return underline
 
     @val.setter
     def val(self, value):

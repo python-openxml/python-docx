@@ -154,7 +154,7 @@ class DescribeRun(object):
 
     def it_knows_its_underline_type(self, underline_get_fixture):
         run, expected_value = underline_get_fixture
-        assert run.underline == expected_value
+        assert run.underline is expected_value
 
     def it_can_change_its_underline_type(self, underline_set_fixture):
         run, underline, expected_xml = underline_set_fixture
