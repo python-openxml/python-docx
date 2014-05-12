@@ -12,7 +12,7 @@ from docx import Document
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.shared import qn
 
-from .helpers import test_docx, test_text
+from helpers import test_docx, test_text
 
 
 # given ===================================================
