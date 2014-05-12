@@ -845,25 +845,13 @@ class CT_Underline(OxmlBaseElement):
 
     @val.setter
     def val(self, value):
-        underline_vals = {
-            True:                            'single',
-            False:                           'none',
-            WD_UNDERLINE.WORDS:              'words',
-            WD_UNDERLINE.DOUBLE:             'double',
-            WD_UNDERLINE.DOTTED:             'dotted',
-            WD_UNDERLINE.THICK:              'thick',
-            WD_UNDERLINE.DASH:               'dash',
-            WD_UNDERLINE.DOT_DASH:           'dotDash',
-            WD_UNDERLINE.DOT_DOT_DASH:       'dotDotDash',
-            WD_UNDERLINE.WAVY:               'wave',
-            WD_UNDERLINE.DOTTED_HEAVY:       'dottedHeavy',
-            WD_UNDERLINE.DASH_HEAVY:         'dashedHeavy',
-            WD_UNDERLINE.DOT_DASH_HEAVY:     'dashDotHeavy',
-            WD_UNDERLINE.DOT_DOT_DASH_HEAVY: 'dashDotDotHeavy',
-            WD_UNDERLINE.WAVY_HEAVY:         'wavyHeavy',
-            WD_UNDERLINE.DASH_LONG:          'dashLong',
-            WD_UNDERLINE.WAVY_DOUBLE:        'wavyDouble',
-            WD_UNDERLINE.DASH_LONG_HEAVY:    'dashLongHeavy',
-        }
-        val = underline_vals[value]
+        # works fine without these two mappings, but only because True == 1
+        # and False == 0, which happen to match the mapping for WD_UNDERLINE
+        # .SINGLE and .NONE respectively.
+        if value is True:
+            value = WD_UNDERLINE.SINGLE
+        elif value is False:
+            value = WD_UNDERLINE.NONE
+
+        val = WD_UNDERLINE.to_xml(value)
         self.set(qn('w:val'), val)
