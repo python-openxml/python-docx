@@ -47,11 +47,15 @@ class WD_UNDERLINE(XmlEnumeration):
             'NONE', 0, 'none', 'No underline. This setting overrides any inh'
             'erited underline value, so can be used to remove underline from'
             ' a run that inherits underlining from its containing paragraph.'
+            ' Note this is not the same as assigning |None| to Run.underline'
+            '. |None| is a valid assignment value, but causes the run to inh'
+            'erit its underline value. Assigning ``WD_UNDERLINE.NONE`` cause'
+            's underlining to be unconditionally turned off.'
         ),
         XmlMappedEnumMember(
-            'SINGLE', 1, 'single', 'A single line (default). Note that this '
-            'setting is write-only in the sense that |True| (rather than 1) '
-            'is returned for a run having this setting.'
+            'SINGLE', 1, 'single', 'A single line. Note that this setting is'
+            'write-only in the sense that |True| (rather than ``WD_UNDERLINE'
+            '.SINGLE``) is returned for a run having this setting.'
         ),
         XmlMappedEnumMember(
             'WORDS', 2, 'words', 'Underline individual words only.'

@@ -333,14 +333,14 @@ class Run(object):
     def underline(self):
         """
         The underline style for this |Run|, one of |None|, |True|, |False|,
-        or a value from ``pptx.enum.text.WD_UNDERLINE``. A value of |None|
-        indicates the run has no directly-applied underline value and so will
-        inherit the underline value of its containing paragraph. Assigning
-        |None| to this property removes any directly-applied underline value.
-        A value of |False| indicates a directly-applied setting of no
-        underline, overriding any inherited value. A value of |True|
-        indicates single underline. The values from ``WD_UNDERLINE`` are used
-        to specify other outline styles such as double, wavy, and dotted.
+        or a value from :ref:`WdUnderline`. A value of |None| indicates the
+        run has no directly-applied underline value and so will inherit the
+        underline value of its containing paragraph. Assigning |None| to this
+        property removes any directly-applied underline value. A value of
+        |False| indicates a directly-applied setting of no underline,
+        overriding any inherited value. A value of |True| indicates single
+        underline. The values from ``WD_UNDERLINE`` are used to specify other
+        outline styles such as double, wavy, and dotted.
         """
         return self._r.underline
 

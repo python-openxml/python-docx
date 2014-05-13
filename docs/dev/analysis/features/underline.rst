@@ -87,6 +87,9 @@ Directly-applied no-underline, overrides inherited value::
 Schema excerpt
 --------------
 
+Note that the ``w:val`` attribute on ``CT_Underline`` is optional. When it is
+not present no underline appears on the run.
+
 .. highlight:: xml
 
 ::

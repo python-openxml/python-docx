@@ -84,6 +84,7 @@ API Documentation
    api/text
    api/shape
    api/shared
+   api/enum/index
 
 
 Contributor Guide
