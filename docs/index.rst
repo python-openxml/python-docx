@@ -18,10 +18,8 @@ Here's an example of what |docx| can do:
 |img|   ::
 
           from docx import Document
-          from docx.shared import Inches
 
           document = Document()
-
           document.add_heading('Document Title', 0)
 
           p = document.add_paragraph('A plain paragraph having some ')
@@ -46,11 +44,16 @@ Here's an example of what |docx| can do:
           hdr_cells[0].text = 'Qty'
           hdr_cells[1].text = 'Id'
           hdr_cells[2].text = 'Desc'
+          recordset = [
+              {'qty': 1, 'id': 101, 'desc': 'Spam'},
+              {'qty': 2, 'id': 42, 'desc': 'Eggs'},
+              {'qty': 3, 'id': 631, 'desc': 'Spam, spam, eggs, and spam'},
+          ]
           for item in recordset:
               row_cells = table.add_row().cells
-              row_cells[0].text = str(item.qty)
-              row_cells[1].text = str(item.id)
-              row_cells[2].text = item.desc
+              row_cells[0].text = str(item['qty'])
+              row_cells[1].text = str(item['id'])
+              row_cells[2].text = item['desc']
 
           document.add_page_break()
 
