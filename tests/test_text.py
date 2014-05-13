@@ -161,6 +161,12 @@ class DescribeRun(object):
         run.underline = underline
         assert run._r.xml == expected_xml
 
+    def it_raises_on_assign_invalid_underline_type(
+            self, underline_raise_fixture):
+        run, underline = underline_raise_fixture
+        with pytest.raises(ValueError):
+            run.underline = underline
+
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
         _text = run.add_text(text_str)
@@ -374,6 +380,13 @@ class DescribeRun(object):
         r = self.r_bldr_with_underline(underline_type).element
         run = Run(r)
         return run, expected_prop_value
+
+    @pytest.fixture(params=['foobar', 42, 'single'])
+    def underline_raise_fixture(self, request):
+        underline = request.param
+        r = self.r_bldr_with_underline(None).element
+        run = Run(r)
+        return run, underline
 
     @pytest.fixture(params=[
         (None,     True,                'single'),

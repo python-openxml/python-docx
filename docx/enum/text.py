@@ -40,6 +40,10 @@ class WD_UNDERLINE(XmlEnumeration):
 
     __members__ = (
         XmlMappedEnumMember(
+            None, None, None, 'Inherit underline setting from containing par'
+            'agraph.'
+        ),
+        XmlMappedEnumMember(
             'NONE', 0, 'none', 'No underline. This setting overrides any inh'
             'erited underline value, so can be used to remove underline from'
             ' a run that inherits underlining from its containing paragraph.'
