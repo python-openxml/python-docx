@@ -34,6 +34,12 @@ class Document(object):
         document_part, package = self._open(docx)
         self._document_part = document_part
         self._package = package
+        self._endnotes_part = self._footnotes_part = None
+        for part in self._package.parts:
+            if part._partname == '/word/endnotes.xml':
+                self._endnotes_part = part
+            elif part._partname == '/word/footnotes.xml':
+                self._footnotes_part = part
 
     def add_heading(self, text='', level=1):
         """
@@ -139,7 +145,25 @@ class Document(object):
         marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self._document_part.paragraphs
+    
+    @property
+    def endnotes(self):
+        if self._endnotes_part is not None:
+            return self._endnotes_part.notes
 
+    def get_endnote(self, note_id):
+        if self._endnotes_part is not None:
+            return self._endnotes_part.get_note(note_id)
+        
+    @property
+    def footnotes(self):
+        if self._footnotes_part is not None:
+            return self._footnotes_part.notes
+    
+    def get_footnote(self, note_id):
+        if self._footnotes_part is not None:
+            return self._footnotes_part.get_note(note_id)
+        
     def save(self, path_or_stream):
         """
         Save this document to *path_or_stream*, which can be either a path to
