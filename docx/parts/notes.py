@@ -4,10 +4,10 @@ from ..shared import lazyproperty
 from ..text import Paragraph
 
 
-class EndnotesPart(Part):
+class NotesPart(Part):
 
     def __init__(self, partname, content_type, endnotes_elm, package):
-        super(EndnotesPart, self).__init__(
+        super(NotesPart, self).__init__(
             partname, content_type, package=package
         )
         self._element = endnotes_elm
