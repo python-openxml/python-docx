@@ -45,6 +45,10 @@ from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_custom_element_class('w:style', CT_Style)
 register_custom_element_class('w:styles', CT_Styles)
 
+from docx.oxml.parts.endnotes import CT_Endnotes, CT_Note
+register_custom_element_class('w:endnotes', CT_Endnotes)
+register_custom_element_class('w:endnote', CT_Note)
+
 from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc
 register_custom_element_class('w:tbl', CT_Tbl)
 register_custom_element_class('w:tblGrid', CT_TblGrid)

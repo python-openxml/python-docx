@@ -1,0 +1,39 @@
+content_type
+------------
+
+'application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml'
+WML_ENDNOTES
+WML_FOOTNOTES
+
+register part
+-------------
+
+__init__.py
+26:PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
+
+api.py
+183:        if document_part.content_type != CT.WML_DOCUMENT_MAIN:
+
+opc/constants.py
+275:    WML_DOCUMENT_MAIN = (
+
+
+endnotes
+--------
+
+endnotes = [p for p in doc._package.parts if p._partname == '/word/endnotes.xml'][0]
+
+
+import docx
+from docx.oxml.shared import qn
+
+doc = docx.api.Document('../docx_converter/testdata/endnotes.docx')
+doc._package.parts
+[p._partname for p in doc._package.parts]
+endnotes = [p for p in doc._package.parts if p._partname == '/word/endnotes.xml'][0]
+endnotes._element.notes_lst
+endnotes.notes
+n = endnotes.notes[0]
+n.id
+n.type
+endnotes.get_note(2)

@@ -14,6 +14,7 @@ from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
+from docx.parts.endnotes import EndnotesPart
 
 
 def part_class_selector(content_type, reltype):
@@ -26,5 +27,6 @@ PartFactory.part_class_selector = part_class_selector
 PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
+PartFactory.part_type_for[CT.WML_ENDNOTES] = EndnotesPart
 
 del CT, DocumentPart, PartFactory, part_class_selector
