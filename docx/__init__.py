@@ -14,7 +14,7 @@ from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
-from docx.parts.endnotes import EndnotesPart
+from docx.parts.notes import EndnotesPart
 
 
 def part_class_selector(content_type, reltype):
