@@ -5,7 +5,7 @@ from nose.tools import *
 
 from docx import api
 from docx.oxml.shared import qn
-from docx.parts.notes import NotesPart, Note
+from docx.parts.notes import NotesPart, Note, NoteReference
 from docx.oxml.parts.notes import CT_NoteReference
 
 
@@ -25,7 +25,7 @@ def test_parts():
 def test_notes():
     part = DOC.endnotes_part
     assert_equals(type(part.notes), list)
-    assert_equals(len(part.notes), 4)
+    assert_equals(len(part.notes), 5)
     
 
 def test_footnotes():
@@ -93,8 +93,13 @@ def test_style_iterator():
 def test_endnoteref():
     run = DOC.paragraphs[2].runs[1]
     assert_equals(run.text, '')
-    endnoteref = run._r[1]
-    assert_equals(endnoteref.tag, qn('w:endnoteReference'))
-    assert_equals(type(endnoteref), CT_NoteReference)
+    _endnoteref = run._r[1]
+    assert_equals(_endnoteref.tag, qn('w:endnoteReference'))
+    assert_equals(type(_endnoteref), CT_NoteReference)
+    assert_equals(_endnoteref.id, 2)
+    endnoteref = run.endnote_reference
+    assert_true(endnoteref)
+    assert_equals(type(endnoteref), NoteReference)
+    assert_equals(endnoteref.id, _endnoteref.id)
         
     

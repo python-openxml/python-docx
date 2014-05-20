@@ -328,7 +328,19 @@ class Run(object):
         for t in self._r.t_lst:
             text += t.text
         return text
-
+    
+    @property
+    def endnote_reference(self):
+        note = self._r.endnote_ref
+        if note is not None:
+            return NoteReference(note, 'endnote')
+        
+    @property
+    def footnote_reference(self):
+        note = self._r.footnote_ref
+        if note is not None:
+            return NoteReference(note, 'footnote')
+        
     @property
     def underline(self):
         """
@@ -365,3 +377,6 @@ class Text(object):
     def __init__(self, t_elm):
         super(Text, self).__init__()
         self._t = t_elm
+
+        
+from docx.parts.notes import NoteReference

@@ -294,6 +294,14 @@ class CT_R(OxmlBaseElement):
         Sequence of <w:t> elements in this paragraph.
         """
         return self.findall(qn('w:t'))
+    
+    @property
+    def endnote_ref(self):
+        return self.find(qn('w:endnoteReference'))
+    
+    @property
+    def footnote_ref(self):
+        return self.find(qn('w:footnoteReference'))
 
     @property
     def underline(self):
