@@ -18,8 +18,12 @@ class NotesPart(Part):
         Provides PartFactory interface for loading a numbering part from
         a WML package.
         """
-        endnotes_elm = oxml_fromstring(blob)
-        return cls(partname, content_type, endnotes_elm, package)
+        notes_elm = oxml_fromstring(blob)
+        return cls(partname, content_type, notes_elm, package)
+
+    @classmethod
+    def new(cls):
+        raise NotImplementedError
 
     def get_note(self, note_id):
         if not hasattr(self, '_notes_map'):

@@ -33,3 +33,10 @@ class CT_Note(OxmlBaseElement):
     def p_lst(self):
          return self.findall(qn('w:p'))
      
+
+class CT_NoteReference(OxmlBaseElement):
+    
+    @property
+    def id(self):
+        return int(self.attrib.get(qn('w:id')))
+    

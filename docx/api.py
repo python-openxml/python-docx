@@ -34,12 +34,6 @@ class Document(object):
         document_part, package = self._open(docx)
         self._document_part = document_part
         self._package = package
-        self._endnotes_part = self._footnotes_part = None
-        for part in self._package.parts:
-            if part._partname == '/word/endnotes.xml':
-                self._endnotes_part = part
-            elif part._partname == '/word/footnotes.xml':
-                self._footnotes_part = part
 
     def add_heading(self, text='', level=1):
         """
@@ -146,23 +140,21 @@ class Document(object):
         """
         return self._document_part.paragraphs
     
-    @property
-    def endnotes(self):
-        if self._endnotes_part is not None:
-            return self._endnotes_part.notes
-
-    def get_endnote(self, note_id):
-        if self._endnotes_part is not None:
-            return self._endnotes_part.get_note(note_id)
-        
-    @property
-    def footnotes(self):
-        if self._footnotes_part is not None:
-            return self._footnotes_part.notes
+    @lazyproperty
+    def endnotes_part(self):
+        return self._notes_part(RT.ENDNOTES)
     
-    def get_footnote(self, note_id):
-        if self._footnotes_part is not None:
-            return self._footnotes_part.get_note(note_id)
+    @lazyproperty
+    def footnotes_part(self):
+        return self._notes_part(RT.FOOTNOTES)
+    
+    def _notes_part(self, rel_type):
+        try:
+            return self._document_part.part_related_by(rel_type)
+        except KeyError:
+            notes_part = NotesPart.new()
+            self._document_part.relate_to(notes_part, rel_type)
+            return notes_part
         
     def save(self, path_or_stream):
         """
