@@ -153,9 +153,7 @@ class Document(object):
         try:
             return self._document_part.part_related_by(rel_type)
         except KeyError:
-            notes_part = NotesPart.new()
-            self._document_part.relate_to(notes_part, rel_type)
-            return notes_part
+            pass
         
     def save(self, path_or_stream):
         """
