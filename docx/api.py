@@ -15,6 +15,7 @@ from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
+from docx.parts.notes import NotesPart
 from docx.shared import lazyproperty
 
 

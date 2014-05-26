@@ -45,15 +45,3 @@ class Note(object):
     @property
     def paragraphs(self):
         return [Paragraph(p) for p in self._element.p_lst]
-
-    
-class NoteReference(object):
-    
-    def __init__(self, el, note_type):
-        self._element = el
-        self.type = note_type
-        
-    @property
-    def id(self):
-        return self._element.id
-    

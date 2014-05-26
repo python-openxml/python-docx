@@ -379,4 +379,12 @@ class Text(object):
         self._t = t_elm
 
         
-from docx.parts.notes import NoteReference
+class NoteReference(object):
+    
+    def __init__(self, el, note_type):
+        self._element = el
+        self.type = note_type
+        
+    @property
+    def id(self):
+        return self._element.id    

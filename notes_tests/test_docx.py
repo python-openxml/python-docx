@@ -5,7 +5,8 @@ from nose.tools import *
 
 from docx import api
 from docx.oxml.shared import qn
-from docx.parts.notes import NotesPart, Note, NoteReference
+from docx.text import NoteReference
+from docx.parts.notes import NotesPart, Note
 from docx.oxml.parts.notes import CT_NoteReference
 
 
