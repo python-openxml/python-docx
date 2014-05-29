@@ -5,9 +5,9 @@ from nose.tools import *
 
 from docx import api
 from docx.oxml.shared import qn
-from docx.text import NoteReference
+from docx.text import EndnoteReference, FootnoteReference
 from docx.parts.notes import NotesPart, Note
-from docx.oxml.parts.notes import CT_NoteReference
+from docx.oxml.parts.notes import CT_EndnoteReference, CT_FootnoteReference
 
 
 logger = logging.getLogger('docx_converter.tests.docx')
@@ -90,17 +90,32 @@ def test_style_iterator():
         ]
     )
     
-    
-def test_endnoteref():
+
+def test_endnoterefs():
     run = DOC.paragraphs[2].runs[1]
     assert_equals(run.text, '')
     _endnoteref = run._r[1]
     assert_equals(_endnoteref.tag, qn('w:endnoteReference'))
-    assert_equals(type(_endnoteref), CT_NoteReference)
+    assert_equals(type(_endnoteref), CT_EndnoteReference)
     assert_equals(_endnoteref.id, 2)
-    endnoteref = run.endnote_reference
-    assert_true(endnoteref)
-    assert_equals(type(endnoteref), NoteReference)
-    assert_equals(endnoteref.id, _endnoteref.id)
+    endnoterefs = run.endnote_references
+    assert_true(endnoterefs)
+    assert_equals(len(endnoterefs), 1)
+    assert_equals(type(endnoterefs[0]), EndnoteReference)
+    assert_equals(endnoterefs[0].id, _endnoteref.id)
+
+
+def test_footnoterefs():
+    run = DOC.paragraphs[4].runs[1]
+    assert_equals(run.text, '')
+    _footnoteref = run._r[1]
+    assert_equals(_footnoteref.tag, qn('w:footnoteReference'))
+    assert_equals(type(_footnoteref), CT_FootnoteReference)
+    assert_equals(_footnoteref.id, 2)
+    footnoterefs = run.footnote_references
+    assert_true(footnoterefs)
+    assert_equals(len(footnoterefs), 1)
+    assert_equals(type(footnoterefs[0]), FootnoteReference)
+    assert_equals(footnoterefs[0].id, _footnoteref.id)
         
-    
+

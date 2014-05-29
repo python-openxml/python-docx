@@ -12,6 +12,14 @@ from docx.oxml.shared import (
 )
 
 
+class CT_Tab(OxmlBaseElement):
+    
+    @classmethod
+    def new(cls):
+        return OxmlElement('w:tab')
+
+    
+
 class CT_Br(OxmlBaseElement):
     """
     ``<w:br>`` element, indicating a line, page, or column break in a run.
@@ -296,12 +304,12 @@ class CT_R(OxmlBaseElement):
         return self.findall(qn('w:t'))
     
     @property
-    def endnote_ref(self):
-        return self.find(qn('w:endnoteReference'))
+    def endnote_refs(self):
+        return self.findall(qn('w:endnoteReference'))
     
     @property
-    def footnote_ref(self):
-        return self.find(qn('w:footnoteReference'))
+    def footnote_refs(self):
+        return self.findall(qn('w:footnoteReference'))
 
     @property
     def underline(self):

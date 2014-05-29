@@ -45,13 +45,13 @@ from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_custom_element_class('w:style', CT_Style)
 register_custom_element_class('w:styles', CT_Styles)
 
-from docx.oxml.parts.notes import CT_Endnotes, CT_Footnotes, CT_Note, CT_NoteReference
+from docx.oxml.parts.notes import CT_Endnotes, CT_Footnotes, CT_Note, CT_EndnoteReference, CT_FootnoteReference
 register_custom_element_class('w:endnotes', CT_Endnotes)
 register_custom_element_class('w:endnote', CT_Note)
 register_custom_element_class('w:footnotes', CT_Footnotes)
 register_custom_element_class('w:footnote', CT_Note)
-register_custom_element_class('w:endnoteReference', CT_NoteReference)
-register_custom_element_class('w:footnoteReference', CT_NoteReference)
+register_custom_element_class('w:endnoteReference', CT_EndnoteReference)
+register_custom_element_class('w:footnoteReference', CT_FootnoteReference)
 
 from docx.oxml.table import CT_Row, CT_Tbl, CT_TblGrid, CT_TblPr, CT_Tc
 register_custom_element_class('w:tbl', CT_Tbl)
@@ -62,10 +62,11 @@ register_custom_element_class('w:tc', CT_Tc)
 register_custom_element_class('w:tr', CT_Row)
 
 from docx.oxml.text import (
-    CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
+    CT_Tab, CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
 )
 register_custom_element_class('w:b', CT_OnOff)
 register_custom_element_class('w:bCs', CT_OnOff)
+register_custom_element_class('w:tab', CT_Tab)
 register_custom_element_class('w:br', CT_Br)
 register_custom_element_class('w:caps', CT_OnOff)
 register_custom_element_class('w:cs', CT_OnOff)

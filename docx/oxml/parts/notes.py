@@ -1,5 +1,4 @@
 from docx.oxml.shared import OxmlBaseElement, qn
-#from docx.oxml.text import CT_P
 
 
 class CT_Notes(OxmlBaseElement):
@@ -40,3 +39,10 @@ class CT_NoteReference(OxmlBaseElement):
     def id(self):
         return int(self.attrib.get(qn('w:id')))
     
+
+class CT_EndnoteReference(CT_NoteReference):
+    pass
+
+
+class CT_FootnoteReference(CT_NoteReference):
+    pass
