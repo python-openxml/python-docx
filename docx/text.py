@@ -143,6 +143,13 @@ class Run(object):
         t = self._r.add_t(text)
         return Text(t)
 
+    def add_tab(self):
+        """
+        Add a tab element to this run.
+        """
+        tab = self._r.add_tab()
+        return Tab(tab)
+
     @boolproperty
     def all_caps(self):
         """
@@ -365,3 +372,12 @@ class Text(object):
     def __init__(self, t_elm):
         super(Text, self).__init__()
         self._t = t_elm
+
+
+class Tab(object):
+    """
+    Proxy object wrapping ``<w:tab>`` element.
+    """
+    def __init__(self, tab_elem):
+        super(Tab, self).__init__()
+        self._tab = tab_elem
