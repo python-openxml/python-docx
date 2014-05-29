@@ -245,6 +245,14 @@ class CT_R(OxmlBaseElement):
         self.append(t)
         return t
 
+    def add_tab(self):
+        """
+        Return a newly added CT_Tab (<w:tab/>) element.
+        """
+        tab = CT_Tab.new()
+        self.append(tab)
+        return tab
+
     def get_or_add_rPr(self):
         """
         Return the rPr child element, newly added if not present.
@@ -810,6 +818,19 @@ class CT_RPr(OxmlBaseElement):
         u = OxmlElement('w:u')
         self.insert(0, u)
         return u
+
+
+class CT_Tab(OxmlBaseElement):
+    """
+    ``<w:tab/>`` element
+    """
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<w:tab/> element>``
+        """
+        tab = OxmlElement('w:tab')
+        return tab
 
 
 class CT_Text(OxmlBaseElement):
