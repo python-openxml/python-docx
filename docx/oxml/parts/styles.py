@@ -14,6 +14,20 @@ class CT_Style(OxmlBaseElement):
     @property
     def pPr(self):
         return self.find(qn('w:pPr'))
+    
+    @property
+    def id(self):
+        return self.attrib.get(qn('w:styleId'))
+    
+    @property
+    def type(self):
+        return self.attrib.get(qn('w:type'))
+    
+    @property
+    def name(self):
+        el = self.find(qn('w:name'))
+        if el is not None:
+            return el.attrib.get(qn('w:val'))
 
 
 class CT_Styles(OxmlBaseElement):

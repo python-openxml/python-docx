@@ -15,6 +15,7 @@ from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
+from docx.parts.notes import NotesPart
 from docx.shared import lazyproperty
 
 
@@ -139,7 +140,21 @@ class Document(object):
         marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self._document_part.paragraphs
-
+    
+    @lazyproperty
+    def endnotes_part(self):
+        return self._notes_part(RT.ENDNOTES)
+    
+    @lazyproperty
+    def footnotes_part(self):
+        return self._notes_part(RT.FOOTNOTES)
+    
+    def _notes_part(self, rel_type):
+        try:
+            return self._document_part.part_related_by(rel_type)
+        except KeyError:
+            pass
+        
     def save(self, path_or_stream):
         """
         Save this document to *path_or_stream*, which can be either a path to
