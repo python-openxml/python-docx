@@ -6,9 +6,10 @@ Custom element classes for tables
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from . import OxmlElement
 from .exceptions import ValidationError
 from .ns import qn
-from .shared import CT_String, OxmlBaseElement, OxmlElement
+from .shared import CT_String, OxmlBaseElement
 from .text import CT_P
 
 

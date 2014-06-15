@@ -4,7 +4,8 @@
 Custom element classes related to the numbering part
 """
 
-from ..shared import CT_DecimalNumber, OxmlBaseElement, OxmlElement
+from .. import OxmlElement
+from ..shared import CT_DecimalNumber, OxmlBaseElement
 from ..ns import nsmap, qn
 
 

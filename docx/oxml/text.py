@@ -5,11 +5,11 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from . import parse_xml
+from . import parse_xml, OxmlElement
 from ..enum.text import WD_UNDERLINE
 from .ns import nsdecls, qn
 from .parts.numbering import CT_NumPr
-from .shared import CT_String, OxmlBaseElement, OxmlElement
+from .shared import CT_String, OxmlBaseElement
 
 
 class CT_Br(OxmlBaseElement):

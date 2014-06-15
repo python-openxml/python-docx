@@ -110,6 +110,6 @@ class ImageParts(object):
             return PackURI('/word/media/image%d.%s' % (n, ext))
         used_numbers = [image_part.partname.idx for image_part in self]
         for n in range(1, len(self)+1):
-            if not n in used_numbers:
+            if n not in used_numbers:
                 return image_partname(n)
         return image_partname(len(self)+1)

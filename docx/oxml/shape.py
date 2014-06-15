@@ -4,7 +4,8 @@
 Custom element classes for shape-related elements like ``<w:inline>``
 """
 
-from .shared import OxmlBaseElement, OxmlElement
+from . import OxmlElement
+from .shared import OxmlBaseElement
 from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
 

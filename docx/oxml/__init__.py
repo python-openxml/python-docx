@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 from lxml import etree
 
-from .ns import nsmap
+from .ns import NamespacePrefixedTag, nsmap
 
 
 # configure XML parser
@@ -38,6 +38,21 @@ def register_custom_element_class(tag, cls):
     nspfx, tagroot = tag.split(':')
     namespace = element_class_lookup.get_namespace(nsmap[nspfx])
     namespace[tagroot] = cls
+
+
+def OxmlElement(nsptag_str, attrs=None, nsmap=None):
+    """
+    Return a 'loose' lxml element having the tag specified by *nsptag_str*.
+    *nsptag_str* must contain the standard namespace prefix, e.g. 'a:tbl'.
+    The resulting element is an instance of the custom element class for this
+    tag name if one is defined. A dictionary of attribute values may be
+    provided as *attrs*; they are set if present.
+    """
+    nsptag = NamespacePrefixedTag(nsptag_str)
+    _nsmap = nsptag.nsmap if nsmap is None else nsmap
+    return oxml_parser.makeelement(
+        nsptag.clark_name, attrib=attrs, nsmap=_nsmap
+    )
 
 
 # ===========================================================================
