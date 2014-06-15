@@ -10,9 +10,40 @@ import pytest
 
 from lxml import etree
 
-from docx.oxml import oxml_parser, parse_xml, register_element_cls
+from docx.oxml import (
+    OxmlElement, oxml_parser, parse_xml, register_element_cls
+)
 from docx.oxml.ns import qn
 from docx.oxml.shared import OxmlBaseElement
+
+
+class DescribeOxmlElement(object):
+
+    def it_returns_an_lxml_element_with_matching_tag_name(self):
+        element = OxmlElement('a:foo')
+        assert isinstance(element, etree._Element)
+        assert element.tag == (
+            '{http://schemas.openxmlformats.org/drawingml/2006/main}foo'
+        )
+
+    def it_adds_supplied_attributes(self):
+        element = OxmlElement('a:foo', {'a': 'b', 'c': 'd'})
+        assert etree.tostring(element) == (
+            '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/200'
+            '6/main" a="b" c="d"/>'
+        )
+
+    def it_adds_additional_namespace_declarations_when_supplied(self):
+        element = OxmlElement(
+            'a:foo', nsdecls={
+                'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
+                'x': 'other'
+            }
+        )
+        assert etree.tostring(element) == (
+            '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/200'
+            '6/main" xmlns:x="other"/>'
+        )
 
 
 class DescribeOxmlParser(object):

@@ -40,18 +40,23 @@ def register_element_cls(tag, cls):
     namespace[tagroot] = cls
 
 
-def OxmlElement(nsptag_str, attrs=None, nsmap=None):
+def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
     """
     Return a 'loose' lxml element having the tag specified by *nsptag_str*.
     *nsptag_str* must contain the standard namespace prefix, e.g. 'a:tbl'.
     The resulting element is an instance of the custom element class for this
     tag name if one is defined. A dictionary of attribute values may be
-    provided as *attrs*; they are set if present.
+    provided as *attrs*; they are set if present. All namespaces defined in
+    the dict *nsdecls* are declared in the element using the key as the
+    prefix and the value as the namespace name. If *nsdecls* is not provided,
+    a single namespace declaration is added based on the prefix on
+    *nsptag_str*.
     """
     nsptag = NamespacePrefixedTag(nsptag_str)
-    _nsmap = nsptag.nsmap if nsmap is None else nsmap
+    if nsdecls is None:
+        nsdecls = nsptag.nsmap
     return oxml_parser.makeelement(
-        nsptag.clark_name, attrib=attrs, nsmap=_nsmap
+        nsptag.clark_name, attrib=attrs, nsmap=nsdecls
     )
 
 

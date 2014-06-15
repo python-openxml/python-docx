@@ -102,7 +102,7 @@ class CT_Inline(OxmlBaseElement):
         name = 'Picture %d' % shape_id
         uri = nsmap['pic']
 
-        inline = OxmlElement('wp:inline', nsmap=nspfxmap('wp', 'r'))
+        inline = OxmlElement('wp:inline', nsdecls=nspfxmap('wp', 'r'))
         inline.append(CT_PositiveSize2D.new('wp:extent', cx, cy))
         inline.append(CT_NonVisualDrawingProps.new(
             'wp:docPr', shape_id, name
@@ -149,7 +149,7 @@ class CT_Picture(OxmlBaseElement):
         contents required to define a viable picture element, based on the
         values passed as parameters.
         """
-        pic = OxmlElement('pic:pic', nsmap=nspfxmap('pic', 'r'))
+        pic = OxmlElement('pic:pic', nsdecls=nspfxmap('pic', 'r'))
         pic.append(CT_PictureNonVisual.new(pic_id, filename))
         pic.append(CT_BlipFillProperties.new(rId))
         pic.append(CT_ShapeProperties.new(cx, cy))
