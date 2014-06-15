@@ -9,11 +9,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 from . import OxmlElement
 from .exceptions import ValidationError
 from .ns import qn
-from .shared import CT_String, OxmlBaseElement
+from .shared import CT_String
 from .text import CT_P
+from .xmlchemy import BaseOxmlElement
 
 
-class CT_Row(OxmlBaseElement):
+class CT_Row(BaseOxmlElement):
     """
     ``<w:tr>`` element
     """
@@ -47,7 +48,7 @@ class CT_Row(OxmlBaseElement):
         return tc
 
 
-class CT_Tbl(OxmlBaseElement):
+class CT_Tbl(BaseOxmlElement):
     """
     ``<w:tbl>`` element
     """
@@ -102,7 +103,7 @@ class CT_Tbl(OxmlBaseElement):
         return tr
 
 
-class CT_TblGrid(OxmlBaseElement):
+class CT_TblGrid(BaseOxmlElement):
     """
     ``<w:tblGrid>`` element, child of ``<w:tbl>``, holds ``<w:gridCol>``
     elements that define column count, width, etc.
@@ -153,7 +154,7 @@ class CT_TblGrid(OxmlBaseElement):
         return None
 
 
-class CT_TblGridCol(OxmlBaseElement):
+class CT_TblGridCol(BaseOxmlElement):
     """
     ``<w:gridCol>`` element, child of ``<w:tblGrid>``, defines a table
     column.
@@ -166,7 +167,7 @@ class CT_TblGridCol(OxmlBaseElement):
         return OxmlElement('w:gridCol')
 
 
-class CT_TblPr(OxmlBaseElement):
+class CT_TblPr(BaseOxmlElement):
     """
     ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
     define table properties such as style and borders.
@@ -203,7 +204,7 @@ class CT_TblPr(OxmlBaseElement):
         return tblStyle
 
 
-class CT_Tc(OxmlBaseElement):
+class CT_Tc(BaseOxmlElement):
     """
     ``<w:tc>`` table cell element
     """

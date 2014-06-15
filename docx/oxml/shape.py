@@ -5,12 +5,12 @@ Custom element classes for shape-related elements like ``<w:inline>``
 """
 
 from . import OxmlElement
-from .shared import OxmlBaseElement
 from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
+from .xmlchemy import BaseOxmlElement
 
 
-class CT_Blip(OxmlBaseElement):
+class CT_Blip(BaseOxmlElement):
     """
     ``<a:blip>`` element, specifies image source and adjustments such as
     alpha and tint.
@@ -30,7 +30,7 @@ class CT_Blip(OxmlBaseElement):
         return blip
 
 
-class CT_BlipFillProperties(OxmlBaseElement):
+class CT_BlipFillProperties(BaseOxmlElement):
     """
     ``<pic:blipFill>`` element, specifies picture properties
     """
@@ -46,7 +46,7 @@ class CT_BlipFillProperties(OxmlBaseElement):
         return blipFill
 
 
-class CT_GraphicalObject(OxmlBaseElement):
+class CT_GraphicalObject(BaseOxmlElement):
     """
     ``<a:graphic>`` element, container for a DrawingML object
     """
@@ -61,7 +61,7 @@ class CT_GraphicalObject(OxmlBaseElement):
         return graphic
 
 
-class CT_GraphicalObjectData(OxmlBaseElement):
+class CT_GraphicalObjectData(BaseOxmlElement):
     """
     ``<a:graphicData>`` element, container for the XML of a DrawingML object
     """
@@ -81,7 +81,7 @@ class CT_GraphicalObjectData(OxmlBaseElement):
         return self.get('uri')
 
 
-class CT_Inline(OxmlBaseElement):
+class CT_Inline(BaseOxmlElement):
     """
     ``<w:inline>`` element, container for an inline shape.
     """
@@ -111,7 +111,7 @@ class CT_Inline(OxmlBaseElement):
         return inline
 
 
-class CT_NonVisualDrawingProps(OxmlBaseElement):
+class CT_NonVisualDrawingProps(BaseOxmlElement):
     """
     Used for ``<wp:docPr>`` element, and perhaps others. Specifies the id and
     name of a DrawingML drawing.
@@ -124,7 +124,7 @@ class CT_NonVisualDrawingProps(OxmlBaseElement):
         return elt
 
 
-class CT_NonVisualPictureProperties(OxmlBaseElement):
+class CT_NonVisualPictureProperties(BaseOxmlElement):
     """
     ``<pic:cNvPicPr>`` element, specifies picture locking and resize
     behaviors.
@@ -134,7 +134,7 @@ class CT_NonVisualPictureProperties(OxmlBaseElement):
         return OxmlElement('pic:cNvPicPr')
 
 
-class CT_Picture(OxmlBaseElement):
+class CT_Picture(BaseOxmlElement):
     """
     ``<pic:pic>`` element, a DrawingML picture
     """
@@ -156,7 +156,7 @@ class CT_Picture(OxmlBaseElement):
         return pic
 
 
-class CT_PictureNonVisual(OxmlBaseElement):
+class CT_PictureNonVisual(BaseOxmlElement):
     """
     ``<pic:nvPicPr>`` element, non-visual picture properties
     """
@@ -170,7 +170,7 @@ class CT_PictureNonVisual(OxmlBaseElement):
         return nvPicPr
 
 
-class CT_Point2D(OxmlBaseElement):
+class CT_Point2D(BaseOxmlElement):
     """
     Used for ``<a:off>`` element, and perhaps others. Specifies an x, y
     coordinate (point).
@@ -183,7 +183,7 @@ class CT_Point2D(OxmlBaseElement):
         return elm
 
 
-class CT_PositiveSize2D(OxmlBaseElement):
+class CT_PositiveSize2D(BaseOxmlElement):
     """
     Used for ``<wp:extent>`` element, and perhaps others later. Specifies the
     size of a DrawingML drawing.
@@ -218,7 +218,7 @@ class CT_PositiveSize2D(OxmlBaseElement):
         return elm
 
 
-class CT_PresetGeometry2D(OxmlBaseElement):
+class CT_PresetGeometry2D(BaseOxmlElement):
     """
     ``<a:prstGeom>`` element, specifies an preset autoshape geometry, such
     as ``rect``.
@@ -230,7 +230,7 @@ class CT_PresetGeometry2D(OxmlBaseElement):
         return prstGeom
 
 
-class CT_RelativeRect(OxmlBaseElement):
+class CT_RelativeRect(BaseOxmlElement):
     """
     ``<a:fillRect>`` element, specifying picture should fill containing
     rectangle shape.
@@ -240,7 +240,7 @@ class CT_RelativeRect(OxmlBaseElement):
         return OxmlElement('a:fillRect')
 
 
-class CT_ShapeProperties(OxmlBaseElement):
+class CT_ShapeProperties(BaseOxmlElement):
     """
     ``<pic:spPr>`` element, specifies size and shape of picture container.
     """
@@ -252,7 +252,7 @@ class CT_ShapeProperties(OxmlBaseElement):
         return spPr
 
 
-class CT_StretchInfoProperties(OxmlBaseElement):
+class CT_StretchInfoProperties(BaseOxmlElement):
     """
     ``<a:stretch>`` element, specifies how picture should fill its containing
     shape.
@@ -264,7 +264,7 @@ class CT_StretchInfoProperties(OxmlBaseElement):
         return stretch
 
 
-class CT_Transform2D(OxmlBaseElement):
+class CT_Transform2D(BaseOxmlElement):
     """
     ``<a:xfrm>`` element, specifies size and shape of picture container.
     """

@@ -9,10 +9,11 @@ from . import parse_xml, OxmlElement
 from ..enum.text import WD_UNDERLINE
 from .ns import nsdecls, qn
 from .parts.numbering import CT_NumPr
-from .shared import CT_String, OxmlBaseElement
+from .shared import CT_String
+from .xmlchemy import BaseOxmlElement
 
 
-class CT_Br(OxmlBaseElement):
+class CT_Br(BaseOxmlElement):
     """
     ``<w:br>`` element, indicating a line, page, or column break in a run.
     """
@@ -40,7 +41,7 @@ class CT_Br(OxmlBaseElement):
         self.set(qn('w:type'), type_str)
 
 
-class CT_P(OxmlBaseElement):
+class CT_P(BaseOxmlElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
@@ -113,7 +114,7 @@ class CT_P(OxmlBaseElement):
         return pPr
 
 
-class CT_PPr(OxmlBaseElement):
+class CT_PPr(BaseOxmlElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
@@ -213,7 +214,7 @@ class CT_PPr(OxmlBaseElement):
         return pStyle
 
 
-class CT_R(OxmlBaseElement):
+class CT_R(BaseOxmlElement):
     """
     ``<w:r>`` element, containing the properties and text for a run.
     """
@@ -320,7 +321,7 @@ class CT_R(OxmlBaseElement):
         return rPr
 
 
-class CT_RPr(OxmlBaseElement):
+class CT_RPr(BaseOxmlElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
     """
@@ -812,7 +813,7 @@ class CT_RPr(OxmlBaseElement):
         return u
 
 
-class CT_Text(OxmlBaseElement):
+class CT_Text(BaseOxmlElement):
     """
     ``<w:t>`` element, containing a sequence of characters within a run.
     """
@@ -826,7 +827,7 @@ class CT_Text(OxmlBaseElement):
         return t
 
 
-class CT_Underline(OxmlBaseElement):
+class CT_Underline(BaseOxmlElement):
     """
     ``<w:u>`` element, specifying the underlining style for a run.
     """

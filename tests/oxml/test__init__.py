@@ -14,7 +14,7 @@ from docx.oxml import (
     OxmlElement, oxml_parser, parse_xml, register_element_cls
 )
 from docx.oxml.ns import qn
-from docx.oxml.shared import OxmlBaseElement
+from docx.oxml.shared import BaseOxmlElement
 
 
 class DescribeOxmlElement(object):
@@ -128,5 +128,5 @@ class DescribeRegisterElementCls(object):
 # static fixture
 # ===========================================================================
 
-class CustElmCls(OxmlBaseElement):
+class CustElmCls(BaseOxmlElement):
     pass

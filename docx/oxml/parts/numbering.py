@@ -5,11 +5,12 @@ Custom element classes related to the numbering part
 """
 
 from .. import OxmlElement
-from ..shared import CT_DecimalNumber, OxmlBaseElement
+from ..shared import CT_DecimalNumber
 from ..ns import nsmap, qn
+from ..xmlchemy import BaseOxmlElement
 
 
-class CT_Num(OxmlBaseElement):
+class CT_Num(BaseOxmlElement):
     """
     ``<w:num>`` element, which represents a concrete list definition
     instance, having a required child <w:abstractNumId> that references an
@@ -48,7 +49,7 @@ class CT_Num(OxmlBaseElement):
         return int(numId_str)
 
 
-class CT_NumLvl(OxmlBaseElement):
+class CT_NumLvl(BaseOxmlElement):
     """
     ``<w:lvlOverride>`` element, which identifies a level in a list
     definition to override with settings it contains.
@@ -71,7 +72,7 @@ class CT_NumLvl(OxmlBaseElement):
         return OxmlElement('w:lvlOverride', {qn('w:ilvl'): str(ilvl)})
 
 
-class CT_NumPr(OxmlBaseElement):
+class CT_NumPr(BaseOxmlElement):
     """
     A ``<w:numPr>`` element, a container for numbering properties applied to
     a paragraph.
@@ -152,7 +153,7 @@ class CT_NumPr(OxmlBaseElement):
         )
 
 
-class CT_Numbering(OxmlBaseElement):
+class CT_Numbering(BaseOxmlElement):
     """
     ``<w:numbering>`` element, the root element of a numbering part, i.e.
     numbering.xml

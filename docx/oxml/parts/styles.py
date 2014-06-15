@@ -4,11 +4,11 @@
 Custom element classes related to the styles part
 """
 
-from ..shared import OxmlBaseElement
 from ..ns import nsmap, qn
+from ..xmlchemy import BaseOxmlElement
 
 
-class CT_Style(OxmlBaseElement):
+class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition
     """
@@ -17,7 +17,7 @@ class CT_Style(OxmlBaseElement):
         return self.find(qn('w:pPr'))
 
 
-class CT_Styles(OxmlBaseElement):
+class CT_Styles(BaseOxmlElement):
     """
     ``<w:styles>`` element, the root element of a styles part, i.e.
     styles.xml

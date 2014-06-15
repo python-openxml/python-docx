@@ -11,6 +11,7 @@ from lxml import etree
 
 import re
 
+from .ns import qn
 from ..compat import Unicode
 
 
@@ -87,3 +88,37 @@ class XmlString(Unicode):
         match = cls._xml_elm_line_patt.match(line)
         front, attrs, close, text = [match.group(n) for n in range(1, 5)]
         return front, attrs, close, text
+
+
+class BaseOxmlElement(etree.ElementBase):
+    """
+    Base class for all custom element classes, to add standardized behavior
+    to all classes in one place.
+    """
+    def first_child_found_in(self, *tagnames):
+        """
+        Return the first child found with tag in *tagnames*, or None if
+        not found.
+        """
+        for tagname in tagnames:
+            child = self.find(qn(tagname))
+            if child is not None:
+                return child
+        return None
+
+    def insert_element_before(self, elm, *tagnames):
+        successor = self.first_child_found_in(*tagnames)
+        if successor is not None:
+            successor.addprevious(elm)
+        else:
+            self.append(elm)
+        return elm
+
+    @property
+    def xml(self):
+        """
+        Return XML string for this element, suitable for testing purposes.
+        Pretty printed for readability and without an XML declaration at the
+        top.
+        """
+        return serialize_for_reading(self)

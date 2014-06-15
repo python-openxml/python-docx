@@ -6,49 +6,13 @@ Objects shared by modules in the docx.oxml subpackage.
 
 from __future__ import absolute_import
 
-from lxml import etree
-
 from . import OxmlElement
 from .exceptions import ValidationError
 from .ns import qn
-from .xmlchemy import serialize_for_reading
+from .xmlchemy import BaseOxmlElement
 
 
-class OxmlBaseElement(etree.ElementBase):
-    """
-    Base class for all custom element classes, to add standardized behavior
-    to all classes in one place.
-    """
-    def first_child_found_in(self, *tagnames):
-        """
-        Return the first child found with tag in *tagnames*, or None if
-        not found.
-        """
-        for tagname in tagnames:
-            child = self.find(qn(tagname))
-            if child is not None:
-                return child
-        return None
-
-    def insert_element_before(self, elm, *tagnames):
-        successor = self.first_child_found_in(*tagnames)
-        if successor is not None:
-            successor.addprevious(elm)
-        else:
-            self.append(elm)
-        return elm
-
-    @property
-    def xml(self):
-        """
-        Return XML string for this element, suitable for testing purposes.
-        Pretty printed for readability and without an XML declaration at the
-        top.
-        """
-        return serialize_for_reading(self)
-
-
-class CT_DecimalNumber(OxmlBaseElement):
+class CT_DecimalNumber(BaseOxmlElement):
     """
     Used for ``<w:numId>``, ``<w:ilvl>``, ``<w:abstractNumId>`` and several
     others, containing a text representation of a decimal number (e.g. 42) in
@@ -76,7 +40,7 @@ class CT_DecimalNumber(OxmlBaseElement):
         self.set(qn('w:val'), decimal_number_str)
 
 
-class CT_OnOff(OxmlBaseElement):
+class CT_OnOff(BaseOxmlElement):
     """
     Used for ``<w:b>``, ``<w:i>`` elements and others, containing a bool-ish
     string in its ``val`` attribute, xsd:boolean plus 'on' and 'off'.
@@ -102,7 +66,7 @@ class CT_OnOff(OxmlBaseElement):
             self.set(val, '0')
 
 
-class CT_String(OxmlBaseElement):
+class CT_String(BaseOxmlElement):
     """
     Used for ``<w:pStyle>`` and ``<w:tblStyle>`` elements and others,
     containing a style name in its ``val`` attribute.

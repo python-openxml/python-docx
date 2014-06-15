@@ -6,12 +6,12 @@ Custom element classes that correspond to the document part, e.g.
 """
 
 from ..ns import qn
-from ..shared import OxmlBaseElement
 from ..table import CT_Tbl
 from ..text import CT_P
+from ..xmlchemy import BaseOxmlElement
 
 
-class CT_Document(OxmlBaseElement):
+class CT_Document(BaseOxmlElement):
     """
     ``<w:document>`` element, the root element of a document.xml file.
     """
@@ -20,7 +20,7 @@ class CT_Document(OxmlBaseElement):
         return self.find(qn('w:body'))
 
 
-class CT_Body(OxmlBaseElement):
+class CT_Body(BaseOxmlElement):
     """
     ``<w:body>``, the container element for the main document story in
     ``document.xml``.

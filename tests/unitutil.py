@@ -8,7 +8,7 @@ import os
 
 from mock import create_autospec, Mock, patch, PropertyMock
 
-from docx.oxml.shared import serialize_for_reading
+from docx.oxml.xmlchemy import serialize_for_reading
 
 
 _thisdir = os.path.split(__file__)[0]
