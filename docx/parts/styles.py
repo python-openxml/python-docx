@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from ..opc.package import Part
-from ..oxml.shared import oxml_fromstring
+from ..oxml import parse_xml
 from ..shared import lazyproperty
 
 
@@ -29,7 +29,7 @@ class StylesPart(Part):
         Provides PartFactory interface for loading a styles part from a WML
         package.
         """
-        styles_elm = oxml_fromstring(blob)
+        styles_elm = parse_xml(blob)
         styles_part = cls(partname, content_type, styles_elm, package)
         return styles_part
 

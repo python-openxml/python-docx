@@ -11,8 +11,8 @@ from __future__ import (
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.oxml import serialize_part_xml
 from ..opc.package import Part
+from ..oxml import parse_xml
 from ..oxml.ns import nsmap
-from ..oxml.shared import oxml_fromstring
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from ..table import Table
@@ -76,7 +76,7 @@ class DocumentPart(Part):
 
     @classmethod
     def load(cls, partname, content_type, blob, package):
-        document_elm = oxml_fromstring(blob)
+        document_elm = parse_xml(blob)
         document_part = cls(partname, content_type, document_elm, package)
         return document_part
 

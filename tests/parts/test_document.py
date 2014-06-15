@@ -52,19 +52,18 @@ class DescribeDocumentPart(object):
         )
         assert part is document_part_
 
-    def it_can_be_constructed_by_opc_part_factory(
-            self, oxml_fromstring_, init):
+    def it_can_be_constructed_by_opc_part_factory(self, parse_xml_, init):
         # mockery ----------------------
         partname, content_type, blob, document_elm, package = (
             Mock(name='partname'), Mock(name='content_type'),
             Mock(name='blob'), Mock(name='document_elm'),
             Mock(name='package')
         )
-        oxml_fromstring_.return_value = document_elm
+        parse_xml_.return_value = document_elm
         # exercise ---------------------
         doc = DocumentPart.load(partname, content_type, blob, package)
         # verify -----------------------
-        oxml_fromstring_.assert_called_once_with(blob)
+        parse_xml_.assert_called_once_with(blob)
         init.assert_called_once_with(
             partname, content_type, document_elm, package
         )
@@ -257,8 +256,8 @@ class DescribeDocumentPart(object):
         return document, expected_id
 
     @pytest.fixture
-    def oxml_fromstring_(self, request):
-        return function_mock(request, 'docx.parts.document.oxml_fromstring')
+    def parse_xml_(self, request):
+        return function_mock(request, 'docx.parts.document.parse_xml')
 
     @pytest.fixture
     def p_(self, request):

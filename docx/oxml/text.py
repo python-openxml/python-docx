@@ -5,10 +5,11 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
+from . import parse_xml
 from ..enum.text import WD_UNDERLINE
 from .ns import nsdecls, qn
 from .parts.numbering import CT_NumPr
-from .shared import CT_String, OxmlBaseElement, OxmlElement, oxml_fromstring
+from .shared import CT_String, OxmlBaseElement, OxmlElement
 
 
 class CT_Br(OxmlBaseElement):
@@ -66,7 +67,7 @@ class CT_P(OxmlBaseElement):
         Return a new ``<w:p>`` element.
         """
         xml = '<w:p %s/>' % nsdecls('w')
-        p = oxml_fromstring(xml)
+        p = parse_xml(xml)
         return p
 
     @property
@@ -140,7 +141,7 @@ class CT_PPr(OxmlBaseElement):
         Return a new ``<w:pPr>`` element.
         """
         xml = '<w:pPr %s/>' % nsdecls('w')
-        pPr = oxml_fromstring(xml)
+        pPr = parse_xml(xml)
         return pPr
 
     @property

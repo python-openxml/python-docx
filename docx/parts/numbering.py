@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from ..opc.package import Part
-from ..oxml.shared import oxml_fromstring
+from ..oxml import parse_xml
 from ..shared import lazyproperty
 
 
@@ -29,7 +29,7 @@ class NumberingPart(Part):
         Provides PartFactory interface for loading a numbering part from
         a WML package.
         """
-        numbering_elm = oxml_fromstring(blob)
+        numbering_elm = parse_xml(blob)
         numbering_part = cls(partname, content_type, numbering_elm, package)
         return numbering_part
 

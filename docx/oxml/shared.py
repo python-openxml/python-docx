@@ -35,13 +35,6 @@ def OxmlElement(nsptag_str, attrs=None, nsmap=None):
     )
 
 
-def oxml_fromstring(text):
-    """
-    ``etree.fromstring()`` replacement that uses oxml parser
-    """
-    return etree.fromstring(text, oxml_parser)
-
-
 def serialize_for_reading(element):
     """
     Serialize *element* to human-readable XML suitable for tests. No XML

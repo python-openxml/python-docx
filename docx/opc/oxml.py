@@ -30,7 +30,7 @@ nsmap = {
 # functions
 # ===========================================================================
 
-def oxml_fromstring(text):
+def parse_xml(text):
     """
     ``etree.fromstring()`` replacement that uses oxml parser
     """
@@ -112,7 +112,7 @@ class CT_Default(OxmlBaseElement):
         values.
         """
         xml = '<Default xmlns="%s"/>' % nsmap['ct']
-        default = oxml_fromstring(xml)
+        default = parse_xml(xml)
         default.set('Extension', ext)
         default.set('ContentType', content_type)
         return default
@@ -138,7 +138,7 @@ class CT_Override(OxmlBaseElement):
         values.
         """
         xml = '<Override xmlns="%s"/>' % nsmap['ct']
-        override = oxml_fromstring(xml)
+        override = parse_xml(xml)
         override.set('PartName', partname)
         override.set('ContentType', content_type)
         return override
@@ -163,7 +163,7 @@ class CT_Relationship(OxmlBaseElement):
         Return a new ``<Relationship>`` element.
         """
         xml = '<Relationship xmlns="%s"/>' % nsmap['pr']
-        relationship = oxml_fromstring(xml)
+        relationship = parse_xml(xml)
         relationship.set('Id', rId)
         relationship.set('Type', reltype)
         relationship.set('Target', target)
@@ -224,7 +224,7 @@ class CT_Relationships(OxmlBaseElement):
         Return a new ``<Relationships>`` element.
         """
         xml = '<Relationships xmlns="%s"/>' % nsmap['pr']
-        relationships = oxml_fromstring(xml)
+        relationships = parse_xml(xml)
         return relationships
 
     @property
@@ -274,7 +274,7 @@ class CT_Types(OxmlBaseElement):
         Return a new ``<Types>`` element.
         """
         xml = '<Types xmlns="%s"/>' % nsmap['ct']
-        types = oxml_fromstring(xml)
+        types = parse_xml(xml)
         return types
 
     @property

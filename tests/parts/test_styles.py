@@ -39,14 +39,14 @@ class DescribeStylesPart(object):
         assert part is styles_part_
 
     def it_can_be_constructed_by_opc_part_factory(self, construct_fixture):
-        (partname_, content_type_, blob_, package_, oxml_fromstring_,
-         init__, styles_elm_) = construct_fixture
+        (partname_, content_type_, blob_, package_, parse_xml_, init__,
+         styles_elm_) = construct_fixture
         # exercise ---------------------
         styles_part = StylesPart.load(
             partname_, content_type_, blob_, package_
         )
         # verify -----------------------
-        oxml_fromstring_.assert_called_once_with(blob_)
+        parse_xml_.assert_called_once_with(blob_)
         init__.assert_called_once_with(
             partname_, content_type_, styles_elm_, package_
         )
@@ -66,11 +66,11 @@ class DescribeStylesPart(object):
 
     @pytest.fixture
     def construct_fixture(
-            self, partname_, content_type_, blob_, package_,
-            oxml_fromstring_, init__, styles_elm_):
+            self, partname_, content_type_, blob_, package_, parse_xml_,
+            init__, styles_elm_):
         return (
-            partname_, content_type_, blob_, package_, oxml_fromstring_,
-            init__, styles_elm_
+            partname_, content_type_, blob_, package_, parse_xml_, init__,
+            styles_elm_
         )
 
     @pytest.fixture
@@ -91,9 +91,9 @@ class DescribeStylesPart(object):
         )
 
     @pytest.fixture
-    def oxml_fromstring_(self, request, styles_elm_):
+    def parse_xml_(self, request, styles_elm_):
         return function_mock(
-            request, 'docx.parts.styles.oxml_fromstring',
+            request, 'docx.parts.styles.parse_xml',
             return_value=styles_elm_
         )
 

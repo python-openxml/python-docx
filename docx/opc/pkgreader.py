@@ -8,7 +8,7 @@ Provides a low-level, read-only API to a serialized Open Packaging Convention
 from __future__ import absolute_import
 
 from .constants import RELATIONSHIP_TARGET_MODE as RTM
-from .oxml import oxml_fromstring
+from .oxml import parse_xml
 from .packuri import PACKAGE_URI, PackURI
 from .phys_pkg import PhysPkgReader
 from .shared import CaseInsensitiveDict
@@ -141,7 +141,7 @@ class _ContentTypeMap(object):
         Return a new |_ContentTypeMap| instance populated with the contents
         of *content_types_xml*.
         """
-        types_elm = oxml_fromstring(content_types_xml)
+        types_elm = parse_xml(content_types_xml)
         ct_map = _ContentTypeMap()
         for o in types_elm.overrides:
             ct_map._add_override(o.partname, o.content_type)
@@ -292,7 +292,7 @@ class _SerializedRelationships(object):
         """
         srels = _SerializedRelationships()
         if rels_item_xml is not None:
-            rels_elm = oxml_fromstring(rels_item_xml)
+            rels_elm = parse_xml(rels_item_xml)
             for rel_elm in rels_elm.Relationship_lst:
                 srels._srels.append(_SerializedRelationship(baseURI, rel_elm))
         return srels
