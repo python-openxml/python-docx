@@ -6,10 +6,9 @@ Custom element classes for tables
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.oxml.shared import OxmlBaseElement, OxmlElement, qn
-
 from .exceptions import ValidationError
-from .shared import CT_String
+from .ns import qn
+from .shared import CT_String, OxmlBaseElement, OxmlElement
 from .text import CT_P
 
 

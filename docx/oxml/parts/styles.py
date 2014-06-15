@@ -4,8 +4,8 @@
 Custom element classes related to the styles part
 """
 
-from ..shared import OxmlBaseElement, qn
-from ..ns import nsmap
+from ..shared import OxmlBaseElement
+from ..ns import nsmap, qn
 
 
 class CT_Style(OxmlBaseElement):

@@ -4,9 +4,9 @@
 Custom element classes for shape-related elements like ``<w:inline>``
 """
 
-from .shared import OxmlBaseElement, OxmlElement, qn
+from .shared import OxmlBaseElement, OxmlElement
 from ..shared import Emu
-from .ns import nsmap, nspfxmap
+from .ns import nsmap, nspfxmap, qn
 
 
 class CT_Blip(OxmlBaseElement):

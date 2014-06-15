@@ -87,3 +87,14 @@ def nspfxmap(*nspfxs):
     namespaces('a', 'r', 'p').
     """
     return dict((pfx, nsmap[pfx]) for pfx in nspfxs)
+
+
+def qn(tag):
+    """
+    Stands for "qualified name", a utility function to turn a namespace
+    prefixed tag name into a Clark-notation qualified tag name for lxml. For
+    example, ``qn('p:cSld')`` returns ``'{http://schemas.../main}cSld'``.
+    """
+    prefix, tagroot = tag.split(':')
+    uri = nsmap[prefix]
+    return '{%s}%s' % (uri, tagroot)

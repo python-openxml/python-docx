@@ -6,11 +6,9 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 """
 
 from ..enum.text import WD_UNDERLINE
-from .ns import nsdecls
+from .ns import nsdecls, qn
 from .parts.numbering import CT_NumPr
-from .shared import (
-    CT_String, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
-)
+from .shared import CT_String, OxmlBaseElement, OxmlElement, oxml_fromstring
 
 
 class CT_Br(OxmlBaseElement):

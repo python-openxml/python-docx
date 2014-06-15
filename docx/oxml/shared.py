@@ -12,7 +12,7 @@ import re
 
 from . import oxml_parser
 from .exceptions import ValidationError
-from .ns import NamespacePrefixedTag, nsmap
+from .ns import NamespacePrefixedTag, nsmap, qn
 
 
 # ===========================================================================
@@ -40,17 +40,6 @@ def oxml_fromstring(text):
     ``etree.fromstring()`` replacement that uses oxml parser
     """
     return etree.fromstring(text, oxml_parser)
-
-
-def qn(tag):
-    """
-    Stands for "qualified name", a utility function to turn a namespace
-    prefixed tag name into a Clark-notation qualified tag name for lxml. For
-    example, ``qn('p:cSld')`` returns ``'{http://schemas.../main}cSld'``.
-    """
-    prefix, tagroot = tag.split(':')
-    uri = nsmap[prefix]
-    return '{%s}%s' % (uri, tagroot)
 
 
 def serialize_for_reading(element):

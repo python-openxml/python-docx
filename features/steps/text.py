@@ -10,7 +10,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
-from docx.oxml.shared import qn
+from docx.oxml.ns import qn
 
 from helpers import test_docx, test_text
 

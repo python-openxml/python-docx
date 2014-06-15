@@ -5,9 +5,10 @@ Custom element classes that correspond to the document part, e.g.
 <w:document>.
 """
 
-from docx.oxml.shared import OxmlBaseElement, qn
-from docx.oxml.table import CT_Tbl
-from docx.oxml.text import CT_P
+from ..ns import qn
+from ..shared import OxmlBaseElement
+from ..table import CT_Tbl
+from ..text import CT_P
 
 
 class CT_Document(OxmlBaseElement):
