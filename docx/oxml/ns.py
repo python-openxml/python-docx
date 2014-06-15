@@ -20,6 +20,8 @@ nsmap = {
     'xml': ('http://www.w3.org/XML/1998/namespace')
 }
 
+pfxmap = dict((value, key) for key, value in nsmap.items())
+
 
 class NamespacePrefixedTag(str):
     """
@@ -36,6 +38,12 @@ class NamespacePrefixedTag(str):
     @property
     def clark_name(self):
         return '{%s}%s' % (self._ns_uri, self._local_part)
+
+    @classmethod
+    def from_clark_name(cls, clark_name):
+        nsuri, local_name = clark_name[1:].split('}')
+        nstag = '%s:%s' % (pfxmap[nsuri], local_name)
+        return cls(nstag)
 
     @property
     def local_part(self):

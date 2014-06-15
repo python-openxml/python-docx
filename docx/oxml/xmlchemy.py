@@ -11,7 +11,7 @@ from lxml import etree
 
 import re
 
-from .ns import qn
+from .ns import NamespacePrefixedTag, qn
 from ..compat import Unicode
 
 
@@ -95,6 +95,11 @@ class BaseOxmlElement(etree.ElementBase):
     Base class for all custom element classes, to add standardized behavior
     to all classes in one place.
     """
+    def __repr__(self):
+        return "<%s '<%s>' at 0x%0x>" % (
+            self.__class__.__name__, self._nsptag, id(self)
+        )
+
     def first_child_found_in(self, *tagnames):
         """
         Return the first child found with tag in *tagnames*, or None if
@@ -122,3 +127,7 @@ class BaseOxmlElement(etree.ElementBase):
         top.
         """
         return serialize_for_reading(self)
+
+    @property
+    def _nsptag(self):
+        return NamespacePrefixedTag.from_clark_name(self.tag)

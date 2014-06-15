@@ -10,7 +10,70 @@ import pytest
 
 from docx.compat import Unicode
 from docx.oxml import parse_xml
+from docx.oxml.ns import qn
 from docx.oxml.xmlchemy import serialize_for_reading, XmlString
+
+from .unitdata.text import a_b, a_u, an_i, an_rPr
+
+
+class DescribeBaseOxmlElement(object):
+
+    def it_can_find_the_first_of_its_children_named_in_a_sequence(
+            self, first_fixture):
+        element, tagnames, matching_child = first_fixture
+        assert element.first_child_found_in(*tagnames) is matching_child
+
+    def it_can_insert_an_element_before_named_successors(
+            self, insert_fixture):
+        element, child, tagnames, expected_xml = insert_fixture
+        element.insert_element_before(child, *tagnames)
+        assert element.xml == expected_xml
+
+    # fixtures ---------------------------------------------
+
+    @pytest.fixture(params=[
+        ('iu', 'b', 'iu', 'biu'),
+        ('u',  'b', 'iu', 'bu'),
+        ('',   'b', 'iu', 'b'),
+        ('bu', 'i', 'u',  'biu'),
+        ('bi', 'u', '',   'biu'),
+    ])
+    def insert_fixture(self, request):
+        present, new, successors, after = request.param
+        element = self.rPr_bldr(present).element
+        child = {
+            'b': a_b(), 'i': an_i(), 'u': a_u()
+        }[new].with_nsdecls().element
+        tagnames = [('w:%s' % char) for char in successors]
+        expected_xml = self.rPr_bldr(after).xml()
+        return element, child, tagnames, expected_xml
+
+    @pytest.fixture(params=[
+        ('biu', 'iu',  'i'),
+        ('bu',  'iu',  'u'),
+        ('bi',  'u',   None),
+        ('b',   'iu',  None),
+        ('iu',  'biu', 'i'),
+        ('',    'biu', None),
+    ])
+    def first_fixture(self, request):
+        present, matching, match = request.param
+        element = self.rPr_bldr(present).element
+        tagnames = [('w:%s' % char) for char in matching]
+        matching_child = element.find(qn('w:%s' % match)) if match else None
+        return element, tagnames, matching_child
+
+    # fixture components ---------------------------------------------
+
+    def rPr_bldr(self, children):
+        rPr_bldr = an_rPr().with_nsdecls()
+        if 'b' in children:
+            rPr_bldr.with_child(a_b())
+        if 'i' in children:
+            rPr_bldr.with_child(an_i())
+        if 'u' in children:
+            rPr_bldr.with_child(a_u())
+        return rPr_bldr
 
 
 class DescribeSerializeForReading(object):

@@ -20,6 +20,10 @@ class DescribeNamespacePrefixedTag(object):
     def it_knows_its_clark_name(self, nsptag, clark_name):
         assert nsptag.clark_name == clark_name
 
+    def it_can_construct_from_a_clark_name(self, clark_name, nsptag):
+        _nsptag = NamespacePrefixedTag.from_clark_name(clark_name)
+        assert _nsptag == nsptag
+
     def it_knows_its_local_part(self, nsptag, local_part):
         assert nsptag.local_part == local_part
 
