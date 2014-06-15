@@ -10,7 +10,8 @@ import pytest
 
 from lxml import etree
 
-from docx.oxml import oxml_parser, parse_xml, register_custom_element_class
+from docx.oxml import oxml_parser, parse_xml, register_element_cls
+from docx.oxml.ns import qn
 from docx.oxml.shared import OxmlBaseElement
 
 
@@ -55,7 +56,7 @@ class DescribeParseXml(object):
             parse_xml(xml_text)
 
     def it_uses_registered_element_classes(self, xml_bytes):
-        register_custom_element_class('a:foo', CustElmCls)
+        register_element_cls('a:foo', CustElmCls)
         element = parse_xml(xml_bytes)
         assert isinstance(element, CustElmCls)
 
@@ -69,6 +70,27 @@ class DescribeParseXml(object):
             '  <a:bar>foøbår</a:bar>\n'
             '</a:foo>\n'
         ).encode('utf-8')
+
+
+class DescribeRegisterElementCls(object):
+
+    def it_determines_class_used_for_elements_with_matching_tagname(
+            self, xml_text):
+        register_element_cls('a:foo', CustElmCls)
+        foo = parse_xml(xml_text)
+        assert type(foo) is CustElmCls
+        assert type(foo.find(qn('a:bar'))) is etree._Element
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def xml_text(self):
+        return (
+            '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/200'
+            '6/main">\n'
+            '  <a:bar>foøbår</a:bar>\n'
+            '</a:foo>\n'
+        )
 
 
 # ===========================================================================
