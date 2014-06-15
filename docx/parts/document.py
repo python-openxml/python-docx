@@ -11,7 +11,8 @@ from __future__ import (
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.oxml import serialize_part_xml
 from ..opc.package import Part
-from ..oxml.shared import nsmap, oxml_fromstring
+from ..oxml.ns import nsmap
+from ..oxml.shared import oxml_fromstring
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from ..table import Table

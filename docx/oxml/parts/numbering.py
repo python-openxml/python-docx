@@ -4,9 +4,8 @@
 Custom element classes related to the numbering part
 """
 
-from docx.oxml.shared import (
-    CT_DecimalNumber, nsmap, OxmlBaseElement, OxmlElement, qn
-)
+from ..shared import CT_DecimalNumber, OxmlBaseElement, OxmlElement, qn
+from ..ns import nsmap
 
 
 class CT_Num(OxmlBaseElement):

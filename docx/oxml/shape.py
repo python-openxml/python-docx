@@ -4,10 +4,9 @@
 Custom element classes for shape-related elements like ``<w:inline>``
 """
 
-from docx.oxml.shared import (
-    nsmap, nspfxmap, OxmlBaseElement, OxmlElement, qn
-)
-from docx.shared import Emu
+from .shared import nspfxmap, OxmlBaseElement, OxmlElement, qn
+from ..shared import Emu
+from .ns import nsmap
 
 
 class CT_Blip(OxmlBaseElement):

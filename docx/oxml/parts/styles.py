@@ -4,7 +4,8 @@
 Custom element classes related to the styles part
 """
 
-from docx.oxml.shared import nsmap, OxmlBaseElement, qn
+from ..shared import OxmlBaseElement, qn
+from ..ns import nsmap
 
 
 class CT_Style(OxmlBaseElement):

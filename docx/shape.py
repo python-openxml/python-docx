@@ -9,9 +9,9 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from docx.enum.shape import WD_INLINE_SHAPE
-from docx.oxml.shape import CT_Inline, CT_Picture
-from docx.oxml.shared import nsmap
+from .enum.shape import WD_INLINE_SHAPE
+from .oxml.shape import CT_Inline, CT_Picture
+from .oxml.ns import nsmap
 
 
 class InlineShape(object):
