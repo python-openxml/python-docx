@@ -70,3 +70,11 @@ class NamespacePrefixedTag(str):
         'http://foo/bar' in nsmap.
         """
         return self._ns_uri
+
+
+def nsdecls(*prefixes):
+    """
+    Return a string containing a namespace declaration for each of the
+    namespace prefix strings, e.g. 'p', 'ct', passed as *prefixes*.
+    """
+    return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])

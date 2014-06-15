@@ -20,10 +20,6 @@ from .ns import NamespacePrefixedTag, nsmap
 # ===========================================================================
 
 
-def nsdecls(*prefixes):
-    return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
-
-
 def nspfxmap(*nspfxs):
     """
     Return a dict containing the subset namespace prefix mappings specified by

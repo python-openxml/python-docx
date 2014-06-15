@@ -5,10 +5,11 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from docx.enum.text import WD_UNDERLINE
-from docx.oxml.parts.numbering import CT_NumPr
-from docx.oxml.shared import (
-    CT_String, nsdecls, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
+from ..enum.text import WD_UNDERLINE
+from .ns import nsdecls
+from .parts.numbering import CT_NumPr
+from .shared import (
+    CT_String, OxmlBaseElement, OxmlElement, oxml_fromstring, qn
 )
 
 

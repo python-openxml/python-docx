@@ -6,7 +6,8 @@ Shared code for unit test data builders
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.oxml.shared import nsdecls, oxml_fromstring
+from docx.oxml.ns import nsdecls
+from docx.oxml.shared import oxml_fromstring
 
 
 class BaseBuilder(object):
