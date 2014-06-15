@@ -11,6 +11,8 @@ from lxml import etree
 
 import re
 
+from ..compat import Unicode
+
 
 def serialize_for_reading(element):
     """
@@ -21,7 +23,7 @@ def serialize_for_reading(element):
     return XmlString(xml)
 
 
-class XmlString(str):
+class XmlString(Unicode):
     """
     Provides string comparison override suitable for serialized XML that is
     useful for tests.

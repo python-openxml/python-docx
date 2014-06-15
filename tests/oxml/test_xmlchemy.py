@@ -8,7 +8,43 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.oxml.xmlchemy import XmlString
+from docx.compat import Unicode
+from docx.oxml import parse_xml
+from docx.oxml.xmlchemy import serialize_for_reading, XmlString
+
+
+class DescribeSerializeForReading(object):
+
+    def it_pretty_prints_an_lxml_element(self, pretty_fixture):
+        element, expected_xml_text = pretty_fixture
+        xml_text = serialize_for_reading(element)
+        assert xml_text == expected_xml_text
+
+    def it_returns_unicode_text(self, type_fixture):
+        element = type_fixture
+        xml_text = serialize_for_reading(element)
+        assert isinstance(xml_text, Unicode)
+
+    # fixtures ---------------------------------------------
+
+    @pytest.fixture
+    def pretty_fixture(self, element):
+        expected_xml_text = (
+            '<foø>\n'
+            '  <bår>text</bår>\n'
+            '</foø>\n'
+        )
+        return element, expected_xml_text
+
+    @pytest.fixture
+    def type_fixture(self, element):
+        return element
+
+    # fixture components -----------------------------------
+
+    @pytest.fixture
+    def element(self):
+        return parse_xml('<foø><bår>text</bår></foø>')
 
 
 class DescribeXmlString(object):

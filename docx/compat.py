@@ -24,6 +24,8 @@ if sys.version_info >= (3, 0):
         """
         return isinstance(obj, str)
 
+    Unicode = str
+
 # ===========================================================================
 # Python 2 versions
 # ===========================================================================
@@ -37,3 +39,5 @@ else:
         Return True if *obj* is a string, False otherwise.
         """
         return isinstance(obj, basestring)
+
+    Unicode = unicode
