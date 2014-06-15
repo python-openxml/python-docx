@@ -12,7 +12,7 @@ import re
 
 from . import oxml_parser
 from .exceptions import ValidationError
-from .ns import NamespacePrefixedTag, nsmap, qn
+from .ns import NamespacePrefixedTag, qn
 
 
 # ===========================================================================
@@ -42,10 +42,6 @@ def serialize_for_reading(element):
     """
     xml = etree.tostring(element, encoding='unicode', pretty_print=True)
     return XmlString(xml)
-
-
-def _SubElement(parent, tag):
-    return etree.SubElement(parent, qn(tag), nsmap=nsmap)
 
 
 class XmlString(str):

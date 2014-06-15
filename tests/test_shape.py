@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.enum.shape import WD_INLINE_SHAPE
-from docx.oxml.shared import nsmap
+from docx.oxml.ns import nsmap
 from docx.parts.image import ImagePart
 from docx.shape import InlineShape
 from docx.shared import Length
