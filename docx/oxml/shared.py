@@ -20,15 +20,6 @@ from .ns import NamespacePrefixedTag, nsmap
 # ===========================================================================
 
 
-def nspfxmap(*nspfxs):
-    """
-    Return a dict containing the subset namespace prefix mappings specified by
-    *nspfxs*. Any number of namespace prefixes can be supplied, e.g.
-    namespaces('a', 'r', 'p').
-    """
-    return dict((pfx, nsmap[pfx]) for pfx in nspfxs)
-
-
 def OxmlElement(nsptag_str, attrs=None, nsmap=None):
     """
     Return a 'loose' lxml element having the tag specified by *nsptag_str*.
@@ -38,9 +29,9 @@ def OxmlElement(nsptag_str, attrs=None, nsmap=None):
     provided as *attrs*; they are set if present.
     """
     nsptag = NamespacePrefixedTag(nsptag_str)
-    nsmap = nsmap if nsmap is not None else nsptag.nsmap
+    _nsmap = nsptag.nsmap if nsmap is None else nsmap
     return oxml_parser.makeelement(
-        nsptag.clark_name, attrib=attrs, nsmap=nsmap
+        nsptag.clark_name, attrib=attrs, nsmap=_nsmap
     )
 
 
