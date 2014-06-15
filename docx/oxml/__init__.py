@@ -5,7 +5,28 @@ Initializes oxml sub-package, including registering custom element classes
 corresponding to Open XML elements.
 """
 
-from docx.oxml.shared import register_custom_element_class
+from __future__ import absolute_import
+
+from lxml import etree
+
+from .ns import nsmap
+
+
+# configure XML parser
+element_class_lookup = etree.ElementNamespaceClassLookup()
+oxml_parser = etree.XMLParser(remove_blank_text=True)
+oxml_parser.set_element_class_lookup(element_class_lookup)
+
+
+def register_custom_element_class(tag, cls):
+    """
+    Register *cls* to be constructed when the oxml parser encounters an
+    element with matching *tag*. *tag* is a string of the form
+    ``nspfx:tagroot``, e.g. ``'w:document'``.
+    """
+    nspfx, tagroot = tag.split(':')
+    namespace = element_class_lookup.get_namespace(nsmap[nspfx])
+    namespace[tagroot] = cls
 
 
 # ===========================================================================

@@ -4,18 +4,15 @@
 Objects shared by modules in the docx.oxml subpackage.
 """
 
+from __future__ import absolute_import
+
 from lxml import etree
 
 import re
 
+from . import oxml_parser
 from .exceptions import ValidationError
 from .ns import nsmap
-
-
-# configure XML parser
-element_class_lookup = etree.ElementNamespaceClassLookup()
-oxml_parser = etree.XMLParser(remove_blank_text=True)
-oxml_parser.set_element_class_lookup(element_class_lookup)
 
 
 # ===========================================================================
@@ -117,17 +114,6 @@ def qn(tag):
     prefix, tagroot = tag.split(':')
     uri = nsmap[prefix]
     return '{%s}%s' % (uri, tagroot)
-
-
-def register_custom_element_class(tag, cls):
-    """
-    Register *cls* to be constructed when the oxml parser encounters an
-    element with matching *tag*. *tag* is a string of the form
-    ``nspfx:tagroot``, e.g. ``'w:document'``.
-    """
-    nspfx, tagroot = tag.split(':')
-    namespace = element_class_lookup.get_namespace(nsmap[nspfx])
-    namespace[tagroot] = cls
 
 
 def serialize_for_reading(element):
