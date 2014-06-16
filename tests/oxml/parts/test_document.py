@@ -4,10 +4,9 @@
 Test suite for the docx.oxml.parts module.
 """
 
-from docx.oxml.parts.document import CT_Body
 from docx.oxml.text import CT_P
 
-from .unitdata.document import a_body, a_document
+from .unitdata.document import a_body
 from ..unitdata.text import a_p, a_sectPr
 
 
@@ -52,10 +51,3 @@ class DescribeCT_Body(object):
             body.clear_content()
             # verify -------------------
             assert body.xml == after_body_bldr.xml()
-
-
-class DescribeCT_Document(object):
-
-    def it_holds_a_body_element(self):
-        document = a_document().with_nsdecls().with_child(a_body()).element
-        assert isinstance(document.body, CT_Body)

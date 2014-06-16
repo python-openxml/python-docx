@@ -8,16 +8,14 @@ Custom element classes that correspond to the document part, e.g.
 from ..ns import qn
 from ..table import CT_Tbl
 from ..text import CT_P
-from ..xmlchemy import BaseOxmlElement
+from ..xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
 class CT_Document(BaseOxmlElement):
     """
     ``<w:document>`` element, the root element of a document.xml file.
     """
-    @property
-    def body(self):
-        return self.find(qn('w:body'))
+    body = ZeroOrOne('w:body')
 
 
 class CT_Body(BaseOxmlElement):
