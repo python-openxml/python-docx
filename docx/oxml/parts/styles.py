@@ -5,16 +5,16 @@ Custom element classes related to the styles part
 """
 
 from ..ns import qn
-from ..xmlchemy import BaseOxmlElement
+from ..xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
 class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition
     """
-    @property
-    def pPr(self):
-        return self.find(qn('w:pPr'))
+    pPr = ZeroOrOne('w:pPr', successors=(
+        'w:rPr', 'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
+    ))
 
 
 class CT_Styles(BaseOxmlElement):

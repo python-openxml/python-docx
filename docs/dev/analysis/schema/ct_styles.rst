@@ -1,6 +1,6 @@
-#############
+
 ``CT_Styles``
-#############
+=============
 
 .. highlight:: xml
 
@@ -17,7 +17,7 @@
 
 
 Analysis
-========
+--------
 
 Only styles with an explicit ``<w:style>`` definition affect the formatting
 of paragraphs that are assigned that style.
@@ -34,26 +34,8 @@ is no longer used by any paragraphs. The definition of each of the styles
 ever used in a document are accumulated in ``styles.xml``.
 
 
-attributes
-^^^^^^^^^^
-
-None.
-
-
-child elements
-^^^^^^^^^^^^^^
-
-============  ====  ================
-name            #   type
-============  ====  ================
-docDefaults     ?   CT_DocDefaults
-latentStyles    ?   CT_LatentStyles
-style          \*   CT_TextParagraph
-============  ====  ================
-
-
 Spec text
-^^^^^^^^^
+---------
 
    This element specifies all of the style information stored in the
    WordprocessingML document: style definitions as well as latent style
@@ -66,14 +48,14 @@ Spec text
 
 
 Schema excerpt
-^^^^^^^^^^^^^^
+--------------
 
 ::
 
   <xsd:complexType name="CT_Styles">
     <xsd:sequence>
       <xsd:element name="docDefaults"  type="CT_DocDefaults"  minOccurs="0"/>
-      <xsd:element name="latentStyles" type="CT_LatentStyles" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="latentStyles" type="CT_LatentStyles" minOccurs="0"/>
       <xsd:element name="style"        type="CT_Style"        minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
@@ -99,7 +81,7 @@ Schema excerpt
 
   <xsd:complexType name="CT_Style">
     <xsd:sequence>
-      <xsd:element name="name"            type="CT_String"        minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="name"            type="CT_String"        minOccurs="0"/>
       <xsd:element name="aliases"         type="CT_String"        minOccurs="0"/>
       <xsd:element name="basedOn"         type="CT_String"        minOccurs="0"/>
       <xsd:element name="next"            type="CT_String"        minOccurs="0"/>
@@ -115,21 +97,21 @@ Schema excerpt
       <xsd:element name="personalCompose" type="CT_OnOff"         minOccurs="0"/>
       <xsd:element name="personalReply"   type="CT_OnOff"         minOccurs="0"/>
       <xsd:element name="rsid"            type="CT_LongHexNumber" minOccurs="0"/>
-      <xsd:element name="pPr"             type="CT_PPrGeneral"    minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="rPr"             type="CT_RPr"           minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="tblPr"           type="CT_TblPrBase"     minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="trPr"            type="CT_TrPr"          minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="tcPr"            type="CT_TcPr"          minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="pPr"             type="CT_PPrGeneral"    minOccurs="0"/>
+      <xsd:element name="rPr"             type="CT_RPr"           minOccurs="0"/>
+      <xsd:element name="tblPr"           type="CT_TblPrBase"     minOccurs="0"/>
+      <xsd:element name="trPr"            type="CT_TrPr"          minOccurs="0"/>
+      <xsd:element name="tcPr"            type="CT_TcPr"          minOccurs="0"/>
       <xsd:element name="tblStylePr"      type="CT_TblStylePr"    minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
-    <xsd:attribute name="type"        type="ST_StyleType" use="optional"/>
-    <xsd:attribute name="styleId"     type="s:ST_String"  use="optional"/>
-    <xsd:attribute name="default"     type="s:ST_OnOff"   use="optional"/>
-    <xsd:attribute name="customStyle" type="s:ST_OnOff"   use="optional"/>
+    <xsd:attribute name="type"        type="ST_StyleType"/>
+    <xsd:attribute name="styleId"     type="s:ST_String"/>
+    <xsd:attribute name="default"     type="s:ST_OnOff"/>
+    <xsd:attribute name="customStyle" type="s:ST_OnOff"/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_LsdException">
-    <xsd:attribute name="name"           type="s:ST_String" use="required"/>
+    <xsd:attribute name="name"           type="s:ST_String"   use="required"/>
     <xsd:attribute name="locked"         type="s:ST_OnOff"/>
     <xsd:attribute name="uiPriority"     type="ST_DecimalNumber"/>
     <xsd:attribute name="semiHidden"     type="s:ST_OnOff"/>
