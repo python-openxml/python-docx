@@ -6,7 +6,7 @@ Custom element classes related to the numbering part
 
 from .. import OxmlElement
 from ..shared import CT_DecimalNumber
-from ..ns import nsmap, qn
+from ..ns import qn
 from ..xmlchemy import BaseOxmlElement
 
 
@@ -181,7 +181,7 @@ class CT_Numbering(BaseOxmlElement):
         """
         xpath = './w:num[@w:numId="%d"]' % numId
         try:
-            return self.xpath(xpath, namespaces=nsmap)[0]
+            return self.xpath(xpath)[0]
         except IndexError:
             raise KeyError('no <w:num> element with numId %d' % numId)
 
@@ -195,7 +195,7 @@ class CT_Numbering(BaseOxmlElement):
         1 and filling any gaps in numbering between existing ``<w:num>``
         elements.
         """
-        numId_strs = self.xpath('./w:num/@w:numId', namespaces=nsmap)
+        numId_strs = self.xpath('./w:num/@w:numId')
         num_ids = [int(numId_str) for numId_str in numId_strs]
         for num in range(1, len(num_ids)+2):
             if num not in num_ids:

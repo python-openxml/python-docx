@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from .compat import cls_method_fn
 from .constants import RELATIONSHIP_TYPE as RT
-from .oxml import CT_Relationships, nsmap, serialize_part_xml
+from .oxml import CT_Relationships, serialize_part_xml
 from .packuri import PACKAGE_URI, PackURI
 from .pkgreader import PackageReader
 from .pkgwriter import PackageWriter
@@ -301,7 +301,7 @@ class Part(object):
         identified by *rId*.
         """
         assert self._element is not None
-        rIds = self._element.xpath('//@r:id', namespaces=nsmap)
+        rIds = self._element.xpath('//@r:id')
         return len([_rId for _rId in rIds if _rId == rId])
 
     # ----------------------------------------------------------------

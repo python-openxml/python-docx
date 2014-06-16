@@ -4,7 +4,7 @@
 Custom element classes related to the styles part
 """
 
-from ..ns import nsmap, qn
+from ..ns import qn
 from ..xmlchemy import BaseOxmlElement
 
 
@@ -29,7 +29,7 @@ class CT_Styles(BaseOxmlElement):
         """
         xpath = './w:style[@w:styleId="%s"]' % styleId
         try:
-            return self.xpath(xpath, namespaces=nsmap)[0]
+            return self.xpath(xpath)[0]
         except IndexError:
             raise KeyError('no <w:style> element with styleId %d' % styleId)
 

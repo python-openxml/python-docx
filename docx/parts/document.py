@@ -12,7 +12,6 @@ from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.oxml import serialize_part_xml
 from ..opc.package import Part
 from ..oxml import parse_xml
-from ..oxml.ns import nsmap
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from ..table import Table
@@ -214,4 +213,4 @@ class InlineShapes(Parented):
     def _inline_lst(self):
         body = self._body
         xpath = './w:p/w:r/w:drawing/wp:inline'
-        return body.xpath(xpath, namespaces=nsmap)
+        return body.xpath(xpath)
