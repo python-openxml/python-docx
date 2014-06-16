@@ -8,7 +8,7 @@ from . import OxmlElement
 from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
 from .simpletypes import ST_RelationshipId
-from .xmlchemy import BaseOxmlElement, OptionalAttribute
+from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
 
 
 class CT_Blip(BaseOxmlElement):
@@ -30,9 +30,9 @@ class CT_BlipFillProperties(BaseOxmlElement):
     """
     ``<pic:blipFill>`` element, specifies picture properties
     """
-    @property
-    def blip(self):
-        return self.find(qn('a:blip'))
+    blip = ZeroOrOne('a:blip', successors=(
+        'a:srcRect', 'a:tile', 'a:stretch'
+    ))
 
     @classmethod
     def new(cls, rId):

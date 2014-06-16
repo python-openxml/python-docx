@@ -114,6 +114,40 @@ Schema definitions
     </xsd:sequence>
   </xsd:complexType>
 
+  <xsd:complexType name="CT_PictureNonVisual">
+    <xsd:sequence>
+      <xsd:element name="cNvPr"    type="a:CT_NonVisualDrawingProps"/>
+      <xsd:element name="cNvPicPr" type="a:CT_NonVisualPictureProperties"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_BlipFillProperties">
+    <xsd:sequence>
+      <xsd:element name="blip"    type="CT_Blip"         minOccurs="0"/>
+      <xsd:element name="srcRect" type="CT_RelativeRect" minOccurs="0"/>
+      <xsd:choice minOccurs="0">
+        <xsd:element name="tile"    type="CT_TileInfoProperties"/>
+        <xsd:element name="stretch" type="CT_StretchInfoProperties"/>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="dpi"          type="xsd:unsignedInt"/>
+    <xsd:attribute name="rotWithShape" type="xsd:boolean"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_ShapeProperties">
+    <xsd:sequence>
+      <xsd:element name="xfrm"    type="CT_Transform2D"            minOccurs="0"/>
+      <xsd:group   ref="EG_Geometry"                               minOccurs="0"/>
+      <xsd:group   ref="EG_FillProperties"                         minOccurs="0"/>
+      <xsd:element name="ln"      type="CT_LineProperties"         minOccurs="0"/>
+      <xsd:group   ref="EG_EffectProperties"                       minOccurs="0"/>
+      <xsd:element name="scene3d" type="CT_Scene3D"                minOccurs="0"/>
+      <xsd:element name="sp3d"    type="CT_Shape3D"                minOccurs="0"/>
+      <xsd:element name="extLst"  type="CT_OfficeArtExtensionList" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="bwMode" type="ST_BlackWhiteMode"/>
+  </xsd:complexType>
+
   <xsd:complexType name="CT_Blip">  <!-- denormalized -->
     <xsd:sequence>
       <xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -146,16 +180,6 @@ Schema definitions
     <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
 
-  <xsd:complexType name="CT_BlipFillProperties">
-    <xsd:sequence>
-      <xsd:element name="blip"    type="CT_Blip"         minOccurs="0"/>
-      <xsd:element name="srcRect" type="CT_RelativeRect" minOccurs="0"/>
-      <xsd:group   ref="EG_FillModeProperties"           minOccurs="0"/>
-    </xsd:sequence>
-    <xsd:attribute name="dpi"          type="xsd:unsignedInt"/>
-    <xsd:attribute name="rotWithShape" type="xsd:boolean"/>
-  </xsd:complexType>
-
   <xsd:complexType name="CT_NonVisualDrawingProps">
     <xsd:sequence>
       <xsd:element name="hlinkClick" type="CT_Hyperlink"              minOccurs="0"/>
@@ -175,13 +199,6 @@ Schema definitions
       <xsd:element name="extLst"   type="CT_OfficeArtExtensionList" minOccurs="0"/>
     </xsd:sequence>
     <xsd:attribute name="preferRelativeResize" type="xsd:boolean" default="true"/>
-  </xsd:complexType>
-
-  <xsd:complexType name="CT_PictureNonVisual">
-    <xsd:sequence>
-      <xsd:element name="cNvPr"    type="a:CT_NonVisualDrawingProps"/>
-      <xsd:element name="cNvPicPr" type="a:CT_NonVisualPictureProperties"/>
-    </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="CT_Point2D">
@@ -206,20 +223,6 @@ Schema definitions
     <xsd:attribute name="t" type="ST_Percentage" default="0%"/>
     <xsd:attribute name="r" type="ST_Percentage" default="0%"/>
     <xsd:attribute name="b" type="ST_Percentage" default="0%"/>
-  </xsd:complexType>
-
-  <xsd:complexType name="CT_ShapeProperties">
-    <xsd:sequence>
-      <xsd:element name="xfrm"    type="CT_Transform2D"            minOccurs="0"/>
-      <xsd:group   ref="EG_Geometry"                               minOccurs="0"/>
-      <xsd:group   ref="EG_FillProperties"                         minOccurs="0"/>
-      <xsd:element name="ln"      type="CT_LineProperties"         minOccurs="0"/>
-      <xsd:group   ref="EG_EffectProperties"                       minOccurs="0"/>
-      <xsd:element name="scene3d" type="CT_Scene3D"                minOccurs="0"/>
-      <xsd:element name="sp3d"    type="CT_Shape3D"                minOccurs="0"/>
-      <xsd:element name="extLst"  type="CT_OfficeArtExtensionList" minOccurs="0"/>
-    </xsd:sequence>
-    <xsd:attribute name="bwMode" type="ST_BlackWhiteMode"/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_StretchInfoProperties">
