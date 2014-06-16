@@ -5,7 +5,6 @@ Custom element classes related to the numbering part
 """
 
 from .. import OxmlElement
-from ..ns import qn
 from ..shared import CT_DecimalNumber
 from ..simpletypes import ST_DecimalNumber
 from ..xmlchemy import (
@@ -95,21 +94,16 @@ class CT_Numbering(BaseOxmlElement):
     ``<w:numbering>`` element, the root element of a numbering part, i.e.
     numbering.xml
     """
+    num = ZeroOrMore('w:num', successors=('w:numIdMacAtCleanup',))
+
     def add_num(self, abstractNum_id):
         """
-        Return a newly added CT_Num (<w:num>) element that references
-        the abstract numbering definition having id *abstractNum_id*.
+        Return a newly added CT_Num (<w:num>) element referencing the
+        abstract numbering definition identified by *abstractNum_id*.
         """
         next_num_id = self._next_numId
         num = CT_Num.new(next_num_id, abstractNum_id)
         return self._insert_num(num)
-
-    @property
-    def num_lst(self):
-        """
-        List of <w:num> child elements.
-        """
-        return self.findall(qn('w:num'))
 
     def num_having_numId(self, numId):
         """
@@ -121,9 +115,6 @@ class CT_Numbering(BaseOxmlElement):
             return self.xpath(xpath)[0]
         except IndexError:
             raise KeyError('no <w:num> element with numId %d' % numId)
-
-    def _insert_num(self, num):
-        return self.insert_element_before(num, 'w:numIdMacAtCleanup')
 
     @property
     def _next_numId(self):
