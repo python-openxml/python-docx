@@ -25,22 +25,8 @@ class CT_Body(BaseOxmlElement):
     p = ZeroOrMore('w:p', successors=('w:sectPr',))
     tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
 
-    def add_p(self):
-        """
-        Return a new <w:p> element that has been added at the end of any
-        existing body content.
-        """
-        return self._add_p()
-
     def _insert_p(self, p):
         return self._append_blocklevelelt(p)
-
-    def add_tbl(self):
-        """
-        Return a new <w:tbl> element that has been added at the end of any
-        existing body content.
-        """
-        return self._add_tbl()
 
     def _insert_tbl(self, tbl):
         return self._append_blocklevelelt(tbl)

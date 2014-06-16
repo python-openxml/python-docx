@@ -332,6 +332,21 @@ class _BaseChildElement(object):
     def _add_method_name(self):
         return '_add_%s' % self._prop_name
 
+    def _add_public_adder(self):
+        """
+        Add a public ``add_x()`` method to the parent element class.
+        """
+        def add_child(obj):
+            private_add_method = getattr(obj, self._add_method_name)
+            child = private_add_method()
+            return child
+
+        add_child.__doc__ = (
+            'Add a new ``<%s>`` child element unconditionally, inserted in t'
+            'he correct sequence.' % self._nsptagname
+        )
+        self._add_to_class(self._public_add_method_name, add_child)
+
     def _add_to_class(self, name, method):
         """
         Add *method* to the target class as *name*, unless *name* is already
@@ -383,6 +398,16 @@ class _BaseChildElement(object):
             'rder they appear.' % self._nsptagname
         )
         return get_child_element_list
+
+    @lazyproperty
+    def _public_add_method_name(self):
+        """
+        add_childElement() is public API for a repeating element, allowing
+        new elements to be added to the sequence. May be overridden to
+        provide a friendlier API to clients having domain appropriate
+        parameter names for required attributes.
+        """
+        return 'add_%s' % self._prop_name
 
     @lazyproperty
     def _remove_method_name(self):
@@ -519,31 +544,6 @@ class OneOrMore(_BaseChildElement):
         self._add_public_adder()
         delattr(element_cls, prop_name)
 
-    def _add_public_adder(self):
-        """
-        Add a public ``add_x()`` method to the parent element class.
-        """
-        def add_child(obj):
-            private_add_method = getattr(obj, self._add_method_name)
-            child = private_add_method()
-            return child
-
-        add_child.__doc__ = (
-            'Add a new ``<%s>`` child element unconditionally, inserted in t'
-            'he correct sequence.' % self._nsptagname
-        )
-        self._add_to_class(self._public_add_method_name, add_child)
-
-    @lazyproperty
-    def _public_add_method_name(self):
-        """
-        add_childElement() is public API for a repeating element, allowing
-        new elements to be added to the sequence. May be overridden to
-        provide a friendlier API to clients having domain appropriate
-        parameter names for required attributes.
-        """
-        return 'add_%s' % self._prop_name
-
 
 class ZeroOrMore(_BaseChildElement):
     """
@@ -560,6 +560,7 @@ class ZeroOrMore(_BaseChildElement):
         self._add_creator()
         self._add_inserter()
         self._add_adder()
+        self._add_public_adder()
         delattr(element_cls, prop_name)
 
 

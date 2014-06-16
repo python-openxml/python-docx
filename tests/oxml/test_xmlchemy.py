@@ -527,6 +527,15 @@ class DescribeZeroOrMore(object):
             'Add a new ``<w:zomChild>`` child element '
         )
 
+    def it_adds_a_public_add_method_for_the_child_element(self, add_fixture):
+        parent, expected_xml = add_fixture
+        zomChild = parent.add_zomChild()
+        assert parent.xml == expected_xml
+        assert isinstance(zomChild, CT_ZomChild)
+        assert parent._add_zomChild.__doc__.startswith(
+            'Add a new ``<w:zomChild>`` child element '
+        )
+
     def it_removes_the_property_root_name_used_for_declaration(self):
         assert not hasattr(CT_Parent, 'zomChild')
 
