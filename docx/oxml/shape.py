@@ -7,9 +7,10 @@ Custom element classes for shape-related elements like ``<w:inline>``
 from . import OxmlElement
 from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
-from .simpletypes import ST_RelationshipId
+from .simpletypes import ST_RelationshipId, XsdToken
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, ZeroOrOne
+    BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute,
+    ZeroOrOne
 )
 
 
@@ -61,20 +62,15 @@ class CT_GraphicalObjectData(BaseOxmlElement):
     """
     ``<a:graphicData>`` element, container for the XML of a DrawingML object
     """
+    pic = ZeroOrOne('pic:pic')
+    uri = RequiredAttribute('uri', XsdToken)
+
     @classmethod
     def new(cls, uri, pic):
         graphicData = OxmlElement('a:graphicData')
-        graphicData.set('uri', uri)
-        graphicData.append(pic)
+        graphicData.uri = uri
+        graphicData._insert_pic(pic)
         return graphicData
-
-    @property
-    def pic(self):
-        return self.find(qn('pic:pic'))
-
-    @property
-    def uri(self):
-        return self.get('uri')
 
 
 class CT_Inline(BaseOxmlElement):
