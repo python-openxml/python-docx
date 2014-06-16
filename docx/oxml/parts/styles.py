@@ -4,8 +4,7 @@
 Custom element classes related to the styles part
 """
 
-from ..ns import qn
-from ..xmlchemy import BaseOxmlElement, ZeroOrOne
+from ..xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 
 class CT_Style(BaseOxmlElement):
@@ -22,6 +21,8 @@ class CT_Styles(BaseOxmlElement):
     ``<w:styles>`` element, the root element of a styles part, i.e.
     styles.xml
     """
+    style = ZeroOrMore('w:style', successors=())
+
     def style_having_styleId(self, styleId):
         """
         Return the ``<w:style>`` child element having ``styleId`` attribute
@@ -32,10 +33,3 @@ class CT_Styles(BaseOxmlElement):
             return self.xpath(xpath)[0]
         except IndexError:
             raise KeyError('no <w:style> element with styleId %d' % styleId)
-
-    @property
-    def style_lst(self):
-        """
-        List of <w:style> child elements.
-        """
-        return self.findall(qn('w:style'))
