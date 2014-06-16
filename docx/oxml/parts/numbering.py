@@ -5,9 +5,12 @@ Custom element classes related to the numbering part
 """
 
 from .. import OxmlElement
-from ..shared import CT_DecimalNumber
 from ..ns import qn
-from ..xmlchemy import BaseOxmlElement
+from ..shared import CT_DecimalNumber
+from ..simpletypes import ST_DecimalNumber
+from ..xmlchemy import (
+    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore
+)
 
 
 class CT_Num(BaseOxmlElement):
@@ -16,18 +19,16 @@ class CT_Num(BaseOxmlElement):
     instance, having a required child <w:abstractNumId> that references an
     abstract numbering definition that defines most of the formatting details.
     """
-    @property
-    def abstractNumId(self):
-        return self.find(qn('w:abstractNumId'))
+    abstractNumId = OneAndOnlyOne('w:abstractNumId')
+    lvlOverride = ZeroOrMore('w:lvlOverride')
+    numId = RequiredAttribute('w:numId', ST_DecimalNumber)
 
     def add_lvlOverride(self, ilvl):
         """
         Return a newly added CT_NumLvl (<w:lvlOverride>) element having its
         ``ilvl`` attribute set to *ilvl*.
         """
-        lvlOverride = CT_NumLvl.new(ilvl)
-        self.append(lvlOverride)
-        return lvlOverride
+        return self._add_lvlOverride(ilvl=ilvl)
 
     @classmethod
     def new(cls, num_id, abstractNum_id):
@@ -36,17 +37,13 @@ class CT_Num(BaseOxmlElement):
         a ``<w:abstractNumId>`` child with val attribute set to
         *abstractNum_id*.
         """
+        num = OxmlElement('w:num')
+        num.numId = num_id
         abstractNumId = CT_DecimalNumber.new(
             'w:abstractNumId', abstractNum_id
         )
-        num = OxmlElement('w:num', {qn('w:numId'): str(num_id)})
         num.append(abstractNumId)
         return num
-
-    @property
-    def numId(self):
-        numId_str = self.get(qn('w:numId'))
-        return int(numId_str)
 
 
 class CT_NumLvl(BaseOxmlElement):
@@ -54,6 +51,8 @@ class CT_NumLvl(BaseOxmlElement):
     ``<w:lvlOverride>`` element, which identifies a level in a list
     definition to override with settings it contains.
     """
+    ilvl = RequiredAttribute('w:ilvl', ST_DecimalNumber)
+
     def add_startOverride(self, val):
         """
         Return a newly added CT_DecimalNumber element having tagname
@@ -62,14 +61,6 @@ class CT_NumLvl(BaseOxmlElement):
         startOverride = CT_DecimalNumber.new('w:startOverride', val)
         self.insert(0, startOverride)
         return startOverride
-
-    @classmethod
-    def new(cls, ilvl):
-        """
-        Return a new ``<w:lvlOverride>`` element having its ``ilvl``
-        attribute set to *ilvl*.
-        """
-        return OxmlElement('w:lvlOverride', {qn('w:ilvl'): str(ilvl)})
 
 
 class CT_NumPr(BaseOxmlElement):

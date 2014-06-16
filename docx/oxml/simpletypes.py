@@ -149,3 +149,7 @@ class XsdUnsignedInt(BaseIntType):
     @classmethod
     def validate(cls, value):
         cls.validate_int_in_range(value, 0, 4294967295)
+
+
+class ST_DecimalNumber(XsdInt):
+    pass

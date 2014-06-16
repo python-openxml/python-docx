@@ -63,10 +63,6 @@ class DescribeNumberingPart(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def blob_(self, request):
-        return instance_mock(request, bytes)
-
-    @pytest.fixture
     def construct_fixture(
             self, partname_, content_type_, blob_, package_, parse_xml_,
             init__, numbering_elm_):
@@ -74,14 +70,6 @@ class DescribeNumberingPart(object):
             partname_, content_type_, blob_, package_, parse_xml_, init__,
             numbering_elm_
         )
-
-    @pytest.fixture
-    def content_type_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def init__(self, request):
-        return initializer_mock(request, NumberingPart)
 
     @pytest.fixture
     def load_fixture(
@@ -93,13 +81,6 @@ class DescribeNumberingPart(object):
         )
 
     @pytest.fixture
-    def _NumberingDefinitions_(self, request, numbering_definitions_):
-        return class_mock(
-            request, 'docx.parts.numbering._NumberingDefinitions',
-            return_value=numbering_definitions_
-        )
-
-    @pytest.fixture
     def num_defs_fixture(
             self, _NumberingDefinitions_, numbering_elm_,
             numbering_definitions_):
@@ -107,6 +88,27 @@ class DescribeNumberingPart(object):
         return (
             numbering_part, _NumberingDefinitions_, numbering_elm_,
             numbering_definitions_
+        )
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def blob_(self, request):
+        return instance_mock(request, bytes)
+
+    @pytest.fixture
+    def content_type_(self, request):
+        return instance_mock(request, str)
+
+    @pytest.fixture
+    def init__(self, request):
+        return initializer_mock(request, NumberingPart)
+
+    @pytest.fixture
+    def _NumberingDefinitions_(self, request, numbering_definitions_):
+        return class_mock(
+            request, 'docx.parts.numbering._NumberingDefinitions',
+            return_value=numbering_definitions_
         )
 
     @pytest.fixture
