@@ -119,6 +119,16 @@ class BaseOxmlElement(etree.ElementBase):
             self.append(elm)
         return elm
 
+    def remove_all(self, *tagnames):
+        """
+        Remove all child elements whose tagname (e.g. 'a:p') appears in
+        *tagnames*.
+        """
+        for tagname in tagnames:
+            matching = self.findall(qn(tagname))
+            for child in matching:
+                self.remove(child)
+
     @property
     def xml(self):
         """

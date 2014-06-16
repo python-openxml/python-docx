@@ -29,7 +29,28 @@ class DescribeBaseOxmlElement(object):
         element.insert_element_before(child, *tagnames)
         assert element.xml == expected_xml
 
+    def it_can_remove_all_children_with_name_in_sequence(
+            self, remove_fixture):
+        element, tagnames, expected_xml = remove_fixture
+        element.remove_all(*tagnames)
+        assert element.xml == expected_xml
+
     # fixtures ---------------------------------------------
+
+    @pytest.fixture(params=[
+        ('biu', 'iu',  'i'),
+        ('bu',  'iu',  'u'),
+        ('bi',  'u',   None),
+        ('b',   'iu',  None),
+        ('iu',  'biu', 'i'),
+        ('',    'biu', None),
+    ])
+    def first_fixture(self, request):
+        present, matching, match = request.param
+        element = self.rPr_bldr(present).element
+        tagnames = self.nsptags(matching)
+        matching_child = element.find(qn('w:%s' % match)) if match else None
+        return element, tagnames, matching_child
 
     @pytest.fixture(params=[
         ('iu', 'b', 'iu', 'biu'),
@@ -49,30 +70,34 @@ class DescribeBaseOxmlElement(object):
         return element, child, tagnames, expected_xml
 
     @pytest.fixture(params=[
-        ('biu', 'iu',  'i'),
-        ('bu',  'iu',  'u'),
-        ('bi',  'u',   None),
-        ('b',   'iu',  None),
-        ('iu',  'biu', 'i'),
-        ('',    'biu', None),
+        ('biu', 'b', 'iu'), ('biu', 'bi', 'u'), ('bbiiuu',  'i',   'bbuu'),
+        ('biu', 'i', 'bu'), ('biu', 'bu', 'i'), ('bbiiuu',   '', 'bbiiuu'),
+        ('biu', 'u', 'bi'), ('biu', 'ui', 'b'), ('bbiiuu', 'bi',     'uu'),
+        ('bu',  'i', 'bu'), ('',    'ui',  ''),
     ])
-    def first_fixture(self, request):
-        present, matching, match = request.param
+    def remove_fixture(self, request):
+        present, remove, after = request.param
         element = self.rPr_bldr(present).element
-        tagnames = [('w:%s' % char) for char in matching]
-        matching_child = element.find(qn('w:%s' % match)) if match else None
-        return element, tagnames, matching_child
+        tagnames = self.nsptags(remove)
+        expected_xml = self.rPr_bldr(after).xml()
+        return element, tagnames, expected_xml
 
     # fixture components ---------------------------------------------
 
+    def nsptags(self, letters):
+        return [('w:%s' % letter) for letter in letters]
+
     def rPr_bldr(self, children):
         rPr_bldr = an_rPr().with_nsdecls()
-        if 'b' in children:
-            rPr_bldr.with_child(a_b())
-        if 'i' in children:
-            rPr_bldr.with_child(an_i())
-        if 'u' in children:
-            rPr_bldr.with_child(a_u())
+        for char in children:
+            if char == 'b':
+                rPr_bldr.with_child(a_b())
+            elif char == 'i':
+                rPr_bldr.with_child(an_i())
+            elif char == 'u':
+                rPr_bldr.with_child(a_u())
+            else:
+                raise NotImplementedError("got '%s'" % char)
         return rPr_bldr
 
 
