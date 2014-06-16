@@ -8,7 +8,6 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 from . import parse_xml, OxmlElement
 from ..enum.text import WD_UNDERLINE
 from .ns import nsdecls, qn
-from .parts.numbering import CT_NumPr
 from .shared import CT_String
 from .xmlchemy import BaseOxmlElement
 
@@ -190,7 +189,7 @@ class CT_PPr(BaseOxmlElement):
             self.pStyle.val = style
 
     def _add_numPr(self):
-        numPr = CT_NumPr.new()
+        numPr = OxmlElement('w:numPr')
         return self._insert_numPr(numPr)
 
     def _add_pStyle(self, style):
