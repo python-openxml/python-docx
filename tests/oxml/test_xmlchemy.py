@@ -9,8 +9,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.compat import Unicode
-from docx.exc import InvalidXmlError
 from docx.oxml import parse_xml, register_element_cls
+from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import BaseIntType
 from docx.oxml.xmlchemy import (

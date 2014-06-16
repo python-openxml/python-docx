@@ -7,7 +7,7 @@ Custom element classes for tables
 from __future__ import absolute_import, print_function, unicode_literals
 
 from . import OxmlElement
-from .exceptions import ValidationError
+from .exceptions import InvalidXmlError
 from .ns import qn
 from .shared import CT_String
 from .text import CT_P
@@ -77,14 +77,14 @@ class CT_Tbl(BaseOxmlElement):
     def tblGrid(self):
         tblGrid = self.find(qn('w:tblGrid'))
         if tblGrid is None:
-            raise ValidationError('required w:tblGrid child not found')
+            raise InvalidXmlError('required w:tblGrid child not found')
         return tblGrid
 
     @property
     def tblPr(self):
         tblPr = self.find(qn('w:tblPr'))
         if tblPr is None:
-            raise ValidationError('required w:tblPr child not found')
+            raise InvalidXmlError('required w:tblPr child not found')
         return tblPr
 
     @property

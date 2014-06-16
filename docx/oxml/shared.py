@@ -7,7 +7,7 @@ Objects shared by modules in the docx.oxml subpackage.
 from __future__ import absolute_import
 
 from . import OxmlElement
-from .exceptions import ValidationError
+from .exceptions import InvalidXmlError
 from .ns import qn
 from .xmlchemy import BaseOxmlElement
 
@@ -54,7 +54,7 @@ class CT_OnOff(BaseOxmlElement):
             return False
         elif val in ('1', 'true', 'on'):
             return True
-        raise ValidationError("expected xsd:boolean, got '%s'" % val)
+        raise InvalidXmlError("expected xsd:boolean, got '%s'" % val)
 
     @val.setter
     def val(self, value):

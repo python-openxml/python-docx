@@ -13,7 +13,7 @@ import re
 
 from . import OxmlElement
 from ..compat import Unicode
-from ..exc import InvalidXmlError
+from .exceptions import InvalidXmlError
 from .ns import NamespacePrefixedTag, nsmap, qn
 from ..shared import lazyproperty
 
