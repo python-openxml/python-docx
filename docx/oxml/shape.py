@@ -8,7 +8,9 @@ from . import OxmlElement
 from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
 from .simpletypes import ST_RelationshipId
-from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+from .xmlchemy import (
+    BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, ZeroOrOne
+)
 
 
 class CT_Blip(BaseOxmlElement):
@@ -46,9 +48,7 @@ class CT_GraphicalObject(BaseOxmlElement):
     """
     ``<a:graphic>`` element, container for a DrawingML object
     """
-    @property
-    def graphicData(self):
-        return self.find(qn('a:graphicData'))
+    graphicData = OneAndOnlyOne('a:graphicData')
 
     @classmethod
     def new(cls, uri, pic):
