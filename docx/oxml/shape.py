@@ -7,7 +7,8 @@ Custom element classes for shape-related elements like ``<w:inline>``
 from . import OxmlElement
 from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
-from .xmlchemy import BaseOxmlElement
+from .simpletypes import ST_RelationshipId
+from .xmlchemy import BaseOxmlElement, OptionalAttribute
 
 
 class CT_Blip(BaseOxmlElement):
@@ -15,13 +16,8 @@ class CT_Blip(BaseOxmlElement):
     ``<a:blip>`` element, specifies image source and adjustments such as
     alpha and tint.
     """
-    @property
-    def embed(self):
-        return self.get(qn('r:embed'))
-
-    @property
-    def link(self):
-        return self.get(qn('r:link'))
+    embed = OptionalAttribute('r:embed', ST_RelationshipId)
+    link = OptionalAttribute('r:link', ST_RelationshipId)
 
     @classmethod
     def new(cls, rId):

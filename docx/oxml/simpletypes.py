@@ -153,3 +153,7 @@ class XsdUnsignedInt(BaseIntType):
 
 class ST_DecimalNumber(XsdInt):
     pass
+
+
+class ST_RelationshipId(XsdString):
+    pass
