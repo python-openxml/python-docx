@@ -92,6 +92,7 @@ register_element_cls('w:num',           CT_Num)
 register_element_cls('w:numId',         CT_DecimalNumber)
 register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
+register_element_cls('w:startOverride', CT_DecimalNumber)
 
 from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_element_cls('w:style',  CT_Style)

@@ -9,7 +9,7 @@ from ..ns import qn
 from ..shared import CT_DecimalNumber
 from ..simpletypes import ST_DecimalNumber
 from ..xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore
+    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
 )
 
 
@@ -51,6 +51,7 @@ class CT_NumLvl(BaseOxmlElement):
     ``<w:lvlOverride>`` element, which identifies a level in a list
     definition to override with settings it contains.
     """
+    startOverride = ZeroOrOne('w:startOverride', successors=('w:lvl',))
     ilvl = RequiredAttribute('w:ilvl', ST_DecimalNumber)
 
     def add_startOverride(self, val):
@@ -58,9 +59,7 @@ class CT_NumLvl(BaseOxmlElement):
         Return a newly added CT_DecimalNumber element having tagname
         ``w:startOverride`` and ``val`` attribute set to *val*.
         """
-        startOverride = CT_DecimalNumber.new('w:startOverride', val)
-        self.insert(0, startOverride)
-        return startOverride
+        return self._add_startOverride(val=val)
 
 
 class CT_NumPr(BaseOxmlElement):
