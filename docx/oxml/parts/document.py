@@ -7,8 +7,7 @@ Custom element classes that correspond to the document part, e.g.
 
 from ..ns import qn
 from ..table import CT_Tbl
-from ..text import CT_P
-from ..xmlchemy import BaseOxmlElement, ZeroOrOne
+from ..xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
 
 
 class CT_Document(BaseOxmlElement):
@@ -23,12 +22,17 @@ class CT_Body(BaseOxmlElement):
     ``<w:body>``, the container element for the main document story in
     ``document.xml``.
     """
+    p = ZeroOrMore('w:p', successors=('w:sectPr',))
+    tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
+
     def add_p(self):
         """
         Return a new <w:p> element that has been added at the end of any
         existing body content.
         """
-        p = CT_P.new()
+        return self._add_p()
+
+    def _insert_p(self, p):
         return self._append_blocklevelelt(p)
 
     def add_tbl(self):
@@ -36,8 +40,13 @@ class CT_Body(BaseOxmlElement):
         Return a new <w:tbl> element that has been added at the end of any
         existing body content.
         """
-        tbl = CT_Tbl.new()
+        return self._add_tbl()
+
+    def _insert_tbl(self, tbl):
         return self._append_blocklevelelt(tbl)
+
+    def _new_tbl(self):
+        return CT_Tbl.new()
 
     def clear_content(self):
         """
@@ -50,20 +59,6 @@ class CT_Body(BaseOxmlElement):
             content_elms = self[:]
         for content_elm in content_elms:
             self.remove(content_elm)
-
-    @property
-    def p_lst(self):
-        """
-        List of <w:p> child elements.
-        """
-        return self.findall(qn('w:p'))
-
-    @property
-    def tbl_lst(self):
-        """
-        List of <w:tbl> child elements.
-        """
-        return self.findall(qn('w:tbl'))
 
     def _append_blocklevelelt(self, block_level_elt):
         """

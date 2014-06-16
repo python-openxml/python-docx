@@ -47,6 +47,44 @@ Schema excerpt
 
   <xsd:complexType name="CT_Body">
     <xsd:sequence>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="p"                           type="CT_P"/>
+        <xsd:element name="tbl"                         type="CT_Tbl"/>
+        <xsd:element name="customXml"                   type="CT_CustomXmlBlock"/>
+        <xsd:element name="sdt"                         type="CT_SdtBlock"/>
+        <xsd:element name="proofErr"                    type="CT_ProofErr"/>
+        <xsd:element name="permStart"                   type="CT_PermStart"/>
+        <xsd:element name="permEnd"                     type="CT_Perm"/>
+        <xsd:element name="ins"                         type="CT_RunTrackChange"/>
+        <xsd:element name="del"                         type="CT_RunTrackChange"/>
+        <xsd:element name="moveFrom"                    type="CT_RunTrackChange"/>
+        <xsd:element name="moveTo"                      type="CT_RunTrackChange"/>
+        <xsd:element  ref="m:oMathPara"                 type="CT_OMathPara"/>
+        <xsd:element  ref="m:oMath"                     type="CT_OMath"/>
+        <xsd:element name="bookmarkStart"               type="CT_Bookmark"/>
+        <xsd:element name="bookmarkEnd"                 type="CT_MarkupRange"/>
+        <xsd:element name="moveFromRangeStart"          type="CT_MoveBookmark"/>
+        <xsd:element name="moveFromRangeEnd"            type="CT_MarkupRange"/>
+        <xsd:element name="moveToRangeStart"            type="CT_MoveBookmark"/>
+        <xsd:element name="moveToRangeEnd"              type="CT_MarkupRange"/>
+        <xsd:element name="commentRangeStart"           type="CT_MarkupRange"/>
+        <xsd:element name="commentRangeEnd"             type="CT_MarkupRange"/>
+        <xsd:element name="customXmlInsRangeStart"      type="CT_TrackChange"/>
+        <xsd:element name="customXmlInsRangeEnd"        type="CT_Markup"/>
+        <xsd:element name="customXmlDelRangeStart"      type="CT_TrackChange"/>
+        <xsd:element name="customXmlDelRangeEnd"        type="CT_Markup"/>
+        <xsd:element name="customXmlMoveFromRangeStart" type="CT_TrackChange"/>
+        <xsd:element name="customXmlMoveFromRangeEnd"   type="CT_Markup"/>
+        <xsd:element name="customXmlMoveToRangeStart"   type="CT_TrackChange"/>
+        <xsd:element name="customXmlMoveToRangeEnd"     type="CT_Markup"/>
+        <xsd:element name="altChunk"                    type="CT_AltChunk"/>
+      </xsd:choice>
+      <xsd:element name="sectPr" type="CT_SectPr" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_Body">
+    <xsd:sequence>
       <xsd:group   ref="EG_BlockLevelElts"        minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="sectPr" type="CT_SectPr" minOccurs="0" maxOccurs="1"/>
     </xsd:sequence>
@@ -63,31 +101,45 @@ Schema excerpt
 
   <xsd:group name="EG_BlockLevelElts">
     <xsd:choice>
-      <xsd:group   ref="EG_BlockLevelChunkElts"       minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element name="altChunk" type="CT_AltChunk" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:group    ref="EG_BlockLevelChunkElts"/>
+      <xsd:element name="altChunk"               type="CT_AltChunk"/>
     </xsd:choice>
   </xsd:group>
 
   <xsd:group name="EG_BlockLevelChunkElts">
     <xsd:choice>
-      <xsd:group ref="EG_ContentBlockContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:group ref="EG_ContentBlockContent"/>
     </xsd:choice>
   </xsd:group>
 
   <xsd:group name="EG_ContentBlockContent">
     <xsd:choice>
-      <xsd:element name="customXml" type="CT_CustomXmlBlock"/>
-      <xsd:element name="sdt"       type="CT_SdtBlock"/>
-      <xsd:element name="p"         type="CT_P"   minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element name="tbl"       type="CT_Tbl" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:group   ref="EG_RunLevelElts"          minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="customXml"       type="CT_CustomXmlBlock"/>
+      <xsd:element name="sdt"             type="CT_SdtBlock"/>
+      <xsd:element name="p"               type="CT_P"/>
+      <xsd:element name="tbl"             type="CT_Tbl"/>
+      <xsd:group    ref="EG_RunLevelElts"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:group name="EG_RunLevelElts">
+    <xsd:choice>
+      <xsd:element name="proofErr"               type="CT_ProofErr"/>
+      <xsd:element name="permStart"              type="CT_PermStart"/>
+      <xsd:element name="permEnd"                type="CT_Perm"/>
+      <xsd:element name="ins"                    type="CT_RunTrackChange"/>
+      <xsd:element name="del"                    type="CT_RunTrackChange"/>
+      <xsd:element name="moveFrom"               type="CT_RunTrackChange"/>
+      <xsd:element name="moveTo"                 type="CT_RunTrackChange"/>
+      <xsd:group    ref="EG_MathContent"/>
+      <xsd:group    ref="EG_RangeMarkupElements"/>
     </xsd:choice>
   </xsd:group>
 
   <xsd:group name="EG_MathContent">
     <xsd:choice>
-      <xsd:element ref="m:oMathPara"/>
-      <xsd:element ref="m:oMath"/>
+      <xsd:element ref="m:oMathPara" type="CT_OMathPara"/>
+      <xsd:element ref="m:oMath"     type="CT_OMath"/>
     </xsd:choice>
   </xsd:group>
 
@@ -109,19 +161,5 @@ Schema excerpt
       <xsd:element name="customXmlMoveFromRangeEnd"   type="CT_Markup"/>
       <xsd:element name="customXmlMoveToRangeStart"   type="CT_TrackChange"/>
       <xsd:element name="customXmlMoveToRangeEnd"     type="CT_Markup"/>
-    </xsd:choice>
-  </xsd:group>
-
-  <xsd:group name="EG_RunLevelElts">
-    <xsd:choice>
-      <xsd:element name="proofErr"  type="CT_ProofErr"       minOccurs="0"/>
-      <xsd:element name="permStart" type="CT_PermStart"      minOccurs="0"/>
-      <xsd:element name="permEnd"   type="CT_Perm"           minOccurs="0"/>
-      <xsd:element name="ins"       type="CT_RunTrackChange" minOccurs="0"/>
-      <xsd:element name="del"       type="CT_RunTrackChange" minOccurs="0"/>
-      <xsd:element name="moveFrom"  type="CT_RunTrackChange"/>
-      <xsd:element name="moveTo"    type="CT_RunTrackChange"/>
-      <xsd:group   ref="EG_MathContent"         minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:group   ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:choice>
   </xsd:group>
