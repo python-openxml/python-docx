@@ -77,13 +77,8 @@ class CT_Inline(BaseOxmlElement):
     """
     ``<w:inline>`` element, container for an inline shape.
     """
-    @property
-    def extent(self):
-        return self.find(qn('wp:extent'))
-
-    @property
-    def graphic(self):
-        return self.find(qn('a:graphic'))
+    extent = OneAndOnlyOne('wp:extent')
+    graphic = OneAndOnlyOne('a:graphic')
 
     @classmethod
     def new(cls, cx, cy, shape_id, pic):
