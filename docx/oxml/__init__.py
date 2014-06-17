@@ -68,16 +68,21 @@ from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
 
 from docx.oxml.shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
-    CT_GraphicalObjectData, CT_Inline, CT_Picture, CT_Point2D,
-    CT_PositiveSize2D
+    CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
+    CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
+    CT_Transform2D
 )
 register_element_cls('a:blip',        CT_Blip)
 register_element_cls('a:ext',         CT_PositiveSize2D)
 register_element_cls('a:graphic',     CT_GraphicalObject)
 register_element_cls('a:graphicData', CT_GraphicalObjectData)
 register_element_cls('a:off',         CT_Point2D)
+register_element_cls('a:xfrm',        CT_Transform2D)
 register_element_cls('pic:blipFill',  CT_BlipFillProperties)
+register_element_cls('pic:cNvPr',     CT_NonVisualDrawingProps)
+register_element_cls('pic:nvPicPr',   CT_PictureNonVisual)
 register_element_cls('pic:pic',       CT_Picture)
+register_element_cls('pic:spPr',      CT_ShapeProperties)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 

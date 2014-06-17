@@ -183,7 +183,7 @@ class ST_Coordinate(BaseIntType):
     def convert_from_xml(cls, str_value):
         if 'i' in str_value or 'm' in str_value or 'p' in str_value:
             return ST_UniversalMeasure.convert_from_xml(str_value)
-        return int(str_value)
+        return Emu(int(str_value))
 
     @classmethod
     def validate(cls, value):
@@ -198,6 +198,10 @@ class ST_CoordinateUnqualified(XsdLong):
 
 
 class ST_DecimalNumber(XsdInt):
+    pass
+
+
+class ST_DrawingElementId(XsdUnsignedInt):
     pass
 
 
@@ -237,5 +241,5 @@ class ST_UniversalMeasure(BaseSimpleType):
             'mm': 36000, 'cm': 360000, 'in': 914400, 'pt': 12700,
             'pc': 152400, 'pi': 152400
         }[units_part]
-        emu_value = int(round(quantity * multiplier))
+        emu_value = Emu(int(round(quantity * multiplier)))
         return emu_value

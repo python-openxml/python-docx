@@ -4,10 +4,11 @@
 Custom element classes for shape-related elements like ``<w:inline>``
 """
 
-from . import OxmlElement
-from .ns import nsmap, nspfxmap, qn
+from . import OxmlElement, parse_xml
+from .ns import nsdecls, nsmap, nspfxmap
 from .simpletypes import (
-    ST_Coordinate, ST_PositiveCoordinate, ST_RelationshipId, XsdToken
+    ST_Coordinate, ST_DrawingElementId, ST_PositiveCoordinate,
+    ST_RelationshipId, XsdString, XsdToken
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute,
@@ -23,12 +24,6 @@ class CT_Blip(BaseOxmlElement):
     embed = OptionalAttribute('r:embed', ST_RelationshipId)
     link = OptionalAttribute('r:link', ST_RelationshipId)
 
-    @classmethod
-    def new(cls, rId):
-        blip = OxmlElement('a:blip')
-        blip.set(qn('r:embed'), rId)
-        return blip
-
 
 class CT_BlipFillProperties(BaseOxmlElement):
     """
@@ -37,13 +32,6 @@ class CT_BlipFillProperties(BaseOxmlElement):
     blip = ZeroOrOne('a:blip', successors=(
         'a:srcRect', 'a:tile', 'a:stretch'
     ))
-
-    @classmethod
-    def new(cls, rId):
-        blipFill = OxmlElement('pic:blipFill')
-        blipFill.append(CT_Blip.new(rId))
-        blipFill.append(CT_StretchInfoProperties.new())
-        return blipFill
 
 
 class CT_GraphicalObject(BaseOxmlElement):
@@ -104,6 +92,9 @@ class CT_NonVisualDrawingProps(BaseOxmlElement):
     Used for ``<wp:docPr>`` element, and perhaps others. Specifies the id and
     name of a DrawingML drawing.
     """
+    id = RequiredAttribute('id', ST_DrawingElementId)
+    name = RequiredAttribute('name', XsdString)
+
     @classmethod
     def new(cls, nsptagname_str, shape_id, name):
         elm = OxmlElement(nsptagname_str)
@@ -117,16 +108,15 @@ class CT_NonVisualPictureProperties(BaseOxmlElement):
     ``<pic:cNvPicPr>`` element, specifies picture locking and resize
     behaviors.
     """
-    @classmethod
-    def new(cls):
-        return OxmlElement('pic:cNvPicPr')
 
 
 class CT_Picture(BaseOxmlElement):
     """
     ``<pic:pic>`` element, a DrawingML picture
     """
+    nvPicPr = OneAndOnlyOne('pic:nvPicPr')
     blipFill = OneAndOnlyOne('pic:blipFill')
+    spPr = OneAndOnlyOne('pic:spPr')
 
     @classmethod
     def new(cls, pic_id, filename, rId, cx, cy):
@@ -135,25 +125,44 @@ class CT_Picture(BaseOxmlElement):
         contents required to define a viable picture element, based on the
         values passed as parameters.
         """
-        pic = OxmlElement('pic:pic', nsdecls=nspfxmap('pic', 'r'))
-        pic.append(CT_PictureNonVisual.new(pic_id, filename))
-        pic.append(CT_BlipFillProperties.new(rId))
-        pic.append(CT_ShapeProperties.new(cx, cy))
+        pic = parse_xml(cls._pic_xml())
+        pic.nvPicPr.cNvPr.id = pic_id
+        pic.nvPicPr.cNvPr.name = filename
+        pic.blipFill.blip.embed = rId
+        pic.spPr.cx = cx
+        pic.spPr.cy = cy
         return pic
+
+    @classmethod
+    def _pic_xml(cls):
+        return (
+            '<pic:pic %s>\n'
+            '  <pic:nvPicPr>\n'
+            '    <pic:cNvPr id="666" name="unnamed"/>\n'
+            '    <pic:cNvPicPr/>\n'
+            '  </pic:nvPicPr>\n'
+            '  <pic:blipFill>\n'
+            '    <a:blip/>\n'
+            '    <a:stretch>\n'
+            '      <a:fillRect/>\n'
+            '    </a:stretch>\n'
+            '  </pic:blipFill>\n'
+            '  <pic:spPr>\n'
+            '    <a:xfrm>\n'
+            '      <a:off x="0" y="0"/>\n'
+            '      <a:ext cx="914400" cy="914400"/>\n'
+            '    </a:xfrm>\n'
+            '    <a:prstGeom prst="rect"/>\n'
+            '  </pic:spPr>\n'
+            '</pic:pic>' % nsdecls('pic', 'a', 'r')
+        )
 
 
 class CT_PictureNonVisual(BaseOxmlElement):
     """
     ``<pic:nvPicPr>`` element, non-visual picture properties
     """
-    @classmethod
-    def new(cls, pic_id, image_filename):
-        nvPicPr = OxmlElement('pic:nvPicPr')
-        nvPicPr.append(CT_NonVisualDrawingProps.new(
-            'pic:cNvPr', pic_id, image_filename
-        ))
-        nvPicPr.append(CT_NonVisualPictureProperties.new())
-        return nvPicPr
+    cNvPr = OneAndOnlyOne('pic:cNvPr')
 
 
 class CT_Point2D(BaseOxmlElement):
@@ -163,13 +172,6 @@ class CT_Point2D(BaseOxmlElement):
     """
     x = RequiredAttribute('x', ST_Coordinate)
     y = RequiredAttribute('y', ST_Coordinate)
-
-    @classmethod
-    def new(cls, nsptagname_str, x, y):
-        elm = OxmlElement(nsptagname_str)
-        elm.x = x
-        elm.y = y
-        return elm
 
 
 class CT_PositiveSize2D(BaseOxmlElement):
@@ -193,11 +195,6 @@ class CT_PresetGeometry2D(BaseOxmlElement):
     ``<a:prstGeom>`` element, specifies an preset autoshape geometry, such
     as ``rect``.
     """
-    @classmethod
-    def new(cls, prst):
-        prstGeom = OxmlElement('a:prstGeom')
-        prstGeom.set('prst', prst)
-        return prstGeom
 
 
 class CT_RelativeRect(BaseOxmlElement):
@@ -205,21 +202,46 @@ class CT_RelativeRect(BaseOxmlElement):
     ``<a:fillRect>`` element, specifying picture should fill containing
     rectangle shape.
     """
-    @classmethod
-    def new(cls):
-        return OxmlElement('a:fillRect')
 
 
 class CT_ShapeProperties(BaseOxmlElement):
     """
     ``<pic:spPr>`` element, specifies size and shape of picture container.
     """
-    @classmethod
-    def new(cls, cx, cy):
-        spPr = OxmlElement('pic:spPr')
-        spPr.append(CT_Transform2D.new(cx, cy))
-        spPr.append(CT_PresetGeometry2D.new('rect'))
-        return spPr
+    xfrm = ZeroOrOne('a:xfrm', successors=(
+        'a:custGeom', 'a:prstGeom', 'a:ln', 'a:effectLst', 'a:effectDag',
+        'a:scene3d', 'a:sp3d', 'a:extLst'
+    ))
+
+    @property
+    def cx(self):
+        """
+        Shape width as an instance of Emu, or None if not present.
+        """
+        xfrm = self.xfrm
+        if xfrm is None:
+            return None
+        return xfrm.cx
+
+    @cx.setter
+    def cx(self, value):
+        xfrm = self.get_or_add_xfrm()
+        xfrm.cx = value
+
+    @property
+    def cy(self):
+        """
+        Shape height as an instance of Emu, or None if not present.
+        """
+        xfrm = self.xfrm
+        if xfrm is None:
+            return None
+        return xfrm.cy
+
+    @cy.setter
+    def cy(self, value):
+        xfrm = self.get_or_add_xfrm()
+        xfrm.cy = value
 
 
 class CT_StretchInfoProperties(BaseOxmlElement):
@@ -227,20 +249,35 @@ class CT_StretchInfoProperties(BaseOxmlElement):
     ``<a:stretch>`` element, specifies how picture should fill its containing
     shape.
     """
-    @classmethod
-    def new(cls):
-        stretch = OxmlElement('a:stretch')
-        stretch.append(CT_RelativeRect.new())
-        return stretch
 
 
 class CT_Transform2D(BaseOxmlElement):
     """
     ``<a:xfrm>`` element, specifies size and shape of picture container.
     """
-    @classmethod
-    def new(cls, cx, cy):
-        spPr = OxmlElement('a:xfrm')
-        spPr.append(CT_Point2D.new('a:off', 0, 0))
-        spPr.append(CT_PositiveSize2D.new('a:ext', cx, cy))
-        return spPr
+    off = ZeroOrOne('a:off', successors=('a:ext',))
+    ext = ZeroOrOne('a:ext', successors=())
+
+    @property
+    def cx(self):
+        ext = self.ext
+        if ext is None:
+            return None
+        return ext.cx
+
+    @cx.setter
+    def cx(self, value):
+        ext = self.get_or_add_ext()
+        ext.cx = value
+
+    @property
+    def cy(self):
+        ext = self.ext
+        if ext is None:
+            return None
+        return ext.cy
+
+    @cy.setter
+    def cy(self, value):
+        ext = self.get_or_add_ext()
+        ext.cy = value
