@@ -7,11 +7,10 @@ Custom element classes for tables
 from __future__ import absolute_import, print_function, unicode_literals
 
 from . import OxmlElement
-from .exceptions import InvalidXmlError
 from .ns import qn
 from .shared import CT_String
 from .text import CT_P
-from .xmlchemy import BaseOxmlElement, ZeroOrMore
+from .xmlchemy import BaseOxmlElement, OneAndOnlyOne, ZeroOrMore
 
 
 class CT_Row(BaseOxmlElement):
@@ -23,25 +22,14 @@ class CT_Row(BaseOxmlElement):
     def _new_tc(self):
         return CT_Tc.new()
 
-    @classmethod
-    def new(cls):
-        """
-        Return a new ``<w:tr>`` element.
-        """
-        return OxmlElement('w:tr')
-
 
 class CT_Tbl(BaseOxmlElement):
     """
     ``<w:tbl>`` element
     """
-    def add_tr(self):
-        """
-        Return a new <w:tr> element that has been added at the end of any
-        existing tr elements.
-        """
-        tr = CT_Row.new()
-        return self._append_tr(tr)
+    tblPr = OneAndOnlyOne('w:tblPr')
+    tblGrid = OneAndOnlyOne('w:tblGrid')
+    tr = ZeroOrMore('w:tr')
 
     @classmethod
     def new(cls):
@@ -55,35 +43,6 @@ class CT_Tbl(BaseOxmlElement):
         tblGrid = CT_TblGrid.new()
         tbl.append(tblGrid)
         return tbl
-
-    @property
-    def tblGrid(self):
-        tblGrid = self.find(qn('w:tblGrid'))
-        if tblGrid is None:
-            raise InvalidXmlError('required w:tblGrid child not found')
-        return tblGrid
-
-    @property
-    def tblPr(self):
-        tblPr = self.find(qn('w:tblPr'))
-        if tblPr is None:
-            raise InvalidXmlError('required w:tblPr child not found')
-        return tblPr
-
-    @property
-    def tr_lst(self):
-        """
-        Sequence containing the ``<w:tr>`` child elements in this
-        ``<w:tbl>``.
-        """
-        return self.findall(qn('w:tr'))
-
-    def _append_tr(self, tr):
-        """
-        Return *tr* after appending it to end of tr sequence.
-        """
-        self.append(tr)
-        return tr
 
 
 class CT_TblGrid(BaseOxmlElement):
