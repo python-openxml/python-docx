@@ -50,21 +50,7 @@ class CT_TblGrid(BaseOxmlElement):
     ``<w:tblGrid>`` element, child of ``<w:tbl>``, holds ``<w:gridCol>``
     elements that define column count, width, etc.
     """
-    def add_gridCol(self):
-        """
-        Return a new <w:gridCol> element that has been added at the end of
-        any existing gridCol elements.
-        """
-        gridCol = CT_TblGridCol.new()
-        return self._append_gridCol(gridCol)
-
-    @property
-    def gridCol_lst(self):
-        """
-        Sequence containing the ``<w:gridCol>`` child elements in this
-        ``<w:tblGrid>``.
-        """
-        return self.findall(qn('w:gridCol'))
+    gridCol = ZeroOrMore('w:gridCol', successors=('w:tblGridChange',))
 
     @classmethod
     def new(cls):
@@ -73,40 +59,12 @@ class CT_TblGrid(BaseOxmlElement):
         """
         return OxmlElement('w:tblGrid')
 
-    def _append_gridCol(self, gridCol):
-        """
-        Return *gridCol* after appending it to end of gridCol sequence.
-        """
-        successor = self.first_child_found_in('w:tblGridChange')
-        if successor is not None:
-            successor.addprevious(gridCol)
-        else:
-            self.append(gridCol)
-        return gridCol
-
-    def first_child_found_in(self, *tagnames):
-        """
-        Return the first child found with tag in *tagnames*, or None if
-        not found.
-        """
-        for tagname in tagnames:
-            child = self.find(qn(tagname))
-            if child is not None:
-                return child
-        return None
-
 
 class CT_TblGridCol(BaseOxmlElement):
     """
     ``<w:gridCol>`` element, child of ``<w:tblGrid>``, defines a table
     column.
     """
-    @classmethod
-    def new(cls):
-        """
-        Return a new ``<w:gridCol>`` element.
-        """
-        return OxmlElement('w:gridCol')
 
 
 class CT_TblPr(BaseOxmlElement):
