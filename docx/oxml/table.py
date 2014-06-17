@@ -11,20 +11,17 @@ from .exceptions import InvalidXmlError
 from .ns import qn
 from .shared import CT_String
 from .text import CT_P
-from .xmlchemy import BaseOxmlElement
+from .xmlchemy import BaseOxmlElement, ZeroOrMore
 
 
 class CT_Row(BaseOxmlElement):
     """
     ``<w:tr>`` element
     """
-    def add_tc(self):
-        """
-        Return a new <w:tc> element that has been added at the end of any
-        existing tc elements.
-        """
-        tc = CT_Tc.new()
-        return self._append_tc(tc)
+    tc = ZeroOrMore('w:tc')
+
+    def _new_tc(self):
+        return CT_Tc.new()
 
     @classmethod
     def new(cls):
@@ -32,20 +29,6 @@ class CT_Row(BaseOxmlElement):
         Return a new ``<w:tr>`` element.
         """
         return OxmlElement('w:tr')
-
-    @property
-    def tc_lst(self):
-        """
-        Sequence containing the ``<w:tc>`` child elements in this ``<w:tr>``.
-        """
-        return self.findall(qn('w:tc'))
-
-    def _append_tc(self, tc):
-        """
-        Return *tc* after appending it to end of tc sequence.
-        """
-        self.append(tc)
-        return tc
 
 
 class CT_Tbl(BaseOxmlElement):
