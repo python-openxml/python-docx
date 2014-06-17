@@ -5,9 +5,9 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from . import parse_xml, OxmlElement
+from . import OxmlElement
 from ..enum.text import WD_UNDERLINE
-from .ns import nsdecls, qn
+from .ns import qn
 from .shared import CT_String
 from .simpletypes import ST_BrClear, ST_BrType
 from .xmlchemy import (
@@ -59,51 +59,23 @@ class CT_PPr(BaseOxmlElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
-    def get_or_add_numPr(self):
-        """
-        Return the numPr child element, newly added if not present.
-        """
-        numPr = self.numPr
-        if numPr is None:
-            numPr = self._add_numPr()
-        return numPr
+    __child_sequence__ = (
+        'w:pStyle', 'w:keepNext', 'w:keepLines', 'w:pageBreakBefore',
+        'w:framePr', 'w:widowControl', 'w:numPr', 'w:suppressLineNumbers',
+        'w:pBdr', 'w:shd', 'w:tabs', 'w:suppressAutoHyphens', 'w:kinsoku',
+        'w:wordWrap', 'w:overflowPunct', 'w:topLinePunct', 'w:autoSpaceDE',
+        'w:autoSpaceDN', 'w:bidi', 'w:adjustRightInd', 'w:snapToGrid',
+        'w:spacing', 'w:ind', 'w:contextualSpacing', 'w:mirrorIndents',
+        'w:suppressOverlap', 'w:jc', 'w:textDirection', 'w:textAlignment',
+        'w:textboxTightWrap', 'w:outlineLvl', 'w:divId', 'w:cnfStyle',
+        'w:rPr', 'w:sectPr', 'w:pPrChange'
+    )
+    pStyle = ZeroOrOne('w:pStyle')
+    numPr = ZeroOrOne('w:numPr', successors=__child_sequence__[7:])
 
-    def get_or_add_pStyle(self):
-        """
-        Return the pStyle child element, newly added if not present.
-        """
-        pStyle = self.pStyle
-        if pStyle is None:
-            pStyle = self._add_pStyle()
+    def _insert_pStyle(self, pStyle):
+        self.insert(0, pStyle)
         return pStyle
-
-    @staticmethod
-    def new():
-        """
-        Return a new ``<w:pPr>`` element.
-        """
-        xml = '<w:pPr %s/>' % nsdecls('w')
-        pPr = parse_xml(xml)
-        return pPr
-
-    @property
-    def numPr(self):
-        """
-        ``<w:numPr>`` child element or None if not present.
-        """
-        return self.find(qn('w:numPr'))
-
-    @property
-    def pStyle(self):
-        """
-        ``<w:pStyle>`` child element or None if not present.
-        """
-        return self.find(qn('w:pStyle'))
-
-    def remove_pStyle(self):
-        pStyle = self.pStyle
-        if pStyle is not None:
-            self.remove(pStyle)
 
     @property
     def style(self):
@@ -114,7 +86,7 @@ class CT_PPr(BaseOxmlElement):
         pStyle = self.pStyle
         if pStyle is None:
             return None
-        return pStyle.get(qn('w:val'))
+        return pStyle.val
 
     @style.setter
     def style(self, style):
@@ -124,35 +96,10 @@ class CT_PPr(BaseOxmlElement):
         element if present.
         """
         if style is None:
-            self.remove_pStyle()
-        elif self.pStyle is None:
-            self._add_pStyle(style)
-        else:
-            self.pStyle.val = style
-
-    def _add_numPr(self):
-        numPr = OxmlElement('w:numPr')
-        return self._insert_numPr(numPr)
-
-    def _add_pStyle(self, style):
-        pStyle = CT_String.new_pStyle(style)
-        return self._insert_pStyle(pStyle)
-
-    def _insert_numPr(self, numPr):
-        return self.insert_element_before(
-            numPr, 'w:suppressLineNumbers', 'w:pBdr', 'w:shd', 'w:tabs',
-            'w:suppressAutoHyphens', 'w:kinsoku', 'w:wordWrap',
-            'w:overflowPunct', 'w:topLinePunct', 'w:autoSpaceDE',
-            'w:autoSpaceDN', 'w:bidi', 'w:adjustRightInd', 'w:snapToGrid',
-            'w:spacing', 'w:ind', 'w:contextualSpacing', 'w:mirrorIndents',
-            'w:suppressOverlap', 'w:jc', 'w:textDirection',
-            'w:textAlignment', 'w:textboxTightWrap', 'w:outlineLvl',
-            'w:divId', 'w:cnfStyle', 'w:rPr', 'w:sectPr', 'w:pPrChange'
-        )
-
-    def _insert_pStyle(self, pStyle):
-        self.insert(0, pStyle)
-        return pStyle
+            self._remove_pStyle()
+            return
+        pStyle = self.get_or_add_pStyle()
+        pStyle.val = style
 
 
 class CT_R(BaseOxmlElement):

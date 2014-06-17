@@ -55,16 +55,6 @@ class CT_String(BaseOxmlElement):
         return elm
 
     @classmethod
-    def new_pStyle(cls, val):
-        """
-        Return a new ``<w:pStyle>`` element with ``val`` attribute set to
-        *val*.
-        """
-        pStyle = OxmlElement('w:pStyle')
-        pStyle.val = val
-        return pStyle
-
-    @classmethod
     def new_rStyle(cls, val):
         """
         Return a new ``<w:rStyle>`` element with ``val`` attribute set to

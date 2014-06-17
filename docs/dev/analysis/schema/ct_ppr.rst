@@ -74,19 +74,7 @@ Schema excerpt
 
 ::
 
-  <xsd:complexType name="CT_PPr">
-    <xsd:complexContent>
-      <xsd:extension base="CT_PPrBase">
-        <xsd:sequence>
-          <xsd:element name="rPr" type="CT_ParaRPr" minOccurs="0"/>
-          <xsd:element name="sectPr" type="CT_SectPr" minOccurs="0"/>
-          <xsd:element name="pPrChange" type="CT_PPrChange" minOccurs="0"/>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="CT_PPrBase">
+  <xsd:complexType name="CT_PPr">  <!-- denormalized -->
     <xsd:sequence>
       <xsd:element name="pStyle"              type="CT_String"           minOccurs="0"/>
       <xsd:element name="keepNext"            type="CT_OnOff"            minOccurs="0"/>
@@ -120,41 +108,44 @@ Schema excerpt
       <xsd:element name="textboxTightWrap"    type="CT_TextboxTightWrap" minOccurs="0"/>
       <xsd:element name="outlineLvl"          type="CT_DecimalNumber"    minOccurs="0"/>
       <xsd:element name="divId"               type="CT_DecimalNumber"    minOccurs="0"/>
-      <xsd:element name="cnfStyle"            type="CT_Cnf"              minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="cnfStyle"            type="CT_Cnf"              minOccurs="0"/>
+      <xsd:element name="rPr"                 type="CT_ParaRPr"          minOccurs="0"/>
+      <xsd:element name="sectPr"              type="CT_SectPr"           minOccurs="0"/>
+      <xsd:element name="pPrChange"           type="CT_PPrChange"        minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="CT_FramePr">
-    <xsd:attribute name="dropCap"    type="ST_DropCap"            use="optional"/>
-    <xsd:attribute name="lines"      type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="w"          type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="h"          type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="vSpace"     type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="hSpace"     type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="wrap"       type="ST_Wrap"               use="optional"/>
-    <xsd:attribute name="hAnchor"    type="ST_HAnchor"            use="optional"/>
-    <xsd:attribute name="vAnchor"    type="ST_VAnchor"            use="optional"/>
-    <xsd:attribute name="x"          type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="xAlign"     type="s:ST_XAlign"           use="optional"/>
-    <xsd:attribute name="y"          type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="yAlign"     type="s:ST_YAlign"           use="optional"/>
-    <xsd:attribute name="hRule"      type="ST_HeightRule"         use="optional"/>
-    <xsd:attribute name="anchorLock" type="s:ST_OnOff"            use="optional"/>
+    <xsd:attribute name="dropCap"    type="ST_DropCap"/>
+    <xsd:attribute name="lines"      type="ST_DecimalNumber"/>
+    <xsd:attribute name="w"          type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="h"          type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="vSpace"     type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="hSpace"     type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="wrap"       type="ST_Wrap"/>
+    <xsd:attribute name="hAnchor"    type="ST_HAnchor"/>
+    <xsd:attribute name="vAnchor"    type="ST_VAnchor"/>
+    <xsd:attribute name="x"          type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="xAlign"     type="s:ST_XAlign"/>
+    <xsd:attribute name="y"          type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="yAlign"     type="s:ST_YAlign"/>
+    <xsd:attribute name="hRule"      type="ST_HeightRule"/>
+    <xsd:attribute name="anchorLock" type="s:ST_OnOff"/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_Ind">
-    <xsd:attribute name="start"          type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="startChars"     type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="end"            type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="endChars"       type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="left"           type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="leftChars"      type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="right"          type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="rightChars"     type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="hanging"        type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="hangingChars"   type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="firstLine"      type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="firstLineChars" type="ST_DecimalNumber"      use="optional"/>
+    <xsd:attribute name="start"          type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="startChars"     type="ST_DecimalNumber"/>
+    <xsd:attribute name="end"            type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="endChars"       type="ST_DecimalNumber"/>
+    <xsd:attribute name="left"           type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="leftChars"      type="ST_DecimalNumber"/>
+    <xsd:attribute name="right"          type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="rightChars"     type="ST_DecimalNumber"/>
+    <xsd:attribute name="hanging"        type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="hangingChars"   type="ST_DecimalNumber"/>
+    <xsd:attribute name="firstLine"      type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="firstLineChars" type="ST_DecimalNumber"/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_Jc">
@@ -166,14 +157,14 @@ Schema excerpt
   </xsd:complexType>
 
   <xsd:complexType name="CT_Spacing">
-    <xsd:attribute name="before"            type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="beforeLines"       type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="beforeAutospacing" type="s:ST_OnOff"            use="optional"/>
-    <xsd:attribute name="after"             type="s:ST_TwipsMeasure"     use="optional"/>
-    <xsd:attribute name="afterLines"        type="ST_DecimalNumber"      use="optional"/>
-    <xsd:attribute name="afterAutospacing"  type="s:ST_OnOff"            use="optional"/>
-    <xsd:attribute name="line"              type="ST_SignedTwipsMeasure" use="optional"/>
-    <xsd:attribute name="lineRule"          type="ST_LineSpacingRule"    use="optional"/>
+    <xsd:attribute name="before"            type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="beforeLines"       type="ST_DecimalNumber"/>
+    <xsd:attribute name="beforeAutospacing" type="s:ST_OnOff"/>
+    <xsd:attribute name="after"             type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="afterLines"        type="ST_DecimalNumber"/>
+    <xsd:attribute name="afterAutospacing"  type="s:ST_OnOff"/>
+    <xsd:attribute name="line"              type="ST_SignedTwipsMeasure"/>
+    <xsd:attribute name="lineRule"          type="ST_LineSpacingRule"/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_String">
@@ -182,7 +173,7 @@ Schema excerpt
 
   <xsd:complexType name="CT_Tabs">
     <xsd:sequence>
-      <xsd:element name="tab" type="CT_TabStop" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="tab" type="CT_TabStop" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
