@@ -9,7 +9,8 @@ from __future__ import absolute_import
 from . import OxmlElement
 from .exceptions import InvalidXmlError
 from .ns import qn
-from .xmlchemy import BaseOxmlElement
+from .simpletypes import ST_DecimalNumber
+from .xmlchemy import BaseOxmlElement, RequiredAttribute
 
 
 class CT_DecimalNumber(BaseOxmlElement):
@@ -18,6 +19,8 @@ class CT_DecimalNumber(BaseOxmlElement):
     others, containing a text representation of a decimal number (e.g. 42) in
     its ``val`` attribute.
     """
+    val = RequiredAttribute('w:val', ST_DecimalNumber)
+
     @classmethod
     def new(cls, nsptagname, val):
         """
@@ -25,19 +28,6 @@ class CT_DecimalNumber(BaseOxmlElement):
         and ``val`` attribute set to *val*.
         """
         return OxmlElement(nsptagname, attrs={qn('w:val'): str(val)})
-
-    @property
-    def val(self):
-        """
-        Required attribute containing a decimal integer
-        """
-        number_str = self.get(qn('w:val'))
-        return int(number_str)
-
-    @val.setter
-    def val(self, val):
-        decimal_number_str = '%d' % val
-        self.set(qn('w:val'), decimal_number_str)
 
 
 class CT_OnOff(BaseOxmlElement):
