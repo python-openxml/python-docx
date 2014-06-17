@@ -53,13 +53,3 @@ class CT_String(BaseOxmlElement):
         elm = OxmlElement(nsptagname)
         elm.val = val
         return elm
-
-    @classmethod
-    def new_rStyle(cls, val):
-        """
-        Return a new ``<w:rStyle>`` element with ``val`` attribute set to
-        *val*.
-        """
-        rStyle = OxmlElement('w:rStyle')
-        rStyle.val = val
-        return rStyle

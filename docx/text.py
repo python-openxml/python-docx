@@ -20,12 +20,12 @@ def boolproperty(f):
         return getattr(parent, attr_name)
 
     def _remove_prop(parent, attr_name):
-        remove_method_name = 'remove_%s' % attr_name
+        remove_method_name = '_remove_%s' % attr_name
         remove_method = getattr(parent, remove_method_name)
         remove_method()
 
     def _add_prop(parent, attr_name):
-        add_method_name = 'add_%s' % attr_name
+        add_method_name = '_add_%s' % attr_name
         add_method = getattr(parent, add_method_name)
         return add_method()
 
