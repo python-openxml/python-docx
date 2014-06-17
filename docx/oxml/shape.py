@@ -4,8 +4,8 @@
 Custom element classes for shape-related elements like ``<w:inline>``
 """
 
-from . import OxmlElement, parse_xml
-from .ns import nsdecls, nsmap, nspfxmap
+from . import parse_xml
+from .ns import nsdecls
 from .simpletypes import (
     ST_Coordinate, ST_DrawingElementId, ST_PositiveCoordinate,
     ST_RelationshipId, XsdString, XsdToken
@@ -40,12 +40,6 @@ class CT_GraphicalObject(BaseOxmlElement):
     """
     graphicData = OneAndOnlyOne('a:graphicData')
 
-    @classmethod
-    def new(cls, uri, pic):
-        graphic = OxmlElement('a:graphic')
-        graphic.append(CT_GraphicalObjectData.new(uri, pic))
-        return graphic
-
 
 class CT_GraphicalObjectData(BaseOxmlElement):
     """
@@ -54,19 +48,13 @@ class CT_GraphicalObjectData(BaseOxmlElement):
     pic = ZeroOrOne('pic:pic')
     uri = RequiredAttribute('uri', XsdToken)
 
-    @classmethod
-    def new(cls, uri, pic):
-        graphicData = OxmlElement('a:graphicData')
-        graphicData.uri = uri
-        graphicData._insert_pic(pic)
-        return graphicData
-
 
 class CT_Inline(BaseOxmlElement):
     """
     ``<w:inline>`` element, container for an inline shape.
     """
     extent = OneAndOnlyOne('wp:extent')
+    docPr = OneAndOnlyOne('wp:docPr')
     graphic = OneAndOnlyOne('a:graphic')
 
     @classmethod
@@ -75,16 +63,31 @@ class CT_Inline(BaseOxmlElement):
         Return a new ``<wp:inline>`` element populated with the values passed
         as parameters.
         """
-        name = 'Picture %d' % shape_id
-        uri = nsmap['pic']
-
-        inline = OxmlElement('wp:inline', nsdecls=nspfxmap('wp', 'r'))
-        inline.append(CT_PositiveSize2D.new('wp:extent', cx, cy))
-        inline.append(CT_NonVisualDrawingProps.new(
-            'wp:docPr', shape_id, name
-        ))
-        inline.append(CT_GraphicalObject.new(uri, pic))
+        inline = parse_xml(cls._inline_xml())
+        inline.extent.cx = cx
+        inline.extent.cy = cy
+        inline.docPr.id = shape_id
+        inline.docPr.name = 'Picture %d' % shape_id
+        inline.graphic.graphicData.uri = (
+            'http://schemas.openxmlformats.org/drawingml/2006/picture'
+        )
+        inline.graphic.graphicData._insert_pic(pic)
         return inline
+
+    @classmethod
+    def _inline_xml(cls):
+        return (
+            '<wp:inline %s>\n'
+            '  <wp:extent cx="914400" cy="914400"/>\n'
+            '  <wp:docPr id="666" name="unnamed"/>\n'
+            '  <wp:cNvGraphicFramePr>\n'
+            '    <a:graphicFrameLocks noChangeAspect="1"/>\n'
+            '  </wp:cNvGraphicFramePr>\n'
+            '  <a:graphic>\n'
+            '    <a:graphicData uri="URI not set"/>\n'
+            '  </a:graphic>\n'
+            '</wp:inline>' % nsdecls('wp', 'a', 'pic', 'r')
+        )
 
 
 class CT_NonVisualDrawingProps(BaseOxmlElement):
@@ -94,13 +97,6 @@ class CT_NonVisualDrawingProps(BaseOxmlElement):
     """
     id = RequiredAttribute('id', ST_DrawingElementId)
     name = RequiredAttribute('name', XsdString)
-
-    @classmethod
-    def new(cls, nsptagname_str, shape_id, name):
-        elm = OxmlElement(nsptagname_str)
-        elm.set('id', str(shape_id))
-        elm.set('name', name)
-        return elm
 
 
 class CT_NonVisualPictureProperties(BaseOxmlElement):
@@ -181,13 +177,6 @@ class CT_PositiveSize2D(BaseOxmlElement):
     """
     cx = RequiredAttribute('cx', ST_PositiveCoordinate)
     cy = RequiredAttribute('cy', ST_PositiveCoordinate)
-
-    @classmethod
-    def new(cls, nsptagname_str, cx, cy):
-        elm = OxmlElement(nsptagname_str)
-        elm.cx = cx
-        elm.cy = cy
-        return elm
 
 
 class CT_PresetGeometry2D(BaseOxmlElement):

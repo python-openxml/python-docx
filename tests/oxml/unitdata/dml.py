@@ -37,6 +37,12 @@ class CT_GraphicalObjectDataBuilder(BaseBuilder):
     __attrs__ = ('uri',)
 
 
+class CT_GraphicalObjectFrameLockingBuilder(BaseBuilder):
+    __tag__ = 'a:graphicFrameLocks'
+    __nspfxs__ = ('a',)
+    __attrs__ = ('noChangeAspect',)
+
+
 class CT_InlineBuilder(BaseBuilder):
     __tag__ = 'wp:inline'
     __nspfxs__ = ('wp',)
@@ -50,6 +56,12 @@ class CT_NonVisualDrawingPropsBuilder(BaseBuilder):
     def __init__(self, tag):
         self.__tag__ = tag
         super(CT_NonVisualDrawingPropsBuilder, self).__init__()
+
+
+class CT_NonVisualGraphicFramePropertiesBuilder(BaseBuilder):
+    __tag__ = 'wp:cNvGraphicFramePr'
+    __nspfxs__ = ('wp',)
+    __attrs__ = ()
 
 
 class CT_NonVisualPicturePropertiesBuilder(BaseBuilder):
@@ -123,6 +135,10 @@ def a_blipFill():
     return CT_BlipFillPropertiesBuilder()
 
 
+def a_cNvGraphicFramePr():
+    return CT_NonVisualGraphicFramePropertiesBuilder()
+
+
 def a_cNvPicPr():
     return CT_NonVisualPicturePropertiesBuilder()
 
@@ -149,6 +165,10 @@ def a_graphic():
 
 def a_graphicData():
     return CT_GraphicalObjectDataBuilder()
+
+
+def a_graphicFrameLocks():
+    return CT_GraphicalObjectFrameLockingBuilder()
 
 
 def a_pic():

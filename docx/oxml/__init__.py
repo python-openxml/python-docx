@@ -83,6 +83,7 @@ register_element_cls('pic:cNvPr',     CT_NonVisualDrawingProps)
 register_element_cls('pic:nvPicPr',   CT_PictureNonVisual)
 register_element_cls('pic:pic',       CT_Picture)
 register_element_cls('pic:spPr',      CT_ShapeProperties)
+register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 

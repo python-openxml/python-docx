@@ -15,9 +15,10 @@ from docx.shape import InlineShape
 from docx.shared import Length
 
 from .oxml.unitdata.dml import (
-    a_blip, a_blipFill, a_cNvPr, a_cNvPicPr, a_docPr, a_fillRect, a_graphic,
-    a_graphicData, a_pic, a_prstGeom, a_stretch, an_ext, an_extent,
-    an_inline, an_nvPicPr, an_off, an_spPr, an_xfrm
+    a_blip, a_blipFill, a_cNvGraphicFramePr, a_cNvPr, a_cNvPicPr, a_docPr,
+    a_fillRect, a_graphic, a_graphicData, a_graphicFrameLocks, a_pic,
+    a_prstGeom, a_stretch, an_ext, an_extent, an_inline, an_nvPicPr, an_off,
+    an_spPr, an_xfrm
 )
 from .oxml.unitdata.text import an_r
 from .unitutil import instance_mock
@@ -98,10 +99,12 @@ class DescribeInlineShape(object):
         name = 'Picture %d' % shape_id
         uri = nsmap['pic']
         expected_inline = (
-            an_inline().with_nsdecls('r', 'wp', 'w').with_child(
+            an_inline().with_nsdecls('wp', 'a', 'pic', 'r', 'w').with_child(
                 an_extent().with_cx(cx).with_cy(cy)).with_child(
                 a_docPr().with_id(shape_id).with_name(name)).with_child(
-                a_graphic().with_nsdecls().with_child(
+                a_cNvGraphicFramePr().with_child(
+                    a_graphicFrameLocks().with_noChangeAspect(1))).with_child(
+                a_graphic().with_child(
                     a_graphicData().with_uri(uri).with_child(
                         self._pic_bldr(filename, rId, cx, cy))))
         ).element
@@ -176,7 +179,7 @@ class DescribeInlineShape(object):
 
     def _pic_bldr(self, name, rId, cx, cy):
         return (
-            a_pic().with_nsdecls().with_child(
+            a_pic().with_child(
                 an_nvPicPr().with_child(
                     a_cNvPr().with_id(0).with_name(name)).with_child(
                     a_cNvPicPr())).with_child(
