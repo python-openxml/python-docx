@@ -7,10 +7,9 @@ Objects shared by modules in the docx.oxml subpackage.
 from __future__ import absolute_import
 
 from . import OxmlElement
-from .exceptions import InvalidXmlError
 from .ns import qn
-from .simpletypes import ST_DecimalNumber
-from .xmlchemy import BaseOxmlElement, RequiredAttribute
+from .simpletypes import ST_DecimalNumber, ST_OnOff
+from .xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute
 
 
 class CT_DecimalNumber(BaseOxmlElement):
@@ -35,25 +34,7 @@ class CT_OnOff(BaseOxmlElement):
     Used for ``<w:b>``, ``<w:i>`` elements and others, containing a bool-ish
     string in its ``val`` attribute, xsd:boolean plus 'on' and 'off'.
     """
-    @property
-    def val(self):
-        val = self.get(qn('w:val'))
-        if val is None:
-            return True
-        elif val in ('0', 'false', 'off'):
-            return False
-        elif val in ('1', 'true', 'on'):
-            return True
-        raise InvalidXmlError("expected xsd:boolean, got '%s'" % val)
-
-    @val.setter
-    def val(self, value):
-        val = qn('w:val')
-        if bool(value) is True:
-            if val in self.attrib:
-                del self.attrib[val]
-        else:
-            self.set(val, '0')
+    val = OptionalAttribute('w:val', ST_OnOff, default=True)
 
 
 class CT_String(BaseOxmlElement):

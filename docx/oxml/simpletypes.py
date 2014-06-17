@@ -177,6 +177,13 @@ class ST_DecimalNumber(XsdInt):
     pass
 
 
+class ST_OnOff(XsdBoolean):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return str_value in ('1', 'true', 'on')
+
+
 class ST_PositiveCoordinate(XsdLong):
 
     @classmethod
