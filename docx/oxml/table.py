@@ -8,9 +8,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from . import OxmlElement
 from .ns import qn
-from .shared import CT_String
 from .text import CT_P
-from .xmlchemy import BaseOxmlElement, OneAndOnlyOne, ZeroOrMore
+from .xmlchemy import BaseOxmlElement, OneAndOnlyOne, ZeroOrOne, ZeroOrMore
 
 
 class CT_Row(BaseOxmlElement):
@@ -72,13 +71,14 @@ class CT_TblPr(BaseOxmlElement):
     ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
     define table properties such as style and borders.
     """
+    tblStyle = ZeroOrOne('w:tblStyle')
+
     def add_tblStyle(self, style_name):
         """
-        Return a new <w:tblStyle> element newly inserted in sequence among
-        the existing child elements, respecting the schema definition.
+        Return a new <w:tblStyle> element having its style set to
+        *style_name*.
         """
-        tblStyle = CT_String.new('w:tblStyle', style_name)
-        return self._insert_tblStyle(tblStyle)
+        return self._add_tblStyle(val=style_name)
 
     @classmethod
     def new(cls):
@@ -86,22 +86,6 @@ class CT_TblPr(BaseOxmlElement):
         Return a new ``<w:tblPr>`` element.
         """
         return OxmlElement('w:tblPr')
-
-    @property
-    def tblStyle(self):
-        """
-        Optional <w:tblStyle> child element, or |None| if not present.
-        """
-        return self.find(qn('w:tblStyle'))
-
-    def _insert_tblStyle(self, tblStyle):
-        """
-        Return *tblStyle* after inserting it in sequence among the existing
-        child elements. Assumes no ``<w:tblStyle>`` element is present.
-        """
-        assert self.tblStyle is None
-        self.insert(0, tblStyle)
-        return tblStyle
 
 
 class CT_Tc(BaseOxmlElement):
