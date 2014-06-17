@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 from . import OxmlElement
 from .ns import qn
-from .simpletypes import ST_DecimalNumber, ST_OnOff
+from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute
 
 
@@ -42,13 +42,17 @@ class CT_String(BaseOxmlElement):
     Used for ``<w:pStyle>`` and ``<w:tblStyle>`` elements and others,
     containing a style name in its ``val`` attribute.
     """
+    val = RequiredAttribute('w:val', ST_String)
+
     @classmethod
     def new(cls, nsptagname, val):
         """
         Return a new ``CT_String`` element with tagname *nsptagname* and
         ``val`` attribute set to *val*.
         """
-        return OxmlElement(nsptagname, attrs={qn('w:val'): val})
+        elm = OxmlElement(nsptagname)
+        elm.val = val
+        return elm
 
     @classmethod
     def new_pStyle(cls, val):
@@ -56,7 +60,9 @@ class CT_String(BaseOxmlElement):
         Return a new ``<w:pStyle>`` element with ``val`` attribute set to
         *val*.
         """
-        return OxmlElement('w:pStyle', attrs={qn('w:val'): val})
+        pStyle = OxmlElement('w:pStyle')
+        pStyle.val = val
+        return pStyle
 
     @classmethod
     def new_rStyle(cls, val):
@@ -64,12 +70,6 @@ class CT_String(BaseOxmlElement):
         Return a new ``<w:rStyle>`` element with ``val`` attribute set to
         *val*.
         """
-        return OxmlElement('w:rStyle', attrs={qn('w:val'): val})
-
-    @property
-    def val(self):
-        return self.get(qn('w:val'))
-
-    @val.setter
-    def val(self, val):
-        return self.set(qn('w:val'), val)
+        rStyle = OxmlElement('w:rStyle')
+        rStyle.val = val
+        return rStyle

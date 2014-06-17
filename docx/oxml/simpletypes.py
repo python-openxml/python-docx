@@ -199,6 +199,10 @@ class ST_RelationshipId(XsdString):
     pass
 
 
+class ST_String(XsdString):
+    pass
+
+
 class ST_UniversalMeasure(BaseSimpleType):
 
     @classmethod
