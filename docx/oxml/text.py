@@ -10,7 +10,9 @@ from ..enum.text import WD_UNDERLINE
 from .ns import nsdecls, qn
 from .shared import CT_String
 from .simpletypes import ST_BrClear, ST_BrType
-from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore
+from .xmlchemy import (
+    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+)
 
 
 class CT_Br(BaseOxmlElement):
@@ -25,36 +27,12 @@ class CT_P(BaseOxmlElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
-    def add_r(self):
-        """
-        Return a newly added CT_R (<w:r>) element.
-        """
-        r = CT_R.new()
-        self.append(r)
-        return r
+    pPr = ZeroOrOne('w:pPr')
+    r = ZeroOrMore('w:r')
 
-    def get_or_add_pPr(self):
-        """
-        Return the pPr child element, newly added if not present.
-        """
-        pPr = self.pPr
-        if pPr is None:
-            pPr = self._add_pPr()
+    def _insert_pPr(self, pPr):
+        self.insert(0, pPr)
         return pPr
-
-    @property
-    def pPr(self):
-        """
-        ``<w:pPr>`` child element or None if not present.
-        """
-        return self.find(qn('w:pPr'))
-
-    @property
-    def r_lst(self):
-        """
-        Sequence containing a reference to each run element in this paragraph.
-        """
-        return self.findall(qn('w:r'))
 
     @property
     def style(self):
@@ -75,14 +53,6 @@ class CT_P(BaseOxmlElement):
         """
         pPr = self.get_or_add_pPr()
         pPr.style = style
-
-    def _add_pPr(self):
-        """
-        Return a newly added pPr child element. Assumes one is not present.
-        """
-        pPr = CT_PPr.new()
-        self.insert(0, pPr)
-        return pPr
 
 
 class CT_PPr(BaseOxmlElement):
