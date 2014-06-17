@@ -4,17 +4,12 @@
 Test suite for the docx.oxml.text module.
 """
 
-from docx.oxml.text import CT_P, CT_PPr, CT_R, CT_Text
+from docx.oxml.text import CT_PPr, CT_R, CT_Text
 
 from .unitdata.text import a_p, a_pPr, a_pStyle, a_t, an_r
 
 
 class DescribeCT_P(object):
-
-    def it_can_construct_a_new_p_element(self):
-        p = CT_P.new()
-        expected_xml = a_p().with_nsdecls().xml()
-        assert p.xml == expected_xml
 
     def it_has_a_sequence_of_the_runs_it_contains(self):
         p = a_p().with_nsdecls().with_child(an_r()).with_child(an_r()).element

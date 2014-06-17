@@ -61,15 +61,6 @@ class CT_P(BaseOxmlElement):
             pPr = self._add_pPr()
         return pPr
 
-    @staticmethod
-    def new():
-        """
-        Return a new ``<w:p>`` element.
-        """
-        xml = '<w:p %s/>' % nsdecls('w')
-        p = parse_xml(xml)
-        return p
-
     @property
     def pPr(self):
         """

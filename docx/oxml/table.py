@@ -7,9 +7,9 @@ Custom element classes for tables
 from __future__ import absolute_import, print_function, unicode_literals
 
 from . import OxmlElement
-from .ns import qn
-from .text import CT_P
-from .xmlchemy import BaseOxmlElement, OneAndOnlyOne, ZeroOrOne, ZeroOrMore
+from .xmlchemy import (
+    BaseOxmlElement, OneAndOnlyOne, OneOrMore, ZeroOrOne, ZeroOrMore
+)
 
 
 class CT_Row(BaseOxmlElement):
@@ -92,19 +92,25 @@ class CT_Tc(BaseOxmlElement):
     """
     ``<w:tc>`` table cell element
     """
-    def add_p(self):
+    tcPr = ZeroOrOne('w:tcPr')  # bunches of successors, overriding insert
+    p = OneOrMore('w:p')
+
+    def _insert_tcPr(self, tcPr):
         """
-        Return a new <w:p> element that has been added at the end of any
-        existing cell content.
+        ``tcPr`` has a bunch of successors, but it comes first if it appears,
+        so just overriding and using insert(0, ...) rather than spelling out
+        successors.
         """
-        p = CT_P.new()
-        self.append(p)
-        return p
+        self.insert(0, tcPr)
+        return tcPr
 
     def clear_content(self):
         """
         Remove all content child elements, preserving the ``<w:tcPr>``
-        element if present.
+        element if present. Note that this leaves the ``<w:tc>`` element in
+        an invalid state because it doesn't contain at least one block-level
+        element. It's up to the caller to add a ``<w:p>`` or ``<w:tbl>``
+        child element.
         """
         new_children = []
         tcPr = self.tcPr
@@ -119,20 +125,5 @@ class CT_Tc(BaseOxmlElement):
         required EG_BlockLevelElt.
         """
         tc = OxmlElement('w:tc')
-        p = CT_P.new()
-        tc.append(p)
+        tc._add_p()
         return tc
-
-    @property
-    def p_lst(self):
-        """
-        List of <w:p> child elements.
-        """
-        return self.findall(qn('w:p'))
-
-    @property
-    def tcPr(self):
-        """
-        <w:tcPr> child element or |None| if not present.
-        """
-        return self.find(qn('w:tcPr'))
