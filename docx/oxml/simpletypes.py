@@ -153,6 +153,30 @@ class XsdUnsignedInt(BaseIntType):
         cls.validate_int_in_range(value, 0, 4294967295)
 
 
+class ST_BrClear(XsdString):
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
+        valid_values = ('none', 'left', 'right', 'all')
+        if value not in valid_values:
+            raise ValueError(
+                "must be one of %s, got '%s'" % (valid_values, value)
+            )
+
+
+class ST_BrType(XsdString):
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
+        valid_values = ('page', 'column', 'textWrapping')
+        if value not in valid_values:
+            raise ValueError(
+                "must be one of %s, got '%s'" % (valid_values, value)
+            )
+
+
 class ST_Coordinate(BaseIntType):
 
     @classmethod

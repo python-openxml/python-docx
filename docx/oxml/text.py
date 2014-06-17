@@ -9,35 +9,16 @@ from . import parse_xml, OxmlElement
 from ..enum.text import WD_UNDERLINE
 from .ns import nsdecls, qn
 from .shared import CT_String
-from .xmlchemy import BaseOxmlElement
+from .simpletypes import ST_BrClear, ST_BrType
+from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore
 
 
 class CT_Br(BaseOxmlElement):
     """
     ``<w:br>`` element, indicating a line, page, or column break in a run.
     """
-    @classmethod
-    def new(cls):
-        """
-        Return a new ``<w:br>`` element.
-        """
-        return OxmlElement('w:br')
-
-    @property
-    def clear(self):
-        self.get(qn('w:clear'))
-
-    @clear.setter
-    def clear(self, clear_str):
-        self.set(qn('w:clear'), clear_str)
-
-    @property
-    def type(self):
-        return self.get(qn('w:type'))
-
-    @type.setter
-    def type(self, type_str):
-        self.set(qn('w:type'), type_str)
+    type = OptionalAttribute('w:type', ST_BrType)
+    clear = OptionalAttribute('w:clear', ST_BrClear)
 
 
 class CT_P(BaseOxmlElement):
@@ -208,13 +189,7 @@ class CT_R(BaseOxmlElement):
     """
     ``<w:r>`` element, containing the properties and text for a run.
     """
-    def add_br(self):
-        """
-        Return a newly appended CT_Br (<w:br>) child element.
-        """
-        br = CT_Br.new()
-        self.append(br)
-        return br
+    br = ZeroOrMore('w:br')
 
     def add_drawing(self, inline_or_anchor):
         """
