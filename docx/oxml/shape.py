@@ -105,10 +105,10 @@ class CT_NonVisualDrawingProps(BaseOxmlElement):
     """
     @classmethod
     def new(cls, nsptagname_str, shape_id, name):
-        elt = OxmlElement(nsptagname_str)
-        elt.set('id', str(shape_id))
-        elt.set('name', name)
-        return elt
+        elm = OxmlElement(nsptagname_str)
+        elm.set('id', str(shape_id))
+        elm.set('name', name)
+        return elm
 
 
 class CT_NonVisualPictureProperties(BaseOxmlElement):
@@ -125,9 +125,7 @@ class CT_Picture(BaseOxmlElement):
     """
     ``<pic:pic>`` element, a DrawingML picture
     """
-    @property
-    def blipFill(self):
-        return self.find(qn('pic:blipFill'))
+    blipFill = OneAndOnlyOne('pic:blipFill')
 
     @classmethod
     def new(cls, pic_id, filename, rId, cx, cy):

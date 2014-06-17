@@ -144,15 +144,15 @@ Schema definitions
   <xsd:complexType name="CT_Inline">
     <xsd:sequence>
       <xsd:element name="extent"            type="a:CT_PositiveSize2D"/>
-      <xsd:element name="effectExtent"      type="CT_EffectExtent" minOccurs="0"/>
+      <xsd:element name="effectExtent"      type="CT_EffectExtent"                      minOccurs="0"/>
       <xsd:element name="docPr"             type="a:CT_NonVisualDrawingProps"/>
       <xsd:element name="cNvGraphicFramePr" type="a:CT_NonVisualGraphicFrameProperties" minOccurs="0"/>
       <xsd:element name="graphic"           type="CT_GraphicalObject"/>
     </xsd:sequence>
-    <xsd:attribute name="distT" type="ST_WrapDistance" use="optional"/>
-    <xsd:attribute name="distB" type="ST_WrapDistance" use="optional"/>
-    <xsd:attribute name="distL" type="ST_WrapDistance" use="optional"/>
-    <xsd:attribute name="distR" type="ST_WrapDistance" use="optional"/>
+    <xsd:attribute name="distT" type="ST_WrapDistance"/>
+    <xsd:attribute name="distB" type="ST_WrapDistance"/>
+    <xsd:attribute name="distL" type="ST_WrapDistance"/>
+    <xsd:attribute name="distR" type="ST_WrapDistance"/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_PositiveSize2D">
@@ -175,9 +175,9 @@ Schema definitions
     </xsd:sequence>
     <xsd:attribute name="id"     type="ST_DrawingElementId" use="required"/>
     <xsd:attribute name="name"   type="xsd:string"          use="required"/>
-    <xsd:attribute name="descr"  type="xsd:string"          use="optional" default=""/>
-    <xsd:attribute name="hidden" type="xsd:boolean"         use="optional" default="false"/>
-    <xsd:attribute name="title"  type="xsd:string"          use="optional" default=""/>
+    <xsd:attribute name="descr"  type="xsd:string"          default=""/>
+    <xsd:attribute name="hidden" type="xsd:boolean"         default="false"/>
+    <xsd:attribute name="title"  type="xsd:string"          default=""/>
   </xsd:complexType>
 
   <xsd:complexType name="CT_NonVisualGraphicFrameProperties">
