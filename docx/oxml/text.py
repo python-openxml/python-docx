@@ -106,50 +106,32 @@ class CT_R(BaseOxmlElement):
     """
     ``<w:r>`` element, containing the properties and text for a run.
     """
+    rPr = ZeroOrOne('w:rPr')
+    t = ZeroOrMore('w:t')
     br = ZeroOrMore('w:br')
+    drawing = ZeroOrMore('w:drawing')
+
+    def _insert_rPr(self, rPr):
+        self.insert(0, rPr)
+        return rPr
+
+    def add_t(self, text):
+        """
+        Return a newly added ``<w:t>`` element containing *text*.
+        """
+        t = self._add_t(text=text)
+        if len(text.strip()) < len(text):
+            t.set(qn('xml:space'), 'preserve')
+        return t
 
     def add_drawing(self, inline_or_anchor):
         """
         Return a newly appended ``CT_Drawing`` (``<w:drawing>``) child
         element having *inline_or_anchor* as its child.
         """
-        drawing = OxmlElement('w:drawing')
-        self.append(drawing)
+        drawing = self._add_drawing()
         drawing.append(inline_or_anchor)
         return drawing
-
-    def add_t(self, text):
-        """
-        Return a newly added CT_T (<w:t>) element containing *text*.
-        """
-        t = CT_Text.new(text)
-        if len(text.strip()) < len(text):
-            t.set(qn('xml:space'), 'preserve')
-        self.append(t)
-        return t
-
-    def get_or_add_rPr(self):
-        """
-        Return the rPr child element, newly added if not present.
-        """
-        rPr = self.rPr
-        if rPr is None:
-            rPr = self._add_rPr()
-        return rPr
-
-    @classmethod
-    def new(cls):
-        """
-        Return a new ``<w:r>`` element.
-        """
-        return OxmlElement('w:r')
-
-    @property
-    def rPr(self):
-        """
-        ``<w:rPr>`` child element or None if not present.
-        """
-        return self.find(qn('w:rPr'))
 
     @property
     def style(self):
@@ -172,13 +154,6 @@ class CT_R(BaseOxmlElement):
         rPr.style = style
 
     @property
-    def t_lst(self):
-        """
-        Sequence of <w:t> elements in this paragraph.
-        """
-        return self.findall(qn('w:t'))
-
-    @property
     def underline(self):
         """
         String contained in w:val attribute of <w:u> grandchild, or |None| if
@@ -193,14 +168,6 @@ class CT_R(BaseOxmlElement):
     def underline(self, value):
         rPr = self.get_or_add_rPr()
         rPr.underline = value
-
-    def _add_rPr(self):
-        """
-        Return a newly added rPr child element. Assumes one is not present.
-        """
-        rPr = CT_RPr.new()
-        self.insert(0, rPr)
-        return rPr
 
 
 class CT_RPr(BaseOxmlElement):
@@ -699,14 +666,6 @@ class CT_Text(BaseOxmlElement):
     """
     ``<w:t>`` element, containing a sequence of characters within a run.
     """
-    @classmethod
-    def new(cls, text):
-        """
-        Return a new ``<w:t>`` element.
-        """
-        t = OxmlElement('w:t')
-        t.text = text
-        return t
 
 
 class CT_Underline(BaseOxmlElement):

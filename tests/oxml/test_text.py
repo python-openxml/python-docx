@@ -81,10 +81,6 @@ class DescribeCT_PPr(object):
 
 class DescribeCT_R(object):
 
-    def it_can_construct_a_new_r_element(self):
-        r = CT_R.new()
-        assert r.xml == an_r().with_nsdecls().xml()
-
     def it_can_add_a_t_to_itself(self):
         text = 'foobar'
         r = an_r().with_nsdecls().element
@@ -111,11 +107,3 @@ class DescribeCT_R(object):
             assert len(r.t_lst) == expected_len
             for t in r.t_lst:
                 assert isinstance(t, CT_Text)
-
-
-class DescribeCT_Text(object):
-
-    def it_can_construct_a_new_t_element(self):
-        text = 'foobar'
-        t = CT_Text.new(text)
-        assert t.xml == a_t().with_nsdecls().with_text(text).xml()
