@@ -71,6 +71,7 @@ from docx.oxml.shape import (
     CT_GraphicalObjectData, CT_Inline, CT_Picture, CT_PositiveSize2D
 )
 register_element_cls('a:blip',        CT_Blip)
+register_element_cls('a:ext',         CT_PositiveSize2D)
 register_element_cls('a:graphic',     CT_GraphicalObject)
 register_element_cls('a:graphicData', CT_GraphicalObjectData)
 register_element_cls('pic:blipFill',  CT_BlipFillProperties)

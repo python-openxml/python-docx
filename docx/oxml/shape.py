@@ -5,9 +5,8 @@ Custom element classes for shape-related elements like ``<w:inline>``
 """
 
 from . import OxmlElement
-from ..shared import Emu
 from .ns import nsmap, nspfxmap, qn
-from .simpletypes import ST_RelationshipId, XsdToken
+from .simpletypes import ST_PositiveCoordinate, ST_RelationshipId, XsdToken
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute,
     ZeroOrOne
@@ -173,33 +172,14 @@ class CT_PositiveSize2D(BaseOxmlElement):
     Used for ``<wp:extent>`` element, and perhaps others later. Specifies the
     size of a DrawingML drawing.
     """
-    @property
-    def cx(self):
-        cx_str = self.get('cx')
-        cx = int(cx_str)
-        return Emu(cx)
-
-    @cx.setter
-    def cx(self, cx):
-        cx_str = str(cx)
-        self.set('cx', cx_str)
-
-    @property
-    def cy(self):
-        cy_str = self.get('cy')
-        cy = int(cy_str)
-        return Emu(cy)
-
-    @cy.setter
-    def cy(self, cy):
-        cy_str = str(cy)
-        self.set('cy', cy_str)
+    cx = RequiredAttribute('cx', ST_PositiveCoordinate)
+    cy = RequiredAttribute('cy', ST_PositiveCoordinate)
 
     @classmethod
     def new(cls, nsptagname_str, cx, cy):
         elm = OxmlElement(nsptagname_str)
-        elm.set('cx', str(cx))
-        elm.set('cy', str(cy))
+        elm.cx = cx
+        elm.cy = cy
         return elm
 
 

@@ -8,6 +8,8 @@ type in the associated XML schema.
 
 from __future__ import absolute_import, print_function
 
+from ..shared import Emu
+
 
 class BaseSimpleType(object):
 
@@ -153,6 +155,17 @@ class XsdUnsignedInt(BaseIntType):
 
 class ST_DecimalNumber(XsdInt):
     pass
+
+
+class ST_PositiveCoordinate(XsdLong):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return Emu(int(str_value))
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_int_in_range(value, 0, 27273042316900)
 
 
 class ST_RelationshipId(XsdString):
