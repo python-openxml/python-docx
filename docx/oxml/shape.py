@@ -6,7 +6,9 @@ Custom element classes for shape-related elements like ``<w:inline>``
 
 from . import OxmlElement
 from .ns import nsmap, nspfxmap, qn
-from .simpletypes import ST_PositiveCoordinate, ST_RelationshipId, XsdToken
+from .simpletypes import (
+    ST_Coordinate, ST_PositiveCoordinate, ST_RelationshipId, XsdToken
+)
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute,
     ZeroOrOne
@@ -159,11 +161,14 @@ class CT_Point2D(BaseOxmlElement):
     Used for ``<a:off>`` element, and perhaps others. Specifies an x, y
     coordinate (point).
     """
+    x = RequiredAttribute('x', ST_Coordinate)
+    y = RequiredAttribute('y', ST_Coordinate)
+
     @classmethod
     def new(cls, nsptagname_str, x, y):
         elm = OxmlElement(nsptagname_str)
-        elm.set('x', str(x))
-        elm.set('y', str(y))
+        elm.x = x
+        elm.y = y
         return elm
 
 

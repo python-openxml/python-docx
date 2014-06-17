@@ -153,6 +153,26 @@ class XsdUnsignedInt(BaseIntType):
         cls.validate_int_in_range(value, 0, 4294967295)
 
 
+class ST_Coordinate(BaseIntType):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        if 'i' in str_value or 'm' in str_value or 'p' in str_value:
+            return ST_UniversalMeasure.convert_from_xml(str_value)
+        return int(str_value)
+
+    @classmethod
+    def validate(cls, value):
+        ST_CoordinateUnqualified.validate(value)
+
+
+class ST_CoordinateUnqualified(XsdLong):
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_int_in_range(value, -27273042329600, 27273042316900)
+
+
 class ST_DecimalNumber(XsdInt):
     pass
 
@@ -170,3 +190,17 @@ class ST_PositiveCoordinate(XsdLong):
 
 class ST_RelationshipId(XsdString):
     pass
+
+
+class ST_UniversalMeasure(BaseSimpleType):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        float_part, units_part = str_value[:-2], str_value[-2:]
+        quantity = float(float_part)
+        multiplier = {
+            'mm': 36000, 'cm': 360000, 'in': 914400, 'pt': 12700,
+            'pc': 152400, 'pi': 152400
+        }[units_part]
+        emu_value = int(round(quantity * multiplier))
+        return emu_value
