@@ -197,6 +197,16 @@ Schema Definitions
     <xsd:union memberTypes="ST_UnsignedDecimalNumber ST_PositiveUniversalMeasure"/>
   </xsd:simpleType>
 
+  <xsd:simpleType name="ST_UnsignedDecimalNumber">
+    <xsd:restriction base="xsd:unsignedLong"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_PositiveUniversalMeasure">
+    <xsd:restriction base="ST_UniversalMeasure">
+      <xsd:pattern value="[0-9]+(\.[0-9]+)?(mm|cm|in|pt|pc|pi)"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:group name="EG_ContentRowContent">
     <xsd:choice>
       <xsd:element name="tr"        type="CT_Row"          minOccurs="0" maxOccurs="unbounded"/>

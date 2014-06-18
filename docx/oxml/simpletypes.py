@@ -8,7 +8,7 @@ type in the associated XML schema.
 
 from __future__ import absolute_import, print_function
 
-from ..shared import Emu
+from ..shared import Emu, Twips
 
 
 class BaseSimpleType(object):
@@ -153,6 +153,13 @@ class XsdUnsignedInt(BaseIntType):
         cls.validate_int_in_range(value, 0, 4294967295)
 
 
+class XsdUnsignedLong(BaseIntType):
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_int_in_range(value, 0, 18446744073709551615)
+
+
 class ST_BrClear(XsdString):
 
     @classmethod
@@ -229,6 +236,21 @@ class ST_RelationshipId(XsdString):
 
 class ST_String(XsdString):
     pass
+
+
+class ST_TwipsMeasure(XsdUnsignedLong):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        if 'i' in str_value or 'm' in str_value or 'p' in str_value:
+            return ST_UniversalMeasure.convert_from_xml(str_value)
+        return Twips(int(str_value))
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        emu = Emu(value)
+        twips = emu.twips
+        return str(twips)
 
 
 class ST_UniversalMeasure(BaseSimpleType):

@@ -18,16 +18,10 @@ class Length(int):
     _EMUS_PER_CM = 360000
     _EMUS_PER_MM = 36000
     _EMUS_PER_PX = 12700
+    _EMUS_PER_TWIP = 635
 
     def __new__(cls, emu):
         return int.__new__(cls, emu)
-
-    @property
-    def inches(self):
-        """
-        The equivalent length expressed in inches (float).
-        """
-        return self / float(self._EMUS_PER_INCH)
 
     @property
     def cm(self):
@@ -35,6 +29,20 @@ class Length(int):
         The equivalent length expressed in centimeters (float).
         """
         return self / float(self._EMUS_PER_CM)
+
+    @property
+    def emu(self):
+        """
+        The equivalent length expressed in English Metric Units (int).
+        """
+        return self
+
+    @property
+    def inches(self):
+        """
+        The equivalent length expressed in inches (float).
+        """
+        return self / float(self._EMUS_PER_INCH)
 
     @property
     def mm(self):
@@ -50,11 +58,11 @@ class Length(int):
         return int(round(self / float(self._EMUS_PER_PX)) + 0.1)
 
     @property
-    def emu(self):
+    def twips(self):
         """
-        The equivalent length expressed in English Metric Units (int).
+        The equivalent length expressed in twips (int).
         """
-        return self
+        return int(round(self / float(self._EMUS_PER_TWIP)) + 0.1)
 
 
 class Inches(Length):
@@ -113,6 +121,16 @@ class Px(Length):
     """
     def __new__(cls, px):
         emu = int(px * Length._EMUS_PER_PX)
+        return Length.__new__(cls, emu)
+
+
+class Twips(Length):
+    """
+    Convenience constructor for length in twips, e.g. ``width = Twips(42)``.
+    A twip is a twentieth of a point, 635 EMU.
+    """
+    def __new__(cls, twips):
+        emu = int(twips * Length._EMUS_PER_TWIP)
         return Length.__new__(cls, emu)
 
 

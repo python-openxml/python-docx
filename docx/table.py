@@ -132,6 +132,14 @@ class _Column(object):
         """
         return _ColumnCells(self._tbl, self._gridCol)
 
+    @property
+    def width(self):
+        """
+        The width of this column in EMU, or |None| if no explicit width is
+        set.
+        """
+        return self._gridCol.w
+
 
 class _ColumnCells(object):
     """

@@ -3,7 +3,7 @@ Feature: Get and set table column widths
   As an python-docx developer
   I need a way to get and set the width of a table's columns
 
-  @wip
+
   Scenario Outline: Get existing column width
     Given a table column having a width of <width>
      Then the reported column width is <width-emu>

@@ -8,8 +8,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from . import parse_xml
 from .ns import nsdecls
+from .simpletypes import ST_TwipsMeasure
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, OneOrMore, ZeroOrOne, ZeroOrMore
+    BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute, ZeroOrOne,
+    ZeroOrMore
 )
 
 
@@ -65,6 +67,7 @@ class CT_TblGridCol(BaseOxmlElement):
     ``<w:gridCol>`` element, child of ``<w:tblGrid>``, defines a table
     column.
     """
+    w = OptionalAttribute('w:w', ST_TwipsMeasure)
 
 
 class CT_TblPr(BaseOxmlElement):

@@ -168,7 +168,30 @@ class Describe_Column(object):
         cells = column.cells
         assert isinstance(cells, _ColumnCells)
 
+    def it_knows_its_width_in_EMU(self, width_fixture):
+        column, expected_width = width_fixture
+        assert column.width == expected_width
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (4242,     2693670),
+        (1440,     914400),
+        ('2.54cm', 914400),
+        ('54mm',   1944000),
+        ('12.5pt', 158750),
+        (None,     None),
+    ])
+    def width_fixture(self, request):
+        w, expected_width = request.param
+        gridCol_bldr = a_gridCol().with_nsdecls()
+        if w is not None:
+            gridCol_bldr.with_w(w)
+        gridCol = gridCol_bldr.element
+        column = _Column(gridCol, None)
+        return column, expected_width
+
+    # fixture components ---------------------------------------------
 
     @pytest.fixture
     def column(self):
