@@ -287,7 +287,9 @@ def then_new_row_has_2_cells(context):
 @then('the reported column width is {width_emu}')
 def then_the_reported_column_width_is_width_emu(context, width_emu):
     expected_value = None if width_emu == 'None' else int(width_emu)
-    assert context.column.width == expected_value
+    assert context.column.width == expected_value, (
+        'got %s' % context.column.width
+    )
 
 
 @then('the table style matches the name I applied')

@@ -62,7 +62,7 @@ class Length(int):
         """
         The equivalent length expressed in twips (int).
         """
-        return int(round(self / float(self._EMUS_PER_TWIP)) + 0.1)
+        return int(round(self / float(self._EMUS_PER_TWIP)))
 
 
 class Inches(Length):

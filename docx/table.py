@@ -140,6 +140,10 @@ class _Column(object):
         """
         return self._gridCol.w
 
+    @width.setter
+    def width(self, value):
+        self._gridCol.w = value
+
 
 class _ColumnCells(object):
     """

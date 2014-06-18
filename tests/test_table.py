@@ -168,9 +168,15 @@ class Describe_Column(object):
         cells = column.cells
         assert isinstance(cells, _ColumnCells)
 
-    def it_knows_its_width_in_EMU(self, width_fixture):
-        column, expected_width = width_fixture
+    def it_knows_its_width_in_EMU(self, width_get_fixture):
+        column, expected_width = width_get_fixture
         assert column.width == expected_width
+
+    def it_can_change_its_width(self, width_set_fixture):
+        column, value, expected_xml = width_set_fixture
+        column.width = value
+        assert column.width == value
+        assert column._gridCol.xml == expected_xml
 
     # fixtures -------------------------------------------------------
 
@@ -182,20 +188,36 @@ class Describe_Column(object):
         ('12.5pt', 158750),
         (None,     None),
     ])
-    def width_fixture(self, request):
+    def width_get_fixture(self, request):
         w, expected_width = request.param
-        gridCol_bldr = a_gridCol().with_nsdecls()
-        if w is not None:
-            gridCol_bldr.with_w(w)
-        gridCol = gridCol_bldr.element
+        gridCol = self.gridCol_bldr(w).element
         column = _Column(gridCol, None)
         return column, expected_width
+
+    @pytest.fixture(params=[
+        (4242, None,   None),
+        (None, None,   None),
+        (4242, 914400, 1440),
+        (None, 914400, 1440),
+    ])
+    def width_set_fixture(self, request):
+        initial_w, value, expected_w = request.param
+        gridCol = self.gridCol_bldr(initial_w).element
+        column = _Column(gridCol, None)
+        expected_xml = self.gridCol_bldr(expected_w).xml()
+        return column, value, expected_xml
 
     # fixture components ---------------------------------------------
 
     @pytest.fixture
     def column(self):
         return _Column(None, None)
+
+    def gridCol_bldr(self, w=None):
+        gridCol_bldr = a_gridCol().with_nsdecls()
+        if w is not None:
+            gridCol_bldr.with_w(w)
+        return gridCol_bldr
 
 
 class Describe_ColumnCells(object):
