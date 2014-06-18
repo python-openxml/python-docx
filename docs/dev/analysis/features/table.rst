@@ -2,6 +2,7 @@
 Table
 =====
 
+... column width is stored in twips (20ths of a point) ...
 
 MS API
 ------
@@ -104,10 +105,10 @@ Schema Definitions
 
   <xsd:complexType name="CT_Tbl">
     <xsd:sequence>
-      <xsd:group   ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element name="tblPr"   type="CT_TblPr"/>
-      <xsd:element name="tblGrid" type="CT_TblGrid"/>
-      <xsd:group   ref="EG_ContentRowContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:group    ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="tblPr"                  type="CT_TblPr"/>
+      <xsd:element name="tblGrid"                type="CT_TblGrid"/>
+      <xsd:group    ref="EG_ContentRowContent"   minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -138,6 +139,39 @@ Schema Definitions
     <xsd:attribute name="type" type="ST_TblWidth"/>
   </xsd:complexType>
 
+  <xsd:simpleType name="ST_MeasurementOrPercent">
+    <xsd:union memberTypes="ST_DecimalNumberOrPercent s:ST_UniversalMeasure"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_DecimalNumberOrPercent">
+    <xsd:union memberTypes="ST_UnqualifiedPercentage s:ST_Percentage"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_UniversalMeasure">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="-?[0-9]+(\.[0-9]+)?(mm|cm|in|pt|pc|pi)"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_UnqualifiedPercentage">
+    <xsd:restriction base="xsd:integer"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_Percentage">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="-?[0-9]+(\.[0-9]+)?%"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_TblWidth">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="nil"/>
+      <xsd:enumeration value="pct"/>
+      <xsd:enumeration value="dxa"/>
+      <xsd:enumeration value="auto"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:complexType name="CT_TblLook">
     <xsd:attribute name="firstRow"    type="s:ST_OnOff"/>
     <xsd:attribute name="lastRow"     type="s:ST_OnOff"/>
@@ -158,6 +192,10 @@ Schema Definitions
   <xsd:complexType name="CT_TblGridCol">
     <xsd:attribute name="w" type="s:ST_TwipsMeasure"/>
   </xsd:complexType>
+
+  <xsd:simpleType name="ST_TwipsMeasure">
+    <xsd:union memberTypes="ST_UnsignedDecimalNumber ST_PositiveUniversalMeasure"/>
+  </xsd:simpleType>
 
   <xsd:group name="EG_ContentRowContent">
     <xsd:choice>
@@ -240,48 +278,6 @@ Schema Definitions
       <xsd:element name="tcPrChange"           type="CT_TcPrChange"    minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
-
-::
-
-    w_CT_Tc =
-      attribute w:id { s_ST_String }?,
-      element tcPr { w_CT_TcPr }?,
-      w_EG_BlockLevelElts+
-
-    w_EG_BlockLevelElts =  # denormalized
-      element customXml { w_CT_CustomXmlBlock }
-      | element p { w_CT_P }
-      | element sdt { w_CT_SdtBlock }
-      | element tbl { w_CT_Tbl }
-      | element altChunk { w_CT_AltChunk }
-
-      | element proofErr { w_CT_ProofErr }
-      | element permStart { w_CT_PermStart }
-      | element permEnd { w_CT_Perm }
-      | element ins { w_CT_RunTrackChange }
-      | element del { w_CT_RunTrackChange }
-      | element moveFrom { w_CT_RunTrackChange }
-      | element moveTo { w_CT_RunTrackChange }
-
-      | element bookmarkStart { w_CT_Bookmark }
-      | element bookmarkEnd { w_CT_MarkupRange }
-      | element moveFromRangeStart { w_CT_MoveBookmark }
-      | element moveFromRangeEnd { w_CT_MarkupRange }
-      | element moveToRangeStart { w_CT_MoveBookmark }
-      | element moveToRangeEnd { w_CT_MarkupRange }
-      | element commentRangeStart { w_CT_MarkupRange }
-      | element commentRangeEnd { w_CT_MarkupRange }
-      | element customXmlInsRangeStart { w_CT_TrackChange }
-      | element customXmlInsRangeEnd { w_CT_Markup }
-      | element customXmlDelRangeStart { w_CT_TrackChange }
-      | element customXmlDelRangeEnd { w_CT_Markup }
-      | element customXmlMoveFromRangeStart { w_CT_TrackChange }
-      | element customXmlMoveFromRangeEnd { w_CT_Markup }
-      | element customXmlMoveToRangeStart { w_CT_TrackChange }
-      | element customXmlMoveToRangeEnd { w_CT_Markup }
-
-      | element oMathPara { m_CT_OMathPara }
-      | element oMath { m_CT_OMath }
 
 
 Resources

@@ -25,7 +25,7 @@ from docx.text import Paragraph
 from ..oxml.unitdata.dml import a_drawing, an_inline
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.table import (
-    a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tc, a_tr
+    a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblW, a_tc, a_tr
 )
 from ..oxml.unitdata.text import a_p, a_sectPr, an_r
 from ..unitutil import (
@@ -437,7 +437,10 @@ class Describe_Body(object):
         return body_bldr
 
     def _tbl_bldr(self, rows=1, cols=1):
-        tblPr_bldr = a_tblPr()
+        tblPr_bldr = (
+            a_tblPr().with_child(
+                a_tblW().with_type("auto").with_w(0))
+        )
 
         tblGrid_bldr = a_tblGrid()
         for i in range(cols):

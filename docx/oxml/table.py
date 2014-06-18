@@ -6,7 +6,8 @@ Custom element classes for tables
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from . import OxmlElement
+from . import parse_xml
+from .ns import nsdecls
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, ZeroOrOne, ZeroOrMore
 )
@@ -36,12 +37,19 @@ class CT_Tbl(BaseOxmlElement):
         Return a new ``<w:tbl>`` element, containing the required
         ``<w:tblPr>`` and ``<w:tblGrid>`` child elements.
         """
-        tbl = OxmlElement('w:tbl')
-        tblPr = CT_TblPr.new()
-        tbl.append(tblPr)
-        tblGrid = CT_TblGrid.new()
-        tbl.append(tblGrid)
+        tbl = parse_xml(cls._tbl_xml())
         return tbl
+
+    @classmethod
+    def _tbl_xml(cls):
+        return (
+            '<w:tbl %s>\n'
+            '  <w:tblPr>\n'
+            '    <w:tblW w:type="auto" w:w="0"/>\n'
+            '  </w:tblPr>\n'
+            '  <w:tblGrid/>\n'
+            '</w:tbl>' % nsdecls('w')
+        )
 
 
 class CT_TblGrid(BaseOxmlElement):
@@ -50,13 +58,6 @@ class CT_TblGrid(BaseOxmlElement):
     elements that define column count, width, etc.
     """
     gridCol = ZeroOrMore('w:gridCol', successors=('w:tblGridChange',))
-
-    @classmethod
-    def new(cls):
-        """
-        Return a new ``<w:tblGrid>`` element.
-        """
-        return OxmlElement('w:tblGrid')
 
 
 class CT_TblGridCol(BaseOxmlElement):
@@ -79,13 +80,6 @@ class CT_TblPr(BaseOxmlElement):
         *style_name*.
         """
         return self._add_tblStyle(val=style_name)
-
-    @classmethod
-    def new(cls):
-        """
-        Return a new ``<w:tblPr>`` element.
-        """
-        return OxmlElement('w:tblPr')
 
 
 class CT_Tc(BaseOxmlElement):
@@ -124,6 +118,8 @@ class CT_Tc(BaseOxmlElement):
         Return a new ``<w:tc>`` element, containing an empty paragraph as the
         required EG_BlockLevelElt.
         """
-        tc = OxmlElement('w:tc')
-        tc._add_p()
-        return tc
+        return parse_xml(
+            '<w:tc %s>\n'
+            '  <w:p/>\n'
+            '</w:tc>' % nsdecls('w')
+        )

@@ -38,6 +38,12 @@ class CT_TblPrBuilder(BaseBuilder):
     __attrs__ = ()
 
 
+class CT_TblWidthBuilder(BaseBuilder):
+    __tag__ = 'w:tblW'
+    __nspfxs__ = ('w',)
+    __attrs__ = ('w:w', 'w:type')
+
+
 class CT_TcBuilder(BaseBuilder):
     __tag__ = 'w:tc'
     __nspfxs__ = ('w',)
@@ -68,6 +74,10 @@ def a_tblPr():
 
 def a_tblStyle():
     return CT_StringBuilder('w:tblStyle')
+
+
+def a_tblW():
+    return CT_TblWidthBuilder()
 
 
 def a_tc():
