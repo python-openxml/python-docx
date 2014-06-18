@@ -689,10 +689,12 @@ class ZeroOrOneChoice(_BaseChildElement):
         return '_remove_%s' % self._prop_name
 
 
-class BaseOxmlElement(etree.ElementBase):
+class _OxmlElementBase(etree.ElementBase):
     """
-    Base class for all custom element classes, to add standardized behavior
-    to all classes in one place.
+    Effective base class for all custom element classes, to add standardized
+    behavior to all classes in one place. Actual inheritance is from
+    BaseOxmlElement below, needed to manage Python 2-3 metaclass declaration
+    compatibility.
     """
 
     __metaclass__ = MetaOxmlElement
@@ -752,3 +754,8 @@ class BaseOxmlElement(etree.ElementBase):
     @property
     def _nsptag(self):
         return NamespacePrefixedTag.from_clark_name(self.tag)
+
+
+BaseOxmlElement = MetaOxmlElement(
+    'BaseOxmlElement', (etree.ElementBase,), dict(_OxmlElementBase.__dict__)
+)

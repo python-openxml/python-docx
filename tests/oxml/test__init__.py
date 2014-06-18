@@ -31,19 +31,15 @@ class DescribeOxmlElement(object):
         assert etree.tostring(element) == (
             '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/200'
             '6/main" a="b" c="d"/>'
-        )
+        ).encode('utf-8')
 
     def it_adds_additional_namespace_declarations_when_supplied(self):
-        element = OxmlElement(
-            'a:foo', nsdecls={
-                'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
-                'x': 'other'
-            }
-        )
-        assert etree.tostring(element) == (
-            '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/200'
-            '6/main" xmlns:x="other"/>'
-        )
+        ns1 = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+        ns2 = 'other'
+        element = OxmlElement('a:foo', nsdecls={'a': ns1, 'x': ns2})
+        assert len(element.nsmap.items()) == 2
+        assert element.nsmap['a'] == ns1
+        assert element.nsmap['x'] == ns2
 
 
 class DescribeOxmlParser(object):
