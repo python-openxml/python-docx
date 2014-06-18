@@ -124,6 +124,12 @@ def when_apply_style_to_table(context):
     table.style = 'LightShading-Accent1'
 
 
+@when('I set the column width to {width_emu}')
+def when_I_set_the_column_width_to_width_emu(context, width_emu):
+    new_value = None if width_emu == 'None' else int(width_emu)
+    context.column.width = new_value
+
+
 # then =====================================================
 
 @then('I can access a cell using its row and column indices')
@@ -280,10 +286,7 @@ def then_new_row_has_2_cells(context):
 
 @then('the reported column width is {width_emu}')
 def then_the_reported_column_width_is_width_emu(context, width_emu):
-    expected_value = {
-        'None':   None,
-        '914400': 914400,
-    }[width_emu]
+    expected_value = None if width_emu == 'None' else int(width_emu)
     assert context.column.width == expected_value
 
 
