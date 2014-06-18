@@ -188,8 +188,8 @@ class OptionalAttribute(BaseAttribute):
         """
         def set_attr_value(obj, value):
             if value is None or value == self._default:
-                if self._attr_name in obj.attrib:
-                    del obj.attrib[self._attr_name]
+                if self._clark_name in obj.attrib:
+                    del obj.attrib[self._clark_name]
                 return
             str_value = self._simple_type.to_xml(value)
             obj.set(self._clark_name, str_value)
