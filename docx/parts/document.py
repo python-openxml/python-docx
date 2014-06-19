@@ -214,3 +214,10 @@ class InlineShapes(Parented):
         body = self._body
         xpath = './w:p/w:r/w:drawing/wp:inline'
         return body.xpath(xpath)
+
+
+class Sections(object):
+    """
+    Sequence of |Section| objects corresponding to the sections in the
+    document.
+    """
