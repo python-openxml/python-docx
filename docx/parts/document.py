@@ -14,6 +14,7 @@ from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.oxml import serialize_part_xml
 from ..opc.package import Part
 from ..oxml import parse_xml
+from ..section import Section
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from ..table import Table
@@ -236,6 +237,10 @@ class Sections(Sequence):
 
     def __getitem__(self, key):
         pass
+
+    def __iter__(self):
+        for sectPr in self._document_elm.sectPr_lst:
+            yield Section(sectPr)
 
     def __len__(self):
         return len(self._document_elm.sectPr_lst)

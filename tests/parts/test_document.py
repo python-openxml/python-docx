@@ -18,6 +18,7 @@ from docx.oxml.text import CT_R
 from docx.package import ImageParts, Package
 from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
 from docx.parts.image import ImagePart
+from docx.section import Section
 from docx.shape import InlineShape
 from docx.table import Table
 from docx.text import Paragraph
@@ -626,11 +627,31 @@ class DescribeSections(object):
         print(sections._document_elm.xml)
         assert len(sections) == expected_len
 
+    def it_can_iterate_over_its_Section_instances(self, iter_fixture):
+        sections, expected_count = iter_fixture
+        section_count = 0
+        for section in sections:
+            section_count += 1
+            assert isinstance(section, Section)
+        assert section_count == expected_count
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def len_fixture(self):
-        document_elm = (
+    def iter_fixture(self, document_elm):
+        sections = Sections(document_elm)
+        return sections, 2
+
+    @pytest.fixture
+    def len_fixture(self, document_elm):
+        sections = Sections(document_elm)
+        return sections, 2
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def document_elm(self):
+        return (
             a_document().with_nsdecls().with_child(
                 a_body().with_child(
                     a_p().with_child(
@@ -638,5 +659,3 @@ class DescribeSections(object):
                             a_sectPr()))).with_child(
                     a_sectPr()))
         ).element
-        sections = Sections(document_elm)
-        return sections, 2

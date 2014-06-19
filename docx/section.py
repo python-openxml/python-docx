@@ -11,3 +11,6 @@ class Section(object):
     """
     Document section, providing access to section and page setup settings.
     """
+    def __init__(self, sectPr):
+        super(Section, self).__init__()
+        self._sectPr = sectPr
