@@ -57,7 +57,7 @@ def then_I_can_iterate_over_the_sections(context):
 
 @then('the length of the section collection is 3')
 def then_the_length_of_the_section_collection_is_3(context):
-    sections = context.sections
+    sections = context.document.sections
     assert len(sections) == 3, (
         'expected len(sections) of 2, got %s' % len(sections)
     )

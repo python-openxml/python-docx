@@ -147,6 +147,13 @@ class Document(object):
         """
         self._package.save(path_or_stream)
 
+    @property
+    def sections(self):
+        """
+        Return a reference to the |Sections| instance for this document.
+        """
+        return self._document_part.sections
+
     @lazyproperty
     def styles_part(self):
         """

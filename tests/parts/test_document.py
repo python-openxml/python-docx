@@ -113,6 +113,12 @@ class DescribeDocumentPart(object):
         paragraphs = document_part.paragraphs
         assert paragraphs is paragraphs_
 
+    def it_provides_access_to_the_document_sections(self, sections_fixture):
+        document, document_elm, Sections_ = sections_fixture
+        sections = document.sections
+        Sections_.assert_called_once_with(document_elm)
+        assert sections is Sections_.return_value
+
     def it_provides_access_to_the_document_tables(self, tables_fixture):
         document_part, tables_ = tables_fixture
         tables = document_part.tables
@@ -299,6 +305,16 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def rId_(self, request):
         return instance_mock(request, str)
+
+    @pytest.fixture
+    def Sections_(self, request):
+        return class_mock(request, 'docx.parts.document.Sections')
+
+    @pytest.fixture
+    def sections_fixture(self, request, Sections_):
+        document_elm = a_document().with_nsdecls().element
+        document = DocumentPart(None, None, document_elm, None)
+        return document, document_elm, Sections_
 
     @pytest.fixture
     def serialize_part_xml_(self, request):

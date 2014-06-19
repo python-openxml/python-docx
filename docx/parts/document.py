@@ -110,6 +110,13 @@ class DocumentPart(Part):
         """
         return self
 
+    @lazyproperty
+    def sections(self):
+        """
+        The |Sections| instance organizing the sections in this document.
+        """
+        return Sections(self._element)
+
     @property
     def tables(self):
         """
@@ -221,3 +228,6 @@ class Sections(object):
     Sequence of |Section| objects corresponding to the sections in the
     document.
     """
+    def __init__(self, document_elm):
+        super(Sections, self).__init__()
+        self._document_elm = document_elm
