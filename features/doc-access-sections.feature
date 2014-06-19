@@ -10,7 +10,6 @@ Feature: Access document sections
        And the length of the section collection is 3
 
 
-  @wip
   Scenario: Access section in section collection
      Given a section collection
       Then I can iterate over the sections

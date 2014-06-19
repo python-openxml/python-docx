@@ -635,7 +635,18 @@ class DescribeSections(object):
             assert isinstance(section, Section)
         assert section_count == expected_count
 
+    def it_can_access_its_Section_instances_by_index(self, index_fixture):
+        sections, indicies = index_fixture
+        assert len(sections[0:2]) == 2
+        for index in indicies:
+            assert isinstance(sections[index], Section)
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def index_fixture(self, document_elm):
+        sections = Sections(document_elm)
+        return sections, [0, 1]
 
     @pytest.fixture
     def iter_fixture(self, document_elm):

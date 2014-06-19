@@ -236,7 +236,11 @@ class Sections(Sequence):
         self._document_elm = document_elm
 
     def __getitem__(self, key):
-        pass
+        if isinstance(key, slice):
+            sectPr_lst = self._document_elm.sectPr_lst[key]
+            return [Section(sectPr) for sectPr in sectPr_lst]
+        sectPr = self._document_elm.sectPr_lst[key]
+        return Section(sectPr)
 
     def __iter__(self):
         for sectPr in self._document_elm.sectPr_lst:
