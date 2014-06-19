@@ -8,6 +8,8 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from collections import Sequence
+
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.oxml import serialize_part_xml
 from ..opc.package import Part
@@ -223,7 +225,7 @@ class InlineShapes(Parented):
         return body.xpath(xpath)
 
 
-class Sections(object):
+class Sections(Sequence):
     """
     Sequence of |Section| objects corresponding to the sections in the
     document.
@@ -231,3 +233,9 @@ class Sections(object):
     def __init__(self, document_elm):
         super(Sections, self).__init__()
         self._document_elm = document_elm
+
+    def __getitem__(self, key):
+        pass
+
+    def __len__(self):
+        return len(self._document_elm.sectPr_lst)

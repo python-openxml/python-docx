@@ -16,6 +16,14 @@ class CT_Document(BaseOxmlElement):
     """
     body = ZeroOrOne('w:body')
 
+    @property
+    def sectPr_lst(self):
+        """
+        Return a list containing a reference to each ``<w:sectPr>`` element
+        in the document, in the order encountered.
+        """
+        return self.xpath('.//w:sectPr')
+
 
 class CT_Body(BaseOxmlElement):
     """

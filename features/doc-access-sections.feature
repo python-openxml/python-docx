@@ -4,7 +4,6 @@ Feature: Access document sections
   I need a way to access document sections
 
 
-  @wip
   Scenario: Access section collection of a document
      Given a document having three sections
       Then I can access the section collection of the document

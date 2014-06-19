@@ -16,7 +16,7 @@ from docx.opc.packuri import PackURI
 from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.text import CT_R
 from docx.package import ImageParts, Package
-from docx.parts.document import _Body, DocumentPart, InlineShapes
+from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
 from docx.parts.image import ImagePart
 from docx.shape import InlineShape
 from docx.table import Table
@@ -27,7 +27,7 @@ from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.table import (
     a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblW, a_tc, a_tr
 )
-from ..oxml.unitdata.text import a_p, a_sectPr, an_r
+from ..oxml.unitdata.text import a_p, a_pPr, a_sectPr, an_r
 from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
     method_mock, property_mock
@@ -617,3 +617,26 @@ class DescribeInlineShapes(object):
     @pytest.fixture
     def shape_id_(self, request):
         return instance_mock(request, int)
+
+
+class DescribeSections(object):
+
+    def it_knows_how_many_sections_it_contains(self, len_fixture):
+        sections, expected_len = len_fixture
+        print(sections._document_elm.xml)
+        assert len(sections) == expected_len
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def len_fixture(self):
+        document_elm = (
+            a_document().with_nsdecls().with_child(
+                a_body().with_child(
+                    a_p().with_child(
+                        a_pPr().with_child(
+                            a_sectPr()))).with_child(
+                    a_sectPr()))
+        ).element
+        sections = Sections(document_elm)
+        return sections, 2
