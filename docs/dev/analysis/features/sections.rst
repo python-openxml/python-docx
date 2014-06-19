@@ -13,8 +13,8 @@ a ``<w:br>`` element in a run.
 Implementation notes
 --------------------
 
-It's probably not going to make a lot of sense to implement this before having
-the ability to set at least a core subset of the section properties. First ones
+Implementing adding a section break should probably wait until after the
+ability to set at least a core subset of the section properties. First ones
 are probably:
 
 * page size 
@@ -33,19 +33,34 @@ I'm thinking the sequence is:
 Candidate protocol
 ------------------
 
-The following interactive session demonstrates the protocol for working with
-sections::
+The following interactive session demonstrates the proposed protocol for
+working with sections::
 
     >>> sections = document.sections
+    >>> sections
+    <docx.section.Sections object at 0x1deadbeef>
     >>> len(sections)
     3
-    >>> first_section = sections[0]
-    >>> last_section = sections[-1]
-
-    >>> p = body.add_paragraph()
-    >>> p.section_properties
-    None
-    >>> p.add_section_break()
+    >>> section = sections[-1]  # the sentinel section
+    >>> section
+    <docx.section.Section object at 0x1deadbeef>
+    >>> section.section_start
+    WD_SECTION.CONTINUOUS (0)
+    >>> page_setup = section.page_setup
+    >>> page_setup
+    <docx.section.PageSetup object at 0x1deadbeef>
+    >>> page_setup.page_width
+    7772400  # Inches(8.5)
+    >>> page_setup.page_height
+    10058400  # Inches(11)
+    >>> page_setup.orientation
+    WD_ORIENT.PORTRAIT
+    >>> page_setup.left_margin  # and .right_, .top_, .bottom_
+    914400
+    >>> page_setup.header_distance  # and .footer_distance
+    457200  # Inches(0.5)
+    >>> page_setup.gutter
+    0
 
 
 Word behavior
@@ -57,6 +72,73 @@ current section (the next ``<w:sectPr>`` element in the document) to provide
 the starting point. Experimentation would be required to determine exactly what
 items are copied, but it at least includes the page size, margins, and column
 spacing.
+
+
+Enumerations
+------------
+
+* `WdSectionStart Enumeration on MSDN`_
+
+.. _WdSectionStart Enumeration on MSDN:
+   http://msdn.microsoft.com/en-us/library/office/bb238171.aspx
+
+::
+
+    @alias(WD_SECTION)
+    class WD_SECTION_START(Enumeration):
+
+CONTINUOUS (0)
+    Continuous section break.
+
+EVENPAGE (3)
+    Even pages section break.
+
+NEWCOLUMN (1)
+    New column section break.
+
+NEWPAGE (2)
+    New page section break.
+
+ODDPAGE (4)
+    Odd pages section break.
+
+
+* `WdOrientation Enumeration on MSDN`_
+
+.. _WdOrientation Enumeration on MSDN:
+   http://msdn.microsoft.com/en-us/library/office/ff837902.aspx
+
+::
+
+    @alias(WD_ORIENT)
+    class WD_ORIENTATION(Enumeration):
+
+LANDSCAPE (1)
+    Landscape orientation.
+
+PORTRAIT (0)
+    Portrait orientation.
+
+::
+
+    @alias(WD_SECTION)
+    class WD_SECTION_START(Enumeration):
+
+CONTINUOUS (0)
+    Continuous section break.
+
+EVENPAGE (3)
+    Even pages section break.
+
+NEWCOLUMN (1)
+    New column section break.
+
+NEWPAGE (2)
+    New page section break.
+
+ODDPAGE (4)
+    Odd pages section break.
+
 
 
 Specimen XML
@@ -131,7 +213,10 @@ Schema excerpt
 
   <xsd:complexType name="CT_SectPr">  <!-- denormalized -->
     <xsd:sequence>
-      <xsd:group   ref="EG_HdrFtrReferences" minOccurs="0" maxOccurs="6"/>
+      <xsd:choice minOccurs="0" maxOccurs="6"/>
+        <xsd:element name="headerReference" type="CT_HdrFtrRef"/>
+        <xsd:element name="footerReference" type="CT_HdrFtrRef"/>
+      </xsd:choice>
       <xsd:element name="footnotePr"      type="CT_FtnProps"      minOccurs="0"/>
       <xsd:element name="endnotePr"       type="CT_EdnProps"      minOccurs="0"/>
       <xsd:element name="type"            type="CT_SectType"      minOccurs="0"/>
@@ -153,19 +238,78 @@ Schema excerpt
       <xsd:element name="printerSettings" type="CT_Rel"           minOccurs="0"/>
       <xsd:element name="sectPrChange"    type="CT_SectPrChange"  minOccurs="0"/>
     </xsd:sequence>
-    <xsd:attributeGroup ref="AG_SectPrAttributes"/>
-  </xsd:complexType>
-
-  <xsd:group name="EG_HdrFtrReferences">
-    <xsd:choice>
-      <xsd:element name="headerReference" type="CT_HdrFtrRef" minOccurs="0"/>
-      <xsd:element name="footerReference" type="CT_HdrFtrRef" minOccurs="0"/>
-    </xsd:choice>
-  </xsd:group>
-
-  <xsd:attributeGroup name="AG_SectPrAttributes">
     <xsd:attribute name="rsidRPr"  type="ST_LongHexNumber"/>
     <xsd:attribute name="rsidDel"  type="ST_LongHexNumber"/>
     <xsd:attribute name="rsidR"    type="ST_LongHexNumber"/>
     <xsd:attribute name="rsidSect" type="ST_LongHexNumber"/>
-  </xsd:attributeGroup>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_HdrFtrRef">
+    <xsd:attribute  ref="r:id"                  use="required"/>
+    <xsd:attribute name="type" type="ST_HdrFtr" use="required"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ST_HdrFtr">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="even"/>
+      <xsd:enumeration value="default"/>
+      <xsd:enumeration value="first"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CT_SectType">
+    <xsd:attribute name="val" type="ST_SectionMark"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ST_SectionMark">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="nextPage"/>
+      <xsd:enumeration value="nextColumn"/>
+      <xsd:enumeration value="continuous"/>
+      <xsd:enumeration value="evenPage"/>
+      <xsd:enumeration value="oddPage"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CT_PageSz">
+    <xsd:attribute name="w"      type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="h"      type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="orient" type="ST_PageOrientation"/>
+    <xsd:attribute name="code"   type="ST_DecimalNumber"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ST_PageOrientation">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="portrait"/>
+      <xsd:enumeration value="landscape"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CT_PageMar">
+    <xsd:attribute name="top"    type="ST_SignedTwipsMeasure" use="required"/>
+    <xsd:attribute name="right"  type="s:ST_TwipsMeasure"     use="required"/>
+    <xsd:attribute name="bottom" type="ST_SignedTwipsMeasure" use="required"/>
+    <xsd:attribute name="left"   type="s:ST_TwipsMeasure"     use="required"/>
+    <xsd:attribute name="header" type="s:ST_TwipsMeasure"     use="required"/>
+    <xsd:attribute name="footer" type="s:ST_TwipsMeasure"     use="required"/>
+    <xsd:attribute name="gutter" type="s:ST_TwipsMeasure"     use="required"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ST_SignedTwipsMeasure">
+    <xsd:union memberTypes="xsd:integer s:ST_UniversalMeasure"/>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CT_Columns">
+    <xsd:sequence minOccurs="0">
+      <xsd:element name="col" type="CT_Column" maxOccurs="45"/>
+    </xsd:sequence>
+      <xsd:attribute name="equalWidth" type="s:ST_OnOff"/>
+      <xsd:attribute name="space"      type="s:ST_TwipsMeasure"/>
+      <xsd:attribute name="num"        type="ST_DecimalNumber"/>
+      <xsd:attribute name="sep"        type="s:ST_OnOff"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_Column">
+    <xsd:attribute name="w"     type="s:ST_TwipsMeasure"/>
+    <xsd:attribute name="space" type="s:ST_TwipsMeasure"/>
+  </xsd:complexType>
