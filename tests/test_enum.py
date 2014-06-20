@@ -90,7 +90,7 @@ class DescribeXmlEnumeration(object):
     def it_knows_the_XML_value_for_each_of_its_xml_members(self):
         assert XMLFOO.to_xml(XMLFOO.XML_RW) == 'attrVal'
         assert XMLFOO.to_xml(42) == 'attrVal'
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             XMLFOO.to_xml(XMLFOO.RO)
 
     def it_can_map_each_of_its_xml_members_from_the_XML_value(self):

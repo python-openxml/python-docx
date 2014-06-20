@@ -23,3 +23,7 @@ class Section(object):
         if the section should begin on the next odd page.
         """
         return self._sectPr.start_type
+
+    @start_type.setter
+    def start_type(self, value):
+        self._sectPr.start_type = value

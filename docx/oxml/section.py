@@ -26,6 +26,14 @@ class CT_SectPr(BaseOxmlElement):
             return WD_SECTION_START.NEW_PAGE
         return type.val
 
+    @start_type.setter
+    def start_type(self, value):
+        if value is None or value is WD_SECTION_START.NEW_PAGE:
+            self._remove_type()
+            return
+        type = self.get_or_add_type()
+        type.val = value
+
 
 class CT_SectType(BaseOxmlElement):
     """

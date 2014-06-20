@@ -17,7 +17,6 @@ Feature: Access and change section properties
       | ODD_PAGE   |
 
 
-  @wip
   Scenario Outline: Set section start type
     Given a section having start type <initial-start-type>
      When I set the section start type to <new-start-type>
