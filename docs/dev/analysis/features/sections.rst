@@ -38,7 +38,7 @@ working with sections::
 
     >>> sections = document.sections
     >>> sections
-    <docx.section.Sections object at 0x1deadbeef>
+    <docx.parts.document.Sections object at 0x1deadbeef>
     >>> len(sections)
     3
     >>> section = sections[-1]  # the sentinel section
@@ -118,27 +118,6 @@ LANDSCAPE (1)
 
 PORTRAIT (0)
     Portrait orientation.
-
-::
-
-    @alias(WD_SECTION)
-    class WD_SECTION_START(Enumeration):
-
-CONTINUOUS (0)
-    Continuous section break.
-
-EVENPAGE (3)
-    Even pages section break.
-
-NEWCOLUMN (1)
-    New column section break.
-
-NEWPAGE (2)
-    New page section break.
-
-ODDPAGE (4)
-    Odd pages section break.
-
 
 
 Specimen XML
