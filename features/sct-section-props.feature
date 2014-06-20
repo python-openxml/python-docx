@@ -4,7 +4,6 @@ Feature: Access and change section properties
   I need a way to get and set the properties of a section
 
 
-  @wip
   Scenario Outline: Get section start type
     Given a section having start type <start-type>
      Then the reported section start type is <start-type>

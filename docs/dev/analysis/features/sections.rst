@@ -130,6 +130,7 @@ Inserting a section break (next page) produces this XML::
     <w:p>
       <w:pPr>
         <w:sectPr>
+          <w:type w:val="oddPage"/>
           <w:pgSz w:w="12240" w:h="15840"/>
           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
           <w:cols w:space="720"/>

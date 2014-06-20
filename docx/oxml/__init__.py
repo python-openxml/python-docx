@@ -107,6 +107,10 @@ from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_element_cls('w:style',  CT_Style)
 register_element_cls('w:styles', CT_Styles)
 
+from docx.oxml.section import CT_SectPr, CT_SectType
+register_element_cls('w:sectPr', CT_SectPr)
+register_element_cls('w:type',   CT_SectType)
+
 from docx.oxml.table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblPr, CT_Tc
 )
