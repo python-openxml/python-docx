@@ -6,7 +6,7 @@ Step implementations for section-related features
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from behave import given, then
+from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_SECTION
@@ -27,6 +27,21 @@ def given_a_section_having_start_type(context, start_type):
     }[start_type]
     document = Document(test_docx('sct-section-props'))
     context.section = document.sections[section_idx]
+
+
+# when =====================================================
+
+@when('I set the section start type to {start_type}')
+def when_I_set_the_section_start_type_to_start_type(context, start_type):
+    new_start_type = {
+        'None':       None,
+        'CONTINUOUS': WD_SECTION.CONTINUOUS,
+        'EVEN_PAGE':  WD_SECTION.EVEN_PAGE,
+        'NEW_COLUMN': WD_SECTION.NEW_COLUMN,
+        'NEW_PAGE':   WD_SECTION.NEW_PAGE,
+        'ODD_PAGE':   WD_SECTION.ODD_PAGE,
+    }[start_type]
+    context.section.start_type = new_start_type
 
 
 # then =====================================================

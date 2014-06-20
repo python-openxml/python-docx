@@ -15,3 +15,16 @@ Feature: Access and change section properties
       | NEW_PAGE   |
       | EVEN_PAGE  |
       | ODD_PAGE   |
+
+
+  @wip
+  Scenario Outline: Set section start type
+    Given a section having start type <initial-start-type>
+     When I set the section start type to <new-start-type>
+     Then the reported section start type is <reported-start-type>
+
+    Examples: Section start types
+      | initial-start-type | new-start-type | reported-start-type |
+      | CONTINUOUS         | NEW_PAGE       | NEW_PAGE            |
+      | NEW_PAGE           | ODD_PAGE       | ODD_PAGE            |
+      | NEW_COLUMN         | None           | NEW_PAGE            |
