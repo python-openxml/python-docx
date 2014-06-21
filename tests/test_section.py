@@ -10,8 +10,9 @@ import pytest
 
 from docx.enum.section import WD_SECTION
 from docx.section import Section
+from docx.shared import Inches
 
-from .oxml.unitdata.section import a_sectPr, a_type
+from .oxml.unitdata.section import a_pgSz, a_sectPr, a_type
 
 
 class DescribeSection(object):
@@ -25,41 +26,81 @@ class DescribeSection(object):
         section.start_type = new_start_type
         assert section._sectPr.xml == expected_xml
 
+    def it_knows_its_page_width(self, page_width_get_fixture):
+        section, expected_page_width = page_width_get_fixture
+        assert section.page_width == expected_page_width
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        (None,         WD_SECTION.NEW_PAGE),
-        ('continuous', WD_SECTION.CONTINUOUS),
-        ('nextPage',   WD_SECTION.NEW_PAGE),
-        ('oddPage',    WD_SECTION.ODD_PAGE),
-        ('evenPage',   WD_SECTION.EVEN_PAGE),
-        ('nextColumn', WD_SECTION.NEW_COLUMN),
+        (True,  1440, Inches(1)),
+        (True,  None, None),
+        (False, None, None),
+    ])
+    def page_width_get_fixture(self, request):
+        has_pgSz_child, w, expected_page_width = request.param
+        pgSz_bldr = self.pgSz_bldr(has_pgSz_child, w)
+        sectPr = self.sectPr_bldr(pgSz_bldr).element
+        section = Section(sectPr)
+        return section, expected_page_width
+
+    @pytest.fixture(params=[
+        (False, None,         WD_SECTION.NEW_PAGE),
+        (True,  None,         WD_SECTION.NEW_PAGE),
+        (True,  'continuous', WD_SECTION.CONTINUOUS),
+        (True,  'nextPage',   WD_SECTION.NEW_PAGE),
+        (True,  'oddPage',    WD_SECTION.ODD_PAGE),
+        (True,  'evenPage',   WD_SECTION.EVEN_PAGE),
+        (True,  'nextColumn', WD_SECTION.NEW_COLUMN),
     ])
     def start_type_get_fixture(self, request):
-        type_val, expected_start_type = request.param
-        sectPr = self.sectPr_bldr(type_val).element
+        has_type_child, type_val, expected_start_type = request.param
+        type_bldr = self.type_bldr(has_type_child, type_val)
+        sectPr = self.sectPr_bldr(type_bldr).element
         section = Section(sectPr)
         return section, expected_start_type
 
     @pytest.fixture(params=[
-        ('oddPage',    WD_SECTION.EVEN_PAGE,  'evenPage'),
-        ('nextPage',   None,                  None),
-        ('continuous', WD_SECTION.NEW_PAGE,   None),
-        (None,         WD_SECTION.NEW_COLUMN, 'nextColumn'),
+        (True,  'oddPage',    WD_SECTION.EVEN_PAGE,  True,  'evenPage'),
+        (True,  'nextPage',   None,                  False, None),
+        (False, None,         WD_SECTION.NEW_PAGE,   False, None),
+        (True,  'continuous', WD_SECTION.NEW_PAGE,   False, None),
+        (True,  None,         WD_SECTION.NEW_PAGE,   False, None),
+        (True,  None,         WD_SECTION.NEW_COLUMN, True,  'nextColumn'),
     ])
     def start_type_set_fixture(self, request):
-        initial_type_val, new_type, expected_type_val = request.param
-        sectPr = self.sectPr_bldr(initial_type_val).element
+        (has_type_child, initial_type_val, new_type, has_type_child_after,
+         expected_type_val) = request.param
+        # section ----------------------
+        type_bldr = self.type_bldr(has_type_child, initial_type_val)
+        sectPr = self.sectPr_bldr(type_bldr).element
         section = Section(sectPr)
-        expected_xml = self.sectPr_bldr(expected_type_val).xml()
+        # expected_xml -----------------
+        type_bldr = self.type_bldr(has_type_child_after, expected_type_val)
+        expected_xml = self.sectPr_bldr(type_bldr).xml()
         return section, new_type, expected_xml
 
     # fixture components ---------------------------------------------
 
-    def sectPr_bldr(self, start_type=None):
+    def pgSz_bldr(self, has_pgSz, w):
+        if not has_pgSz:
+            return None
+        pgSz_bldr = a_pgSz()
+        if w is not None:
+            pgSz_bldr.with_w(w)
+        return pgSz_bldr
+
+    def sectPr_bldr(self, *child_bldrs):
         sectPr_bldr = a_sectPr().with_nsdecls()
-        if start_type is not None:
-            sectPr_bldr.with_child(
-                a_type().with_val(start_type)
-            )
+        for child_bldr in child_bldrs:
+            if child_bldr is not None:
+                sectPr_bldr.with_child(child_bldr)
         return sectPr_bldr
+
+    def type_bldr(self, has_type_elm, val):
+        if not has_type_elm:
+            return None
+        type_bldr = a_type()
+        if val is not None:
+            type_bldr.with_val(val)
+        return type_bldr

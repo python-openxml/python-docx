@@ -16,6 +16,16 @@ class Section(object):
         self._sectPr = sectPr
 
     @property
+    def page_width(self):
+        """
+        Total page width used for this section, inclusive of all edge spacing
+        values such as margins. Page orientation is taken into account, so
+        for example, its expected value would be ``Inches(11)`` for
+        letter-sized paper when orientation is landscape.
+        """
+        return self._sectPr.page_width
+
+    @property
     def start_type(self):
         """
         The member of the ``WD_SECTION`` enumeration corresponding to the

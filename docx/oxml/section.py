@@ -5,14 +5,45 @@ Section-related custom element classes.
 """
 
 from ..enum.section import WD_SECTION_START
+from .simpletypes import ST_TwipsMeasure
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+
+
+class CT_PageSz(BaseOxmlElement):
+    """
+    ``<w:pgSz>`` element, defining page dimensions and orientation.
+    """
+    w = OptionalAttribute('w:w', ST_TwipsMeasure)
 
 
 class CT_SectPr(BaseOxmlElement):
     """
     ``<w:sectPr>`` element, the container element for section properties.
     """
-    type = ZeroOrOne('w:type')
+    __child_sequence__ = (
+        'w:footnotePr', 'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar',
+        'w:paperSrc', 'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols',
+        'w:formProt', 'w:vAlign', 'w:noEndnote', 'w:titlePg',
+        'w:textDirection', 'w:bidi', 'w:rtlGutter', 'w:docGrid',
+        'w:printerSettings', 'w:sectPrChange',
+    )
+    type = ZeroOrOne('w:type', successors=(
+        __child_sequence__[__child_sequence__.index('w:type')+1:]
+    ))
+    pgSz = ZeroOrOne('w:pgSz', successors=(
+        __child_sequence__[__child_sequence__.index('w:pgSz')+1:]
+    ))
+
+    @property
+    def page_width(self):
+        """
+        Value in EMU of the ``w`` attribute of the ``<w:pgSz>`` child
+        element, or |None| if not present.
+        """
+        pgSz = self.pgSz
+        if pgSz is None:
+            return None
+        return pgSz.w
 
     @property
     def start_type(self):
