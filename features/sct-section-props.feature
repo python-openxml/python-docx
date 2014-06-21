@@ -74,3 +74,20 @@ Feature: Access and change section properties
       And the reported gutter margin is 0.25 inches
       And the reported header margin is 0.5 inches
       And the reported footer margin is 0.75 inches
+
+
+  @wip
+  Scenario Outline: Set section page margins
+    Given a section having known page margins
+     When I set the <margin-type> margin to <length> inches
+     Then the reported <margin-type> margin is <length> inches
+
+    Examples: Section margin settings
+      | margin-type | length |
+      | left        |  1.0   |
+      | right       |  1.25  |
+      | top         |  0.75  |
+      | bottom      |  1.5   |
+      | header      |  0.25  |
+      | footer      |  0.5   |
+      | gutter      |  0.25  |

@@ -54,6 +54,21 @@ def given_a_section_having_known_orientation(context, orientation):
 
 # when =====================================================
 
+@when('I set the {margin_side} margin to {inches} inches')
+def when_I_set_the_margin_side_length(context, margin_side, inches):
+    prop_name = {
+        'left':   'left_margin',
+        'right':  'right_margin',
+        'top':    'top_margin',
+        'bottom': 'bottom_margin',
+        'gutter': 'gutter',
+        'header': 'header_distance',
+        'footer': 'footer_distance',
+    }[margin_side]
+    new_value = Inches(float(inches))
+    setattr(context.section, prop_name, new_value)
+
+
 @when('I set the section orientation to {orientation}')
 def when_I_set_the_section_orientation(context, orientation):
     new_orientation = {
