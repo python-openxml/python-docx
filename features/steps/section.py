@@ -10,11 +10,18 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_SECTION
+from docx.shared import Inches
 
 from helpers import test_docx
 
 
 # given ====================================================
+
+@given('a section having known page dimension')
+def given_a_section_having_known_page_dimension(context):
+    document = Document(test_docx('sct-section-props'))
+    context.section = document.sections[-1]
+
 
 @given('a section having start type {start_type}')
 def given_a_section_having_start_type(context, start_type):
@@ -45,6 +52,16 @@ def when_I_set_the_section_start_type_to_start_type(context, start_type):
 
 
 # then =====================================================
+
+@then('the reported page width is 8.5 inches')
+def then_the_reported_page_width_is_width(context):
+    assert context.section.page_width == Inches(8.5)
+
+
+@then('the reported page height is 11 inches')
+def then_the_reported_page_height_is_11_inches(context):
+    assert context.section.page_height == Inches(11)
+
 
 @then('the reported section start type is {start_type}')
 def then_the_reported_section_start_type_is_type(context, start_type):
