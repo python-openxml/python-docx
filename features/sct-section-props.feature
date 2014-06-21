@@ -51,3 +51,16 @@ Feature: Access and change section properties
       | orientation | reported-orientation |
       | landscape   | WD_ORIENT.LANDSCAPE  |
       | portrait    | WD_ORIENT.PORTRAIT   |
+
+
+  @wip
+  Scenario Outline: Set section orientation
+    Given a section known to have <initial-orientation> orientation
+     When I set the section orientation to <new-orientation>
+     Then the reported page orientation is <reported-orientation>
+
+    Examples: Section page orientations
+      | initial-orientation | new-orientation      |  reported-orientation |
+      | portrait            | WD_ORIENT.LANDSCAPE  |  WD_ORIENT.LANDSCAPE  |
+      | landscape           | WD_ORIENT.PORTRAIT   |  WD_ORIENT.PORTRAIT   |
+      | landscape           | None                 |  WD_ORIENT.PORTRAIT   |

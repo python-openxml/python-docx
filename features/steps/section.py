@@ -48,6 +48,16 @@ def given_a_section_having_known_orientation(context, orientation):
 
 # when =====================================================
 
+@when('I set the section orientation to {orientation}')
+def when_I_set_the_section_orientation(context, orientation):
+    new_orientation = {
+        'WD_ORIENT.PORTRAIT':  WD_ORIENT.PORTRAIT,
+        'WD_ORIENT.LANDSCAPE': WD_ORIENT.LANDSCAPE,
+        'None':                None,
+    }[orientation]
+    context.section.orientation = new_orientation
+
+
 @when('I set the section page height to {y} inches')
 def when_I_set_the_section_page_height_to_y_inches(context, y):
     context.section.page_height = Inches(float(y))
