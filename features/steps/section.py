@@ -23,6 +23,12 @@ def given_a_section_having_known_page_dimension(context):
     context.section = document.sections[-1]
 
 
+@given('a section having known page margins')
+def given_a_section_having_known_page_margins(context):
+    document = Document(test_docx('sct-section-props'))
+    context.section = document.sections[0]
+
+
 @given('a section having start type {start_type}')
 def given_a_section_having_start_type(context, start_type):
     section_idx = {
@@ -82,6 +88,22 @@ def when_I_set_the_section_start_type_to_start_type(context, start_type):
 
 
 # then =====================================================
+
+@then('the reported {margin_side} margin is {inches} inches')
+def then_the_reported_margin_is_inches(context, margin_side, inches):
+    prop_name = {
+        'left':   'left_margin',
+        'right':  'right_margin',
+        'top':    'top_margin',
+        'bottom': 'bottom_margin',
+        'gutter': 'gutter',
+        'header': 'header_distance',
+        'footer': 'footer_distance',
+    }[margin_side]
+    expected_value = Inches(float(inches))
+    actual_value = getattr(context.section, prop_name)
+    assert actual_value == expected_value
+
 
 @then('the reported page orientation is {orientation}')
 def then_the_reported_page_orientation_is_orientation(context, orientation):

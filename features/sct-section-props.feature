@@ -63,3 +63,15 @@ Feature: Access and change section properties
       | portrait            | WD_ORIENT.LANDSCAPE  |  WD_ORIENT.LANDSCAPE  |
       | landscape           | WD_ORIENT.PORTRAIT   |  WD_ORIENT.PORTRAIT   |
       | landscape           | None                 |  WD_ORIENT.PORTRAIT   |
+
+
+  @wip
+  Scenario: Get section page margins
+    Given a section having known page margins
+     Then the reported left margin is 1.0 inches
+      And the reported right margin is 1.25 inches
+      And the reported top margin is 1.5 inches
+      And the reported bottom margin is 1.75 inches
+      And the reported gutter margin is 0.25 inches
+      And the reported header margin is 0.5 inches
+      And the reported footer margin is 0.75 inches
