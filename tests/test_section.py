@@ -64,6 +64,15 @@ class DescribeSection(object):
         assert section.header_distance == header
         assert section.footer_distance == footer
 
+    def it_can_change_its_page_margins(self, margins_set_fixture):
+        section, margin_prop_name, new_value, expected_xml = (
+            margins_set_fixture
+        )
+        print(section._sectPr.xml)
+        setattr(section, margin_prop_name, new_value)
+        print(section._sectPr.xml)
+        assert section._sectPr.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -74,24 +83,49 @@ class DescribeSection(object):
     def margins_get_fixture(self, request):
         (has_pgMar_child, left, right, top, bottom, gutter, header,
          footer) = request.param
-        pgMar_bldr = self.pgMar_bldr(
-            has_pgMar_child, left=left, right=right, top=top, bottom=bottom,
-            gutter=gutter, header=header, footer=footer
-        )
+        pgMar_bldr = self.pgMar_bldr(**{
+            'has_pgMar': has_pgMar_child, 'left': left, 'right': right,
+            'top': top, 'bottom': bottom, 'gutter': gutter, 'header': header,
+            'footer': footer
+        })
         sectPr = self.sectPr_bldr(pgMar_bldr).element
         section = Section(sectPr)
-        expected_left = left * 635 if left else None
-        expected_right = right * 635 if right else None
-        expected_top = top * 635 if top else None
-        expected_bottom = bottom * 635 if bottom else None
-        expected_gutter = gutter * 635 if gutter else None
-        expected_header = header * 635 if header else None
-        expected_footer = footer * 635 if footer else None
+        expected_left = self.twips_to_emu(left)
+        expected_right = self.twips_to_emu(right)
+        expected_top = self.twips_to_emu(top)
+        expected_bottom = self.twips_to_emu(bottom)
+        expected_gutter = self.twips_to_emu(gutter)
+        expected_header = self.twips_to_emu(header)
+        expected_footer = self.twips_to_emu(footer)
         return (
             section, expected_left, expected_right, expected_top,
             expected_bottom, expected_gutter, expected_header,
             expected_footer
         )
+
+    @pytest.fixture(params=[
+        ('left', 1440, 720), ('right', None, 1800), ('top', 2160, None),
+        ('bottom', 720, 2160), ('gutter', None, 360), ('header', 720, 630),
+        ('footer', None, 810)
+    ])
+    def margins_set_fixture(self, request):
+        margin_side, initial_margin, new_margin = request.param
+        # section ----------------------
+        pgMar_bldr = self.pgMar_bldr(**{margin_side: initial_margin})
+        sectPr = self.sectPr_bldr(pgMar_bldr).element
+        section = Section(sectPr)
+        # property name ----------------
+        property_name = {
+            'left': 'left_margin', 'right': 'right_margin',
+            'top': 'top_margin', 'bottom': 'bottom_margin',
+            'gutter': 'gutter', 'header': 'header_distance',
+            'footer': 'footer_distance'
+        }[margin_side]
+        # expected_xml -----------------
+        pgMar_bldr = self.pgMar_bldr(**{margin_side: new_margin})
+        expected_xml = self.sectPr_bldr(pgMar_bldr).xml()
+        new_value = self.twips_to_emu(new_margin)
+        return section, property_name, new_value, expected_xml
 
     @pytest.fixture(params=[
         (True,  'landscape', WD_ORIENT.LANDSCAPE),
@@ -211,26 +245,21 @@ class DescribeSection(object):
 
     # fixture components ---------------------------------------------
 
-    def pgMar_bldr(
-            self, has_pgMar=True, left=None, right=None, top=None,
-            bottom=None, header=None, footer=None, gutter=None):
-        if not has_pgMar:
+    @staticmethod
+    def twips_to_emu(twips):
+        if twips is None:
+            return None
+        return twips * 635
+
+    def pgMar_bldr(self, **kwargs):
+        if kwargs.pop('has_pgMar', True) is False:
             return None
         pgMar_bldr = a_pgMar()
-        if left is not None:
-            pgMar_bldr.with_left(left)
-        if right is not None:
-            pgMar_bldr.with_right(right)
-        if top is not None:
-            pgMar_bldr.with_top(top)
-        if bottom is not None:
-            pgMar_bldr.with_bottom(bottom)
-        if header is not None:
-            pgMar_bldr.with_header(header)
-        if footer is not None:
-            pgMar_bldr.with_footer(footer)
-        if gutter is not None:
-            pgMar_bldr.with_gutter(gutter)
+        for key, value in kwargs.items():
+            if value is None:
+                continue
+            set_attr_method = getattr(pgMar_bldr, 'with_%s' % key)
+            set_attr_method(value)
         return pgMar_bldr
 
     def pgSz_bldr(self, has_pgSz=True, w=None, h=None, orient=None):

@@ -66,6 +66,11 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return pgMar.bottom
 
+    @bottom_margin.setter
+    def bottom_margin(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.bottom = value
+
     @property
     def footer(self):
         """
@@ -77,6 +82,11 @@ class CT_SectPr(BaseOxmlElement):
         if pgMar is None:
             return None
         return pgMar.footer
+
+    @footer.setter
+    def footer(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.footer = value
 
     @property
     def gutter(self):
@@ -90,6 +100,11 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return pgMar.gutter
 
+    @gutter.setter
+    def gutter(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.gutter = value
+
     @property
     def header(self):
         """
@@ -101,6 +116,11 @@ class CT_SectPr(BaseOxmlElement):
         if pgMar is None:
             return None
         return pgMar.header
+
+    @header.setter
+    def header(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.header = value
 
     @property
     def left_margin(self):
@@ -114,6 +134,11 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return pgMar.left
 
+    @left_margin.setter
+    def left_margin(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.left = value
+
     @property
     def right_margin(self):
         """
@@ -125,6 +150,11 @@ class CT_SectPr(BaseOxmlElement):
         if pgMar is None:
             return None
         return pgMar.right
+
+    @right_margin.setter
+    def right_margin(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.right = value
 
     @property
     def orientation(self):
@@ -206,6 +236,11 @@ class CT_SectPr(BaseOxmlElement):
         if pgMar is None:
             return None
         return pgMar.top
+
+    @top_margin.setter
+    def top_margin(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.top = value
 
 
 class CT_SectType(BaseOxmlElement):

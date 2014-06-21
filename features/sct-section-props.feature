@@ -76,7 +76,6 @@ Feature: Access and change section properties
       And the reported footer margin is 0.75 inches
 
 
-  @wip
   Scenario Outline: Set section page margins
     Given a section having known page margins
      When I set the <margin-type> margin to <length> inches

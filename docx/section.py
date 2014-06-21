@@ -23,6 +23,10 @@ class Section(object):
         """
         return self._sectPr.bottom_margin
 
+    @bottom_margin.setter
+    def bottom_margin(self, value):
+        self._sectPr.bottom_margin = value
+
     @property
     def footer_distance(self):
         """
@@ -31,6 +35,10 @@ class Section(object):
         in the XML.
         """
         return self._sectPr.footer
+
+    @footer_distance.setter
+    def footer_distance(self, value):
+        self._sectPr.footer = value
 
     @property
     def gutter(self):
@@ -42,6 +50,10 @@ class Section(object):
         """
         return self._sectPr.gutter
 
+    @gutter.setter
+    def gutter(self, value):
+        self._sectPr.gutter = value
+
     @property
     def header_distance(self):
         """
@@ -51,6 +63,10 @@ class Section(object):
         """
         return self._sectPr.header
 
+    @header_distance.setter
+    def header_distance(self, value):
+        self._sectPr.header = value
+
     @property
     def left_margin(self):
         """
@@ -58,6 +74,10 @@ class Section(object):
         section in English Metric Units.
         """
         return self._sectPr.left_margin
+
+    @left_margin.setter
+    def left_margin(self, value):
+        self._sectPr.left_margin = value
 
     @property
     def orientation(self):
@@ -107,6 +127,10 @@ class Section(object):
         """
         return self._sectPr.right_margin
 
+    @right_margin.setter
+    def right_margin(self, value):
+        self._sectPr.right_margin = value
+
     @property
     def start_type(self):
         """
@@ -127,3 +151,7 @@ class Section(object):
         section in English Metric Units.
         """
         return self._sectPr.top_margin
+
+    @top_margin.setter
+    def top_margin(self, value):
+        self._sectPr.top_margin = value
