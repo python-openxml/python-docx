@@ -30,6 +30,11 @@ class DescribeSection(object):
         section, expected_page_width = page_width_get_fixture
         assert section.page_width == expected_page_width
 
+    def it_can_change_its_page_width(self, page_width_set_fixture):
+        section, new_page_width, expected_xml = page_width_set_fixture
+        section.page_width = new_page_width
+        assert section._sectPr.xml == expected_xml
+
     def it_knows_its_page_height(self, page_height_get_fixture):
         section, expected_page_height = page_height_get_fixture
         assert section.page_height == expected_page_height
@@ -59,6 +64,20 @@ class DescribeSection(object):
         sectPr = self.sectPr_bldr(pgSz_bldr).element
         section = Section(sectPr)
         return section, expected_page_width
+
+    @pytest.fixture(params=[
+        (None,      None),
+        (Inches(1), 1440),
+    ])
+    def page_width_set_fixture(self, request):
+        new_page_width, expected_w_val = request.param
+        # section ----------------------
+        sectPr = self.sectPr_bldr().element
+        section = Section(sectPr)
+        # expected_xml -----------------
+        pgSz_bldr = self.pgSz_bldr(w=expected_w_val)
+        expected_xml = self.sectPr_bldr(pgSz_bldr).xml()
+        return section, new_page_width, expected_xml
 
     @pytest.fixture(params=[
         (False, None,         WD_SECTION.NEW_PAGE),
@@ -98,7 +117,7 @@ class DescribeSection(object):
 
     # fixture components ---------------------------------------------
 
-    def pgSz_bldr(self, has_pgSz, w=None, h=None):
+    def pgSz_bldr(self, has_pgSz=True, w=None, h=None):
         if not has_pgSz:
             return None
         pgSz_bldr = a_pgSz()

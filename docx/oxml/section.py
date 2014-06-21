@@ -57,6 +57,11 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return pgSz.w
 
+    @page_width.setter
+    def page_width(self, value):
+        pgSz = self.get_or_add_pgSz()
+        pgSz.w = value
+
     @property
     def start_type(self):
         """
