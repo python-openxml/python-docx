@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.section import WD_SECTION
+from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.shared import Inches
 
 from helpers import test_docx
@@ -32,6 +32,16 @@ def given_a_section_having_start_type(context, start_type):
         'EVEN_PAGE':  3,
         'NEW_COLUMN': 4,
     }[start_type]
+    document = Document(test_docx('sct-section-props'))
+    context.section = document.sections[section_idx]
+
+
+@given('a section known to have {orientation} orientation')
+def given_a_section_having_known_orientation(context, orientation):
+    section_idx = {
+        'landscape': 0,
+        'portrait':  1
+    }[orientation]
     document = Document(test_docx('sct-section-props'))
     context.section = document.sections[section_idx]
 
@@ -62,6 +72,15 @@ def when_I_set_the_section_start_type_to_start_type(context, start_type):
 
 
 # then =====================================================
+
+@then('the reported page orientation is {orientation}')
+def then_the_reported_page_orientation_is_orientation(context, orientation):
+    expected_value = {
+        'WD_ORIENT.LANDSCAPE': WD_ORIENT.LANDSCAPE,
+        'WD_ORIENT.PORTRAIT':  WD_ORIENT.PORTRAIT,
+    }[orientation]
+    assert context.section.orientation == expected_value
+
 
 @then('the reported page width is {x} inches')
 def then_the_reported_page_width_is_width(context, x):

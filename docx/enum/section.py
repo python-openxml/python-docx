@@ -9,6 +9,26 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .base import alias, XmlEnumeration, XmlMappedEnumMember
 
 
+@alias('WD_ORIENT')
+class WD_ORIENTATION(XmlEnumeration):
+    """
+    Specifies the page layout orientation.
+    """
+
+    __ms_name__ = 'WdOrientation'
+
+    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff837902.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'PORTRAIT', 0, 'portrait', 'Portrait orientation.'
+        ),
+        XmlMappedEnumMember(
+            'LANDSCAPE', 1, 'landscape', 'Landscape orientation.'
+        ),
+    )
+
+
 @alias('WD_SECTION')
 class WD_SECTION_START(XmlEnumeration):
     """

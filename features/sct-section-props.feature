@@ -41,3 +41,14 @@ Feature: Access and change section properties
       And I set the section page height to 8.5 inches
      Then the reported page width is 11 inches
       And the reported page height is 8.5 inches
+
+
+  @wip
+  Scenario Outline: Get section orientation
+    Given a section known to have <orientation> orientation
+     Then the reported page orientation is <reported-orientation>
+
+    Examples: Section page orientations
+      | orientation | reported-orientation |
+      | landscape   | WD_ORIENT.LANDSCAPE  |
+      | portrait    | WD_ORIENT.PORTRAIT   |
