@@ -5,8 +5,21 @@ Section-related custom element classes.
 """
 
 from ..enum.section import WD_ORIENTATION, WD_SECTION_START
-from .simpletypes import ST_TwipsMeasure
+from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+
+
+class CT_PageMar(BaseOxmlElement):
+    """
+    ``<w:pgMar>`` element, defining page margins.
+    """
+    top = OptionalAttribute('w:top', ST_SignedTwipsMeasure)
+    right = OptionalAttribute('w:right', ST_TwipsMeasure)
+    bottom = OptionalAttribute('w:bottom', ST_SignedTwipsMeasure)
+    left = OptionalAttribute('w:left', ST_TwipsMeasure)
+    header = OptionalAttribute('w:header', ST_TwipsMeasure)
+    footer = OptionalAttribute('w:footer', ST_TwipsMeasure)
+    gutter = OptionalAttribute('w:gutter', ST_TwipsMeasure)
 
 
 class CT_PageSz(BaseOxmlElement):
@@ -37,6 +50,81 @@ class CT_SectPr(BaseOxmlElement):
     pgSz = ZeroOrOne('w:pgSz', successors=(
         __child_sequence__[__child_sequence__.index('w:pgSz')+1:]
     ))
+    pgMar = ZeroOrOne('w:pgMar', successors=(
+        __child_sequence__[__child_sequence__.index('w:pgMar')+1:]
+    ))
+
+    @property
+    def bottom_margin(self):
+        """
+        The value of the ``w:bottom`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.bottom
+
+    @property
+    def footer(self):
+        """
+        The value of the ``w:footer`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.footer
+
+    @property
+    def gutter(self):
+        """
+        The value of the ``w:gutter`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.gutter
+
+    @property
+    def header(self):
+        """
+        The value of the ``w:header`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.header
+
+    @property
+    def left_margin(self):
+        """
+        The value of the ``w:left`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.left
+
+    @property
+    def right_margin(self):
+        """
+        The value of the ``w:right`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.right
 
     @property
     def orientation(self):
@@ -106,6 +194,18 @@ class CT_SectPr(BaseOxmlElement):
             return
         type = self.get_or_add_type()
         type.val = value
+
+    @property
+    def top_margin(self):
+        """
+        The value of the ``w:top`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.top
 
 
 class CT_SectType(BaseOxmlElement):

@@ -16,6 +16,50 @@ class Section(object):
         self._sectPr = sectPr
 
     @property
+    def bottom_margin(self):
+        """
+        |Length| object representing the bottom margin for all pages in this
+        section in English Metric Units.
+        """
+        return self._sectPr.bottom_margin
+
+    @property
+    def footer_distance(self):
+        """
+        |Length| object representing the distance from the bottom edge of the
+        page to the bottom edge of the footer. |None| if no setting is present
+        in the XML.
+        """
+        return self._sectPr.footer
+
+    @property
+    def gutter(self):
+        """
+        |Length| object representing the page gutter size in English Metric
+        Units for all pages in this section. The page gutter is extra spacing
+        added to the *inner* margin to ensure even margins after page
+        binding.
+        """
+        return self._sectPr.gutter
+
+    @property
+    def header_distance(self):
+        """
+        |Length| object representing the distance from the top edge of the
+        page to the top edge of the header. |None| if no setting is present
+        in the XML.
+        """
+        return self._sectPr.header
+
+    @property
+    def left_margin(self):
+        """
+        |Length| object representing the left margin for all pages in this
+        section in English Metric Units.
+        """
+        return self._sectPr.left_margin
+
+    @property
     def orientation(self):
         """
         Page orientation for this section, one of ``WD_ORIENT.PORTRAIT`` or
@@ -56,6 +100,14 @@ class Section(object):
         self._sectPr.page_width = value
 
     @property
+    def right_margin(self):
+        """
+        |Length| object representing the right margin for all pages in this
+        section in English Metric Units.
+        """
+        return self._sectPr.right_margin
+
+    @property
     def start_type(self):
         """
         The member of the ``WD_SECTION`` enumeration corresponding to the
@@ -67,3 +119,11 @@ class Section(object):
     @start_type.setter
     def start_type(self, value):
         self._sectPr.start_type = value
+
+    @property
+    def top_margin(self):
+        """
+        |Length| object representing the top margin for all pages in this
+        section in English Metric Units.
+        """
+        return self._sectPr.top_margin

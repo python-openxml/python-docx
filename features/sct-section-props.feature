@@ -65,7 +65,6 @@ Feature: Access and change section properties
       | landscape           | None                 |  WD_ORIENT.PORTRAIT   |
 
 
-  @wip
   Scenario: Get section page margins
     Given a section having known page margins
      Then the reported left margin is 1.0 inches

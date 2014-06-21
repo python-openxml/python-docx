@@ -12,7 +12,7 @@ from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.section import Section
 from docx.shared import Inches
 
-from .oxml.unitdata.section import a_pgSz, a_sectPr, a_type
+from .oxml.unitdata.section import a_pgMar, a_pgSz, a_sectPr, a_type
 
 
 class DescribeSection(object):
@@ -52,7 +52,46 @@ class DescribeSection(object):
         section.orientation = new_orientation
         assert section._sectPr.xml == expected_xml
 
+    def it_knows_its_page_margins(self, margins_get_fixture):
+        section, left, right, top, bottom, gutter, header, footer = (
+            margins_get_fixture
+        )
+        assert section.left_margin == left
+        assert section.right_margin == right
+        assert section.top_margin == top
+        assert section.bottom_margin == bottom
+        assert section.gutter == gutter
+        assert section.header_distance == header
+        assert section.footer_distance == footer
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (True,   720,  720,  720,  720,  720,  720,  720),
+        (True,  None,  360, None,  360, None,  360, None),
+        (False, None, None, None, None, None, None, None),
+    ])
+    def margins_get_fixture(self, request):
+        (has_pgMar_child, left, right, top, bottom, gutter, header,
+         footer) = request.param
+        pgMar_bldr = self.pgMar_bldr(
+            has_pgMar_child, left=left, right=right, top=top, bottom=bottom,
+            gutter=gutter, header=header, footer=footer
+        )
+        sectPr = self.sectPr_bldr(pgMar_bldr).element
+        section = Section(sectPr)
+        expected_left = left * 635 if left else None
+        expected_right = right * 635 if right else None
+        expected_top = top * 635 if top else None
+        expected_bottom = bottom * 635 if bottom else None
+        expected_gutter = gutter * 635 if gutter else None
+        expected_header = header * 635 if header else None
+        expected_footer = footer * 635 if footer else None
+        return (
+            section, expected_left, expected_right, expected_top,
+            expected_bottom, expected_gutter, expected_header,
+            expected_footer
+        )
 
     @pytest.fixture(params=[
         (True,  'landscape', WD_ORIENT.LANDSCAPE),
@@ -171,6 +210,28 @@ class DescribeSection(object):
         return section, new_type, expected_xml
 
     # fixture components ---------------------------------------------
+
+    def pgMar_bldr(
+            self, has_pgMar=True, left=None, right=None, top=None,
+            bottom=None, header=None, footer=None, gutter=None):
+        if not has_pgMar:
+            return None
+        pgMar_bldr = a_pgMar()
+        if left is not None:
+            pgMar_bldr.with_left(left)
+        if right is not None:
+            pgMar_bldr.with_right(right)
+        if top is not None:
+            pgMar_bldr.with_top(top)
+        if bottom is not None:
+            pgMar_bldr.with_bottom(bottom)
+        if header is not None:
+            pgMar_bldr.with_header(header)
+        if footer is not None:
+            pgMar_bldr.with_footer(footer)
+        if gutter is not None:
+            pgMar_bldr.with_gutter(gutter)
+        return pgMar_bldr
 
     def pgSz_bldr(self, has_pgSz=True, w=None, h=None, orient=None):
         if not has_pgSz:
