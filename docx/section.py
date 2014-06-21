@@ -16,6 +16,16 @@ class Section(object):
         self._sectPr = sectPr
 
     @property
+    def page_height(self):
+        """
+        Total page height used for this section, inclusive of all edge spacing
+        values such as margins. Page orientation is taken into account, so
+        for example, its expected value would be ``Inches(8.5)`` for
+        letter-sized paper when orientation is landscape.
+        """
+        return self._sectPr.page_height
+
+    @property
     def page_width(self):
         """
         Total page width used for this section, inclusive of all edge spacing

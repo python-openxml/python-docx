@@ -14,6 +14,7 @@ class CT_PageSz(BaseOxmlElement):
     ``<w:pgSz>`` element, defining page dimensions and orientation.
     """
     w = OptionalAttribute('w:w', ST_TwipsMeasure)
+    h = OptionalAttribute('w:h', ST_TwipsMeasure)
 
 
 class CT_SectPr(BaseOxmlElement):
@@ -33,6 +34,17 @@ class CT_SectPr(BaseOxmlElement):
     pgSz = ZeroOrOne('w:pgSz', successors=(
         __child_sequence__[__child_sequence__.index('w:pgSz')+1:]
     ))
+
+    @property
+    def page_height(self):
+        """
+        Value in EMU of the ``h`` attribute of the ``<w:pgSz>`` child
+        element, or |None| if not present.
+        """
+        pgSz = self.pgSz
+        if pgSz is None:
+            return None
+        return pgSz.h
 
     @property
     def page_width(self):
