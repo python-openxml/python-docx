@@ -4,7 +4,7 @@
 Section-related custom element classes.
 """
 
-from ..enum.section import WD_SECTION_START
+from ..enum.section import WD_ORIENTATION, WD_SECTION_START
 from .simpletypes import ST_TwipsMeasure
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
 
@@ -15,6 +15,9 @@ class CT_PageSz(BaseOxmlElement):
     """
     w = OptionalAttribute('w:w', ST_TwipsMeasure)
     h = OptionalAttribute('w:h', ST_TwipsMeasure)
+    orient = OptionalAttribute(
+        'w:orient', WD_ORIENTATION, default=WD_ORIENTATION.PORTRAIT
+    )
 
 
 class CT_SectPr(BaseOxmlElement):
@@ -34,6 +37,18 @@ class CT_SectPr(BaseOxmlElement):
     pgSz = ZeroOrOne('w:pgSz', successors=(
         __child_sequence__[__child_sequence__.index('w:pgSz')+1:]
     ))
+
+    @property
+    def orientation(self):
+        """
+        The member of the ``WD_ORIENTATION`` enumeration corresponding to the
+        value of the ``orient`` attribute of the ``<w:pgSz>`` child element,
+        or ``WD_ORIENTATION.PORTRAIT`` if not present.
+        """
+        pgSz = self.pgSz
+        if pgSz is None:
+            return WD_ORIENTATION.PORTRAIT
+        return pgSz.orient
 
     @property
     def page_height(self):

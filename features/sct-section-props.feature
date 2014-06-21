@@ -43,7 +43,6 @@ Feature: Access and change section properties
       And the reported page height is 8.5 inches
 
 
-  @wip
   Scenario Outline: Get section orientation
     Given a section known to have <orientation> orientation
      Then the reported page orientation is <reported-orientation>

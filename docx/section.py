@@ -16,6 +16,14 @@ class Section(object):
         self._sectPr = sectPr
 
     @property
+    def orientation(self):
+        """
+        Page orientation for this section, one of ``WD_ORIENT.PORTRAIT`` or
+        ``WD_ORIENT.LANDSCAPE``.
+        """
+        return self._sectPr.orientation
+
+    @property
     def page_height(self):
         """
         Total page height used for this section, inclusive of all edge spacing

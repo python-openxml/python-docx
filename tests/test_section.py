@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.enum.section import WD_SECTION
+from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.section import Section
 from docx.shared import Inches
 
@@ -43,7 +43,24 @@ class DescribeSection(object):
         section.page_height = new_page_height
         assert section._sectPr.xml == expected_xml
 
+    def it_knows_its_page_orientation(self, orientation_get_fixture):
+        section, expected_orientation = orientation_get_fixture
+        assert section.orientation is expected_orientation
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (True,  'landscape', WD_ORIENT.LANDSCAPE),
+        (True,  'portrait',  WD_ORIENT.PORTRAIT),
+        (True,  None,        WD_ORIENT.PORTRAIT),
+        (False, None,        WD_ORIENT.PORTRAIT),
+    ])
+    def orientation_get_fixture(self, request):
+        has_pgSz_child, orient, expected_orientation = request.param
+        pgSz_bldr = self.pgSz_bldr(has_pgSz_child, orient=orient)
+        sectPr = self.sectPr_bldr(pgSz_bldr).element
+        section = Section(sectPr)
+        return section, expected_orientation
 
     @pytest.fixture(params=[
         (True,  2880, Inches(2)),
@@ -135,7 +152,7 @@ class DescribeSection(object):
 
     # fixture components ---------------------------------------------
 
-    def pgSz_bldr(self, has_pgSz=True, w=None, h=None):
+    def pgSz_bldr(self, has_pgSz=True, w=None, h=None, orient=None):
         if not has_pgSz:
             return None
         pgSz_bldr = a_pgSz()
@@ -143,6 +160,8 @@ class DescribeSection(object):
             pgSz_bldr.with_w(w)
         if h is not None:
             pgSz_bldr.with_h(h)
+        if orient is not None:
+            pgSz_bldr.with_orient(orient)
         return pgSz_bldr
 
     def sectPr_bldr(self, *child_bldrs):
