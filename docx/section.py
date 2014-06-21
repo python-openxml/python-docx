@@ -25,6 +25,10 @@ class Section(object):
         """
         return self._sectPr.page_height
 
+    @page_height.setter
+    def page_height(self, value):
+        self._sectPr.page_height = value
+
     @property
     def page_width(self):
         """

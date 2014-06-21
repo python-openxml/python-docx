@@ -35,7 +35,6 @@ Feature: Access and change section properties
       And the reported page height is 11 inches
 
 
-  @wip
   Scenario: Set section page size
     Given a section having known page dimension
      When I set the section page width to 11 inches

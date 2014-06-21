@@ -33,11 +33,15 @@ class DescribeSection(object):
     def it_can_change_its_page_width(self, page_width_set_fixture):
         section, new_page_width, expected_xml = page_width_set_fixture
         section.page_width = new_page_width
-        assert section._sectPr.xml == expected_xml
 
     def it_knows_its_page_height(self, page_height_get_fixture):
         section, expected_page_height = page_height_get_fixture
         assert section.page_height == expected_page_height
+
+    def it_can_change_its_page_height(self, page_height_set_fixture):
+        section, new_page_height, expected_xml = page_height_set_fixture
+        section.page_height = new_page_height
+        assert section._sectPr.xml == expected_xml
 
     # fixtures -------------------------------------------------------
 
@@ -52,6 +56,20 @@ class DescribeSection(object):
         sectPr = self.sectPr_bldr(pgSz_bldr).element
         section = Section(sectPr)
         return section, expected_page_height
+
+    @pytest.fixture(params=[
+        (None,      None),
+        (Inches(2), 2880),
+    ])
+    def page_height_set_fixture(self, request):
+        new_page_height, expected_h_val = request.param
+        # section ----------------------
+        sectPr = self.sectPr_bldr().element
+        section = Section(sectPr)
+        # expected_xml -----------------
+        pgSz_bldr = self.pgSz_bldr(h=expected_h_val)
+        expected_xml = self.sectPr_bldr(pgSz_bldr).xml()
+        return section, new_page_height, expected_xml
 
     @pytest.fixture(params=[
         (True,  1440, Inches(1)),
