@@ -38,6 +38,16 @@ def given_a_section_having_start_type(context, start_type):
 
 # when =====================================================
 
+@when('I set the section page height to {y} inches')
+def when_I_set_the_section_page_height_to_y_inches(context, y):
+    context.section.page_height = Inches(float(y))
+
+
+@when('I set the section page width to {x} inches')
+def when_I_set_the_section_page_width_to_x_inches(context, x):
+    context.section.page_width = Inches(float(x))
+
+
 @when('I set the section start type to {start_type}')
 def when_I_set_the_section_start_type_to_start_type(context, start_type):
     new_start_type = {
@@ -53,14 +63,14 @@ def when_I_set_the_section_start_type_to_start_type(context, start_type):
 
 # then =====================================================
 
-@then('the reported page width is 8.5 inches')
-def then_the_reported_page_width_is_width(context):
-    assert context.section.page_width == Inches(8.5)
+@then('the reported page width is {x} inches')
+def then_the_reported_page_width_is_width(context, x):
+    assert context.section.page_width == Inches(float(x))
 
 
-@then('the reported page height is 11 inches')
-def then_the_reported_page_height_is_11_inches(context):
-    assert context.section.page_height == Inches(11)
+@then('the reported page height is {y} inches')
+def then_the_reported_page_height_is_11_inches(context, y):
+    assert context.section.page_height == Inches(float(y))
 
 
 @then('the reported section start type is {start_type}')

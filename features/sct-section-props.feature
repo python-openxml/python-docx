@@ -29,7 +29,16 @@ Feature: Access and change section properties
       | NEW_COLUMN         | None           | NEW_PAGE            |
 
 
-  Scenario: Get section page width
+  Scenario: Get section page size
     Given a section having known page dimension
      Then the reported page width is 8.5 inches
       And the reported page height is 11 inches
+
+
+  @wip
+  Scenario: Set section page size
+    Given a section having known page dimension
+     When I set the section page width to 11 inches
+      And I set the section page height to 8.5 inches
+     Then the reported page width is 11 inches
+      And the reported page height is 8.5 inches
