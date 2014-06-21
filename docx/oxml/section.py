@@ -50,6 +50,11 @@ class CT_SectPr(BaseOxmlElement):
             return WD_ORIENTATION.PORTRAIT
         return pgSz.orient
 
+    @orientation.setter
+    def orientation(self, value):
+        pgSz = self.get_or_add_pgSz()
+        pgSz.orient = value
+
     @property
     def page_height(self):
         """

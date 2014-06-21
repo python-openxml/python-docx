@@ -53,7 +53,6 @@ Feature: Access and change section properties
       | portrait    | WD_ORIENT.PORTRAIT   |
 
 
-  @wip
   Scenario Outline: Set section orientation
     Given a section known to have <initial-orientation> orientation
      When I set the section orientation to <new-orientation>

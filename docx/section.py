@@ -23,6 +23,10 @@ class Section(object):
         """
         return self._sectPr.orientation
 
+    @orientation.setter
+    def orientation(self, value):
+        self._sectPr.orientation = value
+
     @property
     def page_height(self):
         """

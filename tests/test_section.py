@@ -47,6 +47,11 @@ class DescribeSection(object):
         section, expected_orientation = orientation_get_fixture
         assert section.orientation is expected_orientation
 
+    def it_can_change_its_orientation(self, orientation_set_fixture):
+        section, new_orientation, expected_xml = orientation_set_fixture
+        section.orientation = new_orientation
+        assert section._sectPr.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -61,6 +66,21 @@ class DescribeSection(object):
         sectPr = self.sectPr_bldr(pgSz_bldr).element
         section = Section(sectPr)
         return section, expected_orientation
+
+    @pytest.fixture(params=[
+        (WD_ORIENT.LANDSCAPE, 'landscape'),
+        (WD_ORIENT.PORTRAIT,  None),
+        (None,                None),
+    ])
+    def orientation_set_fixture(self, request):
+        new_orientation, expected_orient_val = request.param
+        # section ----------------------
+        sectPr = self.sectPr_bldr().element
+        section = Section(sectPr)
+        # expected_xml -----------------
+        pgSz_bldr = self.pgSz_bldr(orient=expected_orient_val)
+        expected_xml = self.sectPr_bldr(pgSz_bldr).xml()
+        return section, new_orientation, expected_xml
 
     @pytest.fixture(params=[
         (True,  2880, Inches(2)),
