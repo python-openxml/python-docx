@@ -153,6 +153,66 @@ class DescribeDocumentPart(object):
         return document_part, rows, cols, body_, table_
 
     @pytest.fixture
+    def document_blob_fixture(self, request, serialize_part_xml_):
+        document_elm = instance_mock(request, CT_Document)
+        document_part = DocumentPart(None, None, document_elm, None)
+        return document_part, document_elm, serialize_part_xml_
+
+    @pytest.fixture
+    def document_body_fixture(self, request, _Body_):
+        document_elm = (
+            a_document().with_nsdecls().with_child(
+                a_body())
+        ).element
+        body_elm = document_elm[0]
+        document = DocumentPart(None, None, document_elm, None)
+        return document, _Body_, body_elm
+
+    @pytest.fixture
+    def inline_shapes_fixture(self, request, InlineShapes_):
+        document_elm = (
+            a_document().with_nsdecls().with_child(
+                a_body())
+        ).element
+        body_elm = document_elm[0]
+        document = DocumentPart(None, None, document_elm, None)
+        return document, InlineShapes_, body_elm
+
+    @pytest.fixture(params=[
+        ((), 1), ((1,), 2), ((2,), 1), ((1, 2, 3), 4), ((1, 2, 4), 3),
+        ((0, 0), 1), ((0, 0, 1, 3), 2), (('foo', 1, 2), 3), ((1, 'bar'), 2)
+    ])
+    def next_id_fixture(self, request):
+        existing_ids, expected_id = request.param
+        document_elm = a_document().with_nsdecls().element
+        for n in existing_ids:
+            p = a_p().with_nsdecls().element
+            p.set('id', str(n))
+            document_elm.append(p)
+        document = DocumentPart(None, None, document_elm, None)
+        return document, expected_id
+
+    @pytest.fixture
+    def paragraphs_fixture(self, document_part_body_, body_, paragraphs_):
+        document_part = DocumentPart(None, None, None, None)
+        body_.paragraphs = paragraphs_
+        return document_part, paragraphs_
+
+    @pytest.fixture
+    def sections_fixture(self, request, Sections_):
+        document_elm = a_document().with_nsdecls().element
+        document = DocumentPart(None, None, document_elm, None)
+        return document, document_elm, Sections_
+
+    @pytest.fixture
+    def tables_fixture(self, document_part_body_, body_, tables_):
+        document_part = DocumentPart(None, None, None, None)
+        body_.tables = tables_
+        return document_part, tables_
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
     def _Body_(self, request):
         return class_mock(request, 'docx.parts.document._Body')
 
@@ -174,22 +234,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def document(self):
         return DocumentPart(None, None, None, None)
-
-    @pytest.fixture
-    def document_blob_fixture(self, request, serialize_part_xml_):
-        document_elm = instance_mock(request, CT_Document)
-        document_part = DocumentPart(None, None, document_elm, None)
-        return document_part, document_elm, serialize_part_xml_
-
-    @pytest.fixture
-    def document_body_fixture(self, request, _Body_):
-        document_elm = (
-            a_document().with_nsdecls().with_child(
-                a_body())
-        ).element
-        body_elm = document_elm[0]
-        document = DocumentPart(None, None, document_elm, None)
-        return document, _Body_, body_elm
 
     @pytest.fixture
     def document_part_(self, request):
@@ -239,30 +283,6 @@ class DescribeDocumentPart(object):
         return class_mock(request, 'docx.parts.document.InlineShapes')
 
     @pytest.fixture
-    def inline_shapes_fixture(self, request, InlineShapes_):
-        document_elm = (
-            a_document().with_nsdecls().with_child(
-                a_body())
-        ).element
-        body_elm = document_elm[0]
-        document = DocumentPart(None, None, document_elm, None)
-        return document, InlineShapes_, body_elm
-
-    @pytest.fixture(params=[
-        ((), 1), ((1,), 2), ((2,), 1), ((1, 2, 3), 4), ((1, 2, 4), 3),
-        ((0, 0), 1), ((0, 0, 1, 3), 2), (('foo', 1, 2), 3), ((1, 'bar'), 2)
-    ])
-    def next_id_fixture(self, request):
-        existing_ids, expected_id = request.param
-        document_elm = a_document().with_nsdecls().element
-        for n in existing_ids:
-            p = a_p().with_nsdecls().element
-            p.set('id', str(n))
-            document_elm.append(p)
-        document = DocumentPart(None, None, document_elm, None)
-        return document, expected_id
-
-    @pytest.fixture
     def parse_xml_(self, request):
         return function_mock(request, 'docx.parts.document.parse_xml')
 
@@ -277,12 +297,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def paragraphs_(self, request):
         return instance_mock(request, list)
-
-    @pytest.fixture
-    def paragraphs_fixture(self, document_part_body_, body_, paragraphs_):
-        document_part = DocumentPart(None, None, None, None)
-        body_.paragraphs = paragraphs_
-        return document_part, paragraphs_
 
     @pytest.fixture
     def part_load_fixture(
@@ -312,12 +326,6 @@ class DescribeDocumentPart(object):
         return class_mock(request, 'docx.parts.document.Sections')
 
     @pytest.fixture
-    def sections_fixture(self, request, Sections_):
-        document_elm = a_document().with_nsdecls().element
-        document = DocumentPart(None, None, document_elm, None)
-        return document, document_elm, Sections_
-
-    @pytest.fixture
     def serialize_part_xml_(self, request):
         return function_mock(
             request, 'docx.parts.document.serialize_part_xml'
@@ -330,12 +338,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def tables_(self, request):
         return instance_mock(request, list)
-
-    @pytest.fixture
-    def tables_fixture(self, document_part_body_, body_, tables_):
-        document_part = DocumentPart(None, None, None, None)
-        body_.tables = tables_
-        return document_part, tables_
 
 
 class Describe_Body(object):
