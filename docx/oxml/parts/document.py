@@ -41,7 +41,11 @@ class CT_Body(BaseOxmlElement):
         sectPr in this case since we're always working at the end of the
         block content.
         """
-        raise NotImplementedError
+        sentinel_sectPr = self.get_or_add_sectPr()
+        cloned_sectPr = sentinel_sectPr.clone()
+        p = self.add_p()
+        p.set_sectPr(cloned_sectPr)
+        return sentinel_sectPr
 
     def _insert_p(self, p):
         return self._append_blocklevelelt(p)

@@ -32,6 +32,15 @@ class CT_P(BaseOxmlElement):
         self.insert(0, pPr)
         return pPr
 
+    def set_sectPr(self, sectPr):
+        """
+        Unconditionally replace or add *sectPr* as a grandchild in the
+        correct sequence.
+        """
+        pPr = self.get_or_add_pPr()
+        pPr._remove_sectPr()
+        pPr._insert_sectPr(sectPr)
+
     @property
     def style(self):
         """
@@ -70,6 +79,7 @@ class CT_PPr(BaseOxmlElement):
     )
     pStyle = ZeroOrOne('w:pStyle')
     numPr = ZeroOrOne('w:numPr', successors=__child_sequence__[7:])
+    sectPr = ZeroOrOne('w:sectPr', successors=('w:pPrChange',))
 
     def _insert_pStyle(self, pStyle):
         self.insert(0, pStyle)

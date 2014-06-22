@@ -4,6 +4,10 @@
 Section-related custom element classes.
 """
 
+from __future__ import absolute_import, print_function
+
+from copy import deepcopy
+
 from ..enum.section import WD_ORIENTATION, WD_SECTION_START
 from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
@@ -70,6 +74,16 @@ class CT_SectPr(BaseOxmlElement):
     def bottom_margin(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.bottom = value
+
+    def clone(self):
+        """
+        Return an exact duplicate of this ``<w:sectPr>`` element tree
+        suitable for use in adding a section break. All rsid* attributes are
+        removed from the root ``<w:sectPr>`` element.
+        """
+        clone_sectPr = deepcopy(self)
+        clone_sectPr.attrib.clear()
+        return clone_sectPr
 
     @property
     def footer(self):

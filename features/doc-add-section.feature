@@ -4,7 +4,6 @@ Feature: Add a document section
   I need a way to add a new section to a document
 
 
-  @wip
   Scenario: Add a landscape section to a portrait document
      Given a single-section document having portrait layout
       When I add an even-page section to the document
