@@ -43,7 +43,9 @@ class DocumentPart(Part):
         Return a |Section| object representing a new section added at the end
         of the document.
         """
-        raise NotImplementedError
+        new_sectPr = self._element.body.add_section_break()
+        new_sectPr.start_type = start_type
+        return Section(new_sectPr)
 
     def add_table(self, rows, cols):
         """

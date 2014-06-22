@@ -33,6 +33,16 @@ class CT_Body(BaseOxmlElement):
     p = ZeroOrMore('w:p', successors=('w:sectPr',))
     tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
 
+    def add_section_break(self):
+        """
+        Return the current ``<w:sectPr>`` element after adding a clone of it
+        in a new ``<w:p>`` element appended to the block content elements.
+        Note that the "current" ``<w:sectPr>`` will always be the sentinel
+        sectPr in this case since we're always working at the end of the
+        block content.
+        """
+        raise NotImplementedError
+
     def _insert_p(self, p):
         return self._append_blocklevelelt(p)
 
