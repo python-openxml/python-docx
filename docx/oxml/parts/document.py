@@ -5,7 +5,6 @@ Custom element classes that correspond to the document part, e.g.
 <w:document>.
 """
 
-from ..ns import qn
 from ..table import CT_Tbl
 from ..xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
 
@@ -32,6 +31,7 @@ class CT_Body(BaseOxmlElement):
     """
     p = ZeroOrMore('w:p', successors=('w:sectPr',))
     tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
+    sectPr = ZeroOrOne('w:sectPr', successors=())
 
     def add_section_break(self):
         """
@@ -57,7 +57,7 @@ class CT_Body(BaseOxmlElement):
         Remove all content child elements from this <w:body> element. Leave
         the <w:sectPr> element if it is present.
         """
-        if self._sentinel_sectPr is not None:
+        if self.sectPr is not None:
             content_elms = self[:-1]
         else:
             content_elms = self[:]
@@ -69,25 +69,9 @@ class CT_Body(BaseOxmlElement):
         Return *block_level_elt* after appending it to end of
         EG_BlockLevelElts sequence.
         """
-        sentinel_sectPr = self._sentinel_sectPr
-        if sentinel_sectPr is not None:
-            sentinel_sectPr.addprevious(block_level_elt)
+        sectPr = self.sectPr
+        if sectPr is not None:
+            sectPr.addprevious(block_level_elt)
         else:
             self.append(block_level_elt)
         return block_level_elt
-
-    @property
-    def _sentinel_sectPr(self):
-        """
-        Return ``<w:sectPr>`` element appearing as last child, or None if not
-        found. Note that the ``<w:sectPr>`` element can also occur earlier in
-        the body; here we're only interested in one occuring as the last
-        child.
-        """
-        if len(self) == 0:
-            sentinel_sectPr = None
-        elif self[-1].tag != qn('w:sectPr'):
-            sentinel_sectPr = None
-        else:
-            sentinel_sectPr = self[-1]
-        return sentinel_sectPr
