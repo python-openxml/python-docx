@@ -167,6 +167,10 @@ class DescribeDocument(object):
 
     # fixtures -------------------------------------------------------
 
+    @pytest.fixture
+    def add_empty_paragraph_fixture(self, document, document_part_, p_):
+        return document, document_part_, p_
+
     @pytest.fixture(params=[0, 1, 2, 5, 9])
     def add_heading_fixture(self, request, document, add_paragraph_, p_):
         level = request.param
@@ -175,18 +179,8 @@ class DescribeDocument(object):
         return document, add_paragraph_, p_, text, level, style
 
     @pytest.fixture
-    def add_empty_paragraph_fixture(self, document, document_part_, p_):
-        return document, document_part_, p_
-
-    @pytest.fixture
     def add_page_break_fixture(self, document, document_part_, p_, r_):
         return document, document_part_, p_, r_
-
-    @pytest.fixture
-    def add_paragraph_(self, request, p_):
-        return method_mock(
-            request, Document, 'add_paragraph', return_value=p_
-        )
 
     @pytest.fixture(params=[
         (None, None,  200,  100),
@@ -226,6 +220,41 @@ class DescribeDocument(object):
         return document, text, p_, r_
 
     @pytest.fixture
+    def init_fixture(self, docx_, open_):
+        return docx_, open_
+
+    @pytest.fixture
+    def num_part_get_fixture(self, document, document_part_, numbering_part_):
+        document_part_.part_related_by.return_value = numbering_part_
+        return document, document_part_, numbering_part_
+
+    @pytest.fixture
+    def open_fixture(self, docx_, Package_, package_, document_part_):
+        return docx_, Package_, package_, document_part_
+
+    @pytest.fixture
+    def paragraphs_fixture(self, document, paragraphs_):
+        return document, paragraphs_
+
+    @pytest.fixture
+    def save_fixture(self, request, open_, package_):
+        file_ = instance_mock(request, str)
+        document = Document()
+        return document, package_, file_
+
+    @pytest.fixture
+    def tables_fixture(self, document, tables_):
+        return document, tables_
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def add_paragraph_(self, request, p_):
+        return method_mock(
+            request, Document, 'add_paragraph', return_value=p_
+        )
+
+    @pytest.fixture
     def default_docx_(self, request):
         return var_mock(request, 'docx.api._default_docx_path')
 
@@ -255,10 +284,6 @@ class DescribeDocument(object):
         return instance_mock(request, str)
 
     @pytest.fixture
-    def init_fixture(self, docx_, open_):
-        return docx_, open_
-
-    @pytest.fixture
     def inline_shapes_(self, request):
         return instance_mock(request, InlineShapes)
 
@@ -267,11 +292,6 @@ class DescribeDocument(object):
             self, document, NumberingPart_, document_part_, numbering_part_):
         document_part_.part_related_by.side_effect = KeyError
         return document, NumberingPart_, document_part_, numbering_part_
-
-    @pytest.fixture
-    def num_part_get_fixture(self, document, document_part_, numbering_part_):
-        document_part_.part_related_by.return_value = numbering_part_
-        return document, document_part_, numbering_part_
 
     @pytest.fixture
     def NumberingPart_(self, request, numbering_part_):
@@ -289,10 +309,6 @@ class DescribeDocument(object):
             request, Document, '_open',
             return_value=(document_part_, package_)
         )
-
-    @pytest.fixture
-    def open_fixture(self, docx_, Package_, package_, document_part_):
-        return docx_, Package_, package_, document_part_
 
     @pytest.fixture
     def p_(self, request, r_):
@@ -317,18 +333,8 @@ class DescribeDocument(object):
         return instance_mock(request, list)
 
     @pytest.fixture
-    def paragraphs_fixture(self, document, paragraphs_):
-        return document, paragraphs_
-
-    @pytest.fixture
     def r_(self, request):
         return instance_mock(request, Run)
-
-    @pytest.fixture
-    def save_fixture(self, request, open_, package_):
-        file_ = instance_mock(request, str)
-        document = Document()
-        return document, package_, file_
 
     @pytest.fixture
     def StylesPart_(self, request, styles_part_):
@@ -358,7 +364,3 @@ class DescribeDocument(object):
     @pytest.fixture
     def tables_(self, request):
         return instance_mock(request, list)
-
-    @pytest.fixture
-    def tables_fixture(self, document, tables_):
-        return document, tables_
