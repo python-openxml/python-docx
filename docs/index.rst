@@ -4,7 +4,8 @@ python-docx
 
 Release v\ |version| (:ref:`Installation <install>`)
 
-.. include:: ../README.rst
+*python-docx* is a Python library for creating and updating Microsoft Word
+(.docx) files.
 
 
 What it can do

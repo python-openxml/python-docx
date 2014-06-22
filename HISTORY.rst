@@ -3,6 +3,15 @@
 Release History
 ---------------
 
+0.6.0 (2014-06-22)
+++++++++++++++++++
+
+- Add feature #15: section page size
+- Add feature #66: add section
+- Add page margins and page orientation properties on Section
+- Major refactoring of oxml layer
+
+
 0.5.3 (2014-05-10)
 ++++++++++++++++++
 
