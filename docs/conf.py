@@ -77,7 +77,7 @@ rst_epilog = """
 
 .. |_Columns| replace:: :class:`_Columns`
 
-.. |Document| replace:: :class:`Document`
+.. |Document| replace:: :class:`.Document`
 
 .. |docx| replace:: ``python-docx``
 
@@ -117,7 +117,7 @@ rst_epilog = """
 
 .. |Sections| replace:: :class:`.Sections`
 
-.. |StylesPart| replace:: :class:`StylesPart`
+.. |StylesPart| replace:: :class:`.StylesPart`
 
 .. |Table| replace:: :class:`.Table`
 

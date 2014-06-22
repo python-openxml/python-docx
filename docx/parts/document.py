@@ -239,7 +239,7 @@ class InlineShapes(Parented):
 class Sections(Sequence):
     """
     Sequence of |Section| objects corresponding to the sections in the
-    document.
+    document. Supports ``len()``, iteration, and indexed access.
     """
     def __init__(self, document_elm):
         super(Sections, self).__init__()

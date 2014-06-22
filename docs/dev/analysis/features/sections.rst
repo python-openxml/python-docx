@@ -32,54 +32,6 @@ occur:
    element is changed to reflect the type chosen by the user from the UI.
 
 
-Candidate protocol
-------------------
-
-The following interactive session demonstrates the proposed protocol for
-inserting a section break, illustrating adding a landscape section after an
-existing portrait section::
-
-    >>> section_1 = document.sections[0]
-    >>> document.add_paragraph('This paragraph appears in section 1.')
-    >>> section_2 = document.add_section(WD_SECTION.EVEN_PAGE)
-    >>> section_2.orientation
-    PORTRAIT (0)
-    >>> section_2.orientation = WD_ORIENT.LANDSCAPE
-    >>> section_2.page_width = section_1.page_height
-    >>> section_2.page_height = section_1.page_width
-    >>> document.add_paragraph('This paragraph appears in section 2.')
-
-
-The following interactive session demonstrates the proposed protocol for
-setting section properties::
-
-    >>> sections = document.sections
-    >>> sections
-    <docx.parts.document.Sections object at 0x1deadbeef>
-    >>> len(sections)
-    3
-    >>> section = sections[-1]  # the sentinel section
-    >>> section
-    <docx.section.Section object at 0x1deadbeef>
-    >>> section.section_start
-    WD_SECTION.CONTINUOUS (0)
-    >>> page_setup = section.page_setup
-    >>> page_setup
-    <docx.section.PageSetup object at 0x1deadbeef>
-    >>> page_setup.page_width
-    7772400  # Inches(8.5)
-    >>> page_setup.page_height
-    10058400  # Inches(11)
-    >>> page_setup.orientation
-    WD_ORIENT.PORTRAIT
-    >>> page_setup.left_margin  # and .right_, .top_, .bottom_
-    914400
-    >>> page_setup.header_distance  # and .footer_distance
-    457200  # Inches(0.5)
-    >>> page_setup.gutter
-    0
-
-
 Word behavior
 -------------
 

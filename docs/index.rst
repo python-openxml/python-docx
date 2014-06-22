@@ -67,6 +67,7 @@ User Guide
    user/install
    user/quickstart
    user/documents
+   user/sections
    user/api-concepts
    user/styles
    user/shapes
@@ -82,6 +83,7 @@ API Documentation
    api/document
    api/table
    api/text
+   api/section
    api/shape
    api/shared
    api/enum/index

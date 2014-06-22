@@ -82,7 +82,8 @@ class Section(object):
     @property
     def orientation(self):
         """
-        Page orientation for this section, one of ``WD_ORIENT.PORTRAIT`` or
+        Member of the :ref:`WdOrientation` enumeration specifying the page
+        orientation for this section, one of ``WD_ORIENT.PORTRAIT`` or
         ``WD_ORIENT.LANDSCAPE``.
         """
         return self._sectPr.orientation
@@ -134,9 +135,10 @@ class Section(object):
     @property
     def start_type(self):
         """
-        The member of the ``WD_SECTION`` enumeration corresponding to the
-        initial break behavior of this section, e.g. ``WD_SECTION.ODD_PAGE``
-        if the section should begin on the next odd page.
+        The member of the :ref:`WdSectionStart` enumeration corresponding to
+        the initial break behavior of this section, e.g.
+        ``WD_SECTION.ODD_PAGE`` if the section should begin on the next odd
+        page.
         """
         return self._sectPr.start_type
 
