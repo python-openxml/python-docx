@@ -17,6 +17,7 @@ from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
+from docx.section import Section
 from docx.table import Table
 from docx.text import Paragraph, Run
 
@@ -95,6 +96,14 @@ class DescribeDocument(object):
         assert picture.width == expected_width
         assert picture.height == expected_height
         assert picture is picture_
+
+    def it_can_add_a_section(self, add_section_fixture):
+        document, start_type_, section_ = add_section_fixture
+        section = document.add_section(start_type_)
+        document._document_part.add_section.assert_called_once_with(
+            start_type_
+        )
+        assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
         document, rows, cols, style, document_part_, expected_style, table_ = (
@@ -201,6 +210,10 @@ class DescribeDocument(object):
         )
 
     @pytest.fixture
+    def add_section_fixture(self, document, start_type_, section_):
+        return document, start_type_, section_
+
+    @pytest.fixture
     def add_styled_paragraph_fixture(self, document, p_):
         style = 'foobaresque'
         return document, style, p_
@@ -269,11 +282,13 @@ class DescribeDocument(object):
         return Document()
 
     @pytest.fixture
-    def document_part_(self, request, p_, paragraphs_, table_, tables_):
+    def document_part_(
+            self, request, p_, paragraphs_, section_, table_, tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
         document_part_.add_paragraph.return_value = p_
+        document_part_.add_section.return_value = section_
         document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
         document_part_.tables = tables_
@@ -335,6 +350,14 @@ class DescribeDocument(object):
     @pytest.fixture
     def r_(self, request):
         return instance_mock(request, Run)
+
+    @pytest.fixture
+    def section_(self, request):
+        return instance_mock(request, Section)
+
+    @pytest.fixture
+    def start_type_(self, request):
+        return instance_mock(request, int)
 
     @pytest.fixture
     def StylesPart_(self, request, styles_part_):

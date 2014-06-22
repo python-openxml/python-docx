@@ -10,6 +10,7 @@ from __future__ import (
 
 from collections import Sequence
 
+from ..enum.section import WD_SECTION
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.oxml import serialize_part_xml
 from ..opc.package import Part
@@ -36,6 +37,13 @@ class DocumentPart(Part):
         Return a paragraph newly added to the end of body content.
         """
         return self.body.add_paragraph()
+
+    def add_section(self, start_type=WD_SECTION.NEW_PAGE):
+        """
+        Return a |Section| object representing a new section added at the end
+        of the document.
+        """
+        raise NotImplementedError
 
     def add_table(self, rows, cols):
         """

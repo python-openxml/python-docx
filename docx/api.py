@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
+from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.package import Package
@@ -99,6 +100,13 @@ class Document(object):
             picture.height = height
 
         return picture
+
+    def add_section(self, start_type=WD_SECTION.NEW_PAGE):
+        """
+        Return a |Section| object representing a new section added at the end
+        of the document.
+        """
+        return self._document_part.add_section(start_type)
 
     def add_table(self, rows, cols, style='LightShading-Accent1'):
         """
