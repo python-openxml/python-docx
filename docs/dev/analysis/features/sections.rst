@@ -9,32 +9,49 @@ from line, page, and column breaks. The former adds a ``<w:pPr><w:sectPr>``
 element to the last paragraph in the new section. The latter inserts
 a ``<w:br>`` element in a run.
 
+The last section in a document is specified by a ``<w:sectPr>`` element
+appearing as the last child of the ``<w:body>`` element. While this element
+is optional, it appears that Word creates it for all files. Since most files
+have only a single section, the most common case is where this is the only
+``<w:sectPr>`` element.
 
-Implementation notes
---------------------
+Additional sections are specified by a ``w:p/w:pPr/w:sectPr`` element in the
+last paragraph of the section. Any content in that paragraph is part of the
+section defined by its ``<w:sectPr>`` element. The subsequent section begins
+with the following paragraph.
 
-Implementing adding a section break should probably wait until after the
-ability to set at least a core subset of the section properties. First ones
-are probably:
+When a section break is inserted using the Word UI, the following steps
+occur:
 
-* page size 
-* margins
-
-The other thing it will entail is locating the next ``<w:sectPr>`` element in
-document order and copying its child elements.
-
-I'm thinking the sequence is:
-
-1. document.sections
-2. section page setup properties
-3. paragraph.make_section_break() (or whatever, something better perhaps)
+1. The next-occurring ``<w:sectPr>`` element is copied and added to the
+   current paragraph. (It would be interesting to see what happens when that
+   paragraph already has a ``<w:sectPr>`` element.)
+2. A new paragraph is inserted after the current paragraph. The text occuring
+   after the cursor position is moved to the new paragraph.
+3. The start-type (e.g. next page) of the next-occuring ``<w:sectPr>``
+   element is changed to reflect the type chosen by the user from the UI.
 
 
 Candidate protocol
 ------------------
 
 The following interactive session demonstrates the proposed protocol for
-working with sections::
+inserting a section break, illustrating adding a landscape section after an
+existing portrait section::
+
+    >>> section_1 = document.sections[0]
+    >>> document.add_paragraph('This paragraph appears in section 1.')
+    >>> section_2 = document.add_section(WD_SECTION.EVEN_PAGE)
+    >>> section_2.orientation
+    PORTRAIT (0)
+    >>> section_2.orientation = WD_ORIENT.LANDSCAPE
+    >>> section_2.page_width = section_1.page_height
+    >>> section_2.page_height = section_1.page_width
+    >>> document.add_paragraph('This paragraph appears in section 2.')
+
+
+The following interactive session demonstrates the proposed protocol for
+setting section properties::
 
     >>> sections = document.sections
     >>> sections
@@ -66,81 +83,161 @@ working with sections::
 Word behavior
 -------------
 
-When inserting a section break in Word, there is no dialog box presented and no
-parameters are supplied. Word simply copies the section details from the
-current section (the next ``<w:sectPr>`` element in the document) to provide
-the starting point. Experimentation would be required to determine exactly what
-items are copied, but it at least includes the page size, margins, and column
-spacing.
+* A paragraph containing a section break (<w:sectPr> element) does not
+  produce a ¶ glyph in the Word UI.
+* The section break indicator/double-line appears directly after the text of
+  the paragraph in which the <w:sectPr> appears. If the section break
+  paragraph has no text, the indicator line appears immediately after the
+  paragraph mark of the prior paragraph.
+
+
+Before and after analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. highlight:: xml
+
+Baseline document containing two paragraphs::
+
+  <w:body>
+    <w:p>
+      <w:r>
+        <w:t>Paragraph 1</w:t>
+      </w:r>
+    </w:p>
+    <w:p>
+      <w:r>
+        <w:t>Paragraph 2</w:t>
+      </w:r>
+    </w:p>
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800"
+               w:header="720" w:footer="720" w:gutter="0"/>
+      <w:cols w:space="720"/>
+      <w:docGrid w:linePitch="360"/>
+    </w:sectPr>
+  </w:body>
+
+
+Odd-page section inserted before paragraph mark in Paragraph 1::
+
+  <w:body>
+    <w:p>
+      <w:pPr>
+        <w:sectPr>
+          <w:pgSz w:w="12240" w:h="15840"/>
+          <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800"
+                   w:header="720" w:footer="720" w:gutter="0"/>
+          <w:cols w:space="720"/>
+          <w:docGrid w:linePitch="360"/>
+        </w:sectPr>
+      </w:pPr>
+      <w:r>
+        <w:t>Paragraph 1</w:t>
+      </w:r>
+    </w:p>
+    <w:p/>
+    <w:p>
+      <w:r>
+        <w:t>Paragraph 2</w:t>
+      </w:r>
+    </w:p>
+    <w:sectPr w:rsidR="00F039D0" w:rsidSect="006006E7">
+      <w:type w:val="oddPage"/>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800"
+               w:header="720" w:footer="720" w:gutter="0"/>
+      <w:cols w:space="720"/>
+      <w:docGrid w:linePitch="360"/>
+    </w:sectPr>
+  </w:body>
+
+UI shows empty ¶ mark in first position of new next page. Section break
+indicator appears directly after Paragraph 1 text, with no intervening
+¶ mark.
+
+
+Even-page section break inserted before first character in Paragraph 2::
+
+  <w:body>
+    <w:p>
+      <w:r>
+        <w:t>Paragraph 1</w:t>
+      </w:r>
+    </w:p>
+    <w:p>
+      <w:pPr>
+        <w:sectPr>
+          <w:type w:val="oddPage"/>
+          <w:pgSz w:w="12240" w:h="15840"/>
+          <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800"
+                   w:header="720" w:footer="720" w:gutter="0"/>
+          <w:cols w:space="720"/>
+          <w:docGrid w:linePitch="360"/>
+        </w:sectPr>
+      </w:pPr>
+    </w:p>
+    <w:p>
+      <w:r>
+        <w:lastRenderedPageBreak/>
+        <w:t>Paragraph 2</w:t>
+      </w:r>
+    </w:p>
+    <w:sectPr>
+      <w:type w:val="evenPage"/>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800"
+               w:header="720" w:footer="720" w:gutter="0"/>
+      <w:cols w:space="720"/>
+      <w:docGrid w:linePitch="360"/>
+    </w:sectPr>
+  </w:body>
 
 
 Enumerations
 ------------
 
-* `WdSectionStart Enumeration on MSDN`_
+WD_SECTION_START
+~~~~~~~~~~~~~~~~
+
+alias: **WD_SECTION**
+
+`WdSectionStart Enumeration on MSDN`_
 
 .. _WdSectionStart Enumeration on MSDN:
    http://msdn.microsoft.com/en-us/library/office/bb238171.aspx
 
-::
-
-    @alias(WD_SECTION)
-    class WD_SECTION_START(Enumeration):
-
 CONTINUOUS (0)
     Continuous section break.
 
-EVENPAGE (3)
-    Even pages section break.
-
-NEWCOLUMN (1)
+NEW_COLUMN (1)
     New column section break.
 
-NEWPAGE (2)
+NEW_PAGE (2)
     New page section break.
 
-ODDPAGE (4)
+EVEN_PAGE (3)
+    Even pages section break.
+
+ODD_PAGE (4)
     Odd pages section break.
 
 
-* `WdOrientation Enumeration on MSDN`_
+WD_ORIENTATION
+~~~~~~~~~~~~~~
+
+alias: **WD_ORIENT**
+
+`WdOrientation Enumeration on MSDN`_
 
 .. _WdOrientation Enumeration on MSDN:
    http://msdn.microsoft.com/en-us/library/office/ff837902.aspx
-
-::
-
-    @alias(WD_ORIENT)
-    class WD_ORIENTATION(Enumeration):
 
 LANDSCAPE (1)
     Landscape orientation.
 
 PORTRAIT (0)
     Portrait orientation.
-
-
-Specimen XML
-------------
-
-.. highlight:: xml
-
-Inserting a section break (next page) produces this XML::
-
-    <w:p>
-      <w:pPr>
-        <w:sectPr>
-          <w:type w:val="oddPage"/>
-          <w:pgSz w:w="12240" w:h="15840"/>
-          <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
-          <w:cols w:space="720"/>
-          <w:docGrid w:linePitch="360"/>
-        </w:sectPr>
-      </w:pPr>
-      <w:r>
-        <w:t>Text before section break insertion point}</w:t>
-      </w:r>
-    </w:p>
 
 
 Schema excerpt
@@ -152,42 +249,9 @@ Schema excerpt
 
   <xsd:complexType name="CT_PPr">  <!-- denormalized -->
     <xsd:sequence>
-      <xsd:element name="pStyle"              type="CT_String"           minOccurs="0"/>
-      <xsd:element name="keepNext"            type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="keepLines"           type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="pageBreakBefore"     type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="framePr"             type="CT_FramePr"          minOccurs="0"/>
-      <xsd:element name="widowControl"        type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="numPr"               type="CT_NumPr"            minOccurs="0"/>
-      <xsd:element name="suppressLineNumbers" type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="pBdr"                type="CT_PBdr"             minOccurs="0"/>
-      <xsd:element name="shd"                 type="CT_Shd"              minOccurs="0"/>
-      <xsd:element name="tabs"                type="CT_Tabs"             minOccurs="0"/>
-      <xsd:element name="suppressAutoHyphens" type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="kinsoku"             type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="wordWrap"            type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="overflowPunct"       type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="topLinePunct"        type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="autoSpaceDE"         type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="autoSpaceDN"         type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="bidi"                type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="adjustRightInd"      type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="snapToGrid"          type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="spacing"             type="CT_Spacing"          minOccurs="0"/>
-      <xsd:element name="ind"                 type="CT_Ind"              minOccurs="0"/>
-      <xsd:element name="contextualSpacing"   type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="mirrorIndents"       type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="suppressOverlap"     type="CT_OnOff"            minOccurs="0"/>
-      <xsd:element name="jc"                  type="CT_Jc"               minOccurs="0"/>
-      <xsd:element name="textDirection"       type="CT_TextDirection"    minOccurs="0"/>
-      <xsd:element name="textAlignment"       type="CT_TextAlignment"    minOccurs="0"/>
-      <xsd:element name="textboxTightWrap"    type="CT_TextboxTightWrap" minOccurs="0"/>
-      <xsd:element name="outlineLvl"          type="CT_DecimalNumber"    minOccurs="0"/>
-      <xsd:element name="divId"               type="CT_DecimalNumber"    minOccurs="0"/>
-      <xsd:element name="cnfStyle"            type="CT_Cnf"              minOccurs="0"/>
-      <xsd:element name="rPr"                 type="CT_ParaRPr"          minOccurs="0"/>
-      <xsd:element name="sectPr"              type="CT_SectPr"           minOccurs="0"/>
-      <xsd:element name="pPrChange"           type="CT_PPrChange"        minOccurs="0"/>
+      <!-- 34 others ... -->
+      <xsd:element name="sectPr"    type="CT_SectPr"    minOccurs="0"/>
+      <xsd:element name="pPrChange" type="CT_PPrChange" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>
 
