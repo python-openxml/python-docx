@@ -8,8 +8,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from mock import call, Mock, patch
-
 from docx.opc.constants import (
     CONTENT_TYPE as CT, RELATIONSHIP_TARGET_MODE as RTM
 )
@@ -22,8 +20,8 @@ from docx.opc.pkgreader import (
 
 from .unitdata.types import a_Default, a_Types, an_Override
 from ..unitutil import (
-    initializer_mock, class_mock, function_mock, instance_mock, loose_mock,
-    method_mock
+    call, class_mock, function_mock, initializer_mock, instance_mock,
+    loose_mock, method_mock, Mock, patch
 )
 
 

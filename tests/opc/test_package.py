@@ -8,8 +8,6 @@ from __future__ import absolute_import
 
 import pytest
 
-from mock import call, Mock, patch, PropertyMock
-
 from docx.opc.oxml import CT_Relationships
 from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.package import (
@@ -19,8 +17,8 @@ from docx.opc.package import (
 from docx.opc.pkgreader import PackageReader
 
 from ..unitutil import (
-    cls_attr_mock, class_mock, function_mock, instance_mock, loose_mock,
-    method_mock
+    call, class_mock, cls_attr_mock, function_mock, instance_mock,
+    loose_mock, method_mock, Mock, patch, PropertyMock
 )
 
 

@@ -5,8 +5,17 @@ Utility functions for unit testing
 """
 
 import os
+import sys
 
-from mock import create_autospec, Mock, patch, PropertyMock
+if sys.version_info >= (3, 3):
+    from unittest import mock  # noqa
+    from unittest.mock import call, MagicMock  # noqa
+    from unittest.mock import create_autospec, Mock, patch, PropertyMock
+else:
+    import mock  # noqa
+    from mock import call, MagicMock  # noqa
+    from mock import create_autospec, Mock, patch, PropertyMock
+
 
 from docx.oxml.xmlchemy import serialize_for_reading
 

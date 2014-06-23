@@ -8,8 +8,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from mock import Mock
-
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.opc.package import PartFactory
 from docx.opc.packuri import PackURI
@@ -32,7 +30,7 @@ from ..oxml.unitdata.table import (
 from ..oxml.unitdata.text import a_p, a_pPr, a_sectPr, an_r
 from ..unitutil import (
     function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
-    method_mock, property_mock
+    method_mock, Mock, property_mock
 )
 
 

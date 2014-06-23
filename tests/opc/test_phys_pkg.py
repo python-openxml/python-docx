@@ -14,7 +14,6 @@ except ImportError:
 import hashlib
 import pytest
 
-from mock import Mock
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from docx.opc.exceptions import PackageNotFoundError
@@ -23,7 +22,7 @@ from docx.opc.phys_pkg import (
     _DirPkgReader, PhysPkgReader, PhysPkgWriter, _ZipPkgReader, _ZipPkgWriter
 )
 
-from ..unitutil import absjoin, class_mock, loose_mock, test_file_dir
+from ..unitutil import absjoin, class_mock, loose_mock, Mock, test_file_dir
 
 
 test_docx_path = absjoin(test_file_dir, 'test.docx')

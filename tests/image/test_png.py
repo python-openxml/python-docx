@@ -8,8 +8,6 @@ from __future__ import absolute_import, print_function
 
 import pytest
 
-from mock import call
-
 from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, PNG_CHUNK_TYPE
 from docx.image.exceptions import InvalidImageStreamError
@@ -20,7 +18,8 @@ from docx.image.png import (
 )
 
 from ..unitutil import (
-    function_mock, class_mock, initializer_mock, instance_mock, method_mock
+    call, class_mock, function_mock, initializer_mock, instance_mock,
+    method_mock
 )
 
 

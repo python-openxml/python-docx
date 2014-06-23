@@ -8,8 +8,6 @@ from __future__ import absolute_import, print_function
 
 import pytest
 
-from mock import call
-
 from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
@@ -19,8 +17,8 @@ from docx.image.tiff import (
 )
 
 from ..unitutil import (
-    function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
-    method_mock
+    call, class_mock, function_mock, initializer_mock, instance_mock,
+    loose_mock, method_mock
 )
 
 

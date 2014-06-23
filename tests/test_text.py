@@ -14,15 +14,13 @@ from docx.text import Paragraph, Run
 
 import pytest
 
-from mock import call, Mock
-
 from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
     a_snapToGrid, a_specVanish, a_strike, a_t, a_u, a_vanish, a_webHidden,
     an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
     an_r, an_rPr, an_rStyle, an_rtl
 )
-from .unitutil import class_mock, instance_mock
+from .unitutil import call, class_mock, instance_mock, Mock
 
 
 class DescribeParagraph(object):

@@ -8,14 +8,14 @@ from __future__ import absolute_import
 
 import pytest
 
-from mock import call, Mock, patch, PropertyMock
-
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.oxml import CT_Relationships
 from docx.opc.package import Part, _Relationship, Relationships
 from docx.opc.packuri import PackURI
 
-from ..unitutil import class_mock, instance_mock, loose_mock
+from ..unitutil import (
+    call, class_mock, instance_mock, loose_mock, Mock, patch, PropertyMock
+)
 
 
 class Describe_Relationship(object):
