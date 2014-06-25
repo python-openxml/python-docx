@@ -4,7 +4,7 @@
 Step implementations for paragraph-related features
 """
 
-from behave import then, when
+from behave import given, then, when
 
 from docx import Document
 
@@ -12,6 +12,17 @@ from helpers import saved_docx_path, test_text
 
 
 TEST_STYLE = 'Heading1'
+
+
+# given ===================================================
+
+@given('a document containing three paragraphs')
+def given_a_document_containing_three_paragraphs(context):
+    document = Document()
+    document.add_paragraph('foo')
+    document.add_paragraph('bar')
+    document.add_paragraph('baz')
+    context.document = document
 
 
 # when ====================================================
@@ -26,6 +37,12 @@ def when_add_new_text_to_run(context):
     context.r.add_text(test_text)
 
 
+@when('I insert a paragraph above the second paragraph')
+def when_I_insert_a_paragraph_above_the_second_paragraph(context):
+    paragraph = context.document.paragraphs[1]
+    paragraph.insert_paragraph_before('foobar', 'Heading1')
+
+
 @when('I set the paragraph style')
 def when_I_set_the_paragraph_style(context):
     context.paragraph.add_run().add_text(test_text)
@@ -33,6 +50,11 @@ def when_I_set_the_paragraph_style(context):
 
 
 # then =====================================================
+
+@then('the document contains four paragraphs')
+def then_the_document_contains_four_paragraphs(context):
+    assert len(context.document.paragraphs) == 4
+
 
 @then('the document contains the text I added')
 def then_document_contains_text_I_added(context):
@@ -47,3 +69,15 @@ def then_document_contains_text_I_added(context):
 def then_the_paragraph_has_the_style_I_set(context):
     paragraph = Document(saved_docx_path).paragraphs[-1]
     assert paragraph.style == TEST_STYLE
+
+
+@then('the style of the second paragraph matches the style I set')
+def then_the_style_of_the_second_paragraph_matches_the_style_I_set(context):
+    second_paragraph = context.document.paragraphs[1]
+    assert second_paragraph.style == 'Heading1'
+
+
+@then('the text of the second paragraph matches the text I set')
+def then_the_text_of_the_second_paragraph_matches_the_text_I_set(context):
+    second_paragraph = context.document.paragraphs[1]
+    assert second_paragraph.text == 'foobar'
