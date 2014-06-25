@@ -71,6 +71,20 @@ class Paragraph(object):
             run.style = style
         return run
 
+    def insert_paragraph_before(self, text=None, style=None):
+        """
+        Return a newly created paragraph, inserted directly before this
+        paragraph, and having its text set to *text* and style set to
+        *style*.
+        """
+        p = self._p.add_p_before()
+        paragraph = Paragraph(p)
+        if text:
+            paragraph.add_run(text)
+        if style is not None:
+            paragraph.style = style
+        return paragraph
+
     @property
     def runs(self):
         """

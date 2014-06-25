@@ -9,7 +9,7 @@ from ..enum.text import WD_UNDERLINE
 from .ns import qn
 from .simpletypes import ST_BrClear, ST_BrType
 from .xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, OxmlElement, ZeroOrMore, ZeroOrOne
 )
 
 
@@ -31,6 +31,14 @@ class CT_P(BaseOxmlElement):
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)
         return pPr
+
+    def add_p_before(self):
+        """
+        Return a new ``<w:p>`` element inserted directly prior to this one.
+        """
+        new_p = OxmlElement('w:p')
+        self.addprevious(new_p)
+        return new_p
 
     def set_sectPr(self, sectPr):
         """

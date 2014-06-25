@@ -9,16 +9,18 @@ from __future__ import (
 )
 
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.oxml.ns import qn
 from docx.oxml.text import CT_P, CT_R
 from docx.text import Paragraph, Run
 
 import pytest
 
+from .oxml.parts.unitdata.document import a_body
 from .oxml.unitdata.text import (
-    a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_shadow, a_smallCaps,
-    a_snapToGrid, a_specVanish, a_strike, a_t, a_u, a_vanish, a_webHidden,
-    an_emboss, an_i, an_iCs, an_imprint, an_oMath, a_noProof, an_outline,
-    an_r, an_rPr, an_rStyle, an_rtl
+    a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_pPr, a_pStyle,
+    a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike, a_t, a_u,
+    a_vanish, a_webHidden, an_emboss, an_i, an_iCs, an_imprint, an_oMath,
+    a_noProof, an_outline, an_r, an_rPr, an_rStyle, an_rtl
 )
 from .unitutil import call, class_mock, instance_mock, Mock
 
@@ -62,6 +64,14 @@ class DescribeParagraph(object):
         p, expected_text = text_prop_fixture
         assert p.text == expected_text
 
+    def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
+        paragraph, text, style, body, expected_xml = insert_before_fixture
+        new_paragraph = paragraph.insert_paragraph_before(text, style)
+        assert isinstance(new_paragraph, Paragraph)
+        assert new_paragraph.text == text
+        assert new_paragraph.style == style
+        assert body.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -78,6 +88,26 @@ class DescribeParagraph(object):
             r_bldr.with_child(a_t().with_text(text))
         expected_xml = a_p().with_nsdecls().with_child(r_bldr).xml()
         return paragraph, text, style, expected_xml
+
+    @pytest.fixture
+    def insert_before_fixture(self):
+        text, style = 'foobar', 'Heading1'
+        body = (
+            a_body().with_nsdecls().with_child(
+                a_p())
+        ).element
+        p = body.find(qn('w:p'))
+        paragraph = Paragraph(p)
+        expected_xml = (
+            a_body().with_nsdecls().with_child(
+                a_p().with_child(
+                    a_pPr().with_child(
+                        a_pStyle().with_val(style))).with_child(
+                    an_r().with_child(
+                        a_t().with_text(text)))).with_child(
+                a_p())
+        ).xml()
+        return paragraph, text, style, body, expected_xml
 
     # fixture components ---------------------------------------------
 
