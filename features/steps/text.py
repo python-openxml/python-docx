@@ -30,6 +30,14 @@ def given_a_run_having_bool_prop_set_on(context, bool_prop_name):
     context.run = run
 
 
+@given('a run having known text and formatting')
+def given_a_run_having_known_text_and_formatting(context):
+    run = Document().add_paragraph().add_run('foobar')
+    run.bold = True
+    run.italic = True
+    context.run = run
+
+
 @given('a run having {underline_type} underline')
 def given_a_run_having_underline_type(context, underline_type):
     run_idx = {
@@ -83,6 +91,11 @@ def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
     run = context.run
     setattr(run, bool_prop_name, value)
+
+
+@when('I clear the run')
+def when_I_clear_the_run(context):
+    context.run.clear()
 
 
 @when('I set the character style of the run to {char_style}')
@@ -151,9 +164,20 @@ def then_run_appears_without_bool_prop(context, boolean_prop_name):
     assert getattr(run, boolean_prop_name) is False
 
 
+@then('the run contains no text')
+def then_the_run_contains_no_text(context):
+    assert context.run.text == ''
+
+
 @then('the run contains the text I specified')
 def then_the_run_contains_the_text_I_specified(context):
     assert context.run.text == test_text
+
+
+@then('the run formatting is preserved')
+def then_the_run_formatting_is_preserved(context):
+    assert context.run.bold is True
+    assert context.run.italic is True
 
 
 @then('the run underline property value is {underline_value}')
