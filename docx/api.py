@@ -65,12 +65,12 @@ class Document(object):
         Return a paragraph newly added to the end of the document, populated
         with *text* and having paragraph style *style*.
         """
-        p = self._document_part.add_paragraph()
+        paragraph = self._document_part.add_paragraph()
         if text:
-            p.add_run(text)
+            paragraph.add_run(text)
         if style is not None:
-            p.style = style
-        return p
+            paragraph.style = style
+        return paragraph
 
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """

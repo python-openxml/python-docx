@@ -52,10 +52,12 @@ class DescribeDocument(object):
             Document._open(docx_)
 
     def it_can_add_a_heading(self, add_heading_fixture):
-        document, add_paragraph_, p_, text, level, style = add_heading_fixture
-        p = document.add_heading(text, level)
+        document, add_paragraph_, paragraph_, text, level, style = (
+            add_heading_fixture
+        )
+        paragraph = document.add_heading(text, level)
         add_paragraph_.assert_called_once_with(text, style)
-        assert p is p_
+        assert paragraph is paragraph_
 
     def it_should_raise_on_heading_level_out_of_range(self, document):
         with pytest.raises(ValueError):
@@ -64,28 +66,28 @@ class DescribeDocument(object):
             document.add_heading(level=10)
 
     def it_can_add_an_empty_paragraph(self, add_empty_paragraph_fixture):
-        document, document_part_, p_ = add_empty_paragraph_fixture
-        p = document.add_paragraph()
+        document, document_part_, paragraph_ = add_empty_paragraph_fixture
+        paragraph = document.add_paragraph()
         document_part_.add_paragraph.assert_called_once_with()
-        assert p is p_
+        assert paragraph is paragraph_
 
     def it_can_add_a_paragraph_of_text(self, add_text_paragraph_fixture):
-        document, text, p_ = add_text_paragraph_fixture
-        p = document.add_paragraph(text)
-        p.add_run.assert_called_once_with(text)
+        document, text = add_text_paragraph_fixture
+        paragraph = document.add_paragraph(text)
+        paragraph.add_run.assert_called_once_with(text)
 
     def it_can_add_a_styled_paragraph(self, add_styled_paragraph_fixture):
-        document, style, p_ = add_styled_paragraph_fixture
-        p = document.add_paragraph(style=style)
-        assert p.style == style
+        document, style = add_styled_paragraph_fixture
+        paragraph = document.add_paragraph(style=style)
+        assert paragraph.style == style
 
     def it_can_add_a_page_break(self, add_page_break_fixture):
-        document, document_part_, p_, r_ = add_page_break_fixture
-        p = document.add_page_break()
+        document, document_part_, paragraph_, run_ = add_page_break_fixture
+        paragraph = document.add_page_break()
         document_part_.add_paragraph.assert_called_once_with()
-        p_.add_run.assert_called_once_with()
-        r_.add_break.assert_called_once_with(WD_BREAK.PAGE)
-        assert p is p_
+        paragraph_.add_run.assert_called_once_with()
+        run_.add_break.assert_called_once_with(WD_BREAK.PAGE)
+        assert paragraph is paragraph_
 
     def it_can_add_a_picture(self, add_picture_fixture):
         (document, image_path, width, height, inline_shapes_, expected_width,
@@ -176,19 +178,22 @@ class DescribeDocument(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def add_empty_paragraph_fixture(self, document, document_part_, p_):
-        return document, document_part_, p_
+    def add_empty_paragraph_fixture(
+            self, document, document_part_, paragraph_):
+        return document, document_part_, paragraph_
 
     @pytest.fixture(params=[0, 1, 2, 5, 9])
-    def add_heading_fixture(self, request, document, add_paragraph_, p_):
+    def add_heading_fixture(
+            self, request, document, add_paragraph_, paragraph_):
         level = request.param
         text = 'Spam vs. Bacon'
         style = 'Title' if level == 0 else 'Heading%d' % level
-        return document, add_paragraph_, p_, text, level, style
+        return document, add_paragraph_, paragraph_, text, level, style
 
     @pytest.fixture
-    def add_page_break_fixture(self, document, document_part_, p_, r_):
-        return document, document_part_, p_, r_
+    def add_page_break_fixture(
+            self, document, document_part_, paragraph_, run_):
+        return document, document_part_, paragraph_, run_
 
     @pytest.fixture(params=[
         (None, None,  200,  100),
@@ -213,9 +218,9 @@ class DescribeDocument(object):
         return document, start_type_, section_
 
     @pytest.fixture
-    def add_styled_paragraph_fixture(self, document, p_):
+    def add_styled_paragraph_fixture(self, document):
         style = 'foobaresque'
-        return document, style, p_
+        return document, style
 
     @pytest.fixture(params=[None, 'LightShading-Accent1', 'foobar'])
     def add_table_fixture(self, request, document, document_part_, table_):
@@ -227,9 +232,9 @@ class DescribeDocument(object):
         )
 
     @pytest.fixture
-    def add_text_paragraph_fixture(self, document, p_):
+    def add_text_paragraph_fixture(self, document):
         text = 'foobar\rbarfoo'
-        return document, text, p_
+        return document, text
 
     @pytest.fixture
     def init_fixture(self, docx_, open_):
@@ -261,9 +266,9 @@ class DescribeDocument(object):
     # fixture components ---------------------------------------------
 
     @pytest.fixture
-    def add_paragraph_(self, request, p_):
+    def add_paragraph_(self, request, paragraph_):
         return method_mock(
-            request, Document, 'add_paragraph', return_value=p_
+            request, Document, 'add_paragraph', return_value=paragraph_
         )
 
     @pytest.fixture
@@ -282,11 +287,12 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def document_part_(
-            self, request, p_, paragraphs_, section_, table_, tables_):
+            self, request, paragraph_, paragraphs_, section_, table_,
+            tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
-        document_part_.add_paragraph.return_value = p_
+        document_part_.add_paragraph.return_value = paragraph_
         document_part_.add_section.return_value = section_
         document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
@@ -325,10 +331,10 @@ class DescribeDocument(object):
         )
 
     @pytest.fixture
-    def p_(self, request, r_):
-        p_ = instance_mock(request, Paragraph)
-        p_.add_run.return_value = r_
-        return p_
+    def paragraph_(self, request, run_):
+        paragraph_ = instance_mock(request, Paragraph)
+        paragraph_.add_run.return_value = run_
+        return paragraph_
 
     @pytest.fixture
     def Package_(self, request, package_):
@@ -347,7 +353,7 @@ class DescribeDocument(object):
         return instance_mock(request, list)
 
     @pytest.fixture
-    def r_(self, request):
+    def run_(self, request):
         return instance_mock(request, Run)
 
     @pytest.fixture
