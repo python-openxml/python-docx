@@ -74,8 +74,9 @@ class Paragraph(object):
     def insert_paragraph_before(self, text=None, style=None):
         """
         Return a newly created paragraph, inserted directly before this
-        paragraph, and having its text set to *text* and style set to
-        *style*.
+        paragraph. If *text* is supplied, the new paragraph contains that
+        text in a single run. If *style* is provided, that style is assigned
+        to the new paragraph.
         """
         p = self._p.add_p_before()
         paragraph = Paragraph(p)

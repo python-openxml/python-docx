@@ -23,7 +23,7 @@ Possible strategy:
 2. Move ``<w:rPr>`` child to new r element, if there is one
 3. Delete initial ``<w:r>``
 4. Set self._r of Run to new r element
-4. Return self
+5. Return self
 
 
 Schema excerpt

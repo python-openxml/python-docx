@@ -16,9 +16,9 @@ First thing you'll need is a document to work on. The easiest way is this::
     document = Document()
 
 This opens up a blank document based on the default "template", pretty much
-what you get when you start a new document in Word using the built-in defaults.
-You can open any Word document using |docx|, but we'll keep things simple for
-the moment.
+what you get when you start a new document in Word using the built-in
+defaults. You can open and work on an existing Word document using |docx|,
+but we'll keep things simple for the moment.
 
 
 Adding a paragraph
@@ -29,13 +29,23 @@ headings and list items like bullets.
 
 Here's the simplest way to add one::
 
-    p = document.add_paragraph('Lorem ipsum dolor sit amet.')
+    paragraph = document.add_paragraph('Lorem ipsum dolor sit amet.')
 
-This method returns a reference to the newly added paragraph, assigned to ``p``
-in this case. I'll be leaving that out in the following examples unless I have
-a need for it. In your code, often times you won't be doing anything with the
-item after you've added it, so there's not a lot of sense in keep a reference
-to it hanging around.
+This method returns a reference to a paragraph, newly added paragraph at the
+end of the document. The new paragraph reference is assigned to ``paragraph``
+in this case, but I'll be leaving that out in the following examples unless
+I have a need for it. In your code, often times you won't be doing anything
+with the item after you've added it, so there's not a lot of sense in keep
+a reference to it hanging around.
+
+It's also possible to use one paragraph as a "cursor" and insert a new
+paragraph directly above it::
+
+    prior_paragraph = paragraph.insert_paragraph_before('Lorem ipsum')
+
+This allows a paragraph to be inserted in the middle of a document, something
+that's often important when modifying an existing document rather than
+generating one from scratch.
 
 
 Adding a heading
@@ -218,8 +228,8 @@ This particular style causes the paragraph to appear as a bullet, a very handy
 thing. You can also apply a style afterward. These two lines are equivalent to
 the one above::
 
-    p = document.add_paragraph('Lorem ipsum dolor sit amet.')
-    p.style = 'ListBullet'
+    paragraph = document.add_paragraph('Lorem ipsum dolor sit amet.')
+    paragraph.style = 'ListBullet'
 
 The style is specified using its style ID, 'ListBullet' in this example.
 Generally, the style ID is formed by removing the spaces in the style name as
@@ -248,8 +258,8 @@ When you add a paragraph by providing text to the ``.add_paragraph()`` method,
 it gets put into a single run. You can add more using the ``.add_run()`` method
 on the paragraph::
 
-    p = document.add_paragraph('Lorem ipsum ')
-    p.add_run('dolor sit amet.')
+    paragraph = document.add_paragraph('Lorem ipsum ')
+    paragraph.add_run('dolor sit amet.')
 
 This produces a paragraph that looks just like one created from a single
 string. It's not apparent where paragraph text is broken into runs unless you
@@ -261,33 +271,33 @@ that one a few times :).
 |Run| objects have both a ``.bold`` and ``.italic`` property that allows you to
 set their value for a run::
 
-    p = document.add_paragraph('Lorem ipsum ')
-    r = p.add_run('dolor')
-    r.bold = True
-    p.add_run(' sit amet.')
+    paragraph = document.add_paragraph('Lorem ipsum ')
+    run = paragraph.add_run('dolor')
+    run.bold = True
+    paragraph.add_run(' sit amet.')
 
 which produces text that looks like this: 'Lorem ipsum **dolor** sit amet.'
 
 Note that you can set bold or italic right on the result of ``.add_run()`` if
 you don't need it for anything else::
 
-    p.add_run('dolor').bold = True
+    paragraph.add_run('dolor').bold = True
     
     # is equivalent to:
 
-    r = p.add_run('dolor')
-    r.bold = True
+    run = paragraph.add_run('dolor')
+    run.bold = True
 
-    # except you don't have a reference to `r` afterward
+    # except you don't have a reference to `run` afterward
     
 
 It's not necessary to provide text to the ``.add_paragraph()`` method. This can
 make your code simpler if you're building the paragraph up from runs anyway::
 
-    p = document.add_paragraph()
-    p.add_run('Lorem ipsum ')
-    p.add_run('dolor').bold = True
-    p.add_run(' sit amet.')
+    paragraph = document.add_paragraph()
+    paragraph.add_run('Lorem ipsum ')
+    paragraph.add_run('dolor').bold = True
+    paragraph.add_run(' sit amet.')
  
 
 Applying a character style
@@ -302,15 +312,15 @@ Like paragraph styles, a character style must already be defined in the document
 
 A character style can be specified when adding a new run::
 
-    p = document.add_paragraph('Normal text, ')
-    p.add_run('text with emphasis.', 'Emphasis')
+    paragraph = document.add_paragraph('Normal text, ')
+    paragraph.add_run('text with emphasis.', 'Emphasis')
 
 You can also apply a style to a run after it is created. This code produces
 the same result as the lines above::
 
-    p = document.add_paragraph('Normal text, ')
-    r = p.add_run('text with emphasis.')
-    r.style = 'Emphasis'
+    paragraph = document.add_paragraph('Normal text, ')
+    run = paragraph.add_run('text with emphasis.')
+    run.style = 'Emphasis'
 
 As with a paragraph style, the style ID is formed by removing the spaces in
 the name as it appears in the Word UI. So the style 'Subtle Emphasis' would
