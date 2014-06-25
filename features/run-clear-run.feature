@@ -4,7 +4,6 @@ Feature: Remove the content of a run
   I need a way to clear the content of a run
 
 
-  @wip
   Scenario: Clear run content
     Given a run having known text and formatting
      When I clear the run

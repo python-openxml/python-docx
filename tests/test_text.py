@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.oxml.text import CT_P, CT_R
 from docx.text import Paragraph, Run
@@ -210,6 +211,13 @@ class DescribeRun(object):
         run, expected_text = text_prop_fixture
         assert run.text == expected_text
 
+    def it_can_remove_its_content_while_preserving_formatting(
+            self, clear_fixture):
+        run, expected_xml = clear_fixture
+        _run = run.clear()
+        assert run._r.xml == expected_xml
+        assert _run is run
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -365,6 +373,22 @@ class DescribeRun(object):
             rPr_bldr.with_child(child_bldr)
         expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
         return run, bool_prop_name, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('bi', 'foobar'), ('bi', None), ('', 'foobar'), ('', None)
+    ])
+    def clear_fixture(self, request):
+        formatting, text = request.param
+        r = OxmlElement('w:r')
+        if 'b' in formatting:
+            r.get_or_add_rPr()._add_b().val = True
+        if 'i' in formatting:
+            r.get_or_add_rPr()._add_i().val = True
+        expected_xml = r.xml
+        if text is not None:
+            r.add_t(text)
+        run = Run(r)
+        return run, expected_xml
 
     @pytest.fixture(params=['Foobar', None])
     def style_get_fixture(self, request):

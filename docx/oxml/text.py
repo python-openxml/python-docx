@@ -149,6 +149,14 @@ class CT_R(BaseOxmlElement):
         drawing.append(inline_or_anchor)
         return drawing
 
+    def clear_content(self):
+        """
+        Remove all child elements except the ``<w:rPr>`` element if present.
+        """
+        content_child_elms = self[1:] if self.rPr is not None else self[:]
+        for child in content_child_elms:
+            self.remove(child)
+
     @property
     def style(self):
         """

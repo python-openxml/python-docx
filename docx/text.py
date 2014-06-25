@@ -172,6 +172,14 @@ class Run(object):
         """
         return 'b'
 
+    def clear(self):
+        """
+        Return reference to this run after removing all its content. All run
+        formatting is preserved.
+        """
+        self._r.clear_content()
+        return self
+
     @boolproperty
     def complex_script(self):
         """
