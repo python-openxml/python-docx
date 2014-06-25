@@ -12,18 +12,7 @@ main content child elements:
 * <w:br>
 * <w:drawing>
 * <w:tab>
-
-
-``Run.clear()`` design notes
-----------------------------
-
-Possible strategy:
-
-1. Insert new empty ``<w:r/>`` element before
-2. Move ``<w:rPr>`` child to new r element, if there is one
-3. Delete initial ``<w:r>``
-4. Set self._r of Run to new r element
-5. Return self
+* <w:cr>
 
 
 Schema excerpt
@@ -84,3 +73,5 @@ Schema excerpt
       <xsd:element name="lastRenderedPageBreak" type="CT_Empty"/>
     </xsd:choice>
   </xsd:group>
+
+  <xsd:complexType name="CT_Empty"/>

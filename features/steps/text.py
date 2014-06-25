@@ -86,6 +86,11 @@ def when_I_add_a_run_specifying_the_character_style_Emphasis(context):
     context.run = context.paragraph.add_run(test_text, 'Emphasis')
 
 
+@when('I add a tab')
+def when_I_add_a_tab(context):
+    context.run.add_tab()
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -195,3 +200,10 @@ def then_the_style_of_the_run_is_char_style(context, char_style):
         'None': None, 'Emphasis': 'Emphasis', 'Strong': 'Strong'
     }[char_style]
     assert context.run.style == expected_value
+
+
+@then('the tab appears at the end of the run')
+def then_the_tab_appears_at_the_end_of_the_run(context):
+    r = context.run._r
+    tab = r.find(qn('w:tab'))
+    assert tab is not None
