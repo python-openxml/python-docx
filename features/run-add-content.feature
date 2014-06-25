@@ -4,7 +4,6 @@ Feature: Add content to a run
   I need a way to add each of the run content elements to a run
 
 
-  @wip
   Scenario: Add a tab
     Given a run
      When I add a tab

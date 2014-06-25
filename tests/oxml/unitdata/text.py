@@ -14,6 +14,15 @@ class CT_BrBuilder(BaseBuilder):
     __attrs__ = ('w:type', 'w:clear')
 
 
+class CT_EmptyBuilder(BaseBuilder):
+    __nspfxs__ = ('w',)
+    __attrs__ = ()
+
+    def __init__(self, tag):
+        self.__tag__ = tag
+        super(CT_EmptyBuilder, self).__init__()
+
+
 class CT_PBuilder(BaseBuilder):
     __tag__ = 'w:p'
     __nspfxs__ = ('w',)
@@ -108,6 +117,10 @@ def a_specVanish():
 
 def a_strike():
     return CT_OnOffBuilder('w:strike')
+
+
+def a_tab():
+    return CT_EmptyBuilder('w:tab')
 
 
 def a_vanish():

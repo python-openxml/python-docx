@@ -151,6 +151,13 @@ class Run(object):
         if clear is not None:
             br.clear = clear
 
+    def add_tab(self):
+        """
+        Add a ``<w:tab/>`` element at the end of the run, which Word
+        interprets as a tab character.
+        """
+        self._r._add_tab()
+
     def add_text(self, text):
         """
         Add a text element to this run.

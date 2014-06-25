@@ -19,9 +19,9 @@ import pytest
 from .oxml.parts.unitdata.document import a_body
 from .oxml.unitdata.text import (
     a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_pPr, a_pStyle,
-    a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike, a_t, a_u,
-    a_vanish, a_webHidden, an_emboss, an_i, an_iCs, an_imprint, an_oMath,
-    a_noProof, an_outline, an_r, an_rPr, an_rStyle, an_rtl
+    a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike, a_t, a_tab,
+    a_u, a_vanish, a_webHidden, an_emboss, an_i, an_iCs, an_imprint,
+    an_oMath, a_noProof, an_outline, an_r, an_rPr, an_rStyle, an_rtl
 )
 from .unitutil import call, class_mock, instance_mock, Mock
 
@@ -207,6 +207,11 @@ class DescribeRun(object):
         run.add_break(break_type)
         assert run._r.xml == expected_xml
 
+    def it_can_add_a_tab(self, add_tab_fixture):
+        run, expected_xml = add_tab_fixture
+        run.add_tab()
+        assert run._r.xml == expected_xml
+
     def it_knows_the_text_it_contains(self, text_prop_fixture):
         run, expected_text = text_prop_fixture
         assert run.text == expected_text
@@ -240,6 +245,11 @@ class DescribeRun(object):
             br_bldr.with_clear(clear)
         expected_xml = an_r().with_nsdecls().with_child(br_bldr).xml()
         return run, break_type, expected_xml
+
+    @pytest.fixture
+    def add_tab_fixture(self, run):
+        expected_xml = an_r().with_nsdecls().with_child(a_tab()).xml()
+        return run, expected_xml
 
     @pytest.fixture(params=['foobar', ' foo bar', 'bar foo '])
     def add_text_fixture(self, request, run, Text_):

@@ -125,6 +125,7 @@ class CT_R(BaseOxmlElement):
     rPr = ZeroOrOne('w:rPr')
     t = ZeroOrMore('w:t')
     br = ZeroOrMore('w:br')
+    tab = ZeroOrMore('w:tab')
     drawing = ZeroOrMore('w:drawing')
 
     def _insert_rPr(self, rPr):
