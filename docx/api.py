@@ -67,8 +67,7 @@ class Document(object):
         """
         p = self._document_part.add_paragraph()
         if text:
-            r = p.add_run()
-            r.add_text(text)
+            p.add_run(text)
         if style is not None:
             p.style = style
         return p

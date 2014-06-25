@@ -70,10 +70,9 @@ class DescribeDocument(object):
         assert p is p_
 
     def it_can_add_a_paragraph_of_text(self, add_text_paragraph_fixture):
-        document, text, p_, r_ = add_text_paragraph_fixture
+        document, text, p_ = add_text_paragraph_fixture
         p = document.add_paragraph(text)
-        p.add_run.assert_called_once_with()
-        r_.add_text.assert_called_once_with(text)
+        p.add_run.assert_called_once_with(text)
 
     def it_can_add_a_styled_paragraph(self, add_styled_paragraph_fixture):
         document, style, p_ = add_styled_paragraph_fixture
@@ -228,9 +227,9 @@ class DescribeDocument(object):
         )
 
     @pytest.fixture
-    def add_text_paragraph_fixture(self, document, p_, r_):
+    def add_text_paragraph_fixture(self, document, p_):
         text = 'foobar\rbarfoo'
-        return document, text, p_, r_
+        return document, text, p_
 
     @pytest.fixture
     def init_fixture(self, docx_, open_):
