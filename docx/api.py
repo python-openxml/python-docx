@@ -63,7 +63,11 @@ class Document(object):
     def add_paragraph(self, text='', style=None):
         """
         Return a paragraph newly added to the end of the document, populated
-        with *text* and having paragraph style *style*.
+        with *text* and having paragraph style *style*. *text* can contain
+        tab (``\\t``) characters, which are converted to the appropriate XML
+        form for a tab. *text* can also include newline (``\\n``) or carriage
+        return (``\\r``) characters, each of which is converted to a line
+        break.
         """
         paragraph = self._document_part.add_paragraph()
         if text:

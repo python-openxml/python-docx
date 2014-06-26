@@ -61,12 +61,16 @@ class Paragraph(object):
     def add_run(self, text=None, style=None):
         """
         Append a run to this paragraph containing *text* and having character
-        style identified by style ID *style*.
+        style identified by style ID *style*. *text* can contain tab
+        (``\\t``) characters, which are converted to the appropriate XML form
+        for a tab. *text* can also include newline (``\\n``) or carriage
+        return (``\\r``) characters, each of which is converted to a line
+        break.
         """
         r = self._p.add_r()
         run = Run(r)
         if text:
-            run.add_text(text)
+            run.text = text
         if style:
             run.style = style
         return run

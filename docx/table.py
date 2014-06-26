@@ -112,7 +112,7 @@ class _Cell(object):
         tc.clear_content()
         p = tc.add_p()
         r = p.add_r()
-        r.add_t(text)
+        r.text = text
 
 
 class _Column(object):
