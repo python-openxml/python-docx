@@ -10,7 +10,9 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
-from docx.oxml.ns import qn
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls, qn
+from docx.text import Run
 
 from helpers import test_docx, test_text
 
@@ -36,6 +38,26 @@ def given_a_run_having_known_text_and_formatting(context):
     run.bold = True
     run.italic = True
     context.run = run
+
+
+@given('a run having mixed text content')
+def given_a_run_having_mixed_text_content(context):
+    """
+    Mixed here meaning it contains ``<w:tab/>``, ``<w:cr/>``, etc. elements.
+    """
+    r_xml = """\
+        <w:r %s>
+          <w:t>abc</w:t>
+          <w:tab/>
+          <w:t>def</w:t>
+          <w:cr/>
+          <w:t>ghi</w:t>
+          <w:drawing/>
+          <w:br/>
+          <w:t>jkl</w:t>
+        </w:r>""" % nsdecls('w')
+    r = parse_xml(r_xml)
+    context.run = Run(r)
 
 
 @given('a run having {underline_type} underline')
@@ -89,6 +111,11 @@ def when_I_add_a_run_specifying_the_character_style_Emphasis(context):
 @when('I add a tab')
 def when_I_add_a_tab(context):
     context.run.add_tab()
+
+
+@when('I assign mixed text to the text property')
+def when_I_assign_mixed_text_to_the_text_property(context):
+    context.run.text = 'abc\tdef\nghi\rjkl'
 
 
 @when('I assign {value_str} to its {bool_prop_name} property')
@@ -207,3 +234,10 @@ def then_the_tab_appears_at_the_end_of_the_run(context):
     r = context.run._r
     tab = r.find(qn('w:tab'))
     assert tab is not None
+
+
+@then('the text of the run represents the textual run content')
+def then_the_text_of_the_run_represents_the_textual_run_content(context):
+    assert context.run.text == 'abc\tdef\nghi\njkl', (
+        'got \'%s\'' % context.run.text
+    )
