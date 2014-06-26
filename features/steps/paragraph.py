@@ -7,6 +7,9 @@ Step implementations for paragraph-related features
 from behave import given, then, when
 
 from docx import Document
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
+from docx.text import Paragraph
 
 from helpers import saved_docx_path, test_text
 
@@ -25,6 +28,21 @@ def given_a_document_containing_three_paragraphs(context):
     context.document = document
 
 
+@given('a paragraph with content and formatting')
+def given_a_paragraph_with_content_and_formatting(context):
+    p_xml = """\
+        <w:p %s>
+          <w:pPr>
+            <w:pStyle w:val="%s"/>
+          </w:pPr>
+          <w:r>
+            <w:t>foobar</w:t>
+          </w:r>
+        </w:p>""" % (nsdecls('w'), TEST_STYLE)
+    p = parse_xml(p_xml)
+    context.paragraph = Paragraph(p)
+
+
 # when ====================================================
 
 @when('I add a run to the paragraph')
@@ -33,8 +51,13 @@ def when_add_new_run_to_paragraph(context):
 
 
 @when('I add text to the run')
-def when_add_new_text_to_run(context):
+def when_I_add_text_to_the_run(context):
     context.r.add_text(test_text)
+
+
+@when('I clear the paragraph content')
+def when_I_clear_the_paragraph_content(context):
+    context.paragraph.clear()
 
 
 @when('I insert a paragraph above the second paragraph')
@@ -63,6 +86,16 @@ def then_document_contains_text_I_added(context):
     p = paragraphs[-1]
     r = p.runs[0]
     assert r.text == test_text
+
+
+@then('the paragraph formatting is preserved')
+def then_the_paragraph_formatting_is_preserved(context):
+    assert context.paragraph.style == TEST_STYLE
+
+
+@then('the paragraph has no content')
+def then_the_paragraph_has_no_content(context):
+    assert context.paragraph.text == ''
 
 
 @then('the paragraph has the style I set')
