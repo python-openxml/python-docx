@@ -4,7 +4,6 @@ Feature: Clear paragraph content
   I need a way to remove the content of a paragraph
 
 
-  @wip
   Scenario: Clear paragraph content
     Given a paragraph with content and formatting
      When I clear the paragraph content

@@ -75,6 +75,14 @@ class Paragraph(object):
             run.style = style
         return run
 
+    def clear(self):
+        """
+        Return this same paragraph after removing all its content.
+        Paragraph-level formatting, such as style, is preserved.
+        """
+        self._p.clear_content()
+        return self
+
     def insert_paragraph_before(self, text=None, style=None):
         """
         Return a newly created paragraph, inserted directly before this

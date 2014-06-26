@@ -40,6 +40,15 @@ class CT_P(BaseOxmlElement):
         self.addprevious(new_p)
         return new_p
 
+    def clear_content(self):
+        """
+        Remove all child elements, except the ``<w:pPr>`` element if present.
+        """
+        for child in self[:]:
+            if child.tag == qn('w:pPr'):
+                continue
+            self.remove(child)
+
     def set_sectPr(self, sectPr):
         """
         Unconditionally replace or add *sectPr* as a grandchild in the

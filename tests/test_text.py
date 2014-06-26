@@ -73,6 +73,13 @@ class DescribeParagraph(object):
         assert new_paragraph.style == style
         assert body.xml == expected_xml
 
+    def it_can_remove_its_content_while_preserving_formatting(
+            self, clear_fixture):
+        paragraph, expected_xml = clear_fixture
+        _paragraph = paragraph.clear()
+        assert paragraph._p.xml == expected_xml
+        assert _paragraph is paragraph
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -89,6 +96,24 @@ class DescribeParagraph(object):
             r_bldr.with_child(a_t().with_text(text))
         expected_xml = a_p().with_nsdecls().with_child(r_bldr).xml()
         return paragraph, text, style, expected_xml
+
+    @pytest.fixture
+    def clear_fixture(self, request):
+        """
+        After XML should be before XML with content removed. So snapshot XML
+        after adding formatting but before adding content to get after XML.
+        """
+        style, text = ('Heading1', 'foo\tbar')
+        p = OxmlElement('w:p')
+        # expected_xml -----------------
+        if style is not None:
+            p.style = style
+        expected_xml = p.xml
+        # paragraph --------------------
+        paragraph = Paragraph(p)
+        if text is not None:
+            paragraph.add_run(text)
+        return paragraph, expected_xml
 
     @pytest.fixture
     def insert_before_fixture(self):
