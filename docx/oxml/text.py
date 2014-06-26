@@ -196,6 +196,11 @@ class CT_R(BaseOxmlElement):
                 text += '\n'
         return text
 
+    @text.setter
+    def text(self, text):
+        self.clear_content()
+        _RunContentAppender.append_to_run_from_text(self, text)
+
     @property
     def underline(self):
         """
@@ -319,3 +324,59 @@ class CT_Underline(BaseOxmlElement):
 
         val = WD_UNDERLINE.to_xml(value)
         self.set(qn('w:val'), val)
+
+
+class _RunContentAppender(object):
+    """
+    Service object that knows how to translate a Python string into run
+    content elements appended to a specified ``<w:r>`` element. Contiguous
+    sequences of regular characters are appended in a single ``<w:t>``
+    element. Each tab character ('\t') causes a ``<w:tab/>`` element to be
+    appended. Likewise a newline or carriage return character ('\n', '\r')
+    causes a ``<w:cr>`` element to be appended.
+    """
+    def __init__(self, r):
+        self._r = r
+        self._bfr = []
+
+    @classmethod
+    def append_to_run_from_text(cls, r, text):
+        """
+        Create a "one-shot" ``_RunContentAppender`` instance and use it to
+        append the run content elements corresponding to *text* to the
+        ``<w:r>`` element *r*.
+        """
+        appender = cls(r)
+        appender.add_text(text)
+
+    def add_text(self, text):
+        """
+        Append the run content elements corresponding to *text* to the
+        ``<w:r>`` element of this instance.
+        """
+        for char in text:
+            self.add_char(char)
+        self.flush()
+
+    def add_char(self, char):
+        """
+        Process the next character of input through the translation finite
+        state maching (FSM). There are two possible states, buffer pending
+        and not pending, but those are hidden behind the ``.flush()`` method
+        which must be called at the end of text to ensure any pending
+        ``<w:t>`` element is written.
+        """
+        if char == '\t':
+            self.flush()
+            self._r.add_tab()
+        elif char in '\r\n':
+            self.flush()
+            self._r.add_cr()
+        else:
+            self._bfr.append(char)
+
+    def flush(self):
+        text = ''.join(self._bfr)
+        if text:
+            self._r.add_t(text)
+        del self._bfr[:]

@@ -223,6 +223,11 @@ class DescribeRun(object):
         run, expected_text = text_get_fixture
         assert run.text == expected_text
 
+    def it_can_replace_the_text_it_contains(self, text_set_fixture):
+        run, text, expected_xml = text_set_fixture
+        run.text = text
+        assert run._r.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -432,6 +437,21 @@ class DescribeRun(object):
         r_bldr = self.r_content_bldr(content_children)
         run = Run(r_bldr.element)
         return run, expected_text
+
+    @pytest.fixture(params=[
+        ('abc',      ('xabc',)),
+        ('abc\tdef', ('xabc', 't', 'xdef')),
+        ('abc\rdef', ('xabc', 'n', 'xdef')),
+    ])
+    def text_set_fixture(self, request):
+        text, expected_elm_codes = request.param
+        # starting run contains text, so can tell if it doesn't get replaced
+        r_bldr = self.r_content_bldr(('xfoobar'))
+        run = Run(r_bldr.element)
+        # expected_xml -----------------
+        r_bldr = self.r_content_bldr(expected_elm_codes)
+        expected_xml = r_bldr.xml()
+        return run, text, expected_xml
 
     @pytest.fixture(params=[
         (None,     None),

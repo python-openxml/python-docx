@@ -371,6 +371,10 @@ class Run(object):
         """
         return self._r.text
 
+    @text.setter
+    def text(self, text):
+        self._r.text = text
+
     @property
     def underline(self):
         """

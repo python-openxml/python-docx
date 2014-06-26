@@ -10,7 +10,6 @@ Feature: Add content to a run
      Then the tab appears at the end of the run
 
 
-  @wip
   Scenario: Assign mixed text to text property
     Given a run
      When I assign mixed text to the text property
