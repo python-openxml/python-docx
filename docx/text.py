@@ -160,7 +160,10 @@ class Run(object):
 
     def add_text(self, text):
         """
-        Add a text element to this run.
+        Returns a newly appended |Text| object (corresponding to a new
+        ``<w:t>`` child element) to the run, containing *text*. Compare with
+        the possibly more friendly approach of assigning text to the
+        :attr:`Run.text` property.
         """
         t = self._r.add_t(text)
         return Text(t)
@@ -351,13 +354,22 @@ class Run(object):
     @property
     def text(self):
         """
-        A string formed by concatenating all the <w:t> elements present in
-        this run.
+        String formed by concatenating the text equivalent of each run
+        content child element into a Python string. Each ``<w:t>`` element
+        adds the text characters it contains. A ``<w:tab/>`` element adds
+        a ``\\t`` character. A ``<w:cr/>`` or ``<w:br>`` element each add
+        a ``\\n`` character. Note that a ``<w:br>`` element can indicate
+        a page break or column break as well as a line break. All ``<w:br>``
+        elements translate to a single ``\\n`` character regardless of their
+        type. All other content child elements, such as ``<w:drawing>``, are
+        ignored.
+
+        Assigning text to this property has the reverse effect, translating
+        each ``\\t`` character to a ``<w:tab/>`` element and each ``\\n`` or
+        ``\\r`` character to a ``<w:cr/>`` element. Any existing run content
+        is replaced. Run formatting is preserved.
         """
-        text = ''
-        for t in self._r.t_lst:
-            text += t.text
-        return text
+        return self._r.text
 
     @property
     def underline(self):
@@ -369,8 +381,8 @@ class Run(object):
         property removes any directly-applied underline value. A value of
         |False| indicates a directly-applied setting of no underline,
         overriding any inherited value. A value of |True| indicates single
-        underline. The values from ``WD_UNDERLINE`` are used to specify other
-        outline styles such as double, wavy, and dotted.
+        underline. The values from :ref:`WdUnderline` are used to specify
+        other outline styles such as double, wavy, and dotted.
         """
         return self._r.underline
 

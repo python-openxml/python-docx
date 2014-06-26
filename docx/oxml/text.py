@@ -125,6 +125,7 @@ class CT_R(BaseOxmlElement):
     rPr = ZeroOrOne('w:rPr')
     t = ZeroOrMore('w:t')
     br = ZeroOrMore('w:br')
+    cr = ZeroOrMore('w:cr')
     tab = ZeroOrMore('w:tab')
     drawing = ZeroOrMore('w:drawing')
 
@@ -177,6 +178,23 @@ class CT_R(BaseOxmlElement):
         """
         rPr = self.get_or_add_rPr()
         rPr.style = style
+
+    @property
+    def text(self):
+        """
+        A string representing the textual content of this run, with content
+        child elements like ``<w:tab/>`` translated to their Python
+        equivalent.
+        """
+        text = ''
+        for child in self:
+            if child.tag == qn('w:t'):
+                text += child.text
+            elif child.tag == qn('w:tab'):
+                text += '\t'
+            elif child.tag in (qn('w:br'), qn('w:cr')):
+                text += '\n'
+        return text
 
     @property
     def underline(self):

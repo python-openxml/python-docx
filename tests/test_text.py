@@ -18,7 +18,7 @@ import pytest
 
 from .oxml.parts.unitdata.document import a_body
 from .oxml.unitdata.text import (
-    a_b, a_bCs, a_br, a_caps, a_cs, a_dstrike, a_p, a_pPr, a_pStyle,
+    a_b, a_bCs, a_br, a_caps, a_cr, a_cs, a_dstrike, a_p, a_pPr, a_pStyle,
     a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike, a_t, a_tab,
     a_u, a_vanish, a_webHidden, an_emboss, an_i, an_iCs, an_imprint,
     an_oMath, a_noProof, an_outline, an_r, an_rPr, an_rStyle, an_rtl
@@ -212,16 +212,16 @@ class DescribeRun(object):
         run.add_tab()
         assert run._r.xml == expected_xml
 
-    def it_knows_the_text_it_contains(self, text_prop_fixture):
-        run, expected_text = text_prop_fixture
-        assert run.text == expected_text
-
     def it_can_remove_its_content_while_preserving_formatting(
             self, clear_fixture):
         run, expected_xml = clear_fixture
         _run = run.clear()
         assert run._r.xml == expected_xml
         assert _run is run
+
+    def it_knows_the_text_it_contains(self, text_get_fixture):
+        run, expected_text = text_get_fixture
+        assert run.text == expected_text
 
     # fixtures -------------------------------------------------------
 
@@ -421,15 +421,17 @@ class DescribeRun(object):
         expected_xml = self.r_bldr_with_style(after_style).xml()
         return run, after_style, expected_xml
 
-    @pytest.fixture
-    def text_prop_fixture(self, Text_):
-        r = (
-            an_r().with_nsdecls().with_child(
-                a_t().with_text('foo')).with_child(
-                a_t().with_text('bar'))
-        ).element
-        run = Run(r)
-        return run, 'foobar'
+    @pytest.fixture(params=[
+        (('',),                          ''),
+        (('xfoobar',),                   'foobar'),
+        (('bpage', 'xabc', 'xdef', 't'), '\nabcdef\t'),
+        (('xabc', 't', 'xdef', 'n'),     'abc\tdef\n'),
+    ])
+    def text_get_fixture(self, request):
+        content_children, expected_text = request.param
+        r_bldr = self.r_content_bldr(content_children)
+        run = Run(r_bldr.element)
+        return run, expected_text
 
     @pytest.fixture(params=[
         (None,     None),
@@ -471,11 +473,6 @@ class DescribeRun(object):
 
     # fixture components ---------------------------------------------
 
-    @pytest.fixture
-    def run(self):
-        r = an_r().with_nsdecls().element
-        return Run(r)
-
     def r_bldr_with_style(self, style):
         rPr_bldr = an_rPr()
         if style is not None:
@@ -489,6 +486,28 @@ class DescribeRun(object):
             rPr_bldr.with_child(a_u().with_val(underline_type))
         r_bldr = an_r().with_nsdecls().with_child(rPr_bldr)
         return r_bldr
+
+    def r_content_bldr(self, elm_codes):
+        """
+        Return a ``<w:r>`` builder having child elements indicated by
+        *elm_codes*.
+        """
+        r_bldr = an_r().with_nsdecls()
+        for e in elm_codes:
+            if e.startswith('x'):
+                r_bldr.with_child(a_t().with_text(e[1:]))
+            elif e == 't':
+                r_bldr.with_child(a_tab())
+            elif e.startswith('b'):
+                r_bldr.with_child(a_br().with_type(e[1:]))
+            elif e == 'n':
+                r_bldr.with_child(a_cr())
+        return r_bldr
+
+    @pytest.fixture
+    def run(self):
+        r = an_r().with_nsdecls().element
+        return Run(r)
 
     @pytest.fixture
     def Text_(self, request):

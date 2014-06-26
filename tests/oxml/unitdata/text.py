@@ -87,6 +87,10 @@ def a_caps():
     return CT_OnOffBuilder('w:caps')
 
 
+def a_cr():
+    return CT_EmptyBuilder('w:cr')
+
+
 def a_cs():
     return CT_OnOffBuilder('w:cs')
 
