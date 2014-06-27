@@ -92,6 +92,7 @@ def when_I_set_the_paragraph_style(context):
 def when_I_set_the_paragraph_text(context):
     context.paragraph.text = 'bar\tfoo\r'
 
+
 @when('I add text to the paragraph')
 def when_I_add_text_to_the_paragraph(context):
     context.paragraph.add_text('bar\tfoo\r')
