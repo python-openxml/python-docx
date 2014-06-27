@@ -46,6 +46,11 @@ class DescribeParagraph(object):
         paragraph, expected_value = alignment_get_fixture
         assert paragraph.alignment == expected_value
 
+    def it_can_change_its_alignment_value(self, alignment_set_fixture):
+        paragraph, value, expected_xml = alignment_set_fixture
+        paragraph.alignment = value
+        assert paragraph._p.xml == expected_xml
+
     def it_knows_its_paragraph_style(self):
         cases = (
             (Mock(name='p_elm', style='foobar'), 'foobar'),
@@ -119,6 +124,31 @@ class DescribeParagraph(object):
         p = p_bldr.element
         paragraph = Paragraph(p)
         return paragraph, expected_alignment_value
+
+    @pytest.fixture(params=[
+        ('left', WD_ALIGN_PARAGRAPH.CENTER, 'center'),
+        ('left', None,                      None),
+        (None,   WD_ALIGN_PARAGRAPH.LEFT,   'left'),
+        (None,   None,                      None),
+    ])
+    def alignment_set_fixture(self, request):
+        initial_jc_val, new_alignment_value, expected_jc_val = request.param
+        # paragraph --------------------
+        p_bldr = a_p().with_nsdecls()
+        if initial_jc_val is not None:
+            p_bldr.with_child(
+                a_pPr().with_child(
+                    a_jc().with_val(initial_jc_val))
+            )
+        p = p_bldr.element
+        paragraph = Paragraph(p)
+        # expected_xml -----------------
+        pPr_bldr = a_pPr()
+        if expected_jc_val is not None:
+            pPr_bldr.with_child(a_jc().with_val(expected_jc_val))
+        p_bldr = a_p().with_nsdecls().with_child(pPr_bldr)
+        expected_xml = p_bldr.xml()
+        return paragraph, new_alignment_value, expected_xml
 
     @pytest.fixture
     def clear_fixture(self, request):

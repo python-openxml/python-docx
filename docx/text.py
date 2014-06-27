@@ -86,6 +86,10 @@ class Paragraph(object):
         """
         return self._p.alignment
 
+    @alignment.setter
+    def alignment(self, value):
+        self._p.alignment = value
+
     def clear(self):
         """
         Return this same paragraph after removing all its content.

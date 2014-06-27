@@ -4,7 +4,6 @@ Feature: Get or set paragraph alignment
   I need a read/write alignment property on paragraph objects
 
 
-  @wip
   Scenario Outline: Get paragraph alignment
     Given a paragraph having <align-type> alignment
      Then the paragraph alignment property value is <align-value>

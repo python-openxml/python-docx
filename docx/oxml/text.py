@@ -59,6 +59,11 @@ class CT_P(BaseOxmlElement):
             return None
         return pPr.alignment
 
+    @alignment.setter
+    def alignment(self, value):
+        pPr = self.get_or_add_pPr()
+        pPr.alignment = value
+
     def clear_content(self):
         """
         Remove all child elements, except the ``<w:pPr>`` element if present.
@@ -131,6 +136,14 @@ class CT_PPr(BaseOxmlElement):
         if jc is None:
             return None
         return jc.val
+
+    @alignment.setter
+    def alignment(self, value):
+        if value is None:
+            self._remove_jc()
+            return
+        jc = self.get_or_add_jc()
+        jc.val = value
 
     @property
     def style(self):
