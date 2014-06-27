@@ -83,7 +83,7 @@ class Paragraph(object):
         and style. Otherwise, if the given style is the same as the last run,
         the text is appended to it. If the styles differ, a new run is created.
         """
-        if len(self._p.r_lst) == 0:
+        if not self._p.r_lst:
             self.add_run(text, style)
         else:
             run = self.runs[-1]
