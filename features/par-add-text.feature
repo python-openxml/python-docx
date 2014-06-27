@@ -7,19 +7,12 @@ Feature: Add text to a paragraph, preserving the style of the last text
     Given a paragraph
      Then the paragraph has no content
      When I add text to the paragraph
-     Then the paragraph has one run
-     And the paragraph has the text I set
+     Then the paragraph has the text I added
 
-  Scenario: Add text of the same style to a non-empty paragraph
-    Given a paragraph with some text
+  Scenario: Add text to a non-empty paragraph with a style on the last run
+    Given a paragraph with some text and a style on the last run
     When I add text to the paragraph
-    Then the paragraph has one run
+    Then the paragraph has the same amount of runs
     And the paragraph ends with the text I added
     And the initial text is still there
-
-  Scenario: Add text of a different style to a non-empty paragraph
-    Given a paragraph with some text
-    When I add text of a different style to the paragraph
-    Then the paragraph has two runs
-    And the second run contains the text I added
-    And the second run has the style I specified
+    And the last run still has the same style
