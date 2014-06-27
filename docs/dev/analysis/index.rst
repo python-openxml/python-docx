@@ -10,6 +10,7 @@ Feature Analysis
 .. toctree::
    :maxdepth: 1
 
+   features/par-alignment
    features/run-content
    features/numbering
    features/underline
