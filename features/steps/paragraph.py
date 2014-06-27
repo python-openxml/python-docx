@@ -57,6 +57,13 @@ def given_a_paragraph_with_content_and_formatting(context):
     context.paragraph = Paragraph(p)
 
 
+@given('a paragraph with some text')
+def given_a_paragraph_with_some_text(context):
+    context.document = Document()
+    context.paragraph = context.document.add_paragraph()
+    context.paragraph.text = 'Lorem ipsum '
+
+
 # when ====================================================
 
 @when('I add a run to the paragraph')
@@ -84,6 +91,15 @@ def when_I_set_the_paragraph_style(context):
 @when('I set the paragraph text')
 def when_I_set_the_paragraph_text(context):
     context.paragraph.text = 'bar\tfoo\r'
+
+@when('I add text to the paragraph')
+def when_I_add_text_to_the_paragraph(context):
+    context.paragraph.add_text('bar\tfoo\r')
+
+
+@when('I add text of a different style to the paragraph')
+def when_I_add_different_style_text_to_paragraph(context):
+    context.paragraph.add_text('dolor sit amet', 'Heading1')
 
 
 # then =====================================================
@@ -138,6 +154,36 @@ def then_the_paragraph_has_the_text_I_set(context):
 def then_the_style_of_the_second_paragraph_matches_the_style_I_set(context):
     second_paragraph = context.document.paragraphs[1]
     assert second_paragraph.style == 'Heading1'
+
+
+@then('the paragraph has one run')
+def then_the_paragraph_has_one_run(context):
+    assert len(context.paragraph.runs) == 1
+
+
+@then('the paragraph has two runs')
+def then_the_paragraph_has_two_runs(context):
+    assert len(context.paragraph.runs) == 2
+
+
+@then('the paragraph ends with the text I added')
+def then_the_paragraph_ends_with_the_text_I_added(context):
+    assert context.paragraph.text.endswith('bar\tfoo\r')
+
+
+@then('the initial text is still there')
+def then_the_initial_text_is_still_there(context):
+    assert context.paragraph.text.startswith('Lorem ipsum ')
+
+
+@then('the second run contains the text I added')
+def then_second_run_contains_text_I_added(context):
+    context.paragraph.runs[1].text = 'dolor sit amet'
+
+
+@then('the second run has the style I specified')
+def then_second_run_has_specified_style(context):
+    context.paragraph.runs[1].style = 'Heading1'
 
 
 @then('the text of the second paragraph matches the text I set')

@@ -75,6 +75,23 @@ class Paragraph(object):
             run.style = style
         return run
 
+    def add_text(self, text, style=None):
+        """
+        Provides an easy way to add text to a paragraph, preserving the style
+        of the previously inserted text, unless a different style is specified.
+        If the paragraph has no runs, a new run is created with the given text
+        and style. Otherwise, if the given style is the same as the last run,
+        the text is appended to it. If the styles differ, a new run is created.
+        """
+        if len(self._p.r_lst) == 0:
+            self.add_run(text, style)
+        else:
+            run = self.runs[-1]
+            if run.style == style:
+                run.add_text(text)
+            else:
+                self.add_run(text, style)
+
     @property
     def alignment(self):
         """
