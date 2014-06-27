@@ -75,6 +75,17 @@ class Paragraph(object):
             run.style = style
         return run
 
+    @property
+    def alignment(self):
+        """
+        A member of the :ref:`WdParagraphAlignment` enumeration specifying
+        the justification setting for this paragraph. A value of |None|
+        indicates the paragraph has no directly-applied alignment value and
+        will inherit its alignment value from its style hierarchy. Assigning
+        |None| to this property removes any directly-applied alignment value.
+        """
+        return self._p.alignment
+
     def clear(self):
         """
         Return this same paragraph after removing all its content.

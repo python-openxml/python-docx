@@ -23,6 +23,12 @@ class CT_EmptyBuilder(BaseBuilder):
         super(CT_EmptyBuilder, self).__init__()
 
 
+class CT_JcBuilder(BaseBuilder):
+    __tag__ = 'w:jc'
+    __nspfxs__ = ('w',)
+    __attrs__ = ('w:val',)
+
+
 class CT_PBuilder(BaseBuilder):
     __tag__ = 'w:p'
     __nspfxs__ = ('w',)
@@ -63,7 +69,7 @@ class CT_TextBuilder(BaseBuilder):
         return self
 
 
-class CT_Underline(BaseBuilder):
+class CT_UnderlineBuilder(BaseBuilder):
     __tag__ = 'w:u'
     __nspfxs__ = ('w',)
     __attrs__ = (
@@ -97,6 +103,10 @@ def a_cs():
 
 def a_dstrike():
     return CT_OnOffBuilder('w:dstrike')
+
+
+def a_jc():
+    return CT_JcBuilder()
 
 
 def a_noProof():
@@ -156,7 +166,7 @@ def a_t():
 
 
 def a_u():
-    return CT_Underline()
+    return CT_UnderlineBuilder()
 
 
 def an_emboss():

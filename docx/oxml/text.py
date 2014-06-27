@@ -5,11 +5,12 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from ..enum.text import WD_UNDERLINE
+from ..enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from .ns import qn
 from .simpletypes import ST_BrClear, ST_BrType
 from .xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, OxmlElement, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
+    ZeroOrMore, ZeroOrOne
 )
 
 
@@ -19,6 +20,13 @@ class CT_Br(BaseOxmlElement):
     """
     type = OptionalAttribute('w:type', ST_BrType)
     clear = OptionalAttribute('w:clear', ST_BrClear)
+
+
+class CT_Jc(BaseOxmlElement):
+    """
+    ``<w:jc>`` element, specifying paragraph justification.
+    """
+    val = RequiredAttribute('w:val', WD_ALIGN_PARAGRAPH)
 
 
 class CT_P(BaseOxmlElement):
@@ -39,6 +47,17 @@ class CT_P(BaseOxmlElement):
         new_p = OxmlElement('w:p')
         self.addprevious(new_p)
         return new_p
+
+    @property
+    def alignment(self):
+        """
+        The value of the ``<w:jc>`` grandchild element or |None| if not
+        present.
+        """
+        pPr = self.pPr
+        if pPr is None:
+            return None
+        return pPr.alignment
 
     def clear_content(self):
         """
@@ -96,11 +115,22 @@ class CT_PPr(BaseOxmlElement):
     )
     pStyle = ZeroOrOne('w:pStyle')
     numPr = ZeroOrOne('w:numPr', successors=__child_sequence__[7:])
+    jc = ZeroOrOne('w:jc', successors=__child_sequence__[27:])
     sectPr = ZeroOrOne('w:sectPr', successors=('w:pPrChange',))
 
     def _insert_pStyle(self, pStyle):
         self.insert(0, pStyle)
         return pStyle
+
+    @property
+    def alignment(self):
+        """
+        The value of the ``<w:jc>`` child element or |None| if not present.
+        """
+        jc = self.jc
+        if jc is None:
+            return None
+        return jc.val
 
     @property
     def style(self):

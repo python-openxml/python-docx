@@ -125,7 +125,7 @@ register_element_cls('w:tc',       CT_Tc)
 register_element_cls('w:tr',       CT_Row)
 
 from docx.oxml.text import (
-    CT_Br, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
+    CT_Br, CT_Jc, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
 )
 register_element_cls('w:b',          CT_OnOff)
 register_element_cls('w:bCs',        CT_OnOff)
@@ -137,6 +137,7 @@ register_element_cls('w:emboss',     CT_OnOff)
 register_element_cls('w:i',          CT_OnOff)
 register_element_cls('w:iCs',        CT_OnOff)
 register_element_cls('w:imprint',    CT_OnOff)
+register_element_cls('w:jc',         CT_Jc)
 register_element_cls('w:noProof',    CT_OnOff)
 register_element_cls('w:oMath',      CT_OnOff)
 register_element_cls('w:outline',    CT_OnOff)

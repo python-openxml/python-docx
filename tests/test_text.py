@@ -8,7 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.oxml.text import CT_P, CT_R
@@ -18,10 +18,11 @@ import pytest
 
 from .oxml.parts.unitdata.document import a_body
 from .oxml.unitdata.text import (
-    a_b, a_bCs, a_br, a_caps, a_cr, a_cs, a_dstrike, a_p, a_pPr, a_pStyle,
-    a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike, a_t, a_tab,
-    a_u, a_vanish, a_webHidden, an_emboss, an_i, an_iCs, an_imprint,
-    an_oMath, a_noProof, an_outline, an_r, an_rPr, an_rStyle, an_rtl
+    a_b, a_bCs, a_br, a_caps, a_cr, a_cs, a_dstrike, a_jc, a_p, a_pPr,
+    a_pStyle, a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike,
+    a_t, a_tab, a_u, a_vanish, a_webHidden, an_emboss, an_i, an_iCs,
+    an_imprint, an_oMath, a_noProof, an_outline, an_r, an_rPr, an_rStyle,
+    an_rtl
 )
 from .unitutil import call, class_mock, instance_mock, Mock
 
@@ -40,6 +41,10 @@ class DescribeParagraph(object):
         assert paragraph._p.xml == expected_xml
         assert isinstance(run, Run)
         assert run._r is paragraph._p.r_lst[0]
+
+    def it_knows_its_alignment_value(self, alignment_get_fixture):
+        paragraph, expected_value = alignment_get_fixture
+        assert paragraph.alignment == expected_value
 
     def it_knows_its_paragraph_style(self):
         cases = (
@@ -101,6 +106,19 @@ class DescribeParagraph(object):
             r_bldr.with_child(a_t().with_text(text))
         expected_xml = a_p().with_nsdecls().with_child(r_bldr).xml()
         return paragraph, text, style, expected_xml
+
+    @pytest.fixture(params=[
+        ('center', WD_ALIGN_PARAGRAPH.CENTER),
+        (None,     None),
+    ])
+    def alignment_get_fixture(self, request):
+        jc_val, expected_alignment_value = request.param
+        p_bldr = a_p().with_nsdecls()
+        if jc_val is not None:
+            p_bldr.with_child(a_pPr().with_child(a_jc().with_val(jc_val)))
+        p = p_bldr.element
+        paragraph = Paragraph(p)
+        return paragraph, expected_alignment_value
 
     @pytest.fixture
     def clear_fixture(self, request):
