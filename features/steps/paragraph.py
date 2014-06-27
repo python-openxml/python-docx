@@ -67,6 +67,11 @@ def when_I_set_the_paragraph_style(context):
     context.paragraph.style = TEST_STYLE
 
 
+@when('I set the paragraph text')
+def when_I_set_the_paragraph_text(context):
+    context.paragraph.text = 'bar\tfoo\r'
+
+
 # then =====================================================
 
 @then('the document contains four paragraphs')
@@ -97,6 +102,11 @@ def then_the_paragraph_has_no_content(context):
 def then_the_paragraph_has_the_style_I_set(context):
     paragraph = Document(saved_docx_path).paragraphs[-1]
     assert paragraph.style == TEST_STYLE
+
+
+@then('the paragraph has the text I set')
+def then_the_paragraph_has_the_text_I_set(context):
+    assert context.paragraph.text == 'bar\tfoo\n'
 
 
 @then('the style of the second paragraph matches the style I set')
