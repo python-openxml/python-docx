@@ -47,12 +47,7 @@ def given_a_paragraph_with_content_and_formatting(context):
 
 @when('I add a run to the paragraph')
 def when_add_new_run_to_paragraph(context):
-    context.r = context.p.add_run()
-
-
-@when('I add text to the run')
-def when_I_add_text_to_the_run(context):
-    context.r.add_text(test_text)
+    context.run = context.p.add_run()
 
 
 @when('I clear the paragraph content')

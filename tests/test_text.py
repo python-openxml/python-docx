@@ -61,9 +61,9 @@ class DescribeParagraph(object):
             p.style = style
             assert p_elm.style == expected_setting
 
-    def it_knows_the_text_it_contains(self, text_prop_fixture):
-        p, expected_text = text_prop_fixture
-        assert p.text == expected_text
+    def it_knows_the_text_it_contains(self, text_get_fixture):
+        paragraph, expected_text = text_get_fixture
+        assert paragraph.text == expected_text
 
     def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
         paragraph, text, style, body, expected_xml = insert_before_fixture
@@ -135,6 +135,24 @@ class DescribeParagraph(object):
         ).xml()
         return paragraph, text, style, body, expected_xml
 
+    @pytest.fixture
+    def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
+        paragraph = Paragraph(p_)
+        run_, run_2_ = runs_
+        return paragraph, Run_, r_, r_2_, run_, run_2_
+
+    @pytest.fixture
+    def text_get_fixture(self):
+        p = (
+            a_p().with_nsdecls().with_child(
+                an_r().with_child(
+                    a_t().with_text('foo'))).with_child(
+                an_r().with_child(
+                    a_t().with_text(' de bar')))
+        ).element
+        paragraph = Paragraph(p)
+        return paragraph, 'foo de bar'
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -166,24 +184,6 @@ class DescribeParagraph(object):
         run_ = instance_mock(request, Run, name='run_')
         run_2_ = instance_mock(request, Run, name='run_2_')
         return run_, run_2_
-
-    @pytest.fixture
-    def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
-        paragraph = Paragraph(p_)
-        run_, run_2_ = runs_
-        return paragraph, Run_, r_, r_2_, run_, run_2_
-
-    @pytest.fixture
-    def text_prop_fixture(self):
-        p = (
-            a_p().with_nsdecls().with_child(
-                an_r().with_child(
-                    a_t().with_text('foo'))).with_child(
-                an_r().with_child(
-                    a_t().with_text(' de bar')))
-        ).element
-        paragraph = Paragraph(p)
-        return paragraph, 'foo de bar'
 
 
 class DescribeRun(object):

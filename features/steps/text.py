@@ -113,6 +113,11 @@ def when_I_add_a_tab(context):
     context.run.add_tab()
 
 
+@when('I add text to the run')
+def when_I_add_text_to_the_run(context):
+    context.run.add_text(test_text)
+
+
 @when('I assign mixed text to the text property')
 def when_I_assign_mixed_text_to_the_text_property(context):
     context.run.text = 'abc\tdef\nghi\rjkl'
