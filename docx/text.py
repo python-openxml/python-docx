@@ -81,7 +81,8 @@ class Paragraph(object):
         of the previously inserted text, unless a different style is specified.
         If the paragraph has no runs, a new run is created with the given text
         and style. Otherwise, if the given style is the same as the last run,
-        the text is appended to it. If the styles differ, a new run is created.
+        the text is appended to it. If the style specified for the new text is
+        different to the style of the last run, a new run is created.
         """
         if not self._p.r_lst:
             self.add_run(text, style)
