@@ -65,6 +65,11 @@ class DescribeParagraph(object):
         paragraph, expected_text = text_get_fixture
         assert paragraph.text == expected_text
 
+    def it_can_replace_the_text_it_contains(self, text_set_fixture):
+        paragraph, text, expected_text = text_set_fixture
+        paragraph.text = text
+        assert paragraph.text == expected_text
+
     def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
         paragraph, text, style, body, expected_xml = insert_before_fixture
         new_paragraph = paragraph.insert_paragraph_before(text, style)
@@ -152,6 +157,13 @@ class DescribeParagraph(object):
         ).element
         paragraph = Paragraph(p)
         return paragraph, 'foo de bar'
+
+    @pytest.fixture
+    def text_set_fixture(self):
+        p = a_p().with_nsdecls().element
+        paragraph = Paragraph(p)
+        paragraph.add_run('barfoo')
+        return paragraph, 'foo\tbar\rbaz\n', 'foo\tbar\nbaz\n'
 
     # fixture components ---------------------------------------------
 
