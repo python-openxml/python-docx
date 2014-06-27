@@ -3,6 +3,18 @@
 Release History
 ---------------
 
+0.7.0 (2014-06-27)
+++++++++++++++++++
+
+- Add feature #68: Paragraph.insert_paragraph_before()
+- Add feature #51: Paragraph.alignment (read/write)
+- Add feature #61: Paragraph.text setter
+- Add feature #58: Run.add_tab()
+- Add feature #70: Run.clear()
+- Add feature #60: Run.text setter
+- Add feature #39: Run.text and Paragraph.text interpret '\n' and '\t' chars
+
+
 0.6.0 (2014-06-22)
 ++++++++++++++++++
 
