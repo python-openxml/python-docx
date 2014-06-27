@@ -7,11 +7,12 @@ Step implementations for paragraph-related features
 from behave import given, then, when
 
 from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.text import Paragraph
 
-from helpers import saved_docx_path, test_text
+from helpers import saved_docx_path, test_docx, test_text
 
 
 TEST_STYLE = 'Heading1'
@@ -26,6 +27,19 @@ def given_a_document_containing_three_paragraphs(context):
     document.add_paragraph('bar')
     document.add_paragraph('baz')
     context.document = document
+
+
+@given('a paragraph having {align_type} alignment')
+def given_a_paragraph_align_type_alignment(context, align_type):
+    paragraph_idx = {
+        'inherited': 0,
+        'left':      1,
+        'center':    2,
+        'right':     3,
+        'justified': 4,
+    }[align_type]
+    document = Document(test_docx('par-alignment'))
+    context.paragraph = document.paragraphs[paragraph_idx]
 
 
 @given('a paragraph with content and formatting')
@@ -86,6 +100,17 @@ def then_document_contains_text_I_added(context):
     p = paragraphs[-1]
     r = p.runs[0]
     assert r.text == test_text
+
+
+@then('the paragraph alignment property value is {align_value}')
+def then_the_paragraph_alignment_prop_value_is_value(context, align_value):
+    expected_value = {
+        'None':                      None,
+        'WD_ALIGN_PARAGRAPH.LEFT':   WD_ALIGN_PARAGRAPH.LEFT,
+        'WD_ALIGN_PARAGRAPH.CENTER': WD_ALIGN_PARAGRAPH.CENTER,
+        'WD_ALIGN_PARAGRAPH.RIGHT':  WD_ALIGN_PARAGRAPH.RIGHT,
+    }[align_value]
+    assert context.paragraph.alignment == expected_value
 
 
 @then('the paragraph formatting is preserved')
