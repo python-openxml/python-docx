@@ -8,6 +8,7 @@ can be found here:
 .. toctree::
    :titlesonly:
 
+   WdAlignParagraph
    WdOrientation
    WdSectionStart
    WdUnderline
