@@ -82,10 +82,10 @@ class Paragraph(object):
         run is created with the given text. Otherwise, the text is appended
         to the last run and takes on its style.
         """
-        if not self._p.r_lst:
-            self.add_run(text)
-        else:
+        if self._p.r_lst:
             self.runs[-1].add_text(text)
+        else:
+            self.add_run(text)
 
     @property
     def alignment(self):
