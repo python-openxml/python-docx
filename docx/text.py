@@ -83,7 +83,7 @@ class Paragraph(object):
         to the last run and takes on its style.
         """
         if not self._p.r_lst:
-            self.add_run(text, style=None)
+            self.add_run(text)
         else:
             self.runs[-1].add_text(text)
 
