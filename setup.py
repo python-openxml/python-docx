@@ -38,7 +38,7 @@ PACKAGE_DATA = {'docx': ['templates/*']}
 
 INSTALL_REQUIRES = ['lxml>=2.3.2']
 TEST_SUITE = 'tests'
-TESTS_REQUIRE = ['behave', 'mock', 'pytest']
+TESTS_REQUIRE = ['behave', 'mock', 'pyparsing', 'pytest']
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
