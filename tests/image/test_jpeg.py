@@ -17,7 +17,7 @@ from docx.image.jpeg import (
 )
 from docx.image.tiff import Tiff
 
-from ..unitutil import (
+from ..unitutil.mock import (
     call, class_mock, initializer_mock, instance_mock, method_mock
 )
 

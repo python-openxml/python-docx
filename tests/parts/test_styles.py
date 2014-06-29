@@ -16,7 +16,7 @@ from docx.package import Package
 from docx.parts.styles import StylesPart, _Styles
 
 from ..oxml.unitdata.styles import a_style, a_styles
-from ..unitutil import (
+from ..unitutil.mock import (
     function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
 

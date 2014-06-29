@@ -21,7 +21,7 @@ from docx.section import Section
 from docx.table import Table
 from docx.text import Paragraph, Run
 
-from .unitutil import (
+from .unitutil.mock import (
     instance_mock, class_mock, method_mock, property_mock, var_mock
 )
 

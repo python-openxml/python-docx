@@ -1,10 +1,11 @@
 # encoding: utf-8
 
 """
-Utility functions for unit testing
+Utility functions wrapping the excellent *mock* library.
 """
 
-import os
+from __future__ import absolute_import, print_function
+
 import sys
 
 if sys.version_info >= (3, 3):
@@ -15,45 +16,6 @@ else:
     import mock  # noqa
     from mock import call, MagicMock  # noqa
     from mock import create_autospec, Mock, patch, PropertyMock
-
-
-from docx.oxml.xmlchemy import serialize_for_reading
-
-
-_thisdir = os.path.split(__file__)[0]
-test_file_dir = os.path.abspath(os.path.join(_thisdir, 'test_files'))
-
-
-def abspath(relpath):
-    thisdir = os.path.split(__file__)[0]
-    return os.path.abspath(os.path.join(thisdir, relpath))
-
-
-def actual_xml(elm):
-    return serialize_for_reading(elm)
-
-
-def absjoin(*paths):
-    return os.path.abspath(os.path.join(*paths))
-
-
-def docx_path(name):
-    """
-    Return the absolute path to test .docx file with root name *name*.
-    """
-    return absjoin(_thisdir, 'test_files', '%s.docx' % name)
-
-
-def test_file(name):
-    """
-    Return the absolute path to test file having *name*.
-    """
-    return absjoin(_thisdir, 'test_files', name)
-
-
-# ===========================================================================
-# pytest mocking helpers
-# ===========================================================================
 
 
 def class_mock(request, q_class_name, autospec=True, **kwargs):

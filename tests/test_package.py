@@ -13,9 +13,8 @@ from docx.opc.packuri import PackURI
 from docx.package import ImageParts, Package
 from docx.parts.image import ImagePart
 
-from .unitutil import (
-    docx_path, class_mock, instance_mock, method_mock
-)
+from .unitutil.file import docx_path
+from .unitutil.mock import class_mock, instance_mock, method_mock
 
 
 class DescribePackage(object):

@@ -8,8 +8,8 @@ from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from docx.opc.oxml import (
     CT_Default, CT_Override, CT_Relationship, CT_Relationships, CT_Types
 )
+from docx.oxml.xmlchemy import serialize_for_reading
 
-from ..unitutil import actual_xml
 from .unitdata.rels import (
     a_Default, an_Override, a_Relationship, a_Relationships, a_Types
 )
@@ -76,7 +76,7 @@ class DescribeCT_Relationships(object):
             '<Relationships xmlns="http://schemas.openxmlformats.org/package'
             '/2006/relationships"/>\n'
         )
-        assert actual_xml(rels) == expected_xml
+        assert serialize_for_reading(rels) == expected_xml
 
     def it_can_build_rels_element_incrementally(self):
         # setup ------------------------
@@ -87,7 +87,7 @@ class DescribeCT_Relationships(object):
         rels.add_rel('rId3', 'http://reltype2', '../slides/slide1.xml')
         # verify -----------------------
         expected_rels_xml = a_Relationships().xml
-        assert actual_xml(rels) == expected_rels_xml
+        assert serialize_for_reading(rels) == expected_rels_xml
 
     def it_can_generate_rels_file_xml(self):
         expected_xml = (

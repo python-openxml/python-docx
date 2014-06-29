@@ -16,7 +16,7 @@ from docx.opc.package import (
 )
 from docx.opc.pkgreader import PackageReader
 
-from ..unitutil import (
+from ..unitutil.mock import (
     call, class_mock, cls_attr_mock, function_mock, instance_mock,
     loose_mock, method_mock, Mock, patch, PropertyMock
 )

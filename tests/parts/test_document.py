@@ -28,7 +28,7 @@ from ..oxml.unitdata.table import (
     a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblW, a_tc, a_tr
 )
 from ..oxml.unitdata.text import a_p, a_pPr, a_sectPr, an_r
-from ..unitutil import (
+from ..unitutil.mock import (
     function_mock, class_mock, initializer_mock, instance_mock, loose_mock,
     method_mock, Mock, property_mock
 )

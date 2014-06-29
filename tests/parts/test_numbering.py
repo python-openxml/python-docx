@@ -16,7 +16,7 @@ from docx.package import Package
 from docx.parts.numbering import NumberingPart, _NumberingDefinitions
 
 from ..oxml.unitdata.numbering import a_num, a_numbering
-from ..unitutil import (
+from ..unitutil.mock import (
     function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
 

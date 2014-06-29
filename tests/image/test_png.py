@@ -17,7 +17,7 @@ from docx.image.png import (
     Png, _PngParser
 )
 
-from ..unitutil import (
+from ..unitutil.mock import (
     call, class_mock, function_mock, initializer_mock, instance_mock,
     method_mock
 )

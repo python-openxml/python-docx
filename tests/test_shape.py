@@ -21,7 +21,7 @@ from .oxml.unitdata.dml import (
     an_spPr, an_xfrm
 )
 from .oxml.unitdata.text import an_r
-from .unitutil import instance_mock
+from .unitutil.mock import instance_mock
 
 
 class DescribeInlineShape(object):

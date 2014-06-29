@@ -16,7 +16,7 @@ from docx.image.tiff import (
     _LongIfdEntry, _RationalIfdEntry, _ShortIfdEntry, Tiff, _TiffParser
 )
 
-from ..unitutil import (
+from ..unitutil.mock import (
     call, class_mock, function_mock, initializer_mock, instance_mock,
     loose_mock, method_mock
 )

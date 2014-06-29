@@ -19,7 +19,7 @@ from docx.opc.pkgreader import (
 )
 
 from .unitdata.types import a_Default, a_Types, an_Override
-from ..unitutil import (
+from ..unitutil.mock import (
     call, class_mock, function_mock, initializer_mock, instance_mock,
     loose_mock, method_mock, Mock, patch
 )

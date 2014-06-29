@@ -18,9 +18,9 @@ from docx.image.png import Png
 from docx.image.tiff import Tiff
 from docx.opc.constants import CONTENT_TYPE as CT
 
-from ..unitutil import (
-    function_mock, class_mock, initializer_mock, instance_mock, method_mock,
-    test_file
+from ..unitutil.file import test_file
+from ..unitutil.mock import (
+    function_mock, class_mock, initializer_mock, instance_mock, method_mock
 )
 
 

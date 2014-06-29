@@ -15,9 +15,8 @@ from docx.opc.packuri import PackURI
 from docx.package import Package
 from docx.parts.image import ImagePart
 
-from ..unitutil import (
-    initializer_mock, instance_mock, method_mock, test_file
-)
+from ..unitutil.file import test_file
+from ..unitutil.mock import initializer_mock, instance_mock, method_mock
 
 
 class DescribeImagePart(object):

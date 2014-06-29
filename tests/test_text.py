@@ -24,7 +24,7 @@ from .oxml.unitdata.text import (
     an_imprint, an_oMath, a_noProof, an_outline, an_r, an_rPr, an_rStyle,
     an_rtl
 )
-from .unitutil import call, class_mock, instance_mock, Mock
+from .unitutil.mock import call, class_mock, instance_mock, Mock
 
 
 class DescribeParagraph(object):

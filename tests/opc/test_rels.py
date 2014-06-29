@@ -13,7 +13,7 @@ from docx.opc.oxml import CT_Relationships
 from docx.opc.package import Part, _Relationship, Relationships
 from docx.opc.packuri import PackURI
 
-from ..unitutil import (
+from ..unitutil.mock import (
     call, class_mock, instance_mock, loose_mock, Mock, patch, PropertyMock
 )
 

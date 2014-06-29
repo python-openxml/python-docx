@@ -12,7 +12,7 @@ from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE
 from docx.image.gif import Gif
 
-from ..unitutil import initializer_mock
+from ..unitutil.mock import initializer_mock
 
 
 class DescribeGif(object):
