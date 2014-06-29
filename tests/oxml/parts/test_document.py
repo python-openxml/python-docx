@@ -8,33 +8,15 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from .unitdata.document import a_body
-from ..unitdata.section import a_type
-from ..unitdata.text import a_p, a_pPr, a_sectPr
+from ...unitutil.cxml import element, xml
 
 
 class DescribeCT_Body(object):
 
-    def it_can_clear_all_the_content_it_holds(self):
-        """
-        Remove all content child elements from this <w:body> element.
-        """
-        cases = (
-            (a_body().with_nsdecls(),
-             a_body().with_nsdecls()),
-            (a_body().with_nsdecls().with_child(a_p()),
-             a_body().with_nsdecls()),
-            (a_body().with_nsdecls().with_child(a_sectPr()),
-             a_body().with_nsdecls().with_child(a_sectPr())),
-            (a_body().with_nsdecls().with_child(a_p()).with_child(a_sectPr()),
-             a_body().with_nsdecls().with_child(a_sectPr())),
-        )
-        for before_body_bldr, after_body_bldr in cases:
-            body = before_body_bldr.element
-            # exercise -----------------
-            body.clear_content()
-            # verify -------------------
-            assert body.xml == after_body_bldr.xml()
+    def it_can_clear_all_its_content(self, clear_fixture):
+        body, expected_xml = clear_fixture
+        body.clear_content()
+        assert body.xml == expected_xml
 
     def it_can_add_a_section_break(self, section_break_fixture):
         body, expected_xml = section_break_fixture
@@ -44,20 +26,26 @@ class DescribeCT_Body(object):
 
     # fixtures -------------------------------------------------------
 
+    @pytest.fixture(params=[
+        ('w:body',                 'w:body'),
+        ('w:body/w:p',             'w:body'),
+        ('w:body/w:tbl',           'w:body'),
+        ('w:body/w:sectPr',        'w:body/w:sectPr'),
+        ('w:body/(w:p, w:sectPr)', 'w:body/w:sectPr'),
+    ])
+    def clear_fixture(self, request):
+        before_cxml, after_cxml = request.param
+        body = element(before_cxml)
+        expected_xml = xml(after_cxml)
+        return body, expected_xml
+
     @pytest.fixture
     def section_break_fixture(self):
-        body = (
-            a_body().with_nsdecls().with_child(
-                a_sectPr().with_child(
-                    a_type().with_val('foobar')))
-        ).element
-        expected_xml = (
-            a_body().with_nsdecls().with_child(
-                a_p().with_child(
-                    a_pPr().with_child(
-                        a_sectPr().with_child(
-                            a_type().with_val('foobar'))))).with_child(
-                a_sectPr().with_child(
-                    a_type().with_val('foobar')))
-        ).xml()
+        body = element('w:body/w:sectPr/w:type{w:val=foobar}')
+        expected_xml = xml(
+            'w:body/('
+            '  w:p/w:pPr/w:sectPr/w:type{w:val=foobar},'
+            '  w:sectPr/w:type{w:val=foobar}'
+            ')'
+        )
         return body, expected_xml
