@@ -85,8 +85,8 @@ class CT_P(BaseOxmlElement):
     @property
     def style(self):
         """
-        String contained in w:val attribute of <w:pPr><w:pStyle> child, or
-        None if that element is not present.
+        String contained in w:val attribute of ./w:pPr/w:pStyle grandchild,
+        or |None| if not present.
         """
         pPr = self.pPr
         if pPr is None:
@@ -95,10 +95,6 @@ class CT_P(BaseOxmlElement):
 
     @style.setter
     def style(self, style):
-        """
-        Set style of this <w:p> element to *style*. If *style* is None,
-        remove the style element.
-        """
         pPr = self.get_or_add_pPr()
         pPr.style = style
 
@@ -256,8 +252,8 @@ class CT_R(BaseOxmlElement):
     @property
     def underline(self):
         """
-        String contained in w:val attribute of <w:u> grandchild, or |None| if
-        that element is not present.
+        String contained in w:val attribute of ./w:rPr/w:u grandchild, or
+        |None| if not present.
         """
         rPr = self.rPr
         if rPr is None:
