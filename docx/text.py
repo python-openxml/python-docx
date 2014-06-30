@@ -6,7 +6,7 @@ Text-related proxy types for python-docx, such as Paragraph and Run.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.enum.text import WD_BREAK
 
 
 def boolproperty(f):
@@ -39,13 +39,17 @@ def boolproperty(f):
         return prop_value.val
 
     def setter(obj, value):
+        if value not in (True, False, None):
+            raise ValueError(
+                "assigned value must be True, False, or None, got '%s'"
+                % value
+            )
         r, attr_name = obj._r, f(obj)
         rPr = r.get_or_add_rPr()
         _remove_prop(rPr, attr_name)
         if value is not None:
             elm = _add_prop(rPr, attr_name)
-            if bool(value) is False:
-                elm.val = False
+            elm.val = value
 
     return property(getter, setter, doc=f.__doc__)
 
@@ -432,9 +436,6 @@ class Run(object):
 
     @underline.setter
     def underline(self, value):
-        if not WD_UNDERLINE.is_valid_setting(value):
-            tmpl = "'%s' is not a valid setting for Run.underline"
-            raise ValueError(tmpl % value)
         self._r.underline = value
 
     @boolproperty

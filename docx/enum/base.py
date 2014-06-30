@@ -159,12 +159,14 @@ class EnumerationBase(object):
     __ms_name__ = ''
 
     @classmethod
-    def is_valid_setting(cls, value):
+    def validate(cls, value):
         """
-        Return |True| if *value* is an assignable value, |False| if it is
-        a return value-only member or not a member value.
+        Raise |ValueError| if *value* is not an assignable value.
         """
-        return value in cls._valid_settings
+        if value not in cls._valid_settings:
+            raise ValueError(
+                "%s not a member of %s enumeration" % (value, cls.__name__)
+            )
 
 
 Enumeration = MetaEnumeration(

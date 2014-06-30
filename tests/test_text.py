@@ -9,27 +9,19 @@ from __future__ import (
 )
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
-from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.oxml.text import CT_P, CT_R
 from docx.text import Paragraph, Run
 
 import pytest
 
-from .oxml.parts.unitdata.document import a_body
-from .oxml.unitdata.text import (
-    a_b, a_bCs, a_br, a_caps, a_cr, a_cs, a_dstrike, a_jc, a_p, a_pPr,
-    a_pStyle, a_shadow, a_smallCaps, a_snapToGrid, a_specVanish, a_strike,
-    a_t, a_tab, a_u, a_vanish, a_webHidden, an_emboss, an_i, an_iCs,
-    an_imprint, an_oMath, a_noProof, an_outline, an_r, an_rPr, an_rStyle,
-    an_rtl
-)
-from .unitutil.mock import call, class_mock, instance_mock, Mock
+from .unitutil.cxml import element, xml
+from .unitutil.mock import call, class_mock, instance_mock
 
 
 class DescribeParagraph(object):
 
-    def it_has_a_sequence_of_the_runs_it_contains(self, runs_fixture):
+    def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
         paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
         runs = paragraph.runs
         assert Run_.mock_calls == [call(r_), call(r_2_)]
@@ -51,25 +43,14 @@ class DescribeParagraph(object):
         paragraph.alignment = value
         assert paragraph._p.xml == expected_xml
 
-    def it_knows_its_paragraph_style(self):
-        cases = (
-            (Mock(name='p_elm', style='foobar'), 'foobar'),
-            (Mock(name='p_elm', style=None),     'Normal'),
-        )
-        for p_elm, expected_style in cases:
-            p = Paragraph(p_elm)
-            assert p.style == expected_style
+    def it_knows_its_paragraph_style(self, style_get_fixture):
+        paragraph, expected_style = style_get_fixture
+        assert paragraph.style == expected_style
 
-    def it_can_set_its_paragraph_style(self):
-        cases = (
-            ('foobar', 'foobar'),
-            ('Normal', None),
-        )
-        for style, expected_setting in cases:
-            p_elm = Mock(name='p_elm')
-            p = Paragraph(p_elm)
-            p.style = style
-            assert p_elm.style == expected_setting
+    def it_can_change_its_paragraph_style(self, style_set_fixture):
+        paragraph, value, expected_xml = style_set_fixture
+        paragraph.style = value
+        assert paragraph._p.xml == expected_xml
 
     def it_knows_the_text_it_contains(self, text_get_fixture):
         paragraph, expected_text = text_get_fixture
@@ -98,94 +79,66 @@ class DescribeParagraph(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        (None, None), (None, 'Strong'), ('foobar', None), ('foobar', 'Strong')
+        ('w:p', None, None,
+         'w:p/w:r'),
+        ('w:p', 'foobar', None,
+         'w:p/w:r/w:t"foobar"'),
+        ('w:p', None, 'Strong',
+         'w:p/w:r/w:rPr/w:rStyle{w:val=Strong}'),
+        ('w:p', 'foobar', 'Strong',
+         'w:p/w:r/(w:rPr/w:rStyle{w:val=Strong}, w:t"foobar")'),
     ])
-    def add_run_fixture(self, request, paragraph):
-        text, style = request.param
-        r_bldr = an_r()
-        if style:
-            r_bldr.with_child(
-                an_rPr().with_child(an_rStyle().with_val(style))
-            )
-        if text:
-            r_bldr.with_child(a_t().with_text(text))
-        expected_xml = a_p().with_nsdecls().with_child(r_bldr).xml()
+    def add_run_fixture(self, request):
+        before_cxml, text, style, after_cxml = request.param
+        paragraph = Paragraph(element(before_cxml))
+        expected_xml = xml(after_cxml)
         return paragraph, text, style, expected_xml
 
     @pytest.fixture(params=[
-        ('center', WD_ALIGN_PARAGRAPH.CENTER),
-        (None,     None),
+        ('w:p/w:pPr/w:jc{w:val=center}', WD_ALIGN_PARAGRAPH.CENTER),
+        ('w:p', None),
     ])
     def alignment_get_fixture(self, request):
-        jc_val, expected_alignment_value = request.param
-        p_bldr = a_p().with_nsdecls()
-        if jc_val is not None:
-            p_bldr.with_child(a_pPr().with_child(a_jc().with_val(jc_val)))
-        p = p_bldr.element
-        paragraph = Paragraph(p)
+        cxml, expected_alignment_value = request.param
+        paragraph = Paragraph(element(cxml))
         return paragraph, expected_alignment_value
 
     @pytest.fixture(params=[
-        ('left', WD_ALIGN_PARAGRAPH.CENTER, 'center'),
-        ('left', None,                      None),
-        (None,   WD_ALIGN_PARAGRAPH.LEFT,   'left'),
-        (None,   None,                      None),
+        ('w:p', WD_ALIGN_PARAGRAPH.LEFT,
+         'w:p/w:pPr/w:jc{w:val=left}'),
+        ('w:p/w:pPr/w:jc{w:val=left}', WD_ALIGN_PARAGRAPH.CENTER,
+         'w:p/w:pPr/w:jc{w:val=center}'),
+        ('w:p/w:pPr/w:jc{w:val=left}', None,
+         'w:p/w:pPr'),
+        ('w:p', None, 'w:p/w:pPr'),
     ])
     def alignment_set_fixture(self, request):
-        initial_jc_val, new_alignment_value, expected_jc_val = request.param
-        # paragraph --------------------
-        p_bldr = a_p().with_nsdecls()
-        if initial_jc_val is not None:
-            p_bldr.with_child(
-                a_pPr().with_child(
-                    a_jc().with_val(initial_jc_val))
-            )
-        p = p_bldr.element
-        paragraph = Paragraph(p)
-        # expected_xml -----------------
-        pPr_bldr = a_pPr()
-        if expected_jc_val is not None:
-            pPr_bldr.with_child(a_jc().with_val(expected_jc_val))
-        p_bldr = a_p().with_nsdecls().with_child(pPr_bldr)
-        expected_xml = p_bldr.xml()
+        initial_cxml, new_alignment_value, expected_cxml = request.param
+        paragraph = Paragraph(element(initial_cxml))
+        expected_xml = xml(expected_cxml)
         return paragraph, new_alignment_value, expected_xml
 
-    @pytest.fixture
+    @pytest.fixture(params=[
+        ('w:p', 'w:p'),
+        ('w:p/w:pPr', 'w:p/w:pPr'),
+        ('w:p/w:r/w:t"foobar"', 'w:p'),
+        ('w:p/(w:pPr, w:r/w:t"foobar")', 'w:p/w:pPr'),
+    ])
     def clear_fixture(self, request):
-        """
-        After XML should be before XML with content removed. So snapshot XML
-        after adding formatting but before adding content to get after XML.
-        """
-        style, text = ('Heading1', 'foo\tbar')
-        p = OxmlElement('w:p')
-        # expected_xml -----------------
-        if style is not None:
-            p.style = style
-        expected_xml = p.xml
-        # paragraph --------------------
-        paragraph = Paragraph(p)
-        if text is not None:
-            paragraph.add_run(text)
+        initial_cxml, expected_cxml = request.param
+        paragraph = Paragraph(element(initial_cxml))
+        expected_xml = xml(expected_cxml)
         return paragraph, expected_xml
 
-    @pytest.fixture
-    def insert_before_fixture(self):
-        text, style = 'foobar', 'Heading1'
-        body = (
-            a_body().with_nsdecls().with_child(
-                a_p())
-        ).element
-        p = body.find(qn('w:p'))
-        paragraph = Paragraph(p)
-        expected_xml = (
-            a_body().with_nsdecls().with_child(
-                a_p().with_child(
-                    a_pPr().with_child(
-                        a_pStyle().with_val(style))).with_child(
-                    an_r().with_child(
-                        a_t().with_text(text)))).with_child(
-                a_p())
-        ).xml()
+    @pytest.fixture(params=[
+        ('w:body/w:p', 'foobar', 'Heading1',
+         'w:body/(w:p/(w:pPr/w:pStyle{w:val=Heading1},w:r/w:t"foobar"),w:p)')
+    ])
+    def insert_before_fixture(self, request):
+        body_cxml, text, style, expected_cxml = request.param
+        body = element(body_cxml)
+        paragraph = Paragraph(body.find(qn('w:p')))
+        expected_xml = xml(expected_cxml)
         return paragraph, text, style, body, expected_xml
 
     @pytest.fixture
@@ -194,35 +147,63 @@ class DescribeParagraph(object):
         run_, run_2_ = runs_
         return paragraph, Run_, r_, r_2_, run_, run_2_
 
-    @pytest.fixture
-    def text_get_fixture(self):
-        p = (
-            a_p().with_nsdecls().with_child(
-                an_r().with_child(
-                    a_t().with_text('foo'))).with_child(
-                an_r().with_child(
-                    a_t().with_text(' de bar')))
-        ).element
-        paragraph = Paragraph(p)
-        return paragraph, 'foo de bar'
+    @pytest.fixture(params=[
+        ('w:p', 'Normal'),
+        ('w:p/w:pPr', 'Normal'),
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', 'Heading1'),
+    ])
+    def style_get_fixture(self, request):
+        p_cxml, expected_style = request.param
+        paragraph = Paragraph(element(p_cxml))
+        return paragraph, expected_style
+
+    @pytest.fixture(params=[
+        ('w:p',                                'Heading1',
+         'w:p/w:pPr/w:pStyle{w:val=Heading1}'),
+        ('w:p/w:pPr',                          'Heading1',
+         'w:p/w:pPr/w:pStyle{w:val=Heading1}'),
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', 'Heading2',
+         'w:p/w:pPr/w:pStyle{w:val=Heading2}'),
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', None,
+         'w:p/w:pPr'),
+        ('w:p',                                None,
+         'w:p/w:pPr'),
+    ])
+    def style_set_fixture(self, request):
+        p_cxml, new_style_value, expected_cxml = request.param
+        paragraph = Paragraph(element(p_cxml))
+        expected_xml = xml(expected_cxml)
+        return paragraph, new_style_value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:p', ''),
+        ('w:p/w:r', ''),
+        ('w:p/w:r/w:t', ''),
+        ('w:p/w:r/w:t"foo"', 'foo'),
+        ('w:p/w:r/(w:t"foo", w:t"bar")', 'foobar'),
+        ('w:p/w:r/(w:t"fo ", w:t"bar")', 'fo bar'),
+        ('w:p/w:r/(w:t"foo", w:tab, w:t"bar")', 'foo\tbar'),
+        ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', 'foo\nbar'),
+        ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', 'foo\nbar'),
+    ])
+    def text_get_fixture(self, request):
+        p_cxml, expected_text_value = request.param
+        paragraph = Paragraph(element(p_cxml))
+        return paragraph, expected_text_value
 
     @pytest.fixture
     def text_set_fixture(self):
-        p = a_p().with_nsdecls().element
-        paragraph = Paragraph(p)
-        paragraph.add_run('barfoo')
-        return paragraph, 'foo\tbar\rbaz\n', 'foo\tbar\nbaz\n'
+        paragraph = Paragraph(element('w:p'))
+        paragraph.add_run('must not appear in result')
+        new_text_value = 'foo\tbar\rbaz\n'
+        expected_text_value = 'foo\tbar\nbaz\n'
+        return paragraph, new_text_value, expected_text_value
 
     # fixture components ---------------------------------------------
 
     @pytest.fixture
     def p_(self, request, r_, r_2_):
         return instance_mock(request, CT_P, r_lst=(r_, r_2_))
-
-    @pytest.fixture
-    def paragraph(self):
-        p = a_p().with_nsdecls().element
-        return Paragraph(p)
 
     @pytest.fixture
     def Run_(self, request, runs_):
@@ -297,8 +278,7 @@ class DescribeRun(object):
         run.add_tab()
         assert run._r.xml == expected_xml
 
-    def it_can_remove_its_content_while_preserving_formatting(
-            self, clear_fixture):
+    def it_can_remove_its_content_but_keep_formatting(self, clear_fixture):
         run, expected_xml = clear_fixture
         _run = run.clear()
         assert run._r.xml == expected_xml
@@ -316,303 +296,236 @@ class DescribeRun(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        'line', 'page', 'column', 'clr_lt', 'clr_rt', 'clr_all'
+        (WD_BREAK.LINE,   'w:r/w:br'),
+        (WD_BREAK.PAGE,   'w:r/w:br{w:type=page}'),
+        (WD_BREAK.COLUMN, 'w:r/w:br{w:type=column}'),
+        (WD_BREAK.LINE_CLEAR_LEFT,
+         'w:r/w:br{w:type=textWrapping, w:clear=left}'),
+        (WD_BREAK.LINE_CLEAR_RIGHT,
+         'w:r/w:br{w:type=textWrapping, w:clear=right}'),
+        (WD_BREAK.LINE_CLEAR_ALL,
+         'w:r/w:br{w:type=textWrapping, w:clear=all}'),
     ])
-    def add_break_fixture(self, request, run):
-        type_, clear, break_type = {
-            'line':    (None,           None,    WD_BREAK.LINE),
-            'page':    ('page',         None,    WD_BREAK.PAGE),
-            'column':  ('column',       None,    WD_BREAK.COLUMN),
-            'clr_lt':  ('textWrapping', 'left',  WD_BREAK.LINE_CLEAR_LEFT),
-            'clr_rt':  ('textWrapping', 'right', WD_BREAK.LINE_CLEAR_RIGHT),
-            'clr_all': ('textWrapping', 'all',   WD_BREAK.LINE_CLEAR_ALL),
-        }[request.param]
-        # expected_xml -----------------
-        br_bldr = a_br()
-        if type_ is not None:
-            br_bldr.with_type(type_)
-        if clear is not None:
-            br_bldr.with_clear(clear)
-        expected_xml = an_r().with_nsdecls().with_child(br_bldr).xml()
+    def add_break_fixture(self, request):
+        break_type, expected_cxml = request.param
+        run = Run(element('w:r'))
+        expected_xml = xml(expected_cxml)
         return run, break_type, expected_xml
 
-    @pytest.fixture
-    def add_tab_fixture(self, run):
-        expected_xml = an_r().with_nsdecls().with_child(a_tab()).xml()
+    @pytest.fixture(params=[
+        ('w:r/w:t"foo"', 'w:r/(w:t"foo", w:tab)'),
+    ])
+    def add_tab_fixture(self, request):
+        r_cxml, expected_cxml = request.param
+        run = Run(element(r_cxml))
+        expected_xml = xml(expected_cxml)
         return run, expected_xml
 
-    @pytest.fixture(params=['foobar', ' foo bar', 'bar foo '])
-    def add_text_fixture(self, request, run, Text_):
-        text_str = request.param
-        t_bldr = a_t().with_text(text_str)
-        if text_str.startswith(' ') or text_str.endswith(' '):
-            t_bldr.with_space('preserve')
-        expected_xml = an_r().with_nsdecls().with_child(t_bldr).xml()
-        return run, text_str, expected_xml, Text_
+    @pytest.fixture(params=[
+        ('w:r',          'foo', 'w:r/w:t"foo"'),
+        ('w:r/w:t"foo"', 'bar', 'w:r/(w:t"foo", w:t"bar")'),
+        ('w:r',          'fo ', 'w:r/w:t{xml:space=preserve}"fo "'),
+        ('w:r',          'f o', 'w:r/w:t"f o"'),
+    ])
+    def add_text_fixture(self, request, Text_):
+        r_cxml, text, expected_cxml = request.param
+        run = Run(element(r_cxml))
+        expected_xml = xml(expected_cxml)
+        return run, text, expected_xml, Text_
 
     @pytest.fixture(params=[
-        ('all_caps', True), ('all_caps', False), ('all_caps', None),
-        ('bold', True), ('bold', False), ('bold', None),
-        ('italic', True), ('italic', False), ('italic', None),
-        ('complex_script', True), ('complex_script', False),
-        ('complex_script', None),
-        ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
-        ('cs_italic', True), ('cs_italic', False), ('cs_italic', None),
-        ('double_strike', True), ('double_strike', False),
-        ('double_strike', None),
-        ('emboss', True), ('emboss', False), ('emboss', None),
-        ('hidden', True), ('hidden', False), ('hidden', None),
-        ('italic', True), ('italic', False), ('italic', None),
-        ('imprint', True), ('imprint', False), ('imprint', None),
-        ('math', True), ('math', False), ('math', None),
-        ('no_proof', True), ('no_proof', False), ('no_proof', None),
-        ('outline', True), ('outline', False), ('outline', None),
-        ('rtl', True), ('rtl', False), ('rtl', None),
-        ('shadow', True), ('shadow', False), ('shadow', None),
-        ('small_caps', True), ('small_caps', False), ('small_caps', None),
-        ('snap_to_grid', True), ('snap_to_grid', False),
-        ('snap_to_grid', None),
-        ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
-        ('strike', True), ('strike', False), ('strike', None),
-        ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
+        ('w:r/w:rPr',                          'all_caps',       None),
+        ('w:r/w:rPr/w:caps',                   'all_caps',       True),
+        ('w:r/w:rPr/w:caps{w:val=on}',         'all_caps',       True),
+        ('w:r/w:rPr/w:caps{w:val=off}',        'all_caps',       False),
+        ('w:r/w:rPr/w:b{w:val=1}',             'bold',           True),
+        ('w:r/w:rPr/w:i{w:val=0}',             'italic',         False),
+        ('w:r/w:rPr/w:cs{w:val=true}',         'complex_script', True),
+        ('w:r/w:rPr/w:bCs{w:val=false}',       'cs_bold',        False),
+        ('w:r/w:rPr/w:iCs{w:val=on}',          'cs_italic',      True),
+        ('w:r/w:rPr/w:dstrike{w:val=off}',     'double_strike',  False),
+        ('w:r/w:rPr/w:emboss{w:val=1}',        'emboss',         True),
+        ('w:r/w:rPr/w:vanish{w:val=0}',        'hidden',         False),
+        ('w:r/w:rPr/w:i{w:val=true}',          'italic',         True),
+        ('w:r/w:rPr/w:imprint{w:val=false}',   'imprint',        False),
+        ('w:r/w:rPr/w:oMath{w:val=on}',        'math',           True),
+        ('w:r/w:rPr/w:noProof{w:val=off}',     'no_proof',       False),
+        ('w:r/w:rPr/w:outline{w:val=1}',       'outline',        True),
+        ('w:r/w:rPr/w:rtl{w:val=0}',           'rtl',            False),
+        ('w:r/w:rPr/w:shadow{w:val=true}',     'shadow',         True),
+        ('w:r/w:rPr/w:smallCaps{w:val=false}', 'small_caps',     False),
+        ('w:r/w:rPr/w:snapToGrid{w:val=on}',   'snap_to_grid',   True),
+        ('w:r/w:rPr/w:specVanish{w:val=off}',  'spec_vanish',    False),
+        ('w:r/w:rPr/w:strike{w:val=1}',        'strike',         True),
+        ('w:r/w:rPr/w:webHidden{w:val=0}',     'web_hidden',     False),
     ])
     def bool_prop_get_fixture(self, request):
-        bool_prop_name, expected_state = request.param
-        bool_prop_bldr = {
-            'all_caps':       a_caps,
-            'bold':           a_b,
-            'complex_script': a_cs,
-            'cs_bold':        a_bCs,
-            'cs_italic':      an_iCs,
-            'double_strike':  a_dstrike,
-            'emboss':         an_emboss,
-            'hidden':         a_vanish,
-            'italic':         an_i,
-            'imprint':        an_imprint,
-            'math':           an_oMath,
-            'no_proof':       a_noProof,
-            'outline':        an_outline,
-            'rtl':            an_rtl,
-            'shadow':         a_shadow,
-            'small_caps':     a_smallCaps,
-            'snap_to_grid':   a_snapToGrid,
-            'spec_vanish':    a_specVanish,
-            'strike':         a_strike,
-            'web_hidden':     a_webHidden,
-        }[bool_prop_name]
-        r_bldr = an_r().with_nsdecls()
-        if expected_state is not None:
-            child_bldr = bool_prop_bldr()
-            if expected_state is False:
-                child_bldr.with_val('off')
-            rPr_bldr = an_rPr().with_child(child_bldr)
-            r_bldr.with_child(rPr_bldr)
-        r = r_bldr.element
-        run = Run(r)
-        return run, bool_prop_name, expected_state
+        r_cxml, bool_prop_name, expected_value = request.param
+        run = Run(element(r_cxml))
+        return run, bool_prop_name, expected_value
 
     @pytest.fixture(params=[
-        ('all_caps', True), ('all_caps', False), ('all_caps', None),
-        ('bold', True), ('bold', False), ('bold', None),
-        ('italic', True), ('italic', False), ('italic', None),
-        ('complex_script', True), ('complex_script', False),
-        ('complex_script', None),
-        ('cs_bold', True), ('cs_bold', False), ('cs_bold', None),
-        ('cs_italic', True), ('cs_italic', False), ('cs_italic', None),
-        ('double_strike', True), ('double_strike', False),
-        ('double_strike', None),
-        ('emboss', True), ('emboss', False), ('emboss', None),
-        ('hidden', True), ('hidden', False), ('hidden', None),
-        ('italic', True), ('italic', False), ('italic', None),
-        ('imprint', True), ('imprint', False), ('imprint', None),
-        ('math', True), ('math', False), ('math', None),
-        ('no_proof', True), ('no_proof', False), ('no_proof', None),
-        ('outline', True), ('outline', False), ('outline', None),
-        ('rtl', True), ('rtl', False), ('rtl', None),
-        ('shadow', True), ('shadow', False), ('shadow', None),
-        ('small_caps', True), ('small_caps', False), ('small_caps', None),
-        ('snap_to_grid', True), ('snap_to_grid', False),
-        ('snap_to_grid', None),
-        ('spec_vanish', True), ('spec_vanish', False), ('spec_vanish', None),
-        ('strike', True), ('strike', False), ('strike', None),
-        ('web_hidden', True), ('web_hidden', False), ('web_hidden', None),
+        # nothing to True, False, and None ---------------------------
+        ('w:r',                             'all_caps',       True,
+         'w:r/w:rPr/w:caps'),
+        ('w:r',                             'bold',           False,
+         'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r',                             'italic',         None,
+         'w:r/w:rPr'),
+        # default to True, False, and None ---------------------------
+        ('w:r/w:rPr/w:cs',                  'complex_script', True,
+         'w:r/w:rPr/w:cs'),
+        ('w:r/w:rPr/w:bCs',                 'cs_bold',        False,
+         'w:r/w:rPr/w:bCs{w:val=0}'),
+        ('w:r/w:rPr/w:iCs',                 'cs_italic',      None,
+         'w:r/w:rPr'),
+        # True to True, False, and None ------------------------------
+        ('w:r/w:rPr/w:dstrike{w:val=1}',    'double_strike',  True,
+         'w:r/w:rPr/w:dstrike'),
+        ('w:r/w:rPr/w:emboss{w:val=on}',    'emboss',         False,
+         'w:r/w:rPr/w:emboss{w:val=0}'),
+        ('w:r/w:rPr/w:vanish{w:val=1}',     'hidden',         None,
+         'w:r/w:rPr'),
+        # False to True, False, and None -----------------------------
+        ('w:r/w:rPr/w:i{w:val=false}',      'italic',         True,
+         'w:r/w:rPr/w:i'),
+        ('w:r/w:rPr/w:imprint{w:val=0}',    'imprint',        False,
+         'w:r/w:rPr/w:imprint{w:val=0}'),
+        ('w:r/w:rPr/w:oMath{w:val=off}',    'math',           None,
+         'w:r/w:rPr'),
+        # random mix -------------------------------------------------
+        ('w:r/w:rPr/w:noProof{w:val=1}',    'no_proof',       False,
+         'w:r/w:rPr/w:noProof{w:val=0}'),
+        ('w:r/w:rPr',                       'outline',        True,
+         'w:r/w:rPr/w:outline'),
+        ('w:r/w:rPr/w:rtl{w:val=true}',     'rtl',            False,
+         'w:r/w:rPr/w:rtl{w:val=0}'),
+        ('w:r/w:rPr/w:shadow{w:val=on}',    'shadow',         True,
+         'w:r/w:rPr/w:shadow'),
+        ('w:r/w:rPr/w:smallCaps',           'small_caps',     False,
+         'w:r/w:rPr/w:smallCaps{w:val=0}'),
+        ('w:r/w:rPr/w:snapToGrid',          'snap_to_grid',   True,
+         'w:r/w:rPr/w:snapToGrid'),
+        ('w:r/w:rPr/w:specVanish',          'spec_vanish',    None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:strike{w:val=foo}',   'strike',         True,
+         'w:r/w:rPr/w:strike'),
+        ('w:r/w:rPr/w:webHidden',           'web_hidden',     False,
+         'w:r/w:rPr/w:webHidden{w:val=0}'),
     ])
     def bool_prop_set_fixture(self, request):
-        bool_prop_name, value = request.param
-        bool_prop_bldr = {
-            'all_caps':       a_caps,
-            'bold':           a_b,
-            'complex_script': a_cs,
-            'cs_bold':        a_bCs,
-            'cs_italic':      an_iCs,
-            'double_strike':  a_dstrike,
-            'emboss':         an_emboss,
-            'hidden':         a_vanish,
-            'italic':         an_i,
-            'imprint':        an_imprint,
-            'math':           an_oMath,
-            'no_proof':       a_noProof,
-            'outline':        an_outline,
-            'rtl':            an_rtl,
-            'shadow':         a_shadow,
-            'small_caps':     a_smallCaps,
-            'snap_to_grid':   a_snapToGrid,
-            'spec_vanish':    a_specVanish,
-            'strike':         a_strike,
-            'web_hidden':     a_webHidden,
-        }[bool_prop_name]
-        # run --------------------------
-        r = an_r().with_nsdecls().element
-        run = Run(r)
-        # expected_xml -----------------
-        rPr_bldr = an_rPr()
-        if value is not None:
-            child_bldr = bool_prop_bldr()
-            if value is False:
-                child_bldr.with_val(0)
-            rPr_bldr.with_child(child_bldr)
-        expected_xml = an_r().with_nsdecls().with_child(rPr_bldr).xml()
+        initial_r_cxml, bool_prop_name, value, expected_cxml = request.param
+        run = Run(element(initial_r_cxml))
+        expected_xml = xml(expected_cxml)
         return run, bool_prop_name, value, expected_xml
 
     @pytest.fixture(params=[
-        ('bi', 'foobar'), ('bi', None), ('', 'foobar'), ('', None)
+        ('w:r',                   'w:r'),
+        ('w:r/w:t"foo"',          'w:r'),
+        ('w:r/w:br',              'w:r'),
+        ('w:r/w:rPr',             'w:r/w:rPr'),
+        ('w:r/(w:rPr, w:t"foo")', 'w:r/w:rPr'),
+        ('w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
+         'w:r/w:rPr/(w:b, w:i)'),
     ])
     def clear_fixture(self, request):
-        formatting, text = request.param
-        r = OxmlElement('w:r')
-        if 'b' in formatting:
-            r.get_or_add_rPr()._add_b().val = True
-        if 'i' in formatting:
-            r.get_or_add_rPr()._add_i().val = True
-        expected_xml = r.xml
-        if text is not None:
-            r.add_t(text)
-        run = Run(r)
+        initial_r_cxml, expected_cxml = request.param
+        run = Run(element(initial_r_cxml))
+        expected_xml = xml(expected_cxml)
         return run, expected_xml
 
-    @pytest.fixture(params=['Foobar', None])
+    @pytest.fixture(params=[
+        ('w:r',                              None),
+        ('w:r/w:rPr/w:rStyle{w:val=Foobar}', 'Foobar'),
+    ])
     def style_get_fixture(self, request):
-        style = request.param
-        r = self.r_bldr_with_style(style).element
-        run = Run(r)
-        return run, style
+        r_cxml, expected_style = request.param
+        run = Run(element(r_cxml))
+        return run, expected_style
 
     @pytest.fixture(params=[
-        (None, None),
-        (None, 'Foobar'),
-        ('Foobar', None),
-        ('Foobar', 'Foobar'),
-        ('Foobar', 'Barfoo'),
+        ('w:r',                            None,
+         'w:r/w:rPr'),
+        ('w:r',                            'Foo',
+         'w:r/w:rPr/w:rStyle{w:val=Foo}'),
+        ('w:r/w:rPr/w:rStyle{w:val=Foo}',  None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:rStyle{w:val=Foo}',  'Bar',
+         'w:r/w:rPr/w:rStyle{w:val=Bar}'),
     ])
     def style_set_fixture(self, request):
-        before_style, after_style = request.param
-        r = self.r_bldr_with_style(before_style).element
-        run = Run(r)
-        expected_xml = self.r_bldr_with_style(after_style).xml()
-        return run, after_style, expected_xml
+        initial_r_cxml, new_style, expected_cxml = request.param
+        run = Run(element(initial_r_cxml))
+        expected_xml = xml(expected_cxml)
+        return run, new_style, expected_xml
 
     @pytest.fixture(params=[
-        (('',),                          ''),
-        (('xfoobar',),                   'foobar'),
-        (('bpage', 'xabc', 'xdef', 't'), '\nabcdef\t'),
-        (('xabc', 't', 'xdef', 'n'),     'abc\tdef\n'),
+        ('w:r', ''),
+        ('w:r/w:t"foobar"', 'foobar'),
+        ('w:r/(w:t"abc", w:tab, w:t"def", w:cr)', 'abc\tdef\n'),
+        ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', '\nabcdef\t'),
     ])
     def text_get_fixture(self, request):
-        content_children, expected_text = request.param
-        r_bldr = self.r_content_bldr(content_children)
-        run = Run(r_bldr.element)
+        r_cxml, expected_text = request.param
+        run = Run(element(r_cxml))
         return run, expected_text
 
     @pytest.fixture(params=[
-        ('abc',      ('xabc',)),
-        ('abc\tdef', ('xabc', 't', 'xdef')),
-        ('abc\rdef', ('xabc', 'n', 'xdef')),
+        ('abc  def', 'w:r/w:t"abc  def"'),
+        ('abc\tdef', 'w:r/(w:t"abc", w:tab, w:t"def")'),
+        ('abc\ndef', 'w:r/(w:t"abc", w:cr,  w:t"def")'),
+        ('abc\rdef', 'w:r/(w:t"abc", w:cr,  w:t"def")'),
     ])
     def text_set_fixture(self, request):
-        text, expected_elm_codes = request.param
-        # starting run contains text, so can tell if it doesn't get replaced
-        r_bldr = self.r_content_bldr(('xfoobar'))
-        run = Run(r_bldr.element)
-        # expected_xml -----------------
-        r_bldr = self.r_content_bldr(expected_elm_codes)
-        expected_xml = r_bldr.xml()
-        return run, text, expected_xml
+        new_text, expected_cxml = request.param
+        initial_r_cxml = 'w:r/w:t"should get deleted"'
+        run = Run(element(initial_r_cxml))
+        expected_xml = xml(expected_cxml)
+        return run, new_text, expected_xml
 
     @pytest.fixture(params=[
-        (None,     None),
-        ('single', True),
-        ('none',   False),
-        ('double', WD_UNDERLINE.DOUBLE),
+        ('w:r',                         None),
+        ('w:r/w:rPr/w:u',               None),
+        ('w:r/w:rPr/w:u{w:val=single}', True),
+        ('w:r/w:rPr/w:u{w:val=none}',   False),
+        ('w:r/w:rPr/w:u{w:val=double}', WD_UNDERLINE.DOUBLE),
+        ('w:r/w:rPr/w:u{w:val=wave}',   WD_UNDERLINE.WAVY),
     ])
     def underline_get_fixture(self, request):
-        underline_type, expected_prop_value = request.param
-        r = self.r_bldr_with_underline(underline_type).element
-        run = Run(r)
-        return run, expected_prop_value
+        r_cxml, expected_underline = request.param
+        run = Run(element(r_cxml))
+        return run, expected_underline
+
+    @pytest.fixture(params=[
+        ('w:r', True,                'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r', False,               'w:r/w:rPr/w:u{w:val=none}'),
+        ('w:r', None,                'w:r/w:rPr'),
+        ('w:r', WD_UNDERLINE.SINGLE, 'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r', WD_UNDERLINE.THICK,  'w:r/w:rPr/w:u{w:val=thick}'),
+        ('w:r/w:rPr/w:u{w:val=single}', True,
+         'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r/w:rPr/w:u{w:val=single}', False,
+         'w:r/w:rPr/w:u{w:val=none}'),
+        ('w:r/w:rPr/w:u{w:val=single}', None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:u{w:val=single}', WD_UNDERLINE.SINGLE,
+         'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r/w:rPr/w:u{w:val=single}', WD_UNDERLINE.DOTTED,
+         'w:r/w:rPr/w:u{w:val=dotted}'),
+    ])
+    def underline_set_fixture(self, request):
+        initial_r_cxml, new_underline, expected_cxml = request.param
+        run = Run(element(initial_r_cxml))
+        expected_xml = xml(expected_cxml)
+        return run, new_underline, expected_xml
 
     @pytest.fixture(params=['foobar', 42, 'single'])
     def underline_raise_fixture(self, request):
-        underline = request.param
-        r = self.r_bldr_with_underline(None).element
-        run = Run(r)
-        return run, underline
-
-    @pytest.fixture(params=[
-        (None,     True,                'single'),
-        (None,     False,               'none'),
-        (None,     None,                None),
-        (None,     WD_UNDERLINE.SINGLE, 'single'),
-        (None,     WD_UNDERLINE.WAVY,   'wave'),
-        ('single', True,                'single'),
-        ('single', False,               'none'),
-        ('single', None,                None),
-        ('single', WD_UNDERLINE.SINGLE, 'single'),
-        ('single', WD_UNDERLINE.DOTTED, 'dotted'),
-    ])
-    def underline_set_fixture(self, request):
-        before_val, underline, expected_val = request.param
-        r = self.r_bldr_with_underline(before_val).element
-        run = Run(r)
-        expected_xml = self.r_bldr_with_underline(expected_val).xml()
-        return run, underline, expected_xml
+        invalid_underline_setting = request.param
+        run = Run(element('w:r/w:rPr'))
+        return run, invalid_underline_setting
 
     # fixture components ---------------------------------------------
-
-    def r_bldr_with_style(self, style):
-        rPr_bldr = an_rPr()
-        if style is not None:
-            rPr_bldr.with_child(an_rStyle().with_val(style))
-        r_bldr = an_r().with_nsdecls().with_child(rPr_bldr)
-        return r_bldr
-
-    def r_bldr_with_underline(self, underline_type):
-        rPr_bldr = an_rPr()
-        if underline_type is not None:
-            rPr_bldr.with_child(a_u().with_val(underline_type))
-        r_bldr = an_r().with_nsdecls().with_child(rPr_bldr)
-        return r_bldr
-
-    def r_content_bldr(self, elm_codes):
-        """
-        Return a ``<w:r>`` builder having child elements indicated by
-        *elm_codes*.
-        """
-        r_bldr = an_r().with_nsdecls()
-        for e in elm_codes:
-            if e.startswith('x'):
-                r_bldr.with_child(a_t().with_text(e[1:]))
-            elif e == 't':
-                r_bldr.with_child(a_tab())
-            elif e.startswith('b'):
-                r_bldr.with_child(a_br().with_type(e[1:]))
-            elif e == 'n':
-                r_bldr.with_child(a_cr())
-        return r_bldr
-
-    @pytest.fixture
-    def run(self):
-        r = an_r().with_nsdecls().element
-        return Run(r)
 
     @pytest.fixture
     def Text_(self, request):

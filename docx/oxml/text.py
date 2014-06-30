@@ -237,7 +237,8 @@ class CT_R(BaseOxmlElement):
         text = ''
         for child in self:
             if child.tag == qn('w:t'):
-                text += child.text
+                t_text = child.text
+                text += t_text if t_text is not None else ''
             elif child.tag == qn('w:tab'):
                 text += '\t'
             elif child.tag in (qn('w:br'), qn('w:cr')):
