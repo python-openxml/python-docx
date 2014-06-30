@@ -21,6 +21,7 @@ from .oxml.unitdata.dml import (
     an_spPr, an_xfrm
 )
 from .oxml.unitdata.text import an_r
+from .unitutil.cxml import element, xml
 from .unitutil.mock import instance_mock
 
 
@@ -58,37 +59,21 @@ class DescribeInlineShape(object):
 
     @pytest.fixture
     def dimensions_get_fixture(self):
-        cx, cy = 333, 666
-        inline = self._inline_bldr_with_dimensions(cx, cy).element
-        inline_shape = InlineShape(inline)
-        return inline_shape, cx, cy
+        inline_cxml, expected_cx, expected_cy = (
+            'wp:inline/wp:extent{cx=333, cy=666}', 333, 666
+        )
+        inline_shape = InlineShape(element(inline_cxml))
+        return inline_shape, expected_cx, expected_cy
 
     @pytest.fixture
     def dimensions_set_fixture(self):
-        # inline_shape -----------------
-        cx, cy = 333, 666
-        inline = self._inline_bldr_with_dimensions(cx, cy).element
-        inline_shape = InlineShape(inline)
-        # expected_xml -----------------
-        cx, cy = cx + 111, cy + 222
-        expected_xml = self._inline_bldr_with_dimensions(cx, cy).xml()
-        return inline_shape, cx, cy, expected_xml
-
-    @pytest.fixture
-    def image_params(self):
-        filename = 'foobar.garf'
-        rId = 'rId42'
-        cx, cy = 914422, 223344
-        return filename, rId, cx, cy
-
-    @pytest.fixture
-    def image_part_(self, request, image_params):
-        filename, rId, cx, cy = image_params
-        image_part_ = instance_mock(request, ImagePart)
-        image_part_.default_cx = cx
-        image_part_.default_cy = cy
-        image_part_.filename = filename
-        return image_part_
+        inline_cxml, new_cx, new_cy, expected_cxml = (
+            'wp:inline/wp:extent{cx=333, cy=666}', 444, 888,
+            'wp:inline/wp:extent{cx=444, cy=888}'
+        )
+        inline_shape = InlineShape(element(inline_cxml))
+        expected_xml = xml(expected_cxml)
+        return inline_shape, new_cx, new_cy, expected_xml
 
     @pytest.fixture
     def new_picture_fixture(self, request, image_part_, image_params):
@@ -144,11 +129,23 @@ class DescribeInlineShape(object):
 
         return InlineShape(inline), shape_type
 
-    def _inline_bldr_with_dimensions(self, cx, cy):
-        return (
-            an_inline().with_nsdecls().with_child(
-                an_extent().with_cx(cx).with_cy(cy))
-        )
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def image_params(self):
+        filename = 'foobar.garf'
+        rId = 'rId42'
+        cx, cy = 914422, 223344
+        return filename, rId, cx, cy
+
+    @pytest.fixture
+    def image_part_(self, request, image_params):
+        filename, rId, cx, cy = image_params
+        image_part_ = instance_mock(request, ImagePart)
+        image_part_.default_cx = cx
+        image_part_.default_cy = cy
+        image_part_.filename = filename
+        return image_part_
 
     def _inline_with_picture(self, embed=False, link=False):
         picture_ns = nsmap['pic']
