@@ -77,12 +77,23 @@ class CT_TblPr(BaseOxmlElement):
     """
     tblStyle = ZeroOrOne('w:tblStyle')
 
-    def add_tblStyle(self, style_name):
+    @property
+    def style(self):
         """
-        Return a new <w:tblStyle> element having its style set to
-        *style_name*.
+        Return the value of the ``val`` attribute of the ``<w:tblStyle>``
+        child or |None| if not present.
         """
-        return self._add_tblStyle(val=style_name)
+        tblStyle = self.tblStyle
+        if tblStyle is None:
+            return None
+        return tblStyle.val
+
+    @style.setter
+    def style(self, value):
+        self._remove_tblStyle()
+        if value is None:
+            return
+        self._add_tblStyle(val=value)
 
 
 class CT_Tc(BaseOxmlElement):

@@ -67,18 +67,12 @@ class Table(object):
         'LightShading-Accent1'. Name is derived by removing spaces from the
         table style name displayed in the Word UI.
         """
-        tblStyle = self._tblPr.tblStyle
-        if tblStyle is None:
-            return None
-        return tblStyle.val
+        return self._tblPr.style
 
     @style.setter
-    def style(self, style_name):
-        tblStyle = self._tblPr.tblStyle
-        if tblStyle is None:
-            self._tblPr.add_tblStyle(style_name)
-        else:
-            tblStyle.val = style_name
+    def style(self, value):
+        print('style value is %s' % value)
+        self._tblPr.style = value
 
     @property
     def _tblPr(self):
