@@ -10,6 +10,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .compat import cls_method_fn
 from .constants import RELATIONSHIP_TYPE as RT
 from .oxml import CT_Relationships, serialize_part_xml
+from ..oxml import parse_xml
 from .packuri import PACKAGE_URI, PackURI
 from .pkgreader import PackageReader
 from .pkgwriter import PackageWriter
@@ -146,7 +147,6 @@ class OpcPackage(object):
         Save this package to *pkg_file*, where *file* can be either a path to
         a file (a string) or a file-like object.
         """
-        # self._notify_before_marshal()
         for part in self.parts:
             part.before_marshal()
         PackageWriter.write(pkg_file, self.rels, self.parts)
@@ -158,17 +158,12 @@ class Part(object):
     intended to be subclassed in client code to implement specific part
     behaviors.
     """
-    def __init__(
-            self, partname, content_type, blob=None, element=None,
-            package=None):
+    def __init__(self, partname, content_type, blob=None, package=None):
         super(Part, self).__init__()
         self._partname = partname
         self._content_type = content_type
         self._blob = blob
-        self._element = element
         self._package = package
-
-    # load/save interface to OpcPackage ------------------------------
 
     def after_unmarshal(self):
         """
@@ -197,8 +192,6 @@ class Part(object):
         binary. Intended to be overridden by subclasses. Default behavior is
         to return load blob.
         """
-        if self._element is not None:
-            return serialize_part_xml(self._element)
         return self._blob
 
     @property
@@ -208,18 +201,25 @@ class Part(object):
         """
         return self._content_type
 
+    def drop_rel(self, rId):
+        """
+        Remove the relationship identified by *rId* if its reference count
+        is less than 2. Relationships with a reference count of 0 are
+        implicit relationships.
+        """
+        if self._rel_ref_count(rId) < 2:
+            del self.rels[rId]
+
     @classmethod
     def load(cls, partname, content_type, blob, package):
-        return cls(
-            partname, content_type, blob=blob, element=None, package=package
-        )
+        return cls(partname, content_type, blob, package)
 
     def load_rel(self, reltype, target, rId, is_external=False):
         """
         Return newly added |_Relationship| instance of *reltype* between this
         part and *target* with key *rId*. Target mode is set to
         ``RTM.EXTERNAL`` if *is_external* is |True|. Intended for use during
-        load from a serialized package, where the rId is well known. Other
+        load from a serialized package, where the rId is well-known. Other
         methods exist for adding a new relationship to a part when
         manipulating a part.
         """
@@ -240,16 +240,12 @@ class Part(object):
             raise TypeError(tmpl % type(partname).__name__)
         self._partname = partname
 
-    # relationship management interface for child objects ------------
-
-    def drop_rel(self, rId):
+    @property
+    def package(self):
         """
-        Remove the relationship identified by *rId* if its reference count
-        is less than 2. Relationships with a reference count of 0 are
-        implicit relationships.
+        |OpcPackage| instance this part belongs to.
         """
-        if self._rel_ref_count(rId) < 2:
-            del self.rels[rId]
+        return self._package
 
     def part_related_by(self, reltype):
         """
@@ -300,18 +296,40 @@ class Part(object):
         Return the count of references in this part's XML to the relationship
         identified by *rId*.
         """
-        assert self._element is not None
         rIds = self._element.xpath('//@r:id')
         return len([_rId for _rId in rIds if _rId == rId])
 
-    # ----------------------------------------------------------------
+
+class XmlPart(Part):
+    """
+    Base class for package parts containing an XML payload, which is most of
+    them. Provides additional methods to the |Part| base class that take care
+    of parsing and reserializing the XML payload and managing relationships
+    to other parts.
+    """
+    def __init__(self, partname, content_type, element, package):
+        super(XmlPart, self).__init__(
+            partname, content_type, package=package
+        )
+        self._element = element
 
     @property
-    def package(self):
+    def blob(self):
+        return serialize_part_xml(self._element)
+
+    @classmethod
+    def load(cls, partname, content_type, blob, package):
+        element = parse_xml(blob)
+        return cls(partname, content_type, element, package)
+
+    @property
+    def part(self):
         """
-        |OpcPackage| instance this part belongs to.
+        Part of the parent protocol, "children" of the document will not know
+        the part that contains them so must ask their parent object. That
+        chain of delegation ends here for child objects.
         """
-        return self._package
+        return self
 
 
 class PartFactory(object):

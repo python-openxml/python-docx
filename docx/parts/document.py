@@ -12,9 +12,7 @@ from collections import Sequence
 
 from ..enum.section import WD_SECTION
 from ..opc.constants import RELATIONSHIP_TYPE as RT
-from ..opc.oxml import serialize_part_xml
-from ..opc.package import Part
-from ..oxml import parse_xml
+from ..opc.package import XmlPart
 from ..section import Section
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
@@ -22,16 +20,10 @@ from ..table import Table
 from ..text import Paragraph
 
 
-class DocumentPart(Part):
+class DocumentPart(XmlPart):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
-    def __init__(self, partname, content_type, document_elm, package):
-        super(DocumentPart, self).__init__(
-            partname, content_type, package=package
-        )
-        self._element = document_elm
-
     def add_paragraph(self):
         """
         Return a paragraph newly added to the end of body content.
@@ -53,10 +45,6 @@ class DocumentPart(Part):
         to the main document story.
         """
         return self.body.add_table(rows, cols)
-
-    @property
-    def blob(self):
-        return serialize_part_xml(self._element)
 
     @lazyproperty
     def body(self):
@@ -86,12 +74,6 @@ class DocumentPart(Part):
         """
         return InlineShapes(self._element.body, self)
 
-    @classmethod
-    def load(cls, partname, content_type, blob, package):
-        document_elm = parse_xml(blob)
-        document_part = cls(partname, content_type, document_elm, package)
-        return document_part
-
     @property
     def next_id(self):
         """
@@ -113,15 +95,6 @@ class DocumentPart(Part):
         marks such as inserted or deleted do not appear in this list.
         """
         return self.body.paragraphs
-
-    @property
-    def part(self):
-        """
-        Part of the parent protocol, "children" of the document will not know
-        the part that contains them so must ask their parent object. That
-        chain of delegation ends here for document child objects.
-        """
-        return self
 
     @lazyproperty
     def sections(self):
