@@ -356,7 +356,7 @@ class Describe_Rows(object):
     def rows_fixture(self):
         row_count = 2
         tbl = _tbl_bldr(rows=row_count, cols=2).element
-        rows = _Rows(tbl)
+        rows = _Rows(tbl, None)
         return rows, row_count
 
 

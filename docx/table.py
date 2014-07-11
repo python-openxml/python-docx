@@ -58,7 +58,7 @@ class Table(Parented):
         """
         |_Rows| instance containing the sequence of rows in this table.
         """
-        return _Rows(self._tbl)
+        return _Rows(self._tbl, self)
 
     @property
     def style(self):
@@ -258,13 +258,13 @@ class _RowCells(object):
         return len(self._tr.tc_lst)
 
 
-class _Rows(object):
+class _Rows(Parented):
     """
     Sequence of |_Row| instances corresponding to the rows in a table.
     Supports ``len()``, iteration and indexed access.
     """
-    def __init__(self, tbl):
-        super(_Rows, self).__init__()
+    def __init__(self, tbl, parent):
+        super(_Rows, self).__init__(parent)
         self._tbl = tbl
 
     def __getitem__(self, idx):
