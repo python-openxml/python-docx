@@ -33,10 +33,10 @@ from ..unitutil.mock import (
 
 class DescribeDocumentPart(object):
 
-    def it_has_a_body(self, document_body_fixture):
-        document, _Body_, body_elm = document_body_fixture
-        _body = document.body
-        _Body_.assert_called_once_with(body_elm)
+    def it_has_a_body(self, body_fixture):
+        document_part, _Body_, body_elm = body_fixture
+        _body = document_part.body
+        _Body_.assert_called_once_with(body_elm, document_part)
         assert _body is _Body_.return_value
 
     def it_provides_access_to_the_document_paragraphs(
@@ -124,14 +124,14 @@ class DescribeDocumentPart(object):
         return document_part, rows, cols, body_, table_
 
     @pytest.fixture
-    def document_body_fixture(self, request, _Body_):
+    def body_fixture(self, request, _Body_):
         document_elm = (
             a_document().with_nsdecls().with_child(
                 a_body())
         ).element
         body_elm = document_elm[0]
-        document = DocumentPart(None, None, document_elm, None)
-        return document, _Body_, body_elm
+        document_part = DocumentPart(None, None, document_elm, None)
+        return document_part, _Body_, body_elm
 
     @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
@@ -331,7 +331,7 @@ class Describe_Body(object):
     ])
     def add_paragraph_fixture(self, request):
         before_cxml, after_cxml = request.param
-        body = _Body(element(before_cxml))
+        body = _Body(element(before_cxml), None)
         expected_xml = xml(after_cxml)
         return body, expected_xml
 
@@ -339,7 +339,7 @@ class Describe_Body(object):
     def add_table_fixture(self, request):
         p_count, has_sectPr = request.param
         body_bldr = self._body_bldr(p_count=p_count, sectPr=has_sectPr)
-        body = _Body(body_bldr.element)
+        body = _Body(body_bldr.element, None)
 
         tbl_bldr = self._tbl_bldr()
         body_bldr = self._body_bldr(
@@ -357,17 +357,17 @@ class Describe_Body(object):
     ])
     def clear_fixture(self, request):
         before_cxml, after_cxml = request.param
-        body = _Body(element(before_cxml))
+        body = _Body(element(before_cxml), None)
         expected_xml = xml(after_cxml)
         return body, expected_xml
 
     @pytest.fixture
     def paragraphs_fixture(self):
-        return _Body(element('w:body/(w:p, w:p)'))
+        return _Body(element('w:body/(w:p, w:p)'), None)
 
     @pytest.fixture
     def tables_fixture(self):
-        return _Body(element('w:body/(w:tbl, w:tbl)'))
+        return _Body(element('w:body/(w:tbl, w:tbl)'), None)
 
     # fixture components ---------------------------------------------
 

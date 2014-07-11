@@ -51,7 +51,7 @@ class DocumentPart(XmlPart):
         """
         The |_Body| instance containing the content for this document.
         """
-        return _Body(self._element.body)
+        return _Body(self._element.body, self)
 
     def get_or_add_image_part(self, image_descriptor):
         """
@@ -113,13 +113,13 @@ class DocumentPart(XmlPart):
         return self.body.tables
 
 
-class _Body(object):
+class _Body(Parented):
     """
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
-    def __init__(self, body_elm):
-        super(_Body, self).__init__()
+    def __init__(self, body_elm, parent):
+        super(_Body, self).__init__(parent)
         self._body = body_elm
 
     def add_paragraph(self):
