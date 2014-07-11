@@ -6,16 +6,16 @@ The |Table| object and related proxy classes.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .shared import lazyproperty, write_only_property
+from .shared import lazyproperty, Parented, write_only_property
 from .text import Paragraph
 
 
-class Table(object):
+class Table(Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
     """
-    def __init__(self, tbl):
-        super(Table, self).__init__()
+    def __init__(self, tbl, parent):
+        super(Table, self).__init__(parent)
         self._tbl = tbl
 
     def add_column(self):

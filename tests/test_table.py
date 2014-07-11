@@ -65,14 +65,14 @@ class DescribeTable(object):
     @pytest.fixture
     def add_column_fixture(self):
         tbl = _tbl_bldr(2, 1).element
-        table = Table(tbl)
+        table = Table(tbl, None)
         expected_xml = _tbl_bldr(2, 2).xml()
         return table, expected_xml
 
     @pytest.fixture
     def add_row_fixture(self):
         tbl = _tbl_bldr(rows=1, cols=2).element
-        table = Table(tbl)
+        table = Table(tbl, None)
         expected_xml = _tbl_bldr(rows=2, cols=2).xml()
         return table, expected_xml
 
@@ -82,7 +82,7 @@ class DescribeTable(object):
     ])
     def table_style_get_fixture(self, request):
         tbl_cxml, expected_style = request.param
-        table = Table(element(tbl_cxml))
+        table = Table(element(tbl_cxml), None)
         return table, expected_style
 
     @pytest.fixture(params=[
@@ -97,7 +97,7 @@ class DescribeTable(object):
     ])
     def table_style_set_fixture(self, request):
         tbl_cxml, new_style, expected_cxml = request.param
-        table = Table(element(tbl_cxml))
+        table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_cxml)
         return table, new_style, expected_xml
 
@@ -106,7 +106,7 @@ class DescribeTable(object):
     @pytest.fixture
     def table(self):
         tbl = _tbl_bldr(rows=2, cols=2).element
-        table = Table(tbl)
+        table = Table(tbl, None)
         return table
 
 

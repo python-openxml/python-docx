@@ -135,7 +135,7 @@ class _Body(Parented):
         the main document story.
         """
         tbl = self._body.add_tbl()
-        table = Table(tbl)
+        table = Table(tbl, self)
         for i in range(cols):
             table.add_column()
         for i in range(rows):
@@ -161,7 +161,7 @@ class _Body(Parented):
         A sequence containing all the tables in the document, in the order
         they appear.
         """
-        return [Table(tbl) for tbl in self._body.tbl_lst]
+        return [Table(tbl, self) for tbl in self._body.tbl_lst]
 
 
 class InlineShapes(Parented):
