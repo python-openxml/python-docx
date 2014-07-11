@@ -271,7 +271,7 @@ class Describe_Columns(object):
     def columns_fixture(self):
         column_count = 2
         tbl = _tbl_bldr(rows=2, cols=column_count).element
-        columns = _Columns(tbl)
+        columns = _Columns(tbl, None)
         return columns, column_count
 
 

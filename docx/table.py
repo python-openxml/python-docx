@@ -51,7 +51,7 @@ class Table(Parented):
         """
         |_Columns| instance containing the sequence of rows in this table.
         """
-        return _Columns(self._tbl)
+        return _Columns(self._tbl, self)
 
     @lazyproperty
     def rows(self):
@@ -179,13 +179,13 @@ class _ColumnCells(object):
         return self._tbl.tr_lst
 
 
-class _Columns(object):
+class _Columns(Parented):
     """
     Sequence of |_Column| instances corresponding to the columns in a table.
     Supports ``len()``, iteration and indexed access.
     """
-    def __init__(self, tbl):
-        super(_Columns, self).__init__()
+    def __init__(self, tbl, parent):
+        super(_Columns, self).__init__(parent)
         self._tbl = tbl
 
     def __getitem__(self, idx):
