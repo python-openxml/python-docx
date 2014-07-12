@@ -36,7 +36,7 @@ class Table(Parented):
         tr = tbl.add_tr()
         for gridCol in tbl.tblGrid.gridCol_lst:
             tr.add_tc()
-        return _Row(tr)
+        return _Row(tr, self)
 
     def cell(self, row_idx, col_idx):
         """
@@ -216,12 +216,12 @@ class _Columns(Parented):
         return tblGrid.gridCol_lst
 
 
-class _Row(object):
+class _Row(Parented):
     """
     Table row
     """
-    def __init__(self, tr):
-        super(_Row, self).__init__()
+    def __init__(self, tr, parent):
+        super(_Row, self).__init__(parent)
         self._tr = tr
 
     @lazyproperty
@@ -277,10 +277,10 @@ class _Rows(Parented):
         except IndexError:
             msg = "row index [%d] out of range" % idx
             raise IndexError(msg)
-        return _Row(tr)
+        return _Row(tr, self)
 
     def __iter__(self):
-        return (_Row(tr) for tr in self._tbl.tr_lst)
+        return (_Row(tr, self) for tr in self._tbl.tr_lst)
 
     def __len__(self):
         return len(self._tbl.tr_lst)

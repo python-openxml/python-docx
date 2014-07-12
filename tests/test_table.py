@@ -278,7 +278,7 @@ class Describe_Columns(object):
 class Describe_Row(object):
 
     def it_provides_access_to_the_row_cells(self):
-        row = _Row(element('w:tr'))
+        row = _Row(element('w:tr'), None)
         cells = row.cells
         assert isinstance(cells, _RowCells)
 
