@@ -124,7 +124,7 @@ class _Column(Parented):
         Sequence of |_Cell| instances corresponding to cells in this column.
         Supports ``len()``, iteration and indexed access.
         """
-        return _ColumnCells(self._tbl, self._gridCol)
+        return _ColumnCells(self._tbl, self._gridCol, self)
 
     @property
     def width(self):
@@ -139,13 +139,13 @@ class _Column(Parented):
         self._gridCol.w = value
 
 
-class _ColumnCells(object):
+class _ColumnCells(Parented):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table
     column.
     """
-    def __init__(self, tbl, gridCol):
-        super(_ColumnCells, self).__init__()
+    def __init__(self, tbl, gridCol, parent):
+        super(_ColumnCells, self).__init__(parent)
         self._tbl = tbl
         self._gridCol = gridCol
 

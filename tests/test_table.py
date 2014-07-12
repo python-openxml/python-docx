@@ -232,7 +232,7 @@ class Describe_ColumnCells(object):
         cell_count = 2
         tbl = _tbl_bldr(rows=cell_count, cols=1).element
         gridCol = tbl.tblGrid.gridCol_lst[0]
-        cells = _ColumnCells(tbl, gridCol)
+        cells = _ColumnCells(tbl, gridCol, None)
         return cells, cell_count
 
 
