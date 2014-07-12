@@ -14,7 +14,7 @@ if sys.version_info >= (3, 3):
     from unittest.mock import create_autospec, Mock, patch, PropertyMock
 else:
     import mock  # noqa
-    from mock import call, MagicMock  # noqa
+    from mock import ANY, call, MagicMock  # noqa
     from mock import create_autospec, Mock, patch, PropertyMock
 
 

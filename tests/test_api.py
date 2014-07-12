@@ -22,7 +22,7 @@ from docx.table import Table
 from docx.text import Paragraph, Run
 
 from .unitutil.mock import (
-    instance_mock, class_mock, method_mock, property_mock, var_mock
+    ANY, instance_mock, class_mock, method_mock, property_mock, var_mock
 )
 
 
@@ -93,7 +93,7 @@ class DescribeDocument(object):
         (document, image_path, width, height, inline_shapes_, expected_width,
          expected_height, picture_) = add_picture_fixture
         picture = document.add_picture(image_path, width, height)
-        inline_shapes_.add_picture.assert_called_once_with(image_path)
+        inline_shapes_.add_picture.assert_called_once_with(image_path, ANY)
         assert picture.width == expected_width
         assert picture.height == expected_height
         assert picture is picture_

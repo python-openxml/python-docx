@@ -87,7 +87,8 @@ class Document(object):
         (dpi) value specified in the image file, defaulting to 72 dpi if no
         value is specified, as is often the case.
         """
-        picture = self.inline_shapes.add_picture(image_path_or_stream)
+        run = self.add_paragraph().add_run()
+        picture = self.inline_shapes.add_picture(image_path_or_stream, run)
 
         # scale picture dimensions if width and/or height provided
         if width is not None or height is not None:

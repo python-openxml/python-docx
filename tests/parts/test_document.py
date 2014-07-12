@@ -18,7 +18,7 @@ from docx.parts.image import ImagePart
 from docx.section import Section
 from docx.shape import InlineShape
 from docx.table import Table
-from docx.text import Paragraph
+from docx.text import Paragraph, Run
 
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.table import (
@@ -448,10 +448,10 @@ class DescribeInlineShapes(object):
             self, add_picture_fixture):
         # fixture ----------------------
         (inline_shapes, image_descriptor_, document_, InlineShape_,
-         r_, image_part_, rId_, shape_id_, new_picture_shape_
+         run, r_, image_part_, rId_, shape_id_, new_picture_shape_
          ) = add_picture_fixture
         # exercise ---------------------
-        picture_shape = inline_shapes.add_picture(image_descriptor_)
+        picture_shape = inline_shapes.add_picture(image_descriptor_, run)
         # verify -----------------------
         document_.get_or_add_image_part.assert_called_once_with(
             image_descriptor_
@@ -474,9 +474,10 @@ class DescribeInlineShapes(object):
             r_, image_part_, rId_, shape_id_, new_picture_shape_):
         inline_shapes = InlineShapes(body_, None)
         property_mock(request, InlineShapes, 'part', return_value=document_)
+        run = Run(r_, None)
         return (
-            inline_shapes, image_descriptor_, document_, InlineShape_, r_,
-            image_part_, rId_, shape_id_, new_picture_shape_
+            inline_shapes, image_descriptor_, document_, InlineShape_, run,
+            r_, image_part_, rId_, shape_id_, new_picture_shape_
         )
 
     @pytest.fixture
