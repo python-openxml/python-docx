@@ -6,6 +6,8 @@ Step implementations for text-related features
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import hashlib
+
 from behave import given, then, when
 
 from docx import Document
@@ -14,7 +16,7 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.text import Run
 
-from helpers import test_docx, test_text
+from helpers import test_docx, test_file, test_text
 
 
 # given ===================================================
@@ -23,6 +25,7 @@ from helpers import test_docx, test_text
 def given_a_run(context):
     document = Document()
     run = document.add_paragraph().add_run()
+    context.document = document
     context.run = run
 
 
@@ -79,6 +82,21 @@ def given_a_run_having_style_char_style(context, char_style):
     context.run = document.paragraphs[0].runs[run_idx]
 
 
+@given('a run inside a table cell retrieved from {cell_source}')
+def given_a_run_inside_a_table_cell_from_source(context, cell_source):
+    document = Document()
+    table = document.add_table(rows=2, cols=2)
+    if cell_source == 'Table.cell':
+        cell = table.cell(0, 0)
+    elif cell_source == 'Table.row.cells':
+        cell = table.rows[0].cells[1]
+    elif cell_source == 'Table.column.cells':
+        cell = table.columns[1].cells[0]
+    run = cell.paragraphs[0].add_run()
+    context.document = document
+    context.run = run
+
+
 # when ====================================================
 
 @when('I add a column break')
@@ -97,6 +115,12 @@ def when_add_line_break(context):
 def when_add_page_break(context):
     run = context.run
     run.add_break(WD_BREAK.PAGE)
+
+
+@when('I add a picture to the run')
+def when_I_add_a_picture_to_the_run(context):
+    run = context.run
+    run.add_picture(test_file('monty-truth.png'))
 
 
 @when('I add a run specifying its text')
@@ -182,6 +206,23 @@ def then_last_item_in_run_is_a_break(context):
         '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}br'
     )
     assert context.last_child.tag == expected_tag
+
+
+@then('the picture appears at the end of the run')
+def then_the_picture_appears_at_the_end_of_the_run(context):
+    run = context.run
+    r = run._r
+    blip_rId = r.xpath(
+        './w:drawing/wp:inline/a:graphic/a:graphicData/pic:pic/pic:blipFill/'
+        'a:blip/@r:embed'
+    )[0]
+    image_part = run.part.related_parts[blip_rId]
+    image_sha1 = hashlib.sha1(image_part.blob).hexdigest()
+    expected_sha1 = '79769f1e202add2e963158b532e36c2c0f76a70c'
+    assert image_sha1 == expected_sha1, (
+        "image SHA1 doesn't match, expected %s, got %s" %
+        (expected_sha1, image_sha1)
+    )
 
 
 @then('the run appears in {boolean_prop_name} unconditionally')
