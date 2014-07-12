@@ -142,13 +142,13 @@ class Describe_Cell(object):
     ])
     def text_set_fixture(self, request):
         tc_cxml, new_text, expected_cxml = request.param
-        cell = _Cell(element(tc_cxml))
+        cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(expected_cxml)
         return cell, new_text, expected_xml
 
     @pytest.fixture
     def paragraphs_fixture(self):
-        return _Cell(element('w:tc/(w:p, w:p)'))
+        return _Cell(element('w:tc/(w:p, w:p)'), None)
 
 
 class Describe_Column(object):

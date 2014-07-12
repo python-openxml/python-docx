@@ -79,12 +79,12 @@ class Table(Parented):
         return self._tbl.tblPr
 
 
-class _Cell(object):
+class _Cell(Parented):
     """
     Table cell
     """
-    def __init__(self, tc):
-        super(_Cell, self).__init__()
+    def __init__(self, tc, parent):
+        super(_Cell, self).__init__(parent)
         self._tc = tc
 
     @property
@@ -159,12 +159,12 @@ class _ColumnCells(Parented):
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
         tc = tr.tc_lst[self._col_idx]
-        return _Cell(tc)
+        return _Cell(tc, self)
 
     def __iter__(self):
         for tr in self._tr_lst:
             tc = tr.tc_lst[self._col_idx]
-            yield _Cell(tc)
+            yield _Cell(tc, self)
 
     def __len__(self):
         return len(self._tr_lst)
@@ -250,10 +250,10 @@ class _RowCells(Parented):
         except IndexError:
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
-        return _Cell(tc)
+        return _Cell(tc, self)
 
     def __iter__(self):
-        return (_Cell(tc) for tc in self._tr.tc_lst)
+        return (_Cell(tc, self) for tc in self._tr.tc_lst)
 
     def __len__(self):
         return len(self._tr.tc_lst)
