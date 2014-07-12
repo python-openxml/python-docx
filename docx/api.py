@@ -78,31 +78,19 @@ class Document(object):
 
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """
-        Add the image at *image_path_or_stream* in a new paragraph at the end
-        of the document. If neither width nor height is specified, the
-        picture appears at its native size. If only one is specified, it is
-        used to compute a scaling factor that is then applied to the
-        unspecified dimension, preserving the aspect ratio of the image. The
-        native size of the picture is calculated using the dots-per-inch
-        (dpi) value specified in the image file, defaulting to 72 dpi if no
-        value is specified, as is often the case.
+        Return a new picture shape added in its own paragraph at the end of
+        the document. The picture contains the image at
+        *image_path_or_stream*, scaled based on *width* and *height*. If
+        neither width nor height is specified, the picture appears at its
+        native size. If only one is specified, it is used to compute
+        a scaling factor that is then applied to the unspecified dimension,
+        preserving the aspect ratio of the image. The native size of the
+        picture is calculated using the dots-per-inch (dpi) value specified
+        in the image file, defaulting to 72 dpi if no value is specified, as
+        is often the case.
         """
         run = self.add_paragraph().add_run()
-        picture = self.inline_shapes.add_picture(image_path_or_stream, run)
-
-        # scale picture dimensions if width and/or height provided
-        if width is not None or height is not None:
-            native_width, native_height = picture.width, picture.height
-            if width is None:
-                scaling_factor = float(height) / float(native_height)
-                width = int(round(native_width * scaling_factor))
-            elif height is None:
-                scaling_factor = float(width) / float(native_width)
-                height = int(round(native_height * scaling_factor))
-            # set picture to scaled dimensions
-            picture.width = width
-            picture.height = height
-
+        picture = run.add_picture(image_path_or_stream, width, height)
         return picture
 
     def add_section(self, start_type=WD_SECTION.NEW_PAGE):

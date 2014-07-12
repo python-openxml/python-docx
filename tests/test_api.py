@@ -18,11 +18,12 @@ from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
 from docx.section import Section
+from docx.shape import InlineShape
 from docx.table import Table
 from docx.text import Paragraph, Run
 
 from .unitutil.mock import (
-    ANY, instance_mock, class_mock, method_mock, property_mock, var_mock
+    instance_mock, class_mock, method_mock, property_mock, var_mock
 )
 
 
@@ -90,12 +91,11 @@ class DescribeDocument(object):
         assert paragraph is paragraph_
 
     def it_can_add_a_picture(self, add_picture_fixture):
-        (document, image_path, width, height, inline_shapes_, expected_width,
-         expected_height, picture_) = add_picture_fixture
-        picture = document.add_picture(image_path, width, height)
-        inline_shapes_.add_picture.assert_called_once_with(image_path, ANY)
-        assert picture.width == expected_width
-        assert picture.height == expected_height
+        document, image_path_, width, height, run_, picture_ = (
+            add_picture_fixture
+        )
+        picture = document.add_picture(image_path_, width, height)
+        run_.add_picture.assert_called_once_with(image_path_, width, height)
         assert picture is picture_
 
     def it_can_add_a_section(self, add_section_fixture):
@@ -195,23 +195,14 @@ class DescribeDocument(object):
             self, document, document_part_, paragraph_, run_):
         return document, document_part_, paragraph_, run_
 
-    @pytest.fixture(params=[
-        (None, None,  200,  100),
-        (1000, 500,  1000,  500),
-        (2000, None, 2000, 1000),
-        (None, 2000, 4000, 2000),
-    ])
-    def add_picture_fixture(
-            self, request, Document_inline_shapes_, inline_shapes_):
-        width, height, expected_width, expected_height = request.param
+    @pytest.fixture
+    def add_picture_fixture(self, request, run_, picture_):
         document = Document()
         image_path_ = instance_mock(request, str, name='image_path_')
-        picture_ = inline_shapes_.add_picture.return_value
-        picture_.width, picture_.height = 200, 100
-        return (
-            document, image_path_, width, height, inline_shapes_,
-            expected_width, expected_height, picture_
-        )
+        width, height = 100, 200
+        class_mock(request, 'docx.text.Run', return_value=run_)
+        run_.add_picture.return_value = picture_
+        return (document, image_path_, width, height, run_, picture_)
 
     @pytest.fixture
     def add_section_fixture(self, document, start_type_, section_):
@@ -331,12 +322,6 @@ class DescribeDocument(object):
         )
 
     @pytest.fixture
-    def paragraph_(self, request, run_):
-        paragraph_ = instance_mock(request, Paragraph)
-        paragraph_.add_run.return_value = run_
-        return paragraph_
-
-    @pytest.fixture
     def Package_(self, request, package_):
         Package_ = class_mock(request, 'docx.api.Package')
         Package_.open.return_value = package_
@@ -349,8 +334,18 @@ class DescribeDocument(object):
         return package_
 
     @pytest.fixture
+    def paragraph_(self, request, run_):
+        paragraph_ = instance_mock(request, Paragraph)
+        paragraph_.add_run.return_value = run_
+        return paragraph_
+
+    @pytest.fixture
     def paragraphs_(self, request):
         return instance_mock(request, list)
+
+    @pytest.fixture
+    def picture_(self, request):
+        return instance_mock(request, InlineShape)
 
     @pytest.fixture
     def run_(self, request):
