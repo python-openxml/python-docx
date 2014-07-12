@@ -10,14 +10,14 @@ from behave import given, then, when
 
 from docx.image.image import Image
 
-from helpers import test_file_path
+from helpers import test_file
 
 
 # given ===================================================
 
 @given('the image file \'{filename}\'')
 def given_image_filename(context, filename):
-    context.image_path = test_file_path(filename)
+    context.image_path = test_file(filename)
 
 
 # when ====================================================

@@ -21,8 +21,9 @@ from helpers import test_docx, test_text
 
 @given('a run')
 def given_a_run(context):
-    p = Document().add_paragraph()
-    context.run = p.add_run()
+    document = Document()
+    run = document.add_paragraph().add_run()
+    context.run = run
 
 
 @given('a run having {bool_prop_name} set on')

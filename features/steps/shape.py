@@ -15,7 +15,7 @@ from docx.enum.shape import WD_INLINE_SHAPE
 from docx.parts.document import InlineShape, InlineShapes
 from docx.shared import Inches
 
-from helpers import test_docx, test_file_path
+from helpers import test_docx, test_file
 
 
 # given ===================================================
@@ -59,7 +59,7 @@ def given_inline_shape_known_to_be_shape_of_type(context, shp_of_type):
 def when_add_inline_picture_from_file_like_object(context):
     document = context.document
     run = document.add_paragraph().add_run()
-    with open(test_file_path('monty-truth.png'), 'rb') as f:
+    with open(test_file('monty-truth.png'), 'rb') as f:
         context.inline_shape = document.inline_shapes.add_picture(f, run)
 
 
@@ -68,7 +68,7 @@ def when_add_inline_picture_to_document(context):
     document = context.document
     run = document.add_paragraph().add_run()
     context.inline_shape = (document.inline_shapes.add_picture(
-        test_file_path('monty-truth.png'), run
+        test_file('monty-truth.png'), run
     ))
 
 
@@ -155,3 +155,34 @@ def then_len_of_inline_shape_collection_is_5(context):
     inline_shapes = context.document.inline_shapes
     shape_count = len(inline_shapes)
     assert shape_count == 5, 'got %s' % shape_count
+
+
+@then('the picture has its native width and height')
+def then_picture_has_native_width_and_height(context):
+    picture = context.picture
+    assert picture.width == 1905000, 'got %d' % picture.width
+    assert picture.height == 2717800, 'got %d' % picture.height
+
+
+@then('the picture height is 2.14 inches')
+def then_picture_height_is_value_2(context):
+    picture = context.picture
+    assert picture.height == 1956816, 'got %d' % picture.height
+
+
+@then('the picture height is 2.5 inches')
+def then_picture_height_is_value(context):
+    picture = context.picture
+    assert picture.height == 2286000, 'got %d' % picture.height
+
+
+@then('the picture width is 1.05 inches')
+def then_picture_width_is_value_2(context):
+    picture = context.picture
+    assert picture.width == 961402, 'got %d' % picture.width
+
+
+@then('the picture width is 1.75 inches')
+def then_picture_width_is_value(context):
+    picture = context.picture
+    assert picture.width == 1600200, 'got %d' % picture.width

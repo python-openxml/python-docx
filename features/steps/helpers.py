@@ -26,7 +26,7 @@ def test_docx(name):
     return absjoin(thisdir, 'test_files', '%s.docx' % name)
 
 
-def test_file_path(name):
+def test_file(name):
     """
     Return the absolute path to file with *name* in test_files directory
     """

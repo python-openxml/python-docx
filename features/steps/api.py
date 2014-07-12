@@ -9,7 +9,7 @@ from behave import then, when
 from docx.shared import Inches
 from docx.table import Table
 
-from helpers import test_file_path
+from helpers import test_file
 
 
 # when ====================================================
@@ -70,7 +70,7 @@ def when_add_paragraph_without_specifying_text_or_style(context):
 def when_add_picture_specifying_width_and_height(context):
     document = context.document
     context.picture = document.add_picture(
-        test_file_path('monty-truth.png'),
+        test_file('monty-truth.png'),
         width=Inches(1.75), height=Inches(2.5)
     )
 
@@ -79,7 +79,7 @@ def when_add_picture_specifying_width_and_height(context):
 def when_add_picture_specifying_height(context):
     document = context.document
     context.picture = document.add_picture(
-        test_file_path('monty-truth.png'), height=Inches(1.5)
+        test_file('monty-truth.png'), height=Inches(1.5)
     )
 
 
@@ -87,14 +87,14 @@ def when_add_picture_specifying_height(context):
 def when_add_picture_specifying_width(context):
     document = context.document
     context.picture = document.add_picture(
-        test_file_path('monty-truth.png'), width=Inches(1.5)
+        test_file('monty-truth.png'), width=Inches(1.5)
     )
 
 
 @when('I add a picture specifying only the image file')
 def when_add_picture_specifying_only_image_file(context):
     document = context.document
-    context.picture = document.add_picture(test_file_path('monty-truth.png'))
+    context.picture = document.add_picture(test_file('monty-truth.png'))
 
 
 # then =====================================================
@@ -147,37 +147,6 @@ def then_last_p_is_empty_paragraph_added(context):
     document = context.document
     p = document.paragraphs[-1]
     assert p.text == ''
-
-
-@then('the picture has its native width and height')
-def then_picture_has_native_width_and_height(context):
-    picture = context.picture
-    assert picture.width == 1905000, 'got %d' % picture.width
-    assert picture.height == 2717800, 'got %d' % picture.height
-
-
-@then('the picture height is 2.14 inches')
-def then_picture_height_is_value_2(context):
-    picture = context.picture
-    assert picture.height == 1956816, 'got %d' % picture.height
-
-
-@then('the picture height is 2.5 inches')
-def then_picture_height_is_value(context):
-    picture = context.picture
-    assert picture.height == 2286000, 'got %d' % picture.height
-
-
-@then('the picture width is 1.05 inches')
-def then_picture_width_is_value_2(context):
-    picture = context.picture
-    assert picture.width == 961402, 'got %d' % picture.width
-
-
-@then('the picture width is 1.75 inches')
-def then_picture_width_is_value(context):
-    picture = context.picture
-    assert picture.width == 1600200, 'got %d' % picture.width
 
 
 @then('the style of the last paragraph is \'{style}\'')
