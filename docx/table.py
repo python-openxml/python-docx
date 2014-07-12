@@ -71,7 +71,6 @@ class Table(Parented):
 
     @style.setter
     def style(self, value):
-        print('style value is %s' % value)
         self._tblPr.style = value
 
     @property

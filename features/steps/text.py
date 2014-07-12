@@ -57,7 +57,7 @@ def given_a_run_having_mixed_text_content(context):
           <w:t>jkl</w:t>
         </w:r>""" % nsdecls('w')
     r = parse_xml(r_xml)
-    context.run = Run(r)
+    context.run = Run(r, None)
 
 
 @given('a run having {underline_type} underline')

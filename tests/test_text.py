@@ -24,7 +24,9 @@ class DescribeParagraph(object):
     def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
         paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
         runs = paragraph.runs
-        assert Run_.mock_calls == [call(r_), call(r_2_)]
+        assert Run_.mock_calls == [
+            call(r_, paragraph), call(r_2_, paragraph)
+        ]
         assert runs == [run_, run_2_]
 
     def it_can_add_a_run_to_itself(self, add_run_fixture):
@@ -308,7 +310,7 @@ class DescribeRun(object):
     ])
     def add_break_fixture(self, request):
         break_type, expected_cxml = request.param
-        run = Run(element('w:r'))
+        run = Run(element('w:r'), None)
         expected_xml = xml(expected_cxml)
         return run, break_type, expected_xml
 
@@ -317,7 +319,7 @@ class DescribeRun(object):
     ])
     def add_tab_fixture(self, request):
         r_cxml, expected_cxml = request.param
-        run = Run(element(r_cxml))
+        run = Run(element(r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, expected_xml
 
@@ -329,7 +331,7 @@ class DescribeRun(object):
     ])
     def add_text_fixture(self, request, Text_):
         r_cxml, text, expected_cxml = request.param
-        run = Run(element(r_cxml))
+        run = Run(element(r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, text, expected_xml, Text_
 
@@ -361,7 +363,7 @@ class DescribeRun(object):
     ])
     def bool_prop_get_fixture(self, request):
         r_cxml, bool_prop_name, expected_value = request.param
-        run = Run(element(r_cxml))
+        run = Run(element(r_cxml), None)
         return run, bool_prop_name, expected_value
 
     @pytest.fixture(params=[
@@ -415,7 +417,7 @@ class DescribeRun(object):
     ])
     def bool_prop_set_fixture(self, request):
         initial_r_cxml, bool_prop_name, value, expected_cxml = request.param
-        run = Run(element(initial_r_cxml))
+        run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, bool_prop_name, value, expected_xml
 
@@ -430,7 +432,7 @@ class DescribeRun(object):
     ])
     def clear_fixture(self, request):
         initial_r_cxml, expected_cxml = request.param
-        run = Run(element(initial_r_cxml))
+        run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, expected_xml
 
@@ -440,7 +442,7 @@ class DescribeRun(object):
     ])
     def style_get_fixture(self, request):
         r_cxml, expected_style = request.param
-        run = Run(element(r_cxml))
+        run = Run(element(r_cxml), None)
         return run, expected_style
 
     @pytest.fixture(params=[
@@ -455,7 +457,7 @@ class DescribeRun(object):
     ])
     def style_set_fixture(self, request):
         initial_r_cxml, new_style, expected_cxml = request.param
-        run = Run(element(initial_r_cxml))
+        run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, new_style, expected_xml
 
@@ -467,7 +469,7 @@ class DescribeRun(object):
     ])
     def text_get_fixture(self, request):
         r_cxml, expected_text = request.param
-        run = Run(element(r_cxml))
+        run = Run(element(r_cxml), None)
         return run, expected_text
 
     @pytest.fixture(params=[
@@ -479,7 +481,7 @@ class DescribeRun(object):
     def text_set_fixture(self, request):
         new_text, expected_cxml = request.param
         initial_r_cxml = 'w:r/w:t"should get deleted"'
-        run = Run(element(initial_r_cxml))
+        run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, new_text, expected_xml
 
@@ -493,7 +495,7 @@ class DescribeRun(object):
     ])
     def underline_get_fixture(self, request):
         r_cxml, expected_underline = request.param
-        run = Run(element(r_cxml))
+        run = Run(element(r_cxml), None)
         return run, expected_underline
 
     @pytest.fixture(params=[
@@ -515,14 +517,14 @@ class DescribeRun(object):
     ])
     def underline_set_fixture(self, request):
         initial_r_cxml, new_underline, expected_cxml = request.param
-        run = Run(element(initial_r_cxml))
+        run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, new_underline, expected_xml
 
     @pytest.fixture(params=['foobar', 42, 'single'])
     def underline_raise_fixture(self, request):
         invalid_underline_setting = request.param
-        run = Run(element('w:r/w:rPr'))
+        run = Run(element('w:r/w:rPr'), None)
         return run, invalid_underline_setting
 
     # fixture components ---------------------------------------------

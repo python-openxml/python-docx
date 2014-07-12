@@ -73,7 +73,7 @@ class Paragraph(Parented):
         break.
         """
         r = self._p.add_r()
-        run = Run(r)
+        run = Run(r, self)
         if text:
             run.text = text
         if style:
@@ -124,7 +124,7 @@ class Paragraph(Parented):
         Sequence of |Run| instances corresponding to the <w:r> elements in
         this paragraph.
         """
-        return [Run(r) for r in self._p.r_lst]
+        return [Run(r, self) for r in self._p.r_lst]
 
     @property
     def style(self):
@@ -163,7 +163,7 @@ class Paragraph(Parented):
         self.add_run(text)
 
 
-class Run(object):
+class Run(Parented):
     """
     Proxy object wrapping ``<w:r>`` element. Several of the properties on Run
     take a tri-state value, |True|, |False|, or |None|. |True| and |False|
@@ -171,8 +171,8 @@ class Run(object):
     not specified directly on the run and its effective value is taken from
     the style hierarchy.
     """
-    def __init__(self, r):
-        super(Run, self).__init__()
+    def __init__(self, r, parent):
+        super(Run, self).__init__(parent)
         self._r = r
 
     def add_break(self, break_type=WD_BREAK.LINE):
