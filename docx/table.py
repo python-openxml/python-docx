@@ -230,15 +230,15 @@ class _Row(Parented):
         Sequence of |_Cell| instances corresponding to cells in this row.
         Supports ``len()``, iteration and indexed access.
         """
-        return _RowCells(self._tr)
+        return _RowCells(self._tr, self)
 
 
-class _RowCells(object):
+class _RowCells(Parented):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table row.
     """
-    def __init__(self, tr):
-        super(_RowCells, self).__init__()
+    def __init__(self, tr, parent):
+        super(_RowCells, self).__init__(parent)
         self._tr = tr
 
     def __getitem__(self, idx):

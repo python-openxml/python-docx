@@ -316,7 +316,7 @@ class Describe_RowCells(object):
 
     @pytest.fixture
     def cell_count_fixture(self):
-        cells = _RowCells(element('w:tr/(w:tc, w:tc)'))
+        cells = _RowCells(element('w:tr/(w:tc, w:tc)'), None)
         cell_count = 2
         return cells, cell_count
 
