@@ -3,7 +3,6 @@ Feature: Add picture to a run
   As a developer using python-docx
   I need a way to add a picture to a run
 
-  @wip
   Scenario: Add a picture to a body paragraph run
     Given a run
      When I add a picture to the run
@@ -11,7 +10,6 @@ Feature: Add picture to a run
       And the document contains the inline picture
 
 
-  @wip
   Scenario Outline: Add a picture to a run in a table cell
     Given a run inside a table cell retrieved from <cell-source>
      When I add a picture to the run

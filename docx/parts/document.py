@@ -206,7 +206,7 @@ class InlineShapes(Parented):
     @property
     def _inline_lst(self):
         body = self._body
-        xpath = './w:p/w:r/w:drawing/wp:inline'
+        xpath = '//w:p/w:r/w:drawing/wp:inline'
         return body.xpath(xpath)
 
 

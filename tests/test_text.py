@@ -11,6 +11,8 @@ from __future__ import (
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
 from docx.oxml.ns import qn
 from docx.oxml.text import CT_P, CT_R
+from docx.parts.document import InlineShapes
+from docx.shape import InlineShape
 from docx.text import Paragraph, Run
 
 import pytest
@@ -280,6 +282,17 @@ class DescribeRun(object):
         run.add_tab()
         assert run._r.xml == expected_xml
 
+    def it_can_add_a_picture(self, add_picture_fixture):
+        (run, image_descriptor_, width, height, inline_shapes_,
+         expected_width, expected_height, picture_) = add_picture_fixture
+        picture = run.add_picture(image_descriptor_, width, height)
+        inline_shapes_.add_picture.assert_called_once_with(
+            image_descriptor_, run
+        )
+        assert picture is picture_
+        assert picture.width == expected_width
+        assert picture.height == expected_height
+
     def it_can_remove_its_content_but_keep_formatting(self, clear_fixture):
         run, expected_xml = clear_fixture
         _run = run.clear()
@@ -313,6 +326,24 @@ class DescribeRun(object):
         run = Run(element('w:r'), None)
         expected_xml = xml(expected_cxml)
         return run, break_type, expected_xml
+
+    @pytest.fixture(params=[
+        (None, None,  200,  100),
+        (1000, 500,  1000,  500),
+        (2000, None, 2000, 1000),
+        (None, 2000, 4000, 2000),
+    ])
+    def add_picture_fixture(
+            self, request, paragraph_, inline_shapes_, picture_):
+        width, height, expected_width, expected_height = request.param
+        paragraph_.part.inline_shapes = inline_shapes_
+        run = Run(None, paragraph_)
+        image_descriptor_ = 'image_descriptor_'
+        picture_.width, picture_.height = 200, 100
+        return (
+            run, image_descriptor_, width, height, inline_shapes_,
+            expected_width, expected_height, picture_
+        )
 
     @pytest.fixture(params=[
         ('w:r/w:t"foo"', 'w:r/(w:t"foo", w:tab)'),
@@ -528,6 +559,20 @@ class DescribeRun(object):
         return run, invalid_underline_setting
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def inline_shapes_(self, request, picture_):
+        inline_shapes_ = instance_mock(request, InlineShapes)
+        inline_shapes_.add_picture.return_value = picture_
+        return inline_shapes_
+
+    @pytest.fixture
+    def paragraph_(self, request):
+        return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def picture_(self, request):
+        return instance_mock(request, InlineShape)
 
     @pytest.fixture
     def Text_(self, request):

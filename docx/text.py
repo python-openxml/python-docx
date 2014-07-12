@@ -196,6 +196,37 @@ class Run(Parented):
         if clear is not None:
             br.clear = clear
 
+    def add_picture(self, image_path_or_stream, width=None, height=None):
+        """
+        Return an |InlineShape| instance containing the image identified by
+        *image_path_or_stream*, added to the end of this run.
+        *image_path_or_stream* can be a path (a string) or a file-like object
+        containing a binary image. If neither width nor height is specified,
+        the picture appears at its native size. If only one is specified, it
+        is used to compute a scaling factor that is then applied to the
+        unspecified dimension, preserving the aspect ratio of the image. The
+        native size of the picture is calculated using the dots-per-inch
+        (dpi) value specified in the image file, defaulting to 72 dpi if no
+        value is specified, as is often the case.
+        """
+        inline_shapes = self.part.inline_shapes
+        picture = inline_shapes.add_picture(image_path_or_stream, self)
+
+        # scale picture dimensions if width and/or height provided
+        if width is not None or height is not None:
+            native_width, native_height = picture.width, picture.height
+            if width is None:
+                scaling_factor = float(height) / float(native_height)
+                width = int(round(native_width * scaling_factor))
+            elif height is None:
+                scaling_factor = float(width) / float(native_width)
+                height = int(round(native_height * scaling_factor))
+            # set picture to scaled dimensions
+            picture.width = width
+            picture.height = height
+
+        return picture
+
     def add_tab(self):
         """
         Add a ``<w:tab/>`` element at the end of the run, which Word
