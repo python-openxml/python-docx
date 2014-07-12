@@ -90,7 +90,7 @@ class DescribeParagraph(object):
     ])
     def add_run_fixture(self, request):
         before_cxml, text, style, after_cxml = request.param
-        paragraph = Paragraph(element(before_cxml))
+        paragraph = Paragraph(element(before_cxml), None)
         expected_xml = xml(after_cxml)
         return paragraph, text, style, expected_xml
 
@@ -100,7 +100,7 @@ class DescribeParagraph(object):
     ])
     def alignment_get_fixture(self, request):
         cxml, expected_alignment_value = request.param
-        paragraph = Paragraph(element(cxml))
+        paragraph = Paragraph(element(cxml), None)
         return paragraph, expected_alignment_value
 
     @pytest.fixture(params=[
@@ -114,7 +114,7 @@ class DescribeParagraph(object):
     ])
     def alignment_set_fixture(self, request):
         initial_cxml, new_alignment_value, expected_cxml = request.param
-        paragraph = Paragraph(element(initial_cxml))
+        paragraph = Paragraph(element(initial_cxml), None)
         expected_xml = xml(expected_cxml)
         return paragraph, new_alignment_value, expected_xml
 
@@ -126,7 +126,7 @@ class DescribeParagraph(object):
     ])
     def clear_fixture(self, request):
         initial_cxml, expected_cxml = request.param
-        paragraph = Paragraph(element(initial_cxml))
+        paragraph = Paragraph(element(initial_cxml), None)
         expected_xml = xml(expected_cxml)
         return paragraph, expected_xml
 
@@ -137,13 +137,13 @@ class DescribeParagraph(object):
     def insert_before_fixture(self, request):
         body_cxml, text, style, expected_cxml = request.param
         body = element(body_cxml)
-        paragraph = Paragraph(body.find(qn('w:p')))
+        paragraph = Paragraph(body.find(qn('w:p')), None)
         expected_xml = xml(expected_cxml)
         return paragraph, text, style, body, expected_xml
 
     @pytest.fixture
     def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
-        paragraph = Paragraph(p_)
+        paragraph = Paragraph(p_, None)
         run_, run_2_ = runs_
         return paragraph, Run_, r_, r_2_, run_, run_2_
 
@@ -154,7 +154,7 @@ class DescribeParagraph(object):
     ])
     def style_get_fixture(self, request):
         p_cxml, expected_style = request.param
-        paragraph = Paragraph(element(p_cxml))
+        paragraph = Paragraph(element(p_cxml), None)
         return paragraph, expected_style
 
     @pytest.fixture(params=[
@@ -171,7 +171,7 @@ class DescribeParagraph(object):
     ])
     def style_set_fixture(self, request):
         p_cxml, new_style_value, expected_cxml = request.param
-        paragraph = Paragraph(element(p_cxml))
+        paragraph = Paragraph(element(p_cxml), None)
         expected_xml = xml(expected_cxml)
         return paragraph, new_style_value, expected_xml
 
@@ -188,12 +188,12 @@ class DescribeParagraph(object):
     ])
     def text_get_fixture(self, request):
         p_cxml, expected_text_value = request.param
-        paragraph = Paragraph(element(p_cxml))
+        paragraph = Paragraph(element(p_cxml), None)
         return paragraph, expected_text_value
 
     @pytest.fixture
     def text_set_fixture(self):
-        paragraph = Paragraph(element('w:p'))
+        paragraph = Paragraph(element('w:p'), None)
         paragraph.add_run('must not appear in result')
         new_text_value = 'foo\tbar\rbaz\n'
         expected_text_value = 'foo\tbar\nbaz\n'

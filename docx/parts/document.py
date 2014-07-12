@@ -127,7 +127,7 @@ class _Body(Parented):
         Return a paragraph newly added to the end of body content.
         """
         p = self._body.add_p()
-        return Paragraph(p)
+        return Paragraph(p, self)
 
     def add_table(self, rows, cols):
         """
@@ -153,7 +153,7 @@ class _Body(Parented):
 
     @property
     def paragraphs(self):
-        return [Paragraph(p) for p in self._body.p_lst]
+        return [Paragraph(p, self) for p in self._body.p_lst]
 
     @property
     def tables(self):

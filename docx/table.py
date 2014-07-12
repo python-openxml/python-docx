@@ -94,7 +94,7 @@ class _Cell(Parented):
         at least one block-level element. By default this is a single
         paragraph.
         """
-        return [Paragraph(p) for p in self._tc.p_lst]
+        return [Paragraph(p, self) for p in self._tc.p_lst]
 
     @write_only_property
     def text(self, text):

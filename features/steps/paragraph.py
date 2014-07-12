@@ -54,7 +54,7 @@ def given_a_paragraph_with_content_and_formatting(context):
           </w:r>
         </w:p>""" % (nsdecls('w'), TEST_STYLE)
     p = parse_xml(p_xml)
-    context.paragraph = Paragraph(p)
+    context.paragraph = Paragraph(p, None)
 
 
 # when ====================================================

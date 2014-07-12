@@ -6,7 +6,8 @@ Text-related proxy types for python-docx, such as Paragraph and Run.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.enum.text import WD_BREAK
+from .enum.text import WD_BREAK
+from .shared import Parented
 
 
 def boolproperty(f):
@@ -54,12 +55,12 @@ def boolproperty(f):
     return property(getter, setter, doc=f.__doc__)
 
 
-class Paragraph(object):
+class Paragraph(Parented):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
-    def __init__(self, p):
-        super(Paragraph, self).__init__()
+    def __init__(self, p, parent):
+        super(Paragraph, self).__init__(parent)
         self._p = p
 
     def add_run(self, text=None, style=None):
@@ -110,7 +111,7 @@ class Paragraph(object):
         to the new paragraph.
         """
         p = self._p.add_p_before()
-        paragraph = Paragraph(p)
+        paragraph = Paragraph(p, self._parent)
         if text:
             paragraph.add_run(text)
         if style is not None:
