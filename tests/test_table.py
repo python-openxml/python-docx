@@ -154,7 +154,7 @@ class Describe_Cell(object):
 class Describe_Column(object):
 
     def it_provides_access_to_the_column_cells(self):
-        column = _Column(None, None)
+        column = _Column(None, None, None)
         cells = column.cells
         assert isinstance(cells, _ColumnCells)
 
@@ -180,7 +180,7 @@ class Describe_Column(object):
     ])
     def width_get_fixture(self, request):
         gridCol_cxml, expected_width = request.param
-        column = _Column(element(gridCol_cxml), None)
+        column = _Column(element(gridCol_cxml), None, None)
         return column, expected_width
 
     @pytest.fixture(params=[
@@ -191,7 +191,7 @@ class Describe_Column(object):
     ])
     def width_set_fixture(self, request):
         gridCol_cxml, new_value, expected_cxml = request.param
-        column = _Column(element(gridCol_cxml), None)
+        column = _Column(element(gridCol_cxml), None, None)
         expected_xml = xml(expected_cxml)
         return column, new_value, expected_xml
 

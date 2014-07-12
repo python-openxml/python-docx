@@ -26,7 +26,7 @@ class Table(Parented):
         gridCol = tblGrid.add_gridCol()
         for tr in self._tbl.tr_lst:
             tr.add_tc()
-        return _Column(gridCol, self._tbl)
+        return _Column(gridCol, self._tbl, self)
 
     def add_row(self):
         """
@@ -109,12 +109,12 @@ class _Cell(object):
         r.text = text
 
 
-class _Column(object):
+class _Column(Parented):
     """
     Table column
     """
-    def __init__(self, gridCol, tbl):
-        super(_Column, self).__init__()
+    def __init__(self, gridCol, tbl, parent):
+        super(_Column, self).__init__(parent)
         self._gridCol = gridCol
         self._tbl = tbl
 
@@ -197,10 +197,11 @@ class _Columns(Parented):
         except IndexError:
             msg = "column index [%d] is out of range" % idx
             raise IndexError(msg)
-        return _Column(gridCol, self._tbl)
+        return _Column(gridCol, self._tbl, self)
 
     def __iter__(self):
-        return (_Column(gridCol, self._tbl) for gridCol in self._gridCol_lst)
+        for gridCol in self._gridCol_lst:
+            yield _Column(gridCol, self._tbl, self)
 
     def __len__(self):
         return len(self._gridCol_lst)
