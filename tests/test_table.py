@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.shared import Inches
 from docx.table import (
     _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows, Table
 )
@@ -172,6 +173,12 @@ class Describe_Cell(object):
         cell, expected_width = width_get_fixture
         assert cell.width == expected_width
 
+    def it_can_change_its_width(self, width_set_fixture):
+        cell, value, expected_xml = width_set_fixture
+        cell.width = value
+        assert cell.width == value
+        assert cell._tc.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -202,6 +209,18 @@ class Describe_Cell(object):
         tc_cxml, expected_width = request.param
         cell = _Cell(element(tc_cxml), None)
         return cell, expected_width
+
+    @pytest.fixture(params=[
+        ('w:tc', Inches(1),
+         'w:tc/w:tcPr/w:tcW{w:w=1440,w:type=dxa}'),
+        ('w:tc/w:tcPr/w:tcW{w:w=25%,w:type=pct}', Inches(2),
+         'w:tc/w:tcPr/w:tcW{w:w=2880,w:type=dxa}'),
+    ])
+    def width_set_fixture(self, request):
+        tc_cxml, new_value, expected_cxml = request.param
+        cell = _Cell(element(tc_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return cell, new_value, expected_xml
 
 
 class Describe_Column(object):

@@ -128,6 +128,10 @@ class _Cell(Parented):
         """
         return self._tc.width
 
+    @width.setter
+    def width(self, value):
+        self._tc.width = value
+
 
 class _Column(Parented):
     """

@@ -212,6 +212,11 @@ class CT_Tc(BaseOxmlElement):
             return None
         return tcPr.width
 
+    @width.setter
+    def width(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.width = value
+
 
 class CT_TcPr(BaseOxmlElement):
     """

@@ -14,7 +14,6 @@ Feature: Get and set table cell properties
       | 1 inch              | 1 inch         |
 
 
-  @wip
   Scenario Outline: Set cell width
     Given a table cell having a width of <width-setting>
      When I set the cell width to <new-setting>
