@@ -48,6 +48,10 @@ class Table(Parented):
         """
         return self._tblPr.autofit
 
+    @autofit.setter
+    def autofit(self, value):
+        self._tblPr.autofit = value
+
     def cell(self, row_idx, col_idx):
         """
         Return |_Cell| instance correponding to table cell at *row_idx*,

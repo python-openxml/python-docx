@@ -15,7 +15,6 @@ Feature: Get and set table properties
       | fixed               | fixed            |
 
 
-  @wip
   Scenario Outline: Set autofit layout setting
     Given a table having an autofit layout of <autofit-setting>
      When I set the table autofit to <new-setting>

@@ -64,6 +64,11 @@ class DescribeTable(object):
         table, expected_value = autofit_get_fixture
         assert table.autofit is expected_value
 
+    def it_can_change_its_autofit_setting(self, autofit_set_fixture):
+        table, new_value, expected_xml = autofit_set_fixture
+        table.autofit = new_value
+        assert table._tbl.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -90,6 +95,24 @@ class DescribeTable(object):
         tbl_cxml, expected_autofit = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_autofit
+
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr', True,
+         'w:tbl/w:tblPr/w:tblLayout{w:type=autofit}'),
+        ('w:tbl/w:tblPr', False,
+         'w:tbl/w:tblPr/w:tblLayout{w:type=fixed}'),
+        ('w:tbl/w:tblPr', None,
+         'w:tbl/w:tblPr/w:tblLayout{w:type=fixed}'),
+        ('w:tbl/w:tblPr/w:tblLayout{w:type=fixed}', True,
+         'w:tbl/w:tblPr/w:tblLayout{w:type=autofit}'),
+        ('w:tbl/w:tblPr/w:tblLayout{w:type=autofit}', False,
+         'w:tbl/w:tblPr/w:tblLayout{w:type=fixed}'),
+    ])
+    def autofit_set_fixture(self, request):
+        tbl_cxml, new_value, expected_tbl_cxml = request.param
+        table = Table(element(tbl_cxml), None)
+        expected_xml = xml(expected_tbl_cxml)
+        return table, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:tbl/w:tblPr', None),

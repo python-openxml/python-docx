@@ -105,6 +105,11 @@ class CT_TblPr(BaseOxmlElement):
             return True
         return False if tblLayout.type == 'fixed' else True
 
+    @autofit.setter
+    def autofit(self, value):
+        tblLayout = self.get_or_add_tblLayout()
+        tblLayout.type = 'autofit' if value else 'fixed'
+
     @property
     def style(self):
         """
