@@ -10,6 +10,9 @@ Feature Analysis
 .. toctree::
    :maxdepth: 1
 
+   features/table
+   features/table-props
+   features/table-cell
    features/par-alignment
    features/run-content
    features/numbering
@@ -17,7 +20,6 @@ Feature Analysis
    features/char-style
    features/breaks
    features/sections
-   features/table
    features/shapes
    features/shapes-inline
    features/shapes-inline-size
