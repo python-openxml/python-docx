@@ -38,6 +38,15 @@ class Table(Parented):
             tr.add_tc()
         return _Row(tr, self)
 
+    @property
+    def autofit(self):
+        """
+        |True| if column widths can be automatically adjusted to improve the
+        fit of cell contents. |False| if table layout is fixed. Column widths
+        are adjusted in either case if total column width exceeds page width.
+        Read/write boolean.
+        """
+
     def cell(self, row_idx, col_idx):
         """
         Return |_Cell| instance correponding to table cell at *row_idx*,

@@ -74,6 +74,17 @@ def given_a_table_having_an_applied_style(context):
     context.table_ = document.tables[0]
 
 
+@given('a table having an autofit layout of {autofit}')
+def given_a_table_having_an_autofit_layout_of_autofit(context, autofit):
+    tbl_idx = {
+        'no explicit setting': 0,
+        'autofit':             1,
+        'fixed':               2,
+    }[autofit]
+    document = Document(test_docx('tbl-props'))
+    context.table_ = document.tables[tbl_idx]
+
+
 @given('a table having two columns')
 def given_a_table_having_two_columns(context):
     docx_path = test_docx('blk-containing-table')
@@ -128,6 +139,13 @@ def when_apply_style_to_table(context):
 def when_I_set_the_column_width_to_width_emu(context, width_emu):
     new_value = None if width_emu == 'None' else int(width_emu)
     context.column.width = new_value
+
+
+@when('I set the table autofit to {setting}')
+def when_I_set_the_table_autofit_to_setting(context, setting):
+    new_value = {'autofit': True, 'fixed': False}[setting]
+    table = context.table_
+    table.autofit = new_value
 
 
 # then =====================================================
@@ -282,6 +300,13 @@ def then_new_column_has_2_cells(context):
 @then('the new row has 2 cells')
 def then_new_row_has_2_cells(context):
     assert len(context.row.cells) == 2
+
+
+@then('the reported autofit setting is {autofit}')
+def then_the_reported_autofit_setting_is_autofit(context, autofit):
+    expected_value = {'autofit': True, 'fixed': False}[autofit]
+    table = context.table_
+    assert table.autofit is expected_value
 
 
 @then('the reported column width is {width_emu}')
