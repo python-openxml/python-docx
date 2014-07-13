@@ -8,10 +8,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from . import parse_xml
 from .ns import nsdecls
-from .simpletypes import ST_TblLayoutType, ST_TwipsMeasure
+from ..shared import Emu, Twips
+from .simpletypes import (
+    ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+)
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute, ZeroOrOne,
-    ZeroOrMore
+    BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
+    RequiredAttribute, ZeroOrOne, ZeroOrMore
 )
 
 
@@ -129,6 +132,33 @@ class CT_TblPr(BaseOxmlElement):
         self._add_tblStyle(val=value)
 
 
+class CT_TblWidth(BaseOxmlElement):
+    """
+    Used for ``<w:tblW>`` and ``<w:tcW>`` elements and many others, to
+    specify a table-related width.
+    """
+    # the type for `w` attr is actually ST_MeasurementOrPercent, but using
+    # XsdInt for now because only dxa (twips) values are being used. It's not
+    # entirely clear what the semantics are for other values like -01.4mm
+    w = RequiredAttribute('w:w', XsdInt)
+    type = RequiredAttribute('w:type', ST_TblWidth)
+
+    @property
+    def width(self):
+        """
+        Return the EMU length value represented by the combined ``w:w`` and
+        ``w:type`` attributes.
+        """
+        if self.type != 'dxa':
+            return None
+        return Twips(self.w)
+
+    @width.setter
+    def width(self, value):
+        self.type = 'dxa'
+        self.w = Emu(value).twips
+
+
 class CT_Tc(BaseOxmlElement):
     """
     ``<w:tc>`` table cell element
@@ -170,3 +200,42 @@ class CT_Tc(BaseOxmlElement):
             '  <w:p/>\n'
             '</w:tc>' % nsdecls('w')
         )
+
+    @property
+    def width(self):
+        """
+        Return the EMU length value represented in the ``./w:tcPr/w:tcW``
+        child element or |None| if not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.width
+
+
+class CT_TcPr(BaseOxmlElement):
+    """
+    ``<w:tcPr>`` element, defining table cell properties
+    """
+    tcW = ZeroOrOne('w:tcW', successors=(
+        'w:gridSpan', 'w:hMerge', 'w:vMerge', 'w:tcBorders', 'w:shd',
+        'w:noWrap', 'w:tcMar', 'w:textDirection', 'w:tcFitText', 'w:vAlign',
+        'w:hideMark', 'w:headers', 'w:cellIns', 'w:cellDel', 'w:cellMerge',
+        'w:tcPrChange'
+    ))
+
+    @property
+    def width(self):
+        """
+        Return the EMU length value represented in the ``<w:tcW>`` child
+        element or |None| if not present or its type is not 'dxa'.
+        """
+        tcW = self.tcW
+        if tcW is None:
+            return None
+        return tcW.width
+
+    @width.setter
+    def width(self, value):
+        tcW = self.get_or_add_tcW()
+        tcW.width = value

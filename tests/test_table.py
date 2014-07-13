@@ -168,6 +168,10 @@ class Describe_Cell(object):
         cell.text = text
         assert cell._tc.xml == expected_xml
 
+    def it_knows_its_width_in_EMU(self, width_get_fixture):
+        cell, expected_width = width_get_fixture
+        assert cell.width == expected_width
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -187,6 +191,17 @@ class Describe_Cell(object):
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(expected_cxml)
         return cell, new_text, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:tc',                                   None),
+        ('w:tc/w:tcPr',                            None),
+        ('w:tc/w:tcPr/w:tcW{w:w=25%,w:type=pct}',  None),
+        ('w:tc/w:tcPr/w:tcW{w:w=1440,w:type=dxa}', 914400),
+    ])
+    def width_get_fixture(self, request):
+        tc_cxml, expected_width = request.param
+        cell = _Cell(element(tc_cxml), None)
+        return cell, expected_width
 
 
 class Describe_Column(object):

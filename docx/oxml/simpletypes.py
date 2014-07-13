@@ -276,6 +276,18 @@ class ST_TblLayoutType(XsdString):
             )
 
 
+class ST_TblWidth(XsdString):
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
+        valid_values = ('auto', 'dxa', 'nil', 'pct')
+        if value not in valid_values:
+            raise ValueError(
+                "must be one of %s, got '%s'" % (valid_values, value)
+            )
+
+
 class ST_TwipsMeasure(XsdUnsignedLong):
 
     @classmethod

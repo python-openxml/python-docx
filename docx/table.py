@@ -126,6 +126,7 @@ class _Cell(Parented):
         """
         The width of this cell in EMU, or |None| if no explicit width is set.
         """
+        return self._tc.width
 
 
 class _Column(Parented):

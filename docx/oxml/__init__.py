@@ -115,7 +115,7 @@ register_element_cls('w:type',   CT_SectType)
 
 from docx.oxml.table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
-    CT_Tc
+    CT_TblWidth, CT_Tc, CT_TcPr
 )
 register_element_cls('w:gridCol',   CT_TblGridCol)
 register_element_cls('w:tbl',       CT_Tbl)
@@ -124,6 +124,8 @@ register_element_cls('w:tblLayout', CT_TblLayoutType)
 register_element_cls('w:tblPr',     CT_TblPr)
 register_element_cls('w:tblStyle',  CT_String)
 register_element_cls('w:tc',        CT_Tc)
+register_element_cls('w:tcPr',      CT_TcPr)
+register_element_cls('w:tcW',       CT_TblWidth)
 register_element_cls('w:tr',        CT_Row)
 
 from docx.oxml.text import (

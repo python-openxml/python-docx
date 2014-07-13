@@ -4,7 +4,6 @@ Feature: Get and set table cell properties
   I need a way to get and set the properties of a table cell
 
 
-  @wip
   Scenario Outline: Get cell width
     Given a table cell having a width of <width-setting>
      Then the reported width of the cell is <reported-width>
