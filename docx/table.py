@@ -46,6 +46,7 @@ class Table(Parented):
         are adjusted in either case if total column width exceeds page width.
         Read/write boolean.
         """
+        return self._tblPr.autofit
 
     def cell(self, row_idx, col_idx):
         """

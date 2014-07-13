@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from . import parse_xml
 from .ns import nsdecls
-from .simpletypes import ST_TwipsMeasure
+from .simpletypes import ST_TblLayoutType, ST_TwipsMeasure
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute, ZeroOrOne,
     ZeroOrMore
@@ -70,12 +70,40 @@ class CT_TblGridCol(BaseOxmlElement):
     w = OptionalAttribute('w:w', ST_TwipsMeasure)
 
 
+class CT_TblLayoutType(BaseOxmlElement):
+    """
+    ``<w:tblLayout>`` element, specifying whether column widths are fixed or
+    can be automatically adjusted based on content.
+    """
+    type = OptionalAttribute('w:type', ST_TblLayoutType)
+
+
 class CT_TblPr(BaseOxmlElement):
     """
     ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
     define table properties such as style and borders.
     """
-    tblStyle = ZeroOrOne('w:tblStyle')
+    tblStyle = ZeroOrOne('w:tblStyle', successors=(
+        'w:tblpPr', 'w:tblOverlap', 'w:bidiVisual', 'w:tblStyleRowBandSize',
+        'w:tblStyleColBandSize', 'w:tblW', 'w:jc', 'w:tblCellSpacing',
+        'w:tblInd', 'w:tblBorders', 'w:shd', 'w:tblLayout', 'w:tblCellMar',
+        'w:tblLook', 'w:tblCaption', 'w:tblDescription', 'w:tblPrChange'
+    ))
+    tblLayout = ZeroOrOne('w:tblLayout', successors=(
+        'w:tblLayout', 'w:tblCellMar', 'w:tblLook', 'w:tblCaption',
+        'w:tblDescription', 'w:tblPrChange'
+    ))
+
+    @property
+    def autofit(self):
+        """
+        Return |False| if there is a ``<w:tblLayout>`` child with ``w:type``
+        attribute set to ``'fixed'``. Otherwise return |True|.
+        """
+        tblLayout = self.tblLayout
+        if tblLayout is None:
+            return True
+        return False if tblLayout.type == 'fixed' else True
 
     @property
     def style(self):

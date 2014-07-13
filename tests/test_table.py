@@ -60,6 +60,10 @@ class DescribeTable(object):
         table.style = style_name
         assert table._tbl.xml == expected_xml
 
+    def it_knows_whether_it_should_autofit(self, autofit_get_fixture):
+        table, expected_value = autofit_get_fixture
+        assert table.autofit is expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -75,6 +79,17 @@ class DescribeTable(object):
         table = Table(tbl, None)
         expected_xml = _tbl_bldr(rows=2, cols=2).xml()
         return table, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr',                             True),
+        ('w:tbl/w:tblPr/w:tblLayout',                 True),
+        ('w:tbl/w:tblPr/w:tblLayout{w:type=autofit}', True),
+        ('w:tbl/w:tblPr/w:tblLayout{w:type=fixed}',   False),
+    ])
+    def autofit_get_fixture(self, request):
+        tbl_cxml, expected_autofit = request.param
+        table = Table(element(tbl_cxml), None)
+        return table, expected_autofit
 
     @pytest.fixture(params=[
         ('w:tbl/w:tblPr', None),

@@ -4,7 +4,6 @@ Feature: Get and set table properties
   I need a way to get and set a table's properties
 
 
-  @wip
   Scenario Outline: Get autofit layout setting
     Given a table having an autofit layout of <autofit-setting>
      Then the reported autofit setting is <reported-autofit>
