@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from behave import given, then, when
 
 from docx import Document
+from docx.shared import Inches
 from docx.table import (
     _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows
 )
@@ -54,6 +55,15 @@ def given_a_row_collection_having_two_rows(context):
 @given('a table')
 def given_a_table(context):
     context.table_ = Document().add_table(rows=2, cols=2)
+
+
+@given('a table cell having a width of {width}')
+def given_a_table_cell_having_a_width_of_width(context, width):
+    table_idx = {'no explicit setting': 0, '1 inch': 1, '2 inches': 2}[width]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    cell = table.cell(0, 0)
+    context.cell = cell
 
 
 @given('a table column having a width of {width_desc}')
@@ -133,6 +143,12 @@ def when_add_row_to_table(context):
 def when_apply_style_to_table(context):
     table = context.table_
     table.style = 'LightShading-Accent1'
+
+
+@when('I set the cell width to {width}')
+def when_I_set_the_cell_width_to_width(context, width):
+    new_value = {'1 inch': Inches(1)}[width]
+    context.cell.width = new_value
 
 
 @when('I set the column width to {width_emu}')
@@ -314,6 +330,15 @@ def then_the_reported_column_width_is_width_emu(context, width_emu):
     expected_value = None if width_emu == 'None' else int(width_emu)
     assert context.column.width == expected_value, (
         'got %s' % context.column.width
+    )
+
+
+@then('the reported width of the cell is {width}')
+def then_the_reported_width_of_the_cell_is_width(context, width):
+    expected_width = {'None': None, '1 inch': Inches(1)}[width]
+    actual_width = context.cell.width
+    assert actual_width == expected_width, (
+        'expected %s, got %s' % (expected_width, actual_width)
     )
 
 

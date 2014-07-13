@@ -121,6 +121,12 @@ class _Cell(Parented):
         r = p.add_r()
         r.text = text
 
+    @property
+    def width(self):
+        """
+        The width of this cell in EMU, or |None| if no explicit width is set.
+        """
+
 
 class _Column(Parented):
     """
