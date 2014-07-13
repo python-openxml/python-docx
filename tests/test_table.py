@@ -136,7 +136,7 @@ class Describe_Cell(object):
         ('w:tc/w:p', 'foobar',
          'w:tc/w:p/w:r/w:t"foobar"'),
         ('w:tc/w:p', 'fo\tob\rar\n',
-         'w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:cr,w:t"ar",w:cr)'),
+         'w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:br,w:t"ar",w:br)'),
         ('w:tc/(w:tcPr, w:p, w:tbl, w:p)', 'foobar',
          'w:tc/(w:tcPr, w:p/w:r/w:t"foobar")'),
     ])

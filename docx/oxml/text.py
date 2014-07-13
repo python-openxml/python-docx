@@ -420,7 +420,7 @@ class _RunContentAppender(object):
             self._r.add_tab()
         elif char in '\r\n':
             self.flush()
-            self._r.add_cr()
+            self._r.add_br()
         else:
             self._bfr.append(char)
 

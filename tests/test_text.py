@@ -506,8 +506,8 @@ class DescribeRun(object):
     @pytest.fixture(params=[
         ('abc  def', 'w:r/w:t"abc  def"'),
         ('abc\tdef', 'w:r/(w:t"abc", w:tab, w:t"def")'),
-        ('abc\ndef', 'w:r/(w:t"abc", w:cr,  w:t"def")'),
-        ('abc\rdef', 'w:r/(w:t"abc", w:cr,  w:t"def")'),
+        ('abc\ndef', 'w:r/(w:t"abc", w:br,  w:t"def")'),
+        ('abc\rdef', 'w:r/(w:t"abc", w:br,  w:t"def")'),
     ])
     def text_set_fixture(self, request):
         new_text, expected_cxml = request.param
