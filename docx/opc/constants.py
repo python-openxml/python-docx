@@ -268,6 +268,10 @@ class CONTENT_TYPE(object):
         'application/vnd.openxmlformats-officedocument.wordprocessingml.comm'
         'ents+xml'
     )
+    WML_DOCUMENT = (
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.docu'
+        'ment'
+    )
     WML_DOCUMENT_GLOSSARY = (
         'application/vnd.openxmlformats-officedocument.wordprocessingml.docu'
         'ment.glossary+xml'
