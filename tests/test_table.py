@@ -170,6 +170,10 @@ class Describe_Cell(object):
 
     # fixtures -------------------------------------------------------
 
+    @pytest.fixture
+    def paragraphs_fixture(self):
+        return _Cell(element('w:tc/(w:p, w:p)'), None)
+
     @pytest.fixture(params=[
         ('w:tc/w:p', 'foobar',
          'w:tc/w:p/w:r/w:t"foobar"'),
@@ -183,10 +187,6 @@ class Describe_Cell(object):
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(expected_cxml)
         return cell, new_text, expected_xml
-
-    @pytest.fixture
-    def paragraphs_fixture(self):
-        return _Cell(element('w:tc/(w:p, w:p)'), None)
 
 
 class Describe_Column(object):
