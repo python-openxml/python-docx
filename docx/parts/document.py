@@ -123,21 +123,6 @@ class _Body(BlockItemContainer):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
 
-    def add_paragraph(self, text='', style=None):
-        """
-        Return a paragraph newly added to the end of body content, having
-        *text* in a single run if present, and having paragraph style
-        *style*. If *style* is |None|, no paragraph style is applied, which
-        has the same effect as applying the 'Normal' style.
-        """
-        p = self._body.add_p()
-        paragraph = Paragraph(p, self)
-        if text:
-            paragraph.add_run(text)
-        if style is not None:
-            paragraph.style = style
-        return paragraph
-
     def add_table(self, rows, cols):
         """
         Return a table having *rows* rows and *cols* cols, newly appended to
