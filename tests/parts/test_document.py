@@ -21,10 +21,7 @@ from docx.table import Table
 from docx.text import Paragraph, Run
 
 from ..oxml.parts.unitdata.document import a_body, a_document
-from ..oxml.unitdata.table import (
-    a_gridCol, a_tbl, a_tblGrid, a_tblPr, a_tblW, a_tc, a_tr
-)
-from ..oxml.unitdata.text import a_p, a_sectPr
+from ..oxml.unitdata.text import a_p
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import (
     instance_mock, class_mock, loose_mock, method_mock, property_mock
@@ -295,9 +292,9 @@ class Describe_Body(object):
         assert isinstance(p, Paragraph)
 
     def it_can_add_a_table(self, add_table_fixture):
-        body, expected_xml = add_table_fixture
-        table = body.add_table(rows=1, cols=1)
-        assert body._body.xml == expected_xml
+        body, rows, cols, expected_xml = add_table_fixture
+        table = body.add_table(rows, cols)
+        assert body._element.xml == expected_xml
         assert isinstance(table, Table)
 
     def it_can_clear_itself_of_all_content_it_holds(self, clear_fixture):
@@ -335,19 +332,21 @@ class Describe_Body(object):
         expected_xml = xml(after_cxml)
         return body, expected_xml
 
-    @pytest.fixture(params=[(0, False), (0, True), (1, False), (1, True)])
+    @pytest.fixture(params=[
+        ('w:body', 0, 0, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid)'),
+        ('w:body', 1, 0, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid,w:tr)'),
+        ('w:body', 0, 1, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid/w:gridCol)'),
+        ('w:body', 1, 1, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid/w:gridCol,w:tr/w:tc/w:p)'),
+    ])
     def add_table_fixture(self, request):
-        p_count, has_sectPr = request.param
-        body_bldr = self._body_bldr(p_count=p_count, sectPr=has_sectPr)
-        body = _Body(body_bldr.element, None)
-
-        tbl_bldr = self._tbl_bldr()
-        body_bldr = self._body_bldr(
-            p_count=p_count, tbl_bldr=tbl_bldr, sectPr=has_sectPr
-        )
-        expected_xml = body_bldr.xml()
-
-        return body, expected_xml
+        body_cxml, rows, cols, after_cxml = request.param
+        body = _Body(element(body_cxml), None)
+        expected_xml = xml(after_cxml)
+        return body, rows, cols, expected_xml
 
     @pytest.fixture(params=[
         ('w:body',                 'w:body'),
@@ -368,47 +367,6 @@ class Describe_Body(object):
     @pytest.fixture
     def tables_fixture(self):
         return _Body(element('w:body/(w:tbl, w:tbl)'), None)
-
-    # fixture components ---------------------------------------------
-
-    def _body_bldr(self, p_count=0, tbl_bldr=None, sectPr=False):
-        body_bldr = a_body().with_nsdecls()
-        for i in range(p_count):
-            body_bldr.with_child(a_p())
-        if tbl_bldr is not None:
-            body_bldr.with_child(tbl_bldr)
-        if sectPr:
-            body_bldr.with_child(a_sectPr())
-        return body_bldr
-
-    def _tbl_bldr(self, rows=1, cols=1):
-        tblPr_bldr = (
-            a_tblPr().with_child(
-                a_tblW().with_type("auto").with_w(0))
-        )
-
-        tblGrid_bldr = a_tblGrid()
-        for i in range(cols):
-            tblGrid_bldr.with_child(a_gridCol())
-
-        tbl_bldr = a_tbl()
-        tbl_bldr.with_child(tblPr_bldr)
-        tbl_bldr.with_child(tblGrid_bldr)
-        for i in range(rows):
-            tr_bldr = self._tr_bldr(cols)
-            tbl_bldr.with_child(tr_bldr)
-
-        return tbl_bldr
-
-    def _tc_bldr(self):
-        return a_tc().with_child(a_p())
-
-    def _tr_bldr(self, cols):
-        tr_bldr = a_tr()
-        for i in range(cols):
-            tc_bldr = self._tc_bldr()
-            tr_bldr.with_child(tc_bldr)
-        return tr_bldr
 
 
 class DescribeInlineShapes(object):

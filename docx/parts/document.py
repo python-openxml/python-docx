@@ -123,19 +123,6 @@ class _Body(BlockItemContainer):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
 
-    def add_table(self, rows, cols):
-        """
-        Return a table having *rows* rows and *cols* cols, newly appended to
-        the main document story.
-        """
-        tbl = self._body.add_tbl()
-        table = Table(tbl, self)
-        for i in range(cols):
-            table.add_column()
-        for i in range(rows):
-            table.add_row()
-        return table
-
     def clear_content(self):
         """
         Return this |_Body| instance after clearing it of all content.

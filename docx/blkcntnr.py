@@ -37,3 +37,17 @@ class BlockItemContainer(Parented):
         if style is not None:
             paragraph.style = style
         return paragraph
+
+    def add_table(self, rows, cols):
+        """
+        Return a newly added table having *rows* rows and *cols* cols,
+        appended to the content in this container.
+        """
+        from .table import Table
+        tbl = self._element.add_tbl()
+        table = Table(tbl, self)
+        for i in range(cols):
+            table.add_column()
+        for i in range(rows):
+            table.add_row()
+        return table
