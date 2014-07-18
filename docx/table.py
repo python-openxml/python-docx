@@ -130,9 +130,16 @@ class _Cell(BlockItemContainer):
         """
         List of paragraphs in the cell. A table cell is required to contain
         at least one block-level element and end with a paragraph. By
-        default, a new cell contains a single paragraph.
+        default, a new cell contains a single paragraph. Read-only
         """
         return super(_Cell, self).paragraphs
+
+    @property
+    def tables(self):
+        """
+        List of tables in the cell, in the order they appear. Read-only.
+        """
+        return super(_Cell, self).tables
 
     @write_only_property
     def text(self, text):

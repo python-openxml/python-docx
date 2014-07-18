@@ -175,6 +175,18 @@ class Describe_Cell(object):
             count += 1
         assert count == 2
 
+    def it_provides_access_to_the_tables_it_contains(self, tables_fixture):
+        # test len(), iterable, and indexed access
+        cell, expected_count = tables_fixture
+        tables = cell.tables
+        assert len(tables) == expected_count
+        count = 0
+        for idx, table in enumerate(tables):
+            assert isinstance(table, Table)
+            assert tables[idx] is table
+            count += 1
+        assert count == expected_count
+
     def it_can_replace_its_content_with_a_string_of_text(
             self, text_set_fixture):
         cell, text, expected_xml = text_set_fixture
@@ -222,6 +234,18 @@ class Describe_Cell(object):
     @pytest.fixture
     def paragraphs_fixture(self):
         return _Cell(element('w:tc/(w:p, w:p)'), None)
+
+    @pytest.fixture(params=[
+        ('w:tc',                   0),
+        ('w:tc/w:tbl',             1),
+        ('w:tc/(w:tbl,w:tbl)',     2),
+        ('w:tc/(w:p,w:tbl)',       1),
+        ('w:tc/(w:tbl,w:tbl,w:p)', 2),
+    ])
+    def tables_fixture(self, request):
+        cell_cxml, expected_count = request.param
+        cell = _Cell(element(cell_cxml), None)
+        return cell, expected_count
 
     @pytest.fixture(params=[
         ('w:tc/w:p', 'foobar',
