@@ -10,6 +10,7 @@ from __future__ import (
 
 from collections import Sequence
 
+from ..blkcntnr import BlockItemContainer
 from ..enum.section import WD_SECTION
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.package import XmlPart
@@ -113,13 +114,13 @@ class DocumentPart(XmlPart):
         return self.body.tables
 
 
-class _Body(Parented):
+class _Body(BlockItemContainer):
     """
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
     def __init__(self, body_elm, parent):
-        super(_Body, self).__init__(parent)
+        super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
 
     def add_paragraph(self, text='', style=None):
