@@ -17,7 +17,6 @@ from ..opc.package import XmlPart
 from ..section import Section
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
-from ..table import Table
 
 
 class DocumentPart(XmlPart):
@@ -130,14 +129,6 @@ class _Body(BlockItemContainer):
         """
         self._body.clear_content()
         return self
-
-    @property
-    def tables(self):
-        """
-        A sequence containing all the tables in the document, in the order
-        they appear.
-        """
-        return [Table(tbl, self) for tbl in self._body.tbl_lst]
 
 
 class InlineShapes(Parented):

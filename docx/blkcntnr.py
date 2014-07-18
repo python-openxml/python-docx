@@ -59,3 +59,12 @@ class BlockItemContainer(Parented):
         order. Read-only.
         """
         return [Paragraph(p, self) for p in self._element.p_lst]
+
+    @property
+    def tables(self):
+        """
+        A list containing the tables in this container, in document order.
+        Read-only.
+        """
+        from .table import Table
+        return [Table(tbl, self) for tbl in self._element.tbl_lst]

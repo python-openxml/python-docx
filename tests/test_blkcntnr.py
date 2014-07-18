@@ -42,6 +42,18 @@ class DescribeBlockItemContainer(object):
             count += 1
         assert count == expected_count
 
+    def it_provides_access_to_the_tables_it_contains(self, tables_fixture):
+        # test len(), iterable, and indexed access
+        blkcntnr, expected_count = tables_fixture
+        tables = blkcntnr.tables
+        assert len(tables) == expected_count
+        count = 0
+        for idx, table in enumerate(tables):
+            assert isinstance(table, Table)
+            assert tables[idx] is table
+            count += 1
+        assert count == expected_count
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -84,6 +96,18 @@ class DescribeBlockItemContainer(object):
         ('w:body/(w:p,w:tbl,w:p)', 2),
     ])
     def paragraphs_fixture(self, request):
+        blkcntnr_cxml, expected_count = request.param
+        blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
+        return blkcntnr, expected_count
+
+    @pytest.fixture(params=[
+        ('w:body',                   0),
+        ('w:body/w:tbl',             1),
+        ('w:body/(w:tbl,w:tbl)',     2),
+        ('w:body/(w:p,w:tbl)',       1),
+        ('w:body/(w:tbl,w:tbl,w:p)', 2),
+    ])
+    def tables_fixture(self, request):
         blkcntnr_cxml, expected_count = request.param
         blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
         return blkcntnr, expected_count
