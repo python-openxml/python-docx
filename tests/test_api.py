@@ -66,21 +66,13 @@ class DescribeDocument(object):
         with pytest.raises(ValueError):
             document.add_heading(level=10)
 
-    def it_can_add_an_empty_paragraph(self, add_empty_paragraph_fixture):
-        document, document_part_, paragraph_ = add_empty_paragraph_fixture
-        paragraph = document.add_paragraph()
-        document_part_.add_paragraph.assert_called_once_with()
+    def it_can_add_a_paragraph(self, add_paragraph_fixture):
+        document, document_part_, text, style, paragraph_ = (
+            add_paragraph_fixture
+        )
+        paragraph = document.add_paragraph(text, style)
+        document_part_.add_paragraph.assert_called_once_with(text, style)
         assert paragraph is paragraph_
-
-    def it_can_add_a_paragraph_of_text(self, add_text_paragraph_fixture):
-        document, text = add_text_paragraph_fixture
-        paragraph = document.add_paragraph(text)
-        paragraph.add_run.assert_called_once_with(text)
-
-    def it_can_add_a_styled_paragraph(self, add_styled_paragraph_fixture):
-        document, style = add_styled_paragraph_fixture
-        paragraph = document.add_paragraph(style=style)
-        assert paragraph.style == style
 
     def it_can_add_a_page_break(self, add_page_break_fixture):
         document, document_part_, paragraph_, run_ = add_page_break_fixture
@@ -177,10 +169,15 @@ class DescribeDocument(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture
-    def add_empty_paragraph_fixture(
-            self, document, document_part_, paragraph_):
-        return document, document_part_, paragraph_
+    @pytest.fixture(params=[
+        ('',         None),
+        ('',         'Heading1'),
+        ('foo\rbar', 'BodyText'),
+    ])
+    def add_paragraph_fixture(
+            self, request, document, document_part_, paragraph_):
+        text, style = request.param
+        return document, document_part_, text, style, paragraph_
 
     @pytest.fixture(params=[0, 1, 2, 5, 9])
     def add_heading_fixture(
@@ -208,11 +205,6 @@ class DescribeDocument(object):
     def add_section_fixture(self, document, start_type_, section_):
         return document, start_type_, section_
 
-    @pytest.fixture
-    def add_styled_paragraph_fixture(self, document):
-        style = 'foobaresque'
-        return document, style
-
     @pytest.fixture(params=[None, 'LightShading-Accent1', 'foobar'])
     def add_table_fixture(self, request, document, document_part_, table_):
         rows, cols = 4, 2
@@ -221,11 +213,6 @@ class DescribeDocument(object):
             document, rows, cols, style, document_part_, expected_style,
             table_
         )
-
-    @pytest.fixture
-    def add_text_paragraph_fixture(self, document):
-        text = 'foobar\rbarfoo'
-        return document, text
 
     @pytest.fixture
     def init_fixture(self, docx_, open_):

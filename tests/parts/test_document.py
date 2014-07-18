@@ -66,7 +66,7 @@ class DescribeDocumentPart(object):
     def it_can_add_a_paragraph(self, add_paragraph_fixture):
         document_part, body_, p_ = add_paragraph_fixture
         p = document_part.add_paragraph()
-        body_.add_paragraph.assert_called_once_with()
+        body_.add_paragraph.assert_called_once_with('', None)
         assert p is p_
 
     def it_can_add_a_section(self, add_section_fixture):

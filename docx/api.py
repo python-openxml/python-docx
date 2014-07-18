@@ -69,12 +69,7 @@ class Document(object):
         return (``\\r``) characters, each of which is converted to a line
         break.
         """
-        paragraph = self._document_part.add_paragraph()
-        if text:
-            paragraph.add_run(text)
-        if style is not None:
-            paragraph.style = style
-        return paragraph
+        return self._document_part.add_paragraph(text, style)
 
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """
