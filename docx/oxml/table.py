@@ -165,6 +165,7 @@ class CT_Tc(BaseOxmlElement):
     """
     tcPr = ZeroOrOne('w:tcPr')  # bunches of successors, overriding insert
     p = OneOrMore('w:p')
+    tbl = OneOrMore('w:tbl')
 
     def _insert_tcPr(self, tcPr):
         """
@@ -175,13 +176,16 @@ class CT_Tc(BaseOxmlElement):
         self.insert(0, tcPr)
         return tcPr
 
+    def _new_tbl(self):
+        return CT_Tbl.new()
+
     def clear_content(self):
         """
         Remove all content child elements, preserving the ``<w:tcPr>``
         element if present. Note that this leaves the ``<w:tc>`` element in
         an invalid state because it doesn't contain at least one block-level
-        element. It's up to the caller to add a ``<w:p>`` or ``<w:tbl>``
-        child element.
+        element. It's up to the caller to add a ``<w:p>``child element as the
+        last content element.
         """
         new_children = []
         tcPr = self.tcPr
