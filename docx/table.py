@@ -6,8 +6,8 @@ The |Table| object and related proxy classes.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from .blkcntnr import BlockItemContainer
 from .shared import lazyproperty, Parented, write_only_property
-from .text import Paragraph
 
 
 class Table(Parented):
@@ -92,22 +92,22 @@ class Table(Parented):
         return self._tbl.tblPr
 
 
-class _Cell(Parented):
+class _Cell(BlockItemContainer):
     """
     Table cell
     """
     def __init__(self, tc, parent):
-        super(_Cell, self).__init__(parent)
+        super(_Cell, self).__init__(tc, parent)
         self._tc = tc
 
     @property
     def paragraphs(self):
         """
         List of paragraphs in the cell. A table cell is required to contain
-        at least one block-level element. By default this is a single
-        paragraph.
+        at least one block-level element and end with a paragraph. By
+        default, a new cell contains a single paragraph.
         """
-        return [Paragraph(p, self) for p in self._tc.p_lst]
+        return super(_Cell, self).paragraphs
 
     @write_only_property
     def text(self, text):
