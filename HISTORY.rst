@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+0.7.4 (2014-07-18)
+++++++++++++++++++
+
+- Add feature #45: _Cell.add_table()
+- Add feature #76: _Cell.add_paragraph()
+- Add _Cell.tables property (read-only)
+
+
 0.7.3 (2014-07-14)
 ++++++++++++++++++
 
