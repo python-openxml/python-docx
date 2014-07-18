@@ -29,6 +29,19 @@ class DescribeBlockItemContainer(object):
         assert blkcntnr._element.xml == expected_xml
         assert isinstance(table, Table)
 
+    def it_provides_access_to_the_paragraphs_it_contains(
+            self, paragraphs_fixture):
+        # test len(), iterable, and indexed access
+        blkcntnr, expected_count = paragraphs_fixture
+        paragraphs = blkcntnr.paragraphs
+        assert len(paragraphs) == expected_count
+        count = 0
+        for idx, paragraph in enumerate(paragraphs):
+            assert isinstance(paragraph, Paragraph)
+            assert paragraphs[idx] is paragraph
+            count += 1
+        assert count == expected_count
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -62,3 +75,15 @@ class DescribeBlockItemContainer(object):
         blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
         expected_xml = xml(after_cxml)
         return blkcntnr, rows, cols, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:body',                 0),
+        ('w:body/w:p',             1),
+        ('w:body/(w:p,w:p)',       2),
+        ('w:body/(w:p,w:tbl)',     1),
+        ('w:body/(w:p,w:tbl,w:p)', 2),
+    ])
+    def paragraphs_fixture(self, request):
+        blkcntnr_cxml, expected_count = request.param
+        blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
+        return blkcntnr, expected_count

@@ -18,7 +18,6 @@ from ..section import Section
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from ..table import Table
-from ..text import Paragraph
 
 
 class DocumentPart(XmlPart):
@@ -131,10 +130,6 @@ class _Body(BlockItemContainer):
         """
         self._body.clear_content()
         return self
-
-    @property
-    def paragraphs(self):
-        return [Paragraph(p, self) for p in self._body.p_lst]
 
     @property
     def tables(self):

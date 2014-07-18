@@ -51,3 +51,11 @@ class BlockItemContainer(Parented):
         for i in range(rows):
             table.add_row()
         return table
+
+    @property
+    def paragraphs(self):
+        """
+        A list containing the paragraphs in this container, in document
+        order. Read-only.
+        """
+        return [Paragraph(p, self) for p in self._element.p_lst]
