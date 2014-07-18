@@ -100,6 +100,20 @@ class _Cell(BlockItemContainer):
         super(_Cell, self).__init__(tc, parent)
         self._tc = tc
 
+    def add_paragraph(self, text='', style=None):
+        """
+        Return a paragraph newly added to the end of the content in this
+        cell. If present, *text* is added to the paragraph in a single run.
+        If specified, the paragraph style *style* is applied. If *style* is
+        not specified or is |None|, the result is as though the 'Normal'
+        style was applied. Note that the formatting of text in a cell can be
+        influenced by the table style. *text* can contain tab (``\\t``)
+        characters, which are converted to the appropriate XML form for
+        a tab. *text* can also include newline (``\\n``) or carriage return
+        (``\\r``) characters, each of which is converted to a line break.
+        """
+        return super(_Cell, self).add_paragraph(text, style)
+
     @property
     def paragraphs(self):
         """

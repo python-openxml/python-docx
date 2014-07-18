@@ -151,6 +151,12 @@ class DescribeTable(object):
 
 class Describe_Cell(object):
 
+    def it_can_add_a_paragraph(self, add_paragraph_fixture):
+        cell, expected_xml = add_paragraph_fixture
+        p = cell.add_paragraph()
+        assert cell._tc.xml == expected_xml
+        assert isinstance(p, Paragraph)
+
     def it_provides_access_to_the_paragraphs_it_contains(
             self, paragraphs_fixture):
         cell = paragraphs_fixture
@@ -180,6 +186,17 @@ class Describe_Cell(object):
         assert cell._tc.xml == expected_xml
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:tc',       'w:tc/w:p'),
+        ('w:tc/w:p',   'w:tc/(w:p, w:p)'),
+        ('w:tc/w:tbl', 'w:tc/(w:tbl, w:p)'),
+    ])
+    def add_paragraph_fixture(self, request):
+        tc_cxml, after_tc_cxml = request.param
+        cell = _Cell(element(tc_cxml), None)
+        expected_xml = xml(after_tc_cxml)
+        return cell, expected_xml
 
     @pytest.fixture
     def paragraphs_fixture(self):
