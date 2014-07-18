@@ -47,12 +47,6 @@ class CT_Body(BaseOxmlElement):
         p.set_sectPr(cloned_sectPr)
         return sentinel_sectPr
 
-    def _insert_p(self, p):
-        return self._append_blocklevelelt(p)
-
-    def _insert_tbl(self, tbl):
-        return self._append_blocklevelelt(tbl)
-
     def _new_tbl(self):
         return CT_Tbl.new()
 
@@ -67,15 +61,3 @@ class CT_Body(BaseOxmlElement):
             content_elms = self[:]
         for content_elm in content_elms:
             self.remove(content_elm)
-
-    def _append_blocklevelelt(self, block_level_elt):
-        """
-        Return *block_level_elt* after appending it to end of
-        EG_BlockLevelElts sequence.
-        """
-        sectPr = self.sectPr
-        if sectPr is not None:
-            sectPr.addprevious(block_level_elt)
-        else:
-            self.append(block_level_elt)
-        return block_level_elt

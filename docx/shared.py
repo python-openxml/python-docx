@@ -10,8 +10,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 class Length(int):
     """
     Base class for length constructor classes Inches, Cm, Mm, Px, and Emu.
-    Behaves as an int count of English Metric Units, 914400 to the inch,
-    36000 to the cm. Provides convenience unit conversion methods in the form
+    Behaves as an int count of English Metric Units, 914,400 to the inch,
+    36,000 to the mm. Provides convenience unit conversion methods in the form
     of read-only properties. Immutable.
     """
     _EMUS_PER_INCH = 914400
