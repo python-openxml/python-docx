@@ -17,7 +17,6 @@ from .xmlchemy import (
     RequiredAttribute, ZeroOrOne, ZeroOrMore
 )
 
-
 class CT_Row(BaseOxmlElement):
     """
     ``<w:tr>`` element
@@ -221,7 +220,30 @@ class CT_Tc(BaseOxmlElement):
         tcPr = self.get_or_add_tcPr()
         tcPr.width = value
 
+    @property
+    def gridspan(self):
+        """
+        Return the int value represented in the ``./w:tcPr/w:gridSpan``
+        child element or |None| if not present.        
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.gridspan
+    
+    @gridspan.setter
+    def gridspan(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.gridspan = value
 
+
+class CT_TcGridSpan(BaseOxmlElement):
+    """
+    ``<w:gridSpan>`` element, defining a single cell span.
+    """
+    val = RequiredAttribute('w:val', XsdInt)
+    
+    
 class CT_TcPr(BaseOxmlElement):
     """
     ``<w:tcPr>`` element, defining table cell properties
@@ -231,6 +253,12 @@ class CT_TcPr(BaseOxmlElement):
         'w:noWrap', 'w:tcMar', 'w:textDirection', 'w:tcFitText', 'w:vAlign',
         'w:hideMark', 'w:headers', 'w:cellIns', 'w:cellDel', 'w:cellMerge',
         'w:tcPrChange'
+    ))
+    
+    gridSpan = ZeroOrOne('w:gridSpan', successors=(
+        'w:hMerge', 'w:vMerge', 'w:tcBorders', 'w:shd', 'w:noWrap', 'w:tcMar', 
+        'w:textDirection', 'w:tcFitText', 'w:vAlign', 'w:hideMark', 
+        'w:headers', 'w:cellIns', 'w:cellDel', 'w:cellMerge', 'w:tcPrChange'
     ))
 
     @property
@@ -248,3 +276,19 @@ class CT_TcPr(BaseOxmlElement):
     def width(self, value):
         tcW = self.get_or_add_tcW()
         tcW.width = value
+
+    @property
+    def gridspan(self):
+        """
+        Return value represented in the ``<w:gridSpan>`` child element or 
+        |None| if not present.
+        """
+        gridSpan = self.gridSpan
+        if gridSpan is None:
+            return None
+        return gridSpan.val
+ 
+    @gridspan.setter
+    def gridspan(self, value):
+        gridSpan = self.get_or_add_gridSpan()
+        gridSpan.val = value
