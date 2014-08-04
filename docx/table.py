@@ -10,6 +10,7 @@ from .blkcntnr import BlockItemContainer
 from .shared import lazyproperty, Parented, write_only_property
 
 
+
 class Table(Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
@@ -288,6 +289,18 @@ class _Row(Parented):
         """
         return _RowCells(self._tr, self)
 
+    def merge_cells(self, mergeStart=0, mergeStop=None):
+        """
+        Merge the cells of this row indexed by `mergeStart` to `mergeStop`. 
+        The default behavior is to merge all the cells of the row.
+        """
+        merged_cells_count = len(self._tr.tc_lst[mergeStart:mergeStop])
+        # Delete the merged cells to the right of the mergeStart indexed cell.
+        for tc in self._tr.tc_lst[mergeStart+1:mergeStop]:
+            self._tr.remove(tc)
+        # Set the gridSpan value of the mergeStart indexed cell.
+        self._tr.tc_lst[0].gridspan = merged_cells_count
+        
 
 class _RowCells(Parented):
     """
