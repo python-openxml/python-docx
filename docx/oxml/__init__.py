@@ -118,6 +118,7 @@ from docx.oxml.table import (
     CT_TblWidth, CT_Tc, CT_TcPr
 )
 register_element_cls('w:gridCol',   CT_TblGridCol)
+register_element_cls('w:gridSpan',  CT_DecimalNumber)
 register_element_cls('w:tbl',       CT_Tbl)
 register_element_cls('w:tblGrid',   CT_TblGrid)
 register_element_cls('w:tblLayout', CT_TblLayoutType)
