@@ -235,14 +235,6 @@ class CT_Tc(BaseOxmlElement):
     def gridspan(self, value):
         tcPr = self.get_or_add_tcPr()
         tcPr.gridspan = value
-
-
-class CT_TcGridSpan(BaseOxmlElement):
-    """
-    ``<w:gridSpan>`` element, defining a single cell span.
-    """
-    val = RequiredAttribute('w:val', XsdInt)
-    
     
 class CT_TcPr(BaseOxmlElement):
     """
