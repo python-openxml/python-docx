@@ -299,7 +299,7 @@ class _Row(Parented):
         for tc in self._tr.tc_lst[mergeStart+1:mergeStop]:
             self._tr.remove(tc)
         # Set the gridSpan value of the mergeStart indexed cell.
-        self._tr.tc_lst[0].gridspan = merged_cells_count
+        self._tr.tc_lst[mergeStart].gridspan = merged_cells_count
         
 
 class _RowCells(Parented):
