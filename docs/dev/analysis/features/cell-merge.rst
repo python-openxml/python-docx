@@ -39,15 +39,16 @@ area are deleted along with their ``w:vMerge`` elements and the
 the merged cells.
 
 
-Additionnal notes
-~~~~~~~~~~~~~~~~~
+Word behavior particularities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Word cannot report how many cells a specific column contains if one or more 
 cells in this column have a different width due to having been merged with 
-another cell. 
+another cell. Similarly, Word cannot report how many cells a specific row 
+contains if one or more cells of that row have been vertically merged.
 
-Similarly, Word cannot report how many cells a specific row contains if one or
-more cells of that row have been vertically merged.
+Word resize a table when a cell is refered by an out-of-bounds row index.
+If the column identifier is out of bounds, an exception is raised.
 
 
 Candidate protocol -- cell.merge()
