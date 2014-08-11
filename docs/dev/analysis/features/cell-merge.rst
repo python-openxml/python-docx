@@ -1,7 +1,7 @@
 
 Table Cells Merge
 =================
-
+ 
 In Word, table cells can be merged with the following restrictions: 
 
 * Only rectangular selections are supported.
@@ -11,29 +11,44 @@ In Word, table cells can be merged with the following restrictions:
 The area to be merged is determined by the two opposite corner cells of that
 area. The to-be-merged area can span across multiple rows and/or columns.
 
-For merging horizontally, the ``w:gridSpan`` table cell property of the 
-leftmost cell of the area to be merged is set to a value of type ``w:ST_DecimalNumber`` corresponding 
-to the number of columns the cell should span across. Only that leftmost cell
-is preserved; the other cells of the merge selection are deleted. Note that having the 
-``w:gridSpan`` element is only required if there exists another table row using 
-a different column layout. When the same column layout is shared across all the rows,
-then the ``w:gridSpan`` is replaced by a ``w:tcW`` element specifying the width
-of each column. For example, if the table consists of just one row and we merge all
-of its cells, then only the leftmost cell is kept, and its width is ajusted so
-that it is equal to the combined width of the cells merged.
+For merging horizontally, the ``w:gridSpan`` table cell property of the
+leftmost cell of the area to be merged is set to a value of type
+``w:ST_DecimalNumber`` corresponding to the number of columns the cell
+should span across. Only that leftmost cell is preserved; the other cells
+of the merge selection are deleted. Note that having the ``w:gridSpan``
+element is only required if there exists another table row using a
+different column layout. When the same column layout is shared across all
+the rows, then the ``w:gridSpan`` is replaced by a ``w:tcW`` element
+specifying the width of each column. For example, if the table consists of
+just one row and we merge all of its cells, then only the leftmost cell is
+kept, and its width is ajusted so that it is equal to the combined width of
+the cells merged.
 
-For merging vertically, the ``w:vMerge`` table cell property of the uppermost
-cell of the column is set to the value "restart" of type ``w:ST_Merge``. The
-following, lower cells included in the vertical merge must have the
-``w:vMerge`` element present in their cell property (``w:TcPr``) element. Its
-value should be set to "continue", although Word uses empty valued
-``w:vMerge`` elements. A vertical merge ends as soon as a cell ``w:TcPr``
-element lacks the ``w:vMerge`` element. Similarly to the ``w:gridSpan`` element,
-the ``w:vMerge`` elements are only required when the table's layout is not uniform
-across its different columns. In the case it is, only the topmost cell is kept;
-the other lower cells in the merged area are deleted along with their ``w:vMerge`` elements 
-and the ``w:trHeight`` table row property is used to specify the combined heigth of the
-merged cells.
+For merging vertically, the ``w:vMerge`` table cell property of the
+uppermost cell of the column is set to the value "restart" of type
+``w:ST_Merge``. The following, lower cells included in the vertical merge
+must have the ``w:vMerge`` element present in their cell property
+(``w:TcPr``) element. Its value should be set to "continue", although Word
+uses empty valued ``w:vMerge`` elements. A vertical merge ends as soon as a
+cell ``w:TcPr`` element lacks the ``w:vMerge`` element. Similarly to the
+``w:gridSpan`` element, the ``w:vMerge`` elements are only required when
+the table's layout is not uniform across its different columns. In the case
+it is, only the topmost cell is kept; the other lower cells in the merged
+area are deleted along with their ``w:vMerge`` elements and the
+``w:trHeight`` table row property is used to specify the combined heigth of
+the merged cells.
+
+
+Additionnal notes
+~~~~~~~~~~~~~~~~~
+
+Word cannot report how many cells a specific column contains if one or more 
+cells in this column have a different width due to having been merged with 
+another cell. 
+
+Similarly, Word cannot report how many cells a specific row contains if one or
+more cells of that row have been vertically merged.
+
 
 Candidate protocol -- cell.merge()
 ----------------------------------
@@ -43,6 +58,7 @@ cells::
 
     >>> table = doc.add_table(5,5)
     >>> table.rows[0].cells[0].merge(table.rows[3].cells[3])
+
 
 Specimen XML
 ------------
