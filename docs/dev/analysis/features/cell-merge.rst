@@ -42,12 +42,11 @@ the merged cells.
 Word behavior particularities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Word cannot report how many cells a specific column contains if one or more 
-cells in this column have a different width due to having been merged with 
-another cell. Similarly, Word cannot report how many cells a specific row 
-contains if one or more cells of that row have been vertically merged.
+Word cannot access the columns of a table if two or more cells from that table
+have been horizontally merged. Similarly, Word cannot access the rows of a table
+if two or more cells from that table have been vertically merged.
 
-Word resize a table when a cell is refered by an out-of-bounds row index.
+Word resizes a table when a cell is refered by an out-of-bounds row index.
 If the column identifier is out of bounds, an exception is raised.
 
 
