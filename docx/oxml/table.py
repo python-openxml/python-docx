@@ -328,4 +328,4 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, child of ``<w:tcPr>``, defines a vertically merged
     cell.
     """
-    val = OptionalAttribute('w:val', ST_Merge)
+    val = OptionalAttribute('w:val', ST_Merge, 'continue')
