@@ -19,10 +19,9 @@ from helpers import test_docx
 
 # given ===================================================
 
-@given('a 2 x 2 table')
-def given_a_2x2_table(context):
-    context.table_ = Document().add_table(rows=2, cols=2)
-
+@given('a {nrows} x {ncols} table')
+def given_a_nrows_x_ncols_table(context, nrows, ncols):
+    context.table_ = Document().add_table(int(nrows), int(ncols))
 
 @given('a column cell collection having two cells')
 def given_a_column_cell_collection_having_two_cells(context):
@@ -125,6 +124,12 @@ def given_a_table_row_having_two_cells(context):
     context.row = document.tables[0].rows[0]
 
 
+@given('two cells from two different tables')
+def given_two_cells_from_two_different_tables(context):
+    context.cell1 = Document().add_table(2, 2).cell(0, 0)
+    context.cell2 = Document().add_table(3, 3).cell(2, 1)
+
+
 # when =====================================================
 
 @when('I add a column to the table')
@@ -143,6 +148,12 @@ def when_add_row_to_table(context):
 def when_apply_style_to_table(context):
     table = context.table_
     table.style = 'LightShading-Accent1'
+    
+
+@when('I access the cell at the position ({row_index}, {column_index})')
+def when_I_access_the_cell_at_position(context, row_index, column_index):
+    table = context.table_
+    context.cell = table.cell(int(row_index), int(column_index))
 
 
 @when('I set the cell width to {width}')
@@ -165,6 +176,7 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 
 # then =====================================================
+
 
 @then('I can access a cell using its row and column indices')
 def then_can_access_cell_using_its_row_and_col_indices(context):
@@ -318,6 +330,11 @@ def then_new_row_has_2_cells(context):
     assert len(context.row.cells) == 2
 
 
+@then('the first row has 1 cell')
+def then_the_first_row_has_1_cell(context):
+    assert len(context.table_.rows[0].cells) == 1
+
+
 @then('the reported autofit setting is {autofit}')
 def then_the_reported_autofit_setting_is_autofit(context, autofit):
     expected_value = {'autofit': True, 'fixed': False}[autofit]
@@ -331,6 +348,23 @@ def then_the_reported_column_width_is_width_emu(context, width_emu):
     assert context.column.width == expected_value, (
         'got %s' % context.column.width
     )
+
+
+@then('the cell collection length of the row(s) indexed by [{index}] is ' 
+      '{length}')
+def then_the_cell_collection_len_of_row_is_length(context, index, length):
+    table = context.table_
+    index_lst = index.split(',')
+    for i in index_lst:
+        assert len(table.rows[int(i)].cells) == int(length)
+
+@then('the cell collection length of the column(s) indexed by [{index}] is ' 
+      '{length}')
+def then_the_cell_collection_len_of_column_is_length(context, index, length):
+    table = context.table_
+    index_lst = index.split(',')
+    for i in index_lst:
+        assert len(table.columns[int(i)].cells) == int(length)
 
 
 @then('the reported width of the cell is {width}')
@@ -349,14 +383,14 @@ def then_table_style_matches_name_applied(context):
     assert table.style == 'LightShading-Accent1', tmpl % table.style
 
 
-@then('the table has {count} columns')
+@then('the table has {count} column(s)')
 def then_table_has_count_columns(context, count):
     column_count = int(count)
     columns = context.table_.columns
     assert len(columns) == column_count
 
 
-@then('the table has {count} rows')
+@then('the table has {count} row(s)')
 def then_table_has_count_rows(context, count):
     row_count = int(count)
     rows = context.table_.rows
