@@ -42,7 +42,7 @@ vertical merge ends as soon as a cell ``w:TcPr`` element lacks the
 uniform across its different columns. In the case it is, only the topmost
 cell is kept; the other lower cells in the merged area are deleted along
 with their ``w:vMerge`` elements and the ``w:trHeight`` table row property
-is used to specify the combined heigth of the merged cells.
+is used to specify the combined height of the merged cells.
 
 
 Word specific behavior
@@ -75,73 +75,61 @@ A 3 x 3 table where an area defined by the 2 x 2 topleft cells has been
 merged, demonstrating the combined use of the ``w:gridSpan`` as well as the 
 ``w:vMerge`` elements, as produced by Word::
 
-   <w:tbl>
-      <w:tblPr>
-         <w:tblStyle w:val="Grilledutableau" />
-         <w:tblW w:w="0" w:type="auto" />
-         <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
-      </w:tblPr>
-      <w:tblGrid>
-         <w:gridCol w:w="3192" />
-         <w:gridCol w:w="3192" />
-         <w:gridCol w:w="3192" />
-      </w:tblGrid>
-      <w:tr w:rsidR="00AC2064" w:rsidTr="00F528C2">
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="6384" w:type="dxa" />
-               <w:gridSpan w:val="2" />
-               <w:vMerge w:val="restart" />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064">
-               <w:bookmarkStart w:id="0" w:name="_GoBack" w:colFirst="0" w:colLast="0" />
-            </w:p>
-         </w:tc>
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="3192" w:type="dxa" />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064" />
-         </w:tc>
-      </w:tr>
-      <w:bookmarkEnd w:id="0" />
-      <w:tr w:rsidR="00AC2064" w:rsidTr="00F528C2">
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="6384" w:type="dxa" />
-               <w:gridSpan w:val="2" />
-               <w:vMerge />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064" />
-         </w:tc>
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="3192" w:type="dxa" />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064" />
-         </w:tc>
-      </w:tr>
-      <w:tr w:rsidR="00AC2064" w:rsidTr="00AC2064">
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="3192" w:type="dxa" />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064" />
-         </w:tc>
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="3192" w:type="dxa" />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064" />
-         </w:tc>
-         <w:tc>
-            <w:tcPr>
-               <w:tcW w:w="3192" w:type="dxa" />
-            </w:tcPr>
-            <w:p w:rsidR="00AC2064" w:rsidRDefault="00AC2064" />
-         </w:tc>
-      </w:tr>
-   </w:tbl>
+  <w:tbl>
+    <w:tblPr>
+       <w:tblW w:w="0" w:type="auto" />
+    </w:tblPr>
+    <w:tblGrid>
+       <w:gridCol w:w="3192" />
+       <w:gridCol w:w="3192" />
+       <w:gridCol w:w="3192" />
+    </w:tblGrid>
+    <w:tr>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="6384" w:type="dxa" />
+             <w:gridSpan w:val="2" />
+             <w:vMerge w:val="restart" />
+          </w:tcPr>
+       </w:tc>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="3192" w:type="dxa" />
+          </w:tcPr>
+       </w:tc>
+    </w:tr>
+    <w:tr>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="6384" w:type="dxa" />
+             <w:gridSpan w:val="2" />
+             <w:vMerge />
+          </w:tcPr>
+       </w:tc>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="3192" w:type="dxa" />
+          </w:tcPr>
+       </w:tc>
+    </w:tr>
+    <w:tr>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="3192" w:type="dxa" />
+          </w:tcPr>
+       </w:tc>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="3192" w:type="dxa" />
+          </w:tcPr>
+       </w:tc>
+       <w:tc>
+          <w:tcPr>
+             <w:tcW w:w="3192" w:type="dxa" />
+          </w:tcPr>
+       </w:tc>
+    </w:tr>
+  </w:tbl>
 
 
 Schema excerpt
@@ -151,42 +139,58 @@ Schema excerpt
 
 ::
 
-   <xsd:simpleType name="ST_Merge">
-      <xsd:restriction base="xsd:string">
-         <xsd:enumeration value="continue"/>
-         <xsd:enumeration value="restart"/>
-      </xsd:restriction>
-   </xsd:simpleType>
+  <xsd:complexType name="CT_TcPr">  <!-- denormalized -->
+    <xsd:sequence>
+      <xsd:element name="cnfStyle"             type="CT_Cnf"           minOccurs="0"/>
+      <xsd:element name="tcW"                  type="CT_TblWidth"      minOccurs="0"/>
+      <xsd:element name="gridSpan"             type="CT_DecimalNumber" minOccurs="0"/>
+      <xsd:element name="hMerge"               type="CT_HMerge"        minOccurs="0"/>
+      <xsd:element name="vMerge"               type="CT_VMerge"        minOccurs="0"/>
+      <xsd:element name="tcBorders"            type="CT_TcBorders"     minOccurs="0"/>
+      <xsd:element name="shd"                  type="CT_Shd"           minOccurs="0"/>
+      <xsd:element name="noWrap"               type="CT_OnOff"         minOccurs="0"/>
+      <xsd:element name="tcMar"                type="CT_TcMar"         minOccurs="0"/>
+      <xsd:element name="textDirection"        type="CT_TextDirection" minOccurs="0"/>
+      <xsd:element name="tcFitText"            type="CT_OnOff"         minOccurs="0"/>
+      <xsd:element name="vAlign"               type="CT_VerticalJc"    minOccurs="0"/>
+      <xsd:element name="hideMark"             type="CT_OnOff"         minOccurs="0"/>
+      <xsd:element name="headers"              type="CT_Headers"       minOccurs="0"/>
+      <xsd:choice                                                      minOccurs="0"/>
+        <xsd:element name="cellIns"            type="CT_TrackChange"/>
+        <xsd:element name="cellDel"            type="CT_TrackChange"/>
+        <xsd:element name="cellMerge"          type="CT_CellMergeTrackChange"/>
+      </xsd:choice>
+      <xsd:element name="tcPrChange"           type="CT_TcPrChange"    minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
 
-   <xsd:complexType name="CT_VMerge">
-      <xsd:attribute name="val" type="ST_Merge"/>
-   </xsd:complexType>
+  <xsd:complexType name="CT_DecimalNumber">
+    <xsd:attribute name="val" type="ST_DecimalNumber" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:simpleType name="ST_DecimalNumber">
+     <xsd:restriction base="xsd:integer"/>
+  </xsd:simpleType>
+ 
+  <xsd:complexType name="CT_VMerge">
+    <xsd:attribute name="val" type="ST_Merge"/>
+  </xsd:complexType>
 
-   
+ <xsd:simpleType name="ST_Merge">
+    <xsd:restriction base="xsd:string">
+       <xsd:enumeration value="continue"/>
+       <xsd:enumeration value="restart"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+
 Ressources
 ----------
 
 * `Cell.Merge Method on MSDN`_
-* `w:gridSpan reference from Datypic`_
-* `w:vMerge reference from Datypic`_
-* `w:CT_VMerge reference from Datypic`_
-* `w:ST_Merge reference from Datypic`_
 
 .. _`Cell.Merge Method on MSDN`:
    http://msdn.microsoft.com/en-us/library/office/ff821310%28v=office.15%29.aspx
- 
-.. _`w:gridSpan reference from Datypic`:
-   http://www.datypic.com/sc/ooxml/e-w_gridSpan-1.html
-   
-.. _`w:vMerge reference from Datypic`:
-   http://www.datypic.com/sc/ooxml/e-w_vMerge-1.html
-   
-.. _`w:CT_VMerge reference from Datypic`:
-   http://www.datypic.com/sc/ooxml/t-w_CT_VMerge.html
-
-.. _`w:ST_Merge reference from Datypic`:
-   http://www.datypic.com/sc/ooxml/t-w_ST_Merge.html
-
 
 Relevant sections in the ISO Spec
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
