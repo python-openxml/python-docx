@@ -34,23 +34,23 @@ For merging vertically, the ``w:vMerge`` table cell property of the
 uppermost cell of the column is set to the value "restart" of type
 ``w:ST_Merge``. The following, lower cells included in the vertical merge
 must have the ``w:vMerge`` element present in their cell property
-(``w:TcPr``) element. Its value should be set to "continue", although Word
-uses empty valued ``w:vMerge`` elements. A vertical merge ends as soon as a
-cell ``w:TcPr`` element lacks the ``w:vMerge`` element. Similarly to the
-``w:gridSpan`` element, the ``w:vMerge`` elements are only required when
-the table's layout is not uniform across its different columns. In the case
-it is, only the topmost cell is kept; the other lower cells in the merged
-area are deleted along with their ``w:vMerge`` elements and the
-``w:trHeight`` table row property is used to specify the combined heigth of
-the merged cells.
+(``w:TcPr``) element. Its value should be set to "continue", although it is
+not necessary to explicitely define it, as it is the default value. A
+vertical merge ends as soon as a cell ``w:TcPr`` element lacks the
+``w:vMerge`` element. Similarly to the ``w:gridSpan`` element, the
+``w:vMerge`` elements are only required when the table's layout is not
+uniform across its different columns. In the case it is, only the topmost
+cell is kept; the other lower cells in the merged area are deleted along
+with their ``w:vMerge`` elements and the ``w:trHeight`` table row property
+is used to specify the combined heigth of the merged cells.
 
 
 Word specific behavior
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Word cannot access the columns of a table if two or more cells from that table
-have been horizontally merged. Similarly, Word cannot access the rows of a table
-if two or more cells from that table have been vertically merged.
+Word cannot access the columns of a table if two or more cells from that
+table have been horizontally merged. Similarly, Word cannot access the rows
+of a table if two or more cells from that table have been vertically merged.
 
 Word resizes a table when a cell is refered by an out-of-bounds row index.
 If the column identifier is out of bounds, an exception is raised.
