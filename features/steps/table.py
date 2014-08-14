@@ -147,7 +147,11 @@ def when_apply_style_to_table(context):
 @when('I merge the {nrows} x {ncols} topleftmost cells')
 def when_I_merge_the_nrows_x_ncols_topleftmost_cells(context, nrows, ncols):
     table = context.table_
-    table.rows[0].cells[0].merge(table.rows[nrows-1].cells[ncols-1])
+    try:
+        table.cell(0, 0).merge(table.cell(nrows-1, ncols-1))
+    except Exception as e:
+        context.exception = e
+        raise
 
 @when('I set the cell width to {width}')
 def when_I_set_the_cell_width_to_width(context, width):
@@ -169,6 +173,13 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 
 # then =====================================================
+
+@then('a {ex_type} exception is raised with a detailed {error_message}')
+def then_an_ex_is_raised_with_err_message(context, ex_type, error_message):
+    exception = context.exception
+    assert type(exception).__name__ == ex_type
+    assert exception.args[0] == error_message
+
 
 @then('I can access a cell using its row and column indices')
 def then_can_access_cell_using_its_row_and_col_indices(context):

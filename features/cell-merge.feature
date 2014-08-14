@@ -31,11 +31,15 @@ Feature: Merge table cells
       And the cell collection length of the column(s) indexed by [0,1,2] is 2
 
 
-  Scenario: Unsupported merge of an already merged area
+  Scenario Outline: Unsupported merge of an already merged area
     Given a 2 x 2 table
      When I merge the 1 x 2 topleftmost cells
       And I merge the 2 x 1 topleftmost cells
-     Then an exception is raised with a detailed error message
+     Then a <exception-type> exception is raised with a detailed <err-message>
+
+    Examples: Exception type and error message variables
+      | exception-type | err-message                                    |
+      | ValueError     | Cannot partially merge an already merged area. |
 
 
   Scenario: Merge resulting in a table reduction (simplification)
