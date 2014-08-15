@@ -31,5 +31,5 @@ Feature: Merge table cells
      Then a <exception-type> exception is raised with a detailed <err-message>
 
     Examples: Exception type and error message variables
-      | exception-type | err-message                             |
-      | ValueError     | Cannot merge cells of different tables. |
+      | exception-type | err-message                               |
+      | ValueError     | Cannot merge cells from different tables. |

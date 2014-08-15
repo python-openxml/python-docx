@@ -10,6 +10,7 @@ from .blkcntnr import BlockItemContainer
 from .shared import lazyproperty, Parented, write_only_property
 
 
+
 class Table(Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
@@ -52,12 +53,13 @@ class Table(Parented):
     def autofit(self, value):
         self._tblPr.autofit = value
 
-    def cell(self, row_idx, col_idx):
+    def cell(self, row_idx, col_idx, visual_grid=True):
         """
         Return |_Cell| instance correponding to table cell at *row_idx*,
         *col_idx* intersection, where (0, 0) is the top, left-most cell.
         """
         row = self.rows[row_idx]
+        row.cells.visual_grid = visual_grid
         return row.cells[col_idx]
 
     @lazyproperty
@@ -100,6 +102,18 @@ class _Cell(BlockItemContainer):
         super(_Cell, self).__init__(tc, parent)
         self._tc = tc
 
+    def _get_parent(self, instance_type):
+        """
+        Return a reference to the parent object of type `instance_type`, or
+        *None* if no match.
+        """
+        parent = self._parent
+        while parent is not None:
+            if isinstance(parent, instance_type):
+                return parent
+            parent = parent._parent
+        return None
+        
     def add_paragraph(self, text='', style=None):
         """
         Return a paragraph newly added to the end of the content in this
@@ -124,15 +138,103 @@ class _Cell(BlockItemContainer):
         new_table = super(_Cell, self).add_table(rows, cols)
         self.add_paragraph()
         return new_table
+    
+    @property
+    def column_index(self):
+        """
+        The column index of the cell. Read-only.
+        """
+        if self._parent is None: 
+            return 0
+        elif isinstance(self._parent, _RowCells):
+            return self._parent._tr.tc_lst.index(self._tc)
+        elif isinstance(self._parent, _ColumnCells):
+            return self._parent._col_idx
+        else:
+            msg = ('Could not get column index: unexpected cell parent '
+                    'type (%s).')
+            raise ValueError(msg % type(self._parent).__name__)
+        raise ValueError('Could not find the column index.')
+    
+    def merge(self, cell):
+        """
+        Merge the rectangular area delimited by the current cell and another
+        cell passed as the argument.
+        """
+        def _horizontal_merge(tr, merge_start_idx, merge_stop_idx):
+            tr.tc_lst[merge_start_idx].hmerge = 'restart'
+            for tc in tr.tc_lst[merge_start_idx+1:merge_stop_idx+1]:
+                tc.hmerge = 'continue'
+
+        def _vertical_merge(column, merge_start_idx, merge_stop_idx):
+            column.cells[merge_start_idx]._tc.vmerge = 'restart'
+            for index in range(merge_start_idx + 1, merge_stop_idx + 1):
+                column.cells[index]._tc.vmerge = 'continue'
+
+        def _twoways_merge(table, topleft_coord, bottomright_coord):
+            for row_idx in range(topleft_coord[0], bottomright_coord[0] + 1):
+                tr = table.rows[row_idx]._tr
+                _horizontal_merge(tr, topleft_coord[1], bottomright_coord[1])
+            col = table.columns[topleft_coord[1]]
+            _vertical_merge(col, topleft_coord[0], bottomright_coord[0])
+
+        # Verify the cells to be merged are from the same table.
+        orig_table = self._get_parent(Table)
+        dest_table = cell._get_parent(Table)
+        if (orig_table is None) or (dest_table is None):
+            raise ValueError('Cannot merge cells without a Table parent.')
+        if orig_table._tbl is not dest_table._tbl:
+            raise ValueError('Cannot merge cells from different tables.')
+        table = orig_table
+        # Get the cells coordinates and reorganize them.
+        orig_row_idx = min(self.row_index, cell.row_index)
+        orig_col_idx = min(self.column_index, cell.column_index)
+        dest_row_idx = max(self.row_index, cell.row_index)
+        dest_col_idx = max(self.column_index, cell.column_index)
+        orig_coord = (orig_row_idx, orig_col_idx)
+        dest_coord = (dest_row_idx, dest_col_idx)
+        # Process the merge.
+        if (orig_row_idx == dest_row_idx) and (orig_col_idx != dest_col_idx):
+            tr = table.rows[orig_row_idx]._tr
+            _horizontal_merge(tr, orig_col_idx, dest_col_idx)
+        elif (orig_row_idx != dest_row_idx) and (orig_col_idx == dest_col_idx):
+            col = table.columns[orig_col_idx]
+            _vertical_merge(col, orig_row_idx, dest_row_idx)
+        elif (orig_row_idx != dest_row_idx) and (orig_col_idx != dest_col_idx):
+            _twoways_merge(table, orig_coord, dest_coord)
+        else: # orig_coord == dest_coord:
+            return
 
     @property
     def paragraphs(self):
         """
         List of paragraphs in the cell. A table cell is required to contain
         at least one block-level element and end with a paragraph. By
-        default, a new cell contains a single paragraph. Read-only
+        default, a new cell contains a single paragraph. Read-only.
         """
         return super(_Cell, self).paragraphs
+
+    @property
+    def row_index(self):
+        """
+        The row index of the cell. Read-only.
+        """
+        if self._parent is None:
+            return 0
+        if isinstance(self._parent, _RowCells):
+            parent_row = self._get_parent(_Row)
+            parent_rows = self._get_parent(_Rows)
+            if parent_row is None or parent_rows is None:
+                return 0
+            return parent_rows._tbl.tr_lst.index(parent_row._tr)
+        elif isinstance(self._parent, _ColumnCells):
+            for i, cell in enumerate(self._parent):
+                if self._tc is cell._tc: 
+                    return i
+        else:
+            msg = 'Cannot get row index: unexpected cell parent type (%s).'
+            raise ValueError(msg % type(self._parent).__name__)
+        raise ValueError('Could not find the row index.')
 
     @property
     def tables(self):
@@ -200,6 +302,11 @@ class _ColumnCells(Parented):
     Sequence of |_Cell| instances corresponding to the cells in a table
     column.
     """
+    # The visual grid property defines how the merged cells are accounted in 
+    # the rows and columns' length. It also restricts access to certain merged
+    # cells to protect against unintended modification.
+    visual_grid = True
+    
     def __init__(self, tbl, gridCol, parent):
         super(_ColumnCells, self).__init__(parent)
         self._tbl = tbl
@@ -215,14 +322,25 @@ class _ColumnCells(Parented):
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
         tc = tr.tc_lst[self._col_idx]
+        if self.visual_grid:
+            if tc.hmerge == 'continue' or tc.vmerge == 'continue': 
+                raise ValueError('Merged cell access is restricted.')
         return _Cell(tc, self)
 
     def __iter__(self):
         for tr in self._tr_lst:
             tc = tr.tc_lst[self._col_idx]
+            if self.visual_grid:
+                if tc.hmerge == 'continue' or tc.vmerge == 'continue': 
+                    continue
             yield _Cell(tc, self)
 
     def __len__(self):
+        if self.visual_grid:
+            cell_lst = []
+            for cell in self: 
+                cell_lst.append(cell)
+            return len(cell_lst)
         return len(self._tr_lst)
 
     @property
@@ -293,6 +411,9 @@ class _RowCells(Parented):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table row.
     """
+    # See the equivalent static property description in _ColumnCells.
+    visual_grid = True
+    
     def __init__(self, tr, parent):
         super(_RowCells, self).__init__(parent)
         self._tr = tr
@@ -306,12 +427,24 @@ class _RowCells(Parented):
         except IndexError:
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
+        if self.visual_grid:
+            if tc.hmerge == 'continue' or tc.vmerge == 'continue':
+                raise ValueError('Merged cell access is restricted.')        
         return _Cell(tc, self)
 
     def __iter__(self):
-        return (_Cell(tc, self) for tc in self._tr.tc_lst)
+        for tc in self._tr.tc_lst:
+            if self.visual_grid:
+                if tc.hmerge == 'continue' or tc.vmerge == 'continue': 
+                    continue
+            yield _Cell(tc, self)
 
     def __len__(self):
+        if self.visual_grid:
+            cell_lst = []
+            for cell in self: 
+                cell_lst.append(cell)
+            return len(cell_lst)
         return len(self._tr.tc_lst)
 
 
