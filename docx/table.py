@@ -125,15 +125,57 @@ class _Cell(BlockItemContainer):
         new_table = super(_Cell, self).add_table(rows, cols)
         self.add_paragraph()
         return new_table
+    
+    @property
+    def column_index(self):
+        """
+        The column index of the cell. Read-only.
+        """
+        if self._parent is None: return 0
+        return self._parent._tr.tc_lst.index(self._tc)
+    
+    def merge(self, cell):
+        """
+        Merge the rectangular area delimited by the current cell and another
+        cell passed as the argument.
+        """
 
+        
+        pass
+        #merged_cells_count = len(self._tr.tc_lst[mergeStart:mergeStop])
+        # Delete the merged cells to the right of the mergeStart indexed cell.
+        #for tc in self._tr.tc_lst[mergeStart+1:mergeStop]:
+        #    self._tr.remove(tc)
+        # Set the gridSpan value of the mergeStart indexed cell.
+        #self._tr.tc_lst[mergeStart].gridspan = merged_cells_count
+        
     @property
     def paragraphs(self):
         """
         List of paragraphs in the cell. A table cell is required to contain
         at least one block-level element and end with a paragraph. By
-        default, a new cell contains a single paragraph. Read-only
+        default, a new cell contains a single paragraph. Read-only.
         """
         return super(_Cell, self).paragraphs
+
+    @property
+    def row_index(self):
+        """
+        The row index of the cell. Read-only.
+        """
+        parent = self._parent
+        parent_row = None
+        parent_rows = None
+        while parent is not None:
+            if isinstance(parent, _Row):
+                parent_row = parent
+            elif isinstance(parent, _Rows):
+                parent_rows = parent
+                break
+            parent = parent._parent
+        if (parent_row is None) or (parent_rows is None):
+            return 0
+        return parent_rows._tbl.tr_lst.index(parent_row._tr)
 
     @property
     def tables(self):
@@ -288,18 +330,6 @@ class _Row(Parented):
         Supports ``len()``, iteration and indexed access.
         """
         return _RowCells(self._tr, self)
-
-    def merge_cells(self, mergeStart=0, mergeStop=None):
-        """
-        Merge the cells of this row indexed by `mergeStart` to `mergeStop`. 
-        The default behavior is to merge all the cells of the row.
-        """
-        merged_cells_count = len(self._tr.tc_lst[mergeStart:mergeStop])
-        # Delete the merged cells to the right of the mergeStart indexed cell.
-        for tc in self._tr.tc_lst[mergeStart+1:mergeStop]:
-            self._tr.remove(tc)
-        # Set the gridSpan value of the mergeStart indexed cell.
-        self._tr.tc_lst[mergeStart].gridspan = merged_cells_count
         
 
 class _RowCells(Parented):
