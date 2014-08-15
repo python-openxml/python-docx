@@ -144,6 +144,12 @@ def when_apply_style_to_table(context):
     table.style = 'LightShading-Accent1'
     
 
+@when('I access the cell at the position ({row_index}, {column_index})')
+def when_I_access_the_cell_at_position(context, row_index, column_index):
+    table = context.table_
+    context.cell = table.cell(int(row_index), int(column_index))
+
+
 @when('I merge the {nrows} x {ncols} topleftmost cells')
 def when_I_merge_the_nrows_x_ncols_topleftmost_cells(context, nrows, ncols):
     table = context.table_

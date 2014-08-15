@@ -31,9 +31,20 @@ def when_assign_string_to_cell_text_attribute(context):
 
 # then =====================================================
 
+@then('the cell row index value is {row_index_val}')
+def then_the_cell_row_index_value_is_row_index_val(context, row_index_val):
+    assert context.cell.row_index == int(row_index_val)
+
+
+@then('the cell column index value is {col_index_val}')
+def then_the_cell_column_index_value_is_col_index_val(context, col_index_val):
+    assert context.cell.column_index == int(col_index_val)
+
+
 @then('the cell contains the string I assigned')
 def then_cell_contains_string_assigned(context):
     cell, expected_text = context.cell, context.expected_text
     text = cell.paragraphs[0].runs[0].text
     msg = "expected '%s', got '%s'" % (expected_text, text)
     assert text == expected_text, msg
+
