@@ -55,6 +55,8 @@ of a table if two or more cells from that table have been vertically merged.
 Word resizes a table when a cell is refered by an out-of-bounds row index.
 If the column identifier is out of bounds, an exception is raised.
 
+An exception is raised when attempting to merge cells from different tables.
+
 
 Candidate protocol -- cell.merge()
 ----------------------------------
