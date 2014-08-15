@@ -124,6 +124,12 @@ def given_a_table_row_having_two_cells(context):
     context.row = document.tables[0].rows[0]
 
 
+@given('two cells from two different tables')
+def given_two_cells_from_two_different_tables(context):
+    context.cell1 = Document().add_table(2, 2).cell(0, 0)
+    context.cell2 = Document().add_table(3, 3).cell(2, 1)
+
+
 # when =====================================================
 
 @when('I add a column to the table')
@@ -150,15 +156,6 @@ def when_I_access_the_cell_at_position(context, row_index, column_index):
     context.cell = table.cell(int(row_index), int(column_index))
 
 
-@when('I merge the {nrows} x {ncols} topleftmost cells')
-def when_I_merge_the_nrows_x_ncols_topleftmost_cells(context, nrows, ncols):
-    table = context.table_
-    try:
-        table.cell(0, 0).merge(table.cell(nrows-1, ncols-1))
-    except Exception as e:
-        context.exception = e
-        raise
-
 @when('I set the cell width to {width}')
 def when_I_set_the_cell_width_to_width(context, width):
     new_value = {'1 inch': Inches(1)}[width]
@@ -179,12 +176,6 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 
 # then =====================================================
-
-@then('a {ex_type} exception is raised with a detailed {error_message}')
-def then_an_ex_is_raised_with_err_message(context, ex_type, error_message):
-    exception = context.exception
-    assert type(exception).__name__ == ex_type
-    assert exception.args[0] == error_message
 
 
 @then('I can access a cell using its row and column indices')
@@ -364,14 +355,14 @@ def then_the_reported_column_width_is_width_emu(context, width_emu):
 def then_the_cell_collection_len_of_row_is_length(context, index, length):
     table = context.table_
     for i in index:
-        assert len(table.rows[i].cells) == length
+        assert len(table.rows[int(i)].cells) == int(length)
 
 @then('the cell collection length of the column(s) indexed by [{index}] is ' 
       '{length}')
 def then_the_cell_collection_len_of_column_is_length(context, index, length):
     table = context.table_
     for i in index:
-        assert len(table.columns[i].cells) == length
+        assert len(table.columns[int(i)].cells) == int(length)
 
 
 @then('the reported width of the cell is {width}')

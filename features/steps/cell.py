@@ -29,6 +29,28 @@ def when_assign_string_to_cell_text_attribute(context):
     context.expected_text = text
 
 
+@when('I attempt to merge the cells')
+def when_I_attempt_to_merge_the_cells(context): 
+    cell1 = context.cell1
+    cell2 = context.cell2
+    try:
+        cell1.merge(cell2)
+    except Exception as e:
+        context.exception = e
+        raise
+
+
+@when('I merge the {nrows} x {ncols} topleftmost cells')
+def when_I_merge_the_nrows_x_ncols_topleftmost_cells(context, nrows, ncols):
+    table = context.table_
+    row = int(nrows) - 1
+    col = int(ncols) - 1
+    try:
+        table.cell(0, 0).merge(table.cell(row, col))
+    except Exception as e:
+        context.exception = e
+        raise
+
 # then =====================================================
 
 @then('the cell row index value is {row_index_val}')

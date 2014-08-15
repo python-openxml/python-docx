@@ -3,7 +3,7 @@ Feature: Merge table cells
   As an python-docx developer
   I need a way to merge the cells of a table
 
-
+  @wip
   Scenario: Merge cells horizontally
     Given a 2 x 2 table
      When I merge the 1 x 2 topleftmost cells
@@ -47,3 +47,13 @@ Feature: Merge table cells
      When I merge the 2 x 2 topleftmost cells
      Then the table has 1 row(s)
       And the table has 1 column(s)
+
+  @wip
+  Scenario Outline: Error when attempting to merge cells from different tables
+    Given two cells from two different tables
+     When I attempt to merge the cells
+     Then a <exception-type> exception is raised with a detailed <err-message>
+
+    Examples: Exception type and error message variables
+      | exception-type | err-message                             |
+      | ValueError     | Cannot merge cells of different tables. |
