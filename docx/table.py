@@ -101,6 +101,24 @@ class _Cell(BlockItemContainer):
         super(_Cell, self).__init__(tc, parent)
         self._tc = tc
 
+    def _get_parent_row_and_rows(self):
+        """
+        Return a tuple with the parents `_Row` and `_Rows` object
+        references if available. When no such parent are found, the 
+        reference values are set to *None*.
+        """
+        parent = self._parent
+        parent_row = None
+        parent_rows = None
+        while parent is not None:
+            if isinstance(parent, _Row):
+                parent_row = parent
+            elif isinstance(parent, _Rows):
+                parent_rows = parent
+                break
+            parent = parent._parent
+        return parent_row, parent_rows
+        
     def add_paragraph(self, text='', style=None):
         """
         Return a paragraph newly added to the end of the content in this
@@ -131,15 +149,71 @@ class _Cell(BlockItemContainer):
         """
         The column index of the cell. Read-only.
         """
-        if self._parent is None: return 0
-        return self._parent._tr.tc_lst.index(self._tc)
+        if self._parent is None: 
+            return 0
+        elif isinstance(self._parent, _RowCells):
+            return self._parent._tr.tc_lst.index(self._tc)
+        elif isinstance(self._parent, _ColumnCells):
+            return self._parent._col_idx
+        else:
+            tmpl = 'Cannot get column index: unexpected cell parent type (%s).'
+            raise ValueError(tmpl % type(self._parent).__name__)
+        raise ValueError('Could not find the column index.')
     
     def merge(self, cell):
         """
         Merge the rectangular area delimited by the current cell and another
         cell passed as the argument.
         """
+        # Get the cells parents.
+        if (self._parent is None) or (cell._parent is None):
+            raise ValueError('Cannot merge orphaned cells.')
+        
+        orig_rowcells_parent = self._parent
+        dest_rowcells_parent = cell._parent
 
+        orig_row_parent, orig_rows_parent = self._get_parent_row_and_rows()
+        dest_row_parent, dest_rows_parent = cell._get_parent_row_and_rows()
+        
+        # Get the cells coordinates.
+        orig_row = self.row_index
+        orig_col = self.column_index
+        dest_row = cell.row_index
+        dest_col = cell.column_index
+        
+        # Determine the type of merge and make sure it's possible to process
+        # the merge.
+        tmpl_diff_rows = 'Cannot horizontally merge cells from different rows.'
+        tmpl_diff_tables = 'Cannot merge cells from different tables.'
+        if (orig_row == dest_row) and (orig_col != dest_col):
+            merge_type = 'horizontal_merge'
+            if orig_rowcells_parent is not dest_rowcells_parent:
+                raise ValueError(tmpl_diff_rows)
+            #_horizontal_merge(orig_rowcells_parent)
+        elif (orig_row != dest_row) and (orig_col == dest_col):
+            merge_type = 'vertical_merge'
+            if orig_rows_parent is not dest_rows_parent:
+                raise ValueError(tmpl_diff_tables)
+        elif (orig_row != dest_row) and (orig_col != dest_col):
+            merge_type = 'twoways_merge'
+            if orig_rows_parent is not dest_rows_parent:
+                raise ValueError(tmpl_diff_tables)
+        else: # (orig_row == dest_row) and (orig_col == dest_col)
+            merge_type = None
+            if orig_rowcells_parent is not dest_rowcells_parent:
+                raise ValueError(tmpl_diff_rows)
+            if orig_rows_parent is not dest_rows_parent:
+                raise ValueError(tmpl_diff_tables)
+            # NOOP
+            return
+
+        
+        # Find out spatial cell arrangements.
+        
+        # Process the horizontal merge.
+        
+        
+        # Process the vertical merge.
         
         pass
         #merged_cells_count = len(self._tr.tc_lst[mergeStart:mergeStop])
@@ -163,19 +237,20 @@ class _Cell(BlockItemContainer):
         """
         The row index of the cell. Read-only.
         """
-        parent = self._parent
-        parent_row = None
-        parent_rows = None
-        while parent is not None:
-            if isinstance(parent, _Row):
-                parent_row = parent
-            elif isinstance(parent, _Rows):
-                parent_rows = parent
-                break
-            parent = parent._parent
-        if (parent_row is None) or (parent_rows is None):
+        if self._parent is None: 
             return 0
-        return parent_rows._tbl.tr_lst.index(parent_row._tr)
+        elif isinstance(self._parent, _RowCells):
+            parent_row, parent_rows = self._get_parent_row_and_rows()
+            if (parent_row is None) or (parent_rows is None): return 0
+            return parent_rows._tbl.tr_lst.index(parent_row._tr)
+        elif isinstance(self._parent, _ColumnCells):
+            for i, cell in enumerate(self._parent):
+                if self._tc is cell._tc:
+                    return i
+        else:
+            msg = 'Cannot get row index: unexpected cell parent type (%s).'
+            raise ValueError(msg % type(self._parent).__name__)
+        raise ValueError('Could not find the row index.')
 
     @property
     def tables(self):

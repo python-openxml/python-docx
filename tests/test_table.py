@@ -195,15 +195,22 @@ class Describe_Cell(object):
     
     def it_knows_its_row_and_column_index(self, row_and_column_index_fixture):
         tbl, single_row, single_cell = row_and_column_index_fixture
-        for row in range(len(tbl.rows)):
-            for col in range(len(tbl.columns)):
-                cell = tbl.cell(row,col)
-                assert cell.row_index == row
-                assert cell.column_index == col
-        for col in range(len(single_row.cells)):
-            cell = single_row.cells[col]
+        # test in table
+        for nrow, row in enumerate(tbl.rows):
+            for ncol, col in enumerate(tbl.columns):
+                # cell has _RowCells parent
+                cell = row.cells[ncol]
+                assert cell.row_index == nrow
+                assert cell.column_index == ncol
+                # cell has _ColumnCells parent
+                cell = col.cells[nrow]
+                assert cell.row_index == nrow
+                assert cell.column_index == ncol
+        # test in nrow
+        for ncol, cell in enumerate(single_row.cells):
             assert cell.row_index == 0
-            assert cell.column_index == col
+            assert cell.column_index == ncol
+        # test single cell
         assert single_cell.row_index == 0
         assert single_cell.column_index == 0
 
@@ -254,6 +261,7 @@ class Describe_Cell(object):
     def row_and_column_index_fixture(self):
         tbl = Table(_tbl_bldr(4,4).element, None)
         single_row = _Row(_tr_bldr(4).with_nsdecls().element, None)
+        
         single_cell = _Cell(element('w:tc'), None)
         return tbl, single_row, single_cell
     
