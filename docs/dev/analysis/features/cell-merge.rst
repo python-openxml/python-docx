@@ -24,12 +24,6 @@ just one row and we merge all of its cells, then only the leftmost cell is
 kept, and its width is ajusted so that it equals the combined width of
 the cells merged.
 
-As an alternative to the previously described horizontal merging protocol,  
-``w:hMerge`` element can be used to identify the merged cells instead of
-deleting them. This approach is prefered as it is non destructive and removes 
-the hurdle of dealing with ``w:tcW`` elements. This is the approach used by
-the python-docx merge method.
-
 For merging vertically, the ``w:vMerge`` table cell property of the
 uppermost cell of the column is set to the value "restart" of type
 ``w:ST_Merge``. The following, lower cells included in the vertical merge
