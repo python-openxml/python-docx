@@ -9,7 +9,7 @@ Feature: Merge table cells
      When I merge the 1 x 2 topleftmost cells
      Then the cell collection length of the row(s) indexed by [0] is 1
 
-
+  @wip
   Scenario: Merge cells vertically
     Given a 2 x 2 table
      When I merge the 2 x 1 topleftmost cells
@@ -55,5 +55,5 @@ Feature: Merge table cells
      Then a <exception-type> exception is raised with a detailed <err-message>
 
     Examples: Exception type and error message variables
-      | exception-type | err-message                             |
-      | ValueError     | Cannot merge cells of different tables. |
+      | exception-type | err-message                               |
+      | ValueError     | Cannot merge cells from different tables. |

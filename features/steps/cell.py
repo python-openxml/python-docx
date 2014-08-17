@@ -37,7 +37,6 @@ def when_I_attempt_to_merge_the_cells(context):
         cell1.merge(cell2)
     except Exception as e:
         context.exception = e
-        raise
 
 
 @when('I merge the {nrows} x {ncols} topleftmost cells')
