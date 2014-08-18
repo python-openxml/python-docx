@@ -319,13 +319,21 @@ class Describe_Cell(object):
         return cell, new_value, expected_xml
     
     @pytest.fixture(params=[
+        # Horizontal merge
         ('w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),w:tr/(w:tc,w:tc),'
-         'w:tr/(w:tc,w:tc))', (0, 1), 
+         'w:tr/(w:tc,w:tc))', (0, 0), (0, 1), 
          'w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),'
          'w:tr/w:tc/w:tcPr/w:gridSpan{w:val=2},w:tr/(w:tc,w:tc))'),
+        # Vertical merge
+        ('w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),w:tr/(w:tc,w:tc),'
+         'w:tr/(w:tc,w:tc))', (0, 0), (1, 0),
+         'w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),'
+         'w:tr/(w:tc/w:tcPr/w:vMerge{w:val=restart},w:tc),'
+         'w:tr/(w:tc/w:tcPr/w:vMerge,w:tc))'),
     ])
     def cell_merge_fixture(self, request):
-        tbl_cxml, merge_to_coord, expected_cxml = request.param
+        (tbl_cxml, merge_from_coord, merge_to_coord, 
+         expected_cxml) = request.param
         table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_cxml)
         return table, merge_to_coord, expected_xml

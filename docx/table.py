@@ -53,12 +53,13 @@ class Table(Parented):
     def autofit(self, value):
         self._tblPr.autofit = value
 
-    def cell(self, row_idx, col_idx):
+    def cell(self, row_idx, col_idx, visual_grid=True):
         """
         Return |_Cell| instance correponding to table cell at *row_idx*,
         *col_idx* intersection, where (0, 0) is the top, left-most cell.
         """
         row = self.rows[row_idx]
+        row.cells.visual_grid = visual_grid
         return row.cells[col_idx]
 
     @lazyproperty
@@ -213,13 +214,20 @@ class _Cell(BlockItemContainer):
             # Delete the merged cells to the right of the leftmost cell.
             for tc in tr.tc_lst[left_cell_index+1:right_cell_index+1]:
                 tr.remove(tc)
-            # Set the gridSpan value of the mergeStart indexed cell.
+            # Set the gridSpan value of the leftmost merged cell.
             tr.tc_lst[left_cell_index].gridspan = merged_cells_count
         elif merge_type == 'vertical_merge':
-            raise NotImplementedError('Vertical merge is not yet implemented.')
+            top_cell_index = min(orig_row, dest_row)
+            bot_cell_index = max(orig_row, dest_row)
+            col = Table(orig_rows_parent._tbl, None).columns[orig_col]
+            col.cells[top_cell_index]._tc.vmerge = 'restart'
+            for row_index in range(top_cell_index + 1, bot_cell_index + 1):
+                col.cells[row_index]._tc.vmerge = 'continue'
         elif merge_type == 'twoways_merge':
             raise NotImplementedError('Two-ways merge is not yet implemented.')
-        
+        else:
+            raise Exception('Unexpected error.')
+
     @property
     def paragraphs(self):
         """
@@ -317,6 +325,11 @@ class _ColumnCells(Parented):
     Sequence of |_Cell| instances corresponding to the cells in a table
     column.
     """
+    # The visual grid property defines how the merged cells are accounted in 
+    # the rows and columns' length. It also restricts access to certain merged
+    # cells to protect against unintended modification.
+    visual_grid = True
+    
     def __init__(self, tbl, gridCol, parent):
         super(_ColumnCells, self).__init__(parent)
         self._tbl = tbl
@@ -332,14 +345,23 @@ class _ColumnCells(Parented):
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
         tc = tr.tc_lst[self._col_idx]
+        if self.visual_grid and tc.vmerge == 'continue':
+            raise ValueError('Merged cell access is restricted.')
         return _Cell(tc, self)
 
     def __iter__(self):
         for tr in self._tr_lst:
             tc = tr.tc_lst[self._col_idx]
+            if self.visual_grid and tc.vmerge == 'continue': 
+                continue
             yield _Cell(tc, self)
 
     def __len__(self):
+        if self.visual_grid:
+            cell_lst = []
+            for cell in self: 
+                cell_lst.append(cell)
+            return len(cell_lst)
         return len(self._tr_lst)
 
     @property
@@ -404,12 +426,14 @@ class _Row(Parented):
         Supports ``len()``, iteration and indexed access.
         """
         return _RowCells(self._tr, self)
-        
+
 
 class _RowCells(Parented):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table row.
     """
+    visual_grid = True
+    
     def __init__(self, tr, parent):
         super(_RowCells, self).__init__(parent)
         self._tr = tr
@@ -423,12 +447,22 @@ class _RowCells(Parented):
         except IndexError:
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
+        if self.visual_grid and tc.vmerge == 'continue':
+            raise ValueError('Merged cell access is restricted.')        
         return _Cell(tc, self)
 
     def __iter__(self):
-        return (_Cell(tc, self) for tc in self._tr.tc_lst)
+        for tc in self._tr.tc_lst:
+            if self.visual_grid and tc.vmerge == 'continue': 
+                continue
+            yield _Cell(tc, self)
 
     def __len__(self):
+        if self.visual_grid:
+            cell_lst = []
+            for cell in self: 
+                cell_lst.append(cell)
+            return len(cell_lst)
         return len(self._tr.tc_lst)
 
 
