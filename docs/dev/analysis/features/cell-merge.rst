@@ -46,6 +46,18 @@ Word cannot access the columns of a table if two or more cells from that
 table have been horizontally merged. Similarly, Word cannot access the rows
 of a table if two or more cells from that table have been vertically merged.
 
+Horizontally merged cells other than the leftmost cell are deleted and thus 
+can no longer be accessed. 
+
+Vertically merged cells marked by ``w:vMerge=continue`` are no longer 
+accessible from Word. An exception with the message "The member of the 
+collection does not exist" is raised.
+
+Word reports the length of a row or column containing merged cells as the 
+visual length. For example, the reported length of a 3 columns rows which 
+two first cells have been merged would be 2. Similarly, the reported length of
+a 2 rows column which two cells have been merged would be 1.
+
 Word resizes a table when a cell is refered by an out-of-bounds row index.
 If the column identifier is out of bounds, an exception is raised.
 
