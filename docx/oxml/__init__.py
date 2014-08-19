@@ -115,7 +115,7 @@ register_element_cls('w:type',   CT_SectType)
 
 from docx.oxml.table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
-    CT_TblWidth, CT_Tc, CT_TcPr, CT_VMerge
+    CT_TblWidth, CT_Tc, CT_TcPr, CT_HMerge, CT_VMerge
 )
 register_element_cls('w:gridCol',   CT_TblGridCol)
 register_element_cls('w:gridSpan',  CT_DecimalNumber)
@@ -128,6 +128,7 @@ register_element_cls('w:tc',        CT_Tc)
 register_element_cls('w:tcPr',      CT_TcPr)
 register_element_cls('w:tcW',       CT_TblWidth)
 register_element_cls('w:tr',        CT_Row)
+register_element_cls('w:hMerge',    CT_HMerge)
 register_element_cls('w:vMerge',    CT_VMerge)
 
 from docx.oxml.text import (
