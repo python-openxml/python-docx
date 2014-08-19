@@ -230,12 +230,28 @@ class CT_Tc(BaseOxmlElement):
         if tcPr is None:
             return None
         return tcPr.gridspan
-    
+
     @gridspan.setter
     def gridspan(self, value):
         tcPr = self.get_or_add_tcPr()
         tcPr.gridspan = value
         
+    @property
+    def hmerge(self):
+        """
+        Return the string value represented in the ``./w:tcPr/w:hMerge``
+        child element or |None| if not present.        
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.hmerge
+    
+    @hmerge.setter
+    def hmerge(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.hmerge = value
+    
     @property
     def vmerge(self):
         """
@@ -251,7 +267,8 @@ class CT_Tc(BaseOxmlElement):
     def vmerge(self, value):
         tcPr = self.get_or_add_tcPr()
         tcPr.vmerge = value
-    
+
+
 class CT_TcPr(BaseOxmlElement):
     """
     ``<w:tcPr>`` element, defining table cell properties
@@ -265,6 +282,12 @@ class CT_TcPr(BaseOxmlElement):
     
     gridSpan = ZeroOrOne('w:gridSpan', successors=(
         'w:hMerge', 'w:vMerge', 'w:tcBorders', 'w:shd', 'w:noWrap', 'w:tcMar', 
+        'w:textDirection', 'w:tcFitText', 'w:vAlign', 'w:hideMark', 
+        'w:headers', 'w:cellIns', 'w:cellDel', 'w:cellMerge', 'w:tcPrChange'
+    ))
+    
+    hMerge = ZeroOrOne('w:hMerge', successors=(
+        'w:vMerge', 'w:tcBorders', 'w:shd', 'w:noWrap', 'w:tcMar', 
         'w:textDirection', 'w:tcFitText', 'w:vAlign', 'w:hideMark', 
         'w:headers', 'w:cellIns', 'w:cellDel', 'w:cellMerge', 'w:tcPrChange'
     ))
@@ -308,6 +331,22 @@ class CT_TcPr(BaseOxmlElement):
         gridSpan.val = value
 
     @property
+    def hmerge(self):
+        """
+        Return the value represented in the ``<w:hMerge>`` child element or 
+        |None| if not present.
+        """
+        hMerge = self.hMerge
+        if hMerge is None:
+            return None
+        return hMerge.val
+ 
+    @hmerge.setter
+    def hmerge(self, value):
+        hMerge = self.get_or_add_hMerge()
+        hMerge.val = value
+    
+    @property
     def vmerge(self):
         """
         Return the value represented in the ``<w:vMerge>`` child element or 
@@ -322,6 +361,15 @@ class CT_TcPr(BaseOxmlElement):
     def vmerge(self, value):
         vMerge = self.get_or_add_vMerge()
         vMerge.val = value
+
+
+class CT_HMerge(BaseOxmlElement):
+    """
+    ``<w:hMerge>`` element, child of ``<w:tcPr>``, defines an horizontally 
+    merged cell.
+    """
+    val = OptionalAttribute('w:val', ST_Merge, 'continue')
+
 
 class CT_VMerge(BaseOxmlElement):
     """
