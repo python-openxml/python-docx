@@ -161,61 +161,6 @@ class _Cell(BlockItemContainer):
         Merge the rectangular area delimited by the current cell and another
         cell passed as the argument.
         """
-        if (self._parent is None) or (cell._parent is None):
-            raise ValueError('Cannot merge orphaned cells.')
-        # Get the cells coordinates.
-        orig_row = self.row_index
-        orig_col = self.column_index
-        dest_row = cell.row_index
-        dest_col = cell.column_index
-
-        # Harmonize cells ancestry and retrieve parents
-        if isinstance(self._parent, _ColumnCells):
-            self = Table(self._parent._tbl).rows[orig_row].cells[orig_col]
-        if isinstance(cell._parent, _ColumnCells):
-            cell = Table(cell._parent._tbl).rows[dest_row].cells[dest_col]
-        orig_rowcells_parent = self._parent
-        orig_rows_parent = self._get_parent(_Rows)
-        dest_rowcells_parent = cell._parent
-        dest_rows_parent = cell._get_parent(_Rows)
-        
-        def _check_for_diff_rowcells_parent(rowcells_par1, rowcells_par2):
-            tmpl_diff_rows = ('Cannot horizontally merge cells from different '
-                              'rows.')
-            if orig_rowcells_parent._tr is not dest_rowcells_parent._tr:
-                raise ValueError(tmpl_diff_rows)
-        
-        def _check_for_missing_or_diff_rows_parent(row_par1, row_par2):
-            tmpl_missing_par = 'Could not merge cells: missing _Rows parent.'
-            tmpl_diff_tables = 'Cannot merge cells from different tables.'
-            if (orig_rows_parent is None) or (dest_rows_parent is None):
-                raise ValueError(tmpl_missing_par)
-            if orig_rows_parent._tbl is not dest_rows_parent._tbl:
-                raise ValueError(tmpl_diff_tables)
-            
-        # Determine the type of merge and make sure it's possible to process
-        # the merge.
-        if (orig_row == dest_row) and (orig_col != dest_col):
-            merge_type = 'horizontal_merge'
-            _check_for_diff_rowcells_parent(orig_rowcells_parent, 
-                                            dest_rowcells_parent)
-        elif (orig_row != dest_row) and (orig_col == dest_col):
-            merge_type = 'vertical_merge'
-            _check_for_missing_or_diff_rows_parent(orig_rows_parent,
-                                                   dest_rows_parent)
-        elif (orig_row != dest_row) and (orig_col != dest_col):
-            merge_type = 'twoways_merge'
-            _check_for_missing_or_diff_rows_parent(orig_rows_parent,
-                                                   dest_rows_parent)
-        else: # (orig_row == dest_row) and (orig_col == dest_col)
-            merge_type = None
-            _check_for_diff_rowcells_parent(orig_rowcells_parent, 
-                                            dest_rowcells_parent)
-            _check_for_missing_or_diff_rows_parent(orig_rows_parent,
-                                                   dest_rows_parent)
-            # NOOP
-            return
-
         def _horizontal_merge(tr, merge_start_idx, merge_stop_idx):
             tr.tc_lst[merge_start_idx].hmerge = 'restart'
             for tc in tr.tc_lst[merge_start_idx+1:merge_stop_idx+1]:
@@ -226,31 +171,39 @@ class _Cell(BlockItemContainer):
             for index in range(merge_start_idx + 1, merge_stop_idx + 1):
                 column.cells[index]._tc.vmerge = 'continue'
 
-        def _twoways_merge(table, top_row_idx, left_col_idx, bot_row_idx,
-                           right_col_idx):
-            for row_idx in range(top_row_idx, bot_row_idx + 1):
+        def _twoways_merge(table, topleft_coord, bottomright_coord):
+            for row_idx in range(topleft_coord[0], bottomright_coord[0] + 1):
                 tr = table.rows[row_idx]._tr
-                _horizontal_merge(tr, left_col_idx, right_col_idx)
-            col = table.columns[left_col_idx]
-            _vertical_merge(col, top_row_idx, bot_row_idx)
+                _horizontal_merge(tr, topleft_coord[1], bottomright_coord[1])
+            col = table.columns[topleft_coord[1]]
+            _vertical_merge(col, topleft_coord[0], bottomright_coord[0])
 
-        # Process merge.
-        top_row_idx = min(self.row_index, cell.row_index)
-        left_col_idx = min(self.column_index, cell.column_index)
-        bot_row_idx = max(self.row_index, cell.row_index)
-        right_col_idx = max(self.column_index, cell.column_index)
-        if merge_type == 'horizontal_merge':
-            tr = orig_rowcells_parent._tr
-            _horizontal_merge(tr, left_col_idx, right_col_idx)
-        elif merge_type == 'vertical_merge':
-            col = Table(orig_rows_parent._tbl, None).columns[orig_col]
-            _vertical_merge(col, top_row_idx, bot_row_idx)
-        elif merge_type == 'twoways_merge':
-            table = Table(orig_rows_parent._tbl, None)
-            _twoways_merge(table, top_row_idx, left_col_idx, bot_row_idx, 
-                           right_col_idx)
-        else:
-            raise Exception('Unexpected error.')
+        # Verify the cells to be merged are from the same table.
+        orig_table = self._get_parent(Table)
+        dest_table = cell._get_parent(Table)
+        if (orig_table is None) or (dest_table is None):
+            raise ValueError('Cannot merge cells without a Table parent.')
+        if orig_table._tbl is not dest_table._tbl:
+            raise ValueError('Cannot merge cells from different tables.')
+        table = orig_table
+        # Get the cells coordinates and reorganize them.
+        orig_row_idx = min(self.row_index, cell.row_index)
+        orig_col_idx = min(self.column_index, cell.column_index)
+        dest_row_idx = max(self.row_index, cell.row_index)
+        dest_col_idx = max(self.column_index, cell.column_index)
+        orig_coord = (orig_row_idx, orig_col_idx)
+        dest_coord = (dest_row_idx, dest_col_idx)
+        # Process the merge.
+        if (orig_row_idx == dest_row_idx) and (orig_col_idx != dest_col_idx):
+            tr = table.rows[orig_row_idx]._tr
+            _horizontal_merge(tr, orig_col_idx, dest_col_idx)
+        elif (orig_row_idx != dest_row_idx) and (orig_col_idx == dest_col_idx):
+            col = table.columns[orig_col_idx]
+            _vertical_merge(col, orig_row_idx, dest_row_idx)
+        elif (orig_row_idx != dest_row_idx) and (orig_col_idx != dest_col_idx):
+            _twoways_merge(table, orig_coord, dest_coord)
+        else: # orig_coord == dest_coord:
+            return
 
     @property
     def paragraphs(self):
