@@ -354,14 +354,16 @@ def then_the_reported_column_width_is_width_emu(context, width_emu):
       '{length}')
 def then_the_cell_collection_len_of_row_is_length(context, index, length):
     table = context.table_
-    for i in index:
+    index_lst = index.split(',')
+    for i in index_lst:
         assert len(table.rows[int(i)].cells) == int(length)
 
 @then('the cell collection length of the column(s) indexed by [{index}] is ' 
       '{length}')
 def then_the_cell_collection_len_of_column_is_length(context, index, length):
     table = context.table_
-    for i in index:
+    index_lst = index.split(',')
+    for i in index_lst:
         assert len(table.columns[int(i)].cells) == int(length)
 
 

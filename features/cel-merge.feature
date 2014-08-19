@@ -15,12 +15,16 @@ Feature: Merge table cells
      When I merge the 2 x 1 topleftmost cells
      Then the cell collection length of the column(s) indexed by [0] is 1
 
-
+  @wip
   Scenario: Merge cells both horizontally and vertically
     Given a 3 x 3 table
      When I merge the 2 x 2 topleftmost cells
-     Then the cell collection length of the row(s) indexed by [0,1] is 2
-      And the cell collection length of the column(s) indexed by [0,1] is 2
+     Then the cell collection length of the row(s) indexed by [0] is 2
+      And the cell collection length of the row(s) indexed by [1] is 1
+      And the cell collection length of the column(s) indexed by [0] is 2
+      And the cell collection length of the column(s) indexed by [1] is 1
+      But the cell collection length of the row(s) indexed by [2] is 3
+      And the cell collection length of the column(s) indexed by [2] is 3
 
 
   Scenario: Merge an already merged area
