@@ -163,7 +163,6 @@ class _Cell(BlockItemContainer):
         """
         if (self._parent is None) or (cell._parent is None):
             raise ValueError('Cannot merge orphaned cells.')
-
         # Get the cells coordinates.
         orig_row = self.row_index
         orig_col = self.column_index
@@ -174,57 +173,82 @@ class _Cell(BlockItemContainer):
         if isinstance(self._parent, _ColumnCells):
             self = Table(self._parent._tbl).rows[orig_row].cells[orig_col]
         if isinstance(cell._parent, _ColumnCells):
-            cell = Table(self._parent._tbl).rows[orig_row].cells[orig_col]
+            cell = Table(cell._parent._tbl).rows[dest_row].cells[dest_col]
         orig_rowcells_parent = self._parent
         orig_rows_parent = self._get_parent(_Rows)
         dest_rowcells_parent = cell._parent
         dest_rows_parent = cell._get_parent(_Rows)
         
+        def _check_for_diff_rowcells_parent(rowcells_par1, rowcells_par2):
+            tmpl_diff_rows = ('Cannot horizontally merge cells from different '
+                              'rows.')
+            if orig_rowcells_parent._tr is not dest_rowcells_parent._tr:
+                raise ValueError(tmpl_diff_rows)
+        
+        def _check_for_missing_or_diff_rows_parent(row_par1, row_par2):
+            tmpl_missing_par = 'Could not merge cells: missing _Rows parent.'
+            tmpl_diff_tables = 'Cannot merge cells from different tables.'
+            if (orig_rows_parent is None) or (dest_rows_parent is None):
+                raise ValueError(tmpl_missing_par)
+            if orig_rows_parent._tbl is not dest_rows_parent._tbl:
+                raise ValueError(tmpl_diff_tables)
+            
         # Determine the type of merge and make sure it's possible to process
         # the merge.
-        tmpl_diff_rows = 'Cannot horizontally merge cells from different rows.'
-        tmpl_diff_tables = 'Cannot merge cells from different tables.'
         if (orig_row == dest_row) and (orig_col != dest_col):
             merge_type = 'horizontal_merge'
-            if orig_rowcells_parent._tr is not dest_rowcells_parent._tr:
-                raise ValueError(tmpl_diff_rows)
+            _check_for_diff_rowcells_parent(orig_rowcells_parent, 
+                                            dest_rowcells_parent)
         elif (orig_row != dest_row) and (orig_col == dest_col):
             merge_type = 'vertical_merge'
-            if orig_rows_parent._tbl is not dest_rows_parent._tbl:
-                raise ValueError(tmpl_diff_tables)
+            _check_for_missing_or_diff_rows_parent(orig_rows_parent,
+                                                   dest_rows_parent)
         elif (orig_row != dest_row) and (orig_col != dest_col):
             merge_type = 'twoways_merge'
-            if orig_rows_parent._tbl is not dest_rows_parent._tbl:
-                raise ValueError(tmpl_diff_tables)
+            _check_for_missing_or_diff_rows_parent(orig_rows_parent,
+                                                   dest_rows_parent)
         else: # (orig_row == dest_row) and (orig_col == dest_col)
             merge_type = None
-            if orig_rowcells_parent._tr is not dest_rowcells_parent._tr:
-                raise ValueError(tmpl_diff_rows)
-            if orig_rows_parent._tbl is not dest_rows_parent._tbl:
-                raise ValueError(tmpl_diff_tables)
+            _check_for_diff_rowcells_parent(orig_rowcells_parent, 
+                                            dest_rowcells_parent)
+            _check_for_missing_or_diff_rows_parent(orig_rows_parent,
+                                                   dest_rows_parent)
             # NOOP
             return
 
-        # Process the merge
+        def _horizontal_merge(tr, merge_start_idx, merge_stop_idx):
+            tr.tc_lst[merge_start_idx].hmerge = 'restart'
+            for tc in tr.tc_lst[merge_start_idx+1:merge_stop_idx+1]:
+                tc.hmerge = 'continue'
+
+        def _vertical_merge(column, merge_start_idx, merge_stop_idx):
+            column.cells[merge_start_idx]._tc.vmerge = 'restart'
+            for index in range(merge_start_idx + 1, merge_stop_idx + 1):
+                column.cells[index]._tc.vmerge = 'continue'
+
+        def _twoways_merge(table, top_row_idx, left_col_idx, bot_row_idx,
+                           right_col_idx):
+            for row_idx in range(top_row_idx, bot_row_idx + 1):
+                tr = table.rows[row_idx]._tr
+                _horizontal_merge(tr, left_col_idx, right_col_idx)
+            col = table.columns[left_col_idx]
+            _vertical_merge(col, top_row_idx, bot_row_idx)
+
+        # Process merge.
+        top_row_idx = min(self.row_index, cell.row_index)
+        left_col_idx = min(self.column_index, cell.column_index)
+        bot_row_idx = max(self.row_index, cell.row_index)
+        right_col_idx = max(self.column_index, cell.column_index)
         if merge_type == 'horizontal_merge':
-            left_cell_index = min(orig_col, dest_col)
-            right_cell_index = max(orig_col, dest_col)
             tr = orig_rowcells_parent._tr
-            merged_cells_count = right_cell_index - left_cell_index + 1
-            # Delete the merged cells to the right of the leftmost cell.
-            for tc in tr.tc_lst[left_cell_index+1:right_cell_index+1]:
-                tr.remove(tc)
-            # Set the gridSpan value of the leftmost merged cell.
-            tr.tc_lst[left_cell_index].gridspan = merged_cells_count
+            _horizontal_merge(tr, left_col_idx, right_col_idx)
         elif merge_type == 'vertical_merge':
-            top_cell_index = min(orig_row, dest_row)
-            bot_cell_index = max(orig_row, dest_row)
             col = Table(orig_rows_parent._tbl, None).columns[orig_col]
-            col.cells[top_cell_index]._tc.vmerge = 'restart'
-            for row_index in range(top_cell_index + 1, bot_cell_index + 1):
-                col.cells[row_index]._tc.vmerge = 'continue'
+            _vertical_merge(col, top_row_idx, bot_row_idx)
         elif merge_type == 'twoways_merge':
-            raise NotImplementedError('Two-ways merge is not yet implemented.')
+            table = Table(orig_rows_parent._tbl, None)
+            _twoways_merge(table, top_row_idx, left_col_idx, bot_row_idx, 
+                           right_col_idx)
         else:
             raise Exception('Unexpected error.')
 
@@ -345,15 +369,17 @@ class _ColumnCells(Parented):
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
         tc = tr.tc_lst[self._col_idx]
-        if self.visual_grid and tc.vmerge == 'continue':
-            raise ValueError('Merged cell access is restricted.')
+        if self.visual_grid:
+            if tc.hmerge == 'continue' or tc.vmerge == 'continue': 
+                raise ValueError('Merged cell access is restricted.')
         return _Cell(tc, self)
 
     def __iter__(self):
         for tr in self._tr_lst:
             tc = tr.tc_lst[self._col_idx]
-            if self.visual_grid and tc.vmerge == 'continue': 
-                continue
+            if self.visual_grid:
+                if tc.hmerge == 'continue' or tc.vmerge == 'continue': 
+                    continue
             yield _Cell(tc, self)
 
     def __len__(self):
@@ -432,6 +458,7 @@ class _RowCells(Parented):
     """
     Sequence of |_Cell| instances corresponding to the cells in a table row.
     """
+    # See the equivalent static property description in _ColumnCells.
     visual_grid = True
     
     def __init__(self, tr, parent):
@@ -447,14 +474,16 @@ class _RowCells(Parented):
         except IndexError:
             msg = "cell index [%d] is out of range" % idx
             raise IndexError(msg)
-        if self.visual_grid and tc.vmerge == 'continue':
-            raise ValueError('Merged cell access is restricted.')        
+        if self.visual_grid:
+            if tc.hmerge == 'continue' or tc.vmerge == 'continue':
+                raise ValueError('Merged cell access is restricted.')        
         return _Cell(tc, self)
 
     def __iter__(self):
         for tc in self._tr.tc_lst:
-            if self.visual_grid and tc.vmerge == 'continue': 
-                continue
+            if self.visual_grid:
+                if tc.hmerge == 'continue' or tc.vmerge == 'continue': 
+                    continue
             yield _Cell(tc, self)
 
     def __len__(self):
