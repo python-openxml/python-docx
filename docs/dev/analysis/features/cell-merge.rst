@@ -24,6 +24,14 @@ just one row and we merge all of its cells, then only the leftmost cell is
 kept, and its width is ajusted so that it equals the combined width of
 the cells merged.
 
+As an alternative to the previously described horizontal merging protocol,  
+``w:hMerge`` element can be used to identify the merged cells instead of
+deleting them. This approach is prefered as it is non destructive and 
+thus maintains the structure of the table, which in turns allows for more 
+user-friendly cell addressing. This is the approach used by
+the python-docx merge method.
+
+
 For merging vertically, the ``w:vMerge`` table cell property of the
 uppermost cell of the column is set to the value "restart" of type
 ``w:ST_Merge``. The following, lower cells included in the vertical merge
@@ -64,15 +72,45 @@ If the column identifier is out of bounds, an exception is raised.
 An exception is raised when attempting to merge cells from different tables.
 
 
+python-docx API refinements over Word's
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Addressing some of the Word API deficiencies when dealing with merged cells,
+the following new features were introduced:
+
+* The length of any rows or columns remain available for report even when two
+  or more cells have been merged. The length is reported as the count of all
+  the normal (unmerged) cells, plus all the *master* merged cells. By *master*
+  merged cells, we understand the leftmost cell of an horizontally merged
+  area, the topmost cell of a vertically merged area, or the topleftmost cell 
+  of two-ways merged area.
+  
+* The same logic is applied to filter the iterable cells in a _ColumnCells or
+  _RowCells cells collection and a restricted access error message is written
+  when trying to access visually hidden, non master merged cells.
+  
+* The smart filtering of hidden merged cells, dubbed *visual grid* can be 
+  turned off to gain access to cells which would normally be restricted, 
+  either via the ``Table.cell`` method's third argument, or by setting the 
+  ``visual_grid`` static property of a ``_RowCells`` or ``_ColumnsCell`` 
+  instance to *False*.
+
+
 Candidate protocol -- cell.merge()
 ----------------------------------
 
 The following interactive session demonstrates the protocol for merging table
-cells::
+cells. The capability of reporting the length of merged cells collection is 
+also demonstrated::
 
-    >>> table = doc.add_table(5,5)
-    >>> table.rows[0].cells[0].merge(table.rows[3].cells[3])
-
+    >>> table = doc.add_table(5, 5)
+    >>> table.cell(0, 0).merge(table.cell(3, 3))
+    >>> len(table.columns[2].cells)
+    1
+    >>> cells = table.columns[2].cells
+    >>> cells.visual_grid = False
+    >>> len(cells)
+    5
 
 Specimen XML
 ------------
@@ -175,12 +213,16 @@ Schema excerpt
   <xsd:complexType name="CT_DecimalNumber">
     <xsd:attribute name="val" type="ST_DecimalNumber" use="required"/>
   </xsd:complexType>
-  
+
   <xsd:simpleType name="ST_DecimalNumber">
      <xsd:restriction base="xsd:integer"/>
   </xsd:simpleType>
- 
+
   <xsd:complexType name="CT_VMerge">
+    <xsd:attribute name="val" type="ST_Merge"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_HMerge">
     <xsd:attribute name="val" type="ST_Merge"/>
   </xsd:complexType>
 
