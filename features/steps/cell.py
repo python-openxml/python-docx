@@ -44,11 +44,7 @@ def when_I_merge_the_nrows_x_ncols_topleftmost_cells(context, nrows, ncols):
     table = context.table_
     row = int(nrows) - 1
     col = int(ncols) - 1
-    try:
-        table.cell(0, 0).merge(table.cell(row, col))
-    except Exception as e:
-        context.exception = e
-        raise
+    table.cell(0, 0).merge(table.cell(row, col))
 
 # then =====================================================
 
