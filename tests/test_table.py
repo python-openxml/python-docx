@@ -192,6 +192,27 @@ class Describe_Cell(object):
         cell, text, expected_xml = text_set_fixture
         cell.text = text
         assert cell._tc.xml == expected_xml
+    
+    def it_knows_its_row_and_column_index(self, row_and_column_index_fixture):
+        tbl, single_row, single_cell = row_and_column_index_fixture
+        # test in table
+        for nrow, row in enumerate(tbl.rows):
+            for ncol, col in enumerate(tbl.columns):
+                # cell has _RowCells parent
+                cell = row.cells[ncol]
+                assert cell.row_index == nrow
+                assert cell.column_index == ncol
+                # cell has _ColumnCells parent
+                cell = col.cells[nrow]
+                assert cell.row_index == nrow
+                assert cell.column_index == ncol
+        # test in nrow
+        for ncol, cell in enumerate(single_row.cells):
+            assert cell.row_index == 0
+            assert cell.column_index == ncol
+        # test single cell
+        assert single_cell.row_index == 0
+        assert single_cell.column_index == 0
 
     def it_knows_its_width_in_EMU(self, width_get_fixture):
         cell, expected_width = width_get_fixture
@@ -202,6 +223,12 @@ class Describe_Cell(object):
         cell.width = value
         assert cell.width == value
         assert cell._tc.xml == expected_xml
+
+    def it_can_be_merged(self, cell_merge_fixture):
+        (table, merge_from_coord, merge_to_coord, 
+         expected_xml) = cell_merge_fixture
+        table.cell(*merge_from_coord).merge(table.cell(*merge_to_coord))
+        assert table._tbl.xml == expected_xml
 
     # fixtures -------------------------------------------------------
 
@@ -231,6 +258,13 @@ class Describe_Cell(object):
         expected_xml = xml(after_tc_cxml)
         return cell, expected_xml
 
+    @pytest.fixture
+    def row_and_column_index_fixture(self):
+        tbl = Table(_tbl_bldr(4,4).element, None)
+        single_row = _Row(_tr_bldr(4).with_nsdecls().element, None)
+        single_cell = _Cell(element('w:tc'), None)
+        return tbl, single_row, single_cell
+    
     @pytest.fixture
     def paragraphs_fixture(self):
         return _Cell(element('w:tc/(w:p, w:p)'), None)
@@ -283,7 +317,37 @@ class Describe_Cell(object):
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(expected_cxml)
         return cell, new_value, expected_xml
-
+    
+    @pytest.fixture(params=[
+        # Horizontal merge
+        ('w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),w:tr/(w:tc,w:tc),'
+         'w:tr/(w:tc,w:tc))', (0, 0), (0, 1), 
+         'w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),'
+         'w:tr/(w:tc/w:tcPr/w:hMerge{w:val=restart},'
+         'w:tc/w:tcPr/w:hMerge),w:tr/(w:tc,w:tc))'),
+        # Vertical merge
+        ('w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),w:tr/(w:tc,w:tc),'
+         'w:tr/(w:tc,w:tc))', (0, 0), (1, 0),
+         'w:tbl/(w:tblGrid/(w:gridCol,w:gridCol),'
+         'w:tr/(w:tc/w:tcPr/w:vMerge{w:val=restart},w:tc),'
+         'w:tr/(w:tc/w:tcPr/w:vMerge,w:tc))'),                            
+        # Two-ways merge
+        ('w:tbl/(w:tblGrid/(w:gridCol,w:gridCol,w:gridCol),'
+         'w:tr/(w:tc,w:tc,w:tc),w:tr/(w:tc,w:tc,w:tc),w:tr/(w:tc,w:tc,w:tc))',
+         (0, 0), (1, 1),
+         'w:tbl/(w:tblGrid/(w:gridCol,w:gridCol,w:gridCol),'
+         'w:tr/(w:tc/w:tcPr/(w:hMerge{w:val=restart},w:vMerge{w:val=restart}),'
+         'w:tc/w:tcPr/w:hMerge,w:tc),'
+         'w:tr/(w:tc/w:tcPr/(w:hMerge{w:val=restart},w:vMerge),'
+         'w:tc/w:tcPr/w:hMerge,w:tc),'
+         'w:tr/(w:tc,w:tc,w:tc))'),
+    ])
+    def cell_merge_fixture(self, request):
+        (tbl_cxml, merge_from_coord, merge_to_coord, 
+         expected_cxml) = request.param
+        table = Table(element(tbl_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return table, merge_from_coord, merge_to_coord, expected_xml
 
 class Describe_Column(object):
 

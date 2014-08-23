@@ -6,11 +6,11 @@ Feature: Add a row or column to a table
   Scenario: Add a row to a table
      Given a 2 x 2 table
       When I add a row to the table
-      Then the table has 3 rows
+      Then the table has 3 row(s)
        And the new row has 2 cells
 
   Scenario: Add a column to a table
      Given a 2 x 2 table
       When I add a column to the table
-      Then the table has 3 columns
+      Then the table has 3 column(s)
        And the new column has 2 cells

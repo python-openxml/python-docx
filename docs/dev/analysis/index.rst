@@ -13,6 +13,7 @@ Feature Analysis
    features/table
    features/table-props
    features/table-cell
+   features/cell-merge
    features/par-alignment
    features/run-content
    features/numbering

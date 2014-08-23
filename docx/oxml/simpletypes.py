@@ -218,6 +218,17 @@ class ST_DrawingElementId(XsdUnsignedInt):
     pass
 
 
+class ST_Merge(XsdString):
+    
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
+        valid_values = ('continue', 'restart')
+        if value not in valid_values:
+            raise ValueError(
+                "must be one of %s, got '%s'" % (valid_values, value)
+            )
+    
 class ST_OnOff(XsdBoolean):
 
     @classmethod
