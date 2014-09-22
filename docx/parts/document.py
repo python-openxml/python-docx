@@ -157,17 +157,18 @@ class InlineShapes(Parented):
     def __len__(self):
         return len(self._inline_lst)
 
-    def add_picture(self, image_descriptor, run):
+    def add_picture(self, image_descriptor, run, width=None, height=None):
         """
         Return an |InlineShape| instance containing the picture identified by
         *image_descriptor* and added to the end of *run*. The picture shape
-        has the native size of the image. *image_descriptor* can be a path (a
-        string) or a file-like object containing a binary image.
+        will be scaled according to *width* and/or *height* if provided.
+        *image_descriptor* can be a path (a string) or a file-like object
+        containing a binary image.
         """
         image_part, rId = self.part.get_or_add_image_part(image_descriptor)
         shape_id = self.part.next_id
         r = run._r
-        picture = InlineShape.new_picture(r, image_part, rId, shape_id)
+        picture = InlineShape.new_picture(r, image_part, rId, shape_id, width, height)
         return picture
 
     @property
