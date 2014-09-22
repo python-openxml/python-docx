@@ -38,7 +38,7 @@ class InlineShape(object):
         self._inline.extent.cy = cy
 
     @classmethod
-    def new_picture(cls, r, image_part, rId, shape_id, width, height):
+    def new_picture(cls, r, image_part, rId, shape_id, width=None, height=None):
         """
         Return a new |InlineShape| instance containing an inline picture
         placement of *image_part* appended to run *r* and uniquely identified
