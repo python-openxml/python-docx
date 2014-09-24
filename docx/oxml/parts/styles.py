@@ -32,4 +32,4 @@ class CT_Styles(BaseOxmlElement):
         try:
             return self.xpath(xpath)[0]
         except IndexError:
-            raise KeyError('no <w:style> element with styleId %d' % styleId)
+            raise KeyError('no <w:style> element with styleId %s' % styleId)
