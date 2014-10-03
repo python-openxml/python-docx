@@ -413,6 +413,20 @@ class Run(Parented):
         return 'strike'
 
     @property
+    def color(self):
+        """
+        Read/write. The string color applied to this run, or |None| if it has
+        no directly-applied color. Setting this property to |None| causes any
+        directly-applied color to be removed such that the run inherits
+        color from its containing paragraph.
+        """
+        return self._r.color
+
+    @color.setter
+    def color(self, color):
+        self._r.color = color
+
+    @property
     def style(self):
         """
         Read/write. The string style ID of the character style applied to

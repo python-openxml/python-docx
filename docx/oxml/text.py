@@ -208,6 +208,26 @@ class CT_R(BaseOxmlElement):
             self.remove(child)
 
     @property
+    def color(self):
+        """
+        String contained in w:val attribute of <w:color> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.color
+
+    @color.setter
+    def color(self, color):
+        """
+        Set the color of this <w:r> element to *color*. If *color*
+        is None, remove the color element.
+        """
+        rPr = self.get_or_add_rPr()
+        rPr.color = color
+
+    @property
     def style(self):
         """
         String contained in w:val attribute of <w:rStyle> grandchild, or
@@ -271,6 +291,7 @@ class CT_RPr(BaseOxmlElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
     """
+    wColor = ZeroOrOne('w:color', successors=('w:rPrChange',))
     rStyle = ZeroOrOne('w:rStyle', successors=('w:rPrChange',))
     b = ZeroOrOne('w:b', successors=('w:rPrChange',))
     bCs = ZeroOrOne('w:bCs', successors=('w:rPrChange',))
@@ -293,6 +314,31 @@ class CT_RPr(BaseOxmlElement):
     u = ZeroOrOne('w:u', successors=('w:rPrChange',))
     vanish = ZeroOrOne('w:vanish', successors=('w:rPrChange',))
     webHidden = ZeroOrOne('w:webHidden', successors=('w:rPrChange',))
+
+    @property
+    def color(self):
+        """
+        String contained in <w:rStyle> child, or None if that element is not
+        present.
+        """
+        wColor = self.wColor
+        if wColor is None:
+            return None
+        return wColor.val
+
+    @color.setter
+    def color(self, color):
+        """
+        Set val attribute of <w:color> child element to *color*, adding a
+        new element if necessary. If *color* is |None|, remove the <w:color>
+        element if present.
+        """
+        if color is None:
+            self._remove_wColor()
+        elif self.wColor is None:
+            self._add_wColor(val=color)
+        else:
+            self.wColor.val = color
 
     @property
     def style(self):
