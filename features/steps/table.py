@@ -10,9 +10,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.shared import Inches
-from docx.table import (
-    _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows
-)
+from docx.table import _Column, _Columns, _Row, _Rows
 
 from helpers import test_docx
 
@@ -24,11 +22,16 @@ def given_a_2x2_table(context):
     context.table_ = Document().add_table(rows=2, cols=2)
 
 
-@given('a column cell collection having two cells')
-def given_a_column_cell_collection_having_two_cells(context):
-    docx_path = test_docx('blk-containing-table')
-    document = Document(docx_path)
-    context.cells = document.tables[0].columns[0].cells
+@given('a 3x3 table having {span_state}')
+def given_a_3x3_table_having_span_state(context, span_state):
+    table_idx = {
+        'only uniform cells': 0,
+        'a horizontal span':  1,
+        'a vertical span':    2,
+        'a combined span':    3,
+    }[span_state]
+    document = Document(test_docx('tbl-cell-access'))
+    context.table_ = document.tables[table_idx]
 
 
 @given('a column collection having two columns')
@@ -36,13 +39,6 @@ def given_a_column_collection_having_two_columns(context):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
     context.columns = document.tables[0].columns
-
-
-@given('a row cell collection having two cells')
-def given_a_row_cell_collection_having_two_cells(context):
-    docx_path = test_docx('blk-containing-table')
-    document = Document(docx_path)
-    context.cells = document.tables[0].rows[0].cells
 
 
 @given('a row collection having two rows')
@@ -111,20 +107,6 @@ def given_a_table_having_two_rows(context):
     context.table_ = document.tables[0]
 
 
-@given('a table column having two cells')
-def given_a_table_column_having_two_cells(context):
-    docx_path = test_docx('blk-containing-table')
-    document = Document(docx_path)
-    context.column = document.tables[0].columns[0]
-
-
-@given('a table row having two cells')
-def given_a_table_row_having_two_cells(context):
-    docx_path = test_docx('blk-containing-table')
-    document = Document(docx_path)
-    context.row = document.tables[0].rows[0]
-
-
 # when =====================================================
 
 @when('I add a column to the table')
@@ -166,15 +148,6 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 # then =====================================================
 
-@then('I can access a cell using its row and column indices')
-def then_can_access_cell_using_its_row_and_col_indices(context):
-    table = context.table_
-    for row_idx in range(2):
-        for col_idx in range(2):
-            cell = table.cell(row_idx, col_idx)
-            assert isinstance(cell, _Cell)
-
-
 @then('I can access a collection column by index')
 def then_can_access_collection_column_by_index(context):
     columns = context.columns
@@ -191,36 +164,6 @@ def then_can_access_collection_row_by_index(context):
         assert isinstance(row, _Row)
 
 
-@then('I can access a column cell by index')
-def then_can_access_column_cell_by_index(context):
-    cells = context.cells
-    for idx in range(2):
-        cell = cells[idx]
-        assert isinstance(cell, _Cell)
-
-
-@then('I can access a row cell by index')
-def then_can_access_row_cell_by_index(context):
-    cells = context.cells
-    for idx in range(2):
-        cell = cells[idx]
-        assert isinstance(cell, _Cell)
-
-
-@then('I can access the cell collection of the column')
-def then_can_access_cell_collection_of_column(context):
-    column = context.column
-    cells = column.cells
-    assert isinstance(cells, _ColumnCells)
-
-
-@then('I can access the cell collection of the row')
-def then_can_access_cell_collection_of_row(context):
-    row = context.row
-    cells = row.cells
-    assert isinstance(cells, _RowCells)
-
-
 @then('I can access the column collection of the table')
 def then_can_access_column_collection_of_table(context):
     table = context.table_
@@ -235,35 +178,11 @@ def then_can_access_row_collection_of_table(context):
     assert isinstance(rows, _Rows)
 
 
-@then('I can get the length of the column cell collection')
-def then_can_get_length_of_column_cell_collection(context):
-    column = context.column
-    cells = column.cells
-    assert len(cells) == 2
-
-
-@then('I can get the length of the row cell collection')
-def then_can_get_length_of_row_cell_collection(context):
-    row = context.row
-    cells = row.cells
-    assert len(cells) == 2
-
-
 @then('I can get the table style name')
 def then_can_get_table_style_name(context):
     table = context.table_
     msg = "got '%s'" % table.style
     assert table.style == 'LightShading-Accent1', msg
-
-
-@then('I can iterate over the column cells')
-def then_can_iterate_over_the_column_cells(context):
-    cells = context.cells
-    actual_count = 0
-    for cell in cells:
-        actual_count += 1
-        assert isinstance(cell, _Cell)
-    assert actual_count == 2
 
 
 @then('I can iterate over the column collection')
@@ -276,16 +195,6 @@ def then_can_iterate_over_column_collection(context):
     assert actual_count == 2
 
 
-@then('I can iterate over the row cells')
-def then_can_iterate_over_the_row_cells(context):
-    cells = context.cells
-    actual_count = 0
-    for cell in cells:
-        actual_count += 1
-        assert isinstance(cell, _Cell)
-    assert actual_count == 2
-
-
 @then('I can iterate over the row collection')
 def then_can_iterate_over_row_collection(context):
     rows = context.rows
@@ -294,6 +203,21 @@ def then_can_iterate_over_row_collection(context):
         actual_count += 1
         assert isinstance(row, _Row)
     assert actual_count == 2
+
+
+@then('table.cell({row}, {col}).text is {expected_text}')
+def then_table_cell_row_col_text_is_text(context, row, col, expected_text):
+    table = context.table_
+    row_idx, col_idx = int(row), int(col)
+    cell_text = table.cell(row_idx, col_idx).text
+    assert cell_text == expected_text, 'got %s' % cell_text
+
+
+@then('the column cells text is {expected_text}')
+def then_the_column_cells_text_is_expected_text(context, expected_text):
+    table = context.table_
+    cells_text = ' '.join(c.text for col in table.columns for c in col.cells)
+    assert cells_text == expected_text, 'got %s' % cells_text
 
 
 @then('the length of the column collection is 2')
@@ -340,6 +264,13 @@ def then_the_reported_width_of_the_cell_is_width(context, width):
     assert actual_width == expected_width, (
         'expected %s, got %s' % (expected_width, actual_width)
     )
+
+
+@then('the row cells text is {expected_text}')
+def then_the_row_cells_text_is_expected_text(context, expected_text):
+    table = context.table_
+    cells_text = ' '.join(c.text for row in table.rows for c in row.cells)
+    assert cells_text == expected_text, 'got %s' % cells_text
 
 
 @then('the table style matches the name I applied')
