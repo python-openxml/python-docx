@@ -386,3 +386,10 @@ class _Rows(Parented):
 
     def __len__(self):
         return len(self._tbl.tr_lst)
+
+    @property
+    def table(self):
+        """
+        Reference to the |Table| object this row collection belongs to.
+        """
+        return self._parent.table
