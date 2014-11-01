@@ -71,6 +71,10 @@ class DescribeTable(object):
         table.autofit = new_value
         assert table._tbl.xml == expected_xml
 
+    def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
+        table = table_fixture
+        assert table.table is table
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -115,6 +119,11 @@ class DescribeTable(object):
         table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_tbl_cxml)
         return table, new_value, expected_xml
+
+    @pytest.fixture
+    def table_fixture(self):
+        table = Table(None, None)
+        return table
 
     @pytest.fixture(params=[
         ('w:tbl/w:tblPr', None),

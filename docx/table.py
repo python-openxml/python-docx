@@ -101,7 +101,7 @@ class Table(Parented):
         a |Table| object. This is the terminus of a series of `parent._table`
         calls from an arbitrary child through its ancestors.
         """
-        raise NotImplementedError
+        return self
 
     @property
     def _tblPr(self):
