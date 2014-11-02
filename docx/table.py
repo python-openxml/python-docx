@@ -58,8 +58,8 @@ class Table(Parented):
         Return |_Cell| instance correponding to table cell at *row_idx*,
         *col_idx* intersection, where (0, 0) is the top, left-most cell.
         """
-        row = self.rows[row_idx]
-        return row.cells[col_idx]
+        cell_idx = col_idx + (row_idx * self._column_count)
+        return self._cells[cell_idx]
 
     def column_cells(self, column_idx):
         """
