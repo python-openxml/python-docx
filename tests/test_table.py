@@ -187,6 +187,11 @@ class Describe_Cell(object):
             count += 1
         assert count == expected_count
 
+    def it_knows_what_text_it_contains(self, text_get_fixture):
+        cell, expected_text = text_get_fixture
+        text = cell.text
+        assert text == expected_text
+
     def it_can_replace_its_content_with_a_string_of_text(
             self, text_set_fixture):
         cell, text, expected_xml = text_set_fixture
@@ -246,6 +251,19 @@ class Describe_Cell(object):
         cell_cxml, expected_count = request.param
         cell = _Cell(element(cell_cxml), None)
         return cell, expected_count
+
+    @pytest.fixture(params=[
+        ('w:tc',                                     ''),
+        ('w:tc/w:p/w:r/w:t"foobar"',                 'foobar'),
+        ('w:tc/(w:p/w:r/w:t"foo",w:p/w:r/w:t"bar")', 'foo\nbar'),
+        ('w:tc/(w:tcPr,w:p/w:r/w:t"foobar")',        'foobar'),
+        ('w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:br,w:t"ar",w:br)',
+         'fo\tob\nar\n'),
+    ])
+    def text_get_fixture(self, request):
+        tc_cxml, expected_text = request.param
+        cell = _Cell(element(tc_cxml), None)
+        return cell, expected_text
 
     @pytest.fixture(params=[
         ('w:tc/w:p', 'foobar',

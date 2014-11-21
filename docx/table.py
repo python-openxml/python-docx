@@ -7,7 +7,7 @@ The |Table| object and related proxy classes.
 from __future__ import absolute_import, print_function, unicode_literals
 
 from .blkcntnr import BlockItemContainer
-from .shared import lazyproperty, Parented, write_only_property
+from .shared import lazyproperty, Parented
 
 
 class Table(Parented):
@@ -141,7 +141,16 @@ class _Cell(BlockItemContainer):
         """
         return super(_Cell, self).tables
 
-    @write_only_property
+    @property
+    def text(self):
+        """
+        The entire contents of this cell as a string of text. Assigning
+        a string to this property replaces all existing content with a single
+        paragraph containing the assigned text in a single run.
+        """
+        return '\n'.join(p.text for p in self.paragraphs)
+
+    @text.setter
     def text(self, text):
         """
         Write-only. Set entire contents of cell to the string *text*. Any
