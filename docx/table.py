@@ -67,6 +67,12 @@ class Table(Parented):
         """
         return _Columns(self._tbl, self)
 
+    def row_cells(self, row_idx):
+        """
+        Sequence of cells in the row at *row_idx* in this table.
+        """
+        raise NotImplementedError
+
     @lazyproperty
     def rows(self):
         """
@@ -296,6 +302,27 @@ class _Row(Parented):
         Supports ``len()``, iteration and indexed access.
         """
         return _RowCells(self._tr, self)
+
+    @property
+    def cells_new(self):
+        """
+        Sequence of |_Cell| instances corresponding to cells in this row.
+        """
+        return tuple(self.table.row_cells(self._index))
+
+    @property
+    def table(self):
+        """
+        Reference to the |Table| object this row belongs to.
+        """
+        raise NotImplementedError
+
+    @property
+    def _index(self):
+        """
+        Index of this row in its table, starting from zero.
+        """
+        raise NotImplementedError
 
 
 class _RowCells(Parented):

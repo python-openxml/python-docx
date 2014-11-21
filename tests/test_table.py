@@ -17,6 +17,7 @@ from docx.text import Paragraph
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
 from .unitutil.cxml import element, xml
+from .unitutil.mock import instance_mock, property_mock
 
 
 class DescribeTable(object):
@@ -429,10 +430,40 @@ class Describe_Columns(object):
 
 class Describe_Row(object):
 
+    def it_provides_access_to_its_cells(self, cells_fixture):
+        row, row_idx, expected_cells = cells_fixture
+        cells = row.cells_new
+        row.table.row_cells.assert_called_once_with(row_idx)
+        assert cells == expected_cells
+
     def it_provides_access_to_the_row_cells(self):
         row = _Row(element('w:tr'), None)
         cells = row.cells
         assert isinstance(cells, _RowCells)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cells_fixture(self, _index_, table_prop_, table_):
+        row = _Row(None, None)
+        _index_.return_value = row_idx = 6
+        expected_cells = (1, 2, 3)
+        table_.row_cells.return_value = list(expected_cells)
+        return row, row_idx, expected_cells
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _index_(self, request):
+        return property_mock(request, _Row, '_index')
+
+    @pytest.fixture
+    def table_(self, request):
+        return instance_mock(request, Table)
+
+    @pytest.fixture
+    def table_prop_(self, request, table_):
+        return property_mock(request, _Row, 'table', return_value=table_)
 
 
 class Describe_RowCells(object):
