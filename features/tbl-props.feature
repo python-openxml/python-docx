@@ -1,6 +1,6 @@
 Feature: Get and set table properties
   In order to format a table to my requirements
-  As an python-docx developer
+  As a developer using python-docx
   I need a way to get and set a table's properties
 
 

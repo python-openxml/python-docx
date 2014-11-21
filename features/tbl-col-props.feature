@@ -1,6 +1,6 @@
 Feature: Get and set table column widths
   In order to produce properly formatted tables
-  As an python-docx developer
+  As a developer using python-docx
   I need a way to get and set the width of a table's columns
 
 

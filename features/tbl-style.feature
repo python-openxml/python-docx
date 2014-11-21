@@ -1,6 +1,6 @@
 Feature: Query and apply a table style
   In order to maintain consistent formatting of tables
-  As an python-docx developer
+  As a developer using python-docx
   I need the ability to query and apply a table style
 
   Scenario: Access table style

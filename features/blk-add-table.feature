@@ -1,6 +1,6 @@
 Feature: Add a table
   In order to fulfill a requirement for a table in a document
-  As an python-docx developer
+  As a developer using python-docx
   I need the ability to add a table
 
   Scenario: Access a table

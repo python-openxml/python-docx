@@ -1,6 +1,6 @@
 Feature: Add a row or column to a table
   In order to extend an existing table
-  As an python-docx developer
+  As a developer using python-docx
   I need methods to add a row or column
 
   Scenario: Add a row to a table

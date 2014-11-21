@@ -1,6 +1,6 @@
 Feature: Add a line, page, or column break
   In order to control the flow of text in a document
-  As an python-docx developer
+  As a developer using python-docx
   I need the ability to add a line, page, or column break
 
   Scenario: Add a line break

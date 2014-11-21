@@ -1,6 +1,6 @@
 Feature: Set table cell text
   In order to quickly populate a table cell with regular text
-  As an python-docx developer working with a table
+  As a developer using python-docx
   I need the ability to set the text of a table cell
 
   Scenario: Set table cell text

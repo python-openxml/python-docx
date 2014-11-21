@@ -1,6 +1,6 @@
 Feature: Each paragraph has a read/write style
   In order to use the stylesheet capability built into Word
-  As an python-docx developer
+  As a developer using python-docx
   I need the ability to get and set the style of a paragraph
 
   Scenario: Set the style of a paragraph

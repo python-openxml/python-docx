@@ -1,6 +1,6 @@
 Feature: Add a paragraph of text
   In order to populate the text of a document
-  As an python-docx developer
+  As a developer using python-docx
   I need the ability to add a paragraph
 
   Scenario: Add a paragraph using low-level text API

@@ -1,6 +1,6 @@
 Feature: Access inline shapes in document
   In order to query or manipulate inline shapes in a document
-  As an python-docx developer
+  As a developer using python-docx
   I need the ability to access the inline shapes in a document
 
   Scenario: Access inline shapes collection of document
