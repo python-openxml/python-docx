@@ -97,6 +97,14 @@ class CT_TblGridCol(BaseOxmlElement):
     """
     w = OptionalAttribute('w:w', ST_TwipsMeasure)
 
+    @property
+    def gridCol_idx(self):
+        """
+        The index of this ``<w:gridCol>`` element within its parent
+        ``<w:tblGrid>`` element.
+        """
+        return self.getparent().gridCol_lst.index(self)
+
 
 class CT_TblLayoutType(BaseOxmlElement):
     """

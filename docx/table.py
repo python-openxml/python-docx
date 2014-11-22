@@ -274,7 +274,7 @@ class _Column(Parented):
         """
         Index of this column in its table, starting from zero.
         """
-        raise NotImplementedError
+        return self._gridCol.gridCol_idx
 
 
 class _ColumnCells(Parented):

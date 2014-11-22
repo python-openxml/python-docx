@@ -394,6 +394,10 @@ class Describe_Column(object):
         assert column.width == value
         assert column._gridCol.xml == expected_xml
 
+    def it_knows_its_index_in_table_to_help(self, index_fixture):
+        column, expected_idx = index_fixture
+        assert column._index == expected_idx
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -403,6 +407,13 @@ class Describe_Column(object):
         expected_cells = (3, 2, 1)
         table_.column_cells.return_value = list(expected_cells)
         return column, column_idx, expected_cells
+
+    @pytest.fixture
+    def index_fixture(self):
+        tbl = element('w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)')
+        gridCol, expected_idx = tbl.tblGrid[1], 1
+        column = _Column(gridCol, tbl, None)
+        return column, expected_idx
 
     @pytest.fixture
     def table_fixture(self, parent_, table_):
