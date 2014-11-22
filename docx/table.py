@@ -71,7 +71,10 @@ class Table(Parented):
         """
         Sequence of cells in the row at *row_idx* in this table.
         """
-        raise NotImplementedError
+        column_count = self._column_count
+        start = row_idx * column_count
+        end = start + column_count
+        return self._cells[start:end]
 
     @lazyproperty
     def rows(self):
@@ -102,6 +105,22 @@ class Table(Parented):
         calls from an arbitrary child through its ancestors.
         """
         return self
+
+    @property
+    def _cells(self):
+        """
+        A sequence of |_Cell| objects, one for each cell of the layout grid.
+        If the table contains a span, one or more |_Cell| object references
+        are repeated.
+        """
+        raise NotImplementedError
+
+    @property
+    def _column_count(self):
+        """
+        The number of grid columns in this table.
+        """
+        raise NotImplementedError
 
     @property
     def _tblPr(self):

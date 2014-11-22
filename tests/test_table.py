@@ -39,6 +39,11 @@ class DescribeTable(object):
                 tc = tr.tc_lst[col_idx]
                 assert tc is cell._tc
 
+    def it_provides_access_to_the_cells_in_a_row(self, row_cells_fixture):
+        table, row_idx, expected_cells = row_cells_fixture
+        row_cells = table.row_cells(row_idx)
+        assert row_cells == expected_cells
+
     def it_can_add_a_row(self, add_row_fixture):
         table, expected_xml = add_row_fixture
         row = table.add_row()
@@ -121,6 +126,15 @@ class DescribeTable(object):
         return table, new_value, expected_xml
 
     @pytest.fixture
+    def row_cells_fixture(self, _cells_, _column_count_):
+        table = Table(None, None)
+        _cells_.return_value = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        _column_count_.return_value = 3
+        row_idx = 1
+        expected_cells = [3, 4, 5]
+        return table, row_idx, expected_cells
+
+    @pytest.fixture
     def table_fixture(self):
         table = Table(None, None)
         return table
@@ -151,6 +165,14 @@ class DescribeTable(object):
         return table, new_style, expected_xml
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _cells_(self, request):
+        return property_mock(request, Table, '_cells')
+
+    @pytest.fixture
+    def _column_count_(self, request):
+        return property_mock(request, Table, '_column_count')
 
     @pytest.fixture
     def table(self):
