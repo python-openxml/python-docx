@@ -3,7 +3,6 @@ Feature: Access table cells
   As a developer using python-docx
   I need a way to access a cell from a table, row, or column
 
-  @wip
   Scenario Outline: Access cell sequence of a row
      Given a 3x3 table having <span-state>
       Then the row cells text is <expected-text>

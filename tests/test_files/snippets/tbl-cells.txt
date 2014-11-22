@@ -1,0 +1,157 @@
+<!-- 9 x 9 uniform table -->
+<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblGrid>
+    <w:gridCol/>
+    <w:gridCol/>
+    <w:gridCol/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+</w:tbl>
+
+<!-- 9 x 9 with horizontal span -->
+<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblGrid>
+    <w:gridCol/>
+    <w:gridCol/>
+    <w:gridCol/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:gridSpan w:val="2"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+</w:tbl>
+
+<!-- 9 x 9 with vertical span -->
+<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblGrid>
+    <w:gridCol/>
+    <w:gridCol/>
+    <w:gridCol/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc/>
+    <w:tc>
+      <w:tcPr>
+        <w:vMerge w:val="restart"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc>
+      <w:tcPr>
+        <w:vMerge w:val="continue"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+</w:tbl>
+
+<!-- 9 x 9 with combo span -->
+<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblGrid>
+    <w:gridCol/>
+    <w:gridCol/>
+    <w:gridCol/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:gridSpan w:val="2"/>
+        <w:vMerge w:val="restart"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:gridSpan w:val="2"/>
+        <w:vMerge w:val="continue"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc/>
+    <w:tc/>
+    <w:tc/>
+  </w:tr>
+</w:tbl>
+
+<!-- 9 x 9 with horz, vert, and combo span -->
+<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblGrid>
+    <w:gridCol/>
+    <w:gridCol/>
+    <w:gridCol/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:gridSpan w:val="2"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc/>
+  </w:tr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:vMerge w:val="restart"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:gridSpan w:val="2"/>
+        <w:vMerge w:val="restart"/>
+      </w:tcPr>
+    </w:tc>
+  </w:tr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:vMerge w:val="continue"/>
+      </w:tcPr>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:gridSpan w:val="2"/>
+        <w:vMerge w:val="continue"/>
+      </w:tcPr>
+    </w:tc>
+  </w:tr>
+</w:tbl>

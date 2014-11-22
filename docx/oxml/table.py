@@ -10,7 +10,7 @@ from . import parse_xml
 from .ns import nsdecls
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -43,6 +43,16 @@ class CT_Tbl(BaseOxmlElement):
     tblPr = OneAndOnlyOne('w:tblPr')
     tblGrid = OneAndOnlyOne('w:tblGrid')
     tr = ZeroOrMore('w:tr')
+
+    def iter_tcs(self):
+        """
+        Generate each of the `w:tc` elements in this table, left to right and
+        top to bottom. Each cell in the first row is generated, followed by
+        each cell in the second row, etc.
+        """
+        for tr in self.tr_lst:
+            for tc in tr.tc_lst:
+                yield tc
 
     @classmethod
     def new(cls):
@@ -182,18 +192,6 @@ class CT_Tc(BaseOxmlElement):
     p = OneOrMore('w:p')
     tbl = OneOrMore('w:tbl')
 
-    def _insert_tcPr(self, tcPr):
-        """
-        ``tcPr`` has a bunch of successors, but it comes first if it appears,
-        so just overriding and using insert(0, ...) rather than spelling out
-        successors.
-        """
-        self.insert(0, tcPr)
-        return tcPr
-
-    def _new_tbl(self):
-        return CT_Tbl.new()
-
     def clear_content(self):
         """
         Remove all content child elements, preserving the ``<w:tcPr>``
@@ -208,6 +206,17 @@ class CT_Tc(BaseOxmlElement):
             new_children.append(tcPr)
         self[:] = new_children
 
+    @property
+    def grid_span(self):
+        """
+        The integer number of columns this cell spans. Determined by
+        ./w:tcPr/w:gridSpan/@val, it defaults to 1.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return 1
+        return tcPr.grid_span
+
     @classmethod
     def new(cls):
         """
@@ -219,6 +228,17 @@ class CT_Tc(BaseOxmlElement):
             '  <w:p/>\n'
             '</w:tc>' % nsdecls('w')
         )
+
+    @property
+    def vMerge(self):
+        """
+        The value of the ./w:tcPr/w:vMerge/@val attribute, or |None| if the
+        w:vMerge element is not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.vMerge_val
 
     @property
     def width(self):
@@ -236,17 +256,55 @@ class CT_Tc(BaseOxmlElement):
         tcPr = self.get_or_add_tcPr()
         tcPr.width = value
 
+    def _insert_tcPr(self, tcPr):
+        """
+        ``tcPr`` has a bunch of successors, but it comes first if it appears,
+        so just overriding and using insert(0, ...) rather than spelling out
+        successors.
+        """
+        self.insert(0, tcPr)
+        return tcPr
+
+    def _new_tbl(self):
+        return CT_Tbl.new()
+
 
 class CT_TcPr(BaseOxmlElement):
     """
     ``<w:tcPr>`` element, defining table cell properties
     """
-    tcW = ZeroOrOne('w:tcW', successors=(
-        'w:gridSpan', 'w:hMerge', 'w:vMerge', 'w:tcBorders', 'w:shd',
-        'w:noWrap', 'w:tcMar', 'w:textDirection', 'w:tcFitText', 'w:vAlign',
-        'w:hideMark', 'w:headers', 'w:cellIns', 'w:cellDel', 'w:cellMerge',
-        'w:tcPrChange'
-    ))
+    _tag_seq = (
+        'w:cnfStyle', 'w:tcW', 'w:gridSpan', 'w:hMerge', 'w:vMerge',
+        'w:tcBorders', 'w:shd', 'w:noWrap', 'w:tcMar', 'w:textDirection',
+        'w:tcFitText', 'w:vAlign', 'w:hideMark', 'w:headers', 'w:cellIns',
+        'w:cellDel', 'w:cellMerge', 'w:tcPrChange'
+    )
+    tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
+    gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
+    vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    del _tag_seq
+
+    @property
+    def grid_span(self):
+        """
+        The integer number of columns this cell spans. Determined by
+        ./w:gridSpan/@val, it defaults to 1.
+        """
+        gridSpan = self.gridSpan
+        if gridSpan is None:
+            return 1
+        return gridSpan.val
+
+    @property
+    def vMerge_val(self):
+        """
+        The value of the ./w:vMerge/@val attribute, or |None| if the
+        w:vMerge element is not present.
+        """
+        vMerge = self.vMerge
+        if vMerge is None:
+            return None
+        return vMerge.val
 
     @property
     def width(self):
@@ -263,3 +321,10 @@ class CT_TcPr(BaseOxmlElement):
     def width(self, value):
         tcW = self.get_or_add_tcW()
         tcW.width = value
+
+
+class CT_VMerge(BaseOxmlElement):
+    """
+    ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
+    """
+    val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)

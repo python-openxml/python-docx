@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.oxml import parse_xml
 from docx.shared import Inches
 from docx.table import (
     _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows, Table
@@ -17,6 +18,7 @@ from docx.text import Paragraph
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
 from .unitutil.cxml import element, xml
+from .unitutil.file import snippet_seq
 from .unitutil.mock import instance_mock, property_mock
 
 
@@ -85,6 +87,16 @@ class DescribeTable(object):
         column_count = table._column_count
         assert column_count == expected_value
 
+    def it_provides_access_to_its_cells_to_help(self, cells_fixture):
+        table, cell_count, unique_count, matches = cells_fixture
+        cells = table._cells
+        assert len(cells) == cell_count
+        assert len(set(cells)) == unique_count
+        for matching_idxs in matches:
+            comparator_idx = matching_idxs[0]
+            for idx in matching_idxs[1:]:
+                assert cells[idx] is cells[comparator_idx]
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -129,6 +141,19 @@ class DescribeTable(object):
         table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_tbl_cxml)
         return table, new_value, expected_xml
+
+    @pytest.fixture(params=[
+        (0, 9, 9, ()),
+        (1, 9, 8, ((0, 1),)),
+        (2, 9, 8, ((1, 4),)),
+        (3, 9, 6, ((0, 1, 3, 4),)),
+        (4, 9, 4, ((0, 1), (3, 6), (4, 5, 7, 8))),
+    ])
+    def cells_fixture(self, request):
+        snippet_idx, cell_count, unique_count, matches = request.param
+        tbl_xml = snippet_seq('tbl-cells')[snippet_idx]
+        table = Table(parse_xml(tbl_xml), None)
+        return table, cell_count, unique_count, matches
 
     @pytest.fixture
     def column_count_fixture(self):

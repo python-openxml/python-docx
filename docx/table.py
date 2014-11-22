@@ -7,6 +7,7 @@ The |Table| object and related proxy classes.
 from __future__ import absolute_import, print_function, unicode_literals
 
 from .blkcntnr import BlockItemContainer
+from .oxml.simpletypes import ST_Merge
 from .shared import lazyproperty, Parented
 
 
@@ -113,7 +114,17 @@ class Table(Parented):
         If the table contains a span, one or more |_Cell| object references
         are repeated.
         """
-        raise NotImplementedError
+        col_count = self._column_count
+        cells = []
+        for tc in self._tbl.iter_tcs():
+            for grid_span_idx in range(tc.grid_span):
+                if tc.vMerge == ST_Merge.CONTINUE:
+                    cells.append(cells[-col_count])
+                elif grid_span_idx > 0:
+                    cells.append(cells[-1])
+                else:
+                    cells.append(_Cell(tc, self))
+        return cells
 
     @property
     def _column_count(self):

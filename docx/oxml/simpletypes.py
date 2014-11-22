@@ -54,6 +54,21 @@ class BaseSimpleType(object):
         )
 
 
+class BaseIntType(BaseSimpleType):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return int(str_value)
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        return str(value)
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_int(value)
+
+
 class BaseStringType(BaseSimpleType):
 
     @classmethod
@@ -69,19 +84,15 @@ class BaseStringType(BaseSimpleType):
         cls.validate_string(value)
 
 
-class BaseIntType(BaseSimpleType):
-
-    @classmethod
-    def convert_from_xml(cls, str_value):
-        return int(str_value)
-
-    @classmethod
-    def convert_to_xml(cls, value):
-        return str(value)
+class BaseStringEnumerationType(BaseStringType):
 
     @classmethod
     def validate(cls, value):
-        cls.validate_int(value)
+        cls.validate_string(value)
+        if value not in cls._members:
+            raise ValueError(
+                "must be one of %s, got '%s'" % (cls._members, value)
+            )
 
 
 class XsdAnyUri(BaseStringType):
@@ -142,6 +153,12 @@ class XsdLong(BaseIntType):
 
 class XsdString(BaseStringType):
     pass
+
+
+class XsdStringEnumeration(BaseStringEnumerationType):
+    """
+    Set of enumerated xsd:string values.
+    """
 
 
 class XsdToken(BaseStringType):
@@ -216,6 +233,16 @@ class ST_DecimalNumber(XsdInt):
 
 class ST_DrawingElementId(XsdUnsignedInt):
     pass
+
+
+class ST_Merge(XsdStringEnumeration):
+    """
+    Valid values for <w:xMerge val=""> attribute
+    """
+    CONTINUE = 'continue'
+    RESTART = 'restart'
+
+    _members = (CONTINUE, RESTART)
 
 
 class ST_OnOff(XsdBoolean):
