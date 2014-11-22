@@ -237,16 +237,8 @@ class _Column(Parented):
         self._gridCol = gridCol
         self._tbl = tbl
 
-    @lazyproperty
-    def cells(self):
-        """
-        Sequence of |_Cell| instances corresponding to cells in this column.
-        Supports ``len()``, iteration and indexed access.
-        """
-        return _ColumnCells(self._tbl, self._gridCol, self)
-
     @property
-    def cells_new(self):
+    def cells(self):
         """
         Sequence of |_Cell| instances corresponding to cells in this column.
         """
@@ -277,46 +269,6 @@ class _Column(Parented):
         Index of this column in its table, starting from zero.
         """
         return self._gridCol.gridCol_idx
-
-
-class _ColumnCells(Parented):
-    """
-    Sequence of |_Cell| instances corresponding to the cells in a table
-    column.
-    """
-    def __init__(self, tbl, gridCol, parent):
-        super(_ColumnCells, self).__init__(parent)
-        self._tbl = tbl
-        self._gridCol = gridCol
-
-    def __getitem__(self, idx):
-        """
-        Provide indexed access, (e.g. 'cells[0]')
-        """
-        try:
-            tr = self._tr_lst[idx]
-        except IndexError:
-            msg = "cell index [%d] is out of range" % idx
-            raise IndexError(msg)
-        tc = tr.tc_lst[self._col_idx]
-        return _Cell(tc, self)
-
-    def __iter__(self):
-        for tr in self._tr_lst:
-            tc = tr.tc_lst[self._col_idx]
-            yield _Cell(tc, self)
-
-    def __len__(self):
-        return len(self._tr_lst)
-
-    @property
-    def _col_idx(self):
-        gridCol_lst = self._tbl.tblGrid.gridCol_lst
-        return gridCol_lst.index(self._gridCol)
-
-    @property
-    def _tr_lst(self):
-        return self._tbl.tr_lst
 
 
 class _Columns(Parented):

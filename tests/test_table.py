@@ -10,9 +10,7 @@ import pytest
 
 from docx.oxml import parse_xml
 from docx.shared import Inches
-from docx.table import (
-    _Cell, _Column, _ColumnCells, _Columns, _Row, _Rows, Table
-)
+from docx.table import _Cell, _Column, _Columns, _Row, _Rows, Table
 from docx.text import Paragraph
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
@@ -390,7 +388,7 @@ class Describe_Column(object):
 
     def it_provides_access_to_its_cells(self, cells_fixture):
         column, column_idx, expected_cells = cells_fixture
-        cells = column.cells_new
+        cells = column.cells
         column.table.column_cells.assert_called_once_with(column_idx)
         assert cells == expected_cells
 
@@ -477,46 +475,6 @@ class Describe_Column(object):
     @pytest.fixture
     def table_prop_(self, request, table_):
         return property_mock(request, _Column, 'table', return_value=table_)
-
-
-class Describe_ColumnCells(object):
-
-    def it_knows_how_many_cells_it_contains(self, cells_fixture):
-        cells, cell_count = cells_fixture
-        assert len(cells) == cell_count
-
-    def it_can_iterate_over_its__Cell_instances(self, cells_fixture):
-        cells, cell_count = cells_fixture
-        actual_count = 0
-        for cell in cells:
-            assert isinstance(cell, _Cell)
-            actual_count += 1
-        assert actual_count == cell_count
-
-    def it_provides_indexed_access_to_cells(self, cells_fixture):
-        cells, cell_count = cells_fixture
-        for idx in range(-cell_count, cell_count):
-            cell = cells[idx]
-            assert isinstance(cell, _Cell)
-
-    def it_raises_on_indexed_access_out_of_range(self, cells_fixture):
-        cells, cell_count = cells_fixture
-        too_low = -1 - cell_count
-        too_high = cell_count
-        with pytest.raises(IndexError):
-            cells[too_low]
-        with pytest.raises(IndexError):
-            cells[too_high]
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def cells_fixture(self):
-        cell_count = 2
-        tbl = _tbl_bldr(rows=cell_count, cols=1).element
-        gridCol = tbl.tblGrid.gridCol_lst[0]
-        cells = _ColumnCells(tbl, gridCol, None)
-        return cells, cell_count
 
 
 class Describe_Columns(object):
