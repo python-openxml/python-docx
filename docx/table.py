@@ -120,7 +120,7 @@ class Table(Parented):
         """
         The number of grid columns in this table.
         """
-        raise NotImplementedError
+        return self._tbl.col_count
 
     @property
     def _tblPr(self):

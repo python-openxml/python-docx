@@ -53,6 +53,13 @@ class CT_Tbl(BaseOxmlElement):
         tbl = parse_xml(cls._tbl_xml())
         return tbl
 
+    @property
+    def col_count(self):
+        """
+        The number of grid columns in this table.
+        """
+        return len(self.tblGrid.gridCol_lst)
+
     @classmethod
     def _tbl_xml(cls):
         return (

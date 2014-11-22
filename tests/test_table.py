@@ -80,6 +80,11 @@ class DescribeTable(object):
         table = table_fixture
         assert table.table is table
 
+    def it_knows_its_column_count_to_help(self, column_count_fixture):
+        table, expected_value = column_count_fixture
+        column_count = table._column_count
+        assert column_count == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -124,6 +129,13 @@ class DescribeTable(object):
         table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_tbl_cxml)
         return table, new_value, expected_xml
+
+    @pytest.fixture
+    def column_count_fixture(self):
+        tbl_cxml = 'w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)'
+        expected_value = 3
+        table = Table(element(tbl_cxml), None)
+        return table, expected_value
 
     @pytest.fixture
     def row_cells_fixture(self, _cells_, _column_count_):
