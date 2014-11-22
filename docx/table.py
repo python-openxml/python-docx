@@ -335,16 +335,8 @@ class _Row(Parented):
         super(_Row, self).__init__(parent)
         self._tr = tr
 
-    @lazyproperty
-    def cells(self):
-        """
-        Sequence of |_Cell| instances corresponding to cells in this row.
-        Supports ``len()``, iteration and indexed access.
-        """
-        return _RowCells(self._tr, self)
-
     @property
-    def cells_new(self):
+    def cells(self):
         """
         Sequence of |_Cell| instances corresponding to cells in this row.
         """
@@ -363,32 +355,6 @@ class _Row(Parented):
         Index of this row in its table, starting from zero.
         """
         return self._tr.tr_idx
-
-
-class _RowCells(Parented):
-    """
-    Sequence of |_Cell| instances corresponding to the cells in a table row.
-    """
-    def __init__(self, tr, parent):
-        super(_RowCells, self).__init__(parent)
-        self._tr = tr
-
-    def __getitem__(self, idx):
-        """
-        Provide indexed access, (e.g. 'cells[0]')
-        """
-        try:
-            tc = self._tr.tc_lst[idx]
-        except IndexError:
-            msg = "cell index [%d] is out of range" % idx
-            raise IndexError(msg)
-        return _Cell(tc, self)
-
-    def __iter__(self):
-        return (_Cell(tc, self) for tc in self._tr.tc_lst)
-
-    def __len__(self):
-        return len(self._tr.tc_lst)
 
 
 class _Rows(Parented):

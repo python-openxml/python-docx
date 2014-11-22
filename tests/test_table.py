@@ -11,7 +11,7 @@ import pytest
 from docx.oxml import parse_xml
 from docx.shared import Inches
 from docx.table import (
-    _Cell, _Column, _ColumnCells, _Columns, _Row, _RowCells, _Rows, Table
+    _Cell, _Column, _ColumnCells, _Columns, _Row, _Rows, Table
 )
 from docx.text import Paragraph
 
@@ -500,14 +500,9 @@ class Describe_Row(object):
 
     def it_provides_access_to_its_cells(self, cells_fixture):
         row, row_idx, expected_cells = cells_fixture
-        cells = row.cells_new
+        cells = row.cells
         row.table.row_cells.assert_called_once_with(row_idx)
         assert cells == expected_cells
-
-    def it_provides_access_to_the_row_cells(self):
-        row = _Row(element('w:tr'), None)
-        cells = row.cells
-        assert isinstance(cells, _RowCells)
 
     def it_provides_access_to_the_table_it_belongs_to(self, table_fixture):
         row, table_ = table_fixture
@@ -557,44 +552,6 @@ class Describe_Row(object):
     @pytest.fixture
     def table_prop_(self, request, table_):
         return property_mock(request, _Row, 'table', return_value=table_)
-
-
-class Describe_RowCells(object):
-
-    def it_knows_how_many_cells_it_contains(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        assert len(cells) == cell_count
-
-    def it_can_iterate_over_its__Cell_instances(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        actual_count = 0
-        for cell in cells:
-            assert isinstance(cell, _Cell)
-            actual_count += 1
-        assert actual_count == cell_count
-
-    def it_provides_indexed_access_to_cells(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        for idx in range(-cell_count, cell_count):
-            cell = cells[idx]
-            assert isinstance(cell, _Cell)
-
-    def it_raises_on_indexed_access_out_of_range(self, cell_count_fixture):
-        cells, cell_count = cell_count_fixture
-        too_low = -1 - cell_count
-        too_high = cell_count
-        with pytest.raises(IndexError):
-            cells[too_low]
-        with pytest.raises(IndexError):
-            cells[too_high]
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def cell_count_fixture(self):
-        cells = _RowCells(element('w:tr/(w:tc, w:tc)'), None)
-        cell_count = 2
-        return cells, cell_count
 
 
 class Describe_Rows(object):

@@ -269,7 +269,7 @@ def then_the_reported_width_of_the_cell_is_width(context, width):
 @then('the row cells text is {expected_text}')
 def then_the_row_cells_text_is_expected_text(context, expected_text):
     table = context.table_
-    cells_text = ' '.join(c.text for row in table.rows for c in row.cells_new)
+    cells_text = ' '.join(c.text for row in table.rows for c in row.cells)
     assert cells_text == expected_text, 'got %s' % cells_text
 
 
