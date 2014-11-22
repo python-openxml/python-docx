@@ -15,7 +15,6 @@ Feature: Access table cells
       | a combined span    | 1 2 3 4 4 6 4 4 9 |
 
 
-  @wip
   Scenario Outline: Access cell sequence of a column
      Given a 3x3 table having <span-state>
       Then the column cells text is <expected-text>
@@ -28,7 +27,6 @@ Feature: Access table cells
       | a combined span    | 1 4 4 2 4 4 3 6 9 |
 
 
-  @wip
   Scenario Outline: Access cell by row and column index
      Given a 3x3 table having <span-state>
       Then table.cell(<row>, <col>).text is <expected-text>

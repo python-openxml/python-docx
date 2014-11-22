@@ -65,7 +65,9 @@ class Table(Parented):
         """
         Sequence of cells in the column at *column_idx* in this table.
         """
-        raise NotImplementedError
+        cells = self._cells
+        idxs = range(column_idx, len(cells), self._column_count)
+        return [cells[idx] for idx in idxs]
 
     @lazyproperty
     def columns(self):

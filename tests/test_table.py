@@ -41,6 +41,11 @@ class DescribeTable(object):
                 tc = tr.tc_lst[col_idx]
                 assert tc is cell._tc
 
+    def it_provides_access_to_the_cells_in_a_column(self, col_cells_fixture):
+        table, column_idx, expected_cells = col_cells_fixture
+        column_cells = table.column_cells(column_idx)
+        assert column_cells == expected_cells
+
     def it_provides_access_to_the_cells_in_a_row(self, row_cells_fixture):
         table, row_idx, expected_cells = row_cells_fixture
         row_cells = table.row_cells(row_idx)
@@ -154,6 +159,15 @@ class DescribeTable(object):
         tbl_xml = snippet_seq('tbl-cells')[snippet_idx]
         table = Table(parse_xml(tbl_xml), None)
         return table, cell_count, unique_count, matches
+
+    @pytest.fixture
+    def col_cells_fixture(self, _cells_, _column_count_):
+        table = Table(None, None)
+        _cells_.return_value = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        _column_count_.return_value = 3
+        column_idx = 1
+        expected_cells = [1, 4, 7]
+        return table, column_idx, expected_cells
 
     @pytest.fixture
     def column_count_fixture(self):
