@@ -332,7 +332,7 @@ class _Row(Parented):
         """
         Index of this row in its table, starting from zero.
         """
-        raise NotImplementedError
+        return self._tr.tr_idx
 
 
 class _RowCells(Parented):

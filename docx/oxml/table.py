@@ -24,6 +24,14 @@ class CT_Row(BaseOxmlElement):
     """
     tc = ZeroOrMore('w:tc')
 
+    @property
+    def tr_idx(self):
+        """
+        The index of this ``<w:tr>`` element within its parent ``<w:tbl>``
+        element.
+        """
+        return self.getparent().tr_lst.index(self)
+
     def _new_tc(self):
         return CT_Tc.new()
 

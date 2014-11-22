@@ -454,6 +454,10 @@ class Describe_Row(object):
         row, table_ = table_fixture
         assert row.table is table_
 
+    def it_knows_its_index_in_table_to_help(self, idx_fixture):
+        row, expected_idx = idx_fixture
+        assert row._index == expected_idx
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -463,6 +467,13 @@ class Describe_Row(object):
         expected_cells = (1, 2, 3)
         table_.row_cells.return_value = list(expected_cells)
         return row, row_idx, expected_cells
+
+    @pytest.fixture
+    def idx_fixture(self):
+        tbl = element('w:tbl/(w:tr,w:tr,w:tr)')
+        tr, expected_idx = tbl[1], 1
+        row = _Row(tr, None)
+        return row, expected_idx
 
     @pytest.fixture
     def table_fixture(self, parent_, table_):
