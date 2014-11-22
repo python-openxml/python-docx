@@ -374,10 +374,11 @@ class Describe_Cell(object):
 
 class Describe_Column(object):
 
-    def it_provides_access_to_the_column_cells(self):
-        column = _Column(None, None, None)
-        cells = column.cells
-        assert isinstance(cells, _ColumnCells)
+    def it_provides_access_to_its_cells(self, cells_fixture):
+        column, column_idx, expected_cells = cells_fixture
+        cells = column.cells_new
+        column.table.column_cells.assert_called_once_with(column_idx)
+        assert cells == expected_cells
 
     def it_knows_its_width_in_EMU(self, width_get_fixture):
         column, expected_width = width_get_fixture
@@ -390,6 +391,14 @@ class Describe_Column(object):
         assert column._gridCol.xml == expected_xml
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def cells_fixture(self, _index_, table_prop_, table_):
+        column = _Column(None, None, None)
+        _index_.return_value = column_idx = 4
+        expected_cells = (3, 2, 1)
+        table_.column_cells.return_value = list(expected_cells)
+        return column, column_idx, expected_cells
 
     @pytest.fixture(params=[
         ('w:gridCol{w:w=4242}',   2693670),
@@ -415,6 +424,20 @@ class Describe_Column(object):
         column = _Column(element(gridCol_cxml), None, None)
         expected_xml = xml(expected_cxml)
         return column, new_value, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _index_(self, request):
+        return property_mock(request, _Column, '_index')
+
+    @pytest.fixture
+    def table_(self, request):
+        return instance_mock(request, Table)
+
+    @pytest.fixture
+    def table_prop_(self, request, table_):
+        return property_mock(request, _Column, 'table', return_value=table_)
 
 
 class Describe_ColumnCells(object):

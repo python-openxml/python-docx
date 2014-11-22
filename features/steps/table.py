@@ -216,7 +216,9 @@ def then_table_cell_row_col_text_is_text(context, row, col, expected_text):
 @then('the column cells text is {expected_text}')
 def then_the_column_cells_text_is_expected_text(context, expected_text):
     table = context.table_
-    cells_text = ' '.join(c.text for col in table.columns for c in col.cells)
+    cells_text = ' '.join(
+        c.text for col in table.columns for c in col.cells_new
+    )
     assert cells_text == expected_text, 'got %s' % cells_text
 
 

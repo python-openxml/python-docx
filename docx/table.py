@@ -61,6 +61,12 @@ class Table(Parented):
         row = self.rows[row_idx]
         return row.cells[col_idx]
 
+    def column_cells(self, column_idx):
+        """
+        Sequence of cells in the column at *column_idx* in this table.
+        """
+        raise NotImplementedError
+
     @lazyproperty
     def columns(self):
         """
@@ -238,6 +244,20 @@ class _Column(Parented):
         return _ColumnCells(self._tbl, self._gridCol, self)
 
     @property
+    def cells_new(self):
+        """
+        Sequence of |_Cell| instances corresponding to cells in this column.
+        """
+        return tuple(self.table.column_cells(self._index))
+
+    @property
+    def table(self):
+        """
+        Reference to the |Table| object this column belongs to.
+        """
+        raise NotImplementedError
+
+    @property
     def width(self):
         """
         The width of this column in EMU, or |None| if no explicit width is
@@ -248,6 +268,13 @@ class _Column(Parented):
     @width.setter
     def width(self, value):
         self._gridCol.w = value
+
+    @property
+    def _index(self):
+        """
+        Index of this column in its table, starting from zero.
+        """
+        raise NotImplementedError
 
 
 class _ColumnCells(Parented):
