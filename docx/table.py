@@ -255,7 +255,7 @@ class _Column(Parented):
         """
         Reference to the |Table| object this column belongs to.
         """
-        raise NotImplementedError
+        return self._parent.table
 
     @property
     def width(self):

@@ -380,6 +380,10 @@ class Describe_Column(object):
         column.table.column_cells.assert_called_once_with(column_idx)
         assert cells == expected_cells
 
+    def it_provides_access_to_the_table_it_belongs_to(self, table_fixture):
+        column, table_ = table_fixture
+        assert column.table is table_
+
     def it_knows_its_width_in_EMU(self, width_get_fixture):
         column, expected_width = width_get_fixture
         assert column.width == expected_width
@@ -399,6 +403,12 @@ class Describe_Column(object):
         expected_cells = (3, 2, 1)
         table_.column_cells.return_value = list(expected_cells)
         return column, column_idx, expected_cells
+
+    @pytest.fixture
+    def table_fixture(self, parent_, table_):
+        column = _Column(None, None, parent_)
+        parent_.table = table_
+        return column, table_
 
     @pytest.fixture(params=[
         ('w:gridCol{w:w=4242}',   2693670),
@@ -430,6 +440,10 @@ class Describe_Column(object):
     @pytest.fixture
     def _index_(self, request):
         return property_mock(request, _Column, '_index')
+
+    @pytest.fixture
+    def parent_(self, request):
+        return instance_mock(request, Table)
 
     @pytest.fixture
     def table_(self, request):
