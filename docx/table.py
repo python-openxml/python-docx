@@ -345,6 +345,13 @@ class _Columns(Parented):
         return len(self._gridCol_lst)
 
     @property
+    def table(self):
+        """
+        Reference to the |Table| object this column collection belongs to.
+        """
+        return self._parent.table
+
+    @property
     def _gridCol_lst(self):
         """
         Sequence containing ``<w:gridCol>`` elements for this table, each

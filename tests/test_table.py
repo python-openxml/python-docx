@@ -523,6 +523,10 @@ class Describe_Columns(object):
         with pytest.raises(IndexError):
             columns[too_high]
 
+    def it_provides_access_to_the_table_it_belongs_to(self, table_fixture):
+        columns, table_ = table_fixture
+        assert columns.table is table_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -531,6 +535,18 @@ class Describe_Columns(object):
         tbl = _tbl_bldr(rows=2, cols=column_count).element
         columns = _Columns(tbl, None)
         return columns, column_count
+
+    @pytest.fixture
+    def table_fixture(self, table_):
+        columns = _Columns(None, table_)
+        table_.table = table_
+        return columns, table_
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def table_(self, request):
+        return instance_mock(request, Table)
 
 
 class Describe_Row(object):
