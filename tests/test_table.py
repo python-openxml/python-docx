@@ -232,17 +232,26 @@ class DescribeTable(object):
 
 class Describe_Cell(object):
 
-    def it_can_add_a_paragraph(self, add_paragraph_fixture):
-        cell, expected_xml = add_paragraph_fixture
-        p = cell.add_paragraph()
-        assert cell._tc.xml == expected_xml
-        assert isinstance(p, Paragraph)
+    def it_knows_what_text_it_contains(self, text_get_fixture):
+        cell, expected_text = text_get_fixture
+        text = cell.text
+        assert text == expected_text
 
-    def it_can_add_a_table(self, add_table_fixture):
-        cell, expected_xml = add_table_fixture
-        table = cell.add_table(rows=0, cols=0)
+    def it_can_replace_its_content_with_a_string_of_text(
+            self, text_set_fixture):
+        cell, text, expected_xml = text_set_fixture
+        cell.text = text
         assert cell._tc.xml == expected_xml
-        assert isinstance(table, Table)
+
+    def it_knows_its_width_in_EMU(self, width_get_fixture):
+        cell, expected_width = width_get_fixture
+        assert cell.width == expected_width
+
+    def it_can_change_its_width(self, width_set_fixture):
+        cell, value, expected_xml = width_set_fixture
+        cell.width = value
+        assert cell.width == value
+        assert cell._tc.xml == expected_xml
 
     def it_provides_access_to_the_paragraphs_it_contains(
             self, paragraphs_fixture):
@@ -268,26 +277,17 @@ class Describe_Cell(object):
             count += 1
         assert count == expected_count
 
-    def it_knows_what_text_it_contains(self, text_get_fixture):
-        cell, expected_text = text_get_fixture
-        text = cell.text
-        assert text == expected_text
-
-    def it_can_replace_its_content_with_a_string_of_text(
-            self, text_set_fixture):
-        cell, text, expected_xml = text_set_fixture
-        cell.text = text
+    def it_can_add_a_paragraph(self, add_paragraph_fixture):
+        cell, expected_xml = add_paragraph_fixture
+        p = cell.add_paragraph()
         assert cell._tc.xml == expected_xml
+        assert isinstance(p, Paragraph)
 
-    def it_knows_its_width_in_EMU(self, width_get_fixture):
-        cell, expected_width = width_get_fixture
-        assert cell.width == expected_width
-
-    def it_can_change_its_width(self, width_set_fixture):
-        cell, value, expected_xml = width_set_fixture
-        cell.width = value
-        assert cell.width == value
+    def it_can_add_a_table(self, add_table_fixture):
+        cell, expected_xml = add_table_fixture
+        table = cell.add_table(rows=0, cols=0)
         assert cell._tc.xml == expected_xml
+        assert isinstance(table, Table)
 
     # fixtures -------------------------------------------------------
 
