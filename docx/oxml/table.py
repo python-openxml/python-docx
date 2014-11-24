@@ -225,6 +225,14 @@ class CT_Tc(BaseOxmlElement):
             return 1
         return tcPr.grid_span
 
+    def merge(self, other_tc):
+        """
+        Return the top-left ``<w:tc>`` element of the span formed by merging
+        the rectangular region defined by using this tc element and
+        *other_tc* as diagonal corners.
+        """
+        raise NotImplementedError
+
     @classmethod
     def new(cls):
         """

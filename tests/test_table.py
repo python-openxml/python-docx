@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.oxml import parse_xml
+from docx.oxml.table import CT_Tc
 from docx.shared import Inches
 from docx.table import _Cell, _Column, _Columns, _Row, _Rows, Table
 from docx.text import Paragraph
@@ -289,6 +290,14 @@ class Describe_Cell(object):
         assert cell._tc.xml == expected_xml
         assert isinstance(table, Table)
 
+    def it_can_merge_itself_with_other_cells(self, merge_fixture):
+        cell, other_cell, merged_tc_ = merge_fixture
+        merged_cell = cell.merge(other_cell)
+        cell._tc.merge.assert_called_once_with(other_cell._tc)
+        assert isinstance(merged_cell, _Cell)
+        assert merged_cell._tc is merged_tc_
+        assert merged_cell._parent is cell._parent
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -316,6 +325,12 @@ class Describe_Cell(object):
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(after_tc_cxml)
         return cell, expected_xml
+
+    @pytest.fixture
+    def merge_fixture(self, tc_, tc_2_, parent_, merged_tc_):
+        cell, other_cell = _Cell(tc_, parent_), _Cell(tc_2_, parent_)
+        tc_.merge.return_value = merged_tc_
+        return cell, other_cell, merged_tc_
 
     @pytest.fixture
     def paragraphs_fixture(self):
@@ -382,6 +397,24 @@ class Describe_Cell(object):
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(expected_cxml)
         return cell, new_value, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def merged_tc_(self, request):
+        return instance_mock(request, CT_Tc)
+
+    @pytest.fixture
+    def parent_(self, request):
+        return instance_mock(request, Table)
+
+    @pytest.fixture
+    def tc_(self, request):
+        return instance_mock(request, CT_Tc)
+
+    @pytest.fixture
+    def tc_2_(self, request):
+        return instance_mock(request, CT_Tc)
 
 
 class Describe_Column(object):

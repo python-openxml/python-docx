@@ -179,6 +179,17 @@ class _Cell(BlockItemContainer):
         self.add_paragraph()
         return new_table
 
+    def merge(self, other_cell):
+        """
+        Return a merged cell created by spanning the rectangular region
+        demarcated by using the extents of this cell and *other_cell* as
+        diagonal corners. Raises |InvalidSpanError| if the cells do not
+        define a rectangular region.
+        """
+        tc, tc_2 = self._tc, other_cell._tc
+        merged_tc = tc.merge(tc_2)
+        return _Cell(merged_tc, self._parent)
+
     @property
     def paragraphs(self):
         """
