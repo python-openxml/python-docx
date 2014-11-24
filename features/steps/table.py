@@ -4,7 +4,9 @@
 Step implementations for table-related features
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 from behave import given, then, when
 
@@ -125,6 +127,17 @@ def when_add_row_to_table(context):
 def when_apply_style_to_table(context):
     table = context.table_
     table.style = 'LightShading-Accent1'
+
+
+@when('I merge from cell {origin} to cell {other}')
+def when_I_merge_from_cell_origin_to_cell_other(context, origin, other):
+    def cell(table, idx):
+        row, col = idx // 3, idx % 3
+        return table.cell(row, col)
+    a_idx, b_idx = int(origin) - 1, int(other) - 1
+    table = context.table_
+    a, b = cell(table, a_idx), cell(table, b_idx)
+    a.merge(b)
 
 
 @when('I set the cell width to {width}')
@@ -266,8 +279,9 @@ def then_the_reported_width_of_the_cell_is_width(context, width):
     )
 
 
-@then('the row cells text is {expected_text}')
-def then_the_row_cells_text_is_expected_text(context, expected_text):
+@then('the row cells text is {encoded_text}')
+def then_the_row_cells_text_is_expected_text(context, encoded_text):
+    expected_text = encoded_text.replace('\\', '\n')
     table = context.table_
     cells_text = ' '.join(c.text for row in table.rows for c in row.cells)
     assert cells_text == expected_text, 'got %s' % cells_text
@@ -292,3 +306,13 @@ def then_table_has_count_rows(context, count):
     row_count = int(count)
     rows = context.table_.rows
     assert len(rows) == row_count
+
+
+@then('the width of cell {n_str} is {inches_str} inches')
+def then_the_width_of_cell_n_is_x_inches(context, n_str, inches_str):
+    def _cell(table, idx):
+        row, col = idx // 3, idx % 3
+        return table.cell(row, col)
+    idx, inches = int(n_str) - 1, float(inches_str)
+    cell = _cell(context.table_, idx)
+    assert cell.width == Inches(inches), 'got %s' % cell.width.inches
