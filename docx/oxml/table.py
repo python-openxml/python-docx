@@ -24,6 +24,13 @@ class CT_Row(BaseOxmlElement):
     """
     tc = ZeroOrMore('w:tc')
 
+    def tc_at_grid_col(self, idx):
+        """
+        The ``<w:tc>`` element appearing at grid column *idx*. Raises
+        |ValueError| if no ``w:tc`` element begins at that grid column.
+        """
+        raise NotImplementedError
+
     @property
     def tr_idx(self):
         """
@@ -227,11 +234,14 @@ class CT_Tc(BaseOxmlElement):
 
     def merge(self, other_tc):
         """
-        Return the top-left ``<w:tc>`` element of the span formed by merging
-        the rectangular region defined by using this tc element and
+        Return the top-left ``<w:tc>`` element of a new span formed by
+        merging the rectangular region defined by using this tc element and
         *other_tc* as diagonal corners.
         """
-        raise NotImplementedError
+        top, left, height, width = self._span_dimensions(other_tc)
+        top_tc = self._tbl.tr_lst[top].tc_at_grid_col(left)
+        top_tc._grow_to(width, height)
+        return top_tc
 
     @classmethod
     def new(cls):
@@ -272,6 +282,14 @@ class CT_Tc(BaseOxmlElement):
         tcPr = self.get_or_add_tcPr()
         tcPr.width = value
 
+    def _grow_to(self, width, height, top_tc=None):
+        """
+        Grow this cell to *width* grid columns and *height* rows by expanding
+        horizontal spans and creating continuation cells to form vertical
+        spans.
+        """
+        raise NotImplementedError
+
     def _insert_tcPr(self, tcPr):
         """
         ``tcPr`` has a bunch of successors, but it comes first if it appears,
@@ -283,6 +301,21 @@ class CT_Tc(BaseOxmlElement):
 
     def _new_tbl(self):
         return CT_Tbl.new()
+
+    def _span_dimensions(self, other_tc):
+        """
+        Return a (top, left, height, width) 4-tuple specifying the extents of
+        the merged cell formed by using this tc and *other_tc* as opposite
+        corner extents.
+        """
+        raise NotImplementedError
+
+    @property
+    def _tbl(self):
+        """
+        The tbl element this tc element appears in.
+        """
+        raise NotImplementedError
 
 
 class CT_TcPr(BaseOxmlElement):
