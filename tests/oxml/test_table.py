@@ -14,7 +14,7 @@ from docx.exceptions import InvalidSpanError
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Row, CT_Tc
 
-from ..unitutil.cxml import element
+from ..unitutil.cxml import element, xml
 from ..unitutil.file import snippet_seq
 from ..unitutil.mock import call, instance_mock, method_mock, property_mock
 
@@ -73,6 +73,12 @@ class DescribeCT_Tc(object):
         assert tc._swallow_next_tc.call_args_list == expected_calls
         assert tc.vMerge == vMerge
 
+    def it_can_move_its_content_to_help_merge(self, move_fixture):
+        tc, tc_2, expected_tc_xml, expected_tc_2_xml = move_fixture
+        tc._move_content_to(tc_2)
+        assert tc.xml == expected_tc_xml
+        assert tc_2.xml == expected_tc_2_xml
+
     def it_raises_on_tr_above(self, tr_above_raise_fixture):
         tc = tr_above_raise_fixture
         with pytest.raises(ValueError):
@@ -127,6 +133,27 @@ class DescribeCT_Tc(object):
         _tbl_.return_value.tr_lst = [tr_]
         tr_.tc_at_grid_col.return_value = top_tc_
         return tc, other_tc, tr_, top_tc_, left, height, width
+
+    @pytest.fixture(params=[
+        ('w:tc/w:p',             'w:tc/w:p',
+         'w:tc/w:p',             'w:tc/w:p'),
+        ('w:tc/w:p',             'w:tc/w:p/w:r',
+         'w:tc/w:p',             'w:tc/w:p/w:r'),
+        ('w:tc/w:p/w:r',         'w:tc/w:p',
+         'w:tc/w:p',             'w:tc/w:p/w:r'),
+        ('w:tc/(w:p/w:r,w:sdt)', 'w:tc/w:p',
+         'w:tc/w:p',             'w:tc/(w:p/w:r,w:sdt)'),
+        ('w:tc/(w:p/w:r,w:sdt)', 'w:tc/(w:tbl,w:p)',
+         'w:tc/w:p',             'w:tc/(w:tbl,w:p/w:r,w:sdt)'),
+    ])
+    def move_fixture(self, request):
+        tc_cxml, tc_2_cxml, expected_tc_cxml, expected_tc_2_cxml = (
+            request.param
+        )
+        tc, tc_2 = element(tc_cxml), element(tc_2_cxml)
+        expected_tc_xml = xml(expected_tc_cxml)
+        expected_tc_2_xml = xml(expected_tc_2_cxml)
+        return tc, tc_2, expected_tc_xml, expected_tc_2_xml
 
     @pytest.fixture(params=[
         (0, 0, 0, 0, 1, (0, 0, 1, 2)),

@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from . import parse_xml
 from ..exceptions import InvalidSpanError
-from .ns import nsdecls
+from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
     ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
@@ -254,6 +254,16 @@ class CT_Tc(BaseOxmlElement):
             return 1
         return tcPr.grid_span
 
+    def iter_block_items(self):
+        """
+        Generate a reference to each of the block-level content elements in
+        this cell, in the order they appear.
+        """
+        block_item_tags = (qn('w:p'), qn('w:tbl'), qn('w:sdt'))
+        for child in self:
+            if child.tag in block_item_tags:
+                yield child
+
     @property
     def left(self):
         """
@@ -372,15 +382,51 @@ class CT_Tc(BaseOxmlElement):
         self.insert(0, tcPr)
         return tcPr
 
+    @property
+    def _is_empty(self):
+        """
+        True if this cell contains only a single empty ``<w:p>`` element.
+        """
+        block_items = list(self.iter_block_items())
+        if len(block_items) > 1:
+            return False
+        p = block_items[0]  # cell must include at least one <w:p> element
+        if len(p.r_lst) == 0:
+            return True
+        return False
+
     def _move_content_to(self, other_tc):
         """
         Append the content of this cell to *other_tc*, leaving this cell with
         a single empty ``<w:p>`` element.
         """
-        raise NotImplementedError
+        if other_tc is self:
+            return
+        if self._is_empty:
+            return
+        other_tc._remove_trailing_empty_p()
+        # appending moves each element from self to other_tc
+        for block_element in self.iter_block_items():
+            other_tc.append(block_element)
+        # add back the required minimum single empty <w:p> element
+        self.append(self._new_p())
 
     def _new_tbl(self):
         return CT_Tbl.new()
+
+    def _remove_trailing_empty_p(self):
+        """
+        Remove the last content element from this cell if it is an empty
+        ``<w:p>`` element.
+        """
+        block_items = list(self.iter_block_items())
+        last_content_elm = block_items[-1]
+        if last_content_elm.tag != qn('w:p'):
+            return
+        p = last_content_elm
+        if len(p.r_lst) > 0:
+            return
+        self.remove(p)
 
     def _span_dimensions(self, other_tc):
         """
