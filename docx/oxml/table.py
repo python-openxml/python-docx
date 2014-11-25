@@ -29,7 +29,14 @@ class CT_Row(BaseOxmlElement):
         The ``<w:tc>`` element appearing at grid column *idx*. Raises
         |ValueError| if no ``w:tc`` element begins at that grid column.
         """
-        raise NotImplementedError
+        grid_col = 0
+        for tc in self.tc_lst:
+            if grid_col == idx:
+                return tc
+            grid_col += tc.grid_span
+            if grid_col > idx:
+                raise ValueError('no cell on grid column %d' % idx)
+        raise ValueError('index out of bounds')
 
     @property
     def tr_idx(self):
@@ -207,6 +214,20 @@ class CT_Tc(BaseOxmlElement):
     p = OneOrMore('w:p')
     tbl = OneOrMore('w:tbl')
 
+    @property
+    def bottom(self):
+        """
+        The row index that marks the bottom extent of the vertical span of
+        this cell. This is one greater than the index of the bottom-most row
+        of the span, similar to how a slice of the cell's rows would be
+        specified.
+        """
+        if self.vMerge is not None:
+            tc_below = self._tc_below
+            if tc_below is not None and tc_below.vMerge == ST_Merge.CONTINUE:
+                return tc_below.bottom
+        return self._tr_idx + 1
+
     def clear_content(self):
         """
         Remove all content child elements, preserving the ``<w:tcPr>``
@@ -232,6 +253,13 @@ class CT_Tc(BaseOxmlElement):
             return 1
         return tcPr.grid_span
 
+    @property
+    def left(self):
+        """
+        The grid column index at which this ``<w:tc>`` element appears.
+        """
+        return self._grid_col
+
     def merge(self, other_tc):
         """
         Return the top-left ``<w:tc>`` element of a new span formed by
@@ -254,6 +282,25 @@ class CT_Tc(BaseOxmlElement):
             '  <w:p/>\n'
             '</w:tc>' % nsdecls('w')
         )
+
+    @property
+    def right(self):
+        """
+        The grid column index that marks the right-side extent of the
+        horizontal span of this cell. This is one greater than the index of
+        the right-most column of the span, similar to how a slice of the
+        cell's columns would be specified.
+        """
+        return self._grid_col + self.grid_span
+
+    @property
+    def top(self):
+        """
+        The top-most row index in the vertical span of this cell.
+        """
+        if self.vMerge is None or self.vMerge == ST_Merge.RESTART:
+            return self._tr_idx
+        return self._tc_above.top
 
     @property
     def vMerge(self):
@@ -281,6 +328,16 @@ class CT_Tc(BaseOxmlElement):
     def width(self, value):
         tcPr = self.get_or_add_tcPr()
         tcPr.width = value
+
+    @property
+    def _grid_col(self):
+        """
+        The grid column at which this cell begins.
+        """
+        tr = self._tr
+        idx = tr.tc_lst.index(self)
+        preceding_tcs = tr.tc_lst[:idx]
+        return sum(tc.grid_span for tc in preceding_tcs)
 
     def _grow_to(self, width, height, top_tc=None):
         """
@@ -315,7 +372,63 @@ class CT_Tc(BaseOxmlElement):
         """
         The tbl element this tc element appears in.
         """
-        raise NotImplementedError
+        return self.xpath('./ancestor::w:tbl')[0]
+
+    @property
+    def _tc_above(self):
+        """
+        The `w:tc` element immediately above this one in its grid column.
+        """
+        return self._tr_above.tc_at_grid_col(self._grid_col)
+
+    @property
+    def _tc_below(self):
+        """
+        The tc element immediately below this one in its grid column.
+        """
+        tr_below = self._tr_below
+        if tr_below is None:
+            return None
+        return tr_below.tc_at_grid_col(self._grid_col)
+
+    @property
+    def _tr(self):
+        """
+        The tr element this tc element appears in.
+        """
+        return self.xpath('./ancestor::w:tr')[0]
+
+    @property
+    def _tr_above(self):
+        """
+        The tr element prior in sequence to the tr this cell appears in.
+        Raises |ValueError| if called on a cell in the top-most row.
+        """
+        tr_lst = self._tbl.tr_lst
+        tr_idx = tr_lst.index(self._tr)
+        if tr_idx == 0:
+            raise ValueError('no tr above topmost tr')
+        return tr_lst[tr_idx-1]
+
+    @property
+    def _tr_below(self):
+        """
+        The tr element next in sequence after the tr this cell appears in, or
+        |None| if this cell appears in the last row.
+        """
+        tr_lst = self._tbl.tr_lst
+        tr_idx = tr_lst.index(self._tr)
+        try:
+            return tr_lst[tr_idx+1]
+        except IndexError:
+            return None
+
+    @property
+    def _tr_idx(self):
+        """
+        The row index of the tr element this tc element appears in.
+        """
+        return self._tbl.tr_lst.index(self._tr)
 
 
 class CT_TcPr(BaseOxmlElement):
