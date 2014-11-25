@@ -314,6 +314,11 @@ class CT_Tc(BaseOxmlElement):
             return None
         return tcPr.vMerge_val
 
+    @vMerge.setter
+    def vMerge(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.vMerge_val = value
+
     @property
     def width(self):
         """
@@ -367,6 +372,13 @@ class CT_Tc(BaseOxmlElement):
         self.insert(0, tcPr)
         return tcPr
 
+    def _move_content_to(self, other_tc):
+        """
+        Append the content of this cell to *other_tc*, leaving this cell with
+        a single empty ``<w:p>`` element.
+        """
+        raise NotImplementedError
+
     def _new_tbl(self):
         return CT_Tbl.new()
 
@@ -411,6 +423,21 @@ class CT_Tc(BaseOxmlElement):
         from incorporated cells is appended to *top_tc*. The val attribute of
         the vMerge element on the single remaining cell is set to *vMerge*.
         If *vMerge* is |None|, the vMerge element is removed if present.
+        """
+        self._move_content_to(top_tc)
+        while self.grid_span < grid_width:
+            self._swallow_next_tc(grid_width, top_tc)
+        self.vMerge = vMerge
+
+    def _swallow_next_tc(self, grid_width, top_tc):
+        """
+        Extend the horizontal span of this `w:tc` element to incorporate the
+        following `w:tc` element in the row and then delete that following
+        `w:tc` element. Any content in the following `w:tc` element is
+        appended to the content of *top_tc*. The width of the following
+        `w:tc` element is added to this one, if present. Raises
+        |InvalidSpanError| if the width of the resulting cell is greater than
+        *grid_width* or if there is no next `<w:tc>` element in the row.
         """
         raise NotImplementedError
 
@@ -514,6 +541,12 @@ class CT_TcPr(BaseOxmlElement):
         if vMerge is None:
             return None
         return vMerge.val
+
+    @vMerge_val.setter
+    def vMerge_val(self, value):
+        self._remove_vMerge()
+        if value is not None:
+            self._add_vMerge().val = value
 
     @property
     def width(self):

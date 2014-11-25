@@ -66,6 +66,13 @@ class DescribeCT_Tc(object):
         tc._grow_to(width, height, top_tc)
         assert tc._span_to_width.call_args_list == expected_calls
 
+    def it_can_extend_its_horz_span_to_help_merge(self, span_width_fixture):
+        tc, grid_width, top_tc, vMerge, expected_calls = span_width_fixture
+        tc._span_to_width(grid_width, top_tc, vMerge)
+        tc._move_content_to.assert_called_once_with(top_tc)
+        assert tc._swallow_next_tc.call_args_list == expected_calls
+        assert tc.vMerge == vMerge
+
     def it_raises_on_tr_above(self, tr_above_raise_fixture):
         tc = tr_above_raise_fixture
         with pytest.raises(ValueError):
@@ -154,8 +161,19 @@ class DescribeCT_Tc(object):
         tbl = self._snippet_tbl(snippet_idx)
         tc = tbl.tr_lst[row].tc_lst[col]
         tc_2 = tbl.tr_lst[row_2].tc_lst[col_2]
-        print(tc.top, tc_2.top, tc.bottom, tc_2.bottom)
         return tc, tc_2
+
+    @pytest.fixture
+    def span_width_fixture(
+            self, top_tc_, grid_span_, _move_content_to_, _swallow_next_tc_):
+        tc = element('w:tc')
+        grid_span_.side_effect = [1, 3, 4]
+        grid_width, vMerge = 4, 'continue'
+        expected_calls = [
+            call(grid_width, top_tc_),
+            call(grid_width, top_tc_)
+        ]
+        return tc, grid_width, top_tc_, vMerge, expected_calls
 
     @pytest.fixture(params=[(0, 0, 0), (4, 0, 0)])
     def tr_above_raise_fixture(self, request):
@@ -167,8 +185,16 @@ class DescribeCT_Tc(object):
     # fixture components ---------------------------------------------
 
     @pytest.fixture
+    def grid_span_(self, request):
+        return property_mock(request, CT_Tc, 'grid_span')
+
+    @pytest.fixture
     def _grow_to_(self, request):
         return method_mock(request, CT_Tc, '_grow_to')
+
+    @pytest.fixture
+    def _move_content_to_(self, request):
+        return method_mock(request, CT_Tc, '_move_content_to')
 
     @pytest.fixture
     def _span_dimensions_(self, request):
@@ -184,6 +210,10 @@ class DescribeCT_Tc(object):
         file.
         """
         return parse_xml(snippet_seq('tbl-cells')[idx])
+
+    @pytest.fixture
+    def _swallow_next_tc_(self, request):
+        return method_mock(request, CT_Tc, '_swallow_next_tc')
 
     @pytest.fixture
     def _tbl_(self, request):
