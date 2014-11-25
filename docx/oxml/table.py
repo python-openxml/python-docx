@@ -346,7 +346,17 @@ class CT_Tc(BaseOxmlElement):
         horizontal spans and creating continuation cells to form vertical
         spans.
         """
-        raise NotImplementedError
+        def vMerge_val(top_tc):
+            if top_tc is not self:
+                return ST_Merge.CONTINUE
+            if height == 1:
+                return None
+            return ST_Merge.RESTART
+
+        top_tc = self if top_tc is None else top_tc
+        self._span_to_width(width, top_tc, vMerge_val(top_tc))
+        if height > 1:
+            self._tc_below._grow_to(width, height-1, top_tc)
 
     def _insert_tcPr(self, tcPr):
         """
@@ -390,6 +400,19 @@ class CT_Tc(BaseOxmlElement):
         right = max(self.right, other_tc.right)
 
         return top, left, bottom - top, right - left
+
+    def _span_to_width(self, grid_width, top_tc, vMerge):
+        """
+        Incorporate and then remove `w:tc` elements to the right of this one
+        until this cell spans *grid_width*. Raises |ValueError| if
+        *grid_width* cannot be exactly achieved, such as when a merged cell
+        would drive the span width greater than *grid_width* or if not enough
+        grid columns are available to make this cell that wide. All content
+        from incorporated cells is appended to *top_tc*. The val attribute of
+        the vMerge element on the single remaining cell is set to *vMerge*.
+        If *vMerge* is |None|, the vMerge element is removed if present.
+        """
+        raise NotImplementedError
 
     @property
     def _tbl(self):

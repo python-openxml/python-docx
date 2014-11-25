@@ -16,7 +16,7 @@ from docx.oxml.table import CT_Row, CT_Tc
 
 from ..unitutil.cxml import element
 from ..unitutil.file import snippet_seq
-from ..unitutil.mock import instance_mock, method_mock, property_mock
+from ..unitutil.mock import call, instance_mock, method_mock, property_mock
 
 
 class DescribeCT_Row(object):
@@ -61,6 +61,11 @@ class DescribeCT_Tc(object):
         with pytest.raises(InvalidSpanError):
             tc._span_dimensions(other_tc)
 
+    def it_can_grow_itself_to_help_merge(self, grow_to_fixture):
+        tc, width, height, top_tc, expected_calls = grow_to_fixture
+        tc._grow_to(width, height, top_tc)
+        assert tc._span_to_width.call_args_list == expected_calls
+
     def it_raises_on_tr_above(self, tr_above_raise_fixture):
         tc = tr_above_raise_fixture
         with pytest.raises(ValueError):
@@ -83,6 +88,28 @@ class DescribeCT_Tc(object):
         tbl = self._snippet_tbl(snippet_idx)
         tc = tbl.tr_lst[row].tc_lst[col]
         return tc, attr_name, expected_value
+
+    @pytest.fixture(params=[
+        (0, 0, 0, 2, 1),
+        (0, 0, 1, 1, 2),
+        (0, 1, 1, 2, 2),
+        (1, 0, 0, 2, 2),
+        (2, 0, 0, 2, 2),
+        (2, 1, 2, 1, 2),
+    ])
+    def grow_to_fixture(self, request, _span_to_width_):
+        snippet_idx, row, col, width, height = request.param
+        tbl = self._snippet_tbl(snippet_idx)
+        tc = tbl.tr_lst[row].tc_lst[col]
+        start = 0 if height == 1 else 1
+        end = start + height
+        expected_calls = [
+            call(width, tc, None),
+            call(width, tc, 'restart'),
+            call(width, tc, 'continue'),
+            call(width, tc, 'continue'),
+        ][start:end]
+        return tc, width, height, None, expected_calls
 
     @pytest.fixture
     def merge_fixture(
@@ -146,6 +173,10 @@ class DescribeCT_Tc(object):
     @pytest.fixture
     def _span_dimensions_(self, request):
         return method_mock(request, CT_Tc, '_span_dimensions')
+
+    @pytest.fixture
+    def _span_to_width_(self, request):
+        return method_mock(request, CT_Tc, '_span_to_width')
 
     def _snippet_tbl(self, idx):
         """
