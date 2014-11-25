@@ -7,6 +7,7 @@ Custom element classes for tables
 from __future__ import absolute_import, print_function, unicode_literals
 
 from . import parse_xml
+from ..exceptions import InvalidSpanError
 from .ns import nsdecls
 from ..shared import Emu, Twips
 from .simpletypes import (
@@ -365,7 +366,30 @@ class CT_Tc(BaseOxmlElement):
         the merged cell formed by using this tc and *other_tc* as opposite
         corner extents.
         """
-        raise NotImplementedError
+        def raise_on_inverted_L(a, b):
+            if a.top == b.top and a.bottom != b.bottom:
+                raise InvalidSpanError('requested span not rectangular')
+            if a.left == b.left and a.right != b.right:
+                raise InvalidSpanError('requested span not rectangular')
+
+        def raise_on_tee_shaped(a, b):
+            top_most, other = (a, b) if a.top < b.top else (b, a)
+            if top_most.top < other.top and top_most.bottom > other.bottom:
+                raise InvalidSpanError('requested span not rectangular')
+
+            left_most, other = (a, b) if a.left < b.left else (b, a)
+            if left_most.left < other.left and left_most.right > other.right:
+                raise InvalidSpanError('requested span not rectangular')
+
+        raise_on_inverted_L(self, other_tc)
+        raise_on_tee_shaped(self, other_tc)
+
+        top = min(self.top, other_tc.top)
+        left = min(self.left, other_tc.left)
+        bottom = max(self.bottom, other_tc.bottom)
+        right = max(self.right, other_tc.right)
+
+        return top, left, bottom - top, right - left
 
     @property
     def _tbl(self):
