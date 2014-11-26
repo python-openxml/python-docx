@@ -15,6 +15,7 @@ Table objects are constructed using the ``add_table()`` method on |Document|.
 
 .. autoclass:: Table
    :members:
+   :exclude-members: table
 
 
 |_Cell| objects
