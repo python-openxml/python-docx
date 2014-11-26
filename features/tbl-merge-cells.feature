@@ -3,7 +3,6 @@ Feature: Merge table cells
   As a developer using python-docx
   I need a way to merge a range of cells
 
-  @wip
   Scenario Outline: Merge cells
      Given a 3x3 table having only uniform cells
       When I merge from cell <origin> to cell <other>
@@ -16,7 +15,6 @@ Feature: Merge table cells
       |    5   |   9   | 1 2 3 4 5\6\8\9 5\6\8\9 7 5\6\8\9 5\6\8\9 |
 
 
-  @wip
   Scenario Outline: Merge horizontal span with other cell
      Given a 3x3 table having a horizontal span
       When I merge from cell <origin> to cell <other>
@@ -29,7 +27,6 @@ Feature: Merge table cells
       |    2   |   4   | 1\2\4 1\2\4 3 1\2\4 1\2\4 6 7 8 9 |
 
 
-  @wip
   Scenario Outline: Merge vertical span with other cell
      Given a 3x3 table having a vertical span
       When I merge from cell <origin> to cell <other>
@@ -42,7 +39,6 @@ Feature: Merge table cells
       |    7   |   5   | 1 2 3 4\5\7 4\5\7 6 4\5\7 4\5\7 9 |
 
 
-  @wip
   Scenario Outline: Horizontal span adds cell widths
      Given a 3x3 table having <span-state>
       When I merge from cell <origin> to cell <other>

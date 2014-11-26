@@ -73,6 +73,21 @@ class DescribeCT_Tc(object):
         assert tc._swallow_next_tc.call_args_list == expected_calls
         assert tc.vMerge == vMerge
 
+    def it_can_swallow_the_next_tc_help_merge(self, swallow_fixture):
+        tc, grid_width, top_tc, tr, expected_xml = swallow_fixture
+        tc._swallow_next_tc(grid_width, top_tc)
+        assert tr.xml == expected_xml
+
+    def it_adds_cell_widths_on_swallow(self, add_width_fixture):
+        tc, grid_width, top_tc, tr, expected_xml = add_width_fixture
+        tc._swallow_next_tc(grid_width, top_tc)
+        assert tr.xml == expected_xml
+
+    def it_raises_on_invalid_swallow(self, swallow_raise_fixture):
+        tc, grid_width, top_tc, tr = swallow_raise_fixture
+        with pytest.raises(InvalidSpanError):
+            tc._swallow_next_tc(grid_width, top_tc)
+
     def it_can_move_its_content_to_help_merge(self, move_fixture):
         tc, tc_2, expected_tc_xml, expected_tc_2_xml = move_fixture
         tc._move_content_to(tc_2)
@@ -85,6 +100,32 @@ class DescribeCT_Tc(object):
             tc._tr_above
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        # both cells have a width
+        ('w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p),'
+         'w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))',      0, 2,
+         'w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=2880,w:type=dxa},'
+         'w:gridSpan{w:val=2}),w:p))'),
+        # neither have a width
+        ('w:tr/(w:tc/w:p,w:tc/w:p)',                           0, 2,
+         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
+        # only second one has a width
+        ('w:tr/(w:tc/w:p,'
+         'w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))',      0, 2,
+         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
+        # only first one has a width
+        ('w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p),'
+         'w:tc/w:p)',                                          0, 2,
+         'w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=1440,w:type=dxa},'
+         'w:gridSpan{w:val=2}),w:p))'),
+    ])
+    def add_width_fixture(self, request):
+        tr_cxml, tc_idx, grid_width, expected_tr_cxml = request.param
+        tr = element(tr_cxml)
+        tc = top_tc = tr[tc_idx]
+        expected_tr_xml = xml(expected_tr_cxml)
+        return tc, grid_width, top_tc, tr, expected_tr_xml
 
     @pytest.fixture(params=[
         (0, 0, 0, 'top',    0), (2, 0, 1, 'top',    0),
@@ -201,6 +242,36 @@ class DescribeCT_Tc(object):
             call(grid_width, top_tc_)
         ]
         return tc, grid_width, top_tc_, vMerge, expected_calls
+
+    @pytest.fixture(params=[
+        ('w:tr/(w:tc/w:p,w:tc/w:p)',                              0, 2,
+         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
+        ('w:tr/(w:tc/w:p,w:tc/w:p,w:tc/w:p)',                     1, 2,
+         'w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
+        ('w:tr/(w:tc/w:p/w:r/w:t"a",w:tc/w:p/w:r/w:t"b")',        0, 2,
+         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p/w:r/w:t"a",'
+         'w:p/w:r/w:t"b"))'),
+        ('w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p),w:tc/w:p)', 0, 3,
+         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=3},w:p))'),
+        ('w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))', 0, 3,
+         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=3},w:p))'),
+    ])
+    def swallow_fixture(self, request):
+        tr_cxml, tc_idx, grid_width, expected_tr_cxml = request.param
+        tr = element(tr_cxml)
+        tc = top_tc = tr[tc_idx]
+        expected_tr_xml = xml(expected_tr_cxml)
+        return tc, grid_width, top_tc, tr, expected_tr_xml
+
+    @pytest.fixture(params=[
+        ('w:tr/w:tc/w:p', 0, 2),
+        ('w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))', 0, 2),
+    ])
+    def swallow_raise_fixture(self, request):
+        tr_cxml, tc_idx, grid_width = request.param
+        tr = element(tr_cxml)
+        tc = top_tc = tr[tc_idx]
+        return tc, grid_width, top_tc, tr
 
     @pytest.fixture(params=[(0, 0, 0), (4, 0, 0)])
     def tr_above_raise_fixture(self, request):
