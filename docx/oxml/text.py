@@ -24,7 +24,7 @@ class CT_Br(BaseOxmlElement):
 
 class CT_Jc(BaseOxmlElement):
     """
-    ``<w:ivl>`` element, specifying paragraph justification.
+    ``<w:jc>`` element, specifying paragraph justification.
     """
     val = RequiredAttribute('w:val', WD_ALIGN_PARAGRAPH)
 
