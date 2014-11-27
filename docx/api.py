@@ -73,8 +73,9 @@ class Document(object):
 
     def add_list(self, style='ListParagraph', level=0):
         """
-        Return a list paragraph newly added to the end of the document, having
-        paragraph style *style* and indentation level *level*.
+        Return a helper that implements methods to create a list formed by
+        paragraphs sharing the same numId, added to the end of the document,
+        having paragraph style *style* and indentation level *level*.
         """
         return self._document_part.add_list(style=style, level=level)
 
