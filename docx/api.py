@@ -71,6 +71,13 @@ class Document(object):
         """
         return self._document_part.add_paragraph(text, style)
 
+    def add_list(self, style='ListParagraph', level=0):
+        """
+        Return a list paragraph newly added to the end of the document, having
+        paragraph style *style* and indentation level *level*.
+        """
+        return self._document_part.add_list(style=style, level=level)
+
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """
         Return a new picture shape added in its own paragraph at the end of
@@ -136,6 +143,16 @@ class Document(object):
         marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self._document_part.paragraphs
+
+    @property
+    def lists(self):
+        """
+        A list of |ListParagraph| instances corresponding to the paragraphs
+        grouped in lists, in document order. Note that paragraphs within
+        revision marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this
+        list.
+        """
+        return self._document_part.lists
 
     def save(self, path_or_stream):
         """

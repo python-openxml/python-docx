@@ -45,6 +45,13 @@ class DocumentPart(XmlPart):
         """
         return self.body.add_table(rows, cols)
 
+    def add_list(self, style=None, level=0):
+        """
+        Return a paragraph newly added to the end of the body content and
+        formatted to contain a list.
+        """
+        return self.body.add_list(style=style, level=level)
+
     @lazyproperty
     def body(self):
         """
@@ -94,6 +101,16 @@ class DocumentPart(XmlPart):
         marks such as inserted or deleted do not appear in this list.
         """
         return self.body.paragraphs
+
+    @property
+    def lists(self):
+        """
+        A list of |ListParagraph| instances corresponding to the paragraphs in
+        parts of lists in the document, in document order.
+        Note that list paragraphs within revision marks such as inserted or
+        deleted do not appear in this list.
+        """
+        return self.body.lists
 
     @lazyproperty
     def sections(self):

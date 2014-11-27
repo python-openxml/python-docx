@@ -8,8 +8,11 @@ ones like structured document tags.
 
 from __future__ import absolute_import, print_function
 
+import sys
+import random
 from .shared import Parented
 from .text import Paragraph
+from .list import ListParagraph
 
 
 class BlockItemContainer(Parented):
@@ -22,6 +25,15 @@ class BlockItemContainer(Parented):
     def __init__(self, element, parent):
         super(BlockItemContainer, self).__init__(parent)
         self._element = element
+
+    def generate_numId(self):
+        """
+        Generate a unique numId value on this container.
+        """
+        while True:
+            numId = random.randint(0, 999999)
+            if not len(self._element.xpath("//w:numId[@w:val='%s']" % numId)):
+                return numId
 
     def add_paragraph(self, text='', style=None):
         """
@@ -52,6 +64,19 @@ class BlockItemContainer(Parented):
             table.add_row()
         return table
 
+    def add_list(self, style=None, level=0):
+        """
+        Return a list paragraph newly added to the end of the content in this
+        container, having a paragraph style *style* and an indentation level
+        *level*.
+        """
+        return ListParagraph(
+            self,
+            numId=self.generate_numId(),
+            style=style,
+            level=level,
+        )
+
     @property
     def paragraphs(self):
         """
@@ -59,6 +84,15 @@ class BlockItemContainer(Parented):
         order. Read-only.
         """
         return [Paragraph(p, self) for p in self._element.p_lst]
+
+    @property
+    def lists(self):
+        """
+        A list containing the paragraphs grouped in lists in this container,
+        in document order. Read-only.
+        """
+        nums = [paragraph.numId for paragraph in self.paragraphs]
+        return [ListParagraph(self, numId) for numId in set(filter(bool, nums))]
 
     @property
     def tables(self):

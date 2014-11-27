@@ -63,6 +63,13 @@ class Paragraph(Parented):
         super(Paragraph, self).__init__(parent)
         self._p = p
 
+        # XPath: w:p/w:pPr/w:numPr
+        numPr = p.get_or_add_pPr().get_or_add_numPr()
+        # XPath: w:p/w:pPr/w:numPr/w:ilvl
+        self._ilvl = numPr.get_or_add_ilvl()
+        # XPath: w:p/w:pPr/w:numPr/w:numId
+        self._numId = numPr.get_or_add_numId()
+
     def add_run(self, text=None, style=None):
         """
         Append a run to this paragraph containing *text* and having character
@@ -79,6 +86,34 @@ class Paragraph(Parented):
         if style:
             run.style = style
         return run
+
+    @property
+    def numId(self):
+        """
+        Return the numId of the parent list.
+        """
+        return self._numId.val
+
+    @numId.setter
+    def numId(self, numId):
+        """
+        Set the numId of the parent list.
+        """
+        self._numId.val = numId
+
+    @property
+    def level(self):
+        """
+        Return the indentation level of the parent list.
+        """
+        return self._ilvl.val
+
+    @level.setter
+    def level(self, lvl):
+        """
+        Set the indentation level of the parent list.
+        """
+        self._ilvl.val = lvl
 
     @property
     def alignment(self):
