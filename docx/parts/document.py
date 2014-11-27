@@ -47,8 +47,10 @@ class DocumentPart(XmlPart):
 
     def add_list(self, style=None, level=0):
         """
-        Return a paragraph newly added to the end of the body content and
-        formatted to contain a list.
+        Return a helper that provides methods to add paragraphs to the end of
+        the body content, grouped together as a list. The paragraphs will by
+        default have their paragraph style set to *style*, and their indentation
+        level set to *level*.
         """
         return self.body.add_list(style=style, level=level)
 
@@ -105,8 +107,8 @@ class DocumentPart(XmlPart):
     @property
     def lists(self):
         """
-        A list of |ListParagraph| instances corresponding to the paragraphs in
-        parts of lists in the document, in document order.
+        A list of |ListParagraph| instances corresponding to lists formed by
+        paragraphs sharing the same numId in the document, in document order.
         Note that list paragraphs within revision marks such as inserted or
         deleted do not appear in this list.
         """
