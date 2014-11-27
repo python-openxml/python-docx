@@ -24,7 +24,7 @@ class CT_Br(BaseOxmlElement):
 
 class CT_Jc(BaseOxmlElement):
     """
-    ``<w:jc>`` element, specifying paragraph justification.
+    ``<w:ivl>`` element, specifying paragraph justification.
     """
     val = RequiredAttribute('w:val', WD_ALIGN_PARAGRAPH)
 
@@ -165,6 +165,13 @@ class CT_PPr(BaseOxmlElement):
         pStyle = self.get_or_add_pStyle()
         pStyle.val = style
 
+
+class CT_NumPr(BaseOxmlElement):
+    """
+    ``<w:numPr>`` element, containing properties useful for lists.
+    """
+    numId = ZeroOrOne('w:numId')
+    ilvl = ZeroOrOne('w:ilvl')
 
 class CT_R(BaseOxmlElement):
     """

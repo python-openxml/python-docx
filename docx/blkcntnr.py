@@ -91,8 +91,9 @@ class BlockItemContainer(Parented):
         A list containing the paragraphs grouped in lists in this container,
         in document order. Read-only.
         """
-        nums = [paragraph.numId for paragraph in self.paragraphs]
-        return [ListParagraph(self, numId) for numId in set(filter(bool, nums))]
+        nums = [paragraph.numId for paragraph in self.paragraphs
+                if paragraph.numId is not None]
+        return [ListParagraph(self, numId) for numId in set(nums)]
 
     @property
     def tables(self):
