@@ -447,7 +447,7 @@ class Describe_Column(object):
 
     @pytest.fixture
     def cells_fixture(self, _index_, table_prop_, table_):
-        column = _Column(None, None, None)
+        column = _Column(None, None)
         _index_.return_value = column_idx = 4
         expected_cells = (3, 2, 1)
         table_.column_cells.return_value = list(expected_cells)
@@ -457,12 +457,12 @@ class Describe_Column(object):
     def index_fixture(self):
         tbl = element('w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)')
         gridCol, expected_idx = tbl.tblGrid[1], 1
-        column = _Column(gridCol, tbl, None)
+        column = _Column(gridCol, None)
         return column, expected_idx
 
     @pytest.fixture
     def table_fixture(self, parent_, table_):
-        column = _Column(None, None, parent_)
+        column = _Column(None, parent_)
         parent_.table = table_
         return column, table_
 
@@ -476,7 +476,7 @@ class Describe_Column(object):
     ])
     def width_get_fixture(self, request):
         gridCol_cxml, expected_width = request.param
-        column = _Column(element(gridCol_cxml), None, None)
+        column = _Column(element(gridCol_cxml), None)
         return column, expected_width
 
     @pytest.fixture(params=[
@@ -487,7 +487,7 @@ class Describe_Column(object):
     ])
     def width_set_fixture(self, request):
         gridCol_cxml, new_value, expected_cxml = request.param
-        column = _Column(element(gridCol_cxml), None, None)
+        column = _Column(element(gridCol_cxml), None)
         expected_xml = xml(expected_cxml)
         return column, new_value, expected_xml
 
