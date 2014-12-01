@@ -11,6 +11,7 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
+from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.shared import Inches
 from docx.table import _Column, _Columns, _Row, _Rows
 
@@ -75,6 +76,19 @@ def given_a_table_having_a_width_of_width_desc(context, width_desc):
     context.column = document.tables[0].columns[col_idx]
 
 
+@given('a table having {alignment} alignment')
+def given_a_table_having_alignment_alignment(context, alignment):
+    table_idx = {
+        'inherited': 3,
+        'left':      4,
+        'right':     5,
+        'center':    6,
+    }[alignment]
+    docx_path = test_docx('tbl-props')
+    document = Document(docx_path)
+    context.table_ = document.tables[table_idx]
+
+
 @given('a table having an applied style')
 def given_a_table_having_an_applied_style(context):
     docx_path = test_docx('tbl-having-applied-style')
@@ -127,6 +141,18 @@ def when_add_row_to_table(context):
 def when_apply_style_to_table(context):
     table = context.table_
     table.style = 'LightShading-Accent1'
+
+
+@when('I assign {value_str} to table.alignment')
+def when_I_assign_value_to_table_alignment(context, value_str):
+    value = {
+        'None':                      None,
+        'WD_TABLE_ALIGNMENT.LEFT':   WD_TABLE_ALIGNMENT.LEFT,
+        'WD_TABLE_ALIGNMENT.RIGHT':  WD_TABLE_ALIGNMENT.RIGHT,
+        'WD_TABLE_ALIGNMENT.CENTER': WD_TABLE_ALIGNMENT.CENTER,
+    }[value_str]
+    table = context.table_
+    table.alignment = value
 
 
 @when('I merge from cell {origin} to cell {other}')
@@ -216,6 +242,18 @@ def then_can_iterate_over_row_collection(context):
         actual_count += 1
         assert isinstance(row, _Row)
     assert actual_count == 2
+
+
+@then('table.alignment is {value_str}')
+def then_table_alignment_is_value(context, value_str):
+    value = {
+        'None':                      None,
+        'WD_TABLE_ALIGNMENT.LEFT':   WD_TABLE_ALIGNMENT.LEFT,
+        'WD_TABLE_ALIGNMENT.RIGHT':  WD_TABLE_ALIGNMENT.RIGHT,
+        'WD_TABLE_ALIGNMENT.CENTER': WD_TABLE_ALIGNMENT.CENTER,
+    }[value_str]
+    table = context.table_
+    assert table.alignment == value, 'got %s' % table.alignment
 
 
 @then('table.cell({row}, {col}).text is {expected_text}')

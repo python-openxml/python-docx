@@ -4,6 +4,33 @@ Feature: Get and set table properties
   I need a way to get and set a table's properties
 
 
+  @wip
+  Scenario Outline: Determine table alignment
+    Given a table having <alignment> alignment
+     Then table.alignment is <value>
+
+    Examples: table alignment settings
+      | alignment | value                     |
+      | inherited | None                      |
+      | left      | WD_TABLE_ALIGNMENT.LEFT   |
+      | right     | WD_TABLE_ALIGNMENT.RIGHT  |
+      | center    | WD_TABLE_ALIGNMENT.CENTER |
+
+
+  @wip
+  Scenario Outline: Set table alignment
+    Given a table having <alignment> alignment
+     When I assign <value> to table.alignment
+     Then table.alignment is <value>
+
+    Examples: results of assignment to table.alignment
+      | alignment | value                     |
+      | inherited | WD_TABLE_ALIGNMENT.LEFT   |
+      | left      | WD_TABLE_ALIGNMENT.RIGHT  |
+      | right     | WD_TABLE_ALIGNMENT.CENTER |
+      | center    | None                      |
+
+
   Scenario Outline: Get autofit layout setting
     Given a table having an autofit layout of <autofit-setting>
      Then the reported autofit setting is <reported-autofit>

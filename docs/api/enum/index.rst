@@ -11,4 +11,5 @@ can be found here:
    WdAlignParagraph
    WdOrientation
    WdSectionStart
+   WdRowAlignment
    WdUnderline
