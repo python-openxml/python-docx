@@ -23,6 +23,33 @@ from .unitutil.mock import instance_mock, property_mock
 
 class DescribeTable(object):
 
+    def it_knows_whether_it_should_autofit(self, autofit_get_fixture):
+        table, expected_value = autofit_get_fixture
+        assert table.autofit is expected_value
+
+    def it_can_change_its_autofit_setting(self, autofit_set_fixture):
+        table, new_value, expected_xml = autofit_set_fixture
+        table.autofit = new_value
+        assert table._tbl.xml == expected_xml
+
+    def it_knows_its_table_style(self, table_style_get_fixture):
+        table, style = table_style_get_fixture
+        assert table.style == style
+
+    def it_can_apply_a_table_style_by_name(self, table_style_set_fixture):
+        table, style_name, expected_xml = table_style_set_fixture
+        table.style = style_name
+        assert table._tbl.xml == expected_xml
+
+    def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
+        table = table_fixture
+        assert table.table is table
+
+    def it_knows_its_column_count_to_help(self, column_count_fixture):
+        table, expected_value = column_count_fixture
+        column_count = table._column_count
+        assert column_count == expected_value
+
     def it_provides_access_to_the_table_rows(self, table):
         rows = table.rows
         assert isinstance(rows, _Rows)
@@ -63,33 +90,6 @@ class DescribeTable(object):
         assert table._tbl.xml == expected_xml
         assert isinstance(column, _Column)
         assert column._gridCol is table._tbl.tblGrid.gridCol_lst[1]
-
-    def it_knows_its_table_style(self, table_style_get_fixture):
-        table, style = table_style_get_fixture
-        assert table.style == style
-
-    def it_can_apply_a_table_style_by_name(self, table_style_set_fixture):
-        table, style_name, expected_xml = table_style_set_fixture
-        table.style = style_name
-        assert table._tbl.xml == expected_xml
-
-    def it_knows_whether_it_should_autofit(self, autofit_get_fixture):
-        table, expected_value = autofit_get_fixture
-        assert table.autofit is expected_value
-
-    def it_can_change_its_autofit_setting(self, autofit_set_fixture):
-        table, new_value, expected_xml = autofit_set_fixture
-        table.autofit = new_value
-        assert table._tbl.xml == expected_xml
-
-    def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
-        table = table_fixture
-        assert table.table is table
-
-    def it_knows_its_column_count_to_help(self, column_count_fixture):
-        table, expected_value = column_count_fixture
-        column_count = table._column_count
-        assert column_count == expected_value
 
     def it_provides_access_to_its_cells_to_help(self, cells_fixture):
         table, cell_count, unique_count, matches = cells_fixture
