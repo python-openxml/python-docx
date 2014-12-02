@@ -40,6 +40,16 @@ class Table(Parented):
         return _Row(tr, self)
 
     @property
+    def alignment(self):
+        """
+        Read/write. A member of :ref:`WdRowAlignment` or None, specifying the
+        positioning of this table between the page margins. |None| if no
+        setting is specified, causing the effective value to be inherited
+        from the style hierarchy.
+        """
+        return self._tblPr.alignment
+
+    @property
     def autofit(self):
         """
         |True| if column widths can be automatically adjusted to improve the

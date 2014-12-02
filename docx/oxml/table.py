@@ -134,16 +134,29 @@ class CT_TblPr(BaseOxmlElement):
     ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
     define table properties such as style and borders.
     """
-    tblStyle = ZeroOrOne('w:tblStyle', successors=(
-        'w:tblpPr', 'w:tblOverlap', 'w:bidiVisual', 'w:tblStyleRowBandSize',
-        'w:tblStyleColBandSize', 'w:tblW', 'w:jc', 'w:tblCellSpacing',
-        'w:tblInd', 'w:tblBorders', 'w:shd', 'w:tblLayout', 'w:tblCellMar',
-        'w:tblLook', 'w:tblCaption', 'w:tblDescription', 'w:tblPrChange'
-    ))
-    tblLayout = ZeroOrOne('w:tblLayout', successors=(
+    _tag_seq = (
+        'w:tblStyle', 'w:tblpPr', 'w:tblOverlap', 'w:bidiVisual',
+        'w:tblStyleRowBandSize', 'w:tblStyleColBandSize', 'w:tblW', 'w:jc',
+        'w:tblCellSpacing', 'w:tblInd', 'w:tblBorders', 'w:shd',
         'w:tblLayout', 'w:tblCellMar', 'w:tblLook', 'w:tblCaption',
         'w:tblDescription', 'w:tblPrChange'
-    ))
+    )
+    tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
+    jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
+    tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    del _tag_seq
+
+    @property
+    def alignment(self):
+        """
+        Member of :ref:`WdRowAlignment` enumeration or |None|, based on the
+        contents of the `w:val` attribute of `./w:jc`. |None| if no `w:jc`
+        element is present.
+        """
+        jc = self.jc
+        if jc is None:
+            return None
+        return jc.val
 
     @property
     def autofit(self):

@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.shared import Inches
@@ -22,6 +23,10 @@ from .unitutil.mock import instance_mock, property_mock
 
 
 class DescribeTable(object):
+
+    def it_knows_its_alignment_setting(self, alignment_get_fixture):
+        table, expected_value = alignment_get_fixture
+        assert table.alignment == expected_value
 
     def it_knows_whether_it_should_autofit(self, autofit_get_fixture):
         table, expected_value = autofit_get_fixture
@@ -116,6 +121,17 @@ class DescribeTable(object):
         table = Table(tbl, None)
         expected_xml = _tbl_bldr(rows=2, cols=2).xml()
         return table, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr',                    None),
+        ('w:tbl/w:tblPr/w:jc{w:val=center}', WD_TABLE_ALIGNMENT.CENTER),
+        ('w:tbl/w:tblPr/w:jc{w:val=right}',  WD_TABLE_ALIGNMENT.RIGHT),
+        ('w:tbl/w:tblPr/w:jc{w:val=left}',   WD_TABLE_ALIGNMENT.LEFT),
+    ])
+    def alignment_get_fixture(self, request):
+        tbl_cxml, expected_value = request.param
+        table = Table(element(tbl_cxml), None)
+        return table, expected_value
 
     @pytest.fixture(params=[
         ('w:tbl/w:tblPr',                             True),

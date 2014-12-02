@@ -4,7 +4,6 @@ Feature: Get and set table properties
   I need a way to get and set a table's properties
 
 
-  @wip
   Scenario Outline: Determine table alignment
     Given a table having <alignment> alignment
      Then table.alignment is <value>
