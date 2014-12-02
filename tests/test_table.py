@@ -28,6 +28,11 @@ class DescribeTable(object):
         table, expected_value = alignment_get_fixture
         assert table.alignment == expected_value
 
+    def it_can_change_its_alignment_setting(self, alignment_set_fixture):
+        table, new_value, expected_xml = alignment_set_fixture
+        table.alignment = new_value
+        assert table._tbl.xml == expected_xml
+
     def it_knows_whether_it_should_autofit(self, autofit_get_fixture):
         table, expected_value = autofit_get_fixture
         assert table.autofit is expected_value
@@ -132,6 +137,20 @@ class DescribeTable(object):
         tbl_cxml, expected_value = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr', WD_TABLE_ALIGNMENT.LEFT,
+         'w:tbl/w:tblPr/w:jc{w:val=left}'),
+        ('w:tbl/w:tblPr/w:jc{w:val=left}', WD_TABLE_ALIGNMENT.RIGHT,
+         'w:tbl/w:tblPr/w:jc{w:val=right}'),
+        ('w:tbl/w:tblPr/w:jc{w:val=right}', None,
+         'w:tbl/w:tblPr'),
+    ])
+    def alignment_set_fixture(self, request):
+        tbl_cxml, new_value, expected_tbl_cxml = request.param
+        table = Table(element(tbl_cxml), None)
+        expected_xml = xml(expected_tbl_cxml)
+        return table, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:tbl/w:tblPr',                             True),

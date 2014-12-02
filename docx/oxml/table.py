@@ -158,6 +158,14 @@ class CT_TblPr(BaseOxmlElement):
             return None
         return jc.val
 
+    @alignment.setter
+    def alignment(self, value):
+        self._remove_jc()
+        if value is None:
+            return
+        jc = self.get_or_add_jc()
+        jc.val = value
+
     @property
     def autofit(self):
         """

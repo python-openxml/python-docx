@@ -16,7 +16,6 @@ Feature: Get and set table properties
       | center    | WD_TABLE_ALIGNMENT.CENTER |
 
 
-  @wip
   Scenario Outline: Set table alignment
     Given a table having <alignment> alignment
      When I assign <value> to table.alignment

@@ -49,6 +49,10 @@ class Table(Parented):
         """
         return self._tblPr.alignment
 
+    @alignment.setter
+    def alignment(self, value):
+        self._tblPr.alignment = value
+
     @property
     def autofit(self):
         """
