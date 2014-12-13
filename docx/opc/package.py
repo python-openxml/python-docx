@@ -35,6 +35,14 @@ class OpcPackage(object):
         # subclass
         pass
 
+    @property
+    def core_properties(self):
+        """
+        |CoreProperties| object providing read/write access to the Dublin
+        Core properties for this document.
+        """
+        raise NotImplementedError
+
     def iter_rels(self):
         """
         Generate exactly one reference to each relationship in the package by

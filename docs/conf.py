@@ -77,6 +77,8 @@ rst_epilog = """
 
 .. |_Columns| replace:: :class:`_Columns`
 
+.. |CoreProperties| replace:: :class:`.CoreProperties`
+
 .. |Document| replace:: :class:`.Document`
 
 .. |docx| replace:: ``python-docx``

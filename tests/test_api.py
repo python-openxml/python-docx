@@ -13,6 +13,7 @@ import pytest
 from docx.api import Document
 from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
+from docx.opc.coreprops import CoreProperties
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
@@ -131,6 +132,11 @@ class DescribeDocument(object):
         document.save(file_)
         package_.save.assert_called_once_with(file_)
 
+    def it_provides_access_to_the_core_properties(self, core_props_fixture):
+        document, core_properties_ = core_props_fixture
+        core_properties = document.core_properties
+        assert core_properties is core_properties_
+
     def it_provides_access_to_the_numbering_part(self, num_part_get_fixture):
         document, document_part_, numbering_part_ = num_part_get_fixture
         numbering_part = document.numbering_part
@@ -215,6 +221,11 @@ class DescribeDocument(object):
         )
 
     @pytest.fixture
+    def core_props_fixture(self, document, core_properties_):
+        document._package.core_properties = core_properties_
+        return document, core_properties_
+
+    @pytest.fixture
     def init_fixture(self, docx_, open_):
         return docx_, open_
 
@@ -248,6 +259,10 @@ class DescribeDocument(object):
         return method_mock(
             request, Document, 'add_paragraph', return_value=paragraph_
         )
+
+    @pytest.fixture
+    def core_properties_(self, request):
+        return instance_mock(request, CoreProperties)
 
     @pytest.fixture
     def default_docx_(self, request):
