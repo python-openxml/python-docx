@@ -10,6 +10,7 @@ Feature Analysis
 .. toctree::
    :maxdepth: 1
 
+   features/coreprops
    features/cell-merge
    features/table
    features/table-props
