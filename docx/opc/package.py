@@ -41,7 +41,7 @@ class OpcPackage(object):
         |CoreProperties| object providing read/write access to the Dublin
         Core properties for this document.
         """
-        raise NotImplementedError
+        return self._core_properties_part.core_properties
 
     def iter_rels(self):
         """
@@ -158,6 +158,14 @@ class OpcPackage(object):
         for part in self.parts:
             part.before_marshal()
         PackageWriter.write(pkg_file, self.rels, self.parts)
+
+    @property
+    def _core_properties_part(self):
+        """
+        |CorePropertiesPart| object related to this package. Creates
+        a default core properties part if one is not present (not common).
+        """
+        raise NotImplementedError
 
 
 class Part(object):

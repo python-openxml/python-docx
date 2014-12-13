@@ -8,19 +8,22 @@ from __future__ import absolute_import
 
 import pytest
 
+from docx.opc.coreprops import CoreProperties
 from docx.opc.oxml import CT_Relationships
 from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.package import (
     OpcPackage, Part, PartFactory, _Relationship, Relationships,
     Unmarshaller, XmlPart
 )
+from docx.opc.parts.coreprops import CorePropertiesPart
 from docx.opc.pkgreader import PackageReader
 from docx.oxml.xmlchemy import BaseOxmlElement
 
 from ..unitutil.cxml import element
 from ..unitutil.mock import (
     call, class_mock, cls_attr_mock, function_mock, initializer_mock,
-    instance_mock, loose_mock, method_mock, Mock, patch, PropertyMock
+    instance_mock, loose_mock, method_mock, Mock, patch, PropertyMock,
+    property_mock
 )
 
 
@@ -113,7 +116,52 @@ class DescribeOpcPackage(object):
             pkg_file_, pkg._rels, parts_
         )
 
+    def it_provides_access_to_the_core_properties(self, core_props_fixture):
+        opc_package, core_properties_ = core_props_fixture
+        core_properties = opc_package.core_properties
+        assert core_properties is core_properties_
+
     # fixtures ---------------------------------------------
+
+    @pytest.fixture
+    def core_props_fixture(
+            self, _core_properties_part_prop_, core_properties_part_,
+            core_properties_):
+        opc_package = OpcPackage()
+        _core_properties_part_prop_.return_value = core_properties_part_
+        core_properties_part_.core_properties = core_properties_
+        return opc_package, core_properties_
+
+    @pytest.fixture
+    def relate_to_part_fixture_(self, request, pkg, rels_, reltype):
+        rId = 'rId99'
+        rel_ = instance_mock(request, _Relationship, name='rel_', rId=rId)
+        rels_.get_or_add.return_value = rel_
+        pkg._rels = rels_
+        part_ = instance_mock(request, Part, name='part_')
+        return pkg, part_, reltype, rId
+
+    @pytest.fixture
+    def related_part_fixture_(self, request, rels_, reltype):
+        related_part_ = instance_mock(request, Part, name='related_part_')
+        rels_.part_with_reltype.return_value = related_part_
+        pkg = OpcPackage()
+        pkg._rels = rels_
+        return pkg, reltype, related_part_
+
+    # fixture components -----------------------------------
+
+    @pytest.fixture
+    def core_properties_(self, request):
+        return instance_mock(request, CoreProperties)
+
+    @pytest.fixture
+    def core_properties_part_(self, request):
+        return instance_mock(request, CorePropertiesPart)
+
+    @pytest.fixture
+    def _core_properties_part_prop_(self, request):
+        return property_mock(request, OpcPackage, '_core_properties_part')
 
     @pytest.fixture
     def PackageReader_(self, request):
@@ -170,23 +218,6 @@ class DescribeOpcPackage(object):
         target_ = instance_mock(request, Part, name='target_')
         rId = 'rId99'
         return reltype, target_, rId
-
-    @pytest.fixture
-    def relate_to_part_fixture_(self, request, pkg, rels_, reltype):
-        rId = 'rId99'
-        rel_ = instance_mock(request, _Relationship, name='rel_', rId=rId)
-        rels_.get_or_add.return_value = rel_
-        pkg._rels = rels_
-        part_ = instance_mock(request, Part, name='part_')
-        return pkg, part_, reltype, rId
-
-    @pytest.fixture
-    def related_part_fixture_(self, request, rels_, reltype):
-        related_part_ = instance_mock(request, Part, name='related_part_')
-        rels_.part_with_reltype.return_value = related_part_
-        pkg = OpcPackage()
-        pkg._rels = rels_
-        return pkg, reltype, related_part_
 
     @pytest.fixture
     def rels_(self, request):
