@@ -10,6 +10,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .constants import RELATIONSHIP_TYPE as RT
 from .packuri import PACKAGE_URI
 from .part import PartFactory
+from .parts.coreprops import CorePropertiesPart
 from .pkgreader import PackageReader
 from .pkgwriter import PackageWriter
 from .rel import Relationships
@@ -164,7 +165,12 @@ class OpcPackage(object):
         |CorePropertiesPart| object related to this package. Creates
         a default core properties part if one is not present (not common).
         """
-        raise NotImplementedError
+        try:
+            return self.part_related_by(RT.CORE_PROPERTIES)
+        except KeyError:
+            core_properties_part = CorePropertiesPart.default(self)
+            self.relate_to(core_properties_part, RT.CORE_PROPERTIES)
+            return core_properties_part
 
 
 class Unmarshaller(object):

@@ -8,6 +8,7 @@ from __future__ import absolute_import
 
 import pytest
 
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.opc.package import OpcPackage, Unmarshaller
 from docx.opc.packuri import PACKAGE_URI
@@ -116,6 +117,26 @@ class DescribeOpcPackage(object):
         core_properties = opc_package.core_properties
         assert core_properties is core_properties_
 
+    def it_provides_access_to_the_core_properties_part_to_help(
+            self, core_props_part_fixture):
+        opc_package, core_properties_part_ = core_props_part_fixture
+        core_properties_part = opc_package._core_properties_part
+        assert core_properties_part is core_properties_part_
+
+    def it_creates_a_default_core_props_part_if_none_present(
+            self, default_core_props_fixture):
+        opc_package, CorePropertiesPart_, core_properties_part_ = (
+            default_core_props_fixture
+        )
+
+        core_properties_part = opc_package._core_properties_part
+
+        CorePropertiesPart_.default.assert_called_once_with(opc_package)
+        opc_package.relate_to.assert_called_once_with(
+            core_properties_part_, RT.CORE_PROPERTIES
+        )
+        assert core_properties_part is core_properties_part_
+
     # fixtures ---------------------------------------------
 
     @pytest.fixture
@@ -126,6 +147,22 @@ class DescribeOpcPackage(object):
         _core_properties_part_prop_.return_value = core_properties_part_
         core_properties_part_.core_properties = core_properties_
         return opc_package, core_properties_
+
+    @pytest.fixture
+    def core_props_part_fixture(
+            self, part_related_by_, core_properties_part_):
+        opc_package = OpcPackage()
+        part_related_by_.return_value = core_properties_part_
+        return opc_package, core_properties_part_
+
+    @pytest.fixture
+    def default_core_props_fixture(
+            self, part_related_by_, CorePropertiesPart_, relate_to_,
+            core_properties_part_):
+        opc_package = OpcPackage()
+        part_related_by_.side_effect = KeyError
+        CorePropertiesPart_.default.return_value = core_properties_part_
+        return opc_package, CorePropertiesPart_, core_properties_part_
 
     @pytest.fixture
     def relate_to_part_fixture_(self, request, pkg, rels_, reltype):
@@ -145,6 +182,10 @@ class DescribeOpcPackage(object):
         return pkg, reltype, related_part_
 
     # fixture components -----------------------------------
+
+    @pytest.fixture
+    def CorePropertiesPart_(self, request):
+        return class_mock(request, 'docx.opc.package.CorePropertiesPart')
 
     @pytest.fixture
     def core_properties_(self, request):
@@ -169,6 +210,10 @@ class DescribeOpcPackage(object):
     @pytest.fixture
     def PartFactory_(self, request):
         return class_mock(request, 'docx.opc.package.PartFactory')
+
+    @pytest.fixture
+    def part_related_by_(self, request):
+        return method_mock(request, OpcPackage, 'part_related_by')
 
     @pytest.fixture
     def parts(self, request, parts_):
@@ -213,6 +258,10 @@ class DescribeOpcPackage(object):
         target_ = instance_mock(request, Part, name='target_')
         rId = 'rId99'
         return reltype, target_, rId
+
+    @pytest.fixture
+    def relate_to_(self, request):
+        return method_mock(request, OpcPackage, 'relate_to')
 
     @pytest.fixture
     def rels_(self, request):

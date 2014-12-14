@@ -16,6 +16,14 @@ class CorePropertiesPart(XmlPart):
     Corresponds to part named ``/docProps/core.xml``, containing the core
     document properties for this document package.
     """
+    @classmethod
+    def default(cls, package):
+        """
+        Return a new |CorePropertiesPart| object initialized with default
+        values for its base properties.
+        """
+        raise NotImplementedError
+
     @property
     def core_properties(self):
         """
