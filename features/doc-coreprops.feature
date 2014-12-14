@@ -16,7 +16,6 @@ Feature: Read and write core document properties
       Then the core property values match the new values
 
 
-  @wip
   Scenario: a default core properties part is added if doc doesn't have one
      Given a document having no core properties part
       When I access the core properties object

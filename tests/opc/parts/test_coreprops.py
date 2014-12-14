@@ -8,6 +8,8 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from datetime import datetime, timedelta
+
 import pytest
 
 from docx.opc.coreprops import CoreProperties
@@ -24,6 +26,17 @@ class DescribeCorePropertiesPart(object):
         core_properties = core_properties_part.core_properties
         CoreProperties_.assert_called_once_with(core_properties_part.element)
         assert isinstance(core_properties, CoreProperties)
+
+    def it_can_create_a_default_core_properties_part(self):
+        core_properties_part = CorePropertiesPart.default(None)
+        assert isinstance(core_properties_part, CorePropertiesPart)
+        core_properties = core_properties_part.core_properties
+        assert core_properties.title == 'Word Document'
+        assert core_properties.last_modified_by == 'python-docx'
+        assert core_properties.revision == 1
+        delta = datetime.utcnow() - core_properties.modified
+        max_expected_delta = timedelta(seconds=2)
+        assert delta < max_expected_delta
 
     # fixtures ---------------------------------------------
 

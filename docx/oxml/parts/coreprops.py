@@ -12,7 +12,8 @@ import re
 
 from datetime import datetime, timedelta
 
-from ..ns import qn
+from .. import parse_xml
+from ..ns import nsdecls, qn
 from ..xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
@@ -39,6 +40,19 @@ class CT_CoreProperties(BaseOxmlElement):
     subject = ZeroOrOne('dc:subject', successors=())
     title = ZeroOrOne('dc:title', successors=())
     version = ZeroOrOne('cp:version', successors=())
+
+    _coreProperties_tmpl = (
+        '<cp:coreProperties %s/>\n' % nsdecls('cp', 'dc', 'dcterms')
+    )
+
+    @classmethod
+    def new(cls):
+        """
+        Return a new ``<cp:coreProperties>`` element
+        """
+        xml = cls._coreProperties_tmpl
+        coreProperties = parse_xml(xml)
+        return coreProperties
 
     @property
     def author_text(self):
