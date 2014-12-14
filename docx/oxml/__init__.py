@@ -64,9 +64,9 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # custom element class mappings
 # ===========================================================================
 
-from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
+from .shared import CT_DecimalNumber, CT_OnOff, CT_String
 
-from docx.oxml.shape import (
+from .shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
     CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
     CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
@@ -87,11 +87,11 @@ register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 
-from docx.oxml.parts.document import CT_Body, CT_Document
+from .parts.document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
-from docx.oxml.parts.numbering import (
+from .parts.numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
 )
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
@@ -103,17 +103,17 @@ register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
 
-from docx.oxml.parts.styles import CT_Style, CT_Styles
+from .parts.styles import CT_Style, CT_Styles
 register_element_cls('w:style',  CT_Style)
 register_element_cls('w:styles', CT_Styles)
 
-from docx.oxml.section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
+from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
 register_element_cls('w:pgMar',  CT_PageMar)
 register_element_cls('w:pgSz',   CT_PageSz)
 register_element_cls('w:sectPr', CT_SectPr)
 register_element_cls('w:type',   CT_SectType)
 
-from docx.oxml.table import (
+from .table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
     CT_TblWidth, CT_Tc, CT_TcPr, CT_VMerge
 )
@@ -130,7 +130,7 @@ register_element_cls('w:tcW',       CT_TblWidth)
 register_element_cls('w:tr',        CT_Row)
 register_element_cls('w:vMerge',    CT_VMerge)
 
-from docx.oxml.text import (
+from .text import (
     CT_Br, CT_Jc, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
 )
 register_element_cls('w:b',          CT_OnOff)
