@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+0.7.6 (2014-12-14)
+++++++++++++++++++
+
+- Add feature #69: Table.alignment
+- Add feature #29: Document.core_properties
+
+
 0.7.5 (2014-11-29)
 ++++++++++++++++++
 
