@@ -11,8 +11,8 @@ from __future__ import (
 import pytest
 
 from docx.opc.oxml import CT_Relationships
-from docx.opc.package import Part
 from docx.opc.packuri import PackURI
+from docx.opc.part import Part
 from docx.opc.rel import _Relationship, Relationships
 
 from ..unitutil.mock import (

@@ -7,8 +7,8 @@ Test suite for opc.pkgwriter module
 import pytest
 
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.opc.package import Part
 from docx.opc.packuri import PackURI
+from docx.opc.part import Part
 from docx.opc.phys_pkg import _ZipPkgWriter
 from docx.opc.pkgwriter import _ContentTypesItem, PackageWriter
 

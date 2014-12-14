@@ -8,7 +8,7 @@ __version__ = '0.7.5'
 # register custom Part classes with opc package reader
 
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
-from docx.opc.package import PartFactory
+from docx.opc.part import PartFactory
 
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart

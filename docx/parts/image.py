@@ -11,7 +11,7 @@ from __future__ import (
 import hashlib
 
 from docx.image.image import Image
-from docx.opc.package import Part
+from docx.opc.part import Part
 from docx.shared import Emu, Inches
 
 

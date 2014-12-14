@@ -10,8 +10,8 @@ import pytest
 
 from docx.image.image import Image
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
-from docx.opc.package import PartFactory
 from docx.opc.packuri import PackURI
+from docx.opc.part import PartFactory
 from docx.package import Package
 from docx.parts.image import ImagePart
 

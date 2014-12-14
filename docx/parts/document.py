@@ -13,7 +13,7 @@ from collections import Sequence
 from ..blkcntnr import BlockItemContainer
 from ..enum.section import WD_SECTION
 from ..opc.constants import RELATIONSHIP_TYPE as RT
-from ..opc.package import XmlPart
+from ..opc.part import XmlPart
 from ..section import Section
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented

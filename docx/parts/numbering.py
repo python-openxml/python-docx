@@ -8,7 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from ..opc.package import XmlPart
+from ..opc.part import XmlPart
 from ..shared import lazyproperty
 
 
