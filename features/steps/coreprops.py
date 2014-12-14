@@ -8,7 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from behave import given, then, when
 
@@ -25,7 +25,17 @@ def given_a_document_having_known_core_properties(context):
     context.document = Document(test_docx('doc-coreprops'))
 
 
+@given('a document having no core properties part')
+def given_a_document_having_no_core_properties_part(context):
+    context.document = Document(test_docx('doc-no-coreprops'))
+
+
 # when ====================================================
+
+@when('I access the core properties object')
+def when_I_access_the_core_properties_object(context):
+    context.document.core_properties
+
 
 @when("I assign new values to the properties")
 def when_I_assign_new_values_to_the_properties(context):
@@ -52,6 +62,19 @@ def when_I_assign_new_values_to_the_properties(context):
 
 
 # then ====================================================
+
+@then('a core properties part with default values is added')
+def then_a_core_properties_part_with_default_values_is_added(context):
+    core_properties = context.document.core_properties
+    assert core_properties.title == 'Word Document'
+    assert core_properties.last_modified_by == 'python-docx'
+    assert core_properties.revision == 1
+    # core_properties.modified only stores time with seconds resolution, so
+    # comparison needs to be a little loose (within two seconds)
+    modified_timedelta = datetime.utcnow() - core_properties.modified
+    max_expected_timedelta = timedelta(seconds=2)
+    assert modified_timedelta < max_expected_timedelta
+
 
 @then('I can access the core properties object')
 def then_I_can_access_the_core_properties_object(context):
