@@ -219,6 +219,13 @@ class XmlPart(Part):
     def blob(self):
         return serialize_part_xml(self._element)
 
+    @property
+    def element(self):
+        """
+        The root XML element of this XML part.
+        """
+        return self._element
+
     @classmethod
     def load(cls, partname, content_type, blob, package):
         element = parse_xml(blob)

@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from ..coreprops import CoreProperties
 from ..part import XmlPart
 
 
@@ -30,4 +31,4 @@ class CorePropertiesPart(XmlPart):
         A |CoreProperties| object providing read/write access to the core
         properties contained in this core properties part.
         """
-        raise NotImplementedError
+        return CoreProperties(self.element)
