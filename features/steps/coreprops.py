@@ -10,7 +10,7 @@ from __future__ import (
 
 from datetime import datetime
 
-from behave import given, then
+from behave import given, then, when
 
 from docx import Document
 from docx.opc.coreprops import CoreProperties
@@ -23,6 +23,32 @@ from helpers import test_docx
 @given('a document having known core properties')
 def given_a_document_having_known_core_properties(context):
     context.document = Document(test_docx('doc-coreprops'))
+
+
+# when ====================================================
+
+@when("I assign new values to the properties")
+def when_I_assign_new_values_to_the_properties(context):
+    context.propvals = (
+        ('author',           'Creator'),
+        ('category',         'Category'),
+        ('comments',         'Description'),
+        ('content_status',   'Content Status'),
+        ('created',          datetime(2013, 6, 15, 12, 34, 56)),
+        ('identifier',       'Identifier'),
+        ('keywords',         'key; word; keyword'),
+        ('language',         'Language'),
+        ('last_modified_by', 'Last Modified By'),
+        ('last_printed',     datetime(2013, 6, 15, 12, 34, 56)),
+        ('modified',         datetime(2013, 6, 15, 12, 34, 56)),
+        ('revision',         9),
+        ('subject',          'Subject'),
+        ('title',            'Title'),
+        ('version',          'Version'),
+    )
+    core_properties = context.document.core_properties
+    for name, value in context.propvals:
+        setattr(core_properties, name, value)
 
 
 # then ====================================================
@@ -55,6 +81,16 @@ def then_the_core_property_values_match_the_known_values(context):
     )
     core_properties = context.document.core_properties
     for name, expected_value in known_propvals:
+        value = getattr(core_properties, name)
+        assert value == expected_value, (
+            "got '%s' for core property '%s'" % (value, name)
+        )
+
+
+@then('the core property values match the new values')
+def then_the_core_property_values_match_the_new_values(context):
+    core_properties = context.document.core_properties
+    for name, expected_value in context.propvals:
         value = getattr(core_properties, name)
         assert value == expected_value, (
             "got '%s' for core property '%s'" % (value, name)

@@ -8,3 +8,9 @@ Feature: Read and write core document properties
      Given a document having known core properties
       Then I can access the core properties object
        And the core property values match the known values
+
+
+  Scenario: change the core properties of a document
+     Given a document having known core properties
+      When I assign new values to the properties
+      Then the core property values match the new values
