@@ -10,6 +10,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 nsmap = {
     'a':   ('http://schemas.openxmlformats.org/drawingml/2006/main'),
     'c':   ('http://schemas.openxmlformats.org/drawingml/2006/chart'),
+    'cp':  ('http://schemas.openxmlformats.org/package/2006/metadata/core-pr'
+            'operties'),
+    'dc':  ('http://purl.org/dc/elements/1.1/'),
+    'dcmitype': ('http://purl.org/dc/dcmitype/'),
+    'dcterms':  ('http://purl.org/dc/terms/'),
     'dgm': ('http://schemas.openxmlformats.org/drawingml/2006/diagram'),
     'pic': ('http://schemas.openxmlformats.org/drawingml/2006/picture'),
     'r':   ('http://schemas.openxmlformats.org/officeDocument/2006/relations'
@@ -17,7 +22,8 @@ nsmap = {
     'w':   ('http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
     'wp':  ('http://schemas.openxmlformats.org/drawingml/2006/wordprocessing'
             'Drawing'),
-    'xml': ('http://www.w3.org/XML/1998/namespace')
+    'xml': ('http://www.w3.org/XML/1998/namespace'),
+    'xsi': ('http://www.w3.org/2001/XMLSchema-instance'),
 }
 
 pfxmap = dict((value, key) for key, value in nsmap.items())

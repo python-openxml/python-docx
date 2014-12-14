@@ -87,6 +87,10 @@ register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 
+
+from .parts.coreprops import CT_CoreProperties
+register_element_cls('cp:coreProperties', CT_CoreProperties)
+
 from .parts.document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
