@@ -96,7 +96,7 @@ class DescribeCoreProperties(object):
         return core_properties, value, expected_xml
 
     @pytest.fixture(params=[
-        ('author',           'python-pptx'),
+        ('author',           'python-docx'),
         ('category',         ''),
         ('comments',         ''),
         ('content_status',   'DRAFT'),
@@ -105,7 +105,7 @@ class DescribeCoreProperties(object):
         ('language',         'US-EN'),
         ('last_modified_by', 'Steve Canny'),
         ('subject',          'Spam'),
-        ('title',            'Presentation'),
+        ('title',            'Word Document'),
         ('version',          '1.2.88'),
     ])
     def text_prop_get_fixture(self, request, core_properties):
@@ -162,7 +162,7 @@ class DescribeCoreProperties(object):
             b'itype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="h'
             b'ttp://www.w3.org/2001/XMLSchema-instance">\n'
             b'  <cp:contentStatus>DRAFT</cp:contentStatus>\n'
-            b'  <dc:creator>python-pptx</dc:creator>\n'
+            b'  <dc:creator>python-docx</dc:creator>\n'
             b'  <dcterms:created xsi:type="dcterms:W3CDTF">2012-11-17T11:07:'
             b'40-05:30</dcterms:created>\n'
             b'  <dc:description/>\n'
@@ -173,7 +173,7 @@ class DescribeCoreProperties(object):
             b'  <cp:lastModifiedBy>Steve Canny</cp:lastModifiedBy>\n'
             b'  <cp:revision>4</cp:revision>\n'
             b'  <dc:subject>Spam</dc:subject>\n'
-            b'  <dc:title>Presentation</dc:title>\n'
+            b'  <dc:title>Word Document</dc:title>\n'
             b'  <cp:version>1.2.88</cp:version>\n'
             b'</cp:coreProperties>\n'
         )
