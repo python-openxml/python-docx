@@ -79,6 +79,8 @@ rst_epilog = """
 
 .. |CoreProperties| replace:: :class:`.CoreProperties`
 
+.. |datetime| replace:: :class:`datetime.datetime`
+
 .. |Document| replace:: :class:`.Document`
 
 .. |docx| replace:: ``python-docx``
@@ -120,6 +122,8 @@ rst_epilog = """
 .. |Section| replace:: :class:`.Section`
 
 .. |Sections| replace:: :class:`.Sections`
+
+.. |str| replace:: :class:`str`
 
 .. |StylesPart| replace:: :class:`.StylesPart`
 
