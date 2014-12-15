@@ -370,8 +370,8 @@ class _Row(Parented):
 
 class _Rows(Parented):
     """
-    Sequence of |_Row| instances corresponding to the rows in a table.
-    Supports ``len()``, iteration and indexed access.
+    Sequence of |_Row| objects corresponding to the rows in a table.
+    Supports ``len()``, iteration, indexed access, and slicing.
     """
     def __init__(self, tbl, parent):
         super(_Rows, self).__init__(parent)
@@ -381,12 +381,7 @@ class _Rows(Parented):
         """
         Provide indexed access, (e.g. 'rows[0]')
         """
-        try:
-            tr = self._tbl.tr_lst[idx]
-        except IndexError:
-            msg = "row index [%d] out of range" % idx
-            raise IndexError(msg)
-        return _Row(tr, self)
+        return list(self)[idx]
 
     def __iter__(self):
         return (_Row(tr, self) for tr in self._tbl.tr_lst)

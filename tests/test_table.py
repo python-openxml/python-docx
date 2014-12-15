@@ -678,6 +678,15 @@ class Describe_Rows(object):
             row = rows[idx]
             assert isinstance(row, _Row)
 
+    def it_provides_sliced_access_to_rows(self, slice_fixture):
+        rows, start, end, expected_count = slice_fixture
+        slice_of_rows = rows[start:end]
+        assert len(slice_of_rows) == expected_count
+        tr_lst = rows._tbl.tr_lst
+        for idx, row in enumerate(slice_of_rows):
+            assert tr_lst.index(row._tr) == start + idx
+            assert isinstance(row, _Row)
+
     def it_raises_on_indexed_access_out_of_range(self, rows_fixture):
         rows, row_count = rows_fixture
         with pytest.raises(IndexError):
@@ -699,6 +708,16 @@ class Describe_Rows(object):
         tbl = _tbl_bldr(rows=row_count, cols=2).element
         rows = _Rows(tbl, None)
         return rows, row_count
+
+    @pytest.fixture(params=[
+        (3, 1,  3, 2),
+        (3, 0, -1, 2),
+    ])
+    def slice_fixture(self, request):
+        row_count, start, end, expected_count = request.param
+        tbl = _tbl_bldr(rows=row_count, cols=2).element
+        rows = _Rows(tbl, None)
+        return rows, start, end, expected_count
 
     @pytest.fixture
     def table_fixture(self, table_):
