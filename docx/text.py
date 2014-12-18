@@ -266,6 +266,21 @@ class Run(Parented):
         self._r.clear_content()
         return self
 
+    @property
+    def color(self):
+        """
+        Read/write. The string hex color applied to
+        this run, or |None| if it has no directly-applied character color.
+        Setting this property to |None| causes any directly-applied character
+        color to be removed such that the run inherits character formatting
+        from its containing paragraph.
+        """
+        return self._r.color
+
+    @color.setter
+    def color(self, hex_value):
+        self._r.color = hex_value
+
     @boolproperty
     def complex_script(self):
         """
