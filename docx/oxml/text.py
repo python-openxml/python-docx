@@ -208,6 +208,38 @@ class CT_R(BaseOxmlElement):
             self.remove(child)
 
     @property
+    def color(self):
+        """
+        String contained in w:val attribute of <w:color> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+
+        if rPr.color is None:
+            return None
+
+        try:
+            return rPr.color.values()[0]
+        except (AttributeError, IndexError):
+            return None
+
+    @color.setter
+    def color(self, color):
+        """
+        Set the w:color value of this <w:r> element to *color*. If *color*
+        is None, remove the color element.
+        """
+        rPr = self.get_or_add_rPr()
+
+        if color is None:
+            rPr._remove_color()
+        else:
+            rPr.color.clear()
+            rPr.color.set(qn('w:val'), color)
+
+    @property
     def style(self):
         """
         String contained in w:val attribute of <w:rStyle> grandchild, or
@@ -275,6 +307,7 @@ class CT_RPr(BaseOxmlElement):
     b = ZeroOrOne('w:b', successors=('w:rPrChange',))
     bCs = ZeroOrOne('w:bCs', successors=('w:rPrChange',))
     caps = ZeroOrOne('w:caps', successors=('w:rPrChange',))
+    color = ZeroOrOne('w:color', successors=('w:rPrChange',))
     cs = ZeroOrOne('w:cs', successors=('w:rPrChange',))
     dstrike = ZeroOrOne('w:dstrike', successors=('w:rPrChange',))
     emboss = ZeroOrOne('w:emboss', successors=('w:rPrChange',))
