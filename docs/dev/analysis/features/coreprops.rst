@@ -131,8 +131,8 @@ core.xml produced by Microsoft Word::
     </cp:coreProperties>
 
 
-Schema
-======
+Schema Excerpt
+--------------
 
 ::
 

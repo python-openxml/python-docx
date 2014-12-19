@@ -10,6 +10,7 @@ Feature Analysis
 .. toctree::
    :maxdepth: 1
 
+   features/doc-styles
    features/coreprops
    features/cell-merge
    features/table
@@ -42,4 +43,3 @@ ISO/IEC 29500 spec.
    schema/ct_body
    schema/ct_p
    schema/ct_ppr
-   schema/ct_styles
