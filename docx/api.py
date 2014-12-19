@@ -159,6 +159,13 @@ class Document(object):
         """
         return self._document_part.sections
 
+    @property
+    def styles(self):
+        """
+        A |Styles| object providing access to the styles for this document.
+        """
+        return self._document_part.styles
+
     @lazyproperty
     def styles_part(self):
         """

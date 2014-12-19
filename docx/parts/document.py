@@ -103,6 +103,14 @@ class DocumentPart(XmlPart):
         return Sections(self._element)
 
     @property
+    def styles(self):
+        """
+        A |Styles| object providing access to the styles in the styles part
+        of this document.
+        """
+        raise NotImplementedError
+
+    @property
     def tables(self):
         """
         A list of |Table| instances corresponding to the tables in the

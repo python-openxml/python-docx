@@ -20,6 +20,7 @@ from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
 from docx.section import Section
 from docx.shape import InlineShape
+from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -138,6 +139,11 @@ class DescribeDocument(object):
         core_properties = document.core_properties
         assert core_properties is core_properties_
 
+    def it_provides_access_to_its_styles(self, styles_fixture):
+        document, styles_ = styles_fixture
+        styles = document.styles
+        assert styles is styles_
+
     def it_provides_access_to_the_numbering_part(self, num_part_get_fixture):
         document, document_part_, numbering_part_ = num_part_get_fixture
         numbering_part = document.numbering_part
@@ -248,6 +254,11 @@ class DescribeDocument(object):
         file_ = instance_mock(request, str)
         document = Document()
         return document, package_, file_
+
+    @pytest.fixture
+    def styles_fixture(self, document, styles_):
+        document._document_part.styles = styles_
+        return document, styles_
 
     @pytest.fixture
     def tables_fixture(self, document, tables_):
@@ -361,6 +372,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def start_type_(self, request):
         return instance_mock(request, int)
+
+    @pytest.fixture
+    def styles_(self, request):
+        return instance_mock(request, Styles)
 
     @pytest.fixture
     def StylesPart_(self, request, styles_part_):
