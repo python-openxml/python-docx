@@ -9,7 +9,6 @@ Feature: Get and set style properties
      Then style.style_id is the known style id
 
 
-  @wip
   Scenario: Set style id
     Given a style having a known style id
      When I assign a new style id to the style
