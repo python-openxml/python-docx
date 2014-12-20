@@ -13,3 +13,9 @@ Feature: Get and set style properties
     Given a style having a known style id
      When I assign a new value to style.style_id
      Then style.style_id is the new style id
+
+
+  @wip
+  Scenario: Get style type
+    Given a style having a known type
+     Then style.type is the known type
