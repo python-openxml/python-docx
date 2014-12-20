@@ -15,7 +15,6 @@ from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.numbering import NumberingPart
-from docx.parts.styles import StylesPart
 from docx.shared import lazyproperty
 
 
@@ -165,19 +164,6 @@ class Document(object):
         A |Styles| object providing access to the styles for this document.
         """
         return self._document_part.styles
-
-    @lazyproperty
-    def styles_part(self):
-        """
-        Instance of |StylesPart| for this document. Creates an empty styles
-        part if one is not present.
-        """
-        try:
-            return self._document_part.part_related_by(RT.STYLES)
-        except KeyError:
-            styles_part = StylesPart.new()
-            self._document_part.relate_to(styles_part, RT.STYLES)
-            return styles_part
 
     @property
     def tables(self):

@@ -25,14 +25,6 @@ class StylesPart(XmlPart):
         """
         raise NotImplementedError
 
-    @classmethod
-    def new(cls):
-        """
-        Return newly created empty styles part, containing only the root
-        ``<w:styles>`` element.
-        """
-        raise NotImplementedError
-
     @property
     def styles(self):
         """
