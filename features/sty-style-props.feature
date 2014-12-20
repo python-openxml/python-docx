@@ -119,7 +119,6 @@ Feature: Get and set style properties
       | on         | False     | False |
 
 
-  @wip
   Scenario Outline: Get quick-style value
     Given a style having quick-style set <setting>
      Then style.quick_style is <value>
