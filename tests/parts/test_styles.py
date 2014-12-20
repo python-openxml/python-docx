@@ -8,6 +8,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.package import OpcPackage
 from docx.oxml.parts.styles import CT_Styles
 from docx.parts.styles import StylesPart
 from docx.styles.styles import Styles
@@ -22,6 +24,15 @@ class DescribeStylesPart(object):
         styles = styles_part.styles
         Styles_.assert_called_once_with(styles_part.element)
         assert styles is styles_
+
+    def it_can_construct_a_default_styles_part_to_help(self):
+        package = OpcPackage()
+        styles_part = StylesPart.default(package)
+        assert isinstance(styles_part, StylesPart)
+        assert styles_part.partname == '/word/styles.xml'
+        assert styles_part.content_type == CT.WML_STYLES
+        assert styles_part.package is package
+        assert len(styles_part.element) == 6
 
     # fixtures -------------------------------------------------------
 
