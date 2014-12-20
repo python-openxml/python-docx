@@ -11,8 +11,8 @@ from __future__ import (
 import pytest
 
 from docx.styles.style import (
-    _CharacterStyle, _ParagraphStyle, _NumberingStyle, StyleFactory,
-    _TableStyle
+    BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
+    StyleFactory, _TableStyle
 )
 
 from ..unitutil.cxml import element
@@ -90,3 +90,21 @@ class DescribeStyleFactory(object):
     @pytest.fixture
     def numbering_style_(self, request):
         return instance_mock(request, _NumberingStyle)
+
+
+class DescribeBaseStyle(object):
+
+    def it_knows_its_style_id(self, id_get_fixture):
+        style, expected_value = id_get_fixture
+        assert style.style_id == expected_value
+
+    # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:style',                   None),
+        ('w:style{w:styleId=Foobar}', 'Foobar'),
+    ])
+    def id_get_fixture(self, request):
+        style_cxml, expected_value = request.param
+        style = BaseStyle(element(style_cxml))
+        return style, expected_value
