@@ -109,6 +109,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.qFormat_val
 
+    @quick_style.setter
+    def quick_style(self, value):
+        self._element.qFormat_val = value
+
     @property
     def style_id(self):
         """

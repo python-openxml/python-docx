@@ -121,6 +121,12 @@ class CT_Style(BaseOxmlElement):
             return False
         return qFormat.val
 
+    @qFormat_val.setter
+    def qFormat_val(self, value):
+        self._remove_qFormat()
+        if bool(value):
+            self._add_qFormat()
+
     @property
     def semiHidden_val(self):
         """
