@@ -22,10 +22,21 @@ class CT_Style(BaseOxmlElement):
         'w:personalCompose', 'w:personalReply', 'w:rsid', 'w:pPr', 'w:rPr',
         'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
     )
+    name = ZeroOrOne('w:name', successors=_tag_seq[1:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     type = OptionalAttribute('w:type', WD_STYLE_TYPE)
     styleId = OptionalAttribute('w:styleId', ST_String)
     del _tag_seq
+
+    @property
+    def name_val(self):
+        """
+        Value of ``<w:name>`` child or |None| if not present.
+        """
+        name = self.name
+        if name is None:
+            return None
+        return name.val
 
 
 class CT_Styles(BaseOxmlElement):

@@ -4,7 +4,6 @@ Feature: Get and set style properties
   I need a set of read/write style properties
 
 
-  @wip
   Scenario: Get name
     Given a style having a known name
      Then style.name is the known name

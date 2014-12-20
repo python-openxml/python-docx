@@ -36,6 +36,13 @@ class BaseStyle(ElementProxy):
     __slots__ = ()
 
     @property
+    def name(self):
+        """
+        The UI name of this style.
+        """
+        return self._element.name_val
+
+    @property
     def style_id(self):
         """
         The unique key name (string) for this style.

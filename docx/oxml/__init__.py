@@ -87,6 +87,7 @@ register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
 
 from .parts.styles import CT_Style, CT_Styles
+register_element_cls('w:name',   CT_String)
 register_element_cls('w:style',  CT_Style)
 register_element_cls('w:styles', CT_Styles)
 
