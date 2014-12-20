@@ -25,7 +25,6 @@ Feature: Get and set style properties
      Then style.name is the known name
 
 
-  @wip
   Scenario: Set name
     Given a style having a known name
      When I assign a new name to the style

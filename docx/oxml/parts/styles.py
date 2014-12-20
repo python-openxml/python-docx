@@ -38,6 +38,13 @@ class CT_Style(BaseOxmlElement):
             return None
         return name.val
 
+    @name_val.setter
+    def name_val(self, value):
+        self._remove_name()
+        if value is not None:
+            name = self._add_name()
+            name.val = value
+
 
 class CT_Styles(BaseOxmlElement):
     """
