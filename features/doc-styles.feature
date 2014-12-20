@@ -15,7 +15,6 @@ Feature: Access document styles
       | no styles part |      4      |
 
 
-  @wip
   Scenario: Access style in style collection
     Given a document having a styles part
      Then I can iterate over its styles

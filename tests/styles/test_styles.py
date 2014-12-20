@@ -34,7 +34,55 @@ class DescribeStyles(object):
         assert count == expected_count
         assert StyleFactory_.call_args_list == expected_calls
 
+    def it_can_get_a_style_by_id(self, get_by_id_fixture):
+        styles, key, expected_element = get_by_id_fixture
+        style = styles[key]
+        assert style._element is expected_element
+
+    def it_can_get_a_style_by_name(self, get_by_name_fixture):
+        styles, key, expected_element = get_by_name_fixture
+        style = styles[key]
+        assert style._element is expected_element
+
+    def it_raises_on_style_not_found(self, get_raises_fixture):
+        styles, key = get_raises_fixture
+        with pytest.raises(KeyError):
+            styles[key]
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:styles/(w:style{%s,w:styleId=Foobar},w:style,w:style)', 0),
+        ('w:styles/(w:style,w:style{%s,w:styleId=Foobar},w:style)', 1),
+        ('w:styles/(w:style,w:style,w:style{%s,w:styleId=Foobar})', 2),
+    ])
+    def get_by_id_fixture(self, request):
+        styles_cxml_tmpl, style_idx = request.param
+        styles_cxml = styles_cxml_tmpl % 'w:type=paragraph'
+        styles = Styles(element(styles_cxml))
+        expected_element = styles._element[style_idx]
+        return styles, 'Foobar', expected_element
+
+    @pytest.fixture(params=[
+        ('w:styles/(w:style%s/w:name{w:val=foo},w:style,w:style)', 0),
+        ('w:styles/(w:style,w:style%s/w:name{w:val=foo},w:style)', 1),
+        ('w:styles/(w:style,w:style,w:style%s/w:name{w:val=foo})', 2),
+    ])
+    def get_by_name_fixture(self, request):
+        styles_cxml_tmpl, style_idx = request.param
+        styles_cxml = styles_cxml_tmpl % '{w:type=character}'
+        styles = Styles(element(styles_cxml))
+        expected_element = styles._element[style_idx]
+        return styles, 'foo', expected_element
+
+    @pytest.fixture(params=[
+        ('w:styles/(w:style,w:style/w:name{w:val=foo},w:style)'),
+        ('w:styles/(w:style{w:styleId=foo},w:style,w:style)'),
+    ])
+    def get_raises_fixture(self, request):
+        styles_cxml = request.param
+        styles = Styles(element(styles_cxml))
+        return styles, 'bar'
 
     @pytest.fixture(params=[
         ('w:styles',                           0),
