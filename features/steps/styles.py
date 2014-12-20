@@ -4,7 +4,7 @@
 Step implementations for styles-related features
 """
 
-from behave import given, then
+from behave import given, then, when
 
 from docx import Document
 from docx.styles.styles import Styles
@@ -25,6 +25,20 @@ def given_a_document_having_a_styles_part(context):
 def given_a_document_having_no_styles_part(context):
     docx_path = test_docx('sty-having-no-styles-part')
     context.document = Document(docx_path)
+
+
+@given('a style having a known style id')
+def given_a_style_having_a_known_style_id(context):
+    docx_path = test_docx('sty-having-styles-part')
+    document = Document(docx_path)
+    context.style = document.styles['Normal']
+
+
+# when =====================================================
+
+@when('I assign a new style id to the style')
+def when_I_assign_a_new_style_id_to_the_style(context):
+    context.style.style_id = 'Foo42'
 
 
 # then =====================================================
@@ -60,3 +74,13 @@ def then_I_can_iterate_over_its_styles(context):
 @then('len(styles) is {style_count_str}')
 def then_len_styles_is_style_count(context, style_count_str):
     assert len(context.document.styles) == int(style_count_str)
+
+
+@then('style.style_id is the {which} style id')
+def then_style_style_id_is_the_which_style_id(context, which):
+    expected_style_id = {
+        'known': 'Normal',
+        'new':   'Foo42',
+    }[which]
+    style = context.style
+    assert style.style_id == expected_style_id
