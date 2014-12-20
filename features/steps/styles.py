@@ -4,7 +4,7 @@
 Step implementations for styles-related features
 """
 
-from behave import given, then, when
+from behave import given, then
 
 from docx import Document
 from docx.styles.styles import Styles
@@ -25,14 +25,6 @@ def given_a_document_having_a_styles_part(context):
 def given_a_document_having_no_styles_part(context):
     docx_path = test_docx('sty-having-no-styles-part')
     context.document = Document(docx_path)
-
-
-# when ====================================================
-
-@when('I get the styles part from the document')
-def when_get_styles_part_from_document(context):
-    document = context.document
-    context.styles_part = document.styles_part
 
 
 # then =====================================================
@@ -68,9 +60,3 @@ def then_I_can_iterate_over_its_styles(context):
 @then('len(styles) is {style_count_str}')
 def then_len_styles_is_style_count(context, style_count_str):
     assert len(context.document.styles) == int(style_count_str)
-
-
-@then('the styles part has the expected number of style definitions')
-def then_styles_part_has_expected_number_of_style_definitions(context):
-    styles_part = context.styles_part
-    assert len(styles_part.styles) == 6
