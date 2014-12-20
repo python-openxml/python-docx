@@ -10,6 +10,7 @@ from __future__ import (
 
 import pytest
 
+from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.style import (
     BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
     StyleFactory, _TableStyle
@@ -103,6 +104,10 @@ class DescribeBaseStyle(object):
         style.style_id = new_value
         assert style._element.xml == expected_xml
 
+    def it_knows_its_type(self, type_get_fixture):
+        style, expected_value = type_get_fixture
+        assert style.type == expected_value
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -125,3 +130,14 @@ class DescribeBaseStyle(object):
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_style_cxml)
         return style, new_value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:style',                   WD_STYLE_TYPE.PARAGRAPH),
+        ('w:style{w:type=paragraph}', WD_STYLE_TYPE.PARAGRAPH),
+        ('w:style{w:type=character}', WD_STYLE_TYPE.CHARACTER),
+        ('w:style{w:type=numbering}', WD_STYLE_TYPE.LIST),
+    ])
+    def type_get_fixture(self, request):
+        style_cxml, expected_value = request.param
+        style = BaseStyle(element(style_cxml))
+        return style, expected_value

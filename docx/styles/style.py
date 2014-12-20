@@ -46,6 +46,17 @@ class BaseStyle(ElementProxy):
     def style_id(self, value):
         self._element.styleId = value
 
+    @property
+    def type(self):
+        """
+        Member of :ref:`WdStyleType` corresponding to the type of this style,
+        e.g. ``WD_STYLE_TYPE.PARAGRAPH`.
+        """
+        type = self._element.type
+        if type is None:
+            return WD_STYLE_TYPE.PARAGRAPH
+        return type
+
 
 class _CharacterStyle(BaseStyle):
     """
