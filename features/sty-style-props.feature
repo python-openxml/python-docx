@@ -117,3 +117,27 @@ Feature: Get and set style properties
       | setting    | new-value | value |
       | no setting | True      | True  |
       | on         | False     | False |
+
+
+  @wip
+  Scenario Outline: Get quick-style value
+    Given a style having quick-style set <setting>
+     Then style.quick_style is <value>
+
+    Examples: Style quick-style values
+      | setting    | value |
+      | on         | True  |
+      | off        | False |
+      | no setting | False |
+
+
+  @wip
+  Scenario Outline: Set quick-style value
+    Given a style having quick-style set <setting>
+     When I assign <new-value> to style.quick_style
+     Then style.quick_style is <value>
+
+    Examples: Style quick_style values
+      | setting    | new-value | value |
+      | no setting | True      | True  |
+      | on         | False     | False |
