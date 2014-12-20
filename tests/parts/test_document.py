@@ -15,8 +15,10 @@ from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
 from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
 from docx.parts.image import ImagePart
+from docx.parts.styles import StylesPart
 from docx.section import Section
 from docx.shape import InlineShape
+from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -53,6 +55,11 @@ class DescribeDocumentPart(object):
         document_part, tables_ = tables_fixture
         tables = document_part.tables
         assert tables is tables_
+
+    def it_provides_access_to_the_document_styles(self, styles_fixture):
+        document_part, styles_ = styles_fixture
+        styles = document_part.styles
+        assert styles is styles_
 
     def it_provides_access_to_the_inline_shapes_in_the_document(
             self, inline_shapes_fixture):
@@ -162,10 +169,17 @@ class DescribeDocumentPart(object):
         return document_part, paragraphs_
 
     @pytest.fixture
-    def sections_fixture(self, request, Sections_):
+    def sections_fixture(self, Sections_):
         document_elm = a_document().with_nsdecls().element
         document = DocumentPart(None, None, document_elm, None)
         return document, document_elm, Sections_
+
+    @pytest.fixture
+    def styles_fixture(self, _styles_part_prop_, styles_part_, styles_):
+        document_part = DocumentPart(None, None, None, None)
+        _styles_part_prop_.return_value = styles_part_
+        styles_part_.styles = styles_
+        return document_part, styles_
 
     @pytest.fixture
     def tables_fixture(self, document_part_body_, body_, tables_):
@@ -274,6 +288,18 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def start_type_(self, request):
         return instance_mock(request, int)
+
+    @pytest.fixture
+    def styles_(self, request):
+        return instance_mock(request, Styles)
+
+    @pytest.fixture
+    def styles_part_(self, request):
+        return instance_mock(request, StylesPart)
+
+    @pytest.fixture
+    def _styles_part_prop_(self, request):
+        return property_mock(request, DocumentPart, '_styles_part')
 
     @pytest.fixture
     def table_(self, request):

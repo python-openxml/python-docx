@@ -108,7 +108,7 @@ class DocumentPart(XmlPart):
         A |Styles| object providing access to the styles in the styles part
         of this document.
         """
-        raise NotImplementedError
+        return self._styles_part.styles
 
     @property
     def tables(self):
@@ -118,6 +118,14 @@ class DocumentPart(XmlPart):
         such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self.body.tables
+
+    @property
+    def _styles_part(self):
+        """
+        Instance of |StylesPart| for this document. Creates an empty styles
+        part if one is not present.
+        """
+        raise NotImplementedError
 
 
 class _Body(BlockItemContainer):
