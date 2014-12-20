@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from ..opc.part import XmlPart
-from ..shared import lazyproperty
+from ..styles.styles import Styles
 
 
 class StylesPart(XmlPart):
@@ -33,23 +33,10 @@ class StylesPart(XmlPart):
         """
         raise NotImplementedError
 
-    @lazyproperty
+    @property
     def styles(self):
         """
         The |_Styles| instance containing the styles (<w:style> element
         proxies) for this styles part.
         """
-        return _Styles(self._element)
-
-
-class _Styles(object):
-    """
-    Collection of |_Style| instances corresponding to the ``<w:style>``
-    elements in a styles part.
-    """
-    def __init__(self, styles_elm):
-        super(_Styles, self).__init__()
-        self._styles_elm = styles_elm
-
-    def __len__(self):
-        return len(self._styles_elm.style_lst)
+        return Styles(self.element)
