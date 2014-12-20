@@ -42,6 +42,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.name_val
 
+    @name.setter
+    def name(self, value):
+        self._element.name_val = value
+
     @property
     def style_id(self):
         """
