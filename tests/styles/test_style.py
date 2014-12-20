@@ -108,6 +108,10 @@ class DescribeBaseStyle(object):
         style, expected_value = type_get_fixture
         assert style.type == expected_value
 
+    def it_knows_its_name(self, name_get_fixture):
+        style, expected_value = name_get_fixture
+        assert style.name == expected_value
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -130,6 +134,15 @@ class DescribeBaseStyle(object):
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_style_cxml)
         return style, new_value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:style{w:type=table}',                      None),
+        ('w:style{w:type=table}/w:name{w:val=Boofar}', 'Boofar'),
+    ])
+    def name_get_fixture(self, request):
+        style_cxml, expected_value = request.param
+        style = BaseStyle(element(style_cxml))
+        return style, expected_value
 
     @pytest.fixture(params=[
         ('w:style',                   WD_STYLE_TYPE.PARAGRAPH),
