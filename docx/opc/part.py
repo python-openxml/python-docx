@@ -90,6 +90,13 @@ class Part(object):
         return self.rels.add_relationship(reltype, target, rId, is_external)
 
     @property
+    def package(self):
+        """
+        |OpcPackage| instance this part belongs to.
+        """
+        return self._package
+
+    @property
     def partname(self):
         """
         |PackURI| instance holding partname of this part, e.g.
@@ -103,13 +110,6 @@ class Part(object):
             tmpl = "partname must be instance of PackURI, got '%s'"
             raise TypeError(tmpl % type(partname).__name__)
         self._partname = partname
-
-    @property
-    def package(self):
-        """
-        |OpcPackage| instance this part belongs to.
-        """
-        return self._package
 
     def part_related_by(self, reltype):
         """

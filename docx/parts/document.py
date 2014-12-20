@@ -17,6 +17,7 @@ from ..opc.part import XmlPart
 from ..section import Section
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
+from .styles import StylesPart
 
 
 class DocumentPart(XmlPart):
@@ -125,7 +126,12 @@ class DocumentPart(XmlPart):
         Instance of |StylesPart| for this document. Creates an empty styles
         part if one is not present.
         """
-        raise NotImplementedError
+        try:
+            return self.part_related_by(RT.STYLES)
+        except KeyError:
+            styles_part = StylesPart.default(self.package)
+            self.relate_to(styles_part, RT.STYLES)
+            return styles_part
 
 
 class _Body(BlockItemContainer):

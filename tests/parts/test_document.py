@@ -105,6 +105,23 @@ class DescribeDocumentPart(object):
         document, expected_id = next_id_fixture
         assert document.next_id == expected_id
 
+    def it_provides_access_to_its_styles_part_to_help(
+            self, styles_part_get_fixture):
+        document_part, styles_part_ = styles_part_get_fixture
+        styles_part = document_part._styles_part
+        document_part.part_related_by.assert_called_once_with(RT.STYLES)
+        assert styles_part is styles_part_
+
+    def it_creates_default_styles_part_if_not_present_to_help(
+            self, styles_part_create_fixture):
+        document_part, StylesPart_, styles_part_ = styles_part_create_fixture
+        styles_part = document_part._styles_part
+        StylesPart_.default.assert_called_once_with(document_part.package)
+        document_part.relate_to.assert_called_once_with(
+            styles_part_, RT.STYLES
+        )
+        assert styles_part is styles_part_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -180,6 +197,21 @@ class DescribeDocumentPart(object):
         _styles_part_prop_.return_value = styles_part_
         styles_part_.styles = styles_
         return document_part, styles_
+
+    @pytest.fixture
+    def styles_part_create_fixture(
+            self, package_, part_related_by_, StylesPart_, styles_part_,
+            relate_to_):
+        document_part = DocumentPart(None, None, None, package_)
+        part_related_by_.side_effect = KeyError
+        StylesPart_.default.return_value = styles_part_
+        return document_part, StylesPart_, styles_part_
+
+    @pytest.fixture
+    def styles_part_get_fixture(self, part_related_by_, styles_part_):
+        document_part = DocumentPart(None, None, None, None)
+        part_related_by_.return_value = styles_part_
+        return document_part, styles_part_
 
     @pytest.fixture
     def tables_fixture(self, document_part_body_, body_, tables_):
@@ -258,6 +290,10 @@ class DescribeDocumentPart(object):
         return instance_mock(request, list)
 
     @pytest.fixture
+    def part_related_by_(self, request):
+        return method_mock(request, DocumentPart, 'part_related_by')
+
+    @pytest.fixture
     def relate_to_(self, request, rId_):
         relate_to_ = method_mock(request, DocumentPart, 'relate_to')
         relate_to_.return_value = rId_
@@ -292,6 +328,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def styles_(self, request):
         return instance_mock(request, Styles)
+
+    @pytest.fixture
+    def StylesPart_(self, request):
+        return class_mock(request, 'docx.parts.document.StylesPart')
 
     @pytest.fixture
     def styles_part_(self, request):

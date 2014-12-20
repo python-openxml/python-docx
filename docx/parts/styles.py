@@ -18,6 +18,14 @@ class StylesPart(XmlPart):
     or glossary.
     """
     @classmethod
+    def default(cls, package):
+        """
+        Return a newly created styles part, containing a default set of
+        elements.
+        """
+        raise NotImplementedError
+
+    @classmethod
     def new(cls):
         """
         Return newly created empty styles part, containing only the root
