@@ -17,3 +17,6 @@ class Styles(object):
     """
     def __init__(self, element):
         self._element = element
+
+    def __len__(self):
+        return len(self._element.style_lst)
