@@ -154,6 +154,11 @@ class DescribeBaseStyle(object):
         style, expected_value = quick_get_fixture
         assert style.quick_style == expected_value
 
+    def it_can_change_its_quick_style_setting(self, quick_set_fixture):
+        style, new_value, expected_xml = quick_set_fixture
+        style.quick_style = new_value
+        assert style._element.xml == expected_xml
+
     def it_can_delete_itself_from_the_document(self, delete_fixture):
         style, styles, expected_xml = delete_fixture
         style.delete()
@@ -279,6 +284,19 @@ class DescribeBaseStyle(object):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:style',                     True,  'w:style/w:qFormat'),
+        ('w:style/w:qFormat',           False, 'w:style'),
+        ('w:style/w:qFormat',           True,  'w:style/w:qFormat'),
+        ('w:style/w:qFormat{w:val=0}',  False, 'w:style'),
+        ('w:style/w:qFormat{w:val=on}', True,  'w:style/w:qFormat'),
+    ])
+    def quick_set_fixture(self, request):
+        style_cxml, new_value, expected_style_cxml = request.param
+        style = BaseStyle(element(style_cxml))
+        expected_xml = xml(expected_style_cxml)
+        return style, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:style',                   WD_STYLE_TYPE.PARAGRAPH),

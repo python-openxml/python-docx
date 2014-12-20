@@ -130,7 +130,6 @@ Feature: Get and set style properties
       | no setting | False |
 
 
-  @wip
   Scenario Outline: Set quick-style value
     Given a style having quick-style set <setting>
      When I assign <new-value> to style.quick_style
