@@ -33,13 +33,24 @@ class CT_Styles(BaseOxmlElement):
     """
     style = ZeroOrMore('w:style', successors=())
 
-    def style_having_styleId(self, styleId):
+    def get_by_id(self, styleId):
         """
         Return the ``<w:style>`` child element having ``styleId`` attribute
-        matching *styleId*.
+        matching *styleId*, or |None| if not found.
         """
-        xpath = './w:style[@w:styleId="%s"]' % styleId
+        xpath = 'w:style[@w:styleId="%s"]' % styleId
         try:
             return self.xpath(xpath)[0]
         except IndexError:
-            raise KeyError('no <w:style> element with styleId %s' % styleId)
+            return None
+
+    def get_by_name(self, name):
+        """
+        Return the ``<w:style>`` child element having ``<w:name>`` child
+        element with value *name*, or |None| if not found.
+        """
+        xpath = 'w:style[w:name/@w:val="%s"]' % name
+        try:
+            return self.xpath(xpath)[0]
+        except IndexError:
+            return None

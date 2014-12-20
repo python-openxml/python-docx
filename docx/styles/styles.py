@@ -20,6 +20,16 @@ class Styles(object):
     def __init__(self, element):
         self._element = element
 
+    def __getitem__(self, key):
+        """
+        Enables dictionary-style access by style id or UI name.
+        """
+        for get in (self._element.get_by_id, self._element.get_by_name):
+            style_elm = get(key)
+            if style_elm is not None:
+                return StyleFactory(style_elm)
+        raise KeyError("no style with id or name '%s'" % key)
+
     def __iter__(self):
         return (StyleFactory(style) for style in self._element.style_lst)
 
