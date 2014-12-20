@@ -5,6 +5,7 @@ Custom element classes related to the styles part
 """
 
 from ...enum.style import WD_STYLE_TYPE
+from ..simpletypes import ST_String
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 )
@@ -23,6 +24,7 @@ class CT_Style(BaseOxmlElement):
     )
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     type = OptionalAttribute('w:type', WD_STYLE_TYPE)
+    styleId = OptionalAttribute('w:styleId', ST_String)
     del _tag_seq
 
 

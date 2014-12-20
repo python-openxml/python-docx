@@ -35,6 +35,13 @@ class BaseStyle(ElementProxy):
 
     __slots__ = ()
 
+    @property
+    def style_id(self):
+        """
+        The unique key name (string) for this style.
+        """
+        return self._element.styleId
+
 
 class _CharacterStyle(BaseStyle):
     """
