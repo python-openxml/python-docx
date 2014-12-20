@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from ..shared import ElementProxy
+from .style import StyleFactory
 
 
 class Styles(ElementProxy):
@@ -19,6 +20,9 @@ class Styles(ElementProxy):
     """
 
     __slots__ = ()
+
+    def __iter__(self):
+        return (StyleFactory(style) for style in self._element.style_lst)
 
     def __len__(self):
         return len(self._element.style_lst)
