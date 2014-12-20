@@ -4,7 +4,6 @@ Feature: Access document styles
   I need a way to access document styles
 
 
-  @wip
   Scenario Outline: Access document styles collection
     Given a document having <styles-state>
      Then I can access the document styles collection

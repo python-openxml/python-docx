@@ -8,7 +8,12 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+import os
+
+from ..opc.constants import CONTENT_TYPE as CT
+from ..opc.packuri import PackURI
 from ..opc.part import XmlPart
+from ..oxml import parse_xml
 from ..styles.styles import Styles
 
 
@@ -23,7 +28,10 @@ class StylesPart(XmlPart):
         Return a newly created styles part, containing a default set of
         elements.
         """
-        raise NotImplementedError
+        partname = PackURI('/word/styles.xml')
+        content_type = CT.WML_STYLES
+        element = parse_xml(cls._default_styles_xml())
+        return cls(partname, content_type, element, package)
 
     @property
     def styles(self):
@@ -32,3 +40,16 @@ class StylesPart(XmlPart):
         proxies) for this styles part.
         """
         return Styles(self.element)
+
+    @classmethod
+    def _default_styles_xml(cls):
+        """
+        Return a bytestream containing XML for a default styles part.
+        """
+        path = os.path.join(
+            os.path.split(__file__)[0], '..', 'templates',
+            'default-styles.xml'
+        )
+        with open(path, 'rb') as f:
+            xml_bytes = f.read()
+        return xml_bytes
