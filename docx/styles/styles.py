@@ -15,3 +15,5 @@ class Styles(object):
     ``len()``, iteration, and dictionary-style access by style id and style
     UI name.
     """
+    def __init__(self, element):
+        self._element = element
