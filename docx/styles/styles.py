@@ -19,3 +19,6 @@ class Styles(ElementProxy):
     """
 
     __slots__ = ()
+
+    def __len__(self):
+        return len(self._element.style_lst)
