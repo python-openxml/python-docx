@@ -28,21 +28,19 @@ def given_a_document_having_no_styles_part(context):
     context.document = Document(docx_path)
 
 
-@given('a style having a known style id')
-def given_a_style_having_a_known_style_id(context):
-    docx_path = test_docx('sty-having-styles-part')
-    document = Document(docx_path)
-    context.style = document.styles['Normal']
-
-
-@given('a style having a known type')
-def given_a_style_having_a_known_type(context):
+@given('a style having a known {attr_name}')
+def given_a_style_having_a_known_attr_name(context, attr_name):
     docx_path = test_docx('sty-having-styles-part')
     document = Document(docx_path)
     context.style = document.styles['Normal']
 
 
 # when =====================================================
+
+@when('I assign a new name to the style')
+def when_I_assign_a_new_name_to_the_style(context):
+    context.style.name = 'Foobar'
+
 
 @when('I assign a new style id to the style')
 def when_I_assign_a_new_style_id_to_the_style(context):
@@ -82,6 +80,16 @@ def then_I_can_iterate_over_its_styles(context):
 @then('len(styles) is {style_count_str}')
 def then_len_styles_is_style_count(context, style_count_str):
     assert len(context.document.styles) == int(style_count_str)
+
+
+@then('style.name is the {which} name')
+def then_style_name_is_the_which_name(context, which):
+    expected_name = {
+        'known': 'Normal',
+        'new':   'Foobar',
+    }[which]
+    style = context.style
+    assert style.name == expected_name
 
 
 @then('style.style_id is the {which} style id')

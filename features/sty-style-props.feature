@@ -18,3 +18,16 @@ Feature: Get and set style properties
   Scenario: Get style type
     Given a style having a known type
      Then style.type is the known type
+
+
+  @wip
+  Scenario: Get name
+    Given a style having a known name
+     Then style.name is the known name
+
+
+  @wip
+  Scenario: Set name
+    Given a style having a known name
+     When I assign a new name to the style
+     Then style.name is the new name
