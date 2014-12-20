@@ -42,6 +42,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.styleId
 
+    @style_id.setter
+    def style_id(self, value):
+        self._element.styleId = value
+
 
 class _CharacterStyle(BaseStyle):
     """
