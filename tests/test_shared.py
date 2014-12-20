@@ -28,7 +28,17 @@ class DescribeElementProxy(object):
         assert (proxy != proxy_3) is True
         assert (proxy != not_a_proxy) is True
 
+    def it_knows_its_element(self, element_fixture):
+        proxy, element = element_fixture
+        assert proxy.element is element
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture
+    def element_fixture(self):
+        p = element('w:p')
+        proxy = ElementProxy(p)
+        return proxy, p
 
     @pytest.fixture
     def eq_fixture(self):
