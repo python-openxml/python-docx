@@ -96,6 +96,17 @@ def given_a_style_having_priority_of_setting(context, setting):
     context.style = document.styles[style_name]
 
 
+@given('a style having quick-style set {setting}')
+def given_a_style_having_quick_style_setting(context, setting):
+    document = Document(test_docx('sty-behav-props'))
+    style_name = {
+        'on':         'Foo',
+        'off':        'Bar',
+        'no setting': 'Baz',
+    }[setting]
+    context.style = document.styles[style_name]
+
+
 @given('a style having unhide-when-used set {setting}')
 def given_a_style_having_unhide_when_used_setting(context, setting):
     document = Document(test_docx('sty-behav-props'))
@@ -152,6 +163,12 @@ def when_I_assign_value_to_style_priority(context, value):
     style = context.style
     new_value = None if value == 'None' else int(value)
     style.priority = new_value
+
+
+@when('I assign {value} to style.quick_style')
+def when_I_assign_value_to_style_quick_style(context, value):
+    style, new_value = context.style, bool_vals[value]
+    style.quick_style = new_value
 
 
 @when('I assign {value} to style.unhide_when_used')
@@ -263,6 +280,12 @@ def then_style_priority_is_value(context, value):
     style = context.style
     expected_value = None if value == 'None' else int(value)
     assert style.priority == expected_value
+
+
+@then('style.quick_style is {value}')
+def then_style_quick_style_is_value(context, value):
+    style, expected_value = context.style, bool_vals[value]
+    assert style.quick_style is expected_value
 
 
 @then('style.style_id is the {which} style id')
