@@ -8,6 +8,8 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from .style import StyleFactory
+
 
 class Styles(object):
     """
@@ -17,6 +19,9 @@ class Styles(object):
     """
     def __init__(self, element):
         self._element = element
+
+    def __iter__(self):
+        return (StyleFactory(style) for style in self._element.style_lst)
 
     def __len__(self):
         return len(self._element.style_lst)
