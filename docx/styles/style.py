@@ -102,6 +102,14 @@ class BaseStyle(ElementProxy):
         self._element.uiPriority_val = value
 
     @property
+    def quick_style(self):
+        """
+        |True| if this style should be displayed in the style gallery when
+        :attr:`.hidden` is |False|. Read/write Boolean.
+        """
+        return self._element.qFormat_val
+
+    @property
     def style_id(self):
         """
         The unique key name (string) for this style. This value is subject to

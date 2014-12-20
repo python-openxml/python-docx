@@ -46,6 +46,7 @@ class CT_Style(BaseOxmlElement):
     uiPriority = ZeroOrOne('w:uiPriority', successors=_tag_seq[8:])
     semiHidden = ZeroOrOne('w:semiHidden', successors=_tag_seq[9:])
     unhideWhenUsed = ZeroOrOne('w:unhideWhenUsed', successors=_tag_seq[10:])
+    qFormat = ZeroOrOne('w:qFormat', successors=_tag_seq[11:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     rPr = ZeroOrOne('w:rPr', successors=_tag_seq[18:])
     del _tag_seq
@@ -109,6 +110,16 @@ class CT_Style(BaseOxmlElement):
         if value is not None:
             name = self._add_name()
             name.val = value
+
+    @property
+    def qFormat_val(self):
+        """
+        Value of `w:qFormat/@w:val` or |False| if not present.
+        """
+        qFormat = self.qFormat
+        if qFormat is None:
+            return False
+        return qFormat.val
 
     @property
     def semiHidden_val(self):
