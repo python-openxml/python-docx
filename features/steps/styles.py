@@ -7,6 +7,7 @@ Step implementations for styles-related features
 from behave import given, then, when
 
 from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.styles import Styles
 from docx.styles.style import BaseStyle
 
@@ -29,6 +30,13 @@ def given_a_document_having_no_styles_part(context):
 
 @given('a style having a known style id')
 def given_a_style_having_a_known_style_id(context):
+    docx_path = test_docx('sty-having-styles-part')
+    document = Document(docx_path)
+    context.style = document.styles['Normal']
+
+
+@given('a style having a known type')
+def given_a_style_having_a_known_type(context):
     docx_path = test_docx('sty-having-styles-part')
     document = Document(docx_path)
     context.style = document.styles['Normal']
@@ -84,3 +92,9 @@ def then_style_style_id_is_the_which_style_id(context, which):
     }[which]
     style = context.style
     assert style.style_id == expected_style_id
+
+
+@then('style.type is the known type')
+def then_style_type_is_the_known_type(context):
+    style = context.style
+    assert style.type == WD_STYLE_TYPE.PARAGRAPH
