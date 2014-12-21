@@ -6,8 +6,8 @@ Text-related proxy types for python-docx, such as Paragraph and Run.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .enum.text import WD_BREAK
-from .shared import Parented
+from ..enum.text import WD_BREAK
+from ..shared import Parented
 
 
 def boolproperty(f):
