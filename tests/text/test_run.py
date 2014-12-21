@@ -364,4 +364,4 @@ class DescribeRun(object):
 
     @pytest.fixture
     def Text_(self, request):
-        return class_mock(request, 'docx.text.Text')
+        return class_mock(request, 'docx.text.run._Text')
