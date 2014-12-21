@@ -1,14 +1,16 @@
 # encoding: utf-8
 
 """
-Test suite for the docx.oxml.text module.
+Test suite for the docx.oxml.text.run module.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 import pytest
 
-from ..unitutil.cxml import element, xml
+from ...unitutil.cxml import element, xml
 
 
 class DescribeCT_R(object):
