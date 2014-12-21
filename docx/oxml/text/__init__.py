@@ -5,10 +5,10 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from ..enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
-from .ns import qn
-from .simpletypes import ST_BrClear, ST_BrType
-from .xmlchemy import (
+from ...enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
+from ..ns import qn
+from ..simpletypes import ST_BrClear, ST_BrType
+from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
     ZeroOrMore, ZeroOrOne
 )
