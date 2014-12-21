@@ -174,6 +174,24 @@ class _LatentStyle(ElementProxy):
         """
         return self._element.uiPriority
 
+    @priority.setter
+    def priority(self, value):
+        self._element.uiPriority = value
+
+    @property
+    def quick_style(self):
+        """
+        Boolean specifying whether this latent style should appear in the
+        Word styles gallery when not hidden. |None| indicates the effective
+        value should be inherited from the default values in its parent
+        |LatentStyles| object.
+        """
+        return self._element.qFormat
+
+    @quick_style.setter
+    def quick_style(self, value):
+        self._element.qFormat = value
+
     @property
     def unhide_when_used(self):
         """
@@ -181,3 +199,7 @@ class _LatentStyle(ElementProxy):
         Style Gallery) until it is applied to content.
         """
         return self._element.unhideWhenUsed
+
+    @unhide_when_used.setter
+    def unhide_when_used(self, value):
+        self._element.unhideWhenUsed = value

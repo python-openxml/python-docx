@@ -82,6 +82,7 @@ class CT_LsdException(BaseOxmlElement):
     semiHidden = OptionalAttribute('w:semiHidden', ST_OnOff)
     uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
     unhideWhenUsed = OptionalAttribute('w:unhideWhenUsed', ST_OnOff)
+    qFormat = OptionalAttribute('w:qFormat', ST_OnOff)
 
 
 class CT_Style(BaseOxmlElement):
