@@ -7,7 +7,8 @@ Custom element classes related to the styles part
 from ..enum.style import WD_STYLE_TYPE
 from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from .xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
+    ZeroOrOne
 )
 
 
@@ -77,8 +78,10 @@ class CT_LsdException(BaseOxmlElement):
     ``<w:lsdException>`` element, defining override visibility behaviors for
     a named latent style.
     """
+    name = RequiredAttribute('w:name', ST_String)
     semiHidden = OptionalAttribute('w:semiHidden', ST_OnOff)
     uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
+    unhideWhenUsed = OptionalAttribute('w:unhideWhenUsed', ST_OnOff)
 
 
 class CT_Style(BaseOxmlElement):

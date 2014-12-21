@@ -161,8 +161,23 @@ class _LatentStyle(ElementProxy):
         self._element.semiHidden = value
 
     @property
+    def name(self):
+        """
+        The name of the built-in style this exception applies to.
+        """
+        return self._element.name
+
+    @property
     def priority(self):
         """
         The integer sort key for this latent style in the Word UI.
         """
         return self._element.uiPriority
+
+    @property
+    def unhide_when_used(self):
+        """
+        True if this style should not appear in the recommended list (or
+        Style Gallery) until it is applied to content.
+        """
+        return self._element.unhideWhenUsed
