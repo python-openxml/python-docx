@@ -134,9 +134,13 @@ register_element_cls('w:tcW',       CT_TblWidth)
 register_element_cls('w:tr',        CT_Row)
 register_element_cls('w:vMerge',    CT_VMerge)
 
-from .text import (
-    CT_Br, CT_Jc, CT_P, CT_PPr, CT_R, CT_RPr, CT_Text, CT_Underline
-)
+from .text import CT_Jc, CT_P, CT_PPr
+register_element_cls('w:jc',     CT_Jc)
+register_element_cls('w:p',      CT_P)
+register_element_cls('w:pPr',    CT_PPr)
+register_element_cls('w:pStyle', CT_String)
+
+from .text.run import CT_Br, CT_R, CT_RPr, CT_Text, CT_Underline
 register_element_cls('w:b',          CT_OnOff)
 register_element_cls('w:bCs',        CT_OnOff)
 register_element_cls('w:br',         CT_Br)
@@ -147,13 +151,9 @@ register_element_cls('w:emboss',     CT_OnOff)
 register_element_cls('w:i',          CT_OnOff)
 register_element_cls('w:iCs',        CT_OnOff)
 register_element_cls('w:imprint',    CT_OnOff)
-register_element_cls('w:jc',         CT_Jc)
 register_element_cls('w:noProof',    CT_OnOff)
 register_element_cls('w:oMath',      CT_OnOff)
 register_element_cls('w:outline',    CT_OnOff)
-register_element_cls('w:p',          CT_P)
-register_element_cls('w:pPr',        CT_PPr)
-register_element_cls('w:pStyle',     CT_String)
 register_element_cls('w:r',          CT_R)
 register_element_cls('w:rPr',        CT_RPr)
 register_element_cls('w:rStyle',     CT_String)

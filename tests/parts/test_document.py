@@ -11,7 +11,7 @@ import pytest
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.parts.document import CT_Body, CT_Document
 from docx.oxml.section import CT_SectPr
-from docx.oxml.text import CT_R
+from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
 from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
 from docx.parts.image import ImagePart
