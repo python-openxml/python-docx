@@ -84,6 +84,12 @@ class CT_LsdException(BaseOxmlElement):
     unhideWhenUsed = OptionalAttribute('w:unhideWhenUsed', ST_OnOff)
     qFormat = OptionalAttribute('w:qFormat', ST_OnOff)
 
+    def delete(self):
+        """
+        Remove this ``<w:lsdException>`` element from the XML document.
+        """
+        self.getparent().remove(self)
+
 
 class CT_Style(BaseOxmlElement):
     """
