@@ -10,7 +10,7 @@ from __future__ import (
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
 from docx.oxml.ns import qn
-from docx.oxml.text import CT_P
+from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import InlineShapes
 from docx.shape import InlineShape
