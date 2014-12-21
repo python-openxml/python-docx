@@ -171,6 +171,21 @@ class _LatentStyle(ElementProxy):
         self._element.semiHidden = value
 
     @property
+    def locked(self):
+        """
+        Boolean specifying whether this latent styles is locked. A locked
+        style does not appear in the styles panel or the style gallery and
+        cannot be applied to document content. This behavior is only active
+        when formatting protection is turned on for the document (via the
+        Developer menu).
+        """
+        return self._element.locked
+
+    @locked.setter
+    def locked(self, value):
+        self._element.locked = value
+
+    @property
     def name(self):
         """
         The name of the built-in style this exception applies to.
