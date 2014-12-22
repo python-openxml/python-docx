@@ -21,7 +21,8 @@ from docx.parts.styles import StylesPart
 from docx.section import Section
 from docx.shape import InlineShape
 from docx.table import Table
-from docx.text import Paragraph, Run
+from docx.text.paragraph import Paragraph
+from docx.text.run import Run
 
 from .unitutil.mock import (
     instance_mock, class_mock, method_mock, property_mock, var_mock
@@ -203,7 +204,7 @@ class DescribeDocument(object):
         document = Document()
         image_path_ = instance_mock(request, str, name='image_path_')
         width, height = 100, 200
-        class_mock(request, 'docx.text.Run', return_value=run_)
+        class_mock(request, 'docx.text.paragraph.Run', return_value=run_)
         run_.add_picture.return_value = picture_
         return (document, image_path_, width, height, run_, picture_)
 

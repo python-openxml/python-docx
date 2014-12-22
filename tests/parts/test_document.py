@@ -18,7 +18,8 @@ from docx.parts.image import ImagePart
 from docx.section import Section
 from docx.shape import InlineShape
 from docx.table import Table
-from docx.text import Paragraph, Run
+from docx.text.paragraph import Paragraph
+from docx.text.run import Run
 
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.text import a_p

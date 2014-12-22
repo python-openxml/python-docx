@@ -12,7 +12,8 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
-from docx.text import Paragraph, Run
+from docx.text.paragraph import Paragraph
+from docx.text.run import Run
 
 import pytest
 
@@ -212,7 +213,7 @@ class DescribeParagraph(object):
     def Run_(self, request, runs_):
         run_, run_2_ = runs_
         return class_mock(
-            request, 'docx.text.Run', side_effect=[run_, run_2_]
+            request, 'docx.text.paragraph.Run', side_effect=[run_, run_2_]
         )
 
     @pytest.fixture

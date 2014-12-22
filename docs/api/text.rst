@@ -4,11 +4,11 @@
 Text-related objects
 ====================
 
-.. currentmodule:: docx.text
-
 
 |Paragraph| objects
 -------------------
+
+.. currentmodule:: docx.text.paragraph
 
 .. autoclass:: Paragraph
    :members:
@@ -16,6 +16,8 @@ Text-related objects
 
 |Run| objects
 -------------
+
+.. currentmodule:: docx.text.run
 
 .. autoclass:: Run
    :members:

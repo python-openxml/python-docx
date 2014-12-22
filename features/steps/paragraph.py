@@ -10,7 +10,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
-from docx.text import Paragraph
+from docx.text.paragraph import Paragraph
 
 from helpers import saved_docx_path, test_docx, test_text
 

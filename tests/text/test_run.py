@@ -11,7 +11,8 @@ from __future__ import (
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.parts.document import InlineShapes
 from docx.shape import InlineShape
-from docx.text import Paragraph, Run
+from docx.text.paragraph import Paragraph
+from docx.text.run import Run
 
 import pytest
 

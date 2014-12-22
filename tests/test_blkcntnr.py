@@ -10,7 +10,7 @@ import pytest
 
 from docx.blkcntnr import BlockItemContainer
 from docx.table import Table
-from docx.text import Paragraph
+from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element, xml
 

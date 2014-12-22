@@ -9,7 +9,7 @@ ones like structured document tags.
 from __future__ import absolute_import, print_function
 
 from .shared import Parented
-from .text import Paragraph
+from .text.paragraph import Paragraph
 
 
 class BlockItemContainer(Parented):

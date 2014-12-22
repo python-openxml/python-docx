@@ -129,7 +129,7 @@ rst_epilog = """
 
 .. |Table| replace:: :class:`.Table`
 
-.. |Text| replace:: :class:`Text`
+.. |_Text| replace:: :class:`._Text`
 
 .. |True| replace:: ``True``
 
