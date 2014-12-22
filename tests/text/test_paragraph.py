@@ -16,8 +16,8 @@ from docx.text import Paragraph, Run
 
 import pytest
 
-from .unitutil.cxml import element, xml
-from .unitutil.mock import call, class_mock, instance_mock
+from ..unitutil.cxml import element, xml
+from ..unitutil.mock import call, class_mock, instance_mock
 
 
 class DescribeParagraph(object):
