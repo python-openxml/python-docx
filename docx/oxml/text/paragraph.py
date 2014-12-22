@@ -128,10 +128,6 @@ class CT_PPr(BaseOxmlElement):
     sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[35:])
     del _tag_seq
 
-    def _insert_pStyle(self, pStyle):
-        self.insert(0, pStyle)
-        return pStyle
-
     @property
     def first_line_indent(self):
         """
