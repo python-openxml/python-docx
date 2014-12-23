@@ -105,6 +105,7 @@ class CT_Style(BaseOxmlElement):
     )
     name = ZeroOrOne('w:name', successors=_tag_seq[1:])
     basedOn = ZeroOrOne('w:basedOn', successors=_tag_seq[3:])
+    next = ZeroOrOne('w:next', successors=_tag_seq[4:])
     uiPriority = ZeroOrOne('w:uiPriority', successors=_tag_seq[8:])
     semiHidden = ZeroOrOne('w:semiHidden', successors=_tag_seq[9:])
     unhideWhenUsed = ZeroOrOne('w:unhideWhenUsed', successors=_tag_seq[10:])
@@ -190,6 +191,22 @@ class CT_Style(BaseOxmlElement):
         if value is not None:
             name = self._add_name()
             name.val = value
+
+    @property
+    def next_style(self):
+        """
+        Sibling CT_Style element identified by the value of `w:name/@w:val`
+        or |None| if no value is present or no style with that style id
+        is found.
+        """
+        next = self.next
+        if next is None:
+            return None
+        styles = self.getparent()
+        next_style = styles.get_by_id(next.val)
+        if next_style is None:
+            return None
+        return next_style
 
     @property
     def qFormat_val(self):
