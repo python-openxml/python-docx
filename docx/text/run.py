@@ -10,51 +10,6 @@ from ..enum.text import WD_BREAK
 from ..shared import ElementProxy, Parented
 
 
-def boolproperty(f):
-    """
-    @boolproperty decorator. Decorated method must return the XML element
-    name of the boolean property element occuring under rPr. Causes
-    a read/write tri-state property to be added to the class having the name
-    of the decorated function.
-    """
-    def _get_prop_value(parent, attr_name):
-        return getattr(parent, attr_name)
-
-    def _remove_prop(parent, attr_name):
-        remove_method_name = '_remove_%s' % attr_name
-        remove_method = getattr(parent, remove_method_name)
-        remove_method()
-
-    def _add_prop(parent, attr_name):
-        add_method_name = '_add_%s' % attr_name
-        add_method = getattr(parent, add_method_name)
-        return add_method()
-
-    def getter(obj):
-        r, attr_name = obj._r, f(obj)
-        if r.rPr is None:
-            return None
-        prop_value = _get_prop_value(r.rPr, attr_name)
-        if prop_value is None:
-            return None
-        return prop_value.val
-
-    def setter(obj, value):
-        if value not in (True, False, None):
-            raise ValueError(
-                "assigned value must be True, False, or None, got '%s'"
-                % value
-            )
-        r, attr_name = obj._r, f(obj)
-        rPr = r.get_or_add_rPr()
-        _remove_prop(rPr, attr_name)
-        if value is not None:
-            elm = _add_prop(rPr, attr_name)
-            elm.val = value
-
-    return property(getter, setter, doc=f.__doc__)
-
-
 class Run(Parented):
     """
     Proxy object wrapping ``<w:r>`` element. Several of the properties on Run
@@ -136,13 +91,6 @@ class Run(Parented):
         t = self._r.add_t(text)
         return _Text(t)
 
-    @boolproperty
-    def all_caps(self):
-        """
-        Read/write. Causes the text of the run to appear in capital letters.
-        """
-        return 'caps'
-
     @property
     def bold(self):
         """
@@ -162,47 +110,6 @@ class Run(Parented):
         self._r.clear_content()
         return self
 
-    @boolproperty
-    def complex_script(self):
-        """
-        Read/write tri-state value. When |True|, causes the characters in the
-        run to be treated as complex script regardless of their Unicode
-        values.
-        """
-        return 'cs'
-
-    @boolproperty
-    def cs_bold(self):
-        """
-        Read/write tri-state value. When |True|, causes the complex script
-        characters in the run to be displayed in bold typeface.
-        """
-        return 'bCs'
-
-    @boolproperty
-    def cs_italic(self):
-        """
-        Read/write tri-state value. When |True|, causes the complex script
-        characters in the run to be displayed in italic typeface.
-        """
-        return 'iCs'
-
-    @boolproperty
-    def double_strike(self):
-        """
-        Read/write tri-state value. When |True|, causes the text in the run
-        to appear with double strikethrough.
-        """
-        return 'dstrike'
-
-    @boolproperty
-    def emboss(self):
-        """
-        Read/write tri-state value. When |True|, causes the text in the run
-        to appear as if raised off the page in relief.
-        """
-        return 'emboss'
-
     @property
     def font(self):
         """
@@ -210,15 +117,6 @@ class Run(Parented):
         properties for this run, such as font name and size.
         """
         return Font(self._element)
-
-    @boolproperty
-    def hidden(self):
-        """
-        Read/write tri-state value. When |True|, causes the text in the run
-        to be hidden from display, unless applications settings force hidden
-        text to be shown.
-        """
-        return 'vanish'
 
     @property
     def italic(self):
@@ -231,94 +129,6 @@ class Run(Parented):
     @italic.setter
     def italic(self, value):
         self.font.italic = value
-
-    @boolproperty
-    def imprint(self):
-        """
-        Read/write tri-state value. When |True|, causes the text in the run
-        to appear as if pressed into the page.
-        """
-        return 'imprint'
-
-    @boolproperty
-    def math(self):
-        """
-        Read/write tri-state value. When |True|, specifies this run contains
-        WML that should be handled as though it was Office Open XML Math.
-        """
-        return 'oMath'
-
-    @boolproperty
-    def no_proof(self):
-        """
-        Read/write tri-state value. When |True|, specifies that the contents
-        of this run should not report any errors when the document is scanned
-        for spelling and grammar.
-        """
-        return 'noProof'
-
-    @boolproperty
-    def outline(self):
-        """
-        Read/write tri-state value. When |True| causes the characters in the
-        run to appear as if they have an outline, by drawing a one pixel wide
-        border around the inside and outside borders of each character glyph.
-        """
-        return 'outline'
-
-    @boolproperty
-    def rtl(self):
-        """
-        Read/write tri-state value. When |True| causes the text in the run
-        to have right-to-left characteristics.
-        """
-        return 'rtl'
-
-    @boolproperty
-    def shadow(self):
-        """
-        Read/write tri-state value. When |True| causes the text in the run
-        to appear as if each character has a shadow.
-        """
-        return 'shadow'
-
-    @boolproperty
-    def small_caps(self):
-        """
-        Read/write tri-state value. When |True| causes the lowercase
-        characters in the run to appear as capital letters two points smaller
-        than the font size specified for the run.
-        """
-        return 'smallCaps'
-
-    @boolproperty
-    def snap_to_grid(self):
-        """
-        Read/write tri-state value. When |True| causes the run to use the
-        document grid characters per line settings defined in the docGrid
-        element when laying out the characters in this run.
-        """
-        return 'snapToGrid'
-
-    @boolproperty
-    def spec_vanish(self):
-        """
-        Read/write tri-state value. When |True|, specifies that the given run
-        shall always behave as if it is hidden, even when hidden text is
-        being displayed in the current document. The property has a very
-        narrow, specialized use related to the table of contents. Consult the
-        spec (§17.3.2.36) for more details.
-        """
-        return 'specVanish'
-
-    @boolproperty
-    def strike(self):
-        """
-        Read/write tri-state value. When |True| causes the text in the run
-        to appear with a single horizontal line through the center of the
-        line.
-        """
-        return 'strike'
 
     @property
     def style(self):
@@ -377,15 +187,6 @@ class Run(Parented):
     @underline.setter
     def underline(self, value):
         self.font.underline = value
-
-    @boolproperty
-    def web_hidden(self):
-        """
-        Read/write tri-state value. When |True|, specifies that the contents
-        of this run shall be hidden when the document is displayed in web
-        page view.
-        """
-        return 'webHidden'
 
 
 class Font(ElementProxy):

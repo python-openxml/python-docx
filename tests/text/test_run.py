@@ -163,30 +163,12 @@ class DescribeRun(object):
         return run, text, expected_xml, Text_
 
     @pytest.fixture(params=[
-        ('w:r/w:rPr',                          'all_caps',       None),
-        ('w:r/w:rPr/w:caps',                   'all_caps',       True),
-        ('w:r/w:rPr/w:caps{w:val=on}',         'all_caps',       True),
-        ('w:r/w:rPr/w:caps{w:val=off}',        'all_caps',       False),
-        ('w:r/w:rPr/w:b{w:val=1}',             'bold',           True),
-        ('w:r/w:rPr/w:i{w:val=0}',             'italic',         False),
-        ('w:r/w:rPr/w:cs{w:val=true}',         'complex_script', True),
-        ('w:r/w:rPr/w:bCs{w:val=false}',       'cs_bold',        False),
-        ('w:r/w:rPr/w:iCs{w:val=on}',          'cs_italic',      True),
-        ('w:r/w:rPr/w:dstrike{w:val=off}',     'double_strike',  False),
-        ('w:r/w:rPr/w:emboss{w:val=1}',        'emboss',         True),
-        ('w:r/w:rPr/w:vanish{w:val=0}',        'hidden',         False),
-        ('w:r/w:rPr/w:i{w:val=true}',          'italic',         True),
-        ('w:r/w:rPr/w:imprint{w:val=false}',   'imprint',        False),
-        ('w:r/w:rPr/w:oMath{w:val=on}',        'math',           True),
-        ('w:r/w:rPr/w:noProof{w:val=off}',     'no_proof',       False),
-        ('w:r/w:rPr/w:outline{w:val=1}',       'outline',        True),
-        ('w:r/w:rPr/w:rtl{w:val=0}',           'rtl',            False),
-        ('w:r/w:rPr/w:shadow{w:val=true}',     'shadow',         True),
-        ('w:r/w:rPr/w:smallCaps{w:val=false}', 'small_caps',     False),
-        ('w:r/w:rPr/w:snapToGrid{w:val=on}',   'snap_to_grid',   True),
-        ('w:r/w:rPr/w:specVanish{w:val=off}',  'spec_vanish',    False),
-        ('w:r/w:rPr/w:strike{w:val=1}',        'strike',         True),
-        ('w:r/w:rPr/w:webHidden{w:val=0}',     'web_hidden',     False),
+        ('w:r/w:rPr',                  'bold',   None),
+        ('w:r/w:rPr/w:b',              'bold',   True),
+        ('w:r/w:rPr/w:b{w:val=on}',    'bold',   True),
+        ('w:r/w:rPr/w:b{w:val=off}',   'bold',   False),
+        ('w:r/w:rPr/w:b{w:val=1}',     'bold',   True),
+        ('w:r/w:rPr/w:i{w:val=0}',     'italic', False),
     ])
     def bool_prop_get_fixture(self, request):
         r_cxml, bool_prop_name, expected_value = request.param
@@ -195,52 +177,22 @@ class DescribeRun(object):
 
     @pytest.fixture(params=[
         # nothing to True, False, and None ---------------------------
-        ('w:r',                             'all_caps',       True,
-         'w:r/w:rPr/w:caps'),
-        ('w:r',                             'bold',           False,
-         'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r',                             'italic',         None,
-         'w:r/w:rPr'),
+        ('w:r', 'bold',   True,  'w:r/w:rPr/w:b'),
+        ('w:r', 'bold',   False, 'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r', 'italic', None,  'w:r/w:rPr'),
         # default to True, False, and None ---------------------------
-        ('w:r/w:rPr/w:cs',                  'complex_script', True,
-         'w:r/w:rPr/w:cs'),
-        ('w:r/w:rPr/w:bCs',                 'cs_bold',        False,
-         'w:r/w:rPr/w:bCs{w:val=0}'),
-        ('w:r/w:rPr/w:iCs',                 'cs_italic',      None,
-         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:b', 'bold',   True,  'w:r/w:rPr/w:b'),
+        ('w:r/w:rPr/w:b', 'bold',   False, 'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r/w:rPr/w:i', 'italic', None,  'w:r/w:rPr'),
         # True to True, False, and None ------------------------------
-        ('w:r/w:rPr/w:dstrike{w:val=1}',    'double_strike',  True,
-         'w:r/w:rPr/w:dstrike'),
-        ('w:r/w:rPr/w:emboss{w:val=on}',    'emboss',         False,
-         'w:r/w:rPr/w:emboss{w:val=0}'),
-        ('w:r/w:rPr/w:vanish{w:val=1}',     'hidden',         None,
-         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:b{w:val=on}', 'bold', True,  'w:r/w:rPr/w:b'),
+        ('w:r/w:rPr/w:b{w:val=1}',  'bold', False, 'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r/w:rPr/w:b{w:val=1}',  'bold', None,  'w:r/w:rPr'),
         # False to True, False, and None -----------------------------
-        ('w:r/w:rPr/w:i{w:val=false}',      'italic',         True,
-         'w:r/w:rPr/w:i'),
-        ('w:r/w:rPr/w:imprint{w:val=0}',    'imprint',        False,
-         'w:r/w:rPr/w:imprint{w:val=0}'),
-        ('w:r/w:rPr/w:oMath{w:val=off}',    'math',           None,
-         'w:r/w:rPr'),
-        # random mix -------------------------------------------------
-        ('w:r/w:rPr/w:noProof{w:val=1}',    'no_proof',       False,
-         'w:r/w:rPr/w:noProof{w:val=0}'),
-        ('w:r/w:rPr',                       'outline',        True,
-         'w:r/w:rPr/w:outline'),
-        ('w:r/w:rPr/w:rtl{w:val=true}',     'rtl',            False,
-         'w:r/w:rPr/w:rtl{w:val=0}'),
-        ('w:r/w:rPr/w:shadow{w:val=on}',    'shadow',         True,
-         'w:r/w:rPr/w:shadow'),
-        ('w:r/w:rPr/w:smallCaps',           'small_caps',     False,
-         'w:r/w:rPr/w:smallCaps{w:val=0}'),
-        ('w:r/w:rPr/w:snapToGrid',          'snap_to_grid',   True,
-         'w:r/w:rPr/w:snapToGrid'),
-        ('w:r/w:rPr/w:specVanish',          'spec_vanish',    None,
-         'w:r/w:rPr'),
-        ('w:r/w:rPr/w:strike{w:val=foo}',   'strike',         True,
-         'w:r/w:rPr/w:strike'),
-        ('w:r/w:rPr/w:webHidden',           'web_hidden',     False,
-         'w:r/w:rPr/w:webHidden{w:val=0}'),
+        ('w:r/w:rPr/w:i{w:val=false}', 'italic', True,  'w:r/w:rPr/w:i'),
+        ('w:r/w:rPr/w:i{w:val=0}',     'italic', False,
+         'w:r/w:rPr/w:i{w:val=0}'),
+        ('w:r/w:rPr/w:i{w:val=off}',   'italic', None,  'w:r/w:rPr'),
     ])
     def bool_prop_set_fixture(self, request):
         initial_r_cxml, bool_prop_name, value, expected_cxml = request.param
@@ -397,7 +349,6 @@ class DescribeFont(object):
     def it_can_change_its_typeface_name(self, name_set_fixture):
         font, value, expected_xml = name_set_fixture
         font.name = value
-        print(font._element.xml)
         assert font._element.xml == expected_xml
 
     def it_knows_its_size(self, size_get_fixture):
