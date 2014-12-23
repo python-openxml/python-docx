@@ -131,12 +131,12 @@ class CT_R(BaseOxmlElement):
         rPr = self.rPr
         if rPr is None:
             return None
-        return rPr.underline
+        return rPr.u_val
 
     @underline.setter
     def underline(self, value):
         rPr = self.get_or_add_rPr()
-        rPr.underline = value
+        rPr.u_val = value
 
 
 class CT_RPr(BaseOxmlElement):
@@ -275,23 +275,22 @@ class CT_RPr(BaseOxmlElement):
         if value is not None:
             self._add_u().val = value
 
-    @property
-    def underline(self):
+    def _get_bool_val(self, name):
         """
-        Underline type specified in <w:u> child, or None if that element is
-        not present.
+        Return the value of the boolean child element having *name*, e.g.
+        'b', 'i', and 'smallCaps'.
         """
-        u = self.u
-        if u is None:
+        element = getattr(self, name)
+        if element is None:
             return None
-        return u.val
+        return element.val
 
-    @underline.setter
-    def underline(self, value):
-        self._remove_u()
-        if value is not None:
-            u = self._add_u()
-            u.val = value
+    def _set_bool_val(self, name, value):
+        if value is None:
+            getattr(self, '_remove_%s' % name)()
+            return
+        element = getattr(self, 'get_or_add_%s' % name)()
+        element.val = value
 
 
 class CT_Text(BaseOxmlElement):
