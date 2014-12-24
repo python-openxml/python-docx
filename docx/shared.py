@@ -172,10 +172,11 @@ class ElementProxy(object):
     type of class in python-docx other than custom element (oxml) classes.
     """
 
-    __slots__ = ('_element',)
+    __slots__ = ('_element', '_parent')
 
-    def __init__(self, element):
+    def __init__(self, element, parent=None):
         self._element = element
+        self._parent = parent
 
     def __eq__(self, other):
         """
@@ -200,6 +201,13 @@ class ElementProxy(object):
         The lxml element proxied by this object.
         """
         return self._element
+
+    @property
+    def part(self):
+        """
+        The package part containing this object
+        """
+        return self._parent.part
 
 
 class Parented(object):
