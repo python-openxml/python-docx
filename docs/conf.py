@@ -89,6 +89,8 @@ rst_epilog = """
 
 .. |False| replace:: ``False``
 
+.. |Font| replace:: :class:`.Font`
+
 .. |InlineShape| replace:: :class:`.InlineShape`
 
 .. |InlineShapes| replace:: :class:`.InlineShapes`
@@ -96,6 +98,8 @@ rst_epilog = """
 .. |InvalidSpanError| replace:: :class:`.InvalidSpanError`
 
 .. |int| replace:: :class:`int`
+
+.. |LatentStyles| replace:: :class:`.LatentStyles`
 
 .. |Length| replace:: :class:`.Length`
 
@@ -117,13 +121,17 @@ rst_epilog = """
 
 .. |_Rows| replace:: :class:`_Rows`
 
-.. |Run| replace:: :class:`Run`
+.. |Run| replace:: :class:`.Run`
 
 .. |Section| replace:: :class:`.Section`
 
 .. |Sections| replace:: :class:`.Sections`
 
 .. |str| replace:: :class:`str`
+
+.. |Style| replace:: :class:`.Style`
+
+.. |Styles| replace:: :class:`.Styles`
 
 .. |StylesPart| replace:: :class:`.StylesPart`
 

@@ -70,7 +70,8 @@ User Guide
    user/documents
    user/sections
    user/api-concepts
-   user/styles
+   user/styles-understanding
+   user/styles-using
    user/shapes
    user/text
 
