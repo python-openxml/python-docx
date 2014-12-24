@@ -17,7 +17,7 @@ class Length(int):
     _EMUS_PER_INCH = 914400
     _EMUS_PER_CM = 360000
     _EMUS_PER_MM = 36000
-    _EMUS_PER_PX = 12700
+    _EMUS_PER_PT = 12700
     _EMUS_PER_TWIP = 635
 
     def __new__(cls, emu):
@@ -52,10 +52,11 @@ class Length(int):
         return self / float(self._EMUS_PER_MM)
 
     @property
-    def px(self):
-        # round can somtimes return values like x.999999 which are truncated
-        # to x by int(); adding the 0.1 prevents this
-        return int(round(self / float(self._EMUS_PER_PX)) + 0.1)
+    def pt(self):
+        """
+        Floating point length in points
+        """
+        return self / float(self._EMUS_PER_PT)
 
     @property
     def twips(self):
@@ -104,23 +105,12 @@ class Mm(Length):
         return Length.__new__(cls, emu)
 
 
-class Pt(int):
+class Pt(Length):
     """
-    Convenience class for setting font sizes in points
+    Convenience value class for specifying a length in points
     """
-    _UNITS_PER_POINT = 100
-
-    def __new__(cls, pts):
-        units = int(pts * Pt._UNITS_PER_POINT)
-        return int.__new__(cls, units)
-
-
-class Px(Length):
-    """
-    Convenience constructor for length in pixels.
-    """
-    def __new__(cls, px):
-        emu = int(px * Length._EMUS_PER_PX)
+    def __new__(cls, points):
+        emu = int(points * Length._EMUS_PER_PT)
         return Length.__new__(cls, emu)
 
 

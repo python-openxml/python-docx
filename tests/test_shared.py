@@ -11,7 +11,7 @@ from __future__ import (
 import pytest
 
 from docx.opc.part import XmlPart
-from docx.shared import ElementProxy
+from docx.shared import ElementProxy, Length, Cm, Emu, Inches, Mm, Pt, Twips
 
 from .unitutil.cxml import element
 from .unitutil.mock import instance_mock
@@ -70,3 +70,46 @@ class DescribeElementProxy(object):
     @pytest.fixture
     def part_(self, request):
         return instance_mock(request, XmlPart)
+
+
+class DescribeLength(object):
+
+    def it_can_construct_from_convenient_units(self, construct_fixture):
+        UnitCls, units_val, emu = construct_fixture
+        length = UnitCls(units_val)
+        assert isinstance(length, Length)
+        assert length == emu
+
+    def it_can_self_convert_to_convenient_units(self, units_fixture):
+        emu, units_prop_name, expected_length_in_units, type_ = units_fixture
+        length = Length(emu)
+        length_in_units = getattr(length, units_prop_name)
+        assert length_in_units == expected_length_in_units
+        assert isinstance(length_in_units, type_)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (Length,      914400,  914400),
+        (Inches,      1.1,    1005840),
+        (Cm,          2.53,    910799),
+        (Emu,         9144.9,    9144),
+        (Mm,          13.8,    496800),
+        (Pt,          24.5,    311150),
+        (Twips,       360,     228600),
+    ])
+    def construct_fixture(self, request):
+        UnitCls, units_val, emu = request.param
+        return UnitCls, units_val, emu
+
+    @pytest.fixture(params=[
+        (914400, 'inches', 1.0,    float),
+        (914400, 'cm',     2.54,   float),
+        (914400, 'emu',    914400, int),
+        (914400, 'mm',     25.4,   float),
+        (914400, 'pt',     72.0,   float),
+        (914400, 'twips',  1440,   int),
+    ])
+    def units_fixture(self, request):
+        emu, units_prop_name, expected_length_in_units, type_ = request.param
+        return emu, units_prop_name, expected_length_in_units, type_
