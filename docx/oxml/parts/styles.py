@@ -4,16 +4,26 @@
 Custom element classes related to the styles part
 """
 
-from ..xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
+from ...enum.style import WD_STYLE_TYPE
+from ..xmlchemy import (
+    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+)
 
 
 class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition
     """
-    pPr = ZeroOrOne('w:pPr', successors=(
-        'w:rPr', 'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
-    ))
+    _tag_seq = (
+        'w:name', 'w:aliases', 'w:basedOn', 'w:next', 'w:link',
+        'w:autoRedefine', 'w:hidden', 'w:uiPriority', 'w:semiHidden',
+        'w:unhideWhenUsed', 'w:qFormat', 'w:locked', 'w:personal',
+        'w:personalCompose', 'w:personalReply', 'w:rsid', 'w:pPr', 'w:rPr',
+        'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
+    )
+    pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
+    type = OptionalAttribute('w:type', WD_STYLE_TYPE)
+    del _tag_seq
 
 
 class CT_Styles(BaseOxmlElement):
