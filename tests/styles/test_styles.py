@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 """
-Test suite for the docx.styles module
+Test suite for the docx.styles.styles module
 """
 
 from __future__ import (
