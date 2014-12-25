@@ -64,16 +64,16 @@ class DescribeStyles(object):
         return styles, 'Foobar', expected_element
 
     @pytest.fixture(params=[
-        ('w:styles/(w:style%s/w:name{w:val=foo},w:style,w:style)', 0),
-        ('w:styles/(w:style,w:style%s/w:name{w:val=foo},w:style)', 1),
-        ('w:styles/(w:style,w:style,w:style%s/w:name{w:val=foo})', 2),
+        ('w:styles/(w:style%s/w:name{w:val=foo},w:style)', 'foo',       0),
+        ('w:styles/(w:style,w:style%s/w:name{w:val=foo})', 'foo',       1),
+        ('w:styles/w:style%s/w:name{w:val=heading 1}',     'Heading 1', 0),
     ])
     def get_by_name_fixture(self, request):
-        styles_cxml_tmpl, style_idx = request.param
+        styles_cxml_tmpl, key, style_idx = request.param
         styles_cxml = styles_cxml_tmpl % '{w:type=character}'
         styles = Styles(element(styles_cxml))
         expected_element = styles._element[style_idx]
-        return styles, 'foo', expected_element
+        return styles, key, expected_element
 
     @pytest.fixture(params=[
         ('w:styles/(w:style,w:style/w:name{w:val=foo},w:style)'),
