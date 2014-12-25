@@ -9,7 +9,6 @@ from __future__ import (
 )
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml.ns import qn
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.text.paragraph import Paragraph
@@ -18,7 +17,7 @@ from docx.text.run import Run
 import pytest
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import call, class_mock, instance_mock
+from ..unitutil.mock import call, class_mock, instance_mock, method_mock
 
 
 class DescribeParagraph(object):
@@ -66,12 +65,15 @@ class DescribeParagraph(object):
         assert paragraph.text == expected_text
 
     def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
-        paragraph, text, style, body, expected_xml = insert_before_fixture
+        paragraph, text, style, paragraph_, add_run_calls = (
+            insert_before_fixture
+        )
         new_paragraph = paragraph.insert_paragraph_before(text, style)
-        assert isinstance(new_paragraph, Paragraph)
-        assert new_paragraph.text == text
+
+        paragraph._insert_paragraph_before.assert_called_once_with()
+        assert new_paragraph.add_run.call_args_list == add_run_calls
         assert new_paragraph.style == style
-        assert body.xml == expected_xml
+        assert new_paragraph is paragraph_
 
     def it_can_remove_its_content_while_preserving_formatting(
             self, clear_fixture):
@@ -79,6 +81,12 @@ class DescribeParagraph(object):
         _paragraph = paragraph.clear()
         assert paragraph._p.xml == expected_xml
         assert _paragraph is paragraph
+
+    def it_inserts_a_paragraph_before_to_help(self, _insert_before_fixture):
+        paragraph, body, expected_xml = _insert_before_fixture
+        new_paragraph = paragraph._insert_paragraph_before()
+        assert isinstance(new_paragraph, Paragraph)
+        assert body.xml == expected_xml
 
     # fixtures -------------------------------------------------------
 
@@ -135,15 +143,31 @@ class DescribeParagraph(object):
         return paragraph, expected_xml
 
     @pytest.fixture(params=[
-        ('w:body/w:p', 'foobar', 'Heading1',
-         'w:body/(w:p/(w:pPr/w:pStyle{w:val=Heading1},w:r/w:t"foobar"),w:p)')
+        (None,  None),
+        ('Foo', None),
+        (None,  'Bar'),
+        ('Foo', 'Bar'),
     ])
-    def insert_before_fixture(self, request):
-        body_cxml, text, style, expected_cxml = request.param
+    def insert_before_fixture(self, request, _insert_paragraph_before_,
+                              add_run_):
+        paragraph = Paragraph(None, None)
+        paragraph_ = _insert_paragraph_before_.return_value
+        text, style = request.param
+        add_run_calls = [] if text is None else [call(text)]
+        paragraph_.style = None
+        return (
+            paragraph, text, style, paragraph_, add_run_calls
+        )
+
+    @pytest.fixture(params=[
+        ('w:body/w:p{id=42}', 'w:body/(w:p,w:p{id=42})')
+    ])
+    def _insert_before_fixture(self, request):
+        body_cxml, expected_cxml = request.param
         body = element(body_cxml)
-        paragraph = Paragraph(body.find(qn('w:p')), None)
+        paragraph = Paragraph(body[0], None)
         expected_xml = xml(expected_cxml)
-        return paragraph, text, style, body, expected_xml
+        return paragraph, body, expected_xml
 
     @pytest.fixture
     def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
@@ -204,6 +228,14 @@ class DescribeParagraph(object):
         return paragraph, new_text_value, expected_text_value
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def add_run_(self, request):
+        return method_mock(request, Paragraph, 'add_run')
+
+    @pytest.fixture
+    def _insert_paragraph_before_(self, request):
+        return method_mock(request, Paragraph, '_insert_paragraph_before')
 
     @pytest.fixture
     def p_(self, request, r_, r_2_):
