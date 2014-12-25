@@ -6,6 +6,7 @@ Paragraph-related proxy types.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from ..enum.style import WD_STYLE_TYPE
 from .run import Run
 from ..shared import Parented
 
@@ -85,8 +86,8 @@ class Paragraph(Parented):
         """
         Paragraph style for this paragraph. Read/Write.
         """
-        style = self._p.style
-        return style if style is not None else 'Normal'
+        style_id = self._p.style
+        return self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
 
     @style.setter
     def style(self, style):

@@ -66,6 +66,14 @@ class DocumentPart(XmlPart):
         rId = self.relate_to(image_part, RT.IMAGE)
         return (image_part, rId)
 
+    def get_style(self, style_id, style_type):
+        """
+        Return the style in this document matching *style_id*. Returns the
+        default style for *style_type* if *style_id* is |None| or does not
+        match a defined style of *style_type*.
+        """
+        raise NotImplementedError
+
     @lazyproperty
     def inline_shapes(self):
         """

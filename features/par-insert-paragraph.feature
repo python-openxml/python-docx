@@ -4,6 +4,7 @@ Feature: Insert a paragraph before or after a paragraph
   I need a way to insert a paragraph relative to another paragraph
 
 
+  @wip
   Scenario: Add a new paragraph above an existing paragraph
     Given a document containing three paragraphs
      When I insert a paragraph above the second paragraph
