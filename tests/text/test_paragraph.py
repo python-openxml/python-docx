@@ -8,16 +8,20 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
+from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 import pytest
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import call, class_mock, instance_mock, method_mock
+from ..unitutil.mock import (
+    call, class_mock, instance_mock, method_mock, property_mock
+)
 
 
 class DescribeParagraph(object):
@@ -47,8 +51,12 @@ class DescribeParagraph(object):
         assert paragraph._p.xml == expected_xml
 
     def it_knows_its_paragraph_style(self, style_get_fixture):
-        paragraph, expected_style = style_get_fixture
-        assert paragraph.style == expected_style
+        paragraph, style_id_, style_ = style_get_fixture
+        style = paragraph.style
+        paragraph.part.get_style.assert_called_once_with(
+            style_id_, WD_STYLE_TYPE.PARAGRAPH
+        )
+        assert style is style_
 
     def it_can_change_its_paragraph_style(self, style_set_fixture):
         paragraph, value, expected_xml = style_set_fixture
@@ -175,15 +183,13 @@ class DescribeParagraph(object):
         run_, run_2_ = runs_
         return paragraph, Run_, r_, r_2_, run_, run_2_
 
-    @pytest.fixture(params=[
-        ('w:p', 'Normal'),
-        ('w:p/w:pPr', 'Normal'),
-        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', 'Heading1'),
-    ])
-    def style_get_fixture(self, request):
-        p_cxml, expected_style = request.param
+    @pytest.fixture
+    def style_get_fixture(self, part_prop_):
+        style_id = 'Foobar'
+        p_cxml = 'w:p/w:pPr/w:pStyle{w:val=%s}' % style_id
         paragraph = Paragraph(element(p_cxml), None)
-        return paragraph, expected_style
+        style_ = part_prop_.return_value.get_style.return_value
+        return paragraph, style_id, style_
 
     @pytest.fixture(params=[
         ('w:p',                                'Heading1',
@@ -234,12 +240,22 @@ class DescribeParagraph(object):
         return method_mock(request, Paragraph, 'add_run')
 
     @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
     def _insert_paragraph_before_(self, request):
         return method_mock(request, Paragraph, '_insert_paragraph_before')
 
     @pytest.fixture
     def p_(self, request, r_, r_2_):
         return instance_mock(request, CT_P, r_lst=(r_, r_2_))
+
+    @pytest.fixture
+    def part_prop_(self, request, document_part_):
+        return property_mock(
+            request, Paragraph, 'part', return_value=document_part_
+        )
 
     @pytest.fixture
     def Run_(self, request, runs_):

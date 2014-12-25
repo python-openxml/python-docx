@@ -4,6 +4,7 @@ Feature: Replace paragraph text
   I need a writable text property on paragraph
 
 
+  @wip
   Scenario: Set paragraph text
     Given a paragraph with content and formatting
      When I set the paragraph text
