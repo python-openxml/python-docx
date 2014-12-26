@@ -152,7 +152,7 @@ def then_the_paragraph_has_the_text_I_set(context):
 @then('the style of the second paragraph matches the style I set')
 def then_the_style_of_the_second_paragraph_matches_the_style_I_set(context):
     second_paragraph = context.document.paragraphs[1]
-    assert second_paragraph.style == 'Heading1'
+    assert second_paragraph.style.name == 'Heading 1'
 
 
 @then('the text of the second paragraph matches the text I set')
