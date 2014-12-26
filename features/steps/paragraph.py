@@ -8,14 +8,8 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
-from docx.text.paragraph import Paragraph
 
 from helpers import saved_docx_path, test_docx, test_text
-
-
-TEST_STYLE = 'Heading1'
 
 
 # given ===================================================
@@ -56,17 +50,8 @@ def given_a_paragraph_having_style(context, style_state):
 
 @given('a paragraph with content and formatting')
 def given_a_paragraph_with_content_and_formatting(context):
-    p_xml = """\
-        <w:p %s>
-          <w:pPr>
-            <w:pStyle w:val="%s"/>
-          </w:pPr>
-          <w:r>
-            <w:t>foobar</w:t>
-          </w:r>
-        </w:p>""" % (nsdecls('w'), TEST_STYLE)
-    p = parse_xml(p_xml)
-    context.paragraph = Paragraph(p, None)
+    document = Document(test_docx('par-known-paragraphs'))
+    context.paragraph = document.paragraphs[0]
 
 
 # when ====================================================
@@ -144,7 +129,8 @@ def then_the_paragraph_alignment_prop_value_is_value(context, align_value):
 
 @then('the paragraph formatting is preserved')
 def then_the_paragraph_formatting_is_preserved(context):
-    assert context.paragraph.style == TEST_STYLE
+    paragraph = context.paragraph
+    assert paragraph.style.name == 'Heading 1'
 
 
 @then('the paragraph has no content')
