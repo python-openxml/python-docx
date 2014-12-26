@@ -38,11 +38,28 @@ class Styles(ElementProxy):
     def __len__(self):
         return len(self._element.style_lst)
 
+    def default(self, style_type):
+        """
+        Return the default style for *style_type* or |None| if no default is
+        defined for that type (not common).
+        """
+        raise NotImplementedError
+
     def get_by_id(self, style_id, style_type):
         """
         Return the style of *style_type* matching *style_id*. Returns the
         default for *style_type* if *style_id* is not found or is |None|, or
         if the style having *style_id* is not of *style_type*.
+        """
+        if style_id is None:
+            return self.default(style_type)
+        return self._get_by_id(style_id, style_type)
+
+    def _get_by_id(self, style_id, style_type):
+        """
+        Return the style of *style_type* matching *style_id*. Returns the
+        default for *style_type* if *style_id* is not found or if the style
+        having *style_id* is not of *style_type*.
         """
         raise NotImplementedError
 
