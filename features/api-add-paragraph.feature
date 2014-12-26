@@ -16,7 +16,6 @@ Feature: Add a paragraph with optional text and style
      Then the last paragraph contains the text I specified
 
 
-  @wip
   Scenario Outline: Add a paragraph specifying its style
     Given a document
      When I add a paragraph specifying its style as a <style-spec>

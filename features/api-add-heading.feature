@@ -4,7 +4,6 @@ Feature: Add a section heading with text
   I need a method to add a heading with its text in a single step
 
 
-  @wip
   Scenario: Add a heading specifying only its text
     Given a document
      When I add a heading specifying only its text
@@ -12,7 +11,6 @@ Feature: Add a section heading with text
       And the last paragraph contains the heading text
 
 
-  @wip
   Scenario Outline: Add a heading specifying level
     Given a document
      When I add a heading specifying level=<heading level>
