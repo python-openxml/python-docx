@@ -4,7 +4,6 @@ Feature: Each paragraph has a read/write style
   I need the ability to get and set the style of a paragraph
 
 
-  @wip
   Scenario Outline: Get the style of a paragraph
      Given a paragraph having <style> style
       Then paragraph.style is <expected-value>

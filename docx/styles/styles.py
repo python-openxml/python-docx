@@ -43,7 +43,10 @@ class Styles(ElementProxy):
         Return the default style for *style_type* or |None| if no default is
         defined for that type (not common).
         """
-        raise NotImplementedError
+        style = self._element.default_for(style_type)
+        if style is None:
+            return None
+        return StyleFactory(style)
 
     def get_by_id(self, style_id, style_type):
         """

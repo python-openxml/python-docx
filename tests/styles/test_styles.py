@@ -50,6 +50,15 @@ class DescribeStyles(object):
         with pytest.raises(KeyError):
             styles[key]
 
+    def it_can_get_the_default_style_for_a_type(self, default_fixture):
+        styles, style_type, StyleFactory_ = default_fixture[:3]
+        StyleFactory_calls, style_ = default_fixture[3:]
+
+        style = styles.default(style_type)
+
+        assert StyleFactory_.call_args_list == StyleFactory_calls
+        assert style is style_
+
     def it_can_get_a_style_of_type_by_id(self, get_by_id_fixture):
         styles, style_id, style_type = get_by_id_fixture[:3]
         default_calls, _get_by_id_calls, style_ = get_by_id_fixture[3:]
@@ -71,6 +80,27 @@ class DescribeStyles(object):
         assert style is style_
 
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:styles',
+         False, WD_STYLE_TYPE.CHARACTER),
+        ('w:styles/w:style{w:type=paragraph,w:default=1}',
+         True, WD_STYLE_TYPE.PARAGRAPH),
+        ('w:styles/(w:style{w:type=table,w:default=1},w:style{w:type=table,w'
+         ':default=1})',
+         True, WD_STYLE_TYPE.TABLE),
+    ])
+    def default_fixture(self, request, StyleFactory_, style_):
+        styles_cxml, is_defined, style_type = request.param
+        styles_elm = element(styles_cxml)
+        styles = Styles(styles_elm)
+        StyleFactory_calls = [call(styles_elm[-1])] if is_defined else []
+        StyleFactory_.return_value = style_
+        expected_value = style_ if is_defined else None
+        return (
+            styles, style_type, StyleFactory_, StyleFactory_calls,
+            expected_value
+        )
 
     @pytest.fixture(params=[None, 'Foo'])
     def get_by_id_fixture(self, request, default_, _get_by_id_, style_):
