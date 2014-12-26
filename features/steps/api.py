@@ -152,11 +152,13 @@ def then_last_p_is_empty_paragraph_added(context):
     assert p.text == ''
 
 
-@then('the style of the last paragraph is \'{style}\'')
-def then_style_of_last_paragraph_is_style(context, style):
+@then('the style of the last paragraph is \'{style_name}\'')
+def then_the_style_of_the_last_paragraph_is_style(context, style_name):
     document = context.document
-    p = document.paragraphs[-1]
-    assert p.style == style
+    paragraph = document.paragraphs[-1]
+    assert paragraph.style.name == style_name, (
+        'got %s' % paragraph.style.name
+    )
 
 
 @then('the table style is \'{style}\'')

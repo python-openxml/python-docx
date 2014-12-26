@@ -141,8 +141,9 @@ class DescribeBaseStyle(object):
         return style, new_value, expected_xml
 
     @pytest.fixture(params=[
-        ('w:style{w:type=table}',                      None),
-        ('w:style{w:type=table}/w:name{w:val=Boofar}', 'Boofar'),
+        ('w:style{w:type=table}',                         None),
+        ('w:style{w:type=table}/w:name{w:val=Boofar}',    'Boofar'),
+        ('w:style{w:type=table}/w:name{w:val=heading 1}', 'Heading 1'),
     ])
     def name_get_fixture(self, request):
         style_cxml, expected_value = request.param
