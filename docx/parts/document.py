@@ -72,7 +72,7 @@ class DocumentPart(XmlPart):
         default style for *style_type* if *style_id* is |None| or does not
         match a defined style of *style_type*.
         """
-        raise NotImplementedError
+        return self.styles.get_by_id(style_id, style_type)
 
     @lazyproperty
     def inline_shapes(self):

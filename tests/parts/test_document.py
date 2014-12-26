@@ -18,6 +18,7 @@ from docx.parts.image import ImagePart
 from docx.parts.styles import StylesPart
 from docx.section import Section
 from docx.shape import InlineShape
+from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -105,6 +106,14 @@ class DescribeDocumentPart(object):
         document, expected_id = next_id_fixture
         assert document.next_id == expected_id
 
+    def it_can_get_a_style_by_id(self, get_style_fixture):
+        document_part, style_id, style_type, style_ = get_style_fixture
+        style = document_part.get_style(style_id, style_type)
+        document_part.styles.get_by_id.assert_called_once_with(
+            style_id, style_type
+        )
+        assert style is style_
+
     def it_provides_access_to_its_styles_part_to_help(
             self, styles_part_get_fixture):
         document_part, styles_part_ = styles_part_get_fixture
@@ -146,7 +155,7 @@ class DescribeDocumentPart(object):
         return document_part, rows, cols, body_, table_
 
     @pytest.fixture
-    def body_fixture(self, request, _Body_):
+    def body_fixture(self, _Body_):
         document_elm = (
             a_document().with_nsdecls().with_child(
                 a_body())
@@ -154,6 +163,13 @@ class DescribeDocumentPart(object):
         body_elm = document_elm[0]
         document_part = DocumentPart(None, None, document_elm, None)
         return document_part, _Body_, body_elm
+
+    @pytest.fixture
+    def get_style_fixture(self, styles_prop_, style_):
+        document_part = DocumentPart(None, None, None, None)
+        style_id, style_type = 'Foobar', 1
+        styles_prop_.return_value.get_by_id.return_value = style_
+        return document_part, style_id, style_type, style_
 
     @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
@@ -326,6 +342,10 @@ class DescribeDocumentPart(object):
         return instance_mock(request, int)
 
     @pytest.fixture
+    def style_(self, request):
+        return instance_mock(request, BaseStyle)
+
+    @pytest.fixture
     def styles_(self, request):
         return instance_mock(request, Styles)
 
@@ -336,6 +356,12 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def styles_part_(self, request):
         return instance_mock(request, StylesPart)
+
+    @pytest.fixture
+    def styles_prop_(self, request, styles_):
+        return property_mock(
+            request, DocumentPart, 'styles', return_value=styles_
+        )
 
     @pytest.fixture
     def _styles_part_prop_(self, request):
