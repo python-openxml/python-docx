@@ -61,7 +61,10 @@ class Styles(ElementProxy):
         default for *style_type* if *style_id* is not found or if the style
         having *style_id* is not of *style_type*.
         """
-        raise NotImplementedError
+        style = self._element.get_by_id(style_id)
+        if style is None or style.type != style_type:
+            return self.default(style_type)
+        return StyleFactory(style)
 
     @staticmethod
     def _translate_special_case_names(name):
