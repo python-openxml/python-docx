@@ -10,6 +10,7 @@ from __future__ import (
 
 import pytest
 
+from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 
@@ -52,9 +53,21 @@ class DescribeStyles(object):
     def it_can_get_a_style_of_type_by_id(self, get_by_id_fixture):
         styles, style_id, style_type = get_by_id_fixture[:3]
         default_calls, _get_by_id_calls, style_ = get_by_id_fixture[3:]
+
         style = styles.get_by_id(style_id, style_type)
+
         assert styles.default.call_args_list == default_calls
         assert styles._get_by_id.call_args_list == _get_by_id_calls
+        assert style is style_
+
+    def it_gets_a_style_by_id_to_help(self, _get_by_id_fixture):
+        styles, style_id, style_type, default_calls = _get_by_id_fixture[:4]
+        StyleFactory_, StyleFactory_calls, style_ = _get_by_id_fixture[4:]
+
+        style = styles._get_by_id(style_id, style_type)
+
+        assert styles.default.call_args_list == default_calls
+        assert StyleFactory_.call_args_list == StyleFactory_calls
         assert style is style_
 
     # fixture --------------------------------------------------------
@@ -71,6 +84,27 @@ class DescribeStyles(object):
         return (
             styles, style_id, style_type, default_calls, _get_by_id_calls,
             style_
+        )
+
+    @pytest.fixture(params=[
+        ('w:styles/w:style{w:type=paragraph,w:styleId=Foo}', 'Foo',
+         WD_STYLE_TYPE.PARAGRAPH),
+        ('w:styles/w:style{w:type=paragraph,w:styleId=Foo}', 'Bar',
+         WD_STYLE_TYPE.PARAGRAPH),
+        ('w:styles/w:style{w:type=table,w:styleId=Bar}',     'Bar',
+         WD_STYLE_TYPE.PARAGRAPH),
+    ])
+    def _get_by_id_fixture(self, request, default_, StyleFactory_, style_):
+        styles_cxml, style_id, style_type = request.param
+        styles_elm = element(styles_cxml)
+        style_elm = styles_elm[0]
+        styles = Styles(styles_elm)
+        default_calls = [] if style_id == 'Foo' else [call(style_type)]
+        StyleFactory_calls = [call(style_elm)] if style_id == 'Foo' else []
+        default_.return_value = StyleFactory_.return_value = style_
+        return (
+            styles, style_id, style_type, default_calls, StyleFactory_,
+            StyleFactory_calls, style_
         )
 
     @pytest.fixture(params=[
