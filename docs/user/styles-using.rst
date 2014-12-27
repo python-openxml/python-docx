@@ -7,8 +7,8 @@ a term is unfamiliar, consult the prior page :ref:`understandingstyles` for
 a definition.
 
 
-Accessing a style
------------------
+Access a style
+--------------
 
 Styles are accessed using the :attr:`.Document.styles` attribute::
 
@@ -52,17 +52,18 @@ example, this code will produce a list of the defined paragraph styles::
    List Bullet
 
 
-Applying a style
-----------------
+Apply a style
+-------------
 
 The |Paragraph|, |Run|, and |Table| objects each have a :attr:`style`
-attribute. Assigning a |Style| object of the appropriate type to this
-attribute applies that style::
+attribute. Assigning a |Style| object to this attribute applies that style::
 
     >>> document = Document()
     >>> paragraph = document.add_paragraph()
     >>> paragraph.style
-    None  # inherits the default style, usually 'Normal' for a paragraph
+    <docx.styles.style._ParagraphStyle object at <0x11a7c4c50>
+    >>> paragraph.style.name
+    'Normal'
     >>> paragraph.style = document.styles['Heading 1']
     >>> paragraph.style.name
     'Heading 1'
@@ -79,17 +80,59 @@ lookup for you::
 A style can also be applied at creation time using either the |Style| object
 or its name::
 
-    >>> paragraph = document.add_paragraph(style='Heading 1')
+    >>> paragraph = document.add_paragraph(style='Body Text')
     >>> paragraph.style.name
-    'Heading 1'
-    >>> heading_1_style = document.styles['Heading 1']
-    >>> paragraph = document.add_paragraph(style=heading_1_style)
+    'Body Text'
+    >>> body_text_style = document.styles['Body Text']
+    >>> paragraph = document.add_paragraph(style=body_text_style)
     >>> paragraph.style.name
-    'Heading 1'
+    'Body Text'
 
 
-Controlling how a style appears in the Word UI
-----------------------------------------------
+Add or delete a style
+---------------------
+
+A new style can be added to the document by specifying a unique name and
+a style type::
+
+    >>> from docx.enum.style import WD_STYLE_TYPE
+    >>> styles = document.styles
+    >>> style = styles.add_style('Citation', WD_STYLE_TYPE.PARAGRAPH)
+    >>> style.name
+    'Citation'
+    >>> style.type
+    PARAGRAPH (1)
+
+Use the :attr:`~.BaseStyle.base_style` property to specify a style the new
+style should inherit formatting settings from::
+
+    >>> style.base_style
+    None
+    >>> style.base_style = styles['Normal']
+    >>> style.base_style
+    <docx.styles.style._ParagraphStyle object at 0x10a7a9550>
+    >>> style.base_style.name
+    'Normal'
+
+A style can be removed from the document simply by calling its
+:meth:`~.BaseStyle.delete` method::
+
+    >>> styles = document.styles
+    >>> len(styles)
+    10
+    >>> styles['Citation'].delete()
+    >>> len(styles)
+    9
+
+.. note:: The :meth:`.Style.delete` method removes the style's definition
+   from the document. It does not affect content in the document to which
+   that style is applied. Content having a style not defined in the document
+   is rendered using the default style for that content object, e.g.
+   'Normal' in the case of a paragraph.
+
+
+Control how a style appears in the Word UI
+------------------------------------------
 
 The properties of a style fall into two categories, *behavioral properties*
 and *formatting properties*. Its behavioral properties control when and where
