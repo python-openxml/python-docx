@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from ..shared import ElementProxy
-from .style import StyleFactory
+from .style import BaseStyle, StyleFactory
 
 
 class Styles(ElementProxy):
@@ -67,7 +67,12 @@ class Styles(ElementProxy):
         defined. Raises |ValueError| if the target style is not of
         *style_type*.
         """
-        raise NotImplementedError
+        if style_or_name is None:
+            return None
+        elif isinstance(style_or_name, BaseStyle):
+            return self._get_style_id_from_style(style_or_name, style_type)
+        else:
+            return self._get_style_id_from_name(style_or_name, style_type)
 
     def _get_by_id(self, style_id, style_type):
         """
@@ -79,6 +84,22 @@ class Styles(ElementProxy):
         if style is None or style.type != style_type:
             return self.default(style_type)
         return StyleFactory(style)
+
+    def _get_style_id_from_name(self, style_name, style_type):
+        """
+        Return the id of the style of *style_type* corresponding to
+        *style_name*. Returns |None| if that style is the default style for
+        *style_type*. Raises |ValueError| if the named style is not found in
+        the document or does not match *style_type*.
+        """
+        raise NotImplementedError
+
+    def _get_style_id_from_style(self, style, style_type):
+        """
+        Return the id of *style*, or |None| if it is the default style of
+        *style_type*. Raises |ValueError| if style is not of *style_type*.
+        """
+        raise NotImplementedError
 
     @staticmethod
     def _translate_special_case_names(name):
