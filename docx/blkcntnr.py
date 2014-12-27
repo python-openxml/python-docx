@@ -30,8 +30,7 @@ class BlockItemContainer(Parented):
         paragraph style *style*. If *style* is |None|, no paragraph style is
         applied, which has the same effect as applying the 'Normal' style.
         """
-        p = self._element.add_p()
-        paragraph = Paragraph(p, self)
+        paragraph = self._add_paragraph()
         if text:
             paragraph.add_run(text)
         if style is not None:
@@ -68,3 +67,10 @@ class BlockItemContainer(Parented):
         """
         from .table import Table
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
+
+    def _add_paragraph(self):
+        """
+        Return a paragraph newly added to the end of the content in this
+        container.
+        """
+        return Paragraph(self._element.add_p(), self)
