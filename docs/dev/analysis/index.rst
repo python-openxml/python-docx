@@ -8,9 +8,9 @@ Feature Analysis
 ----------------
 
 .. toctree::
-   :maxdepth: 1
+   :titlesonly:
 
-   features/doc-styles
+   features/styles/index
    features/coreprops
    features/cell-merge
    features/table

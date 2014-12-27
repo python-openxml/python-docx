@@ -2,120 +2,20 @@
 Styles
 ======
 
+.. toctree::
+   :titlesonly:
+
+   styles
+   style
+   latent-styles
+
 Word supports the definition of *styles* to allow a group of formatting
 properties to be easily and consistently applied to a paragraph, run, table,
-or numbering scheme; all at once. The mechanism is similar to how Cascading
+or numbering scheme, all at once. The mechanism is similar to how Cascading
 Style Sheets (CSS) works with HTML.
 
 Styles are defined in the ``styles.xml`` package part and are keyed to
 a paragraph, run, or table using the `styleId` string.
-
-
-Latent style candidate protocol
--------------------------------
-
-::
-
-    >>> latent_styles = document.styles.latent_styles
-    >>> latent_styles
-    <docx.styles.LatentStyles object at 0x1045dd550>
-
-    >>> latent_styles.default_locked_state
-    False
-    >>> latent_styles.default_locked_state = True
-    >>> latent_styles.default_locked_state
-    True
-
-    >>> latent_styles.default_hidden
-    False
-    >>> latent_styles.default_hidden = True
-    >>> latent_styles.default_hidden
-    True
-
-    >>> exception = latent_styles.exceptions[0]
-
-    >>> exception.name
-    'Normal'
-
-    >>> exception.priority
-    None
-    >>> exception.priority = 10
-    >>> exception.priority
-    True
-
-    >>> exception.locked
-    None
-    >>> exception.locked = True
-    >>> exception.locked
-    True
-
-    >>> exception.quick_style
-    None
-    >>> exception.quick_style = True
-    >>> exception.quick_style
-    True
-
-
-Latent style behavior
----------------------
-
-* A style has two categories of attribute, *behavioral* and *formatting*.
-  Behavioral attributes specify where and when the style should appear in the
-  user interface. Behavioral attributes can be specified for latent styles
-  using the ``<w:latentStyles>`` element and its ``<w:lsdException>`` child
-  elements. The 5 behavioral attributes are:
-
-  + locked
-  + uiPriority
-  + semiHidden
-  + unhideWhenUsed
-  + qFormat
-
-* **locked**. The `locked` attribute specifies that the style should not
-  appear in any list or the gallery and may not be applied to content. This
-  behavior is only active when restricted formatting is turned on.
-
-  Locking is turned on via the menu: Developer Tab > Protect Document >
-  Formatting Restrictions (Windows only).
-
-* **uiPriority**. The `uiPriority` attribute acts as a sort key for
-  sequencing style names in the user interface. Both the lists in the styles
-  panel and the Style Gallery are sensitive to this setting. Its effective
-  value is 0 if not specified.
-
-* **semiHidden**. The `semiHidden` attribute causes the style to be excluded
-  from the recommended list. The notion of *semi* in this context is that
-  while the style is hidden from the recommended list, it still appears in
-  the "All Styles" list. This attribute is removed on first application of
-  the style if an `unhideWhenUsed` attribute set |True| is also present.
-
-* **unhideWhenUsed**. The `unhideWhenUsed` attribute causes any `semiHidden`
-  attribute to be removed when the style is first applied to content. Word
-  does *not* remove the `semiHidden` attribute just because there exists an
-  object in the document having that style. The `unhideWhenUsed` attribute is
-  not removed along with the `semiHidden` attribute when the style is
-  applied.
-
-  The `semiHidden` and `unhideWhenUsed` attributes operate in combination to
-  produce *hide-until-used* behavior.
-
-  *Hypothesis.* The persistance of the `unhideWhenUsed` attribute after
-  removing the `semiHidden` attribute on first application of the style is
-  necessary to produce appropriate behavior in style inheritance situations.
-  In that case, the `semiHidden` attribute may be explictly set to |False| to
-  override an inherited value. Or it could allow the `semiHidden` attribute
-  to be re-set to |True| later while preserving the hide-until-used behavior.
-
-* **qFormat**. The `qFormat` attribute specifies whether the style should
-  appear in the Style Gallery when it appears in the recommended list.
-  A style will never appear in the gallery unless it also appears in the
-  recommended list.
-
-* Latent style attributes are only operative for latent styles. Once a style
-  is defined, the attributes of the definition exclusively determine style
-  behavior; no attributes are inherited from its corresponding latent style
-  definition.
-
 
 Style visual behavior
 ---------------------
@@ -217,34 +117,6 @@ definition if it is no longer applied to any content. The definition of each
 of the styles ever used in a document are accumulated in its ``styles.xml``.
 
 
-Candidate protocol
-------------------
-
-::
-
-    >>> styles = document.styles  # default styles part added if not present
-    >>> list_styles = [s for s in styles if s.type == WD_STYLE_TYPE.LIST]
-    >>> list_styles[0].type
-    WD_STYLE_TYPE.LIST (4)
-
-    >>> style = styles.add_style('Citation', WD_STYLE_TYPE.PARAGRAPH)
-
-    >>> document.add_paragraph(style='undefined-style')
-    KeyError: no style with id 'undefined-style'
-
-
-Feature Notes
--------------
-
-* could add a default builtin style from known specs on first access via
-  WD_BUILTIN_STYLE enumeration::
-
-      >>> style = document.styles['Heading1']
-      KeyError: no style with id or name 'Heading1'
-      >>> style = document.styles[WD_STYLE.HEADING_1]
-      >>> assert style == document.styles['Heading1']
-
-
 Related MS API *(partial)*
 --------------------------
 
@@ -278,19 +150,6 @@ Enumerations
 ------------
 
 * WdBuiltinStyle
-
-
-Spec text
----------
-
-   This element specifies all of the style information stored in the
-   WordprocessingML document: style definitions as well as latent style
-   information.
-
-   Example: The Normal paragraph style in a word processing document can have
-   any number of formatting properties, e.g. font face = Times New Roman; font
-   size = 12pt; paragraph justification = left. All paragraphs which reference
-   this paragraph style would automatically inherit these properties.
 
 
 Example XML
