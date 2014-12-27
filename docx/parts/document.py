@@ -74,6 +74,16 @@ class DocumentPart(XmlPart):
         """
         return self.styles.get_by_id(style_id, style_type)
 
+    def get_style_id(self, style_or_name, style_type):
+        """
+        Return the style_id (|str|) of the style of *style_type* matching
+        *style_or_name*. Returns |None| if the style resolves to the default
+        style for *style_type* or if *style_or_name* is itself |None|. Raises
+        if *style_or_name* is a style of the wrong type or names a style not
+        present in the document.
+        """
+        raise NotImplementedError
+
     @lazyproperty
     def inline_shapes(self):
         """
