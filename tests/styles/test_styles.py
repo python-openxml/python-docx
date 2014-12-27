@@ -69,6 +69,16 @@ class DescribeStyles(object):
         assert styles._get_by_id.call_args_list == _get_by_id_calls
         assert style is style_
 
+    def it_can_get_a_style_id(self, get_style_id_fixture):
+        styles, style_or_name, style_type = get_style_id_fixture[:3]
+        style_calls, name_calls, style_id_ = get_style_id_fixture[3:]
+
+        style_id = styles.get_style_id(style_or_name, style_type)
+
+        assert styles._get_style_id_from_style.call_args_list == style_calls
+        assert styles._get_style_id_from_name.call_args_list == name_calls
+        assert style_id is style_id_
+
     def it_gets_a_style_by_id_to_help(self, _get_by_id_fixture):
         styles, style_id, style_type, default_calls = _get_by_id_fixture[:4]
         StyleFactory_, StyleFactory_calls, style_ = _get_by_id_fixture[4:]
@@ -114,6 +124,27 @@ class DescribeStyles(object):
         return (
             styles, style_id, style_type, default_calls, _get_by_id_calls,
             style_
+        )
+
+    @pytest.fixture(params=[None, BaseStyle(None), 'Style Name'])
+    def get_style_id_fixture(self, request, _get_style_id_from_style_,
+                             _get_style_id_from_name_):
+        style_or_name, style_type = request.param, 1
+        styles = Styles(None)
+        style_calls = (
+            [call(style_or_name, style_type)]
+            if isinstance(style_or_name, BaseStyle) else []
+        )
+        name_calls = (
+            [call(style_or_name, style_type)]
+            if style_or_name == 'Style Name' else []
+        )
+        style_id_ = None if style_or_name is None else 'StyleName'
+        _get_style_id_from_style_.return_value = style_id_
+        _get_style_id_from_name_.return_value = style_id_
+        return (
+            styles, style_or_name, style_type, style_calls, name_calls,
+            style_id_
         )
 
     @pytest.fixture(params=[
@@ -204,6 +235,14 @@ class DescribeStyles(object):
     @pytest.fixture
     def _get_by_id_(self, request):
         return method_mock(request, Styles, '_get_by_id')
+
+    @pytest.fixture
+    def _get_style_id_from_name_(self, request):
+        return method_mock(request, Styles, '_get_style_id_from_name')
+
+    @pytest.fixture
+    def _get_style_id_from_style_(self, request):
+        return method_mock(request, Styles, '_get_style_id_from_style')
 
     @pytest.fixture
     def style_(self, request):
