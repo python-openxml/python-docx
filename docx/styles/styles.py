@@ -92,7 +92,7 @@ class Styles(ElementProxy):
         *style_type*. Raises |ValueError| if the named style is not found in
         the document or does not match *style_type*.
         """
-        raise NotImplementedError
+        return self._get_style_id_from_style(self[style_name], style_type)
 
     def _get_style_id_from_style(self, style, style_type):
         """

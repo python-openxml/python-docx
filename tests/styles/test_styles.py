@@ -89,6 +89,17 @@ class DescribeStyles(object):
         assert StyleFactory_.call_args_list == StyleFactory_calls
         assert style is style_
 
+    def it_gets_a_style_id_from_a_name_to_help(self, id_name_fixture):
+        styles, style_name, style_type, style_, style_id_ = id_name_fixture
+
+        style_id = styles._get_style_id_from_name(style_name, style_type)
+
+        styles.__getitem__.assert_called_once_with(style_name)
+        styles._get_style_id_from_style.assert_called_once_with(
+            style_, style_type
+        )
+        assert style_id is style_id_
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -201,6 +212,14 @@ class DescribeStyles(object):
         styles = Styles(element(styles_cxml))
         return styles, 'bar'
 
+    @pytest.fixture
+    def id_name_fixture(self, _getitem_, _get_style_id_from_style_, style_):
+        styles = Styles(None)
+        style_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
+        _getitem_.return_value = style_
+        _get_style_id_from_style_.return_value = style_id_
+        return styles, style_name, style_type, style_, style_id_
+
     @pytest.fixture(params=[
         ('w:styles',                           0),
         ('w:styles/w:style',                   1),
@@ -235,6 +254,10 @@ class DescribeStyles(object):
     @pytest.fixture
     def _get_by_id_(self, request):
         return method_mock(request, Styles, '_get_by_id')
+
+    @pytest.fixture
+    def _getitem_(self, request):
+        return method_mock(request, Styles, '__getitem__')
 
     @pytest.fixture
     def _get_style_id_from_name_(self, request):
