@@ -60,7 +60,12 @@ class DescribeParagraph(object):
 
     def it_can_change_its_paragraph_style(self, style_set_fixture):
         paragraph, value, expected_xml = style_set_fixture
+
         paragraph.style = value
+
+        paragraph.part.get_style_id.assert_called_once_with(
+            value, WD_STYLE_TYPE.PARAGRAPH
+        )
         assert paragraph._p.xml == expected_xml
 
     def it_knows_the_text_it_contains(self, text_get_fixture):
@@ -192,22 +197,23 @@ class DescribeParagraph(object):
         return paragraph, style_id, style_
 
     @pytest.fixture(params=[
-        ('w:p',                                'Heading1',
+        ('w:p',                                 'Heading 1', 'Heading1',
          'w:p/w:pPr/w:pStyle{w:val=Heading1}'),
-        ('w:p/w:pPr',                          'Heading1',
+        ('w:p/w:pPr',                           'Heading 1', 'Heading1',
          'w:p/w:pPr/w:pStyle{w:val=Heading1}'),
-        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', 'Heading2',
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}',  'Heading 2', 'Heading2',
          'w:p/w:pPr/w:pStyle{w:val=Heading2}'),
-        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', None,
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}',  'Normal',    None,
          'w:p/w:pPr'),
-        ('w:p',                                None,
+        ('w:p',                                 None,        None,
          'w:p/w:pPr'),
     ])
-    def style_set_fixture(self, request):
-        p_cxml, new_style_value, expected_cxml = request.param
+    def style_set_fixture(self, request, part_prop_):
+        p_cxml, value, style_id, expected_cxml = request.param
         paragraph = Paragraph(element(p_cxml), None)
+        part_prop_.return_value.get_style_id.return_value = style_id
         expected_xml = xml(expected_cxml)
-        return paragraph, new_style_value, expected_xml
+        return paragraph, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:p', ''),

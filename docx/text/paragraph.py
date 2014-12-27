@@ -90,8 +90,11 @@ class Paragraph(Parented):
         return self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
 
     @style.setter
-    def style(self, style):
-        self._p.style = None if style == 'Normal' else style
+    def style(self, style_or_name):
+        style_id = self.part.get_style_id(
+            style_or_name, WD_STYLE_TYPE.PARAGRAPH
+        )
+        self._p.style = style_id
 
     @property
     def text(self):
