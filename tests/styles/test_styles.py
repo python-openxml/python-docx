@@ -100,6 +100,19 @@ class DescribeStyles(object):
         )
         assert style_id is style_id_
 
+    def it_gets_a_style_id_from_a_style_to_help(self, id_style_fixture):
+        styles, style_, style_type, style_id_ = id_style_fixture
+
+        style_id = styles._get_style_id_from_style(style_, style_type)
+
+        styles.default.assert_called_once_with(style_type)
+        assert style_id is style_id_
+
+    def it_raises_on_style_type_mismatch(self, id_style_raises_fixture):
+        styles, style_, style_type = id_style_raises_fixture
+        with pytest.raises(ValueError):
+            styles._get_style_id_from_style(style_, style_type)
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -219,6 +232,23 @@ class DescribeStyles(object):
         _getitem_.return_value = style_
         _get_style_id_from_style_.return_value = style_id_
         return styles, style_name, style_type, style_, style_id_
+
+    @pytest.fixture(params=[True, False])
+    def id_style_fixture(self, request, default_, style_):
+        style_is_default = request.param
+        styles = Styles(None)
+        style_id, style_type = 'FooBar', 1
+        default_.return_value = style_ if style_is_default else None
+        style_.style_id, style_.type = style_id, style_type
+        expected_value = None if style_is_default else style_id
+        return styles, style_, style_type, expected_value
+
+    @pytest.fixture
+    def id_style_raises_fixture(self, style_):
+        styles = Styles(None)
+        style_.type = 1
+        style_type = 2
+        return styles, style_, style_type
 
     @pytest.fixture(params=[
         ('w:styles',                           0),

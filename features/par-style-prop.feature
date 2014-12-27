@@ -16,7 +16,6 @@ Feature: Each paragraph has a read/write style
       | Body Text    | Body Text      |
 
 
-  @wip
   Scenario Outline: Set the style of a paragraph
      Given a paragraph
       When I assign a <style-spec> to paragraph.style
