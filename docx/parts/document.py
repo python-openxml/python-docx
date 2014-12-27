@@ -82,7 +82,7 @@ class DocumentPart(XmlPart):
         if *style_or_name* is a style of the wrong type or names a style not
         present in the document.
         """
-        raise NotImplementedError
+        return self.styles.get_style_id(style_or_name, style_type)
 
     @lazyproperty
     def inline_shapes(self):

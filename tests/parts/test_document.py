@@ -114,6 +114,17 @@ class DescribeDocumentPart(object):
         )
         assert style is style_
 
+    def it_can_get_the_id_of_a_style(self, get_style_id_fixture):
+        document_part, style_or_name, style_type, style_id_ = (
+            get_style_id_fixture
+        )
+        style_id = document_part.get_style_id(style_or_name, style_type)
+
+        document_part.styles.get_style_id.assert_called_once_with(
+            style_or_name, style_type
+        )
+        assert style_id is style_id_
+
     def it_provides_access_to_its_styles_part_to_help(
             self, styles_part_get_fixture):
         document_part, styles_part_ = styles_part_get_fixture
@@ -170,6 +181,13 @@ class DescribeDocumentPart(object):
         style_id, style_type = 'Foobar', 1
         styles_prop_.return_value.get_by_id.return_value = style_
         return document_part, style_id, style_type, style_
+
+    @pytest.fixture
+    def get_style_id_fixture(self, styles_prop_):
+        document_part = DocumentPart(None, None, None, None)
+        style_or_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
+        styles_prop_.return_value.get_style_id.return_value = style_id_
+        return document_part, style_or_name, style_type, style_id_
 
     @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
