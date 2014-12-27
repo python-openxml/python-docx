@@ -99,7 +99,14 @@ class Styles(ElementProxy):
         Return the id of *style*, or |None| if it is the default style of
         *style_type*. Raises |ValueError| if style is not of *style_type*.
         """
-        raise NotImplementedError
+        if style.type != style_type:
+            raise ValueError(
+                "assigned style is type %s, need type %s" %
+                (style.type, style_type)
+            )
+        if style == self.default(style_type):
+            return None
+        return style.style_id
 
     @staticmethod
     def _translate_special_case_names(name):
