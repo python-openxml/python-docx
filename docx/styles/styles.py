@@ -58,6 +58,17 @@ class Styles(ElementProxy):
             return self.default(style_type)
         return self._get_by_id(style_id, style_type)
 
+    def get_style_id(self, style_or_name, style_type):
+        """
+        Return the id of the style corresponding to *style_or_name*, or
+        |None| if *style_or_name* is |None|. If *style_or_name* is not
+        a style object, the style is looked up using *style_or_name* as
+        a style name, raising |ValueError| if no style with that name is
+        defined. Raises |ValueError| if the target style is not of
+        *style_type*.
+        """
+        raise NotImplementedError
+
     def _get_by_id(self, style_id, style_type):
         """
         Return the style of *style_type* matching *style_id*. Returns the
