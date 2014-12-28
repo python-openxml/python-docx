@@ -7,7 +7,7 @@ Run-related proxy objects for python-docx, Run in particular.
 from __future__ import absolute_import, print_function, unicode_literals
 
 from ..enum.text import WD_BREAK
-from ..shared import Parented
+from ..shared import ElementProxy, Parented
 
 
 def boolproperty(f):
@@ -370,6 +370,16 @@ class Run(Parented):
         page view.
         """
         return 'webHidden'
+
+
+class Font(ElementProxy):
+    """
+    Proxy object wrapping the parent of a ``<w:rPr>`` element and providing
+    access to character properties such as font name, font size, bold, and
+    subscript.
+    """
+
+    __slots__ = ()
 
 
 class _Text(object):
