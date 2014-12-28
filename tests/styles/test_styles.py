@@ -11,6 +11,7 @@ from __future__ import (
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.parts.styles import CT_Style, CT_Styles
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 
@@ -53,6 +54,23 @@ class DescribeStyles(object):
         styles, key = get_raises_fixture
         with pytest.raises(KeyError):
             styles[key]
+
+    def it_can_add_a_new_style(self, add_fixture):
+        styles, name, style_type, builtin = add_fixture[:4]
+        name_, StyleFactory_, style_elm_, style_ = add_fixture[4:]
+
+        style = styles.add_style(name, style_type, builtin)
+
+        styles._element.add_style_of_type.assert_called_once_with(
+            name_, style_type, builtin
+        )
+        StyleFactory_.assert_called_once_with(style_elm_)
+        assert style is style_
+
+    def it_raises_when_style_name_already_used(self, add_raises_fixture):
+        styles, name = add_raises_fixture
+        with pytest.raises(ValueError):
+            styles.add_style(name, None)
 
     def it_can_get_the_default_style_for_a_type(self, default_fixture):
         styles, style_type, StyleFactory_ = default_fixture[:3]
@@ -118,6 +136,28 @@ class DescribeStyles(object):
             styles._get_style_id_from_style(style_, style_type)
 
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('Foo Bar',   'Foo Bar',   WD_STYLE_TYPE.CHARACTER, False),
+        ('Heading 1', 'heading 1', WD_STYLE_TYPE.PARAGRAPH, True),
+    ])
+    def add_fixture(self, request, styles_elm_, _getitem_, style_elm_,
+                    StyleFactory_, style_):
+        name, name_, style_type, builtin = request.param
+        styles = Styles(styles_elm_)
+        _getitem_.return_value = None
+        styles_elm_.add_style_of_type.return_value = style_elm_
+        StyleFactory_.return_value = style_
+        return (
+            styles, name, style_type, builtin, name_, StyleFactory_,
+            style_elm_, style_
+        )
+
+    @pytest.fixture
+    def add_raises_fixture(self, _getitem_):
+        styles = Styles(element('w:styles/w:style/w:name{w:val=heading 1}'))
+        name = 'Heading 1'
+        return styles, name
 
     @pytest.fixture(params=[
         ('w:styles',
@@ -319,3 +359,11 @@ class DescribeStyles(object):
     @pytest.fixture
     def StyleFactory_(self, request):
         return function_mock(request, 'docx.styles.styles.StyleFactory')
+
+    @pytest.fixture
+    def style_elm_(self, request):
+        return instance_mock(request, CT_Style)
+
+    @pytest.fixture
+    def styles_elm_(self, request):
+        return instance_mock(request, CT_Styles)
