@@ -75,6 +75,11 @@ def when_I_call_add_style(context, name, type_str, builtin_str):
     styles.add_style(name, type, builtin=builtin)
 
 
+@when('I delete a style')
+def when_I_delete_a_style(context):
+    context.document.styles['No List'].delete()
+
+
 # then =====================================================
 
 @then('I can access a style by its UI name')
@@ -157,9 +162,27 @@ def then_styles_name_is_a_style(context, name):
     assert isinstance(style, BaseStyle)
 
 
+@then('the deleted style is not in the styles collection')
+def then_the_deleted_style_is_not_in_the_styles_collection(context):
+    document = context.document
+    try:
+        document.styles['No List']
+    except KeyError:
+        return
+    raise AssertionError('Style not deleted')
+
+
 @then('the document has one additional style')
 def then_the_document_has_one_additional_style(context):
     document = context.document
     style_count = len(document.styles)
     expected_style_count = context.style_count + 1
+    assert style_count == expected_style_count
+
+
+@then('the document has one fewer styles')
+def then_the_document_has_one_fewer_styles(context):
+    document = context.document
+    style_count = len(document.styles)
+    expected_style_count = context.style_count - 1
     assert style_count == expected_style_count
