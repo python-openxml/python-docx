@@ -21,6 +21,16 @@ class Styles(ElementProxy):
 
     __slots__ = ()
 
+    def __contains__(self, name):
+        """
+        Enables `in` operator on style name.
+        """
+        name = self._translate_special_case_names(name)
+        for style in self._element.style_lst:
+            if style.name_val == name:
+                return True
+        return False
+
     def __getitem__(self, key):
         """
         Enables dictionary-style access by style id or UI name.
