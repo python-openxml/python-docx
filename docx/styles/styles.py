@@ -48,6 +48,18 @@ class Styles(ElementProxy):
     def __len__(self):
         return len(self._element.style_lst)
 
+    def add_style(self, name, style_type, builtin=False):
+        """
+        Return a newly added style object of *style_type* and identified
+        by *name*. A builtin style can be defined by passing True for the
+        optional *builtin* argument.
+        """
+        name = self._translate_special_case_names(name)
+        if name in self:
+            raise ValueError("document already contains style '%s'" % name)
+        style = self._element.add_style_of_type(name, style_type, builtin)
+        return StyleFactory(style)
+
     def default(self, style_type):
         """
         Return the default style for *style_type* or |None| if no default is

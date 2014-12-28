@@ -54,6 +54,14 @@ class CT_Styles(BaseOxmlElement):
     """
     style = ZeroOrMore('w:style', successors=())
 
+    def add_style_of_type(self, name, style_type, builtin):
+        """
+        Return a newly added `w:style` element having *name* and
+        *style_type*. `w:style/@customStyle` is set based on the value of
+        *builtin*.
+        """
+        raise NotImplementedError
+
     def default_for(self, style_type):
         """
         Return `w:style[@w:type="*{style_type}*][-1]` or |None| if not found.
