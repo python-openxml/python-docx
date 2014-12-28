@@ -66,27 +66,6 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 
 from .shared import CT_DecimalNumber, CT_OnOff, CT_String
 
-from .shape import (
-    CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
-    CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
-    CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
-    CT_Transform2D
-)
-register_element_cls('a:blip',        CT_Blip)
-register_element_cls('a:ext',         CT_PositiveSize2D)
-register_element_cls('a:graphic',     CT_GraphicalObject)
-register_element_cls('a:graphicData', CT_GraphicalObjectData)
-register_element_cls('a:off',         CT_Point2D)
-register_element_cls('a:xfrm',        CT_Transform2D)
-register_element_cls('pic:blipFill',  CT_BlipFillProperties)
-register_element_cls('pic:cNvPr',     CT_NonVisualDrawingProps)
-register_element_cls('pic:nvPicPr',   CT_PictureNonVisual)
-register_element_cls('pic:pic',       CT_Picture)
-register_element_cls('pic:spPr',      CT_ShapeProperties)
-register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
-register_element_cls('wp:extent',     CT_PositiveSize2D)
-register_element_cls('wp:inline',     CT_Inline)
-
 
 from .parts.coreprops import CT_CoreProperties
 register_element_cls('cp:coreProperties', CT_CoreProperties)
@@ -116,6 +95,27 @@ register_element_cls('w:pgMar',  CT_PageMar)
 register_element_cls('w:pgSz',   CT_PageSz)
 register_element_cls('w:sectPr', CT_SectPr)
 register_element_cls('w:type',   CT_SectType)
+
+from .shape import (
+    CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
+    CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
+    CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
+    CT_Transform2D
+)
+register_element_cls('a:blip',        CT_Blip)
+register_element_cls('a:ext',         CT_PositiveSize2D)
+register_element_cls('a:graphic',     CT_GraphicalObject)
+register_element_cls('a:graphicData', CT_GraphicalObjectData)
+register_element_cls('a:off',         CT_Point2D)
+register_element_cls('a:xfrm',        CT_Transform2D)
+register_element_cls('pic:blipFill',  CT_BlipFillProperties)
+register_element_cls('pic:cNvPr',     CT_NonVisualDrawingProps)
+register_element_cls('pic:nvPicPr',   CT_PictureNonVisual)
+register_element_cls('pic:pic',       CT_Picture)
+register_element_cls('pic:spPr',      CT_ShapeProperties)
+register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
+register_element_cls('wp:extent',     CT_PositiveSize2D)
+register_element_cls('wp:inline',     CT_Inline)
 
 from .table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
