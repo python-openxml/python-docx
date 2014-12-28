@@ -49,6 +49,12 @@ class CT_Style(BaseOxmlElement):
     customStyle = OptionalAttribute('w:customStyle', ST_OnOff)
     del _tag_seq
 
+    def delete(self):
+        """
+        Remove this `w:style` element from its parent `w:styles` element.
+        """
+        self.getparent().remove(self)
+
     @property
     def name_val(self):
         """

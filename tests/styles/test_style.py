@@ -121,6 +121,12 @@ class DescribeBaseStyle(object):
         style, expected_value = builtin_get_fixture
         assert style.builtin is expected_value
 
+    def it_can_delete_itself_from_the_document(self, delete_fixture):
+        style, styles, expected_xml = delete_fixture
+        style.delete()
+        assert styles.xml == expected_xml
+        assert style._element is None
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -132,6 +138,13 @@ class DescribeBaseStyle(object):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
+
+    @pytest.fixture
+    def delete_fixture(self):
+        styles = element('w:styles/w:style')
+        style = BaseStyle(styles[0])
+        expected_xml = xml('w:styles')
+        return style, styles, expected_xml
 
     @pytest.fixture(params=[
         ('w:style',                   None),

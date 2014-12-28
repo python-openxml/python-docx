@@ -4,7 +4,6 @@ Feature: Delete a style
   I need a way to delete a style
 
 
-  @wip
   Scenario: Delete a style
     Given a document having known styles
      When I delete a style
