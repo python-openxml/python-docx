@@ -36,6 +36,14 @@ class BaseStyle(ElementProxy):
     __slots__ = ()
 
     @property
+    def builtin(self):
+        """
+        Boolean indicating whether this style is a built-in style. False
+        indicates it is a custom (user-defined) style.
+        """
+        return not self._element.customStyle
+
+    @property
     def name(self):
         """
         The UI name of this style.
