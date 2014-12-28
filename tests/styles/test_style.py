@@ -117,7 +117,21 @@ class DescribeBaseStyle(object):
         style.name = new_value
         assert style._element.xml == expected_xml
 
+    def it_knows_whether_its_a_builtin_style(self, builtin_get_fixture):
+        style, expected_value = builtin_get_fixture
+        assert style.builtin is expected_value
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:style',                  True),
+        ('w:style{w:customStyle=0}', True),
+        ('w:style{w:customStyle=1}', False),
+    ])
+    def builtin_get_fixture(self, request):
+        style_cxml, expected_value = request.param
+        style = BaseStyle(element(style_cxml))
+        return style, expected_value
 
     @pytest.fixture(params=[
         ('w:style',                   None),

@@ -4,7 +4,6 @@ Feature: Add a style
   I need a way to add a new style
 
 
-  @wip
   Scenario Outline: Add a style
     Given a document having known styles
      When I call add_style('<name>', <type>, builtin=<builtin>)
