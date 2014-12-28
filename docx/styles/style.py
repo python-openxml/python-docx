@@ -43,6 +43,17 @@ class BaseStyle(ElementProxy):
         """
         return not self._element.customStyle
 
+    def delete(self):
+        """
+        Remove this style definition from the document. Note that calling
+        this method does not remove or change the style applied to any
+        document content. Content items having the deleted style will be
+        rendered using the default style, as is any content with a style not
+        defined in the document.
+        """
+        self._element.delete()
+        self._element = None
+
     @property
     def name(self):
         """
