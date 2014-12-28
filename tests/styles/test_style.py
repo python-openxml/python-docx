@@ -15,6 +15,7 @@ from docx.styles.style import (
     BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
     StyleFactory, _TableStyle
 )
+from docx.text.run import Font
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, function_mock, instance_mock
@@ -216,6 +217,12 @@ class Describe_CharacterStyle(object):
         style.base_style = value
         assert style._element.xml == expected_xml
 
+    def it_provides_access_to_its_font(self, font_fixture):
+        style, Font_, font_ = font_fixture
+        font = style.font
+        Font_.assert_called_once_with(style._element)
+        assert font is font_
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -255,7 +262,22 @@ class Describe_CharacterStyle(object):
         expected_xml = xml(expected_style_cxml)
         return style, base_style, expected_xml
 
+    @pytest.fixture
+    def font_fixture(self, Font_, font_):
+        style = _CharacterStyle(element('w:style'))
+        return style, Font_, font_
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Font_(self, request, font_):
+        return class_mock(
+            request, 'docx.styles.style.Font', return_value=font_
+        )
+
+    @pytest.fixture
+    def font_(self, request):
+        return instance_mock(request, Font)
 
     @pytest.fixture
     def style_(self, request):

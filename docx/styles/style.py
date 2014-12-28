@@ -10,6 +10,7 @@ from __future__ import (
 
 from ..enum.style import WD_STYLE_TYPE
 from ..shared import ElementProxy
+from ..text.run import Font
 
 
 def StyleFactory(style_elm):
@@ -133,6 +134,14 @@ class _CharacterStyle(BaseStyle):
     def base_style(self, style):
         style_id = style.style_id if style is not None else None
         self._element.basedOn_val = style_id
+
+    @property
+    def font(self):
+        """
+        The |Font| object providing access to the character formatting
+        properties for this style, such as font name and size.
+        """
+        return Font(self._element)
 
 
 class _ParagraphStyle(_CharacterStyle):
