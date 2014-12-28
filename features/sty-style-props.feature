@@ -1,5 +1,5 @@
 Feature: Get and set style properties
-  In order to adjust styles to suit my needs
+  In order to adjust a style to suit my needs
   As a developer using python-docx
   I need a set of read/write style properties
 

@@ -13,6 +13,18 @@ from docx.styles.style import BaseStyle
 
 from helpers import test_docx
 
+bool_vals = {
+    'True':  True,
+    'False': False
+}
+
+style_types = {
+    'WD_STYLE_TYPE.CHARACTER': WD_STYLE_TYPE.CHARACTER,
+    'WD_STYLE_TYPE.PARAGRAPH': WD_STYLE_TYPE.PARAGRAPH,
+    'WD_STYLE_TYPE.LIST':      WD_STYLE_TYPE.LIST,
+    'WD_STYLE_TYPE.TABLE':     WD_STYLE_TYPE.TABLE,
+}
+
 
 # given ===================================================
 
@@ -20,6 +32,14 @@ from helpers import test_docx
 def given_a_document_having_a_styles_part(context):
     docx_path = test_docx('sty-having-styles-part')
     context.document = Document(docx_path)
+
+
+@given('a document having known styles')
+def given_a_document_having_known_styles(context):
+    docx_path = test_docx('sty-known-styles')
+    document = Document(docx_path)
+    context.document = document
+    context.style_count = len(document.styles)
 
 
 @given('a document having no styles part')
@@ -45,6 +65,14 @@ def when_I_assign_a_new_name_to_the_style(context):
 @when('I assign a new style id to the style')
 def when_I_assign_a_new_style_id_to_the_style(context):
     context.style.style_id = 'Foo42'
+
+
+@when('I call add_style(\'{name}\', {type_str}, builtin={builtin_str})')
+def when_I_call_add_style(context, name, type_str, builtin_str):
+    styles = context.document.styles
+    type = style_types[type_str]
+    builtin = bool_vals[builtin_str]
+    styles.add_style(name, type, builtin=builtin)
 
 
 # then =====================================================
@@ -82,6 +110,13 @@ def then_len_styles_is_style_count(context, style_count_str):
     assert len(context.document.styles) == int(style_count_str)
 
 
+@then('style.builtin is {builtin_str}')
+def then_style_builtin_is_builtin(context, builtin_str):
+    style = context.style
+    builtin = bool_vals[builtin_str]
+    assert style.builtin == builtin
+
+
 @then('style.name is the {which} name')
 def then_style_name_is_the_which_name(context, which):
     expected_name = {
@@ -106,3 +141,25 @@ def then_style_style_id_is_the_which_style_id(context, which):
 def then_style_type_is_the_known_type(context):
     style = context.style
     assert style.type == WD_STYLE_TYPE.PARAGRAPH
+
+
+@then('style.type is {type_str}')
+def then_style_type_is_type(context, type_str):
+    style = context.style
+    style_type = style_types[type_str]
+    assert style.type == style_type
+
+
+@then('styles[\'{name}\'] is a style')
+def then_styles_name_is_a_style(context, name):
+    styles = context.document.styles
+    style = context.style = styles[name]
+    assert isinstance(style, BaseStyle)
+
+
+@then('the document has one additional style')
+def then_the_document_has_one_additional_style(context):
+    document = context.document
+    style_count = len(document.styles)
+    expected_style_count = context.style_count + 1
+    assert style_count == expected_style_count
