@@ -11,6 +11,25 @@ from .xmlchemy import (
 )
 
 
+def styleId_from_name(name):
+    """
+    Return the style id corresponding to *name*, taking into account
+    special-case names such as 'Heading 1'.
+    """
+    return {
+        'caption':   'Caption',
+        'heading 1': 'Heading1',
+        'heading 2': 'Heading2',
+        'heading 3': 'Heading3',
+        'heading 4': 'Heading4',
+        'heading 5': 'Heading5',
+        'heading 6': 'Heading6',
+        'heading 7': 'Heading7',
+        'heading 8': 'Heading8',
+        'heading 9': 'Heading9',
+    }.get(name, name.replace(' ', ''))
+
+
 class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition
@@ -27,6 +46,7 @@ class CT_Style(BaseOxmlElement):
     type = OptionalAttribute('w:type', WD_STYLE_TYPE)
     styleId = OptionalAttribute('w:styleId', ST_String)
     default = OptionalAttribute('w:default', ST_OnOff)
+    customStyle = OptionalAttribute('w:customStyle', ST_OnOff)
     del _tag_seq
 
     @property
@@ -60,7 +80,12 @@ class CT_Styles(BaseOxmlElement):
         *style_type*. `w:style/@customStyle` is set based on the value of
         *builtin*.
         """
-        raise NotImplementedError
+        style = self.add_style()
+        style.type = style_type
+        style.customStyle = None if builtin else True
+        style.styleId = styleId_from_name(name)
+        style.name_val = name
+        return style
 
     def default_for(self, style_type):
         """
