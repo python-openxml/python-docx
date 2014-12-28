@@ -10,7 +10,7 @@ import pytest
 
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.package import OpcPackage
-from docx.oxml.parts.styles import CT_Styles
+from docx.oxml.styles import CT_Styles
 from docx.parts.styles import StylesPart
 from docx.styles.styles import Styles
 

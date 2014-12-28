@@ -11,7 +11,7 @@ from __future__ import (
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
-from docx.oxml.parts.styles import CT_Style, CT_Styles
+from docx.oxml.styles import CT_Style, CT_Styles
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 
