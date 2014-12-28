@@ -86,11 +86,6 @@ register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
 
-from .parts.styles import CT_Style, CT_Styles
-register_element_cls('w:name',   CT_String)
-register_element_cls('w:style',  CT_Style)
-register_element_cls('w:styles', CT_Styles)
-
 from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
 register_element_cls('w:pgMar',  CT_PageMar)
 register_element_cls('w:pgSz',   CT_PageSz)
@@ -117,6 +112,11 @@ register_element_cls('pic:spPr',      CT_ShapeProperties)
 register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
+
+from .styles import CT_Style, CT_Styles
+register_element_cls('w:name',   CT_String)
+register_element_cls('w:style',  CT_Style)
+register_element_cls('w:styles', CT_Styles)
 
 from .table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,

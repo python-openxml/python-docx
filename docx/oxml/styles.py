@@ -4,9 +4,9 @@
 Custom element classes related to the styles part
 """
 
-from ...enum.style import WD_STYLE_TYPE
-from ..simpletypes import ST_OnOff, ST_String
-from ..xmlchemy import (
+from ..enum.style import WD_STYLE_TYPE
+from .simpletypes import ST_OnOff, ST_String
+from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 )
 
