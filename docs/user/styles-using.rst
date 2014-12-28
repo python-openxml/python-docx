@@ -131,6 +131,74 @@ A style can be removed from the document simply by calling its
    'Normal' in the case of a paragraph.
 
 
+Define character formatting
+---------------------------
+
+Character, paragraph, and table styles can all specify character formatting
+to be applied to content with that style. All the character formatting that
+can be applied directly to text can be specified in a style. Examples include
+font typeface and size, bold, italic, and underline.
+
+Each of these three style types have a :attr:`~._CharacterStyle.font`
+attribute providing access to a |Font| object. A style's |Font| object
+provides properties for getting and setting the character formatting for that
+style.
+
+Several examples are provided here. For a complete set of the available
+properties, see the |Font| API documentation.
+
+The font for a style can be accessed like this::
+
+    >>> from docx import Document
+    >>> document = Document()
+    >>> style = document.styles['Normal']
+    >>> font = style.font
+
+Typeface and size are set like this::
+
+    >>> from docx.shared import Pt
+    >>> font.name = 'Calibri'
+    >>> font.size = Pt(12)
+
+Many font properties are *tri-state*, meaning they can take the values
+|True|, |False|, and |None|. |True| means the property is "on", |False| means
+it is "off". Conceptually, the |None| value means "inherit". Because a style
+exists in an inheritance hierarchy, it is important to have the ability to
+specify a property at the right place in the hierarchy, generally as far up
+the hierarchy as possible. For example, if all headings should be in the
+Arial typeface, it makes more sense to set that property on the `Heading 1`
+style and have `Heading 2` inherit from `Heading 1`.
+
+Bold and italic are tri-state properties, as are all-caps, strikethrough,
+superscript, and many others. See the |Font| API documentation for a full
+list::
+
+    >>> font.bold, font.italic
+    (None, None)
+    >>> font.italic = True
+    >>> font.italic
+    True
+    >>> font.italic = False
+    >>> font.italic
+    False
+    >>> font.italic = None
+    >>> font.italic
+    None
+
+Underline is a bit of a special case. It is a hybrid of a tri-state property
+and an enumerated value property. |True| means single underline, by far the
+most common. |False| means no underline, but more often |None| is the right
+choice if no underlining is wanted since it is rare to inherit it from a base
+style. The other forms of underlining, such as double or dashed, are
+specified with a member of the :ref:`WdUnderline` enumeration::
+
+    >>> font.underline
+    None
+    >>> font.underline = True
+    >>> # or perhaps
+    >>> font.underline = WD_UNDERLINE.DOT_DASH
+
+
 Control how a style appears in the Word UI
 ------------------------------------------
 
