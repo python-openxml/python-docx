@@ -20,6 +20,10 @@ from ..unitutil.mock import call, function_mock, instance_mock, method_mock
 
 class DescribeStyles(object):
 
+    def it_supports_the_in_operator_on_style_name(self, in_fixture):
+        styles, name, expected_value = in_fixture
+        assert (name in styles) is expected_value
+
     def it_knows_its_length(self, len_fixture):
         styles, expected_value = len_fixture
         assert len(styles) == expected_value
@@ -249,6 +253,17 @@ class DescribeStyles(object):
         style_.type = 1
         style_type = 2
         return styles, style_, style_type
+
+    @pytest.fixture(params=[
+        ('w:styles/w:style/w:name{w:val=heading 1}', 'Heading 1', True),
+        ('w:styles/w:style/w:name{w:val=Foo Bar}',   'Foo Bar',   True),
+        ('w:styles/w:style/w:name{w:val=heading 1}', 'Foobar',    False),
+        ('w:styles',                                 'Foobar',    False),
+    ])
+    def in_fixture(self, request):
+        styles_cxml, name, expected_value = request.param
+        styles = Styles(element(styles_cxml))
+        return styles, name, expected_value
 
     @pytest.fixture(params=[
         ('w:styles',                           0),
