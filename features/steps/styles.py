@@ -10,6 +10,7 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.styles import Styles
 from docx.styles.style import BaseStyle
+from docx.text.run import Font
 
 from helpers import test_docx
 
@@ -65,6 +66,18 @@ def given_a_style_having_a_known_attr_name(context, attr_name):
     docx_path = test_docx('sty-having-styles-part')
     document = Document(docx_path)
     context.style = document.styles['Normal']
+
+
+@given('a style of type {style_type}')
+def given_a_style_of_type(context, style_type):
+    document = Document(test_docx('sty-known-styles'))
+    name = {
+        'WD_STYLE_TYPE.CHARACTER': 'Default Paragraph Font',
+        'WD_STYLE_TYPE.LIST':      'No List',
+        'WD_STYLE_TYPE.PARAGRAPH': 'Normal',
+        'WD_STYLE_TYPE.TABLE':     'Normal Table',
+    }[style_type]
+    context.style = document.styles[name]
 
 
 # when =====================================================
@@ -153,6 +166,14 @@ def then_style_builtin_is_builtin(context, builtin_str):
     style = context.style
     builtin = bool_vals[builtin_str]
     assert style.builtin == builtin
+
+
+@then('style.font is the Font object for the style')
+def then_style_font_is_the_Font_object_for_the_style(context):
+    style = context.style
+    font = style.font
+    assert isinstance(font, Font)
+    assert font.element is style.element
 
 
 @then('style.name is the {which} name')
