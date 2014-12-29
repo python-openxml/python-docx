@@ -6,7 +6,7 @@ Custom element classes related to text runs (CT_R).
 
 from ...enum.text import WD_UNDERLINE
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
+from ..simpletypes import ST_BrClear, ST_BrType, ST_String
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 )
@@ -18,6 +18,14 @@ class CT_Br(BaseOxmlElement):
     """
     type = OptionalAttribute('w:type', ST_BrType)
     clear = OptionalAttribute('w:clear', ST_BrClear)
+
+
+class CT_Fonts(BaseOxmlElement):
+    """
+    ``<w:rFonts>`` element, specifying typeface name for the various language
+    types.
+    """
+    ascii = OptionalAttribute('w:ascii', ST_String)
 
 
 class CT_R(BaseOxmlElement):
@@ -135,6 +143,7 @@ class CT_RPr(BaseOxmlElement):
         'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
     )
     rStyle = ZeroOrOne('w:rStyle', successors=_tag_seq[1:])
+    rFonts = ZeroOrOne('w:rFonts', successors=_tag_seq[2:])
     b = ZeroOrOne('w:b', successors=_tag_seq[3:])
     bCs = ZeroOrOne('w:bCs', successors=_tag_seq[4:])
     i = ZeroOrOne('w:i', successors=_tag_seq[5:])
@@ -157,6 +166,19 @@ class CT_RPr(BaseOxmlElement):
     specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
     oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
     del _tag_seq
+
+    @property
+    def rFonts_ascii(self):
+        """
+        The value of `w:rFonts/@w:ascii` or |None| if not present. Represents
+        the assigned typeface name. The rFonts element also specifies other
+        special-case typeface names; this method handles the case where just
+        the common name is required.
+        """
+        rFonts = self.rFonts
+        if rFonts is None:
+            return None
+        return rFonts.ascii
 
     @property
     def style(self):
