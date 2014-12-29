@@ -400,6 +400,27 @@ class Font(ElementProxy):
         rPr.rFonts_ascii = value
         rPr.rFonts_hAnsi = value
 
+    @property
+    def size(self):
+        """
+        Read/write |Length| value or |None|, indicating the font height in
+        English Metric Units (EMU). |None| indicates the font size should be
+        inherited from the style hierarchy. |Length| is a subclass of |int|
+        having properties for convenient conversion into points or other
+        length units. The :class:`docx.shared.Pt` class allows convenient
+        specification of point values::
+
+            >> font.size = Pt(24)
+            >> font.size
+            304800
+            >> font.size.pt
+            24.0
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.sz_val
+
 
 class _Text(object):
     """

@@ -11,6 +11,7 @@ from __future__ import (
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.parts.document import InlineShapes
 from docx.shape import InlineShape
+from docx.shared import Pt
 from docx.text.paragraph import Paragraph
 from docx.text.run import Font, Run
 
@@ -380,6 +381,10 @@ class DescribeFont(object):
         print(font._element.xml)
         assert font._element.xml == expected_xml
 
+    def it_knows_its_size(self, size_get_fixture):
+        font, expected_value = size_get_fixture
+        assert font.size == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -408,3 +413,13 @@ class DescribeFont(object):
         font = Font(element(r_cxml))
         expected_xml = xml(expected_r_cxml)
         return font, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:r',                      None),
+        ('w:r/w:rPr',                None),
+        ('w:r/w:rPr/w:sz{w:val=28}', Pt(14)),
+    ])
+    def size_get_fixture(self, request):
+        r_cxml, expected_value = request.param
+        font = Font(element(r_cxml))
+        return font, expected_value

@@ -6,10 +6,12 @@ stored in XML element attributes. Naming generally corresponds to the simple
 type in the associated XML schema.
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 from ..exceptions import InvalidXmlError
-from ..shared import Emu, Twips
+from ..shared import Emu, Pt, Twips
 
 
 class BaseSimpleType(object):
@@ -233,6 +235,23 @@ class ST_DecimalNumber(XsdInt):
 
 class ST_DrawingElementId(XsdUnsignedInt):
     pass
+
+
+class ST_HpsMeasure(XsdUnsignedLong):
+    """
+    Half-point measure, e.g. 24.0 represents 12.0 points.
+    """
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        if 'm' in str_value or 'n' in str_value or 'p' in str_value:
+            return ST_UniversalMeasure.convert_from_xml(str_value)
+        return Pt(int(str_value)/2.0)
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        emu = Emu(value)
+        half_points = int(emu.pt * 2)
+        return str(half_points)
 
 
 class ST_Merge(XsdStringEnumeration):
