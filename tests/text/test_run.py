@@ -374,6 +374,12 @@ class DescribeFont(object):
         font, expected_value = name_get_fixture
         assert font.name == expected_value
 
+    def it_can_change_its_typeface_name(self, name_set_fixture):
+        font, value, expected_xml = name_set_fixture
+        font.name = value
+        print(font._element.xml)
+        assert font._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -386,3 +392,19 @@ class DescribeFont(object):
         r_cxml, expected_value = request.param
         font = Font(element(r_cxml))
         return font, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r',                                          'Foo',
+         'w:r/w:rPr/w:rFonts{w:ascii=Foo,w:hAnsi=Foo}'),
+        ('w:r/w:rPr',                                    'Foo',
+         'w:r/w:rPr/w:rFonts{w:ascii=Foo,w:hAnsi=Foo}'),
+        ('w:r/w:rPr/w:rFonts{w:hAnsi=Foo}',              'Bar',
+         'w:r/w:rPr/w:rFonts{w:ascii=Bar,w:hAnsi=Bar}'),
+        ('w:r/w:rPr/w:rFonts{w:ascii=Foo,w:hAnsi=Foo}',  'Bar',
+         'w:r/w:rPr/w:rFonts{w:ascii=Bar,w:hAnsi=Bar}'),
+    ])
+    def name_set_fixture(self, request):
+        r_cxml, value, expected_r_cxml = request.param
+        font = Font(element(r_cxml))
+        expected_xml = xml(expected_r_cxml)
+        return font, value, expected_xml

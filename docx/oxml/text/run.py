@@ -26,6 +26,7 @@ class CT_Fonts(BaseOxmlElement):
     types.
     """
     ascii = OptionalAttribute('w:ascii', ST_String)
+    hAnsi = OptionalAttribute('w:hAnsi', ST_String)
 
 
 class CT_R(BaseOxmlElement):
@@ -179,6 +180,31 @@ class CT_RPr(BaseOxmlElement):
         if rFonts is None:
             return None
         return rFonts.ascii
+
+    @rFonts_ascii.setter
+    def rFonts_ascii(self, value):
+        if value is None:
+            self._remove_rFonts()
+            return
+        rFonts = self.get_or_add_rFonts()
+        rFonts.ascii = value
+
+    @property
+    def rFonts_hAnsi(self):
+        """
+        The value of `w:rFonts/@w:hAnsi` or |None| if not present.
+        """
+        rFonts = self.rFonts
+        if rFonts is None:
+            return None
+        return rFonts.hAnsi
+
+    @rFonts_hAnsi.setter
+    def rFonts_hAnsi(self, value):
+        if value is None and self.rFonts is None:
+            return
+        rFonts = self.get_or_add_rFonts()
+        rFonts.hAnsi = value
 
     @property
     def style(self):
