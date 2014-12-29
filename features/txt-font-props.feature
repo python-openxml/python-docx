@@ -1,7 +1,32 @@
-Feature: Query or apply boolean property to a run
-  In order to query or change a boolean display property of a word or phrase
+Feature: Get or set font properties
+  In order to customize the character formatting of text in a document
   As a python-docx developer
-  I need a way to query and set the boolean properties on a run
+  I need a set of read/write properties on the Font object
+
+
+  @wip
+  Scenario Outline: Get typeface name
+    Given a font having typeface name <name>
+     Then font.name is <value>
+
+    Examples: font.name values
+      | name          | value        |
+      | not specified | None         |
+      | Avenir Black  | Avenir Black |
+
+
+  @wip
+  Scenario Outline: Set typeface name
+    Given a font having typeface name <name>
+     When I assign <value> to font.name
+     Then font.name is <value>
+
+    Examples: font.name values
+      | name          | value        |
+      | not specified | Avenir Black |
+      | Avenir Black  | Calibri      |
+      | Avenir Black  | None         |
+
 
   Scenario Outline: Apply boolean property to a run
     Given a run
@@ -31,6 +56,7 @@ Feature: Query or apply boolean property to a run
       | strike            |
       | web_hidden        |
 
+
   Scenario Outline: Set <boolean_prop_name> off unconditionally
     Given a run
      When I assign False to its <boolean_prop_name> property
@@ -58,6 +84,7 @@ Feature: Query or apply boolean property to a run
       | spec_vanish       |
       | strike            |
       | web_hidden        |
+
 
   Scenario Outline: Remove boolean property from a run
     Given a run having <boolean_prop_name> set on

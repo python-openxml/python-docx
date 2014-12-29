@@ -21,6 +21,16 @@ from helpers import test_docx, test_file, test_text
 
 # given ===================================================
 
+@given('a font having typeface name {name}')
+def given_a_font_having_typeface_name(context, name):
+    document = Document(test_docx('txt-font-props'))
+    style_name = {
+        'not specified': 'Normal',
+        'Avenir Black':  'Having Typeface',
+    }[name]
+    context.font = document.styles[style_name].font
+
+
 @given('a run')
 def given_a_run(context):
     document = Document()
@@ -148,6 +158,13 @@ def when_I_assign_mixed_text_to_the_text_property(context):
     context.run.text = 'abc\tdef\nghi\rjkl'
 
 
+@when('I assign {value} to font.name')
+def when_I_assign_value_to_font_name(context, value):
+    font = context.font
+    value = None if value == 'None' else value
+    font.name = value
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -179,6 +196,13 @@ def when_I_set_the_run_underline_to_value(context, underline_value):
 
 
 # then =====================================================
+
+@then('font.name is {value}')
+def then_font_name_is_value(context, value):
+    font = context.font
+    value = None if value == 'None' else value
+    assert font.name == value
+
 
 @then('it is a column break')
 def then_type_is_column_break(context):
