@@ -426,6 +426,21 @@ class Font(ElementProxy):
         rPr = self._element.get_or_add_rPr()
         rPr.sz_val = emu
 
+    @property
+    def underline(self):
+        """
+        The underline style for this |Font|, one of |None|, |True|, |False|,
+        or a value from :ref:`WdUnderline`. |None| indicates the font
+        inherits its underline value from the style hierarchy. |False|
+        indicates no underline. |True| indicates single underline. The values
+        from :ref:`WdUnderline` are used to specify other outline styles such
+        as double, wavy, and dotted.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.u_val
+
 
 class _Text(object):
     """

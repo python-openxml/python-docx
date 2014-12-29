@@ -48,7 +48,6 @@ Feature: Get or set font properties
       | 18 pt       | None   |
 
 
-  @wip
   Scenario Outline: Get font underline value
     Given a font having <underline-type> underline
      Then font.underline is <value>

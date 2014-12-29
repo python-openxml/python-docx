@@ -260,6 +260,16 @@ class CT_RPr(BaseOxmlElement):
         sz.val = value
 
     @property
+    def u_val(self):
+        """
+        Value of `w:u/@val`, or None if not present.
+        """
+        u = self.u
+        if u is None:
+            return None
+        return u.val
+
+    @property
     def underline(self):
         """
         Underline type specified in <w:u> child, or None if that element is
