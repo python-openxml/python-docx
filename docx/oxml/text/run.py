@@ -6,9 +6,10 @@ Custom element classes related to text runs (CT_R).
 
 from ...enum.text import WD_UNDERLINE
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType, ST_String
+from ..simpletypes import ST_BrClear, ST_BrType, ST_HpsMeasure, ST_String
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
+    ZeroOrOne
 )
 
 
@@ -27,6 +28,14 @@ class CT_Fonts(BaseOxmlElement):
     """
     ascii = OptionalAttribute('w:ascii', ST_String)
     hAnsi = OptionalAttribute('w:hAnsi', ST_String)
+
+
+class CT_HpsMeasure(BaseOxmlElement):
+    """
+    Used for ``<w:sz>`` element and others, specifying font size in
+    half-points.
+    """
+    val = RequiredAttribute('w:val', ST_HpsMeasure)
 
 
 class CT_R(BaseOxmlElement):
@@ -161,6 +170,7 @@ class CT_RPr(BaseOxmlElement):
     snapToGrid = ZeroOrOne('w:snapToGrid', successors=_tag_seq[16:])
     vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
+    sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
     rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
     cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
@@ -230,6 +240,16 @@ class CT_RPr(BaseOxmlElement):
             self._add_rStyle(val=style)
         else:
             self.rStyle.val = style
+
+    @property
+    def sz_val(self):
+        """
+        The value of `w:sz/@w:val` or |None| if not present.
+        """
+        sz = self.sz
+        if sz is None:
+            return None
+        return sz.val
 
     @property
     def underline(self):

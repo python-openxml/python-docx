@@ -142,7 +142,9 @@ register_element_cls('w:p',      CT_P)
 register_element_cls('w:pPr',    CT_PPr)
 register_element_cls('w:pStyle', CT_String)
 
-from .text.run import CT_Br, CT_Fonts, CT_R, CT_RPr, CT_Text, CT_Underline
+from .text.run import (
+    CT_Br, CT_Fonts, CT_HpsMeasure, CT_R, CT_RPr, CT_Text, CT_Underline
+)
 register_element_cls('w:b',          CT_OnOff)
 register_element_cls('w:bCs',        CT_OnOff)
 register_element_cls('w:br',         CT_Br)
@@ -166,6 +168,7 @@ register_element_cls('w:smallCaps',  CT_OnOff)
 register_element_cls('w:snapToGrid', CT_OnOff)
 register_element_cls('w:specVanish', CT_OnOff)
 register_element_cls('w:strike',     CT_OnOff)
+register_element_cls('w:sz',         CT_HpsMeasure)
 register_element_cls('w:t',          CT_Text)
 register_element_cls('w:u',          CT_Underline)
 register_element_cls('w:vanish',     CT_OnOff)

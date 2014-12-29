@@ -26,7 +26,6 @@ Feature: Get or set font properties
       | Avenir Black  | None         |
 
 
-  @wip
   Scenario Outline: Get font size
     Given a font of size <size>
      Then font.size is <value>
