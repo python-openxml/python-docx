@@ -26,6 +26,30 @@ Feature: Get or set font properties
       | Avenir Black  | None         |
 
 
+  @wip
+  Scenario Outline: Get font size
+    Given a font of size <size>
+     Then font.size is <value>
+
+    Examples: font.size values
+      | size        | value  |
+      | unspecified | None   |
+      | 14 pt       | 177800 |
+
+
+  @wip
+  Scenario Outline: Set font size
+    Given a font of size <size>
+     When I assign <value> to font.size
+     Then font.size is <value>
+
+    Examples: font.size post-assignment values
+      | size        | value  |
+      | unspecified | 177800 |
+      | 14 pt       | 228600 |
+      | 18 pt       | None   |
+
+
   Scenario Outline: Apply boolean property to a run
     Given a run
      When I assign True to its <boolean_prop_name> property

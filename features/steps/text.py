@@ -31,6 +31,17 @@ def given_a_font_having_typeface_name(context, name):
     context.font = document.styles[style_name].font
 
 
+@given('a font of size {size}')
+def given_a_font_of_size(context, size):
+    document = Document(test_docx('txt-font-props'))
+    style_name = {
+        'unspecified': 'Normal',
+        '14 pt':       'Having Typeface',
+        '18 pt':       'Large Size',
+    }[size]
+    context.font = document.styles[style_name].font
+
+
 @given('a run')
 def given_a_run(context):
     document = Document()
@@ -165,6 +176,13 @@ def when_I_assign_value_to_font_name(context, value):
     font.name = value
 
 
+@when('I assign {value} to font.size')
+def when_I_assign_value_str_to_font_size(context, value):
+    value = None if value == 'None' else int(value)
+    font = context.font
+    font.size = value
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -202,6 +220,13 @@ def then_font_name_is_value(context, value):
     font = context.font
     value = None if value == 'None' else value
     assert font.name == value
+
+
+@then('font.size is {value}')
+def then_font_size_is_value(context, value):
+    value = None if value == 'None' else int(value)
+    font = context.font
+    assert font.size == value
 
 
 @then('it is a column break')
