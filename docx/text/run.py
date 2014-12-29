@@ -372,11 +372,11 @@ class Run(Parented):
         underline. The values from :ref:`WdUnderline` are used to specify
         other outline styles such as double, wavy, and dotted.
         """
-        return self._r.underline
+        return self.font.underline
 
     @underline.setter
     def underline(self, value):
-        self._r.underline = value
+        self.font.underline = value
 
     @boolproperty
     def web_hidden(self):

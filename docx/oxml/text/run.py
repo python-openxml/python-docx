@@ -122,22 +122,6 @@ class CT_R(BaseOxmlElement):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
 
-    @property
-    def underline(self):
-        """
-        String contained in w:val attribute of ./w:rPr/w:u grandchild, or
-        |None| if not present.
-        """
-        rPr = self.rPr
-        if rPr is None:
-            return None
-        return rPr.u_val
-
-    @underline.setter
-    def underline(self, value):
-        rPr = self.get_or_add_rPr()
-        rPr.u_val = value
-
 
 class CT_RPr(BaseOxmlElement):
     """
