@@ -36,7 +36,6 @@ Feature: Get or set font properties
       | 14 pt       | 177800 |
 
 
-  @wip
   Scenario Outline: Set font size
     Given a font of size <size>
      When I assign <value> to font.size

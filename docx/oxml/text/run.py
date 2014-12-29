@@ -251,6 +251,14 @@ class CT_RPr(BaseOxmlElement):
             return None
         return sz.val
 
+    @sz_val.setter
+    def sz_val(self, value):
+        if value is None:
+            self._remove_sz()
+            return
+        sz = self.get_or_add_sz()
+        sz.val = value
+
     @property
     def underline(self):
         """

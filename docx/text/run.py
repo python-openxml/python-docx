@@ -421,6 +421,11 @@ class Font(ElementProxy):
             return None
         return rPr.sz_val
 
+    @size.setter
+    def size(self, emu):
+        rPr = self._element.get_or_add_rPr()
+        rPr.sz_val = emu
+
 
 class _Text(object):
     """
