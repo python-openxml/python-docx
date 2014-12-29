@@ -381,6 +381,19 @@ class Font(ElementProxy):
 
     __slots__ = ()
 
+    @property
+    def name(self):
+        """
+        Get or set the typeface name for this |Font| instance, causing the
+        text it controls to appear in the named font, if a matching font is
+        found. |None| indicates the typeface is inherited from the style
+        hierarchy.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.rFonts_ascii
+
 
 class _Text(object):
     """

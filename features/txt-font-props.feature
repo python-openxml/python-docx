@@ -4,7 +4,6 @@ Feature: Get or set font properties
   I need a set of read/write properties on the Font object
 
 
-  @wip
   Scenario Outline: Get typeface name
     Given a font having typeface name <name>
      Then font.name is <value>

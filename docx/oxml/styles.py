@@ -44,11 +44,13 @@ class CT_Style(BaseOxmlElement):
     name = ZeroOrOne('w:name', successors=_tag_seq[1:])
     basedOn = ZeroOrOne('w:basedOn', successors=_tag_seq[3:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
+    rPr = ZeroOrOne('w:rPr', successors=_tag_seq[18:])
+    del _tag_seq
+
     type = OptionalAttribute('w:type', WD_STYLE_TYPE)
     styleId = OptionalAttribute('w:styleId', ST_String)
     default = OptionalAttribute('w:default', ST_OnOff)
     customStyle = OptionalAttribute('w:customStyle', ST_OnOff)
-    del _tag_seq
 
     @property
     def basedOn_val(self):

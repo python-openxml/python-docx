@@ -12,7 +12,7 @@ from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.parts.document import InlineShapes
 from docx.shape import InlineShape
 from docx.text.paragraph import Paragraph
-from docx.text.run import Run
+from docx.text.run import Font, Run
 
 import pytest
 
@@ -366,3 +366,23 @@ class DescribeRun(object):
     @pytest.fixture
     def Text_(self, request):
         return class_mock(request, 'docx.text.run._Text')
+
+
+class DescribeFont(object):
+
+    def it_knows_its_typeface_name(self, name_get_fixture):
+        font, expected_value = name_get_fixture
+        assert font.name == expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:r',                               None),
+        ('w:r/w:rPr',                         None),
+        ('w:r/w:rPr/w:rFonts',                None),
+        ('w:r/w:rPr/w:rFonts{w:ascii=Arial}', 'Arial'),
+    ])
+    def name_get_fixture(self, request):
+        r_cxml, expected_value = request.param
+        font = Font(element(r_cxml))
+        return font, expected_value
