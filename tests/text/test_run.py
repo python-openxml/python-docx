@@ -385,6 +385,11 @@ class DescribeFont(object):
         font, expected_value = size_get_fixture
         assert font.size == expected_value
 
+    def it_can_change_its_size(self, size_set_fixture):
+        font, value, expected_xml = size_set_fixture
+        font.size = value
+        assert font._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -423,3 +428,15 @@ class DescribeFont(object):
         r_cxml, expected_value = request.param
         font = Font(element(r_cxml))
         return font, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r',                      Pt(12), 'w:r/w:rPr/w:sz{w:val=24}'),
+        ('w:r/w:rPr',                Pt(12), 'w:r/w:rPr/w:sz{w:val=24}'),
+        ('w:r/w:rPr/w:sz{w:val=24}', Pt(18), 'w:r/w:rPr/w:sz{w:val=36}'),
+        ('w:r/w:rPr/w:sz{w:val=36}', None,   'w:r/w:rPr'),
+    ])
+    def size_set_fixture(self, request):
+        r_cxml, value, expected_r_cxml = request.param
+        font = Font(element(r_cxml))
+        expected_xml = xml(expected_r_cxml)
+        return font, value, expected_xml
