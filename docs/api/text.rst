@@ -21,3 +21,12 @@ Text-related objects
 
 .. autoclass:: Run
    :members:
+
+
+|Font| objects
+--------------
+
+.. currentmodule:: docx.text.run
+
+.. autoclass:: Font
+   :members:

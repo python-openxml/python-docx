@@ -1,6 +1,6 @@
 
-Run underline
-=============
+Underline
+=========
 
 Text in a Word document can be underlined in a variety of styles.
 
