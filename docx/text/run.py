@@ -65,7 +65,7 @@ class Run(Parented):
     """
     def __init__(self, r, parent):
         super(Run, self).__init__(parent)
-        self._r = r
+        self._r = self._element = self.element = r
 
     def add_break(self, break_type=WD_BREAK.LINE):
         """
@@ -198,6 +198,14 @@ class Run(Parented):
         to appear as if raised off the page in relief.
         """
         return 'emboss'
+
+    @property
+    def font(self):
+        """
+        The |Font| object providing access to the character formatting
+        properties for this run, such as font name and size.
+        """
+        return Font(self._element)
 
     @boolproperty
     def hidden(self):
