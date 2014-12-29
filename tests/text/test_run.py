@@ -394,6 +394,11 @@ class DescribeFont(object):
         font, expected_value = underline_get_fixture
         assert font.underline is expected_value
 
+    def it_can_change_its_underline_type(self, underline_set_fixture):
+        font, underline, expected_xml = underline_set_fixture
+        font.underline = underline
+        assert font._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -457,3 +462,26 @@ class DescribeFont(object):
         r_cxml, expected_value = request.param
         run = Font(element(r_cxml), None)
         return run, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r', True,                'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r', False,               'w:r/w:rPr/w:u{w:val=none}'),
+        ('w:r', None,                'w:r/w:rPr'),
+        ('w:r', WD_UNDERLINE.SINGLE, 'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r', WD_UNDERLINE.THICK,  'w:r/w:rPr/w:u{w:val=thick}'),
+        ('w:r/w:rPr/w:u{w:val=single}', True,
+         'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r/w:rPr/w:u{w:val=single}', False,
+         'w:r/w:rPr/w:u{w:val=none}'),
+        ('w:r/w:rPr/w:u{w:val=single}', None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:u{w:val=single}', WD_UNDERLINE.SINGLE,
+         'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r/w:rPr/w:u{w:val=single}', WD_UNDERLINE.DOTTED,
+         'w:r/w:rPr/w:u{w:val=dotted}'),
+    ])
+    def underline_set_fixture(self, request):
+        initial_r_cxml, value, expected_cxml = request.param
+        run = Font(element(initial_r_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return run, value, expected_xml
