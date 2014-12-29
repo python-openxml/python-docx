@@ -14,7 +14,6 @@ Feature: Get or set font properties
       | Avenir Black  | Avenir Black |
 
 
-  @wip
   Scenario Outline: Set typeface name
     Given a font having typeface name <name>
      When I assign <value> to font.name

@@ -394,6 +394,12 @@ class Font(ElementProxy):
             return None
         return rPr.rFonts_ascii
 
+    @name.setter
+    def name(self, value):
+        rPr = self._element.get_or_add_rPr()
+        rPr.rFonts_ascii = value
+        rPr.rFonts_hAnsi = value
+
 
 class _Text(object):
     """
