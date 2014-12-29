@@ -14,7 +14,7 @@ from docx import Document
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
-from docx.text.run import Run
+from docx.text.run import Font, Run
 
 from helpers import test_docx, test_file, test_text
 
@@ -282,6 +282,13 @@ def then_type_is_line_break(context):
 def then_type_is_page_break(context):
     attrib = context.last_child.attrib
     assert attrib == {qn('w:type'): 'page'}
+
+
+@then('run.font is the Font object for the run')
+def then_run_font_is_the_Font_object_for_the_run(context):
+    run, font = context.run, context.run.font
+    assert isinstance(font, Font)
+    assert font.element is run.element
 
 
 @then('the last item in the run is a break')
