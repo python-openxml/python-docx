@@ -48,6 +48,39 @@ Feature: Get or set font properties
       | 18 pt       | None   |
 
 
+  @wip
+  Scenario Outline: Get font underline value
+    Given a font having <underline-type> underline
+     Then font.underline is <value>
+
+    Examples: font underline values
+      | underline-type | value               |
+      | inherited      | None                |
+      | no             | False               |
+      | single         | True                |
+      | double         | WD_UNDERLINE.DOUBLE |
+
+
+  @wip
+  Scenario Outline: Change font underline
+    Given a font having <underline-type> underline
+     When I assign <new-value> to font.underline
+     Then font.underline is <expected-value>
+
+    Examples: underline property values
+      | underline-type | new-value           | expected-value      |
+      | inherited      | True                | True                |
+      | inherited      | False               | False               |
+      | inherited      | None                | None                |
+      | inherited      | WD_UNDERLINE.SINGLE | True                |
+      | inherited      | WD_UNDERLINE.DOUBLE | WD_UNDERLINE.DOUBLE |
+      | single         | None                | None                |
+      | single         | True                | True                |
+      | single         | False               | False               |
+      | single         | WD_UNDERLINE.SINGLE | True                |
+      | single         | WD_UNDERLINE.DOUBLE | WD_UNDERLINE.DOUBLE |
+
+
   Scenario Outline: Apply boolean property to a run
     Given a run
      When I assign True to its <boolean_prop_name> property
