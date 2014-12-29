@@ -441,6 +441,11 @@ class Font(ElementProxy):
             return None
         return rPr.u_val
 
+    @underline.setter
+    def underline(self, value):
+        rPr = self._element.get_or_add_rPr()
+        rPr.u_val = value
+
 
 class _Text(object):
     """

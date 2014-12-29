@@ -60,7 +60,6 @@ Feature: Get or set font properties
       | double         | WD_UNDERLINE.DOUBLE |
 
 
-  @wip
   Scenario Outline: Change font underline
     Given a font having <underline-type> underline
      When I assign <new-value> to font.underline
