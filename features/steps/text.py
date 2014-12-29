@@ -31,6 +31,18 @@ def given_a_font_having_typeface_name(context, name):
     context.font = document.styles[style_name].font
 
 
+@given('a font having {underline_type} underline')
+def given_a_font_having_type_underline(context, underline_type):
+    style_name = {
+        'inherited': 'Normal',
+        'no':        'None Underlined',
+        'single':    'Underlined',
+        'double':    'Double Underlined',
+    }[underline_type]
+    document = Document(test_docx('txt-font-props'))
+    context.font = document.styles[style_name].font
+
+
 @given('a font of size {size}')
 def given_a_font_of_size(context, size):
     document = Document(test_docx('txt-font-props'))
@@ -183,6 +195,19 @@ def when_I_assign_value_str_to_font_size(context, value):
     font.size = value
 
 
+@when('I assign {value_key} to font.underline')
+def when_I_assign_value_to_font_underline(context, value_key):
+    value = {
+        'True':                True,
+        'False':               False,
+        'None':                None,
+        'WD_UNDERLINE.SINGLE': WD_UNDERLINE.SINGLE,
+        'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE,
+    }[value_key]
+    font = context.font
+    font.underline = value
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -227,6 +252,18 @@ def then_font_size_is_value(context, value):
     value = None if value == 'None' else int(value)
     font = context.font
     assert font.size == value
+
+
+@then('font.underline is {value_key}')
+def then_font_underline_is_value(context, value_key):
+    value = {
+        'None':                None,
+        'True':                True,
+        'False':               False,
+        'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE,
+    }[value_key]
+    font = context.font
+    assert font.underline == value
 
 
 @then('it is a column break')
