@@ -125,28 +125,38 @@ class CT_RPr(BaseOxmlElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
     """
-    rStyle = ZeroOrOne('w:rStyle', successors=('w:rPrChange',))
-    b = ZeroOrOne('w:b', successors=('w:rPrChange',))
-    bCs = ZeroOrOne('w:bCs', successors=('w:rPrChange',))
-    caps = ZeroOrOne('w:caps', successors=('w:rPrChange',))
-    cs = ZeroOrOne('w:cs', successors=('w:rPrChange',))
-    dstrike = ZeroOrOne('w:dstrike', successors=('w:rPrChange',))
-    emboss = ZeroOrOne('w:emboss', successors=('w:rPrChange',))
-    i = ZeroOrOne('w:i', successors=('w:rPrChange',))
-    iCs = ZeroOrOne('w:iCs', successors=('w:rPrChange',))
-    imprint = ZeroOrOne('w:imprint', successors=('w:rPrChange',))
-    noProof = ZeroOrOne('w:noProof', successors=('w:rPrChange',))
-    oMath = ZeroOrOne('w:oMath', successors=('w:rPrChange',))
-    outline = ZeroOrOne('w:outline', successors=('w:rPrChange',))
-    rtl = ZeroOrOne('w:rtl', successors=('w:rPrChange',))
-    shadow = ZeroOrOne('w:shadow', successors=('w:rPrChange',))
-    smallCaps = ZeroOrOne('w:smallCaps', successors=('w:rPrChange',))
-    snapToGrid = ZeroOrOne('w:snapToGrid', successors=('w:rPrChange',))
-    specVanish = ZeroOrOne('w:specVanish', successors=('w:rPrChange',))
-    strike = ZeroOrOne('w:strike', successors=('w:rPrChange',))
-    u = ZeroOrOne('w:u', successors=('w:rPrChange',))
-    vanish = ZeroOrOne('w:vanish', successors=('w:rPrChange',))
-    webHidden = ZeroOrOne('w:webHidden', successors=('w:rPrChange',))
+    _tag_seq = (
+        'w:rStyle', 'w:rFonts', 'w:b', 'w:bCs', 'w:i', 'w:iCs', 'w:caps',
+        'w:smallCaps', 'w:strike', 'w:dstrike', 'w:outline', 'w:shadow',
+        'w:emboss', 'w:imprint', 'w:noProof', 'w:snapToGrid', 'w:vanish',
+        'w:webHidden', 'w:color', 'w:spacing', 'w:w', 'w:kern', 'w:position',
+        'w:sz', 'w:szCs', 'w:highlight', 'w:u', 'w:effect', 'w:bdr', 'w:shd',
+        'w:fitText', 'w:vertAlign', 'w:rtl', 'w:cs', 'w:em', 'w:lang',
+        'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
+    )
+    rStyle = ZeroOrOne('w:rStyle', successors=_tag_seq[1:])
+    b = ZeroOrOne('w:b', successors=_tag_seq[3:])
+    bCs = ZeroOrOne('w:bCs', successors=_tag_seq[4:])
+    i = ZeroOrOne('w:i', successors=_tag_seq[5:])
+    iCs = ZeroOrOne('w:iCs', successors=_tag_seq[6:])
+    caps = ZeroOrOne('w:caps', successors=_tag_seq[7:])
+    smallCaps = ZeroOrOne('w:smallCaps', successors=_tag_seq[8:])
+    strike = ZeroOrOne('w:strike', successors=_tag_seq[9:])
+    dstrike = ZeroOrOne('w:dstrike', successors=_tag_seq[10:])
+    outline = ZeroOrOne('w:outline', successors=_tag_seq[11:])
+    shadow = ZeroOrOne('w:shadow', successors=_tag_seq[12:])
+    emboss = ZeroOrOne('w:emboss', successors=_tag_seq[13:])
+    imprint = ZeroOrOne('w:imprint', successors=_tag_seq[14:])
+    noProof = ZeroOrOne('w:noProof', successors=_tag_seq[15:])
+    snapToGrid = ZeroOrOne('w:snapToGrid', successors=_tag_seq[16:])
+    vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
+    webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
+    u = ZeroOrOne('w:u', successors=_tag_seq[27:])
+    rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
+    cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
+    specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
+    oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
+    del _tag_seq
 
     @property
     def style(self):
