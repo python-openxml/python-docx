@@ -220,13 +220,17 @@ class Run(Parented):
         """
         return 'vanish'
 
-    @boolproperty
+    @property
     def italic(self):
         """
         Read/write tri-state value. When |True|, causes the text of the run
         to appear in italics.
         """
-        return 'i'
+        return self.font.italic
+
+    @italic.setter
+    def italic(self, value):
+        self.font.italic = value
 
     @boolproperty
     def imprint(self):
