@@ -143,12 +143,16 @@ class Run(Parented):
         """
         return 'caps'
 
-    @boolproperty
+    @property
     def bold(self):
         """
         Read/write. Causes the text of the run to appear in bold.
         """
-        return 'b'
+        return self.font.bold
+
+    @bold.setter
+    def bold(self, value):
+        self.font.bold = value
 
     def clear(self):
         """
