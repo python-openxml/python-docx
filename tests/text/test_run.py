@@ -56,6 +56,12 @@ class DescribeRun(object):
         with pytest.raises(ValueError):
             run.underline = underline
 
+    def it_provides_access_to_its_font(self, font_fixture):
+        run, Font_, font_ = font_fixture
+        font = run.font
+        Font_.assert_called_once_with(run._element)
+        assert font is font_
+
     def it_can_add_text(self, add_text_fixture):
         run, text_str, expected_xml, Text_ = add_text_fixture
         _text = run.add_text(text_str)
@@ -257,6 +263,11 @@ class DescribeRun(object):
         expected_xml = xml(expected_cxml)
         return run, expected_xml
 
+    @pytest.fixture
+    def font_fixture(self, Font_, font_):
+        run = Run(element('w:r'), None)
+        return run, Font_, font_
+
     @pytest.fixture(params=[
         ('w:r',                              None),
         ('w:r/w:rPr/w:rStyle{w:val=Foobar}', 'Foobar'),
@@ -349,6 +360,14 @@ class DescribeRun(object):
         return run, invalid_underline_setting
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Font_(self, request, font_):
+        return class_mock(request, 'docx.text.run.Font', return_value=font_)
+
+    @pytest.fixture
+    def font_(self, request):
+        return instance_mock(request, Font)
 
     @pytest.fixture
     def inline_shapes_(self, request, picture_):

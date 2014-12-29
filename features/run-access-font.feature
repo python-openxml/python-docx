@@ -4,7 +4,6 @@ Feature: Access run font
   I need access to the font of a run
 
 
-  @wip
   Scenario: Access the font of a run
     Given a run
      Then run.font is the Font object for the run
