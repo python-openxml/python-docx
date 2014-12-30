@@ -43,6 +43,17 @@ def given_a_font_having_type_underline(context, underline_type):
     context.font = document.styles[style_name].font
 
 
+@given('a font having {vertAlign_state} vertical alignment')
+def given_a_font_having_vertAlign_state(context, vertAlign_state):
+    style_name = {
+        'inherited':   'Normal',
+        'subscript':   'Subscript',
+        'superscript': 'Superscript',
+    }[vertAlign_state]
+    document = Document(test_docx('txt-font-props'))
+    context.font = document.styles[style_name].font
+
+
 @given('a font of size {size}')
 def given_a_font_of_size(context, size):
     document = Document(test_docx('txt-font-props'))
@@ -208,6 +219,22 @@ def when_I_assign_value_to_font_underline(context, value_key):
     font.underline = value
 
 
+@when('I assign {value_key} to font.{sub_super}script')
+def when_I_assign_value_to_font_sub_super(context, value_key, sub_super):
+    font = context.font
+    name = {
+        'sub':   'subscript',
+        'super': 'superscript',
+    }[sub_super]
+    value = {
+        'None':  None,
+        'True':  True,
+        'False': False,
+    }[value_key]
+
+    setattr(font, name, value)
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -264,6 +291,22 @@ def then_font_underline_is_value(context, value_key):
     }[value_key]
     font = context.font
     assert font.underline == value
+
+
+@then('font.{sub_super}script is {value_key}')
+def then_font_sub_super_is_value(context, sub_super, value_key):
+    name = {
+        'sub':   'subscript',
+        'super': 'superscript',
+    }[sub_super]
+    expected_value = {
+        'None':  None,
+        'True':  True,
+        'False': False,
+    }[value_key]
+    font = context.font
+    actual_value = getattr(font, name)
+    assert actual_value == expected_value
 
 
 @then('it is a column break')
