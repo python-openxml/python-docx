@@ -492,6 +492,11 @@ class Font(ElementProxy):
             return None
         return rPr.subscript
 
+    @subscript.setter
+    def subscript(self, value):
+        rPr = self._element.get_or_add_rPr()
+        rPr.subscript = value
+
     @property
     def superscript(self):
         """

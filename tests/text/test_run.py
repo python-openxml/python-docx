@@ -373,6 +373,11 @@ class DescribeFont(object):
         font, expected_value = subscript_get_fixture
         assert font.subscript == expected_value
 
+    def it_can_change_whether_it_is_subscript(self, subscript_set_fixture):
+        font, value, expected_xml = subscript_set_fixture
+        font.subscript = value
+        assert font._element.xml == expected_xml
+
     def it_knows_whether_it_is_superscript(self, superscript_get_fixture):
         font, expected_value = superscript_get_fixture
         assert font.superscript == expected_value
@@ -534,6 +539,34 @@ class DescribeFont(object):
         r_cxml, expected_value = request.param
         font = Font(element(r_cxml))
         return font, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r',                                      True,
+         'w:r/w:rPr/w:vertAlign{w:val=subscript}'),
+        ('w:r',                                      False,
+         'w:r/w:rPr'),
+        ('w:r',                                      None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:vertAlign{w:val=subscript}',   True,
+         'w:r/w:rPr/w:vertAlign{w:val=subscript}'),
+        ('w:r/w:rPr/w:vertAlign{w:val=subscript}',   False,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:vertAlign{w:val=subscript}',   None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:vertAlign{w:val=superscript}', True,
+         'w:r/w:rPr/w:vertAlign{w:val=subscript}'),
+        ('w:r/w:rPr/w:vertAlign{w:val=superscript}', False,
+         'w:r/w:rPr/w:vertAlign{w:val=superscript}'),
+        ('w:r/w:rPr/w:vertAlign{w:val=superscript}', None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr/w:vertAlign{w:val=baseline}',    True,
+         'w:r/w:rPr/w:vertAlign{w:val=subscript}'),
+    ])
+    def subscript_set_fixture(self, request):
+        r_cxml, value, expected_r_cxml = request.param
+        font = Font(element(r_cxml))
+        expected_xml = xml(expected_r_cxml)
+        return font, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:r',                                      None),
