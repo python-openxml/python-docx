@@ -243,6 +243,20 @@ class CT_RPr(BaseOxmlElement):
         return False
 
     @property
+    def superscript(self):
+        """
+        |True| if `w:vertAlign/@w:val` is 'superscript'. |False| if
+        `w:vertAlign/@w:val` contains any other value. |None| if
+        `w:vertAlign` is not present.
+        """
+        vertAlign = self.vertAlign
+        if vertAlign is None:
+            return None
+        if vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT:
+            return True
+        return False
+
+    @property
     def sz_val(self):
         """
         The value of `w:sz/@w:val` or |None| if not present.
