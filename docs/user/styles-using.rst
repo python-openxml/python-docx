@@ -199,6 +199,32 @@ specified with a member of the :ref:`WdUnderline` enumeration::
     >>> font.underline = WD_UNDERLINE.DOT_DASH
 
 
+Define paragraph formatting
+---------------------------
+
+Both a paragraph style and a table style allow paragraph formatting to be
+specified. These styles provide access to a |ParagraphFormat| object via
+their :attr:`~._ParagraphStyle.paragraph_format` property.
+
+Paragraph formatting includes layout behaviors such as justification,
+indentation, space before and after, page break before, and widow/orphan
+control. For a complete list of the available properties, consult the API
+documentation page for the |ParagraphFormat| object.
+
+Here's an example of how you would create a paragraph style having hanging
+indentation of 1/4 inch, 12 points spacing above, and widow/orphan control::
+
+    >>> from docx.enum.style import WD_STYLE_TYPE
+    >>> from docx.shared import Inches, Pt
+    >>> document = Document()
+    >>> style = document.styles.add_style('Indent', WD_STYLE_TYPE.PARAGRAPH)
+    >>> paragraph_format = style.paragraph_format
+    >>> paragraph_format.left_indent = Inches(0.25)
+    >>> paragraph_format.first_line_indent = Inches(-0.25)
+    >>> paragraph_format.space_before = Pt(12)
+    >>> paragraph_format.widow_control = True
+
+
 Control how a style appears in the Word UI
 ------------------------------------------
 

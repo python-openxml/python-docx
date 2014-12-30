@@ -69,17 +69,17 @@ release = __version__
 rst_epilog = """
 .. |api-Document| replace:: :class:`docx.api.Document`
 
-.. |_Body| replace:: :class:`_Body`
+.. |_Body| replace:: :class:`._Body`
 
-.. |_Cell| replace:: :class:`_Cell`
+.. |_Cell| replace:: :class:`._Cell`
 
-.. |_Column| replace:: :class:`_Column`
+.. |_Column| replace:: :class:`._Column`
 
-.. |_Columns| replace:: :class:`_Columns`
+.. |_Columns| replace:: :class:`._Columns`
 
 .. |CoreProperties| replace:: :class:`.CoreProperties`
 
-.. |datetime| replace:: :class:`datetime.datetime`
+.. |datetime| replace:: :class:`.datetime.datetime`
 
 .. |Document| replace:: :class:`.Document`
 
@@ -87,7 +87,9 @@ rst_epilog = """
 
 .. |Emu| replace:: :class:`.Emu`
 
-.. |False| replace:: ``False``
+.. |False| replace:: :class:`False`
+
+.. |float| replace:: :class:`.float`
 
 .. |Font| replace:: :class:`.Font`
 
@@ -97,29 +99,33 @@ rst_epilog = """
 
 .. |InvalidSpanError| replace:: :class:`.InvalidSpanError`
 
-.. |int| replace:: :class:`int`
+.. |int| replace:: :class:`.int`
 
 .. |LatentStyles| replace:: :class:`.LatentStyles`
 
 .. |Length| replace:: :class:`.Length`
 
-.. |OpcPackage| replace:: :class:`OpcPackage`
+.. |OpcPackage| replace:: :class:`.OpcPackage`
 
-.. |None| replace:: ``None``
+.. |None| replace:: :class:`.None`
 
-.. |NumberingPart| replace:: :class:`NumberingPart`
+.. |NumberingPart| replace:: :class:`.NumberingPart`
 
 .. |Paragraph| replace:: :class:`.Paragraph`
 
-.. |Part| replace:: :class:`Part`
+.. |ParagraphFormat| replace:: :class:`.ParagraphFormat`
 
-.. |_Relationship| replace:: :class:`_Relationship`
+.. |Part| replace:: :class:`.Part`
 
-.. |Relationships| replace:: :class:`_Relationships`
+.. |Pt| replace:: :class:`.Pt`
 
-.. |_Row| replace:: :class:`_Row`
+.. |_Relationship| replace:: :class:`._Relationship`
 
-.. |_Rows| replace:: :class:`_Rows`
+.. |Relationships| replace:: :class:`._Relationships`
+
+.. |_Row| replace:: :class:`._Row`
+
+.. |_Rows| replace:: :class:`._Rows`
 
 .. |Run| replace:: :class:`.Run`
 
@@ -127,7 +133,7 @@ rst_epilog = """
 
 .. |Sections| replace:: :class:`.Sections`
 
-.. |str| replace:: :class:`str`
+.. |str| replace:: :class:`.str`
 
 .. |Style| replace:: :class:`.Style`
 
@@ -139,7 +145,7 @@ rst_epilog = """
 
 .. |_Text| replace:: :class:`._Text`
 
-.. |True| replace:: ``True``
+.. |True| replace:: :class:`True`
 
 .. |ValueError| replace:: :class:`ValueError`
 """

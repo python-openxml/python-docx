@@ -6,7 +6,7 @@ Enumerations related to text in WordprocessingML files
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .base import alias, XmlEnumeration, XmlMappedEnumMember
+from .base import alias, EnumMember, XmlEnumeration, XmlMappedEnumMember
 
 
 @alias('WD_ALIGN_PARAGRAPH')
@@ -82,6 +82,48 @@ class WD_BREAK_TYPE(object):
     TEXT_WRAPPING = 11
 
 WD_BREAK = WD_BREAK_TYPE
+
+
+class WD_LINE_SPACING(XmlEnumeration):
+    """
+    Specifies a line spacing format to be applied to a paragraph.
+
+    Example::
+
+        from docx.enum.text import WD_LINE_SPACING
+
+        paragraph = document.add_paragraph()
+        paragraph.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+    """
+
+    __ms_name__ = 'WdLineSpacing'
+
+    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff844910.aspx'
+
+    __members__ = (
+        EnumMember(
+            'ONE_POINT_FIVE', 1, 'Space-and-a-half line spacing.'
+        ),
+        XmlMappedEnumMember(
+            'AT_LEAST', 3, 'atLeast', 'Line spacing is always at least the s'
+            'pecified amount. The amount is specified separately.'
+        ),
+        EnumMember(
+            'DOUBLE', 2, 'Double spaced.'
+        ),
+        XmlMappedEnumMember(
+            'EXACTLY', 4, 'exact', 'Line spacing is exactly the specified am'
+            'ount. The amount is specified separately.'
+        ),
+        XmlMappedEnumMember(
+            'MULTIPLE', 5, 'auto', 'Line spacing is specified as a multiple '
+            'of line heights. Changing the font size will change the line sp'
+            'acing proportionately.'
+        ),
+        EnumMember(
+            'SINGLE', 0, 'Single spaced (default).'
+        ),
+    )
 
 
 class WD_UNDERLINE(XmlEnumeration):
