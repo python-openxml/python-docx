@@ -4,7 +4,6 @@ Feature: Get and set style properties
   I need a set of read/write style properties
 
 
-  @wip
   Scenario Outline: Get base style
     Given a style based on <base-style>
      Then style.base_style is <value>

@@ -114,9 +114,10 @@ register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 
 from .styles import CT_Style, CT_Styles
-register_element_cls('w:name',   CT_String)
-register_element_cls('w:style',  CT_Style)
-register_element_cls('w:styles', CT_Styles)
+register_element_cls('w:basedOn', CT_String)
+register_element_cls('w:name',    CT_String)
+register_element_cls('w:style',   CT_Style)
+register_element_cls('w:styles',  CT_Styles)
 
 from .table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
