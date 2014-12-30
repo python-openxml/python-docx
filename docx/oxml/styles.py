@@ -51,6 +51,23 @@ class CT_Style(BaseOxmlElement):
     del _tag_seq
 
     @property
+    def basedOn_val(self):
+        """
+        Value of `w:basedOn/@w:val` or |None| if not present.
+        """
+        basedOn = self.basedOn
+        if basedOn is None:
+            return None
+        return basedOn.val
+
+    @basedOn_val.setter
+    def basedOn_val(self, value):
+        if value is None:
+            self._remove_basedOn()
+        else:
+            self.get_or_add_basedOn().val = value
+
+    @property
     def base_style(self):
         """
         Sibling CT_Style element this style is based on or |None| if no base

@@ -129,6 +129,11 @@ class _CharacterStyle(BaseStyle):
             return None
         return StyleFactory(base_style)
 
+    @base_style.setter
+    def base_style(self, style):
+        style_id = style.style_id if style is not None else None
+        self._element.basedOn_val = style_id
+
 
 class _ParagraphStyle(_CharacterStyle):
     """
