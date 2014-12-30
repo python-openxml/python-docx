@@ -48,6 +48,18 @@ def given_a_document_having_no_styles_part(context):
     context.document = Document(docx_path)
 
 
+@given('a style based on {base_style}')
+def given_a_style_based_on_setting(context, base_style):
+    style_name = {
+        'no style': 'Base',
+        'Normal':   'Sub Normal',
+        'Base':     'Citation',
+    }[base_style]
+    document = Document(test_docx('sty-known-styles'))
+    context.styles = document.styles
+    context.style = document.styles[style_name]
+
+
 @given('a style having a known {attr_name}')
 def given_a_style_having_a_known_attr_name(context, attr_name):
     docx_path = test_docx('sty-having-styles-part')
@@ -65,6 +77,16 @@ def when_I_assign_a_new_name_to_the_style(context):
 @when('I assign a new value to style.style_id')
 def when_I_assign_a_new_value_to_style_style_id(context):
     context.style.style_id = 'Foo42'
+
+
+@when('I assign {value_key} to style.base_style')
+def when_I_assign_value_to_style_base_style(context, value_key):
+    value = {
+        'None':               None,
+        'styles[\'Normal\']': context.styles['Normal'],
+        'styles[\'Base\']':   context.styles['Base'],
+    }[value_key]
+    context.style.base_style = value
 
 
 @when('I call add_style(\'{name}\', {type_str}, builtin={builtin_str})')
@@ -113,6 +135,17 @@ def then_I_can_iterate_over_its_styles(context):
 @then('len(styles) is {style_count_str}')
 def then_len_styles_is_style_count(context, style_count_str):
     assert len(context.document.styles) == int(style_count_str)
+
+
+@then('style.base_style is {value_key}')
+def then_style_base_style_is_value(context, value_key):
+    expected_value = {
+        'None':               None,
+        'styles[\'Normal\']': context.styles['Normal'],
+        'styles[\'Base\']':   context.styles['Base'],
+    }[value_key]
+    style = context.style
+    assert style.base_style == expected_value
 
 
 @then('style.builtin is {builtin_str}')
