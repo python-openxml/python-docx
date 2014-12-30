@@ -242,6 +242,17 @@ class CT_RPr(BaseOxmlElement):
             return True
         return False
 
+    @subscript.setter
+    def subscript(self, value):
+        if value is None:
+            self._remove_vertAlign()
+        elif bool(value) is True:
+            self.get_or_add_vertAlign().val = ST_VerticalAlignRun.SUBSCRIPT
+        elif self.vertAlign is None:
+            return
+        elif self.vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT:
+            self._remove_vertAlign()
+
     @property
     def superscript(self):
         """
