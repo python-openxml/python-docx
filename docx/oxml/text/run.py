@@ -6,7 +6,9 @@ Custom element classes related to text runs (CT_R).
 
 from ...enum.text import WD_UNDERLINE
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType, ST_HpsMeasure, ST_String
+from ..simpletypes import (
+    ST_BrClear, ST_BrType, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
+)
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
     ZeroOrOne
@@ -156,6 +158,7 @@ class CT_RPr(BaseOxmlElement):
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
+    vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
     rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
     cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
     specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
@@ -224,6 +227,20 @@ class CT_RPr(BaseOxmlElement):
             self._add_rStyle(val=style)
         else:
             self.rStyle.val = style
+
+    @property
+    def subscript(self):
+        """
+        |True| if `w:vertAlign/@w:val` is 'subscript'. |False| if
+        `w:vertAlign/@w:val` contains any other value. |None| if
+        `w:vertAlign` is not present.
+        """
+        vertAlign = self.vertAlign
+        if vertAlign is None:
+            return None
+        if vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT:
+            return True
+        return False
 
     @property
     def sz_val(self):
@@ -312,6 +329,13 @@ class CT_Underline(BaseOxmlElement):
 
         val = WD_UNDERLINE.to_xml(value)
         self.set(qn('w:val'), val)
+
+
+class CT_VerticalAlignRun(BaseOxmlElement):
+    """
+    ``<w:vertAlign>`` element, specifying subscript or superscript.
+    """
+    val = RequiredAttribute('w:val', ST_VerticalAlignRun)
 
 
 class _RunContentAppender(object):

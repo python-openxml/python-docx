@@ -361,3 +361,14 @@ class ST_UniversalMeasure(BaseSimpleType):
         }[units_part]
         emu_value = Emu(int(round(quantity * multiplier)))
         return emu_value
+
+
+class ST_VerticalAlignRun(XsdStringEnumeration):
+    """
+    Valid values for `w:vertAlign/@val`.
+    """
+    BASELINE = 'baseline'
+    SUPERSCRIPT = 'superscript'
+    SUBSCRIPT = 'subscript'
+
+    _members = (BASELINE, SUPERSCRIPT, SUBSCRIPT)

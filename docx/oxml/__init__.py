@@ -143,7 +143,8 @@ register_element_cls('w:pPr',    CT_PPr)
 register_element_cls('w:pStyle', CT_String)
 
 from .text.run import (
-    CT_Br, CT_Fonts, CT_HpsMeasure, CT_R, CT_RPr, CT_Text, CT_Underline
+    CT_Br, CT_Fonts, CT_HpsMeasure, CT_R, CT_RPr, CT_Text, CT_Underline,
+    CT_VerticalAlignRun
 )
 register_element_cls('w:b',          CT_OnOff)
 register_element_cls('w:bCs',        CT_OnOff)
@@ -172,4 +173,5 @@ register_element_cls('w:sz',         CT_HpsMeasure)
 register_element_cls('w:t',          CT_Text)
 register_element_cls('w:u',          CT_Underline)
 register_element_cls('w:vanish',     CT_OnOff)
+register_element_cls('w:vertAlign',  CT_VerticalAlignRun)
 register_element_cls('w:webHidden',  CT_OnOff)
