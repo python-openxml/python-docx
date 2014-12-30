@@ -493,6 +493,18 @@ class Font(ElementProxy):
         return rPr.subscript
 
     @property
+    def superscript(self):
+        """
+        Boolean indicating whether the characters in this |Font| appear as
+        superscript. |None| indicates the subscript/superscript value is
+        inherited from the style hierarchy.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.superscript
+
+    @property
     def underline(self):
         """
         The underline style for this |Font|, one of |None|, |True|, |False|,

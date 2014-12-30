@@ -79,7 +79,6 @@ Feature: Get or set font properties
       | single         | WD_UNDERLINE.DOUBLE | WD_UNDERLINE.DOUBLE |
 
 
-  @wip
   Scenario Outline: Get font sub/superscript value
     Given a font having <vertAlign-state> vertical alignment
      Then font.subscript is <sub-value>
