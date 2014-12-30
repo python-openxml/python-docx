@@ -42,12 +42,28 @@ class CT_Style(BaseOxmlElement):
         'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
     )
     name = ZeroOrOne('w:name', successors=_tag_seq[1:])
+    basedOn = ZeroOrOne('w:basedOn', successors=_tag_seq[3:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     type = OptionalAttribute('w:type', WD_STYLE_TYPE)
     styleId = OptionalAttribute('w:styleId', ST_String)
     default = OptionalAttribute('w:default', ST_OnOff)
     customStyle = OptionalAttribute('w:customStyle', ST_OnOff)
     del _tag_seq
+
+    @property
+    def base_style(self):
+        """
+        Sibling CT_Style element this style is based on or |None| if no base
+        style or base style not found.
+        """
+        basedOn = self.basedOn
+        if basedOn is None:
+            return None
+        styles = self.getparent()
+        base_style = styles.get_by_id(basedOn.val)
+        if base_style is None:
+            return None
+        return base_style
 
     def delete(self):
         """

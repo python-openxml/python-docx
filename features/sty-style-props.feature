@@ -31,7 +31,6 @@ Feature: Get and set style properties
      Then style.name is the new name
 
 
-  @wip
   Scenario Outline: Get base style
     Given a style based on <base-style>
      Then style.base_style is <value>

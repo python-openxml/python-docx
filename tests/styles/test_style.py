@@ -17,7 +17,7 @@ from docx.styles.style import (
 )
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import class_mock, instance_mock
+from ..unitutil.mock import call, class_mock, function_mock, instance_mock
 
 
 class DescribeStyleFactory(object):
@@ -198,3 +198,44 @@ class DescribeBaseStyle(object):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
+
+
+class Describe_CharacterStyle(object):
+
+    def it_knows_which_style_it_is_based_on(self, base_get_fixture):
+        style, StyleFactory_, StyleFactory_calls, base_style_ = (
+            base_get_fixture
+        )
+        base_style = style.base_style
+
+        assert StyleFactory_.call_args_list == StyleFactory_calls
+        assert base_style == base_style_
+
+    # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:styles/(w:style{w:styleId=Foo},w:style/w:basedOn{w:val=Foo})',
+         1, 0),
+        ('w:styles/(w:style{w:styleId=Foo},w:style/w:basedOn{w:val=Bar})',
+         1, -1),
+        ('w:styles/w:style',
+         0, -1),
+    ])
+    def base_get_fixture(self, request, StyleFactory_):
+        styles_cxml, style_idx, base_style_idx = request.param
+        styles = element(styles_cxml)
+        style = _CharacterStyle(styles[style_idx])
+        if base_style_idx >= 0:
+            base_style = styles[base_style_idx]
+            StyleFactory_calls = [call(base_style)]
+            expected_value = StyleFactory_.return_value
+        else:
+            StyleFactory_calls = []
+            expected_value = None
+        return style, StyleFactory_, StyleFactory_calls, expected_value
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def StyleFactory_(self, request):
+        return function_mock(request, 'docx.styles.style.StyleFactory')

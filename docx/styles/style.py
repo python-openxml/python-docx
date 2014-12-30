@@ -118,6 +118,17 @@ class _CharacterStyle(BaseStyle):
 
     __slots__ = ()
 
+    @property
+    def base_style(self):
+        """
+        Style object this style inherits from or |None| if this style is
+        not based on another style.
+        """
+        base_style = self._element.base_style
+        if base_style is None:
+            return None
+        return StyleFactory(base_style)
+
 
 class _ParagraphStyle(_CharacterStyle):
     """
