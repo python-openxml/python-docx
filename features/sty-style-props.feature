@@ -41,7 +41,6 @@ Feature: Get and set style properties
       | Normal     | styles['Normal'] |
 
 
-  @wip
   Scenario Outline: Set base style
     Given a style based on <base-style>
      When I assign <assigned-value> to style.base_style

@@ -211,6 +211,11 @@ class Describe_CharacterStyle(object):
         assert StyleFactory_.call_args_list == StyleFactory_calls
         assert base_style == base_style_
 
+    def it_can_change_its_base_style(self, base_set_fixture):
+        style, value, expected_xml = base_set_fixture
+        style.base_style = value
+        assert style._element.xml == expected_xml
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -234,7 +239,27 @@ class Describe_CharacterStyle(object):
             expected_value = None
         return style, StyleFactory_, StyleFactory_calls, expected_value
 
+    @pytest.fixture(params=[
+        ('w:style',                       'Foo',
+         'w:style/w:basedOn{w:val=Foo}'),
+        ('w:style/w:basedOn{w:val=Foo}',  'Bar',
+         'w:style/w:basedOn{w:val=Bar}'),
+        ('w:style/w:basedOn{w:val=Bar}',  None,
+         'w:style'),
+    ])
+    def base_set_fixture(self, request, style_):
+        style_cxml, base_style_id, expected_style_cxml = request.param
+        style = _CharacterStyle(element(style_cxml))
+        style_.style_id = base_style_id
+        base_style = style_ if base_style_id is not None else None
+        expected_xml = xml(expected_style_cxml)
+        return style, base_style, expected_xml
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def style_(self, request):
+        return instance_mock(request, BaseStyle)
 
     @pytest.fixture
     def StyleFactory_(self, request):
