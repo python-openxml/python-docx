@@ -91,7 +91,6 @@ Feature: Get or set font properties
       | superscript     | False     | True        |
 
 
-  @wip
   Scenario Outline: Change font sub/superscript
     Given a font having <vertAlign-state> vertical alignment
      When I assign <value> to font.<name>script
