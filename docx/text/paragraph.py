@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from ..enum.style import WD_STYLE_TYPE
 from .run import Run
-from ..shared import Parented
+from ..shared import ElementProxy, Parented
 
 
 class Paragraph(Parented):
@@ -127,3 +127,13 @@ class Paragraph(Parented):
         """
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)
+
+
+class ParagraphFormat(ElementProxy):
+    """
+    Provides access to paragraph formatting such as justification,
+    indentation, line spacing, space before and after, and widow/orphan
+    control.
+    """
+
+    __slots__ = ()

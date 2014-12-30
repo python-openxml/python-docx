@@ -5,11 +5,9 @@ Text
 .. toctree::
    :titlesonly:
 
+   paragraph-format
    font
    underline
-   par-alignment
    run-content
    breaks
    char-style
-
-Word supports the definition of *styles* to allow a group of formatting

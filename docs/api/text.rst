@@ -14,6 +14,15 @@ Text-related objects
    :members:
 
 
+|ParagraphFormat| objects
+-------------------------
+
+.. currentmodule:: docx.text.paragraph
+
+.. autoclass:: ParagraphFormat
+   :members:
+
+
 |Run| objects
 -------------
 

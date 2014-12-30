@@ -37,4 +37,3 @@ ISO/IEC 29500 spec.
    schema/ct_document
    schema/ct_body
    schema/ct_p
-   schema/ct_ppr

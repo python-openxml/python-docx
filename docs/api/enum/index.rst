@@ -10,6 +10,7 @@ can be found here:
 
    WdAlignParagraph
    WdBuiltinStyle
+   WdLineSpacing
    WdOrientation
    WdSectionStart
    WdStyleType

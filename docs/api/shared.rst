@@ -35,5 +35,11 @@ allowing values to be expressed in the units most appropriate to the context.
 .. autoclass:: Mm
    :members:
 
+.. autoclass:: Pt
+   :members:
+
+.. autoclass:: Twips
+   :members:
+
 .. autoclass:: Emu
    :members:
