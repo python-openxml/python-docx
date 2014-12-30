@@ -481,6 +481,18 @@ class Font(ElementProxy):
         self._set_bool_prop('strike', value)
 
     @property
+    def subscript(self):
+        """
+        Boolean indicating whether the characters in this |Font| appear as
+        subscript. |None| indicates the subscript/subscript value is
+        inherited from the style hierarchy.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.subscript
+
+    @property
     def underline(self):
         """
         The underline style for this |Font|, one of |None|, |True|, |False|,
