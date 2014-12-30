@@ -79,6 +79,47 @@ Feature: Get or set font properties
       | single         | WD_UNDERLINE.DOUBLE | WD_UNDERLINE.DOUBLE |
 
 
+  @wip
+  Scenario Outline: Get font sub/superscript value
+    Given a font having <vertAlign-state> vertical alignment
+     Then font.subscript is <sub-value>
+      And font.superscript is <super-value>
+
+    Examples: font sub/superscript values
+      | vertAlign-state | sub-value | super-value |
+      | inherited       | None      | None        |
+      | subscript       | True      | False       |
+      | superscript     | False     | True        |
+
+
+  @wip
+  Scenario Outline: Change font sub/superscript
+    Given a font having <vertAlign-state> vertical alignment
+     When I assign <value> to font.<name>script
+     Then font.<name-2>script is <expected-value>
+
+    Examples: value of sub/superscript after assignment
+      | vertAlign-state | name  | value | name-2  | expected-value |
+      | inherited       | sub   | True  |  sub    | True           |
+      | inherited       | sub   | True  |  super  | False          |
+      | inherited       | sub   | False |  sub    | None           |
+      | inherited       | super | True  |  super  | True           |
+      | inherited       | super | True  |  sub    | False          |
+      | inherited       | super | False |  super  | None           |
+      | subscript       | sub   | True  |  sub    | True           |
+      | subscript       | sub   | False |  sub    | None           |
+      | subscript       | sub   | None  |  sub    | None           |
+      | subscript       | super | True  |  sub    | False          |
+      | subscript       | super | False |  sub    | True           |
+      | subscript       | super | None  |  sub    | None           |
+      | superscript     | super | True  |  super  | True           |
+      | superscript     | super | False |  super  | None           |
+      | superscript     | super | None  |  super  | None           |
+      | superscript     | sub   | True  |  super  | False          |
+      | superscript     | sub   | False |  super  | True           |
+      | superscript     | sub   | None  |  super  | None           |
+
+
   Scenario Outline: Apply boolean property to a run
     Given a run
      When I assign True to its <boolean_prop_name> property
