@@ -4,7 +4,6 @@ Feature: Access style paragraph format
   I need access to the paragraph format of a style
 
 
-  @wip
   Scenario Outline: Get style paragraph format
     Given a style of type <style-type>
      Then style.paragraph_format is the ParagraphFormat object for the style

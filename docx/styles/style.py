@@ -10,6 +10,7 @@ from __future__ import (
 
 from ..enum.style import WD_STYLE_TYPE
 from ..shared import ElementProxy
+from ..text.paragraph import ParagraphFormat
 from ..text.run import Font
 
 
@@ -150,6 +151,14 @@ class _ParagraphStyle(_CharacterStyle):
     """
 
     __slots__ = ()
+
+    @property
+    def paragraph_format(self):
+        """
+        The |ParagraphFormat| object providing access to the paragraph
+        properties for this style.
+        """
+        return ParagraphFormat(self._element)
 
 
 class _TableStyle(_ParagraphStyle):

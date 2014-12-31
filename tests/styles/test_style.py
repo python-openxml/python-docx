@@ -15,6 +15,7 @@ from docx.styles.style import (
     BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
     StyleFactory, _TableStyle
 )
+from docx.text.paragraph import ParagraphFormat
 from docx.text.run import Font
 
 from ..unitutil.cxml import element, xml
@@ -286,3 +287,32 @@ class Describe_CharacterStyle(object):
     @pytest.fixture
     def StyleFactory_(self, request):
         return function_mock(request, 'docx.styles.style.StyleFactory')
+
+
+class Describe_ParagraphStyle(object):
+
+    def it_provides_access_to_its_paragraph_format(self, parfmt_fixture):
+        style, ParagraphFormat_, paragraph_format_ = parfmt_fixture
+        paragraph_format = style.paragraph_format
+        ParagraphFormat_.assert_called_once_with(style._element)
+        assert paragraph_format is paragraph_format_
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def parfmt_fixture(self, ParagraphFormat_, paragraph_format_):
+        style = _ParagraphStyle(element('w:style'))
+        return style, ParagraphFormat_, paragraph_format_
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def ParagraphFormat_(self, request, paragraph_format_):
+        return class_mock(
+            request, 'docx.styles.style.ParagraphFormat',
+            return_value=paragraph_format_
+        )
+
+    @pytest.fixture
+    def paragraph_format_(self, request):
+        return instance_mock(request, ParagraphFormat)
