@@ -19,6 +19,7 @@ class CT_Ind(BaseOxmlElement):
     ``<w:ind>`` element, specifying paragraph indentation.
     """
     left = OptionalAttribute('w:left', ST_SignedTwipsMeasure)
+    right = OptionalAttribute('w:right', ST_SignedTwipsMeasure)
     firstLine = OptionalAttribute('w:firstLine', ST_TwipsMeasure)
     hanging = OptionalAttribute('w:hanging', ST_TwipsMeasure)
 
@@ -150,6 +151,16 @@ class CT_PPr(BaseOxmlElement):
         if ind is None:
             return None
         return ind.left
+
+    @property
+    def ind_right(self):
+        """
+        The value of `w:ind/@w:right` or |None| if not present.
+        """
+        ind = self.ind
+        if ind is None:
+            return None
+        return ind.right
 
     @property
     def jc_val(self):
