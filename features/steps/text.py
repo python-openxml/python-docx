@@ -11,7 +11,9 @@ import hashlib
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
+from docx.enum.text import (
+    WD_ALIGN_PARAGRAPH, WD_BREAK, WD_LINE_SPACING, WD_UNDERLINE
+)
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.shared import Pt
@@ -64,6 +66,17 @@ def given_a_font_of_size(context, size):
         '18 pt':       'Large Size',
     }[size]
     context.font = document.styles[style_name].font
+
+
+@given('a paragraph format having {setting} line spacing')
+def given_a_paragraph_format_having_setting_line_spacing(context, setting):
+    style_name = {
+        'inherited': 'Normal',
+        '14 pt':     'Base',
+        'double':    'Citation',
+    }[setting]
+    document = Document(test_docx('sty-known-styles'))
+    context.paragraph_format = document.styles[style_name].paragraph_format
 
 
 @given('a paragraph format having {setting} space {side}')
@@ -238,6 +251,31 @@ def when_I_assign_value_to_font_underline(context, value_key):
     font.underline = value
 
 
+@when('I assign {value_key} to paragraph_format.line_spacing')
+def when_I_assign_value_to_paragraph_format_line_spacing(context, value_key):
+    value = {
+        'Pt(14)': Pt(14),
+        '2':      2,
+    }.get(value_key)
+    value = float(value_key) if value is None else value
+    context.paragraph_format.line_spacing = value
+
+
+@when('I assign {value_key} to paragraph_format.line_spacing_rule')
+def when_I_assign_value_to_paragraph_format_line_rule(context, value_key):
+    value = {
+        'None':                           None,
+        'WD_LINE_SPACING.EXACTLY':        WD_LINE_SPACING.EXACTLY,
+        'WD_LINE_SPACING.MULTIPLE':       WD_LINE_SPACING.MULTIPLE,
+        'WD_LINE_SPACING.SINGLE':         WD_LINE_SPACING.SINGLE,
+        'WD_LINE_SPACING.DOUBLE':         WD_LINE_SPACING.DOUBLE,
+        'WD_LINE_SPACING.AT_LEAST':       WD_LINE_SPACING.AT_LEAST,
+        'WD_LINE_SPACING.ONE_POINT_FIVE': WD_LINE_SPACING.ONE_POINT_FIVE,
+    }[value_key]
+    paragraph_format = context.paragraph_format
+    paragraph_format.line_spacing_rule = value
+
+
 @when('I assign {value_key} to font.{sub_super}script')
 def when_I_assign_value_to_font_sub_super(context, value_key, sub_super):
     font = context.font
@@ -379,6 +417,36 @@ def then_paragraph_format_alignment_is_value(context, value_key):
     }[value_key]
     paragraph_format = context.paragraph_format
     assert paragraph_format.alignment == value
+
+
+@then('paragraph_format.line_spacing is {value}')
+def then_paragraph_format_line_spacing_is_value(context, value):
+    value = (
+        None if value == 'None' else
+        float(value) if '.' in value else
+        int(value)
+    )
+    paragraph_format = context.paragraph_format
+
+    if value is None or isinstance(value, int):
+        assert paragraph_format.line_spacing == value
+    else:
+        assert abs(paragraph_format.line_spacing - value) < 0.001
+
+
+@then('paragraph_format.line_spacing_rule is {value_key}')
+def then_paragraph_format_line_spacing_rule_is_value(context, value_key):
+    value = {
+        'None':                           None,
+        'WD_LINE_SPACING.EXACTLY':        WD_LINE_SPACING.EXACTLY,
+        'WD_LINE_SPACING.MULTIPLE':       WD_LINE_SPACING.MULTIPLE,
+        'WD_LINE_SPACING.SINGLE':         WD_LINE_SPACING.SINGLE,
+        'WD_LINE_SPACING.DOUBLE':         WD_LINE_SPACING.DOUBLE,
+        'WD_LINE_SPACING.AT_LEAST':       WD_LINE_SPACING.AT_LEAST,
+        'WD_LINE_SPACING.ONE_POINT_FIVE': WD_LINE_SPACING.ONE_POINT_FIVE,
+    }[value_key]
+    paragraph_format = context.paragraph_format
+    assert paragraph_format.line_spacing_rule == value
 
 
 @then('paragraph_format.space_{side} is {value}')
