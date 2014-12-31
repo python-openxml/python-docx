@@ -26,30 +26,6 @@ from ..unitutil.mock import (
 
 class DescribeParagraph(object):
 
-    def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
-        paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
-        runs = paragraph.runs
-        assert Run_.mock_calls == [
-            call(r_, paragraph), call(r_2_, paragraph)
-        ]
-        assert runs == [run_, run_2_]
-
-    def it_can_add_a_run_to_itself(self, add_run_fixture):
-        paragraph, text, style, expected_xml = add_run_fixture
-        run = paragraph.add_run(text, style)
-        assert paragraph._p.xml == expected_xml
-        assert isinstance(run, Run)
-        assert run._r is paragraph._p.r_lst[0]
-
-    def it_knows_its_alignment_value(self, alignment_get_fixture):
-        paragraph, expected_value = alignment_get_fixture
-        assert paragraph.alignment == expected_value
-
-    def it_can_change_its_alignment_value(self, alignment_set_fixture):
-        paragraph, value, expected_xml = alignment_set_fixture
-        paragraph.alignment = value
-        assert paragraph._p.xml == expected_xml
-
     def it_knows_its_paragraph_style(self, style_get_fixture):
         paragraph, style_id_, style_ = style_get_fixture
         style = paragraph.style
@@ -76,6 +52,30 @@ class DescribeParagraph(object):
         paragraph, text, expected_text = text_set_fixture
         paragraph.text = text
         assert paragraph.text == expected_text
+
+    def it_knows_its_alignment_value(self, alignment_get_fixture):
+        paragraph, expected_value = alignment_get_fixture
+        assert paragraph.alignment == expected_value
+
+    def it_can_change_its_alignment_value(self, alignment_set_fixture):
+        paragraph, value, expected_xml = alignment_set_fixture
+        paragraph.alignment = value
+        assert paragraph._p.xml == expected_xml
+
+    def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
+        paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
+        runs = paragraph.runs
+        assert Run_.mock_calls == [
+            call(r_, paragraph), call(r_2_, paragraph)
+        ]
+        assert runs == [run_, run_2_]
+
+    def it_can_add_a_run_to_itself(self, add_run_fixture):
+        paragraph, text, style, expected_xml = add_run_fixture
+        run = paragraph.add_run(text, style)
+        assert paragraph._p.xml == expected_xml
+        assert isinstance(run, Run)
+        assert run._r is paragraph._p.r_lst[0]
 
     def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
         paragraph, text, style, paragraph_, add_run_calls = (
