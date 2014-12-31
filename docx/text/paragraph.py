@@ -190,6 +190,11 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.ind_left
 
+    @left_indent.setter
+    def left_indent(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.ind_left = value
+
     @property
     def line_spacing(self):
         """
