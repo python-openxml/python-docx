@@ -170,6 +170,10 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.spacing_after
 
+    @space_after.setter
+    def space_after(self, value):
+        self._element.get_or_add_pPr().spacing_after = value
+
     @property
     def space_before(self):
         """
