@@ -11,7 +11,7 @@ from __future__ import (
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_LINE_SPACING
 from .run import Run
-from ..shared import ElementProxy, Parented, Pt, Twips
+from ..shared import ElementProxy, Emu, Length, Parented, Pt, Twips
 
 
 class Paragraph(Parented):
@@ -174,6 +174,20 @@ class ParagraphFormat(ElementProxy):
         if pPr is None:
             return None
         return self._line_spacing(pPr.spacing_line, pPr.spacing_lineRule)
+
+    @line_spacing.setter
+    def line_spacing(self, value):
+        pPr = self._element.get_or_add_pPr()
+        if value is None:
+            pPr.spacing_line = None
+            pPr.spacing_lineRule = None
+        elif isinstance(value, Length):
+            pPr.spacing_line = value
+            if pPr.spacing_lineRule != WD_LINE_SPACING.AT_LEAST:
+                pPr.spacing_lineRule = WD_LINE_SPACING.EXACTLY
+        else:
+            pPr.spacing_line = Emu(value * Twips(240))
+            pPr.spacing_lineRule = WD_LINE_SPACING.MULTIPLE
 
     @property
     def line_spacing_rule(self):

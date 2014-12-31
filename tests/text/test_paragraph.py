@@ -319,6 +319,11 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = line_spacing_get_fixture
         assert paragraph_format.line_spacing == expected_value
 
+    def it_can_change_its_line_spacing(self, line_spacing_set_fixture):
+        paragraph_format, value, expected_xml = line_spacing_set_fixture
+        paragraph_format.line_spacing = value
+        assert paragraph_format._element.xml == expected_xml
+
     def it_knows_its_line_spacing_rule(self, line_spacing_rule_get_fixture):
         paragraph_format, expected_value = line_spacing_rule_get_fixture
         assert paragraph_format.line_spacing_rule == expected_value
@@ -365,6 +370,29 @@ class DescribeParagraphFormat(object):
         p_cxml, expected_value = request.param
         paragraph_format = ParagraphFormat(element(p_cxml))
         return paragraph_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:p', 1,      'w:p/w:pPr/w:spacing{w:line=240,w:lineRule=auto}'),
+        ('w:p', 2.0,    'w:p/w:pPr/w:spacing{w:line=480,w:lineRule=auto}'),
+        ('w:p', Pt(42), 'w:p/w:pPr/w:spacing{w:line=840,w:lineRule=exact}'),
+        ('w:p/w:pPr',                                          2,
+         'w:p/w:pPr/w:spacing{w:line=480,w:lineRule=auto}'),
+        ('w:p/w:pPr/w:spacing{w:line=360}',                    1,
+         'w:p/w:pPr/w:spacing{w:line=240,w:lineRule=auto}'),
+        ('w:p/w:pPr/w:spacing{w:line=240,w:lineRule=exact}',   1.75,
+         'w:p/w:pPr/w:spacing{w:line=420,w:lineRule=auto}'),
+        ('w:p/w:pPr/w:spacing{w:line=240,w:lineRule=atLeast}', Pt(42),
+         'w:p/w:pPr/w:spacing{w:line=840,w:lineRule=atLeast}'),
+        ('w:p/w:pPr/w:spacing{w:line=240,w:lineRule=exact}',   None,
+         'w:p/w:pPr/w:spacing'),
+        ('w:p/w:pPr',                                          None,
+         'w:p/w:pPr'),
+    ])
+    def line_spacing_set_fixture(self, request):
+        p_cxml, value, expected_p_cxml = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        expected_xml = xml(expected_p_cxml)
+        return paragraph_format, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:p',                             None),
