@@ -11,7 +11,7 @@ import hashlib
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.text.run import Font, Run
@@ -63,6 +63,17 @@ def given_a_font_of_size(context, size):
         '18 pt':       'Large Size',
     }[size]
     context.font = document.styles[style_name].font
+
+
+@given('a paragraph format having {type} alignment')
+def given_a_paragraph_format_having_align_type_alignment(context, type):
+    style_name = {
+        'inherited': 'Normal',
+        'center':    'Base',
+        'right':     'Citation',
+    }[type]
+    document = Document(test_docx('sty-known-styles'))
+    context.paragraph_format = document.styles[style_name].paragraph_format
 
 
 @given('a run')
@@ -235,6 +246,17 @@ def when_I_assign_value_to_font_sub_super(context, value_key, sub_super):
     setattr(font, name, value)
 
 
+@when('I assign {value_key} to paragraph_format.alignment')
+def when_I_assign_value_to_paragraph_format_alignment(context, value_key):
+    value = {
+        'None':                      None,
+        'WD_ALIGN_PARAGRAPH.CENTER': WD_ALIGN_PARAGRAPH.CENTER,
+        'WD_ALIGN_PARAGRAPH.RIGHT':  WD_ALIGN_PARAGRAPH.RIGHT,
+    }[value_key]
+    paragraph_format = context.paragraph_format
+    paragraph_format.alignment = value
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -325,6 +347,18 @@ def then_type_is_line_break(context):
 def then_type_is_page_break(context):
     attrib = context.last_child.attrib
     assert attrib == {qn('w:type'): 'page'}
+
+
+@then('paragraph_format.alignment is {value_key}')
+def then_paragraph_format_alignment_is_value(context, value_key):
+    value = {
+        'None':                      None,
+        'WD_ALIGN_PARAGRAPH.LEFT':   WD_ALIGN_PARAGRAPH.LEFT,
+        'WD_ALIGN_PARAGRAPH.CENTER': WD_ALIGN_PARAGRAPH.CENTER,
+        'WD_ALIGN_PARAGRAPH.RIGHT':  WD_ALIGN_PARAGRAPH.RIGHT,
+    }[value_key]
+    paragraph_format = context.paragraph_format
+    assert paragraph_format.alignment == value
 
 
 @then('run.font is the Font object for the run')
