@@ -54,7 +54,6 @@ Feature: Get or set paragraph formatting properties
       | after  | 42 pt     | None      | None   |
 
 
-  @wip
   Scenario Outline: Get line spacing
     Given a paragraph format having <setting> line spacing
      Then paragraph_format.line_spacing is <value>

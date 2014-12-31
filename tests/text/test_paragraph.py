@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
@@ -319,6 +319,10 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = line_spacing_get_fixture
         assert paragraph_format.line_spacing == expected_value
 
+    def it_knows_its_line_spacing_rule(self, line_spacing_rule_get_fixture):
+        paragraph_format, expected_value = line_spacing_rule_get_fixture
+        assert paragraph_format.line_spacing_rule == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -358,6 +362,26 @@ class DescribeParagraphFormat(object):
         ('w:p/w:pPr/w:spacing{w:line=840,w:lineRule=atLeast}', Pt(42)),
     ])
     def line_spacing_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:p',                             None),
+        ('w:p/w:pPr',                       None),
+        ('w:p/w:pPr/w:spacing',             None),
+        ('w:p/w:pPr/w:spacing{w:line=240}', WD_LINE_SPACING.SINGLE),
+        ('w:p/w:pPr/w:spacing{w:line=360}', WD_LINE_SPACING.ONE_POINT_FIVE),
+        ('w:p/w:pPr/w:spacing{w:line=480}', WD_LINE_SPACING.DOUBLE),
+        ('w:p/w:pPr/w:spacing{w:line=420}', WD_LINE_SPACING.MULTIPLE),
+        ('w:p/w:pPr/w:spacing{w:lineRule=auto}',
+         WD_LINE_SPACING.MULTIPLE),
+        ('w:p/w:pPr/w:spacing{w:lineRule=exact}',
+         WD_LINE_SPACING.EXACTLY),
+        ('w:p/w:pPr/w:spacing{w:lineRule=atLeast}',
+         WD_LINE_SPACING.AT_LEAST),
+    ])
+    def line_spacing_rule_get_fixture(self, request):
         p_cxml, expected_value = request.param
         paragraph_format = ParagraphFormat(element(p_cxml))
         return paragraph_format, expected_value
