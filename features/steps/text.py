@@ -97,6 +97,19 @@ def given_a_paragraph_format_having_align_type_alignment(context, type):
     context.paragraph_format = document.styles[style_name].paragraph_format
 
 
+@given('a paragraph format having {type} indent of {value}')
+def given_a_paragraph_format_having_type_indent_value(context, type, value):
+    style_name = {
+        'inherit':  'Normal',
+        '18 pt':    'Base',
+        '17.3 pt':  'Base',
+        '-17.3 pt': 'Citation',
+        '46.1 pt':  'Citation',
+    }[value]
+    document = Document(test_docx('sty-known-styles'))
+    context.paragraph_format = document.styles[style_name].paragraph_format
+
+
 @given('a run')
 def given_a_run(context):
     document = Document()
@@ -315,6 +328,14 @@ def when_I_assign_value_to_paragraph_format_space(context, value_key, side):
     setattr(paragraph_format, prop_name, value)
 
 
+@when('I assign {value} to paragraph_format.{type_}_indent')
+def when_I_assign_value_to_paragraph_format_indent(context, value, type_):
+    paragraph_format = context.paragraph_format
+    prop_name = '%s_indent' % type_
+    value = None if value == 'None' else Pt(float(value.split()[0]))
+    setattr(paragraph_format, prop_name, value)
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -453,6 +474,15 @@ def then_paragraph_format_line_spacing_rule_is_value(context, value_key):
 def then_paragraph_format_space_side_is_value(context, side, value):
     expected_value = None if value == 'None' else int(value)
     prop_name = 'space_%s' % side
+    paragraph_format = context.paragraph_format
+    actual_value = getattr(paragraph_format, prop_name)
+    assert actual_value == expected_value
+
+
+@then('paragraph_format.{type_}_indent is {value}')
+def then_paragraph_format_type_indent_is_value(context, type_, value):
+    expected_value = None if value == 'None' else int(value)
+    prop_name = '%s_indent' % type_
     paragraph_format = context.paragraph_format
     actual_value = getattr(paragraph_format, prop_name)
     assert actual_value == expected_value

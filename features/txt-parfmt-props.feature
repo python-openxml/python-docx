@@ -93,3 +93,38 @@ Feature: Get or set paragraph formatting properties
       | double  | WD_LINE_SPACING.SINGLE   | 1.0    | WD_LINE_SPACING.SINGLE   |
       | 14 pt   | WD_LINE_SPACING.AT_LEAST | 177800 | WD_LINE_SPACING.AT_LEAST |
       | 14 pt   | None                     | 1.1666 | WD_LINE_SPACING.MULTIPLE |
+
+
+  @wip
+  Scenario Outline: Get paragraph indents
+    Given a paragraph format having <type> indent of <setting>
+     Then paragraph_format.<type>_indent is <value>
+
+    Examples: paragraph_format indent values
+      | type       | setting  | value   |
+      | first_line | inherit  | None    |
+      | first_line | 18 pt    | 228600  |
+      | first_line | -17.3 pt | -219710 |
+      | left       | inherit  | None    |
+      | left       | 46.1 pt  | 585470  |
+      | right      | inherit  | None    |
+      | right      | 17.3 pt  | 219710  |
+
+
+  @wip
+  Scenario Outline: Set paragraph indents
+    Given a paragraph format having <type> indent of <setting>
+     When I assign <new-value> to paragraph_format.<type>_indent
+     Then paragraph_format.<type>_indent is <value>
+
+    Examples: paragraph_format indent assignment results
+      | type       | setting  | new-value | value   |
+      | first_line | inherit  | 18 pt     | 228600  |
+      | first_line | 18 pt    | -18 pt    | -228600 |
+      | first_line | -17.3 pt | None      | None    |
+      | left       | inherit  | 36 pt     | 457200  |
+      | left       | 46.1 pt  | -12 pt    | -152400 |
+      | left       | 46.1 pt  | None      | None    |
+      | right      | inherit  | 24 pt     | 304800  |
+      | right      | 17.3 pt  | -6 pt     | -76200  |
+      | right      | 17.3 pt  | None      | None    |
