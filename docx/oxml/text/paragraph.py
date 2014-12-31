@@ -175,6 +175,12 @@ class CT_PPr(BaseOxmlElement):
             return None
         return spacing.line
 
+    @spacing_line.setter
+    def spacing_line(self, value):
+        if value is None and self.spacing is None:
+            return
+        self.get_or_add_spacing().line = value
+
     @property
     def spacing_lineRule(self):
         """
@@ -191,6 +197,12 @@ class CT_PPr(BaseOxmlElement):
         if lineRule is None and spacing.line is not None:
             return WD_LINE_SPACING.MULTIPLE
         return lineRule
+
+    @spacing_lineRule.setter
+    def spacing_lineRule(self, value):
+        if value is None and self.spacing is None:
+            return
+        self.get_or_add_spacing().lineRule = value
 
     @property
     def style(self):

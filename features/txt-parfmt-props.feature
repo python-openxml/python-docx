@@ -66,7 +66,6 @@ Feature: Get or set paragraph formatting properties
       | double    | 2.0    | WD_LINE_SPACING.DOUBLE   |
 
 
-  @wip
   Scenario Outline: Set line spacing
     Given a paragraph format having <setting> line spacing
      When I assign <new-value> to paragraph_format.line_spacing
