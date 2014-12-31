@@ -184,3 +184,7 @@ class ParagraphFormat(ElementProxy):
         if pPr is None:
             return None
         return pPr.spacing_before
+
+    @space_before.setter
+    def space_before(self, value):
+        self._element.get_or_add_pPr().spacing_before = value
