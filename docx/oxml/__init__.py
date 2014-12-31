@@ -136,11 +136,12 @@ register_element_cls('w:tcW',       CT_TblWidth)
 register_element_cls('w:tr',        CT_Row)
 register_element_cls('w:vMerge',    CT_VMerge)
 
-from .text.paragraph import CT_Jc, CT_P, CT_PPr
-register_element_cls('w:jc',     CT_Jc)
-register_element_cls('w:p',      CT_P)
-register_element_cls('w:pPr',    CT_PPr)
-register_element_cls('w:pStyle', CT_String)
+from .text.paragraph import CT_Jc, CT_P, CT_PPr, CT_Spacing
+register_element_cls('w:jc',      CT_Jc)
+register_element_cls('w:p',       CT_P)
+register_element_cls('w:pPr',     CT_PPr)
+register_element_cls('w:pStyle',  CT_String)
+register_element_cls('w:spacing', CT_Spacing)
 
 from .text.run import (
     CT_Br, CT_Fonts, CT_HpsMeasure, CT_R, CT_RPr, CT_Text, CT_Underline,

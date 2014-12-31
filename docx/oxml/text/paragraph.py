@@ -6,8 +6,10 @@ Custom element classes related to paragraphs (CT_P).
 
 from ...enum.text import WD_ALIGN_PARAGRAPH
 from ..ns import qn
+from ..simpletypes import ST_TwipsMeasure
 from ..xmlchemy import (
-    BaseOxmlElement, OxmlElement, RequiredAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
+    ZeroOrMore, ZeroOrOne
 )
 
 
@@ -92,7 +94,7 @@ class CT_PPr(BaseOxmlElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
-    __child_sequence__ = (
+    _tag_seq = (
         'w:pStyle', 'w:keepNext', 'w:keepLines', 'w:pageBreakBefore',
         'w:framePr', 'w:widowControl', 'w:numPr', 'w:suppressLineNumbers',
         'w:pBdr', 'w:shd', 'w:tabs', 'w:suppressAutoHyphens', 'w:kinsoku',
@@ -103,14 +105,12 @@ class CT_PPr(BaseOxmlElement):
         'w:textboxTightWrap', 'w:outlineLvl', 'w:divId', 'w:cnfStyle',
         'w:rPr', 'w:sectPr', 'w:pPrChange'
     )
-    pStyle = ZeroOrOne('w:pStyle')
-    numPr = ZeroOrOne('w:numPr', successors=__child_sequence__[7:])
-    jc = ZeroOrOne('w:jc', successors=__child_sequence__[27:])
-    sectPr = ZeroOrOne('w:sectPr', successors=('w:pPrChange',))
-
-    def _insert_pStyle(self, pStyle):
-        self.insert(0, pStyle)
-        return pStyle
+    pStyle = ZeroOrOne('w:pStyle', successors=_tag_seq[1:])
+    numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
+    spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
+    jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
+    sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[35:])
+    del _tag_seq
 
     @property
     def jc_val(self):
@@ -128,6 +128,16 @@ class CT_PPr(BaseOxmlElement):
             self._remove_jc()
             return
         self.get_or_add_jc().val = value
+
+    @property
+    def spacing_before(self):
+        """
+        The value of `w:spacing@w:before` or |None| if not present.
+        """
+        spacing = self.spacing
+        if spacing is None:
+            return None
+        return spacing.before
 
     @property
     def style(self):
@@ -152,3 +162,11 @@ class CT_PPr(BaseOxmlElement):
             return
         pStyle = self.get_or_add_pStyle()
         pStyle.val = style
+
+
+class CT_Spacing(BaseOxmlElement):
+    """
+    ``<w:spacing>`` element, specifying paragraph spacing attributes such as
+    space before and line spacing.
+    """
+    before = OptionalAttribute('w:before', ST_TwipsMeasure)
