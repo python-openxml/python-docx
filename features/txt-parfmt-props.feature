@@ -110,7 +110,6 @@ Feature: Get or set paragraph formatting properties
       | right      | 17.3 pt  | 219710  |
 
 
-  @wip
   Scenario Outline: Set paragraph indents
     Given a paragraph format having <type> indent of <setting>
      When I assign <new-value> to paragraph_format.<type>_indent
