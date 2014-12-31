@@ -46,12 +46,12 @@ class CT_P(BaseOxmlElement):
         pPr = self.pPr
         if pPr is None:
             return None
-        return pPr.alignment
+        return pPr.jc_val
 
     @alignment.setter
     def alignment(self, value):
         pPr = self.get_or_add_pPr()
-        pPr.alignment = value
+        pPr.jc_val = value
 
     def clear_content(self):
         """
@@ -113,7 +113,7 @@ class CT_PPr(BaseOxmlElement):
         return pStyle
 
     @property
-    def alignment(self):
+    def jc_val(self):
         """
         The value of the ``<w:jc>`` child element or |None| if not present.
         """
@@ -122,13 +122,12 @@ class CT_PPr(BaseOxmlElement):
             return None
         return jc.val
 
-    @alignment.setter
-    def alignment(self, value):
+    @jc_val.setter
+    def jc_val(self, value):
         if value is None:
             self._remove_jc()
             return
-        jc = self.get_or_add_jc()
-        jc.val = value
+        self.get_or_add_jc().val = value
 
     @property
     def style(self):
