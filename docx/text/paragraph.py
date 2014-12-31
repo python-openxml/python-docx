@@ -173,6 +173,19 @@ class ParagraphFormat(ElementProxy):
         return pPr.first_line_indent
 
     @property
+    def left_indent(self):
+        """
+        |Length| value specifying the space between the left margin and the
+        left side of the paragraph. |None| indicates the left indent value is
+        inherited from the style hierarchy. Use an |Inches| value object as
+        a convenient way to apply indentation in units of inches.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.ind_left
+
+    @property
     def line_spacing(self):
         """
         |float| or |Length| value specifying the space between baselines in
