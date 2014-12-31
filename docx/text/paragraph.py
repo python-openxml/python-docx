@@ -172,6 +172,11 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.first_line_indent
 
+    @first_line_indent.setter
+    def first_line_indent(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.first_line_indent = value
+
     @property
     def left_indent(self):
         """
