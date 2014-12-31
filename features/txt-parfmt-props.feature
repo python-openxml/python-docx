@@ -4,7 +4,6 @@ Feature: Get or set paragraph formatting properties
   I need a ParagraphFormat object with read/write formatting properties
 
 
-  @wip
   Scenario Outline: Get paragraph alignment
     Given a paragraph format having <align-type> alignment
      Then paragraph_format.alignment is <value>

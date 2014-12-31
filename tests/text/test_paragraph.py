@@ -13,7 +13,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
-from docx.text.paragraph import Paragraph
+from docx.text.paragraph import Paragraph, ParagraphFormat
 from docx.text.run import Run
 
 import pytest
@@ -283,3 +283,22 @@ class DescribeParagraph(object):
         run_ = instance_mock(request, Run, name='run_')
         run_2_ = instance_mock(request, Run, name='run_2_')
         return run_, run_2_
+
+
+class DescribeParagraphFormat(object):
+
+    def it_knows_its_alignment_value(self, alignment_get_fixture):
+        paragraph_format, expected_value = alignment_get_fixture
+        assert paragraph_format.alignment == expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:p',                          None),
+        ('w:p/w:pPr',                    None),
+        ('w:p/w:pPr/w:jc{w:val=center}', WD_ALIGN_PARAGRAPH.CENTER),
+    ])
+    def alignment_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value

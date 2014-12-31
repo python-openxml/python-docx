@@ -137,3 +137,15 @@ class ParagraphFormat(ElementProxy):
     """
 
     __slots__ = ()
+
+    @property
+    def alignment(self):
+        """
+        A member of the :ref:`WdParagraphAlignment` enumeration specifying
+        the justification setting for this paragraph. A value of |None|
+        indicates paragraph alignment is inherited from the style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.jc_val
