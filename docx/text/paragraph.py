@@ -154,3 +154,18 @@ class ParagraphFormat(ElementProxy):
     def alignment(self, value):
         pPr = self._element.get_or_add_pPr()
         pPr.jc_val = value
+
+    @property
+    def space_before(self):
+        """
+        |Length| value specifying the spacing to appear between this
+        paragraph and the prior paragraph. |None| indicates this value is
+        inherited from the style hierarchy. |Length| objects provide
+        convenience properties, such as :attr:`~.Length.pt` and
+        :attr:`~.Length.cm`, that allow easy conversion to various length
+        units.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.spacing_before

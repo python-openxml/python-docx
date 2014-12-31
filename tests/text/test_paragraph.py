@@ -13,6 +13,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
+from docx.shared import Pt
 from docx.text.paragraph import Paragraph, ParagraphFormat
 from docx.text.run import Run
 
@@ -296,6 +297,10 @@ class DescribeParagraphFormat(object):
         paragraph_format.alignment = value
         assert paragraph_format._element.xml == expected_xml
 
+    def it_knows_its_space_before(self, space_before_get_fixture):
+        paragraph_format, expected_value = space_before_get_fixture
+        assert paragraph_format.space_before == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -325,3 +330,14 @@ class DescribeParagraphFormat(object):
         paragraph_format = ParagraphFormat(element(p_cxml))
         expected_xml = xml(expected_cxml)
         return paragraph_format, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:p',                               None),
+        ('w:p/w:pPr',                         None),
+        ('w:p/w:pPr/w:spacing',               None),
+        ('w:p/w:pPr/w:spacing{w:before=240}', Pt(12)),
+    ])
+    def space_before_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value
