@@ -149,6 +149,12 @@ class CT_PPr(BaseOxmlElement):
             return None
         return spacing.before
 
+    @spacing_before.setter
+    def spacing_before(self, value):
+        if value is None and self.spacing is None:
+            return
+        self.get_or_add_spacing().before = value
+
     @property
     def style(self):
         """
