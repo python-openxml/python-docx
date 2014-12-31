@@ -27,7 +27,6 @@ Feature: Get or set paragraph formatting properties
       | right      | None                      | None                      |
 
 
-  @wip
   Scenario Outline: Get paragraph spacing
     Given a paragraph format having <setting> space <side>
      Then paragraph_format.space_<side> is <value>

@@ -301,6 +301,10 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = space_before_get_fixture
         assert paragraph_format.space_before == expected_value
 
+    def it_knows_its_space_after(self, space_after_get_fixture):
+        paragraph_format, expected_value = space_after_get_fixture
+        assert paragraph_format.space_after == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -332,10 +336,21 @@ class DescribeParagraphFormat(object):
         return paragraph_format, value, expected_xml
 
     @pytest.fixture(params=[
+        ('w:p',                              None),
+        ('w:p/w:pPr',                        None),
+        ('w:p/w:pPr/w:spacing',              None),
+        ('w:p/w:pPr/w:spacing{w:after=240}', Pt(12)),
+    ])
+    def space_after_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value
+
+    @pytest.fixture(params=[
         ('w:p',                               None),
         ('w:p/w:pPr',                         None),
         ('w:p/w:pPr/w:spacing',               None),
-        ('w:p/w:pPr/w:spacing{w:before=240}', Pt(12)),
+        ('w:p/w:pPr/w:spacing{w:before=420}', Pt(21)),
     ])
     def space_before_get_fixture(self, request):
         p_cxml, expected_value = request.param
