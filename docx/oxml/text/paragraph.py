@@ -4,9 +4,9 @@
 Custom element classes related to paragraphs (CT_P).
 """
 
-from ...enum.text import WD_ALIGN_PARAGRAPH
+from ...enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from ..ns import qn
-from ..simpletypes import ST_TwipsMeasure
+from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
     ZeroOrMore, ZeroOrOne
@@ -166,6 +166,33 @@ class CT_PPr(BaseOxmlElement):
         self.get_or_add_spacing().before = value
 
     @property
+    def spacing_line(self):
+        """
+        The value of `w:spacing/@w:line` or |None| if not present.
+        """
+        spacing = self.spacing
+        if spacing is None:
+            return None
+        return spacing.line
+
+    @property
+    def spacing_lineRule(self):
+        """
+        The value of `w:spacing/@w:lineRule` as a member of the
+        :ref:`WdLineSpacing` enumeration. Only the `MULTIPLE`, `EXACTLY`, and
+        `AT_LEAST` members are used. It is the responsibility of the client
+        to calculate the use of `SINGLE`, `DOUBLE`, and `MULTIPLE` based on
+        the value of `w:spacing/@w:line` if that behavior is desired.
+        """
+        spacing = self.spacing
+        if spacing is None:
+            return None
+        lineRule = spacing.lineRule
+        if lineRule is None and spacing.line is not None:
+            return WD_LINE_SPACING.MULTIPLE
+        return lineRule
+
+    @property
     def style(self):
         """
         String contained in <w:pStyle> child, or None if that element is not
@@ -197,3 +224,5 @@ class CT_Spacing(BaseOxmlElement):
     """
     after = OptionalAttribute('w:after', ST_TwipsMeasure)
     before = OptionalAttribute('w:before', ST_TwipsMeasure)
+    line = OptionalAttribute('w:line', ST_SignedTwipsMeasure)
+    lineRule = OptionalAttribute('w:lineRule', WD_LINE_SPACING)

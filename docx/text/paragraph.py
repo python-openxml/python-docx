@@ -4,11 +4,14 @@
 Paragraph-related proxy types.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 from ..enum.style import WD_STYLE_TYPE
+from ..enum.text import WD_LINE_SPACING
 from .run import Run
-from ..shared import ElementProxy, Parented
+from ..shared import ElementProxy, Parented, Pt
 
 
 class Paragraph(Parented):
@@ -156,6 +159,23 @@ class ParagraphFormat(ElementProxy):
         pPr.jc_val = value
 
     @property
+    def line_spacing(self):
+        """
+        |float| or |Length| value specifying the space between baselines in
+        successive lines of the paragraph. A value of |None| indicates line
+        spacing is inherited from the style hierarchy. A float value, e.g.
+        ``2.0`` or ``1.75``, indicates spacing is applied in multiples of
+        line heights. A |Length| value such as ``Pt(12)`` indicates spacing
+        is a fixed height. The |Pt| value class is a convenient way to apply
+        line spacing in units of points. Assigning |None| resets line spacing
+        to inherit from the style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return self._line_spacing(pPr.spacing_line, pPr.spacing_lineRule)
+
+    @property
     def space_after(self):
         """
         |Length| value specifying the spacing to appear between this
@@ -192,3 +212,18 @@ class ParagraphFormat(ElementProxy):
     @space_before.setter
     def space_before(self, value):
         self._element.get_or_add_pPr().spacing_before = value
+
+    @staticmethod
+    def _line_spacing(spacing_line, spacing_lineRule):
+        """
+        Return the line spacing value calculated from the combination of
+        *spacing_line* and *spacing_lineRule*. Returns a |float| number of
+        lines when *spacing_lineRule* is ``WD_LINE_SPACING.MULTIPLE``,
+        otherwise a |Length| object of absolute line height is returned.
+        Returns |None| when *spacing_line* is |None|.
+        """
+        if spacing_line is None:
+            return None
+        if spacing_lineRule == WD_LINE_SPACING.MULTIPLE:
+            return spacing_line / Pt(12)
+        return spacing_line
