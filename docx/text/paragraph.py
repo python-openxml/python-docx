@@ -270,6 +270,11 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.ind_right
 
+    @right_indent.setter
+    def right_indent(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.ind_right = value
+
     @property
     def space_after(self):
         """

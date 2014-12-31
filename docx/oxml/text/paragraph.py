@@ -186,6 +186,13 @@ class CT_PPr(BaseOxmlElement):
             return None
         return ind.right
 
+    @ind_right.setter
+    def ind_right(self, value):
+        if value is None and self.ind is None:
+            return
+        ind = self.get_or_add_ind()
+        ind.right = value
+
     @property
     def jc_val(self):
         """
