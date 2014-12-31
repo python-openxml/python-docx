@@ -205,6 +205,21 @@ class ParagraphFormat(ElementProxy):
             pPr.spacing_line, pPr.spacing_lineRule
         )
 
+    @line_spacing_rule.setter
+    def line_spacing_rule(self, value):
+        pPr = self._element.get_or_add_pPr()
+        if value == WD_LINE_SPACING.SINGLE:
+            pPr.spacing_line = Twips(240)
+            pPr.spacing_lineRule = WD_LINE_SPACING.MULTIPLE
+        elif value == WD_LINE_SPACING.ONE_POINT_FIVE:
+            pPr.spacing_line = Twips(360)
+            pPr.spacing_lineRule = WD_LINE_SPACING.MULTIPLE
+        elif value == WD_LINE_SPACING.DOUBLE:
+            pPr.spacing_line = Twips(480)
+            pPr.spacing_lineRule = WD_LINE_SPACING.MULTIPLE
+        else:
+            pPr.spacing_lineRule = value
+
     @property
     def space_after(self):
         """

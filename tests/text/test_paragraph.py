@@ -328,6 +328,12 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = line_spacing_rule_get_fixture
         assert paragraph_format.line_spacing_rule == expected_value
 
+    def it_can_change_its_line_spacing_rule(self,
+                                            line_spacing_rule_set_fixture):
+        paragraph_format, value, expected_xml = line_spacing_rule_set_fixture
+        paragraph_format.line_spacing_rule = value
+        assert paragraph_format._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -413,6 +419,27 @@ class DescribeParagraphFormat(object):
         p_cxml, expected_value = request.param
         paragraph_format = ParagraphFormat(element(p_cxml))
         return paragraph_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:p', WD_LINE_SPACING.SINGLE,
+         'w:p/w:pPr/w:spacing{w:line=240,w:lineRule=auto}'),
+        ('w:p', WD_LINE_SPACING.ONE_POINT_FIVE,
+         'w:p/w:pPr/w:spacing{w:line=360,w:lineRule=auto}'),
+        ('w:p', WD_LINE_SPACING.DOUBLE,
+         'w:p/w:pPr/w:spacing{w:line=480,w:lineRule=auto}'),
+        ('w:p', WD_LINE_SPACING.MULTIPLE,
+         'w:p/w:pPr/w:spacing{w:lineRule=auto}'),
+        ('w:p', WD_LINE_SPACING.EXACTLY,
+         'w:p/w:pPr/w:spacing{w:lineRule=exact}'),
+        ('w:p/w:pPr/w:spacing{w:line=280,w:lineRule=exact}',
+         WD_LINE_SPACING.AT_LEAST,
+         'w:p/w:pPr/w:spacing{w:line=280,w:lineRule=atLeast}'),
+    ])
+    def line_spacing_rule_set_fixture(self, request):
+        p_cxml, value, expected_p_cxml = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        expected_xml = xml(expected_p_cxml)
+        return paragraph_format, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:p',                              None),
