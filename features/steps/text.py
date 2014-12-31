@@ -14,6 +14,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_UNDERLINE
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
+from docx.shared import Pt
 from docx.text.run import Font, Run
 
 from helpers import test_docx, test_file, test_text
@@ -63,6 +64,13 @@ def given_a_font_of_size(context, size):
         '18 pt':       'Large Size',
     }[size]
     context.font = document.styles[style_name].font
+
+
+@given('a paragraph format having {setting} space {side}')
+def given_a_paragraph_format_having_setting_spacing(context, setting, side):
+    style_name = 'Normal' if setting == 'inherited' else 'Base'
+    document = Document(test_docx('sty-known-styles'))
+    context.paragraph_format = document.styles[style_name].paragraph_format
 
 
 @given('a paragraph format having {type} alignment')
@@ -257,6 +265,18 @@ def when_I_assign_value_to_paragraph_format_alignment(context, value_key):
     paragraph_format.alignment = value
 
 
+@when('I assign {value_key} to paragraph_format.space_{side}')
+def when_I_assign_value_to_paragraph_format_space(context, value_key, side):
+    paragraph_format = context.paragraph_format
+    prop_name = 'space_%s' % side
+    value = {
+        'None':   None,
+        'Pt(12)': Pt(12),
+        'Pt(18)': Pt(18),
+    }[value_key]
+    setattr(paragraph_format, prop_name, value)
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -359,6 +379,15 @@ def then_paragraph_format_alignment_is_value(context, value_key):
     }[value_key]
     paragraph_format = context.paragraph_format
     assert paragraph_format.alignment == value
+
+
+@then('paragraph_format.space_{side} is {value}')
+def then_paragraph_format_space_side_is_value(context, side, value):
+    expected_value = None if value == 'None' else int(value)
+    prop_name = 'space_%s' % side
+    paragraph_format = context.paragraph_format
+    actual_value = getattr(paragraph_format, prop_name)
+    assert actual_value == expected_value
 
 
 @then('run.font is the Font object for the run')
