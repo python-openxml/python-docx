@@ -10,6 +10,7 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.styles import Styles
 from docx.styles.style import BaseStyle
+from docx.text.paragraph import ParagraphFormat
 from docx.text.run import Font
 
 from helpers import test_docx
@@ -184,6 +185,14 @@ def then_style_name_is_the_which_name(context, which):
     }[which]
     style = context.style
     assert style.name == expected_name
+
+
+@then('style.paragraph_format is the ParagraphFormat object for the style')
+def then_style_paragraph_format_is_the_ParagraphFormat_object(context):
+    style = context.style
+    paragraph_format = style.paragraph_format
+    assert isinstance(paragraph_format, ParagraphFormat)
+    assert paragraph_format.element is style.element
 
 
 @then('style.style_id is the {which} style id')
