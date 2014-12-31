@@ -291,6 +291,11 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = alignment_get_fixture
         assert paragraph_format.alignment == expected_value
 
+    def it_can_change_its_alignment_value(self, alignment_set_fixture):
+        paragraph_format, value, expected_xml = alignment_set_fixture
+        paragraph_format.alignment = value
+        assert paragraph_format._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -302,3 +307,21 @@ class DescribeParagraphFormat(object):
         p_cxml, expected_value = request.param
         paragraph_format = ParagraphFormat(element(p_cxml))
         return paragraph_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:p',                          WD_ALIGN_PARAGRAPH.LEFT,
+         'w:p/w:pPr/w:jc{w:val=left}'),
+        ('w:p/w:pPr',                    WD_ALIGN_PARAGRAPH.CENTER,
+         'w:p/w:pPr/w:jc{w:val=center}'),
+        ('w:p/w:pPr/w:jc{w:val=center}', WD_ALIGN_PARAGRAPH.RIGHT,
+         'w:p/w:pPr/w:jc{w:val=right}'),
+        ('w:p/w:pPr/w:jc{w:val=right}',  None,
+         'w:p/w:pPr'),
+        ('w:p',                          None,
+         'w:p/w:pPr'),
+    ])
+    def alignment_set_fixture(self, request):
+        p_cxml, value, expected_cxml = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        expected_xml = xml(expected_cxml)
+        return paragraph_format, value, expected_xml
