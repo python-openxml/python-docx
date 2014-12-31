@@ -11,7 +11,7 @@ from __future__ import (
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_LINE_SPACING
 from .run import Run
-from ..shared import ElementProxy, Parented, Pt
+from ..shared import ElementProxy, Parented, Pt, Twips
 
 
 class Paragraph(Parented):
@@ -176,6 +176,22 @@ class ParagraphFormat(ElementProxy):
         return self._line_spacing(pPr.spacing_line, pPr.spacing_lineRule)
 
     @property
+    def line_spacing_rule(self):
+        """
+        A member of the :ref:`WdLineSpacing` enumeration indicating how the
+        value of :attr:`line_spacing` should be interpreted. Assigning any of
+        the :ref:`WdLineSpacing` members :attr:`SINGLE`, :attr:`DOUBLE`, or
+        :attr:`ONE_POINT_FIVE` will cause the value of :attr:`line_spacing`
+        to be updated to produce the corresponding line spacing.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return self._line_spacing_rule(
+            pPr.spacing_line, pPr.spacing_lineRule
+        )
+
+    @property
     def space_after(self):
         """
         |Length| value specifying the spacing to appear between this
@@ -227,3 +243,20 @@ class ParagraphFormat(ElementProxy):
         if spacing_lineRule == WD_LINE_SPACING.MULTIPLE:
             return spacing_line / Pt(12)
         return spacing_line
+
+    @staticmethod
+    def _line_spacing_rule(line, lineRule):
+        """
+        Return the line spacing rule value calculated from the combination of
+        *line* and *lineRule*. Returns special members of the
+        :ref:`WdLineSpacing` enumeration when line spacing is single, double,
+        or 1.5 lines.
+        """
+        if lineRule == WD_LINE_SPACING.MULTIPLE:
+            if line == Twips(240):
+                return WD_LINE_SPACING.SINGLE
+            if line == Twips(360):
+                return WD_LINE_SPACING.ONE_POINT_FIVE
+            if line == Twips(480):
+                return WD_LINE_SPACING.DOUBLE
+        return lineRule
