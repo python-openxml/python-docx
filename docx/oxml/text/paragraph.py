@@ -142,6 +142,19 @@ class CT_PPr(BaseOxmlElement):
             return None
         return firstLine
 
+    @first_line_indent.setter
+    def first_line_indent(self, value):
+        if self.ind is None and value is None:
+            return
+        ind = self.get_or_add_ind()
+        ind.firstLine = ind.hanging = None
+        if value is None:
+            return
+        elif value < 0:
+            ind.hanging = -value
+        else:
+            ind.firstLine = value
+
     @property
     def ind_left(self):
         """
