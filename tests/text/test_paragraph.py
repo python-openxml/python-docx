@@ -315,6 +315,10 @@ class DescribeParagraphFormat(object):
         paragraph_format.space_after = value
         assert paragraph_format._element.xml == expected_xml
 
+    def it_knows_its_line_spacing(self, line_spacing_get_fixture):
+        paragraph_format, expected_value = line_spacing_get_fixture
+        assert paragraph_format.line_spacing == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -344,6 +348,19 @@ class DescribeParagraphFormat(object):
         paragraph_format = ParagraphFormat(element(p_cxml))
         expected_xml = xml(expected_cxml)
         return paragraph_format, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:p',                                                None),
+        ('w:p/w:pPr',                                          None),
+        ('w:p/w:pPr/w:spacing',                                None),
+        ('w:p/w:pPr/w:spacing{w:line=420}',                    1.75),
+        ('w:p/w:pPr/w:spacing{w:line=840,w:lineRule=exact}',   Pt(42)),
+        ('w:p/w:pPr/w:spacing{w:line=840,w:lineRule=atLeast}', Pt(42)),
+    ])
+    def line_spacing_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value
 
     @pytest.fixture(params=[
         ('w:p',                              None),
