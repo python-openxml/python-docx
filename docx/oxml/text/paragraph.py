@@ -134,9 +134,19 @@ class CT_PPr(BaseOxmlElement):
         self.get_or_add_jc().val = value
 
     @property
+    def spacing_after(self):
+        """
+        The value of `w:spacing/@w:after` or |None| if not present.
+        """
+        spacing = self.spacing
+        if spacing is None:
+            return None
+        return spacing.after
+
+    @property
     def spacing_before(self):
         """
-        The value of `w:spacing@w:before` or |None| if not present.
+        The value of `w:spacing/@w:before` or |None| if not present.
         """
         spacing = self.spacing
         if spacing is None:
@@ -173,4 +183,5 @@ class CT_Spacing(BaseOxmlElement):
     ``<w:spacing>`` element, specifying paragraph spacing attributes such as
     space before and line spacing.
     """
+    after = OptionalAttribute('w:after', ST_TwipsMeasure)
     before = OptionalAttribute('w:before', ST_TwipsMeasure)
