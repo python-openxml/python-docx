@@ -159,6 +159,20 @@ class ParagraphFormat(ElementProxy):
         pPr.jc_val = value
 
     @property
+    def first_line_indent(self):
+        """
+        |Length| value specifying the relative difference in indentation for
+        the first line of the paragraph. A positive value causes the first
+        line to be indented. A negative value produces a hanging indent.
+        |None| indicates first line indentation is inherited from the style
+        hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.first_line_indent
+
+    @property
     def line_spacing(self):
         """
         |float| or |Length| value specifying the space between baselines in

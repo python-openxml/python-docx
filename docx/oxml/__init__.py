@@ -136,7 +136,8 @@ register_element_cls('w:tcW',       CT_TblWidth)
 register_element_cls('w:tr',        CT_Row)
 register_element_cls('w:vMerge',    CT_VMerge)
 
-from .text.paragraph import CT_Jc, CT_P, CT_PPr, CT_Spacing
+from .text.paragraph import CT_Ind, CT_Jc, CT_P, CT_PPr, CT_Spacing
+register_element_cls('w:ind',     CT_Ind)
 register_element_cls('w:jc',      CT_Jc)
 register_element_cls('w:p',       CT_P)
 register_element_cls('w:pPr',     CT_PPr)

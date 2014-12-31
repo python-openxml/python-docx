@@ -334,6 +334,10 @@ class DescribeParagraphFormat(object):
         paragraph_format.line_spacing_rule = value
         assert paragraph_format._element.xml == expected_xml
 
+    def it_knows_its_first_line_indent(self, first_indent_get_fixture):
+        paragraph_format, expected_value = first_indent_get_fixture
+        assert paragraph_format.first_line_indent == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -363,6 +367,18 @@ class DescribeParagraphFormat(object):
         paragraph_format = ParagraphFormat(element(p_cxml))
         expected_xml = xml(expected_cxml)
         return paragraph_format, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:p',                              None),
+        ('w:p/w:pPr',                        None),
+        ('w:p/w:pPr/w:ind',                  None),
+        ('w:p/w:pPr/w:ind{w:firstLine=240}', Pt(12)),
+        ('w:p/w:pPr/w:ind{w:hanging=240}',   Pt(-12)),
+    ])
+    def first_indent_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value
 
     @pytest.fixture(params=[
         ('w:p',                                                None),

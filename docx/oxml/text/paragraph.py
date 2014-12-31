@@ -6,11 +6,20 @@ Custom element classes related to paragraphs (CT_P).
 
 from ...enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from ..ns import qn
+from ...shared import Length
 from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
     ZeroOrMore, ZeroOrOne
 )
+
+
+class CT_Ind(BaseOxmlElement):
+    """
+    ``<w:ind>`` element, specifying paragraph indentation.
+    """
+    firstLine = OptionalAttribute('w:firstLine', ST_TwipsMeasure)
+    hanging = OptionalAttribute('w:hanging', ST_TwipsMeasure)
 
 
 class CT_Jc(BaseOxmlElement):
@@ -108,6 +117,7 @@ class CT_PPr(BaseOxmlElement):
     pStyle = ZeroOrOne('w:pStyle', successors=_tag_seq[1:])
     numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
+    ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
     sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[35:])
     del _tag_seq
@@ -115,6 +125,24 @@ class CT_PPr(BaseOxmlElement):
     def _insert_pStyle(self, pStyle):
         self.insert(0, pStyle)
         return pStyle
+
+    @property
+    def first_line_indent(self):
+        """
+        A |Length| value calculated from the values of `w:ind/@w:firstLine`
+        and `w:ind/@w:hanging`. Returns |None| if the `w:ind` child is not
+        present.
+        """
+        ind = self.ind
+        if ind is None:
+            return None
+        hanging = ind.hanging
+        if hanging is not None:
+            return Length(-hanging)
+        firstLine = ind.firstLine
+        if firstLine is None:
+            return None
+        return firstLine
 
     @property
     def jc_val(self):
