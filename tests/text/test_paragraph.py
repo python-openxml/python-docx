@@ -310,6 +310,11 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = space_after_get_fixture
         assert paragraph_format.space_after == expected_value
 
+    def it_can_change_its_space_after(self, space_after_set_fixture):
+        paragraph_format, value, expected_xml = space_after_set_fixture
+        paragraph_format.space_after = value
+        assert paragraph_format._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -350,6 +355,24 @@ class DescribeParagraphFormat(object):
         p_cxml, expected_value = request.param
         paragraph_format = ParagraphFormat(element(p_cxml))
         return paragraph_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:p',                 Pt(12), 'w:p/w:pPr/w:spacing{w:after=240}'),
+        ('w:p',                 None,   'w:p/w:pPr'),
+        ('w:p/w:pPr',           Pt(12), 'w:p/w:pPr/w:spacing{w:after=240}'),
+        ('w:p/w:pPr',           None,   'w:p/w:pPr'),
+        ('w:p/w:pPr/w:spacing', Pt(12), 'w:p/w:pPr/w:spacing{w:after=240}'),
+        ('w:p/w:pPr/w:spacing', None,   'w:p/w:pPr/w:spacing'),
+        ('w:p/w:pPr/w:spacing{w:after=240}', Pt(42),
+         'w:p/w:pPr/w:spacing{w:after=840}'),
+        ('w:p/w:pPr/w:spacing{w:after=840}', None,
+         'w:p/w:pPr/w:spacing'),
+    ])
+    def space_after_set_fixture(self, request):
+        p_cxml, value, expected_p_cxml = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        expected_xml = xml(expected_p_cxml)
+        return paragraph_format, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:p',                               None),

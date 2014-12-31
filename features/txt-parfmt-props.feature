@@ -39,7 +39,6 @@ Feature: Get or set paragraph formatting properties
       | after  | 42 pt     | 533400 |
 
 
-  @wip
   Scenario Outline: Set paragraph spacing
     Given a paragraph format having <setting> space <side>
      When I assign <new-value> to paragraph_format.space_<side>
