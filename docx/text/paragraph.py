@@ -149,3 +149,8 @@ class ParagraphFormat(ElementProxy):
         if pPr is None:
             return None
         return pPr.jc_val
+
+    @alignment.setter
+    def alignment(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.jc_val = value

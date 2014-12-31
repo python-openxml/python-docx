@@ -15,7 +15,6 @@ Feature: Get or set paragraph formatting properties
       | right      | WD_ALIGN_PARAGRAPH.RIGHT  |
 
 
-  @wip
   Scenario Outline: Set paragraph alignment
     Given a paragraph format having <align-type> alignment
      When I assign <new-value> to paragraph_format.alignment
