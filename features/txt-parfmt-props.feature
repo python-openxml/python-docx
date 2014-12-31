@@ -81,7 +81,6 @@ Feature: Get or set paragraph formatting properties
       | 14 pt     | 1.5       | 1.5    | WD_LINE_SPACING.ONE_POINT_FIVE |
 
 
-  @wip
   Scenario Outline: Set line spacing rule
     Given a paragraph format having <setting> line spacing
      When I assign <new-value> to paragraph_format.line_spacing_rule
