@@ -95,7 +95,6 @@ Feature: Get or set paragraph formatting properties
       | 14 pt   | None                     | 1.1666 | WD_LINE_SPACING.MULTIPLE |
 
 
-  @wip
   Scenario Outline: Get paragraph indents
     Given a paragraph format having <type> indent of <setting>
      Then paragraph_format.<type>_indent is <value>

@@ -342,6 +342,10 @@ class DescribeParagraphFormat(object):
         paragraph_format, expected_value = left_indent_get_fixture
         assert paragraph_format.left_indent == expected_value
 
+    def it_knows_its_right_indent(self, right_indent_get_fixture):
+        paragraph_format, expected_value = right_indent_get_fixture
+        assert paragraph_format.right_indent == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -472,6 +476,18 @@ class DescribeParagraphFormat(object):
         paragraph_format = ParagraphFormat(element(p_cxml))
         expected_xml = xml(expected_p_cxml)
         return paragraph_format, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:p',                             None),
+        ('w:p/w:pPr',                       None),
+        ('w:p/w:pPr/w:ind',                 None),
+        ('w:p/w:pPr/w:ind{w:right=160}',    Pt(8)),
+        ('w:p/w:pPr/w:ind{w:right=-4.2pt}', Pt(-4.2)),
+    ])
+    def right_indent_get_fixture(self, request):
+        p_cxml, expected_value = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        return paragraph_format, expected_value
 
     @pytest.fixture(params=[
         ('w:p',                              None),

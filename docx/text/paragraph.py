@@ -248,6 +248,19 @@ class ParagraphFormat(ElementProxy):
             pPr.spacing_lineRule = value
 
     @property
+    def right_indent(self):
+        """
+        |Length| value specifying the space between the right margin and the
+        right side of the paragraph. |None| indicates the right indent value
+        is inherited from the style hierarchy. Use a |Cm| value object as
+        a convenient way to apply indentation in units of centimeters.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.ind_right
+
+    @property
     def space_after(self):
         """
         |Length| value specifying the spacing to appear between this
