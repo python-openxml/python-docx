@@ -72,6 +72,15 @@ class CT_LatentStyles(BaseOxmlElement):
         setattr(self, attr_name, bool(value))
 
 
+class CT_LsdException(BaseOxmlElement):
+    """
+    ``<w:lsdException>`` element, defining override visibility behaviors for
+    a named latent style.
+    """
+    semiHidden = OptionalAttribute('w:semiHidden', ST_OnOff)
+    uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
+
+
 class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition

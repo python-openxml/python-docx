@@ -159,3 +159,10 @@ class _LatentStyle(ElementProxy):
     @hidden.setter
     def hidden(self, value):
         self._element.semiHidden = value
+
+    @property
+    def priority(self):
+        """
+        The integer sort key for this latent style in the Word UI.
+        """
+        return self._element.uiPriority
