@@ -534,6 +534,9 @@ class DescribeParagraphFormat(object):
         ('w:p',                                  'keep_with_next',    None),
         ('w:p/w:pPr/w:keepNext{w:val=1}',        'keep_with_next',    True),
         ('w:p/w:pPr/w:keepNext{w:val=false}',    'keep_with_next',    False),
+        ('w:p',                                  'page_break_before', None),
+        ('w:p/w:pPr/w:pageBreakBefore',          'page_break_before', True),
+        ('w:p/w:pPr/w:pageBreakBefore{w:val=0}', 'page_break_before', False),
     ])
     def on_off_get_fixture(self, request):
         p_cxml, prop_name, expected_value = request.param
