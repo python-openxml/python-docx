@@ -148,7 +148,6 @@ Feature: Get or set paragraph formatting properties
       | widow_control     | Off        | False |
 
 
-  @wip
   Scenario Outline: Set On/Off paragraph property
     Given a paragraph format having <prop-name> set <state>
      When I assign <new-value> to paragraph_format.<prop-name>

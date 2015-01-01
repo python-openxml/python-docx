@@ -376,6 +376,10 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.widowControl_val
 
+    @widow_control.setter
+    def widow_control(self, value):
+        self._element.get_or_add_pPr().widowControl_val = value
+
     @staticmethod
     def _line_spacing(spacing_line, spacing_lineRule):
         """

@@ -366,6 +366,13 @@ class CT_PPr(BaseOxmlElement):
             return None
         return widowControl.val
 
+    @widowControl_val.setter
+    def widowControl_val(self, value):
+        if value is None:
+            self._remove_widowControl()
+        else:
+            self.get_or_add_widowControl().val = value
+
 
 class CT_Spacing(BaseOxmlElement):
     """
