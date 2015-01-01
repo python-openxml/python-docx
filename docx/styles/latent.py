@@ -155,3 +155,7 @@ class _LatentStyle(ElementProxy):
         inherited from the parent ``<w:latentStyles>`` element.
         """
         return self._element.semiHidden
+
+    @hidden.setter
+    def hidden(self, value):
+        self._element.semiHidden = value
