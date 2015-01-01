@@ -146,3 +146,12 @@ class _LatentStyle(ElementProxy):
     """
 
     __slots__ = ()
+
+    @property
+    def hidden(self):
+        """
+        Boolean specifying whether this latent style should appear in the
+        recommended list. |None| indicates the effective value should be
+        inherited from the parent ``<w:latentStyles>`` element.
+        """
+        return self._element.semiHidden
