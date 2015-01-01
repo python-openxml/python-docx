@@ -531,6 +531,9 @@ class DescribeParagraphFormat(object):
         ('w:p',                                  'keep_together',     None),
         ('w:p/w:pPr/w:keepLines{w:val=on}',      'keep_together',     True),
         ('w:p/w:pPr/w:keepLines{w:val=0}',       'keep_together',     False),
+        ('w:p',                                  'keep_with_next',    None),
+        ('w:p/w:pPr/w:keepNext{w:val=1}',        'keep_with_next',    True),
+        ('w:p/w:pPr/w:keepNext{w:val=false}',    'keep_with_next',    False),
     ])
     def on_off_get_fixture(self, request):
         p_cxml, prop_name, expected_value = request.param

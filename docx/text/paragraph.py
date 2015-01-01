@@ -190,6 +190,20 @@ class ParagraphFormat(ElementProxy):
         return pPr.keepLines_val
 
     @property
+    def keep_with_next(self):
+        """
+        |True| if the paragraph should be kept on the same page as the
+        subsequent paragraph when the document is rendered. For example, this
+        property could be used to keep a section heading on the same page as
+        its first paragraph. |None| indicates its effective value is
+        inherited from the style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.keepNext_val
+
+    @property
     def left_indent(self):
         """
         |Length| value specifying the space between the left margin and the

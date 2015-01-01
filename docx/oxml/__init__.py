@@ -140,6 +140,7 @@ from .text.paragraph import CT_Ind, CT_Jc, CT_P, CT_PPr, CT_Spacing
 register_element_cls('w:ind',             CT_Ind)
 register_element_cls('w:jc',              CT_Jc)
 register_element_cls('w:keepLines',       CT_OnOff)
+register_element_cls('w:keepNext',        CT_OnOff)
 register_element_cls('w:p',               CT_P)
 register_element_cls('w:pPr',             CT_PPr)
 register_element_cls('w:pStyle',          CT_String)
