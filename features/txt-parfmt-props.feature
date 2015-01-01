@@ -126,3 +126,46 @@ Feature: Get or set paragraph formatting properties
       | right      | inherit  | 24 pt     | 304800  |
       | right      | 17.3 pt  | -6 pt     | -76200  |
       | right      | 17.3 pt  | None      | None    |
+
+
+  @wip
+  Scenario Outline: Get On/Off paragraph property
+    Given a paragraph format having <prop-name> set <state>
+     Then paragraph_format.<prop-name> is <value>
+
+    Examples: ParagraphFormat On/Off property values
+      | prop-name         | state      | value |
+      | keep_together     | to inherit | None  |
+      | keep_together     | On         | True  |
+      | keep_together     | Off        | False |
+      | keep_with_next    | to inherit | None  |
+      | keep_with_next    | On         | True  |
+      | keep_with_next    | Off        | False |
+      | page_break_before | to inherit | None  |
+      | page_break_before | On         | True  |
+      | page_break_before | Off        | False |
+      | widow_control     | to inherit | None  |
+      | widow_control     | On         | True  |
+      | widow_control     | Off        | False |
+
+
+  @wip
+  Scenario Outline: Set On/Off paragraph property
+    Given a paragraph format having <prop-name> set <state>
+     When I assign <new-value> to paragraph_format.<prop-name>
+     Then paragraph_format.<prop-name> is <value>
+
+    Examples: ParagraphFormat On/Off property values
+      | prop-name         | state      | new-value | value |
+      | keep_together     | to inherit |   True    | True  |
+      | keep_together     | On         |   False   | False |
+      | keep_together     | Off        |   None    | None  |
+      | keep_with_next    | to inherit |   False   | False |
+      | keep_with_next    | Off        |   True    | True  |
+      | keep_with_next    | On         |   None    | None  |
+      | page_break_before | to inherit |   True    | True  |
+      | page_break_before | On         |   False   | False |
+      | page_break_before | Off        |   None    | None  |
+      | widow_control     | to inherit |   False   | False |
+      | widow_control     | Off        |   True    | True  |
+      | widow_control     | On         |   None    | None  |
