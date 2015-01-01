@@ -224,6 +224,13 @@ class CT_PPr(BaseOxmlElement):
             return None
         return keepLines.val
 
+    @keepLines_val.setter
+    def keepLines_val(self, value):
+        if value is None:
+            self._remove_keepLines()
+        else:
+            self.get_or_add_keepLines().val = value
+
     @property
     def keepNext_val(self):
         """

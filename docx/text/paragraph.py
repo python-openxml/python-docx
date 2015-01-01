@@ -189,6 +189,10 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.keepLines_val
 
+    @keep_together.setter
+    def keep_together(self, value):
+        self._element.get_or_add_pPr().keepLines_val = value
+
     @property
     def keep_with_next(self):
         """
