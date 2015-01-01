@@ -117,6 +117,7 @@ class CT_PPr(BaseOxmlElement):
         'w:rPr', 'w:sectPr', 'w:pPrChange'
     )
     pStyle = ZeroOrOne('w:pStyle', successors=_tag_seq[1:])
+    keepLines = ZeroOrOne('w:keepLines', successors=_tag_seq[3:])
     numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
@@ -209,6 +210,16 @@ class CT_PPr(BaseOxmlElement):
             self._remove_jc()
             return
         self.get_or_add_jc().val = value
+
+    @property
+    def keepLines_val(self):
+        """
+        The value of `keepLines/@val` or |None| if not present.
+        """
+        keepLines = self.keepLines
+        if keepLines is None:
+            return None
+        return keepLines.val
 
     @property
     def spacing_after(self):

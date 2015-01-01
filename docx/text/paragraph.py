@@ -178,6 +178,18 @@ class ParagraphFormat(ElementProxy):
         pPr.first_line_indent = value
 
     @property
+    def keep_together(self):
+        """
+        |True| if the paragraph should be kept "in one piece" and not broken
+        across a page boundary when the document is rendered. |None|
+        indicates its effective value is inherited from the style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.keepLines_val
+
+    @property
     def left_indent(self):
         """
         |Length| value specifying the space between the left margin and the
