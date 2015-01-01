@@ -237,6 +237,13 @@ class CT_PPr(BaseOxmlElement):
             return None
         return keepNext.val
 
+    @keepNext_val.setter
+    def keepNext_val(self, value):
+        if value is None:
+            self._remove_keepNext()
+        else:
+            self.get_or_add_keepNext().val = value
+
     @property
     def pageBreakBefore_val(self):
         """

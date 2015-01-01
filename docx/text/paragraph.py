@@ -207,6 +207,10 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.keepNext_val
 
+    @keep_with_next.setter
+    def keep_with_next(self, value):
+        self._element.get_or_add_pPr().keepNext_val = value
+
     @property
     def left_indent(self):
         """

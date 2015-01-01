@@ -553,9 +553,14 @@ class DescribeParagraphFormat(object):
 
     @pytest.fixture(params=[
         ('w:p', 'keep_together',     True,  'w:p/w:pPr/w:keepLines'),
+        ('w:p', 'keep_with_next',    True,  'w:p/w:pPr/w:keepNext'),
         ('w:p/w:pPr/w:keepLines',                 'keep_together',     False,
          'w:p/w:pPr/w:keepLines{w:val=0}'),
+        ('w:p/w:pPr/w:keepNext',                  'keep_with_next',    False,
+         'w:p/w:pPr/w:keepNext{w:val=0}'),
         ('w:p/w:pPr/w:keepLines{w:val=0}',        'keep_together',     None,
+         'w:p/w:pPr'),
+        ('w:p/w:pPr/w:keepNext{w:val=0}',         'keep_with_next',    None,
          'w:p/w:pPr'),
     ])
     def on_off_set_fixture(self, request):
