@@ -68,6 +68,17 @@ def given_a_font_of_size(context, size):
     context.font = document.styles[style_name].font
 
 
+@given('a paragraph format having {prop_name} set {setting}')
+def given_a_paragraph_format_having_prop_set(context, prop_name, setting):
+    style_name = {
+        'to inherit': 'Normal',
+        'On':         'Base',
+        'Off':        'Citation',
+    }[setting]
+    document = Document(test_docx('sty-known-styles'))
+    context.paragraph_format = document.styles[style_name].paragraph_format
+
+
 @given('a paragraph format having {setting} line spacing')
 def given_a_paragraph_format_having_setting_line_spacing(context, setting):
     style_name = {
@@ -336,6 +347,13 @@ def when_I_assign_value_to_paragraph_format_indent(context, value, type_):
     setattr(paragraph_format, prop_name, value)
 
 
+@when('I assign {value} to paragraph_format.{prop_name}')
+def when_I_assign_value_to_paragraph_format_prop(context, value, prop_name):
+    paragraph_format = context.paragraph_format
+    value = {'None': None, 'True': True, 'False': False}[value]
+    setattr(paragraph_format, prop_name, value)
+
+
 @when('I assign {value_str} to its {bool_prop_name} property')
 def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     value = {'True': True, 'False': False, 'None': None}[value_str]
@@ -483,6 +501,14 @@ def then_paragraph_format_space_side_is_value(context, side, value):
 def then_paragraph_format_type_indent_is_value(context, type_, value):
     expected_value = None if value == 'None' else int(value)
     prop_name = '%s_indent' % type_
+    paragraph_format = context.paragraph_format
+    actual_value = getattr(paragraph_format, prop_name)
+    assert actual_value == expected_value
+
+
+@then('paragraph_format.{prop_name} is {value}')
+def then_paragraph_format_prop_name_is_value(context, prop_name, value):
+    expected_value = {'None': None, 'True': True, 'False': False}[value]
     paragraph_format = context.paragraph_format
     actual_value = getattr(paragraph_format, prop_name)
     assert actual_value == expected_value
