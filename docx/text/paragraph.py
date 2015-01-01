@@ -303,6 +303,10 @@ class ParagraphFormat(ElementProxy):
             return None
         return pPr.pageBreakBefore_val
 
+    @page_break_before.setter
+    def page_break_before(self, value):
+        self._element.get_or_add_pPr().pageBreakBefore_val = value
+
     @property
     def right_indent(self):
         """
