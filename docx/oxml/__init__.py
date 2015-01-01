@@ -146,6 +146,7 @@ register_element_cls('w:pageBreakBefore', CT_OnOff)
 register_element_cls('w:pPr',             CT_PPr)
 register_element_cls('w:pStyle',          CT_String)
 register_element_cls('w:spacing',         CT_Spacing)
+register_element_cls('w:widowControl',    CT_OnOff)
 
 from .text.run import (
     CT_Br, CT_Fonts, CT_HpsMeasure, CT_R, CT_RPr, CT_Text, CT_Underline,

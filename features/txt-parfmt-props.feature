@@ -128,7 +128,6 @@ Feature: Get or set paragraph formatting properties
       | right      | 17.3 pt  | None      | None    |
 
 
-  @wip
   Scenario Outline: Get On/Off paragraph property
     Given a paragraph format having <prop-name> set <state>
      Then paragraph_format.<prop-name> is <value>

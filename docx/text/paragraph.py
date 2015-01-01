@@ -351,6 +351,19 @@ class ParagraphFormat(ElementProxy):
     def space_before(self, value):
         self._element.get_or_add_pPr().spacing_before = value
 
+    @property
+    def widow_control(self):
+        """
+        |True| if the first and last lines in the paragraph remain on the
+        same page as the rest of the paragraph when Word repaginates the
+        document. |None| indicates its effective value is inherited from the
+        style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.widowControl_val
+
     @staticmethod
     def _line_spacing(spacing_line, spacing_lineRule):
         """

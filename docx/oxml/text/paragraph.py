@@ -120,6 +120,7 @@ class CT_PPr(BaseOxmlElement):
     keepNext = ZeroOrOne('w:keepNext', successors=_tag_seq[2:])
     keepLines = ZeroOrOne('w:keepLines', successors=_tag_seq[3:])
     pageBreakBefore = ZeroOrOne('w:pageBreakBefore', successors=_tag_seq[4:])
+    widowControl = ZeroOrOne('w:widowControl', successors=_tag_seq[6:])
     numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
@@ -333,6 +334,16 @@ class CT_PPr(BaseOxmlElement):
             return
         pStyle = self.get_or_add_pStyle()
         pStyle.val = style
+
+    @property
+    def widowControl_val(self):
+        """
+        The value of `widowControl/@val` or |None| if not present.
+        """
+        widowControl = self.widowControl
+        if widowControl is None:
+            return None
+        return widowControl.val
 
 
 class CT_Spacing(BaseOxmlElement):
