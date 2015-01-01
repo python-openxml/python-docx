@@ -284,6 +284,18 @@ class ParagraphFormat(ElementProxy):
             pPr.spacing_lineRule = value
 
     @property
+    def page_break_before(self):
+        """
+        |True| if the paragraph should appear at the top of the page
+        following the prior paragraph. |None| indicates its effective value
+        is inherited from the style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.pageBreakBefore_val
+
+    @property
     def right_indent(self):
         """
         |Length| value specifying the space between the right margin and the
