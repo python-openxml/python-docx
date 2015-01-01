@@ -365,6 +365,11 @@ class DescribeParagraphFormat(object):
         paragraph_format, prop_name, expected_value = on_off_get_fixture
         assert getattr(paragraph_format, prop_name) == expected_value
 
+    def it_can_change_its_on_off_props(self, on_off_set_fixture):
+        paragraph_format, prop_name, value, expected_xml = on_off_set_fixture
+        setattr(paragraph_format, prop_name, value)
+        assert paragraph_format._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -545,6 +550,19 @@ class DescribeParagraphFormat(object):
         p_cxml, prop_name, expected_value = request.param
         paragraph_format = ParagraphFormat(element(p_cxml))
         return paragraph_format, prop_name, expected_value
+
+    @pytest.fixture(params=[
+        ('w:p', 'keep_together',     True,  'w:p/w:pPr/w:keepLines'),
+        ('w:p/w:pPr/w:keepLines',                 'keep_together',     False,
+         'w:p/w:pPr/w:keepLines{w:val=0}'),
+        ('w:p/w:pPr/w:keepLines{w:val=0}',        'keep_together',     None,
+         'w:p/w:pPr'),
+    ])
+    def on_off_set_fixture(self, request):
+        p_cxml, prop_name, value, expected_cxml = request.param
+        paragraph_format = ParagraphFormat(element(p_cxml))
+        expected_xml = xml(expected_cxml)
+        return paragraph_format, prop_name, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:p',                             None),
