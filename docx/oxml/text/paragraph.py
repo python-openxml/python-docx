@@ -258,6 +258,13 @@ class CT_PPr(BaseOxmlElement):
             return None
         return pageBreakBefore.val
 
+    @pageBreakBefore_val.setter
+    def pageBreakBefore_val(self, value):
+        if value is None:
+            self._remove_pageBreakBefore()
+        else:
+            self.get_or_add_pageBreakBefore().val = value
+
     @property
     def spacing_after(self):
         """
