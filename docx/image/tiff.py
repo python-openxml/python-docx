@@ -118,6 +118,10 @@ class _TiffParser(object):
         """
         if resolution_tag not in self._ifd_entries:
             return 72
+
+        if TIFF_TAG.RESOLUTION_UNIT not in self._ifd_entries:
+            return 72
+
         resolution_unit = self._ifd_entries[TIFF_TAG.RESOLUTION_UNIT]
         if resolution_unit == 1:  # aspect ratio only
             return 72
