@@ -119,9 +119,6 @@ class _TiffParser(object):
         if resolution_tag not in self._ifd_entries:
             return 72
 
-        if TIFF_TAG.RESOLUTION_UNIT not in self._ifd_entries:
-            return 72
-
         # get resolution unit, assume inches if not specified
         if TIFF_TAG.RESOLUTION_UNIT not in self._ifd_entries:
             resolution_unit = 2
