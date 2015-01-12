@@ -7,7 +7,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 
 from ..enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from .ns import qn
-from .simpletypes import ST_BrClear, ST_BrType
+from .simpletypes import ST_BrClear, ST_BrType, ST_String
 from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
     ZeroOrMore, ZeroOrOne
@@ -228,6 +228,26 @@ class CT_R(BaseOxmlElement):
         rPr.style = style
 
     @property
+    def font(self):
+        """
+        String contained in w:ascii attribute of <w:rFonts> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.font
+
+    @font.setter
+    def font(self, font):
+        """
+        Set the character font of this <w:r> element to *font*. If *font*
+        is None, remove the font element.
+        """
+        rPr = self.get_or_add_rPr()
+        rPr.font = font
+
+    @property
     def text(self):
         """
         A string representing the textual content of this run, with content
@@ -272,6 +292,7 @@ class CT_RPr(BaseOxmlElement):
     ``<w:rPr>`` element, containing the properties for a run.
     """
     rStyle = ZeroOrOne('w:rStyle', successors=('w:rPrChange',))
+    rFonts = ZeroOrOne('w:rFonts', successors=('w:rPrChange',))
     b = ZeroOrOne('w:b', successors=('w:rPrChange',))
     bCs = ZeroOrOne('w:bCs', successors=('w:rPrChange',))
     caps = ZeroOrOne('w:caps', successors=('w:rPrChange',))
@@ -320,6 +341,33 @@ class CT_RPr(BaseOxmlElement):
             self.rStyle.val = style
 
     @property
+    def font(self):
+        """
+        String contained in <w:rFonts> child, or None if that element is not
+        present.
+        """
+        rFonts = self.rFonts
+        if rFonts is None:
+            return None
+        return rFonts.ascii
+
+    @font.setter
+    def font(self, font):
+        """
+        Set ascii attribute of <w:rFonts> child element to *font*, adding a
+        new element if necessary. If *font* is |None|, remove the <w:rFont>
+        element if present.
+        """
+        if font is None:
+            self._remove_rFonts()
+        elif self.rFonts is None:
+            self._add_rFonts(ascii=font, hAnsi=font, cs=font)
+        else:
+            self.rFonts.ascii = font
+            self.rFonts.hAnsi = font
+            self.rFonts.cs = font
+
+    @property
     def underline(self):
         """
         Underline type specified in <w:u> child, or None if that element is
@@ -336,6 +384,37 @@ class CT_RPr(BaseOxmlElement):
         if value is not None:
             u = self._add_u()
             u.val = value
+
+
+class CT_Fonts(BaseOxmlElement):
+    """
+    ``<w:rFonts>`` element, specifying font for a run
+    http://www.datypic.com/sc/ooxml/t-w_CT_Fonts.html
+    """
+    ascii = OptionalAttribute('w:ascii', ST_String)
+    hAnsi = OptionalAttribute('w:hAnsi', ST_String)
+    eastAsia = OptionalAttribute('w:eastAsia', ST_String)
+    cs = OptionalAttribute('w:cs', ST_String)
+
+    @classmethod
+    def new(cls, nsptagname, ascii=None, hAnsi=None, eastAsia=None, cs=None):
+        """
+        Return a new ``CT_Fonts`` element with tagname *nsptagname* and
+        ``ascii`` attribute set to *ascii* and
+        ``hAnsi`` attribute set to *hAnsi* and
+        ``eastAsia`` attribute set to *eastAsia* and
+        ``cs`` attribute set to *cs*.
+        """
+        elm = OxmlElement(nsptagname)
+        if ascii:
+            elm.ascii = ascii
+        if hAnsi:
+            elm.hAnsi = hAnsi
+        if eastAsia:
+            elm.eastAsia = eastAsia
+        if cs:
+            elm.cs = cs
+        return elm
 
 
 class CT_Text(BaseOxmlElement):
