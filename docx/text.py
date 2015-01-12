@@ -428,6 +428,19 @@ class Run(Parented):
         self._r.style = char_style
 
     @property
+    def font(self):
+        """
+        Read/write. The font applied to this run, or |None|. Setting this
+        property to |None| causes any directly-applied font to be removed
+        such that the run inherits font from its containing paragraph.
+        """
+        return self._r.font
+
+    @font.setter
+    def font(self, font_name):
+        self._r.font = font_name
+
+    @property
     def text(self):
         """
         String formed by concatenating the text equivalent of each run
