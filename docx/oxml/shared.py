@@ -29,6 +29,33 @@ class CT_DecimalNumber(BaseOxmlElement):
         return OxmlElement(nsptagname, attrs={qn('w:val'): str(val)})
 
 
+class CT_HpsMeasure(CT_DecimalNumber):
+    """
+    Used for ``<w:size>``, ``<w:kern>``, ``<w:sz>``, ``<w:szCs>``, ``<w:hps>``,
+    ``<w:hpsRaise>``, ``<w:hpsBaseText>``
+    """
+    _val = None
+
+    @classmethod
+    def new(cls, nsptagname, val):
+        """
+        Return a new ``CT_HpsMeasure`` element having tagname *nsptagname*
+        and ``val`` attribute set to #val * 2#.
+        """
+        val = val * 2
+        return super(CT_HpsMeasure, cls).new(nsptagname, val)
+
+    @property
+    def val(self):
+        val = self.get(qn('w:val'))
+        return int(val) / 2
+
+    @val.setter
+    def val(self, val):
+        val = val * 2
+        self.set(qn('w:val'), str(val))
+
+
 class CT_OnOff(BaseOxmlElement):
     """
     Used for ``<w:b>``, ``<w:i>`` elements and others, containing a bool-ish

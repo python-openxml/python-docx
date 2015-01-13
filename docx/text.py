@@ -428,6 +428,20 @@ class Run(Parented):
         self._r.style = char_style
 
     @property
+    def font_size(self):
+        """
+        Read/write. The font size applied to this run, or |None| if it has no
+        directly-applied size. Setting this property to |None| causes any
+        directly-applied font size to be removed such that the run inherits
+        font size from its containing paragraph.
+        """
+        return self._r.font_size
+
+    @font_size.setter
+    def font_size(self, font_size):
+        self._r.font_size = font_size
+
+    @property
     def text(self):
         """
         String formed by concatenating the text equivalent of each run
