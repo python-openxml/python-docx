@@ -228,6 +228,26 @@ class CT_R(BaseOxmlElement):
         rPr.style = style
 
     @property
+    def font_size(self):
+        """
+        HpsMeasure contained in w:val attribute of <w:sz> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.font_size
+
+    @font_size.setter
+    def font_size(self, font_size):
+        """
+        Set the font size of this <w:r> element to *font_size*. If *font_size*
+        is None, remove the sz element.
+        """
+        rPr = self.get_or_add_rPr()
+        rPr.font_size = font_size
+
+    @property
     def text(self):
         """
         A string representing the textual content of this run, with content
@@ -272,6 +292,7 @@ class CT_RPr(BaseOxmlElement):
     ``<w:rPr>`` element, containing the properties for a run.
     """
     rStyle = ZeroOrOne('w:rStyle', successors=('w:rPrChange',))
+    sz = ZeroOrOne('w:sz', successors=('w:rPrChange',))
     b = ZeroOrOne('w:b', successors=('w:rPrChange',))
     bCs = ZeroOrOne('w:bCs', successors=('w:rPrChange',))
     caps = ZeroOrOne('w:caps', successors=('w:rPrChange',))
@@ -318,6 +339,31 @@ class CT_RPr(BaseOxmlElement):
             self._add_rStyle(val=style)
         else:
             self.rStyle.val = style
+
+    @property
+    def font_size(self):
+        """
+        HpsMeasure contained in <w:sz> child, or None if that element is not
+        present.
+        """
+        sz = self.sz
+        if sz is None:
+            return None
+        return sz.val
+
+    @font_size.setter
+    def font_size(self, font_size):
+        """
+        Set val attribute of <w:sz> child element to *font_size*, adding a
+        new element if necessary. If *font_size* is |NONE|, remove the <w:sz>
+        element if present.
+        """
+        if font_size is None:
+            self._remove_sz()
+        elif self.sz is None:
+            self._add_sz(val=font_size)
+        else:
+            self.sz.val = font_size
 
     @property
     def underline(self):

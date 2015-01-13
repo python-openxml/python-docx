@@ -64,7 +64,7 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # custom element class mappings
 # ===========================================================================
 
-from .shared import CT_DecimalNumber, CT_OnOff, CT_String
+from .shared import CT_DecimalNumber, CT_HpsMeasure, CT_OnOff, CT_String
 
 from .shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
@@ -157,6 +157,7 @@ register_element_cls('w:pStyle',     CT_String)
 register_element_cls('w:r',          CT_R)
 register_element_cls('w:rPr',        CT_RPr)
 register_element_cls('w:rStyle',     CT_String)
+register_element_cls('w:sz',         CT_HpsMeasure)
 register_element_cls('w:rtl',        CT_OnOff)
 register_element_cls('w:shadow',     CT_OnOff)
 register_element_cls('w:smallCaps',  CT_OnOff)
