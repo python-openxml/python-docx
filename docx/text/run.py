@@ -427,6 +427,33 @@ class Font(ElementProxy):
         rPr.sz_val = emu
 
     @property
+    def color(self):
+        """
+        Read/write |RGBColor| value or |None|, indicating the font color in
+        RGBColor. |None| indicates the font color should be
+        inherited from the style hierarchy. |RGBColor| is a subclass of |tuple|
+        having properties for convenient conversion into RGB or hex. The
+        :class:`docx.shared.RGBColor` class allows convenient
+        specification of RGB values::
+
+            >>> font.color = RGBColor(255, 0, 0)
+            >>> font.color = RGBColor.from_string('FF0000')
+            >>> font.color
+            (255, 0, 0)
+            >>> str(font.color)
+            FF0000
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.color_val
+
+    @color.setter
+    def color(self, col_val):
+        rPr = self._element.get_or_add_rPr()
+        rPr.color_val = col_val
+
+    @property
     def small_caps(self):
         """
         Read/write tri-state value. When |True| causes the lowercase

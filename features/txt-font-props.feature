@@ -48,6 +48,27 @@ Feature: Get or set font properties
       | 18 pt       | None   |
 
 
+  Scenario Outline: Get font color
+    Given a font of color <color>
+      Then font.color is <value>
+
+    Examples: font.color values
+      | size        | value  |
+      | unspecified | None   |
+      | 255, 0, 0   | FF0000 |
+
+
+  Scenario Outline: Set font color
+    Given a font of color <color>
+      When I assign <value> tp font.color
+      Then font.color is <value>
+
+    Examples: font.color post-assignment values
+      | size        | value  |
+      | unspecified | None   |
+      | 255, 0, 0   | FF0000 |
+
+
   Scenario Outline: Get font underline value
     Given a font having <underline-type> underline
      Then font.underline is <value>

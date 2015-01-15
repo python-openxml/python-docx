@@ -254,6 +254,37 @@ class ST_HpsMeasure(XsdUnsignedLong):
         return str(half_points)
 
 
+class ST_HexColorRGB(BaseStringType):
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        """
+        Keep alpha characters all uppercase just for consistency.
+        """
+        return value.upper()
+
+    @classmethod
+    def validate(cls, value):
+        # must be string ---------------
+        str_value = cls.validate_string(value)
+
+        # must be 6 chars long----------
+        if len(str_value) != 6:
+            raise ValueError(
+                "RGB string must be six characters long, got '%s'"
+                % str_value
+            )
+
+        # must parse as hex int --------
+        try:
+            int(str_value, 16)
+        except ValueError:
+            raise ValueError(
+                "RGB string must be valid hex string, got '%s'"
+                % str_value
+            )
+
+
 class ST_Merge(XsdStringEnumeration):
     """
     Valid values for <w:xMerge val=""> attribute

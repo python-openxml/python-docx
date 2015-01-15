@@ -11,7 +11,7 @@ from __future__ import (
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.parts.document import InlineShapes
 from docx.shape import InlineShape
-from docx.shared import Pt
+from docx.shared import Pt, RGBColor
 from docx.text.paragraph import Paragraph
 from docx.text.run import Font, Run
 
@@ -360,6 +360,15 @@ class DescribeFont(object):
         font.size = value
         assert font._element.xml == expected_xml
 
+    def it_knows_its_color(self, color_get_fixture):
+        font, expected_value = color_get_fixture
+        assert font.color == expected_value
+
+    def it_can_change_its_color(self, color_set_fixture):
+        font, value, expected_xml = color_set_fixture
+        font.color = value
+        assert font._element.xml == expected_xml
+
     def it_knows_its_bool_prop_states(self, bool_prop_get_fixture):
         font, prop_name, expected_state = bool_prop_get_fixture
         assert getattr(font, prop_name) == expected_state
@@ -528,6 +537,32 @@ class DescribeFont(object):
         ('w:r/w:rPr/w:sz{w:val=36}', None,   'w:r/w:rPr'),
     ])
     def size_set_fixture(self, request):
+        r_cxml, value, expected_r_cxml = request.param
+        font = Font(element(r_cxml))
+        expected_xml = xml(expected_r_cxml)
+        return font, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:r',                             None),
+        ('w:r/w:rPr',                       None),
+        ('w:r/w:rPr/w:color{w:val=FF0000}', RGBColor(255, 0, 0)),
+    ])
+    def color_get_fixture(self, request):
+        r_cxml, expected_value = request.param
+        font = Font(element(r_cxml))
+        return font, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r',                             RGBColor(255, 0, 0),
+         'w:r/w:rPr/w:color{w:val=FF0000}'),
+        ('w:r/w:rPr',                       RGBColor(255, 0, 0),
+         'w:r/w:rPr/w:color{w:val=FF0000}'),
+        ('w:r/w:rPr/w:color{w:val=FF0000}', RGBColor(0, 255, 0),
+         'w:r/w:rPr/w:color{w:val=00FF00}'),
+        ('w:r/w:rPr/w:color{w:val=00FF00}', None,
+         'w:r/w:rPr'),
+    ])
+    def color_set_fixture(self, request):
         r_cxml, value, expected_r_cxml = request.param
         font = Font(element(r_cxml))
         expected_xml = xml(expected_r_cxml)

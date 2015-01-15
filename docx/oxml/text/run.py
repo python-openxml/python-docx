@@ -7,12 +7,14 @@ Custom element classes related to text runs (CT_R).
 from ...enum.text import WD_UNDERLINE
 from ..ns import qn
 from ..simpletypes import (
-    ST_BrClear, ST_BrType, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
+    ST_BrClear, ST_BrType, ST_HpsMeasure, ST_String, ST_VerticalAlignRun,
+    ST_HexColorRGB
 )
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
     ZeroOrOne
 )
+from ...shared import RGBColor
 
 
 class CT_Br(BaseOxmlElement):
@@ -38,6 +40,14 @@ class CT_HpsMeasure(BaseOxmlElement):
     half-points.
     """
     val = RequiredAttribute('w:val', ST_HpsMeasure)
+
+
+class CT_Color(BaseOxmlElement):
+    """
+    Used for ``<w:color>`` element and others, specifying color in
+    rgb.
+    """
+    val = RequiredAttribute('w:val', ST_HexColorRGB)
 
 
 class CT_R(BaseOxmlElement):
@@ -156,6 +166,7 @@ class CT_RPr(BaseOxmlElement):
     snapToGrid = ZeroOrOne('w:snapToGrid', successors=_tag_seq[16:])
     vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
+    color = ZeroOrOne('w:color', successors=_tag_seq[19:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
     vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
@@ -295,6 +306,24 @@ class CT_RPr(BaseOxmlElement):
             return
         sz = self.get_or_add_sz()
         sz.val = value
+
+    @property
+    def color_val(self):
+        """
+        The value of `w:color/@w:val` or |None| if not present.
+        """
+        color = self.color
+        if color is None:
+            return None
+        return RGBColor.from_string(color.val)
+
+    @color_val.setter
+    def color_val(self, value):
+        if value is None:
+            self._remove_color()
+            return
+        color = self.get_or_add_color()
+        color.val = str(value)
 
     @property
     def u_val(self):
