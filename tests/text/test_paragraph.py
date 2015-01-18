@@ -63,6 +63,12 @@ class DescribeParagraph(object):
         paragraph.alignment = value
         assert paragraph._p.xml == expected_xml
 
+    def it_provides_access_to_its_paragraph_format(self, parfmt_fixture):
+        paragraph, ParagraphFormat_, paragraph_format_ = parfmt_fixture
+        paragraph_format = paragraph.paragraph_format
+        ParagraphFormat_.assert_called_once_with(paragraph._element)
+        assert paragraph_format is paragraph_format_
+
     def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
         paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
         runs = paragraph.runs
@@ -184,6 +190,11 @@ class DescribeParagraph(object):
         return paragraph, body, expected_xml
 
     @pytest.fixture
+    def parfmt_fixture(self, ParagraphFormat_, paragraph_format_):
+        paragraph = Paragraph(element('w:p'), None)
+        return paragraph, ParagraphFormat_, paragraph_format_
+
+    @pytest.fixture
     def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
         paragraph = Paragraph(p_, None)
         run_, run_2_ = runs_
@@ -257,6 +268,17 @@ class DescribeParagraph(object):
     @pytest.fixture
     def p_(self, request, r_, r_2_):
         return instance_mock(request, CT_P, r_lst=(r_, r_2_))
+
+    @pytest.fixture
+    def ParagraphFormat_(self, request, paragraph_format_):
+        return class_mock(
+            request, 'docx.text.paragraph.ParagraphFormat',
+            return_value=paragraph_format_
+        )
+
+    @pytest.fixture
+    def paragraph_format_(self, request):
+        return instance_mock(request, ParagraphFormat)
 
     @pytest.fixture
     def part_prop_(self, request, document_part_):
