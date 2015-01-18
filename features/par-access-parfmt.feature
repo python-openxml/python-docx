@@ -4,7 +4,6 @@ Feature: Access paragraph format
   I need access to the paragraph format of a paragraph
 
 
-  @wip
   Scenario: Get paragraph format object
     Given a paragraph
      Then paragraph.paragraph_format is its ParagraphFormat object

@@ -96,7 +96,7 @@ def then_paragraph_paragraph_format_is_its_parfmt_object(context):
     paragraph = context.paragraph
     paragraph_format = paragraph.paragraph_format
     assert isinstance(paragraph_format, ParagraphFormat)
-    assert paragraph_format.element is paragraph.element
+    assert paragraph_format.element is paragraph._element
 
 
 @then('paragraph.style is {value_key}')

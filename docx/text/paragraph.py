@@ -20,7 +20,7 @@ class Paragraph(Parented):
     """
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
-        self._p = p
+        self._p = self._element = p
 
     def add_run(self, text=None, style=None):
         """
@@ -75,6 +75,14 @@ class Paragraph(Parented):
         if style is not None:
             paragraph.style = style
         return paragraph
+
+    @property
+    def paragraph_format(self):
+        """
+        The |ParagraphFormat| object providing access to the formatting
+        properties for this paragraph, such as line spacing and indentation.
+        """
+        return ParagraphFormat(self._element)
 
     @property
     def runs(self):
