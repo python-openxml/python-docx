@@ -236,11 +236,11 @@ font and its paragraph indentation.
 
 There are five behavioral properties of a style:
 
-* :attr:`~.Style.hidden`
-* :attr:`~.Style.unhide_when_used`
-* :attr:`~.Style.priority`
-* :attr:`~.Style.quick_style`
-* :attr:`~.Style.locked`
+* :attr:`~.BaseStyle.hidden`
+* :attr:`~.BaseStyle.unhide_when_used`
+* :attr:`~.BaseStyle.priority`
+* :attr:`~.BaseStyle.quick_style`
+* :attr:`~.BaseStyle.locked`
 
 See the :ref:`style_behavior` section in :ref:`understanding_styles` for
 a description of how these behavioral properties interact to determine when
@@ -279,6 +279,74 @@ but allow it to remain in the recommended list::
 Working with Latent Styles
 --------------------------
 
-... describe latent styles in Understanding page ...
+See the :ref:`builtin_styles` and :ref:`latent_styles` sections in
+:ref:`understanding_styles` for a description of how latent styles define the
+behavioral properties of built-in styles that are not yet defined in the
+`styles.xml` part of a .docx file.
 
-Let's illustrate these behaviors with a few examples.
+Access the latent styles in a document
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The latent styles in a document are accessed from the styles object::
+
+    >>> document = Document()
+    >>> latent_styles = document.styles.latent_styles
+
+A |LatentStyles| object supports :meth:`len`, iteration, and dictionary-style
+access by style name::
+
+    >>> len(latent_styles)
+    161
+
+    >>> latent_style_names = [ls.name for ls in latent_styles]
+    >>> latent_style_names
+    ['Normal', 'Heading 1', 'Heading 2', ... 'TOC Heading']
+
+    >>> latent_quote = latent_styles['Quote']
+    >>> latent_quote
+    <docx.styles.latent.LatentStyle object at 0x10a7c4f50>
+    >>> latent_quote.priority
+    29
+
+Change latent style defaults
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The |LatentStyles| object also provides access to the default behavioral
+properties for built-in styles in the current document. These defaults
+provide the value for any undefined attributes of the |_LatentStyle|
+definitions and to all behavioral properties of built-in styles having no
+explicit latent style definition. See the API documentation for the
+|LatentStyles| object for the complete set of available properties::
+
+    >>> latent_styles.default_to_locked
+    False
+    >>> latent_styles.default_to_locked = True
+    >>> latent_styles.default_to_locked
+    True
+
+Add a latent style definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A new latent style can be added using the
+:meth:`~.LatentStyles.add_latent_style` method on |LatentStyles|. This code
+adds a new latent style for the builtin style 'List Bullet', setting it to
+appear in the style gallery::
+
+    >>> latent_style = latent_styles['List Bullet']
+    KeyError: no latent style with name 'List Bullet'
+    >>> latent_style = latent_styles.add_latent_style('List Bullet')
+    >>> latent_style.hidden = False
+    >>> latent_style.priority = 2
+    >>> latent_style.quick_style = True
+
+Delete a latent style definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A latent style definition can be deleted by calling its
+:meth:`~.LatentStyle.delete` method::
+
+    >>> latent_styles['Light Grid']
+    <docx.styles.latent.LatentStyle object at 0x10a7c4f50>
+    >>> latent_styles['Light Grid'].delete()
+    >>> latent_styles['Light Grid']
+    KeyError: no latent style with name 'Light Grid'

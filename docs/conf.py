@@ -109,6 +109,8 @@ rst_epilog = """
 
 .. |int| replace:: :class:`.int`
 
+.. |_LatentStyle| replace:: :class:`._LatentStyle`
+
 .. |LatentStyles| replace:: :class:`.LatentStyles`
 
 .. |Length| replace:: :class:`.Length`

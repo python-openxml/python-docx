@@ -132,6 +132,23 @@ the style id unless they are confident with the internals involved.
 A style's :attr:`type` is set at creation time and cannot be changed.
 
 
+.. _builtin_styles:
+
+Built-in styles
+---------------
+
+Word comes with almost 300 so-called *built-in* styles like `Normal`,
+`Heading 1`, and `List Bullet`. Style definitions are stored in the
+`styles.xml` part of a .docx package, but built-in style definitions are
+stored in the Word application itself and are not written to `styles.xml`
+until they are actually used. This is a sensible strategy because they take
+up considerable room and would be largely redundant and useless overhead in
+every .docx file otherwise.
+
+The fact that built-in styles are not written to the .docx package until used
+gives rise to the need for *latent style* definitions, explained below.
+
+
 .. _style_behavior:
 
 Style Behavior
@@ -158,6 +175,27 @@ for styles of the same priority. If a style's :attr:`locked` property is
 |True| and formatting restrictions are turned on for the document, the style
 will not appear in any list or the style gallery and cannot be applied to
 content.
+
+
+.. _latent_styles:
+
+Latent styles
+-------------
+
+The need to specify the UI behavior of built-in styles not defined in
+`styles.xml` gives rise to the need for *latent style* definitions. A latent
+style definition is basically a stub style definition that has at most the
+five behavior attributes in addition to the style name. Additional space is
+saved by defining defaults for each of the behavior attributes, so only those
+that differ from the default need be defined and styles that match all
+defaults need no latent style definition.
+
+Latent style definitions are specified using the `w:latentStyles` and
+`w:lsdException` elements appearing in `styles.xml`.
+
+A latent style definition is only required for a built-in style because only
+a built-in style can appear in the UI without a style definition in
+`styles.xml`.
 
 
 Style inheritance
