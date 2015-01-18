@@ -73,6 +73,8 @@ rst_epilog = """
 
 .. |_Cell| replace:: :class:`._Cell`
 
+.. |Cm| replace:: :class:`.Cm`
+
 .. |_Column| replace:: :class:`._Column`
 
 .. |_Columns| replace:: :class:`._Columns`
@@ -92,6 +94,8 @@ rst_epilog = """
 .. |float| replace:: :class:`.float`
 
 .. |Font| replace:: :class:`.Font`
+
+.. |Inches| replace:: :class:`.Inches`
 
 .. |InlineShape| replace:: :class:`.InlineShape`
 
