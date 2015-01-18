@@ -310,7 +310,7 @@ including its typeface, size, color, bold, italic, etc.
 
 Like paragraph styles, a character style must already be defined in the
 document you open with the ``Document()`` call (*see*
-:ref:`understandingstyles`).
+:ref:`understanding_styles`).
 
 A character style can be specified when adding a new run::
 

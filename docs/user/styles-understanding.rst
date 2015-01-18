@@ -1,4 +1,4 @@
-.. _understandingstyles:
+.. _understanding_styles:
 
 Understanding Styles
 ====================
@@ -130,6 +130,34 @@ however there are exceptions. Users of |docx| should generally avoid using
 the style id unless they are confident with the internals involved.
 
 A style's :attr:`type` is set at creation time and cannot be changed.
+
+
+.. _style_behavior:
+
+Style Behavior
+--------------
+
+In addition to collecting a set of formatting properties, a style has five
+properties that specify its *behavior*. This behavior is relatively simple,
+basically amounting to when and where the style appears in the Word or
+LibreOffice UI.
+
+The key notion to understanding style behavior is the recommended list. In
+the style pane in Word, the user can select which list of styles they want to
+see. One of these is named *Recommended* and is known as the *recommended
+list*. All five behavior properties affect some aspect of the style’s
+appearance in this list and in the style gallery.
+
+In brief, a style appears in the recommended list if its :attr:`hidden`
+property is |False| (the default). If a style is not hidden and its
+:attr:`quick_style` property is |True|, it also appears in the style gallery.
+If a hidden style's :attr:`unhide_when_used` property is |True|, its hidden
+property is set |False| the first time it is used. Styles in the style lists
+and style gallery are sorted in :attr:`priority` order, then alphabetically
+for styles of the same priority. If a style's :attr:`locked` property is
+|True| and formatting restrictions are turned on for the document, the style
+will not appear in any list or the style gallery and cannot be applied to
+content.
 
 
 Style inheritance
