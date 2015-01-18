@@ -68,12 +68,12 @@ User Guide
    user/install
    user/quickstart
    user/documents
+   user/text
    user/sections
    user/api-concepts
    user/styles-understanding
    user/styles-using
    user/shapes
-   user/text
 
 
 API Documentation
