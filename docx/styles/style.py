@@ -60,6 +60,16 @@ class BaseStyle(ElementProxy):
         self._element = None
 
     @property
+    def hidden(self):
+        """
+        True if display of this style in the style gallery and list of
+        recommended styles is suppressed. False otherwise. In order to be
+        shown in the style gallery, this value must be |False| and
+        :attr:`.quick_style` must be |True|.
+        """
+        return self._element.semiHidden_val
+
+    @property
     def name(self):
         """
         The UI name of this style.
