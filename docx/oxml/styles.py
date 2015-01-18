@@ -118,6 +118,13 @@ class CT_Style(BaseOxmlElement):
             return False
         return semiHidden.val
 
+    @semiHidden_val.setter
+    def semiHidden_val(self, value):
+        self._remove_semiHidden()
+        if bool(value) is True:
+            semiHidden = self._add_semiHidden()
+            semiHidden.val = value
+
 
 class CT_Styles(BaseOxmlElement):
     """

@@ -69,6 +69,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.semiHidden_val
 
+    @hidden.setter
+    def hidden(self, value):
+        self._element.semiHidden_val = value
+
     @property
     def name(self):
         """
