@@ -3,7 +3,7 @@ Working with Styles
 ===================
 
 This page uses concepts developed in the prior page without introduction. If
-a term is unfamiliar, consult the prior page :ref:`understandingstyles` for
+a term is unfamiliar, consult the prior page :ref:`understanding_styles` for
 a definition.
 
 
@@ -242,19 +242,38 @@ There are five behavioral properties of a style:
 * :attr:`~.Style.quick_style`
 * :attr:`~.Style.locked`
 
-The key notion to understanding the behavioral properties is the *recommended
-list*. In the style pane in Word, the user can select which list of styles
-they want to see. One of those is named *Recommended*. All five behavior
-properties affect some aspect of the style's appearance in this list and in
-the style gallery.
+See the :ref:`style_behavior` section in :ref:`understanding_styles` for
+a description of how these behavioral properties interact to determine when
+and where a style appears in the Word UI.
 
-In brief, a style appears in the recommended list if its `hidden` property is
-|False|. If a style is not hidden and its `quick_style` property is |True|,
-it also appears in the style gallery. The style's `priority` value (|int|)
-determines its position in the sequence of styles. If a styles's `locked`
-property is |True| and formatting restrictions are turned on for the
-document, the style will not appear in any list or the style gallery and
-cannot be applied to content.
+The :attr:`priority` property takes an integer value. The other four style
+behavior properties are *tri-state*, meaning they can take the value |True|
+(on), |False| (off), or |None| (inherit).
+
+Display a style in the style gallery
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following code will cause the 'Body Text' paragraph style to appear first
+in the style gallery::
+
+    >>> from docx import Document
+    >>> document = Document()
+    >>> style = document.styles['Body Text']
+
+    >>> style.hidden = False
+    >>> style.quick_style = True
+    >>> style.priorty = 1
+
+Remove a style from the style gallery
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This code will remove the 'Normal' paragraph style from the style gallery,
+but allow it to remain in the recommended list::
+
+    >>> style = document.styles['Normal']
+
+    >>> style.hidden = False
+    >>> style.quick_style = False
 
 
 Working with Latent Styles
