@@ -26,6 +26,30 @@ Feature: Get and set style properties
       | Base       | None             | None             |
 
 
+  @wip
+  Scenario Outline: Get hidden value
+    Given a style having hidden set <setting>
+     Then style.hidden is <value>
+
+    Examples: Style hidden values
+      | setting    | value |
+      | on         | True  |
+      | off        | False |
+      | no setting | False |
+
+
+  @wip
+  Scenario Outline: Set hidden value
+    Given a style having hidden set <setting>
+     When I assign <new-value> to style.hidden
+     Then style.hidden is <value>
+
+    Examples: Style hidden values
+      | setting    | new-value | value |
+      | no setting | True      | True  |
+      | on         | False     | False |
+
+
   Scenario: Get name
     Given a style having a known name
      Then style.name is the known name
