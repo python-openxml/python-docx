@@ -26,7 +26,6 @@ Feature: Get and set style properties
       | Base       | None             | None             |
 
 
-  @wip
   Scenario Outline: Get hidden value
     Given a style having hidden set <setting>
      Then style.hidden is <value>
