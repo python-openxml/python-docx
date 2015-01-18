@@ -127,6 +127,11 @@ class DescribeBaseStyle(object):
         style, expected_value = hidden_get_fixture
         assert style.hidden == expected_value
 
+    def it_can_change_whether_its_hidden(self, hidden_set_fixture):
+        style, value, expected_xml = hidden_set_fixture
+        style.hidden = value
+        assert style._element.xml == expected_xml
+
     def it_can_delete_itself_from_the_document(self, delete_fixture):
         style, styles, expected_xml = delete_fixture
         style.delete()
@@ -162,6 +167,20 @@ class DescribeBaseStyle(object):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:style',                       True,  'w:style/w:semiHidden'),
+        ('w:style/w:semiHidden{w:val=0}', True,  'w:style/w:semiHidden'),
+        ('w:style/w:semiHidden{w:val=1}', True,  'w:style/w:semiHidden'),
+        ('w:style',                       False, 'w:style'),
+        ('w:style/w:semiHidden',          False, 'w:style'),
+        ('w:style/w:semiHidden{w:val=1}', False, 'w:style'),
+    ])
+    def hidden_set_fixture(self, request):
+        style_cxml, value, expected_cxml = request.param
+        style = BaseStyle(element(style_cxml))
+        expected_xml = xml(expected_cxml)
+        return style, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:style',                   None),

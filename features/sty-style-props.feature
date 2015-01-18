@@ -37,7 +37,6 @@ Feature: Get and set style properties
       | no setting | False |
 
 
-  @wip
   Scenario Outline: Set hidden value
     Given a style having hidden set <setting>
      When I assign <new-value> to style.hidden
