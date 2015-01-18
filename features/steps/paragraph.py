@@ -8,6 +8,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.text.paragraph import ParagraphFormat
 
 from helpers import saved_docx_path, test_docx, test_text
 
@@ -89,6 +90,14 @@ def when_I_set_the_paragraph_text(context):
 
 
 # then =====================================================
+
+@then('paragraph.paragraph_format is its ParagraphFormat object')
+def then_paragraph_paragraph_format_is_its_parfmt_object(context):
+    paragraph = context.paragraph
+    paragraph_format = paragraph.paragraph_format
+    assert isinstance(paragraph_format, ParagraphFormat)
+    assert paragraph_format.element is paragraph.element
+
 
 @then('paragraph.style is {value_key}')
 def then_paragraph_style_is_value(context, value_key):
