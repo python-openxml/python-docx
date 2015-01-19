@@ -69,9 +69,13 @@ release = __version__
 rst_epilog = """
 .. |api-Document| replace:: :class:`docx.api.Document`
 
+.. |BaseStyle| replace:: :class:`.BaseStyle`
+
 .. |_Body| replace:: :class:`._Body`
 
 .. |_Cell| replace:: :class:`._Cell`
+
+.. |_CharacterStyle| replace:: :class:`._CharacterStyle`
 
 .. |Cm| replace:: :class:`.Cm`
 
@@ -109,15 +113,19 @@ rst_epilog = """
 
 .. |Length| replace:: :class:`.Length`
 
-.. |OpcPackage| replace:: :class:`.OpcPackage`
-
 .. |None| replace:: :class:`.None`
 
 .. |NumberingPart| replace:: :class:`.NumberingPart`
 
+.. |_NumberingStyle| replace:: :class:`._NumberingStyle`
+
+.. |OpcPackage| replace:: :class:`.OpcPackage`
+
 .. |Paragraph| replace:: :class:`.Paragraph`
 
 .. |ParagraphFormat| replace:: :class:`.ParagraphFormat`
+
+.. |_ParagraphStyle| replace:: :class:`._ParagraphStyle`
 
 .. |Part| replace:: :class:`.Part`
 
@@ -146,6 +154,8 @@ rst_epilog = """
 .. |StylesPart| replace:: :class:`.StylesPart`
 
 .. |Table| replace:: :class:`.Table`
+
+.. |_TableStyle| replace:: :class:`._TableStyle`
 
 .. |_Text| replace:: :class:`._Text`
 
