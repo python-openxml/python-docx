@@ -126,8 +126,8 @@ def when_I_assign_a_new_name_to_the_style(context):
     context.style.name = 'Foobar'
 
 
-@when('I assign a new style id to the style')
-def when_I_assign_a_new_style_id_to_the_style(context):
+@when('I assign a new value to style.style_id')
+def when_I_assign_a_new_value_to_style_style_id(context):
     context.style.style_id = 'Foo42'
 
 

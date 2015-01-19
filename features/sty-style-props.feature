@@ -11,7 +11,7 @@ Feature: Get and set style properties
 
   Scenario: Set style id
     Given a style having a known style id
-     When I assign a new style id to the style
+     When I assign a new value to style.style_id
      Then style.style_id is the new style id
 
 
