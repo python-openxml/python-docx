@@ -20,6 +20,9 @@ class LatentStyles(ElementProxy):
 
     __slots__ = ()
 
+    def __iter__(self):
+        return (_LatentStyle(ls) for ls in self._element.lsdException_lst)
+
     def __len__(self):
         return len(self._element.lsdException_lst)
 
