@@ -28,7 +28,36 @@ class DescribeLatentStyles(object):
         for latent_style in lst:
             assert isinstance(latent_style, _LatentStyle)
 
+    def it_can_get_a_latent_style_by_name(self, getitem_fixture):
+        latent_styles, name, lsdException = getitem_fixture
+        latent_style = latent_styles[name]
+        assert isinstance(latent_style, _LatentStyle)
+        assert latent_style._element is lsdException
+
+    def it_raises_on_latent_style_not_found(self, getitem_raises_fixture):
+        latent_styles, name = getitem_raises_fixture
+        with pytest.raises(KeyError):
+            latent_styles[name]
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:lsdException{w:name=Ab},w:lsdException,w:lsdException', 'Ab', 0),
+        ('w:lsdException,w:lsdException{w:name=Cd},w:lsdException', 'Cd', 1),
+        ('w:lsdException,w:lsdException,w:lsdException{w:name=Ef}', 'Ef', 2),
+    ])
+    def getitem_fixture(self, request):
+        cxml, name, idx = request.param
+        latentStyles_cxml = 'w:latentStyles/(%s)' % cxml
+        latentStyles = element(latentStyles_cxml)
+        lsdException = latentStyles[idx]
+        latent_styles = LatentStyles(latentStyles)
+        return latent_styles, name, lsdException
+
+    @pytest.fixture
+    def getitem_raises_fixture(self):
+        latent_styles = LatentStyles(element('w:latentStyles'))
+        return latent_styles, 'Foobar'
 
     @pytest.fixture(params=[
         ('w:latentStyles',                                  0),

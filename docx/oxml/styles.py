@@ -38,6 +38,16 @@ class CT_LatentStyles(BaseOxmlElement):
     """
     lsdException = ZeroOrMore('w:lsdException', successors=())
 
+    def get_by_name(self, name):
+        """
+        Return the `w:lsdException` child having *name*, or |None| if not
+        found.
+        """
+        found = self.xpath('w:lsdException[@w:name="%s"]' % name)
+        if not found:
+            return None
+        return found[0]
+
 
 class CT_Style(BaseOxmlElement):
     """
