@@ -62,8 +62,8 @@ class BaseStyle(ElementProxy):
     @property
     def hidden(self):
         """
-        True if display of this style in the style gallery and list of
-        recommended styles is suppressed. False otherwise. In order to be
+        |True| if display of this style in the style gallery and list of
+        recommended styles is suppressed. |False| otherwise. In order to be
         shown in the style gallery, this value must be |False| and
         :attr:`.quick_style` must be |True|.
         """
@@ -72,6 +72,17 @@ class BaseStyle(ElementProxy):
     @hidden.setter
     def hidden(self, value):
         self._element.semiHidden_val = value
+
+    @property
+    def locked(self):
+        """
+        Read/write Boolean. |True| if this style is locked. A locked style
+        does not appear in the styles panel or the style gallery and cannot
+        be applied to document content. This behavior is only active when
+        formatting protection is turned on for the document (via the
+        Developer menu).
+        """
+        return self._element.locked_val
 
     @property
     def name(self):

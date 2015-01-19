@@ -115,6 +115,7 @@ register_element_cls('wp:inline',     CT_Inline)
 
 from .styles import CT_Style, CT_Styles
 register_element_cls('w:basedOn',        CT_String)
+register_element_cls('w:locked',         CT_OnOff)
 register_element_cls('w:name',           CT_String)
 register_element_cls('w:qFormat',        CT_OnOff)
 register_element_cls('w:semiHidden',     CT_OnOff)
