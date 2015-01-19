@@ -113,8 +113,9 @@ register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 
-from .styles import CT_Style, CT_Styles
+from .styles import CT_LatentStyles, CT_Style, CT_Styles
 register_element_cls('w:basedOn',        CT_String)
+register_element_cls('w:latentStyles',   CT_LatentStyles)
 register_element_cls('w:locked',         CT_OnOff)
 register_element_cls('w:name',           CT_String)
 register_element_cls('w:qFormat',        CT_OnOff)

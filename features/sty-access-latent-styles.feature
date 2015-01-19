@@ -4,7 +4,6 @@ Feature: Access latent styles for a document
   I need access to the latent styles collection
 
 
-  @wip
   Scenario: Access latent styles collection
     Given the style collection of a document
      Then styles.latent_styles is the LatentStyles object for the document
