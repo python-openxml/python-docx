@@ -59,7 +59,6 @@ Feature: Get and set style properties
      Then style.name is the new name
 
 
-  @wip
   Scenario Outline: Get style display sort order
     Given a style having priority of <setting>
      Then style.priority is <value>

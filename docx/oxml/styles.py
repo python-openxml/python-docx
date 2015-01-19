@@ -43,6 +43,7 @@ class CT_Style(BaseOxmlElement):
     )
     name = ZeroOrOne('w:name', successors=_tag_seq[1:])
     basedOn = ZeroOrOne('w:basedOn', successors=_tag_seq[3:])
+    uiPriority = ZeroOrOne('w:uiPriority', successors=_tag_seq[8:])
     semiHidden = ZeroOrOne('w:semiHidden', successors=_tag_seq[9:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     rPr = ZeroOrOne('w:rPr', successors=_tag_seq[18:])
@@ -124,6 +125,16 @@ class CT_Style(BaseOxmlElement):
         if bool(value) is True:
             semiHidden = self._add_semiHidden()
             semiHidden.val = value
+
+    @property
+    def uiPriority_val(self):
+        """
+        Value of ``<w:uiPriority>`` child or |None| if not present.
+        """
+        uiPriority = self.uiPriority
+        if uiPriority is None:
+            return None
+        return uiPriority.val
 
 
 class CT_Styles(BaseOxmlElement):
