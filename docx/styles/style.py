@@ -97,6 +97,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.uiPriority_val
 
+    @priority.setter
+    def priority(self, value):
+        self._element.uiPriority_val = value
+
     @property
     def style_id(self):
         """

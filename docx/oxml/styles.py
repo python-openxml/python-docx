@@ -136,6 +136,13 @@ class CT_Style(BaseOxmlElement):
             return None
         return uiPriority.val
 
+    @uiPriority_val.setter
+    def uiPriority_val(self, value):
+        self._remove_uiPriority()
+        if value is not None:
+            uiPriority = self._add_uiPriority()
+            uiPriority.val = value
+
 
 class CT_Styles(BaseOxmlElement):
     """

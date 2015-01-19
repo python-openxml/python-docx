@@ -69,7 +69,6 @@ Feature: Get and set style properties
       | 42         | 42    |
 
 
-  @wip
   Scenario Outline: Set style display sort order
     Given a style having priority of <setting>
      When I assign <new-value> to style.priority

@@ -136,6 +136,11 @@ class DescribeBaseStyle(object):
         style, expected_value = priority_get_fixture
         assert style.priority == expected_value
 
+    def it_can_change_its_sort_order(self, priority_set_fixture):
+        style, value, expected_xml = priority_set_fixture
+        style.priority = value
+        assert style._element.xml == expected_xml
+
     def it_can_delete_itself_from_the_document(self, delete_fixture):
         style, styles, expected_xml = delete_fixture
         style.delete()
@@ -236,6 +241,20 @@ class DescribeBaseStyle(object):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:style',                        42,
+         'w:style/w:uiPriority{w:val=42}'),
+        ('w:style/w:uiPriority{w:val=42}', 24,
+         'w:style/w:uiPriority{w:val=24}'),
+        ('w:style/w:uiPriority{w:val=24}', None,
+         'w:style'),
+    ])
+    def priority_set_fixture(self, request):
+        style_cxml, value, expected_cxml = request.param
+        style = BaseStyle(element(style_cxml))
+        expected_xml = xml(expected_cxml)
+        return style, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:style',                   WD_STYLE_TYPE.PARAGRAPH),
