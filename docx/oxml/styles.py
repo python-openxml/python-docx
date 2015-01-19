@@ -154,6 +154,13 @@ class CT_Style(BaseOxmlElement):
             return False
         return unhideWhenUsed.val
 
+    @unhideWhenUsed_val.setter
+    def unhideWhenUsed_val(self, value):
+        self._remove_unhideWhenUsed()
+        if bool(value) is True:
+            unhideWhenUsed = self._add_unhideWhenUsed()
+            unhideWhenUsed.val = value
+
 
 class CT_Styles(BaseOxmlElement):
     """

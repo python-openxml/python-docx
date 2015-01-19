@@ -135,6 +135,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.unhideWhenUsed_val
 
+    @unhide_when_used.setter
+    def unhide_when_used(self, value):
+        self._element.unhideWhenUsed_val = value
+
     @staticmethod
     def _translate_special_case_names(name):
         """
