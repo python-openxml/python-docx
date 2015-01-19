@@ -141,7 +141,6 @@ Feature: Get and set style properties
       | on         | False     | False |
 
 
-  @wip
   Scenario Outline: Get locked value
     Given a style having locked set <setting>
      Then style.locked is <value>

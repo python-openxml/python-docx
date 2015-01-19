@@ -47,6 +47,7 @@ class CT_Style(BaseOxmlElement):
     semiHidden = ZeroOrOne('w:semiHidden', successors=_tag_seq[9:])
     unhideWhenUsed = ZeroOrOne('w:unhideWhenUsed', successors=_tag_seq[10:])
     qFormat = ZeroOrOne('w:qFormat', successors=_tag_seq[11:])
+    locked = ZeroOrOne('w:locked', successors=_tag_seq[12:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     rPr = ZeroOrOne('w:rPr', successors=_tag_seq[18:])
     del _tag_seq
@@ -93,6 +94,16 @@ class CT_Style(BaseOxmlElement):
         Remove this `w:style` element from its parent `w:styles` element.
         """
         self.getparent().remove(self)
+
+    @property
+    def locked_val(self):
+        """
+        Value of `w:locked/@w:val` or |False| if not present.
+        """
+        locked = self.locked
+        if locked is None:
+            return False
+        return locked.val
 
     @property
     def name_val(self):
