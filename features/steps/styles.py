@@ -8,6 +8,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
+from docx.styles.latent import _LatentStyle, LatentStyles
 from docx.styles.styles import Styles
 from docx.styles.style import BaseStyle
 from docx.text.paragraph import ParagraphFormat
@@ -54,6 +55,12 @@ def given_a_document_having_known_styles(context):
 def given_a_document_having_no_styles_part(context):
     docx_path = test_docx('sty-having-no-styles-part')
     context.document = Document(docx_path)
+
+
+@given('a latent style collection')
+def given_a_latent_style_collection(context):
+    document = Document(test_docx('sty-known-styles'))
+    context.latent_styles = document.styles.latent_styles
 
 
 @given('a style based on {base_style}')
@@ -141,6 +148,12 @@ def given_a_style_of_type(context, style_type):
     context.style = document.styles[name]
 
 
+@given('the style collection of a document')
+def given_the_style_collection_of_a_document(context):
+    document = Document(test_docx('sty-known-styles'))
+    context.styles = document.styles
+
+
 # when =====================================================
 
 @when('I assign a new name to the style')
@@ -209,6 +222,13 @@ def when_I_delete_a_style(context):
 
 # then =====================================================
 
+@then('I can access a latent style by name')
+def then_I_can_access_a_latent_style_by_name(context):
+    latent_styles = context.latent_styles
+    latent_style = latent_styles['Colorful Shading']
+    assert isinstance(latent_style, _LatentStyle)
+
+
 @then('I can access a style by its UI name')
 def then_I_can_access_a_style_by_its_UI_name(context):
     styles = context.document.styles
@@ -235,6 +255,18 @@ def then_I_can_iterate_over_its_styles(context):
     styles = [s for s in context.document.styles]
     assert len(styles) > 0
     assert all(isinstance(s, BaseStyle) for s in styles)
+
+
+@then('I can iterate over the latent styles')
+def then_I_can_iterate_over_the_latent_styles(context):
+    latent_styles = [ls for ls in context.latent_styles]
+    assert len(latent_styles) == 137
+    assert all(isinstance(ls, _LatentStyle) for ls in latent_styles)
+
+
+@then('len(latent_styles) is 137')
+def then_len_latent_styles_is_137(context):
+    assert len(context.latent_styles) == 137
 
 
 @then('len(styles) is {style_count_str}')
@@ -338,6 +370,14 @@ def then_style_type_is_type(context, type_str):
 def then_style_unhide_when_used_is_value(context, value):
     style, expected_value = context.style, bool_vals[value]
     assert style.unhide_when_used is expected_value
+
+
+@then('styles.latent_styles is the LatentStyles object for the document')
+def then_styles_latent_styles_is_the_LatentStyles_object(context):
+    styles = context.styles
+    context.latent_styles = latent_styles = styles.latent_styles
+    assert isinstance(latent_styles, LatentStyles)
+    assert latent_styles.element is styles.element.latentStyles
 
 
 @then('styles[\'{name}\'] is a style')
