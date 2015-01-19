@@ -45,6 +45,7 @@ class CT_Style(BaseOxmlElement):
     basedOn = ZeroOrOne('w:basedOn', successors=_tag_seq[3:])
     uiPriority = ZeroOrOne('w:uiPriority', successors=_tag_seq[8:])
     semiHidden = ZeroOrOne('w:semiHidden', successors=_tag_seq[9:])
+    unhideWhenUsed = ZeroOrOne('w:unhideWhenUsed', successors=_tag_seq[10:])
     pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
     rPr = ZeroOrOne('w:rPr', successors=_tag_seq[18:])
     del _tag_seq
@@ -142,6 +143,16 @@ class CT_Style(BaseOxmlElement):
         if value is not None:
             uiPriority = self._add_uiPriority()
             uiPriority.val = value
+
+    @property
+    def unhideWhenUsed_val(self):
+        """
+        Value of `w:unhideWhenUsed/@w:val` or |False| if not present.
+        """
+        unhideWhenUsed = self.unhideWhenUsed
+        if unhideWhenUsed is None:
+            return False
+        return unhideWhenUsed.val
 
 
 class CT_Styles(BaseOxmlElement):

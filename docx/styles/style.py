@@ -125,6 +125,16 @@ class BaseStyle(ElementProxy):
             return WD_STYLE_TYPE.PARAGRAPH
         return type
 
+    @property
+    def unhide_when_used(self):
+        """
+        |True| if an application should make this style visible the next time
+        it is applied to content. False otherwise. Note that |docx| does not
+        automatically unhide a style having |True| for this attribute when it
+        is applied to content.
+        """
+        return self._element.unhideWhenUsed_val
+
     @staticmethod
     def _translate_special_case_names(name):
         """

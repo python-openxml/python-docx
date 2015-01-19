@@ -97,7 +97,6 @@ Feature: Get and set style properties
       | 42         | None      | None  |
 
 
-  @wip
   Scenario Outline: Get unhide-when-used value
     Given a style having unhide-when-used set <setting>
      Then style.unhide_when_used is <value>

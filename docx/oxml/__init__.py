@@ -120,6 +120,7 @@ register_element_cls('w:semiHidden',     CT_OnOff)
 register_element_cls('w:style',          CT_Style)
 register_element_cls('w:styles',         CT_Styles)
 register_element_cls('w:uiPriority',     CT_DecimalNumber)
+register_element_cls('w:unhideWhenUsed', CT_OnOff)
 
 from .table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
