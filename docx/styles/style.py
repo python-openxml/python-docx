@@ -32,7 +32,8 @@ def StyleFactory(style_elm):
 class BaseStyle(ElementProxy):
     """
     Base class for the various types of style object, paragraph, character,
-    table, and numbering.
+    table, and numbering. These properties and methods are inherited by all
+    style objects.
     """
 
     __slots__ = ()
@@ -40,8 +41,10 @@ class BaseStyle(ElementProxy):
     @property
     def builtin(self):
         """
-        Boolean indicating whether this style is a built-in style. False
-        indicates it is a custom (user-defined) style.
+        Read-only. |True| if this style is a built-in style. |False|
+        indicates it is a custom (user-defined) style. Note this value is
+        based on the presence of a `customStyle` attribute in the XML, not on
+        specific knowledge of which styles are built into Word.
         """
         return not self._element.customStyle
 
@@ -73,7 +76,9 @@ class BaseStyle(ElementProxy):
     @property
     def style_id(self):
         """
-        The unique key name (string) for this style.
+        The unique key name (string) for this style. This value is subject to
+        rewriting by Word and should generally not be changed unless you are
+        familiar with the internals involved.
         """
         return self._element.styleId
 
@@ -85,7 +90,7 @@ class BaseStyle(ElementProxy):
     def type(self):
         """
         Member of :ref:`WdStyleType` corresponding to the type of this style,
-        e.g. ``WD_STYLE_TYPE.PARAGRAPH`.
+        e.g. ``WD_STYLE_TYPE.PARAGRAPH``.
         """
         type = self._element.type
         if type is None:
@@ -115,7 +120,9 @@ class BaseStyle(ElementProxy):
 
 class _CharacterStyle(BaseStyle):
     """
-    A character style.
+    A character style. A character style is applied to a |Run| object and
+    primarily provides character-level formatting via the |Font| object in
+    its :attr:`.font` property.
     """
 
     __slots__ = ()
@@ -147,7 +154,8 @@ class _CharacterStyle(BaseStyle):
 
 class _ParagraphStyle(_CharacterStyle):
     """
-    A paragraph style.
+    A paragraph style. A paragraph style provides both character formatting
+    and paragraph formatting such as indentation and line-spacing.
     """
 
     __slots__ = ()
@@ -156,14 +164,15 @@ class _ParagraphStyle(_CharacterStyle):
     def paragraph_format(self):
         """
         The |ParagraphFormat| object providing access to the paragraph
-        properties for this style.
+        formatting properties for this style such as indentation.
         """
         return ParagraphFormat(self._element)
 
 
 class _TableStyle(_ParagraphStyle):
     """
-    A table style.
+    A table style. A table style provides character and paragraph formatting
+    for its contents as well as special table formatting properties.
     """
 
     __slots__ = ()
@@ -171,7 +180,7 @@ class _TableStyle(_ParagraphStyle):
 
 class _NumberingStyle(BaseStyle):
     """
-    A numbering style.
+    A numbering style. Not yet implemented.
     """
 
     __slots__ = ()
