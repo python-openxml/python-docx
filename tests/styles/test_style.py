@@ -141,6 +141,10 @@ class DescribeBaseStyle(object):
         style.priority = value
         assert style._element.xml == expected_xml
 
+    def it_knows_whether_its_unhide_when_used(self, unhide_get_fixture):
+        style, expected_value = unhide_get_fixture
+        assert style.unhide_when_used == expected_value
+
     def it_can_delete_itself_from_the_document(self, delete_fixture):
         style, styles, expected_xml = delete_fixture
         style.delete()
@@ -263,6 +267,17 @@ class DescribeBaseStyle(object):
         ('w:style{w:type=numbering}', WD_STYLE_TYPE.LIST),
     ])
     def type_get_fixture(self, request):
+        style_cxml, expected_value = request.param
+        style = BaseStyle(element(style_cxml))
+        return style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:style',                           False),
+        ('w:style/w:unhideWhenUsed',          True),
+        ('w:style/w:unhideWhenUsed{w:val=0}', False),
+        ('w:style/w:unhideWhenUsed{w:val=1}', True),
+    ])
+    def unhide_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
