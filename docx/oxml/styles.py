@@ -202,7 +202,10 @@ class CT_Styles(BaseOxmlElement):
     ``<w:styles>`` element, the root element of a styles part, i.e.
     styles.xml
     """
+    _tag_seq = ('w:docDefaults', 'w:latentStyles', 'w:style')
+    latentStyles = ZeroOrOne('w:latentStyles', successors=_tag_seq[2:])
     style = ZeroOrMore('w:style', successors=())
+    del _tag_seq
 
     def add_style_of_type(self, name, style_type, builtin):
         """
