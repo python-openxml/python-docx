@@ -96,6 +96,17 @@ def given_a_style_having_priority_of_setting(context, setting):
     context.style = document.styles[style_name]
 
 
+@given('a style having unhide-when-used set {setting}')
+def given_a_style_having_unhide_when_used_setting(context, setting):
+    document = Document(test_docx('sty-behav-props'))
+    style_name = {
+        'on':         'Foo',
+        'off':        'Bar',
+        'no setting': 'Baz',
+    }[setting]
+    context.style = document.styles[style_name]
+
+
 @given('a style of type {style_type}')
 def given_a_style_of_type(context, style_type):
     document = Document(test_docx('sty-known-styles'))
@@ -141,6 +152,12 @@ def when_I_assign_value_to_style_priority(context, value):
     style = context.style
     new_value = None if value == 'None' else int(value)
     style.priority = new_value
+
+
+@when('I assign {value} to style.unhide_when_used')
+def when_I_assign_value_to_style_unhide_when_used(context, value):
+    style, new_value = context.style, bool_vals[value]
+    style.unhide_when_used = new_value
 
 
 @when('I call add_style(\'{name}\', {type_str}, builtin={builtin_str})')
@@ -269,6 +286,12 @@ def then_style_type_is_type(context, type_str):
     style = context.style
     style_type = style_types[type_str]
     assert style.type == style_type
+
+
+@then('style.unhide_when_used is {value}')
+def then_style_unhide_when_used_is_value(context, value):
+    style, expected_value = context.style, bool_vals[value]
+    assert style.unhide_when_used is expected_value
 
 
 @then('styles[\'{name}\'] is a style')

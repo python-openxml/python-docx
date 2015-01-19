@@ -95,3 +95,27 @@ Feature: Get and set style properties
   Scenario: Get style type
     Given a style having a known type
      Then style.type is the known type
+
+
+  @wip
+  Scenario Outline: Get unhide-when-used value
+    Given a style having unhide-when-used set <setting>
+     Then style.unhide_when_used is <value>
+
+    Examples: Style unhide-when-used values
+      | setting    | value |
+      | on         | True  |
+      | off        | False |
+      | no setting | False |
+
+
+  @wip
+  Scenario Outline: Set unhide-when-used value
+    Given a style having unhide-when-used set <setting>
+     When I assign <new-value> to style.unhide_when_used
+     Then style.unhide_when_used is <value>
+
+    Examples: Style unhide_when_used values
+      | setting    | new-value | value |
+      | no setting | True      | True  |
+      | on         | False     | False |
