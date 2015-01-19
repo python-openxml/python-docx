@@ -105,6 +105,13 @@ class CT_Style(BaseOxmlElement):
             return False
         return locked.val
 
+    @locked_val.setter
+    def locked_val(self, value):
+        self._remove_locked()
+        if bool(value) is True:
+            locked = self._add_locked()
+            locked.val = value
+
     @property
     def name_val(self):
         """
