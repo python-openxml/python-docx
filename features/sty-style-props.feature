@@ -152,7 +152,6 @@ Feature: Get and set style properties
       | no setting | False |
 
 
-  @wip
   Scenario Outline: Set locked value
     Given a style having locked set <setting>
      When I assign <new-value> to style.locked

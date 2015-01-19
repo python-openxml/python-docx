@@ -84,6 +84,10 @@ class BaseStyle(ElementProxy):
         """
         return self._element.locked_val
 
+    @locked.setter
+    def locked(self, value):
+        self._element.locked_val = value
+
     @property
     def name(self):
         """
