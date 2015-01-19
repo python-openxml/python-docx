@@ -12,11 +12,14 @@ import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.styles import CT_Style, CT_Styles
+from docx.styles.latent import LatentStyles
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 
 from ..unitutil.cxml import element
-from ..unitutil.mock import call, function_mock, instance_mock, method_mock
+from ..unitutil.mock import (
+    call, class_mock, function_mock, instance_mock, method_mock
+)
 
 
 class DescribeStyles(object):
@@ -134,6 +137,12 @@ class DescribeStyles(object):
         styles, style_, style_type = id_style_raises_fixture
         with pytest.raises(ValueError):
             styles._get_style_id_from_style(style_, style_type)
+
+    def it_provides_access_to_the_latent_styles(self, latent_styles_fixture):
+        styles, LatentStyles_, latent_styles_ = latent_styles_fixture
+        latent_styles = styles.latent_styles
+        LatentStyles_.assert_called_once_with(styles._element.latentStyles)
+        assert latent_styles is latent_styles_
 
     # fixture --------------------------------------------------------
 
@@ -319,6 +328,11 @@ class DescribeStyles(object):
         StyleFactory_.return_value = style_
         return styles, expected_count, style_, StyleFactory_, expected_calls
 
+    @pytest.fixture
+    def latent_styles_fixture(self, LatentStyles_, latent_styles_):
+        styles = Styles(element('w:styles/w:latentStyles'))
+        return styles, LatentStyles_, latent_styles_
+
     @pytest.fixture(params=[
         ('w:styles',                           0),
         ('w:styles/w:style',                   1),
@@ -351,6 +365,17 @@ class DescribeStyles(object):
     @pytest.fixture
     def _get_style_id_from_style_(self, request):
         return method_mock(request, Styles, '_get_style_id_from_style')
+
+    @pytest.fixture
+    def LatentStyles_(self, request, latent_styles_):
+        return class_mock(
+            request, 'docx.styles.styles.LatentStyles',
+            return_value=latent_styles_
+        )
+
+    @pytest.fixture
+    def latent_styles_(self, request):
+        return instance_mock(request, LatentStyles)
 
     @pytest.fixture
     def style_(self, request):

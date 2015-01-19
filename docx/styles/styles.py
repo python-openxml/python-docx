@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from .latent import LatentStyles
 from ..shared import ElementProxy
 from .style import BaseStyle, StyleFactory
 
@@ -95,6 +96,16 @@ class Styles(ElementProxy):
             return self._get_style_id_from_style(style_or_name, style_type)
         else:
             return self._get_style_id_from_name(style_or_name, style_type)
+
+    @property
+    def latent_styles(self):
+        """
+        A |LatentStyles| object providing access to the default behaviors for
+        latent styles and the collection of |_LatentStyle| objects that
+        define overrides of those defaults for a particular named latent
+        style.
+        """
+        return LatentStyles(self._element.get_or_add_latentStyles())
 
     def _get_by_id(self, style_id, style_type):
         """
