@@ -86,6 +86,16 @@ def given_a_style_having_hidden_set_setting(context, setting):
     context.style = document.styles[style_name]
 
 
+@given('a style having priority of {setting}')
+def given_a_style_having_priority_of_setting(context, setting):
+    document = Document(test_docx('sty-behav-props'))
+    style_name = {
+        'no setting': 'Baz',
+        '42':         'Foo',
+    }[setting]
+    context.style = document.styles[style_name]
+
+
 @given('a style of type {style_type}')
 def given_a_style_of_type(context, style_type):
     document = Document(test_docx('sty-known-styles'))
@@ -124,6 +134,13 @@ def when_I_assign_value_to_style_base_style(context, value_key):
 def when_I_assign_value_to_style_hidden(context, value):
     style, new_value = context.style, tri_state_vals[value]
     style.hidden = new_value
+
+
+@when('I assign {value} to style.priority')
+def when_I_assign_value_to_style_priority(context, value):
+    style = context.style
+    new_value = None if value == 'None' else int(value)
+    style.priority = new_value
 
 
 @when('I call add_style(\'{name}\', {type_str}, builtin={builtin_str})')
@@ -222,6 +239,13 @@ def then_style_paragraph_format_is_the_ParagraphFormat_object(context):
     paragraph_format = style.paragraph_format
     assert isinstance(paragraph_format, ParagraphFormat)
     assert paragraph_format.element is style.element
+
+
+@then('style.priority is {value}')
+def then_style_priority_is_value(context, value):
+    style = context.style
+    expected_value = None if value == 'None' else int(value)
+    assert style.priority == expected_value
 
 
 @then('style.style_id is the {which} style id')

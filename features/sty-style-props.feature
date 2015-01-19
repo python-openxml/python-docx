@@ -59,6 +59,30 @@ Feature: Get and set style properties
      Then style.name is the new name
 
 
+  @wip
+  Scenario Outline: Get style display sort order
+    Given a style having priority of <setting>
+     Then style.priority is <value>
+
+    Examples: style.priority values
+      | setting    | value |
+      | no setting | None  |
+      | 42         | 42    |
+
+
+  @wip
+  Scenario Outline: Set style display sort order
+    Given a style having priority of <setting>
+     When I assign <new-value> to style.priority
+     Then style.priority is <value>
+
+    Examples: Style priority values
+      | setting    | new-value | value |
+      | no setting | 42        | 42    |
+      | 42         | 24        | 24    |
+      | 42         | None      | None  |
+
+
   Scenario: Get style id
     Given a style having a known style id
      Then style.style_id is the known style id
