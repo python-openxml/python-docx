@@ -30,6 +30,15 @@ def styleId_from_name(name):
     }.get(name, name.replace(' ', ''))
 
 
+class CT_LatentStyles(BaseOxmlElement):
+    """
+    `w:latentStyles` element, defining behavior defaults for latent styles
+    and containing `w:lsdException` child elements that each override those
+    defaults for a named latent style.
+    """
+    lsdException = ZeroOrMore('w:lsdException', successors=())
+
+
 class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition
