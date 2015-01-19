@@ -86,6 +86,17 @@ def given_a_style_having_hidden_set_setting(context, setting):
     context.style = document.styles[style_name]
 
 
+@given('a style having locked set {setting}')
+def given_a_style_having_locked_setting(context, setting):
+    document = Document(test_docx('sty-behav-props'))
+    style_name = {
+        'on':         'Foo',
+        'off':        'Bar',
+        'no setting': 'Baz',
+    }[setting]
+    context.style = document.styles[style_name]
+
+
 @given('a style having priority of {setting}')
 def given_a_style_having_priority_of_setting(context, setting):
     document = Document(test_docx('sty-behav-props'))
@@ -156,6 +167,12 @@ def when_I_assign_value_to_style_base_style(context, value_key):
 def when_I_assign_value_to_style_hidden(context, value):
     style, new_value = context.style, tri_state_vals[value]
     style.hidden = new_value
+
+
+@when('I assign {value} to style.locked')
+def when_I_assign_value_to_style_locked(context, value):
+    style, new_value = context.style, bool_vals[value]
+    style.locked = new_value
 
 
 @when('I assign {value} to style.priority')
@@ -255,6 +272,12 @@ def then_style_font_is_the_Font_object_for_the_style(context):
 def then_style_hidden_is_value(context, value):
     style, expected_value = context.style, tri_state_vals[value]
     assert style.hidden is expected_value
+
+
+@then('style.locked is {value}')
+def then_style_locked_is_value(context, value):
+    style, expected_value = context.style, bool_vals[value]
+    assert style.locked is expected_value
 
 
 @then('style.name is the {which} name')

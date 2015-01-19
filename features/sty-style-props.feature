@@ -139,3 +139,27 @@ Feature: Get and set style properties
       | setting    | new-value | value |
       | no setting | True      | True  |
       | on         | False     | False |
+
+
+  @wip
+  Scenario Outline: Get locked value
+    Given a style having locked set <setting>
+     Then style.locked is <value>
+
+    Examples: Style locked values
+      | setting    | value |
+      | on         | True  |
+      | off        | False |
+      | no setting | False |
+
+
+  @wip
+  Scenario Outline: Set locked value
+    Given a style having locked set <setting>
+     When I assign <new-value> to style.locked
+     Then style.locked is <value>
+
+    Examples: Style locked values
+      | setting    | new-value | value |
+      | no setting | True      | True  |
+      | on         | False     | False |
