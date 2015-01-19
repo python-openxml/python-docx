@@ -88,6 +88,16 @@ class BaseStyle(ElementProxy):
         self._element.name_val = value
 
     @property
+    def priority(self):
+        """
+        The integer sort key governing display sequence of this style in the
+        Word UI. |None| indicates no setting is defined, causing Word to use
+        the default value of 0. Style name is used as a secondary sort key to
+        resolve ordering of styles having the same priority value.
+        """
+        return self._element.uiPriority_val
+
+    @property
     def style_id(self):
         """
         The unique key name (string) for this style. This value is subject to
