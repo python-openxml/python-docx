@@ -108,7 +108,6 @@ Feature: Get and set style properties
       | no setting | False |
 
 
-  @wip
   Scenario Outline: Set unhide-when-used value
     Given a style having unhide-when-used set <setting>
      When I assign <new-value> to style.unhide_when_used

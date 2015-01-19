@@ -145,6 +145,11 @@ class DescribeBaseStyle(object):
         style, expected_value = unhide_get_fixture
         assert style.unhide_when_used == expected_value
 
+    def it_can_change_its_unhide_when_used_value(self, unhide_set_fixture):
+        style, value, expected_xml = unhide_set_fixture
+        style.unhide_when_used = value
+        assert style._element.xml == expected_xml
+
     def it_can_delete_itself_from_the_document(self, delete_fixture):
         style, styles, expected_xml = delete_fixture
         style.delete()
@@ -281,6 +286,26 @@ class DescribeBaseStyle(object):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:style',                           True,
+         'w:style/w:unhideWhenUsed'),
+        ('w:style/w:unhideWhenUsed',          False,
+         'w:style'),
+        ('w:style/w:unhideWhenUsed{w:val=0}', True,
+         'w:style/w:unhideWhenUsed'),
+        ('w:style/w:unhideWhenUsed{w:val=1}', True,
+         'w:style/w:unhideWhenUsed'),
+        ('w:style/w:unhideWhenUsed{w:val=1}', False,
+         'w:style'),
+        ('w:style',                           False,
+         'w:style'),
+    ])
+    def unhide_set_fixture(self, request):
+        style_cxml, value, expected_cxml = request.param
+        style = BaseStyle(element(style_cxml))
+        expected_xml = xml(expected_cxml)
+        return style, value, expected_xml
 
 
 class Describe_CharacterStyle(object):
