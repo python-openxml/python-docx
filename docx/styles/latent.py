@@ -20,6 +20,15 @@ class LatentStyles(ElementProxy):
 
     __slots__ = ()
 
+    def __getitem__(self, key):
+        """
+        Enables dictionary-style access to a latent style by name.
+        """
+        lsdException = self._element.get_by_name(key)
+        if lsdException is None:
+            raise KeyError("no latent style with name '%s'" % key)
+        return _LatentStyle(lsdException)
+
     def __iter__(self):
         return (_LatentStyle(ls) for ls in self._element.lsdException_lst)
 

@@ -10,7 +10,6 @@ Feature: Access latent styles for a document
       And len(latent_styles) is 137
 
 
-  @wip
   Scenario: Access latent style in collection
      Given a latent style collection
       Then I can iterate over the latent styles
