@@ -44,6 +44,17 @@ class LatentStyles(ElementProxy):
         """
         return self._element.defUIPriority
 
+    @property
+    def load_count(self):
+        """
+        Integer specifying the number of built-in styles to initialize to the
+        defaults specified in this |LatentStyles| object. |None| if there is
+        no setting in the XML (very uncommon). The default Word 2011 template
+        sets this value to 276, accounting for the built-in styles in Word
+        2010.
+        """
+        return self._element.count
+
 
 class _LatentStyle(ElementProxy):
     """

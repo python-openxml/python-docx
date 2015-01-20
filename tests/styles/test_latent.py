@@ -43,7 +43,20 @@ class DescribeLatentStyles(object):
         latent_styles, expected_value = priority_get_fixture
         assert latent_styles.default_priority == expected_value
 
+    def it_knows_its_load_count(self, count_get_fixture):
+        latent_styles, expected_value = count_get_fixture
+        assert latent_styles.load_count == expected_value
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:latentStyles',             None),
+        ('w:latentStyles{w:count=42}', 42),
+    ])
+    def count_get_fixture(self, request):
+        latentStyles_cxml, expected_value = request.param
+        latent_styles = LatentStyles(element(latentStyles_cxml))
+        return latent_styles, expected_value
 
     @pytest.fixture(params=[
         ('w:lsdException{w:name=Ab},w:lsdException,w:lsdException', 'Ab', 0),

@@ -38,6 +38,7 @@ class CT_LatentStyles(BaseOxmlElement):
     """
     lsdException = ZeroOrMore('w:lsdException', successors=())
 
+    count = OptionalAttribute('w:count', ST_DecimalNumber)
     defUIPriority = OptionalAttribute('w:defUIPriority', ST_DecimalNumber)
 
     def get_by_name(self, name):
