@@ -15,9 +15,9 @@ from .style import BaseStyle, StyleFactory
 
 class Styles(ElementProxy):
     """
-    A collection of |Style| objects defined in a document. Supports
-    ``len()``, iteration, and dictionary-style access by style id and style
-    UI name.
+    A collection providing access to the styles defined in a document.
+    Accessed using the :attr:`.Document.styles` property. Supports ``len()``,
+    iteration, and dictionary-style access by style name.
     """
 
     __slots__ = ()

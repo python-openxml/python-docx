@@ -36,7 +36,7 @@ name::
    are accessed with the name exactly as it appears in the Word UI.
 
 The |Styles| object is also iterable. By using the identification properties
-on |Style|, various subsets of the defined styles can be generated. For
+on |BaseStyle|, various subsets of the defined styles can be generated. For
 example, this code will produce a list of the defined paragraph styles::
 
    >>> from docx.enum.style import WD_STYLE_TYPE
@@ -56,7 +56,7 @@ Apply a style
 -------------
 
 The |Paragraph|, |Run|, and |Table| objects each have a :attr:`style`
-attribute. Assigning a |Style| object to this attribute applies that style::
+attribute. Assigning a style object to this attribute applies that style::
 
     >>> document = Document()
     >>> paragraph = document.add_paragraph()
@@ -77,8 +77,8 @@ lookup for you::
     >>> paragraph.style.name
     'List Bullet'
 
-A style can also be applied at creation time using either the |Style| object
-or its name::
+A style can also be applied at creation time using either the style object or
+its name::
 
     >>> paragraph = document.add_paragraph(style='Body Text')
     >>> paragraph.style.name

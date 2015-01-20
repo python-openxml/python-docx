@@ -149,8 +149,6 @@ rst_epilog = """
 
 .. |str| replace:: :class:`.str`
 
-.. |Style| replace:: :class:`.Style`
-
 .. |Styles| replace:: :class:`.Styles`
 
 .. |StylesPart| replace:: :class:`.StylesPart`

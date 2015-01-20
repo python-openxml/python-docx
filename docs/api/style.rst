@@ -10,11 +10,23 @@ formatting consistency thoroughout a document and across related documents
 and allows formatting changes to be made globally by changing the definition
 in the appropriate style.
 
-.. currentmodule:: docx.styles.style
+
+|Styles| objects
+----------------
+
+.. currentmodule:: docx.styles.styles
+
+.. autoclass:: Styles()
+   :members:
+   :inherited-members:
+   :exclude-members:
+       get_by_id, get_style_id, part
 
 
 |BaseStyle| objects
 -------------------
+
+.. currentmodule:: docx.styles.style
 
 .. autoclass:: BaseStyle()
    :members:
@@ -61,3 +73,25 @@ in the appropriate style.
 
 .. autoclass:: _NumberingStyle()
    :members:
+
+
+|LatentStyles| objects
+----------------------
+
+.. currentmodule:: docx.styles.latent
+
+.. autoclass:: LatentStyles()
+   :members:
+   :inherited-members:
+   :exclude-members:
+       part
+
+
+|_LatentStyle| objects
+----------------------
+
+.. autoclass:: _LatentStyle()
+   :members:
+   :inherited-members:
+   :exclude-members:
+       part
