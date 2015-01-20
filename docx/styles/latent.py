@@ -57,6 +57,10 @@ class LatentStyles(ElementProxy):
         """
         return self._element.bool_prop('defSemiHidden')
 
+    @default_to_hidden.setter
+    def default_to_hidden(self, value):
+        self._element.set_bool_prop('defSemiHidden', value)
+
     @property
     def default_to_locked(self):
         """
@@ -68,6 +72,10 @@ class LatentStyles(ElementProxy):
         """
         return self._element.bool_prop('defLockedState')
 
+    @default_to_locked.setter
+    def default_to_locked(self, value):
+        self._element.set_bool_prop('defLockedState', value)
+
     @property
     def default_to_quick_style(self):
         """
@@ -76,6 +84,10 @@ class LatentStyles(ElementProxy):
         """
         return self._element.bool_prop('defQFormat')
 
+    @default_to_quick_style.setter
+    def default_to_quick_style(self, value):
+        self._element.set_bool_prop('defQFormat', value)
+
     @property
     def default_to_unhide_when_used(self):
         """
@@ -83,6 +95,10 @@ class LatentStyles(ElementProxy):
         to be unhidden when first applied to content.
         """
         return self._element.bool_prop('defUnhideWhenUsed')
+
+    @default_to_unhide_when_used.setter
+    def default_to_unhide_when_used(self, value):
+        self._element.set_bool_prop('defUnhideWhenUsed', value)
 
     @property
     def load_count(self):

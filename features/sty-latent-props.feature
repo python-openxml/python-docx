@@ -18,7 +18,6 @@ Feature: Get and set latent style properties
       | default_to_unhide_when_used | True  |
 
 
-  @wip
   Scenario Outline: Set default latent style properties
     Given a latent styles object with known defaults
      When I assign <new-value> to latent_styles.<prop-name>

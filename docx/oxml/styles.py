@@ -65,6 +65,12 @@ class CT_LatentStyles(BaseOxmlElement):
             return None
         return found[0]
 
+    def set_bool_prop(self, attr_name, value):
+        """
+        Set the on/off attribute having *attr_name* to *value*.
+        """
+        setattr(self, attr_name, bool(value))
+
 
 class CT_Style(BaseOxmlElement):
     """
