@@ -63,6 +63,12 @@ def given_a_latent_style_collection(context):
     context.latent_styles = document.styles.latent_styles
 
 
+@given('a latent styles object with known defaults')
+def given_a_latent_styles_object_with_known_defaults(context):
+    document = Document(test_docx('sty-known-styles'))
+    context.latent_styles = document.styles.latent_styles
+
+
 @given('a style based on {base_style}')
 def given_a_style_based_on_setting(context, base_style):
     style_name = {
@@ -166,6 +172,13 @@ def when_I_assign_a_new_value_to_style_style_id(context):
     context.style.style_id = 'Foo42'
 
 
+@when('I assign {value} to latent_styles.{prop_name}')
+def when_I_assign_value_to_latent_styles_prop(context, value, prop_name):
+    latent_styles = context.latent_styles
+    new_value = bool_vals[value] if value in bool_vals else int(value)
+    setattr(latent_styles, prop_name, new_value)
+
+
 @when('I assign {value_key} to style.base_style')
 def when_I_assign_value_to_style_base_style(context, value_key):
     value = {
@@ -262,6 +275,14 @@ def then_I_can_iterate_over_the_latent_styles(context):
     latent_styles = [ls for ls in context.latent_styles]
     assert len(latent_styles) == 137
     assert all(isinstance(ls, _LatentStyle) for ls in latent_styles)
+
+
+@then('latentStyles.{prop_name} is {value}')
+def then_latentStyles_prop_name_is_value(context, prop_name, value):
+    latent_styles = context.latent_styles
+    expected_value = bool_vals[value] if value in bool_vals else int(value)
+    actual_value = getattr(latent_styles, prop_name)
+    assert actual_value == expected_value
 
 
 @then('len(latent_styles) is 137')
