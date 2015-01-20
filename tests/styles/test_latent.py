@@ -52,6 +52,11 @@ class DescribeLatentStyles(object):
         latent_styles, expected_value = count_get_fixture
         assert latent_styles.load_count == expected_value
 
+    def it_can_change_its_load_count(self, count_set_fixture):
+        latent_styles, value, expected_xml = count_set_fixture
+        latent_styles.load_count = value
+        assert latent_styles._element.xml == expected_xml
+
     def it_knows_its_boolean_properties(self, bool_prop_get_fixture):
         latent_styles, prop_name, expected_value = bool_prop_get_fixture
         actual_value = getattr(latent_styles, prop_name)
@@ -86,6 +91,17 @@ class DescribeLatentStyles(object):
         latentStyles_cxml, expected_value = request.param
         latent_styles = LatentStyles(element(latentStyles_cxml))
         return latent_styles, expected_value
+
+    @pytest.fixture(params=[
+        ('w:latentStyles',             42,   'w:latentStyles{w:count=42}'),
+        ('w:latentStyles{w:count=24}', 42,   'w:latentStyles{w:count=42}'),
+        ('w:latentStyles{w:count=24}', None, 'w:latentStyles'),
+    ])
+    def count_set_fixture(self, request):
+        latentStyles_cxml, value, expected_cxml = request.param
+        latent_styles = LatentStyles(element(latentStyles_cxml))
+        expected_xml = xml(expected_cxml)
+        return latent_styles, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:lsdException{w:name=Ab},w:lsdException,w:lsdException', 'Ab', 0),
