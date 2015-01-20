@@ -39,7 +39,21 @@ class CT_LatentStyles(BaseOxmlElement):
     lsdException = ZeroOrMore('w:lsdException', successors=())
 
     count = OptionalAttribute('w:count', ST_DecimalNumber)
+    defLockedState = OptionalAttribute('w:defLockedState', ST_OnOff)
+    defQFormat = OptionalAttribute('w:defQFormat', ST_OnOff)
+    defSemiHidden = OptionalAttribute('w:defSemiHidden', ST_OnOff)
     defUIPriority = OptionalAttribute('w:defUIPriority', ST_DecimalNumber)
+    defUnhideWhenUsed = OptionalAttribute('w:defUnhideWhenUsed', ST_OnOff)
+
+    def bool_prop(self, attr_name):
+        """
+        Return the boolean value of the attribute having *attr_name*, or
+        |False| if not present.
+        """
+        value = getattr(self, attr_name)
+        if value is None:
+            return False
+        return value
 
     def get_by_name(self, name):
         """

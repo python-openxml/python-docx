@@ -47,7 +47,31 @@ class DescribeLatentStyles(object):
         latent_styles, expected_value = count_get_fixture
         assert latent_styles.load_count == expected_value
 
+    def it_knows_its_boolean_properties(self, bool_prop_get_fixture):
+        latent_styles, prop_name, expected_value = bool_prop_get_fixture
+        actual_value = getattr(latent_styles, prop_name)
+        assert actual_value == expected_value
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:latentStyles', 'default_to_hidden',           False),
+        ('w:latentStyles', 'default_to_locked',           False),
+        ('w:latentStyles', 'default_to_quick_style',      False),
+        ('w:latentStyles', 'default_to_unhide_when_used', False),
+        ('w:latentStyles{w:defSemiHidden=1}',
+         'default_to_hidden',           True),
+        ('w:latentStyles{w:defLockedState=0}',
+         'default_to_locked',           False),
+        ('w:latentStyles{w:defQFormat=on}',
+         'default_to_quick_style',      True),
+        ('w:latentStyles{w:defUnhideWhenUsed=false}',
+         'default_to_unhide_when_used', False),
+    ])
+    def bool_prop_get_fixture(self, request):
+        latentStyles_cxml, prop_name, expected_value = request.param
+        latent_styles = LatentStyles(element(latentStyles_cxml))
+        return latent_styles, prop_name, expected_value
 
     @pytest.fixture(params=[
         ('w:latentStyles',             None),
