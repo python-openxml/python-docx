@@ -45,6 +45,42 @@ class LatentStyles(ElementProxy):
         return self._element.defUIPriority
 
     @property
+    def default_to_hidden(self):
+        """
+        Boolean specifying whether the default behavior for latent styles is
+        to be hidden. A hidden style does not appear in the recommended list
+        or in the style gallery.
+        """
+        return self._element.bool_prop('defSemiHidden')
+
+    @property
+    def default_to_locked(self):
+        """
+        Boolean specifying whether the default behavior for latent styles is
+        to be locked. A locked style does not appear in the styles panel or
+        the style gallery and cannot be applied to document content. This
+        behavior is only active when formatting protection is turned on for
+        the document (via the Developer menu).
+        """
+        return self._element.bool_prop('defLockedState')
+
+    @property
+    def default_to_quick_style(self):
+        """
+        Boolean specifying whether the default behavior for latent styles is
+        to appear in the style gallery when not hidden.
+        """
+        return self._element.bool_prop('defQFormat')
+
+    @property
+    def default_to_unhide_when_used(self):
+        """
+        Boolean specifying whether the default behavior for latent styles is
+        to be unhidden when first applied to content.
+        """
+        return self._element.bool_prop('defUnhideWhenUsed')
+
+    @property
     def load_count(self):
         """
         Integer specifying the number of built-in styles to initialize to the

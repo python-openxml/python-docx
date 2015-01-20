@@ -4,7 +4,6 @@ Feature: Get and set latent style properties
   I need a set of read/write latent style properties
 
 
-  @wip
   Scenario Outline: Get default latent style properties
     Given a latent styles object with known defaults
      Then latentStyles.<prop-name> is <value>
