@@ -12,7 +12,7 @@ import pytest
 
 from docx.styles.latent import _LatentStyle, LatentStyles
 
-from ..unitutil.cxml import element
+from ..unitutil.cxml import element, xml
 
 
 class DescribeLatentStyles(object):
@@ -42,6 +42,11 @@ class DescribeLatentStyles(object):
     def it_knows_its_default_priority(self, priority_get_fixture):
         latent_styles, expected_value = priority_get_fixture
         assert latent_styles.default_priority == expected_value
+
+    def it_can_change_its_default_priority(self, priority_set_fixture):
+        latent_styles, value, expected_xml = priority_set_fixture
+        latent_styles.default_priority = value
+        assert latent_styles._element.xml == expected_xml
 
     def it_knows_its_load_count(self, count_get_fixture):
         latent_styles, expected_value = count_get_fixture
@@ -128,3 +133,17 @@ class DescribeLatentStyles(object):
         latentStyles_cxml, expected_value = request.param
         latent_styles = LatentStyles(element(latentStyles_cxml))
         return latent_styles, expected_value
+
+    @pytest.fixture(params=[
+        ('w:latentStyles',                     42,
+         'w:latentStyles{w:defUIPriority=42}'),
+        ('w:latentStyles{w:defUIPriority=24}', 42,
+         'w:latentStyles{w:defUIPriority=42}'),
+        ('w:latentStyles{w:defUIPriority=24}', None,
+         'w:latentStyles'),
+    ])
+    def priority_set_fixture(self, request):
+        latentStyles_cxml, value, expected_cxml = request.param
+        latent_styles = LatentStyles(element(latentStyles_cxml))
+        expected_xml = xml(expected_cxml)
+        return latent_styles, value, expected_xml
