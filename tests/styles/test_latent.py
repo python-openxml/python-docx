@@ -62,6 +62,11 @@ class DescribeLatentStyles(object):
         actual_value = getattr(latent_styles, prop_name)
         assert actual_value == expected_value
 
+    def it_can_change_its_boolean_properties(self, bool_prop_set_fixture):
+        latent_styles, prop_name, value, expected_xml = bool_prop_set_fixture
+        setattr(latent_styles, prop_name, value)
+        assert latent_styles.element.xml == expected_xml
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -82,6 +87,26 @@ class DescribeLatentStyles(object):
         latentStyles_cxml, prop_name, expected_value = request.param
         latent_styles = LatentStyles(element(latentStyles_cxml))
         return latent_styles, prop_name, expected_value
+
+    @pytest.fixture(params=[
+        ('w:latentStyles', 'default_to_hidden',           True,
+         'w:latentStyles{w:defSemiHidden=1}'),
+        ('w:latentStyles', 'default_to_locked',           False,
+         'w:latentStyles{w:defLockedState=0}'),
+        ('w:latentStyles', 'default_to_quick_style',      True,
+         'w:latentStyles{w:defQFormat=1}'),
+        ('w:latentStyles', 'default_to_unhide_when_used', False,
+         'w:latentStyles{w:defUnhideWhenUsed=0}'),
+        ('w:latentStyles{w:defSemiHidden=0}',  'default_to_hidden', 'Foo',
+         'w:latentStyles{w:defSemiHidden=1}'),
+        ('w:latentStyles{w:defLockedState=1}', 'default_to_locked', None,
+         'w:latentStyles{w:defLockedState=0}'),
+    ])
+    def bool_prop_set_fixture(self, request):
+        latentStyles_cxml, prop_name, value, expected_cxml = request.param
+        latent_styles = LatentStyles(element(latentStyles_cxml))
+        expected_xml = xml(expected_cxml)
+        return latent_styles, prop_name, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:latentStyles',             None),
