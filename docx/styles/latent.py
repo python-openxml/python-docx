@@ -35,6 +35,15 @@ class LatentStyles(ElementProxy):
     def __len__(self):
         return len(self._element.lsdException_lst)
 
+    @property
+    def default_priority(self):
+        """
+        Integer between 0 and 99 inclusive specifying the default sort order
+        for latent styles in style lists and the style gallery. |None| if no
+        value is assigned, which causes Word to use the default value 99.
+        """
+        return self._element.defUIPriority
+
 
 class _LatentStyle(ElementProxy):
     """

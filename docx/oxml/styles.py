@@ -5,7 +5,7 @@ Custom element classes related to the styles part
 """
 
 from ..enum.style import WD_STYLE_TYPE
-from .simpletypes import ST_OnOff, ST_String
+from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 )
@@ -37,6 +37,8 @@ class CT_LatentStyles(BaseOxmlElement):
     defaults for a named latent style.
     """
     lsdException = ZeroOrMore('w:lsdException', successors=())
+
+    defUIPriority = OptionalAttribute('w:defUIPriority', ST_DecimalNumber)
 
     def get_by_name(self, name):
         """

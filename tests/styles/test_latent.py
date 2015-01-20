@@ -39,6 +39,10 @@ class DescribeLatentStyles(object):
         with pytest.raises(KeyError):
             latent_styles[name]
 
+    def it_knows_its_default_priority(self, priority_get_fixture):
+        latent_styles, expected_value = priority_get_fixture
+        assert latent_styles.default_priority == expected_value
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -78,3 +82,12 @@ class DescribeLatentStyles(object):
         latentStyles_cxml, count = request.param
         latent_styles = LatentStyles(element(latentStyles_cxml))
         return latent_styles, count
+
+    @pytest.fixture(params=[
+        ('w:latentStyles',                     None),
+        ('w:latentStyles{w:defUIPriority=42}', 42),
+    ])
+    def priority_get_fixture(self, request):
+        latentStyles_cxml, expected_value = request.param
+        latent_styles = LatentStyles(element(latentStyles_cxml))
+        return latent_styles, expected_value
