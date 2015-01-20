@@ -95,6 +95,10 @@ class LatentStyles(ElementProxy):
         """
         return self._element.count
 
+    @load_count.setter
+    def load_count(self, value):
+        self._element.count = value
+
 
 class _LatentStyle(ElementProxy):
     """
