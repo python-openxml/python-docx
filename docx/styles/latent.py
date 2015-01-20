@@ -44,6 +44,10 @@ class LatentStyles(ElementProxy):
         """
         return self._element.defUIPriority
 
+    @default_priority.setter
+    def default_priority(self, value):
+        self._element.defUIPriority = value
+
     @property
     def default_to_hidden(self):
         """
