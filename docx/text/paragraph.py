@@ -139,6 +139,9 @@ class Paragraph(Parented):
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)
 
+    def set_numbering(self, ilvl=0, numId=10):
+        self._p.set_numbering(ilvl, numId)
+
 
 class ParagraphFormat(ElementProxy):
     """

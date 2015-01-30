@@ -72,21 +72,21 @@ class CT_NumPr(BaseOxmlElement):
     numId = ZeroOrOne('w:numId', successors=('w:numberingChange', 'w:ins'))
 
     # @ilvl.setter
-    # def _set_ilvl(self, val):
-    #     """
-    #     Get or add a <w:ilvl> child and set its ``w:val`` attribute to *val*.
-    #     """
-    #     ilvl = self.get_or_add_ilvl()
-    #     ilvl.val = val
+    def set_ilvl(self, val):
+        """
+        Get or add a <w:ilvl> child and set its ``w:val`` attribute to *val*.
+        """
+        ilvl = self.get_or_add_ilvl()
+        ilvl.val = val
 
     # @numId.setter
-    # def numId(self, val):
-    #     """
-    #     Get or add a <w:numId> child and set its ``w:val`` attribute to
-    #     *val*.
-    #     """
-    #     numId = self.get_or_add_numId()
-    #     numId.val = val
+    def set_numId(self, val):
+        """
+        Get or add a <w:numId> child and set its ``w:val`` attribute to
+        *val*.
+        """
+        numId = self.get_or_add_numId()
+        numId.val = val
 
 
 class CT_Numbering(BaseOxmlElement):

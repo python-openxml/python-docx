@@ -100,6 +100,10 @@ class CT_P(BaseOxmlElement):
         pPr = self.get_or_add_pPr()
         pPr.style = style
 
+    def set_numbering(self, ilvl=0, numId=10):
+        pPr = self.get_or_add_pPr()
+        pPr.set_numbering(ilvl, numId)
+
 
 class CT_PPr(BaseOxmlElement):
     """
@@ -372,6 +376,11 @@ class CT_PPr(BaseOxmlElement):
             self._remove_widowControl()
         else:
             self.get_or_add_widowControl().val = value
+
+    def set_numbering(self, ilvl=0, numId=10):
+        numPr = self.get_or_add_numPr()
+        numPr.set_ilvl(ilvl)
+        numPr.set_numId(numId)
 
 
 class CT_Spacing(BaseOxmlElement):
