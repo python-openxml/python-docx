@@ -136,6 +136,16 @@ class _LatentStyle(ElementProxy):
 
     __slots__ = ()
 
+    def delete(self):
+        """
+        Remove this latent style definition such that the defaults defined in
+        the containing |LatentStyles| object provide the effective value for
+        each of its attributes. Attempting to access any attributes on this
+        object after calling this method will raise |AttributeError|.
+        """
+        self._element.delete()
+        self._element = None
+
     @property
     def hidden(self):
         """

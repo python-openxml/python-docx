@@ -17,6 +17,12 @@ from ..unitutil.cxml import element, xml
 
 class DescribeLatentStyle(object):
 
+    def it_can_delete_itself(self, delete_fixture):
+        latent_style, latent_styles, expected_xml = delete_fixture
+        latent_style.delete()
+        assert latent_styles.xml == expected_xml
+        assert latent_style._element is None
+
     def it_knows_its_name(self, name_get_fixture):
         latent_style, expected_value = name_get_fixture
         assert latent_style.name == expected_value
@@ -41,6 +47,13 @@ class DescribeLatentStyle(object):
         assert latent_style.element.xml == expected_xml
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def delete_fixture(self):
+        latent_styles = element('w:latentStyles/w:lsdException{w:name=Foo}')
+        latent_style = _LatentStyle(latent_styles[0])
+        expected_xml = xml('w:latentStyles')
+        return latent_style, latent_styles, expected_xml
 
     @pytest.fixture(params=[
         ('w:lsdException{w:name=Foobar}', 'Foobar'),

@@ -11,7 +11,6 @@ Feature: Add or delete a latent style
       And latent_styles['Foobar'] is a latent style
 
 
-  @wip
   Scenario: Delete a latent style
     Given a document having known styles
      When I delete a latent style

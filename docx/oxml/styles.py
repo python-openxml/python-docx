@@ -85,6 +85,12 @@ class CT_LsdException(BaseOxmlElement):
     uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
     unhideWhenUsed = OptionalAttribute('w:unhideWhenUsed', ST_OnOff)
 
+    def delete(self):
+        """
+        Remove this `w:lsdException` element from the XML document.
+        """
+        self.getparent().remove(self)
+
     def on_off_prop(self, attr_name):
         """
         Return the boolean value of the attribute having *attr_name*, or
