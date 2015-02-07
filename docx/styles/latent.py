@@ -125,3 +125,10 @@ class _LatentStyle(ElementProxy):
     """
 
     __slots__ = ()
+
+    @property
+    def name(self):
+        """
+        The name of the built-in style this exception applies to.
+        """
+        return self._element.name

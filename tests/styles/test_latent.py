@@ -15,6 +15,23 @@ from docx.styles.latent import _LatentStyle, LatentStyles
 from ..unitutil.cxml import element, xml
 
 
+class DescribeLatentStyle(object):
+
+    def it_knows_its_name(self, name_get_fixture):
+        latent_style, expected_value = name_get_fixture
+        assert latent_style.name == expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:lsdException{w:name=Foobar}', 'Foobar'),
+    ])
+    def name_get_fixture(self, request):
+        lsdException_cxml, expected_value = request.param
+        latent_style = _LatentStyle(element(lsdException_cxml))
+        return latent_style, expected_value
+
+
 class DescribeLatentStyles(object):
 
     def it_knows_how_many_latent_styles_it_contains(self, len_fixture):
@@ -67,7 +84,7 @@ class DescribeLatentStyles(object):
         setattr(latent_styles, prop_name, value)
         assert latent_styles.element.xml == expected_xml
 
-    # fixture --------------------------------------------------------
+    # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
         ('w:latentStyles', 'default_to_hidden',           False),

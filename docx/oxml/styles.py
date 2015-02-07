@@ -7,7 +7,8 @@ Custom element classes related to the styles part
 from ..enum.style import WD_STYLE_TYPE
 from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from .xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
+    ZeroOrOne
 )
 
 
@@ -70,6 +71,14 @@ class CT_LatentStyles(BaseOxmlElement):
         Set the on/off attribute having *attr_name* to *value*.
         """
         setattr(self, attr_name, bool(value))
+
+
+class CT_LsdException(BaseOxmlElement):
+    """
+    ``<w:lsdException>`` element, defining override visibility behaviors for
+    a named latent style.
+    """
+    name = RequiredAttribute('w:name', ST_String)
 
 
 class CT_Style(BaseOxmlElement):

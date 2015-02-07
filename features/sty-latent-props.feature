@@ -33,7 +33,6 @@ Feature: Get and set latent style properties
       | default_to_unhide_when_used |   False   | False |
 
 
-  @wip
   Scenario: Get latent style name
     Given a latent style having a known name
      Then latent_style.name is the known name
