@@ -135,6 +135,10 @@ class _LatentStyle(ElementProxy):
         """
         return self._element.on_off_prop('semiHidden')
 
+    @hidden.setter
+    def hidden(self, value):
+        self._element.set_on_off_prop('semiHidden', value)
+
     @property
     def locked(self):
         """
@@ -145,6 +149,10 @@ class _LatentStyle(ElementProxy):
         (via the Developer menu).
         """
         return self._element.on_off_prop('locked')
+
+    @locked.setter
+    def locked(self, value):
+        self._element.set_on_off_prop('locked', value)
 
     @property
     def name(self):
@@ -174,6 +182,10 @@ class _LatentStyle(ElementProxy):
         """
         return self._element.on_off_prop('qFormat')
 
+    @quick_style.setter
+    def quick_style(self, value):
+        self._element.set_on_off_prop('qFormat', value)
+
     @property
     def unhide_when_used(self):
         """
@@ -184,3 +196,7 @@ class _LatentStyle(ElementProxy):
         object.
         """
         return self._element.on_off_prop('unhideWhenUsed')
+
+    @unhide_when_used.setter
+    def unhide_when_used(self, value):
+        self._element.set_on_off_prop('unhideWhenUsed', value)

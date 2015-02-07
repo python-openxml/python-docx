@@ -92,6 +92,12 @@ class CT_LsdException(BaseOxmlElement):
         """
         return getattr(self, attr_name)
 
+    def set_on_off_prop(self, attr_name, value):
+        """
+        Set the on/off attribute having *attr_name* to *value*.
+        """
+        setattr(self, attr_name, value)
+
 
 class CT_Style(BaseOxmlElement):
     """

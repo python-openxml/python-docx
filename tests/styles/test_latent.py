@@ -35,6 +35,11 @@ class DescribeLatentStyle(object):
         actual_value = getattr(latent_style, prop_name)
         assert actual_value == expected_value
 
+    def it_can_change_its_on_off_properties(self, on_off_set_fixture):
+        latent_style, prop_name, value, expected_xml = on_off_set_fixture
+        setattr(latent_style, prop_name, value)
+        assert latent_style.element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -63,6 +68,28 @@ class DescribeLatentStyle(object):
         lsdException_cxml, prop_name, expected_value = request.param
         latent_style = _LatentStyle(element(lsdException_cxml))
         return latent_style, prop_name, expected_value
+
+    @pytest.fixture(params=[
+        ('w:lsdException',                 'hidden',           True,
+         'w:lsdException{w:semiHidden=1}'),
+        ('w:lsdException{w:semiHidden=1}', 'hidden',           False,
+         'w:lsdException{w:semiHidden=0}'),
+        ('w:lsdException{w:semiHidden=0}', 'hidden',           None,
+         'w:lsdException'),
+        ('w:lsdException',                 'locked',           True,
+         'w:lsdException{w:locked=1}'),
+        ('w:lsdException',                 'quick_style',      False,
+         'w:lsdException{w:qFormat=0}'),
+        ('w:lsdException',                 'unhide_when_used', True,
+         'w:lsdException{w:unhideWhenUsed=1}'),
+        ('w:lsdException{w:locked=1}',     'locked',           None,
+         'w:lsdException'),
+    ])
+    def on_off_set_fixture(self, request):
+        lsdException_cxml, prop_name, value, expected_cxml = request.param
+        latent_styles = _LatentStyle(element(lsdException_cxml))
+        expected_xml = xml(expected_cxml)
+        return latent_styles, prop_name, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:lsdException',                  None),

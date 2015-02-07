@@ -80,7 +80,6 @@ Feature: Get and set latent style properties
       | unhide_when_used | no setting | None  |
 
 
-  @wip
   Scenario Outline: Set on/off latent style properties
     Given a latent style having <prop-name> set <setting>
      When I assign <new-value> to latent_style.<prop-name>
