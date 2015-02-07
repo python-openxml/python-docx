@@ -63,6 +63,36 @@ def given_a_latent_style_collection(context):
     context.latent_styles = document.styles.latent_styles
 
 
+@given('a latent style having a known name')
+def given_a_latent_style_having_a_known_name(context):
+    document = Document(test_docx('sty-known-styles'))
+    latent_styles = list(document.styles.latent_styles)
+    context.latent_style = latent_styles[0]  # should be 'Normal'
+
+
+@given('a latent style having priority of {setting}')
+def given_a_latent_style_having_priority_of_setting(context, setting):
+    latent_style_name = {
+        '42':         'Normal',
+        'no setting': 'Subtitle',
+    }[setting]
+    document = Document(test_docx('sty-known-styles'))
+    latent_styles = document.styles.latent_styles
+    context.latent_style = latent_styles[latent_style_name]
+
+
+@given('a latent style having {prop_name} set {setting}')
+def given_a_latent_style_having_prop_setting(context, prop_name, setting):
+    latent_style_name = {
+        'on':         'Normal',
+        'off':        'Title',
+        'no setting': 'Subtitle',
+    }[setting]
+    document = Document(test_docx('sty-known-styles'))
+    latent_styles = document.styles.latent_styles
+    context.latent_style = latent_styles[latent_style_name]
+
+
 @given('a latent styles object with known defaults')
 def given_a_latent_styles_object_with_known_defaults(context):
     document = Document(test_docx('sty-known-styles'))
@@ -172,6 +202,15 @@ def when_I_assign_a_new_value_to_style_style_id(context):
     context.style.style_id = 'Foo42'
 
 
+@when('I assign {value} to latent_style.{prop_name}')
+def when_I_assign_value_to_latent_style_prop(context, value, prop_name):
+    latent_style = context.latent_style
+    new_value = (
+        tri_state_vals[value] if value in tri_state_vals else int(value)
+    )
+    setattr(latent_style, prop_name, new_value)
+
+
 @when('I assign {value} to latent_styles.{prop_name}')
 def when_I_assign_value_to_latent_styles_prop(context, value, prop_name):
     latent_styles = context.latent_styles
@@ -275,6 +314,27 @@ def then_I_can_iterate_over_the_latent_styles(context):
     latent_styles = [ls for ls in context.latent_styles]
     assert len(latent_styles) == 137
     assert all(isinstance(ls, _LatentStyle) for ls in latent_styles)
+
+
+@then('latent_style.name is the known name')
+def then_latent_style_name_is_the_known_name(context):
+    latent_style = context.latent_style
+    assert latent_style.name == 'Normal'
+
+
+@then('latent_style.priority is {value}')
+def then_latent_style_priority_is_value(context, value):
+    latent_style = context.latent_style
+    expected_value = None if value == 'None' else int(value)
+    assert latent_style.priority == expected_value
+
+
+@then('latent_style.{prop_name} is {value}')
+def then_latent_style_prop_name_is_value(context, prop_name, value):
+    latent_style = context.latent_style
+    actual_value = getattr(latent_style, prop_name)
+    expected_value = tri_state_vals[value]
+    assert actual_value == expected_value
 
 
 @then('latent_styles.{prop_name} is {value}')
