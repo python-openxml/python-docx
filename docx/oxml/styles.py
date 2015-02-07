@@ -79,6 +79,7 @@ class CT_LsdException(BaseOxmlElement):
     a named latent style.
     """
     name = RequiredAttribute('w:name', ST_String)
+    uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
 
 
 class CT_Style(BaseOxmlElement):

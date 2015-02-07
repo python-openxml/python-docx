@@ -132,3 +132,10 @@ class _LatentStyle(ElementProxy):
         The name of the built-in style this exception applies to.
         """
         return self._element.name
+
+    @property
+    def priority(self):
+        """
+        The integer sort key for this latent style in the Word UI.
+        """
+        return self._element.uiPriority

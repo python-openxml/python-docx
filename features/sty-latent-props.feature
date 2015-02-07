@@ -38,7 +38,6 @@ Feature: Get and set latent style properties
      Then latent_style.name is the known name
 
 
-  @wip
   Scenario Outline: Get latent style display sort order
     Given a latent style having priority of <setting>
      Then latent_style.priority is <value>
