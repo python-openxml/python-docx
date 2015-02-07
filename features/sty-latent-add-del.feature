@@ -4,7 +4,6 @@ Feature: Add or delete a latent style
   I need a way to add and delete a latent style
 
 
-  @wip
   Scenario: Add a latent style
     Given a document having known styles
      When I add a latent style named 'Foobar'

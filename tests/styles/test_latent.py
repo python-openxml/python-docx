@@ -117,6 +117,15 @@ class DescribeLatentStyle(object):
 
 class DescribeLatentStyles(object):
 
+    def it_can_add_a_latent_style(self, add_fixture):
+        latent_styles, name, expected_xml = add_fixture
+
+        latent_style = latent_styles.add_latent_style(name)
+
+        assert latent_styles.element.xml == expected_xml
+        assert isinstance(latent_style, _LatentStyle)
+        assert latent_style.element is latent_styles.element[0]
+
     def it_knows_how_many_latent_styles_it_contains(self, len_fixture):
         latent_styles, expected_value = len_fixture
         assert len(latent_styles) == expected_value
@@ -168,6 +177,13 @@ class DescribeLatentStyles(object):
         assert latent_styles.element.xml == expected_xml
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def add_fixture(self):
+        latent_styles = LatentStyles(element('w:latentStyles'))
+        name = 'Foobar'
+        expected_xml = xml('w:latentStyles/w:lsdException{w:name=Foobar}')
+        return latent_styles, name, expected_xml
 
     @pytest.fixture(params=[
         ('w:latentStyles', 'default_to_hidden',           False),

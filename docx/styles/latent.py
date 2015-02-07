@@ -35,6 +35,16 @@ class LatentStyles(ElementProxy):
     def __len__(self):
         return len(self._element.lsdException_lst)
 
+    def add_latent_style(self, name):
+        """
+        Return a newly added |_LatentStyle| object to override the inherited
+        defaults defined in this latent styles object for the built-in style
+        having *name*.
+        """
+        lsdException = self._element.add_lsdException()
+        lsdException.name = name
+        return _LatentStyle(lsdException)
+
     @property
     def default_priority(self):
         """
