@@ -192,6 +192,14 @@ def given_the_style_collection_of_a_document(context):
 
 # when =====================================================
 
+@when('I add a latent style named \'Foobar\'')
+def when_I_add_a_latent_style_named_Foobar(context):
+    latent_styles = context.document.styles.latent_styles
+    context.latent_styles = latent_styles
+    context.latent_style_count = len(latent_styles)
+    latent_styles.add_latent_style('Foobar')
+
+
 @when('I assign a new name to the style')
 def when_I_assign_a_new_name_to_the_style(context):
     context.style.name = 'Foobar'
@@ -267,6 +275,14 @@ def when_I_call_add_style(context, name, type_str, builtin_str):
     styles.add_style(name, type, builtin=builtin)
 
 
+@when('I delete a latent style')
+def when_I_delete_a_latent_style(context):
+    latent_styles = context.document.styles.latent_styles
+    context.latent_styles = latent_styles
+    context.latent_style_count = len(latent_styles)
+    latent_styles['Normal'].delete()
+
+
 @when('I delete a style')
 def when_I_delete_a_style(context):
     context.document.styles['No List'].delete()
@@ -335,6 +351,13 @@ def then_latent_style_prop_name_is_value(context, prop_name, value):
     actual_value = getattr(latent_style, prop_name)
     expected_value = tri_state_vals[value]
     assert actual_value == expected_value
+
+
+@then('latent_styles[\'Foobar\'] is a latent style')
+def then_latentStyles_Foobar_is_a_latent_style(context):
+    latent_styles = context.latent_styles
+    latent_style = latent_styles['Foobar']
+    assert isinstance(latent_style, _LatentStyle)
 
 
 @then('latent_styles.{prop_name} is {value}')
@@ -468,6 +491,16 @@ def then_styles_name_is_a_style(context, name):
     assert isinstance(style, BaseStyle)
 
 
+@then('the deleted latent style is not in the latent styles collection')
+def then_the_deleted_latent_style_is_not_in_the_collection(context):
+    latent_styles = context.latent_styles
+    try:
+        latent_styles['Normal']
+    except KeyError:
+        return
+    raise AssertionError('Latent style not deleted')
+
+
 @then('the deleted style is not in the styles collection')
 def then_the_deleted_style_is_not_in_the_styles_collection(context):
     document = context.document
@@ -478,12 +511,27 @@ def then_the_deleted_style_is_not_in_the_styles_collection(context):
     raise AssertionError('Style not deleted')
 
 
+@then('the document has one additional latent style')
+def then_the_document_has_one_additional_latent_style(context):
+    latent_styles = context.document.styles.latent_styles
+    latent_style_count = len(latent_styles)
+    expected_count = context.latent_style_count + 1
+    assert latent_style_count == expected_count
+
+
 @then('the document has one additional style')
 def then_the_document_has_one_additional_style(context):
     document = context.document
     style_count = len(document.styles)
     expected_style_count = context.style_count + 1
     assert style_count == expected_style_count
+
+
+@then('the document has one fewer latent styles')
+def then_the_document_has_one_fewer_latent_styles(context):
+    latent_style_count = len(context.latent_styles)
+    expected_count = context.latent_style_count - 1
+    assert latent_style_count == expected_count
 
 
 @then('the document has one fewer styles')
