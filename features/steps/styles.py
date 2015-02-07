@@ -140,6 +140,19 @@ def given_a_style_having_locked_setting(context, setting):
     context.style = document.styles[style_name]
 
 
+@given('a style having next paragraph style set to {setting}')
+def given_a_style_having_next_paragraph_style_setting(context, setting):
+    document = Document(test_docx('sty-known-styles'))
+    style_name = {
+        'Sub Normal': 'Citation',
+        'Foobar':     'Sub Normal',
+        'Base':       'Foo',
+        'no setting': 'Base',
+    }[setting]
+    context.styles = document.styles
+    context.style = document.styles[style_name]
+
+
 @given('a style having priority of {setting}')
 def given_a_style_having_priority_of_setting(context, setting):
     document = Document(test_docx('sty-behav-props'))
@@ -246,6 +259,13 @@ def when_I_assign_value_to_style_hidden(context, value):
 def when_I_assign_value_to_style_locked(context, value):
     style, new_value = context.style, bool_vals[value]
     style.locked = new_value
+
+
+@when('I assign {value} to style.next_paragraph_style')
+def when_I_assign_value_to_style_next_paragraph_style(context, value):
+    styles, style = context.styles, context.style
+    new_value = None if value == 'None' else styles[value]
+    style.next_paragraph_style = new_value
 
 
 @when('I assign {value} to style.priority')
@@ -424,6 +444,14 @@ def then_style_name_is_the_which_name(context, which):
     }[which]
     style = context.style
     assert style.name == expected_name
+
+
+@then('style.next_paragraph_style is {value}')
+def then_style_next_paragraph_style_is_value(context, value):
+    style, styles = context.style, context.styles
+    actual_value = style.next_paragraph_style
+    expected_value = styles[value]
+    assert actual_value == expected_value, 'got %s' % actual_value
 
 
 @then('style.paragraph_format is the ParagraphFormat object for the style')

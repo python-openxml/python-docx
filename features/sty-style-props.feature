@@ -81,6 +81,31 @@ Feature: Get and set style properties
      Then style.name is the new name
 
 
+  @wip
+  Scenario Outline: Get next paragraph style
+    Given a style having next paragraph style set to <setting>
+     Then style.next_paragraph_style is <value>
+
+    Examples: Style next paragraph style values
+      | setting    | value      |
+      | no setting | Base       |
+      | Sub Normal | Sub Normal |
+      | Foobar     | Sub Normal |
+
+
+  @wip
+  Scenario Outline: Set next paragraph style
+    Given a style having next paragraph style set to <setting>
+     When I assign <new-value> to style.next_paragraph_style
+     Then style.next_paragraph_style is <value>
+
+    Examples: Results of assignment to .next_paragraph_style
+      | setting    | new-value  | value      |
+      | no setting | Citation   | Citation   |
+      | Sub Normal | Base       | Base       |
+      | Base       | None       | Foo        |
+
+
   Scenario Outline: Get style display sort order
     Given a style having priority of <setting>
      Then style.priority is <value>
