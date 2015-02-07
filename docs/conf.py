@@ -69,6 +69,8 @@ release = __version__
 rst_epilog = """
 .. |api-Document| replace:: :class:`docx.api.Document`
 
+.. |AttributeError| replace:: :exc:`.AttributeError`
+
 .. |BaseStyle| replace:: :class:`.BaseStyle`
 
 .. |_Body| replace:: :class:`._Body`

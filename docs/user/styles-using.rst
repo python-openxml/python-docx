@@ -225,6 +225,45 @@ indentation of 1/4 inch, 12 points spacing above, and widow/orphan control::
     >>> paragraph_format.widow_control = True
 
 
+Use paragraph-specific style properties
+---------------------------------------
+
+A paragraph style has a :attr:`~._ParagraphStyle.next_paragraph_style`
+property that specifies the style to be applied to new paragraphs inserted
+after a paragraph of that style. This is most useful when the style would
+normally appear only once in a sequence, such as a heading. In that case, the
+paragraph style can automatically be set back to a body style after
+completing the heading.
+
+In the most common case (body paragraphs), subsequent paragraphs should
+receive the same style as the current paragraph. The default handles this
+case well by applying the same style if a next paragraph style is not
+specified.
+
+Here's an example of how you would change the next paragraph style of the
+*Heading 1* style to *Body Text*::
+
+    >>> from docx import Document
+    >>> document = Document()
+    >>> styles = document.styles
+
+    >>> styles['Heading 1'].next_paragraph_style = styles['Body Text']
+
+The default behavior can be restored by assigning |None| or the style itself::
+
+    >>> heading_1_style = styles['Heading 1']
+    >>> heading_1_style.next_paragraph_style.name
+    'Body Text'
+
+    >>> heading_1_style.next_paragraph_style = heading_1_style
+    >>> heading_1_style.next_paragraph_style.name
+    'Heading 1'
+
+    >>> heading_1_style.next_paragraph_style = None
+    >>> heading_1_style.next_paragraph_style.name
+    'Heading 1'
+
+
 Control how a style appears in the Word UI
 ------------------------------------------
 

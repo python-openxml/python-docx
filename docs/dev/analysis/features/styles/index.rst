@@ -7,6 +7,7 @@ Styles
 
    styles
    style
+   paragraph-style
    latent-styles
 
 Word supports the definition of *styles* to allow a group of formatting
