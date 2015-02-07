@@ -60,7 +60,6 @@ Feature: Get and set latent style properties
       | 42         | None      | None  |
 
 
-  @wip
   Scenario Outline: Get on/off latent style properties
     Given a latent style having <prop-name> set <setting>
      Then latent_style.<prop-name> is <value>

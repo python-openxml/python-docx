@@ -30,6 +30,11 @@ class DescribeLatentStyle(object):
         latent_style.priority = new_value
         assert latent_style._element.xml == expected_xml
 
+    def it_knows_its_on_off_properties(self, on_off_get_fixture):
+        latent_style, prop_name, expected_value = on_off_get_fixture
+        actual_value = getattr(latent_style, prop_name)
+        assert actual_value == expected_value
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -39,6 +44,25 @@ class DescribeLatentStyle(object):
         lsdException_cxml, expected_value = request.param
         latent_style = _LatentStyle(element(lsdException_cxml))
         return latent_style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:lsdException',                     'hidden',           None),
+        ('w:lsdException',                     'locked',           None),
+        ('w:lsdException',                     'quick_style',      None),
+        ('w:lsdException',                     'unhide_when_used', None),
+        ('w:lsdException{w:semiHidden=1}',     'hidden',           True),
+        ('w:lsdException{w:locked=1}',         'locked',           True),
+        ('w:lsdException{w:qFormat=1}',        'quick_style',      True),
+        ('w:lsdException{w:unhideWhenUsed=1}', 'unhide_when_used', True),
+        ('w:lsdException{w:semiHidden=0}',     'hidden',           False),
+        ('w:lsdException{w:locked=0}',         'locked',           False),
+        ('w:lsdException{w:qFormat=0}',        'quick_style',      False),
+        ('w:lsdException{w:unhideWhenUsed=0}', 'unhide_when_used', False),
+    ])
+    def on_off_get_fixture(self, request):
+        lsdException_cxml, prop_name, expected_value = request.param
+        latent_style = _LatentStyle(element(lsdException_cxml))
+        return latent_style, prop_name, expected_value
 
     @pytest.fixture(params=[
         ('w:lsdException',                  None),

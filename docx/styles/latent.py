@@ -127,6 +127,26 @@ class _LatentStyle(ElementProxy):
     __slots__ = ()
 
     @property
+    def hidden(self):
+        """
+        Tri-state value specifying whether this latent style should appear in
+        the recommended list. |None| indicates the effective value is
+        inherited from the parent ``<w:latentStyles>`` element.
+        """
+        return self._element.on_off_prop('semiHidden')
+
+    @property
+    def locked(self):
+        """
+        Tri-state value specifying whether this latent styles is locked.
+        A locked style does not appear in the styles panel or the style
+        gallery and cannot be applied to document content. This behavior is
+        only active when formatting protection is turned on for the document
+        (via the Developer menu).
+        """
+        return self._element.on_off_prop('locked')
+
+    @property
     def name(self):
         """
         The name of the built-in style this exception applies to.
@@ -143,3 +163,24 @@ class _LatentStyle(ElementProxy):
     @priority.setter
     def priority(self, value):
         self._element.uiPriority = value
+
+    @property
+    def quick_style(self):
+        """
+        Tri-state value specifying whether this latent style should appear in
+        the Word styles gallery when not hidden. |None| indicates the
+        effective value should be inherited from the default values in its
+        parent |LatentStyles| object.
+        """
+        return self._element.on_off_prop('qFormat')
+
+    @property
+    def unhide_when_used(self):
+        """
+        Tri-state value specifying whether this style should have its
+        :attr:`hidden` attribute set |False| the next time the style is
+        applied to content. |None| indicates the effective value should be
+        inherited from the default specified by its parent |LatentStyles|
+        object.
+        """
+        return self._element.on_off_prop('unhideWhenUsed')

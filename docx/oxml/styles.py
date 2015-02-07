@@ -78,8 +78,19 @@ class CT_LsdException(BaseOxmlElement):
     ``<w:lsdException>`` element, defining override visibility behaviors for
     a named latent style.
     """
+    locked = OptionalAttribute('w:locked', ST_OnOff)
     name = RequiredAttribute('w:name', ST_String)
+    qFormat = OptionalAttribute('w:qFormat', ST_OnOff)
+    semiHidden = OptionalAttribute('w:semiHidden', ST_OnOff)
     uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
+    unhideWhenUsed = OptionalAttribute('w:unhideWhenUsed', ST_OnOff)
+
+    def on_off_prop(self, attr_name):
+        """
+        Return the boolean value of the attribute having *attr_name*, or
+        |None| if not present.
+        """
+        return getattr(self, attr_name)
 
 
 class CT_Style(BaseOxmlElement):
