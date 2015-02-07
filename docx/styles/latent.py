@@ -139,3 +139,7 @@ class _LatentStyle(ElementProxy):
         The integer sort key for this latent style in the Word UI.
         """
         return self._element.uiPriority
+
+    @priority.setter
+    def priority(self, value):
+        self._element.uiPriority = value

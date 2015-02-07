@@ -48,7 +48,6 @@ Feature: Get and set latent style properties
       | 42         | 42    |
 
 
-  @wip
   Scenario Outline: Set latent style display sort order
     Given a latent style having priority of <setting>
      When I assign <new-value> to latent_style.priority

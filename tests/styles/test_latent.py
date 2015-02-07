@@ -25,6 +25,11 @@ class DescribeLatentStyle(object):
         latent_style, expected_value = priority_get_fixture
         assert latent_style.priority == expected_value
 
+    def it_can_change_its_priority(self, priority_set_fixture):
+        latent_style, new_value, expected_xml = priority_set_fixture
+        latent_style.priority = new_value
+        assert latent_style._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -43,6 +48,20 @@ class DescribeLatentStyle(object):
         lsdException_cxml, expected_value = request.param
         latent_style = _LatentStyle(element(lsdException_cxml))
         return latent_style, expected_value
+
+    @pytest.fixture(params=[
+        ('w:lsdException',                  42,
+         'w:lsdException{w:uiPriority=42}'),
+        ('w:lsdException{w:uiPriority=42}', 24,
+         'w:lsdException{w:uiPriority=24}'),
+        ('w:lsdException{w:uiPriority=24}', None,
+         'w:lsdException'),
+    ])
+    def priority_set_fixture(self, request):
+        lsdException_cxml, new_value, expected_cxml = request.param
+        latent_style = _LatentStyle(element(lsdException_cxml))
+        expected_xml = xml(expected_cxml)
+        return latent_style, new_value, expected_xml
 
 
 class DescribeLatentStyles(object):
