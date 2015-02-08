@@ -8,6 +8,8 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from warnings import warn
+
 from . import BabelFish
 from .latent import LatentStyles
 from ..shared import ElementProxy
@@ -35,14 +37,24 @@ class Styles(ElementProxy):
 
     def __getitem__(self, key):
         """
-        Enables dictionary-style access by style id or UI name.
+        Enables dictionary-style access by UI name. Lookup by style id is
+        deprecated, triggers a warning, and will be removed in a near-future
+        release.
         """
-        style_name = BabelFish.ui2internal(key)
-        for get in (self._element.get_by_id, self._element.get_by_name):
-            style_elm = get(style_name)
-            if style_elm is not None:
-                return StyleFactory(style_elm)
-        raise KeyError("no style with id or name '%s'" % key)
+        style_elm = self._element.get_by_name(BabelFish.ui2internal(key))
+        if style_elm is not None:
+            return StyleFactory(style_elm)
+
+        style_elm = self._element.get_by_id(key)
+        if style_elm is not None:
+            msg = (
+                'style lookup by style_id is deprecated. Use style name as '
+                'key instead.'
+            )
+            warn(msg, UserWarning)
+            return StyleFactory(style_elm)
+
+        raise KeyError("no style with name '%s'" % key)
 
     def __iter__(self):
         return (StyleFactory(style) for style in self._element.style_lst)
