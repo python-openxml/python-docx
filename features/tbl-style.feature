@@ -15,7 +15,6 @@ Feature: Query and apply a table style
       | Light Shading - Accent 1 | Light Shading Accent 1 |
 
 
-  @wip
   Scenario Outline: Apply a table style
     Given a table having <style> style
      When I assign <value> to table.style

@@ -52,9 +52,12 @@ class DescribeTable(object):
         )
         assert style is style_
 
-    def it_can_apply_a_table_style_by_name(self, table_style_set_fixture):
-        table, style_name, expected_xml = table_style_set_fixture
-        table.style = style_name
+    def it_can_change_its_table_style(self, style_set_fixture):
+        table, value, expected_xml = style_set_fixture
+        table.style = value
+        table.part.get_style_id.assert_called_once_with(
+            value, WD_STYLE_TYPE.TABLE
+        )
         assert table._tbl.xml == expected_xml
 
     def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
@@ -233,26 +236,25 @@ class DescribeTable(object):
         style_ = part_prop_.return_value.get_style.return_value
         return table, style_id, style_
 
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr',                         'Tbl A', 'TblA',
+         'w:tbl/w:tblPr/w:tblStyle{w:val=TblA}'),
+        ('w:tbl/w:tblPr/w:tblStyle{w:val=TblA}',  'Tbl B', 'TblB',
+         'w:tbl/w:tblPr/w:tblStyle{w:val=TblB}'),
+        ('w:tbl/w:tblPr/w:tblStyle{w:val=TblB}',  None,    None,
+         'w:tbl/w:tblPr'),
+    ])
+    def style_set_fixture(self, request, part_prop_):
+        tbl_cxml, value, style_id, expected_cxml = request.param
+        table = Table(element(tbl_cxml), None)
+        part_prop_.return_value.get_style_id.return_value = style_id
+        expected_xml = xml(expected_cxml)
+        return table, value, expected_xml
+
     @pytest.fixture
     def table_fixture(self):
         table = Table(None, None)
         return table
-
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr', 'foobar',
-         'w:tbl/w:tblPr/w:tblStyle{w:val=foobar}'),
-        ('w:tbl/w:tblPr/w:tblStyle{w:val=foobar}', 'barfoo',
-         'w:tbl/w:tblPr/w:tblStyle{w:val=barfoo}'),
-        ('w:tbl/w:tblPr/w:tblStyle{w:val=foobar}', None,
-         'w:tbl/w:tblPr'),
-        ('w:tbl/w:tblPr', None,
-         'w:tbl/w:tblPr'),
-    ])
-    def table_style_set_fixture(self, request):
-        tbl_cxml, new_style, expected_cxml = request.param
-        table = Table(element(tbl_cxml), None)
-        expected_xml = xml(expected_cxml)
-        return table, new_style, expected_xml
 
     # fixture components ---------------------------------------------
 

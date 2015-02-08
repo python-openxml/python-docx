@@ -11,7 +11,6 @@ Feature: Add a table
       And table.style is styles['Light Shading Accent 1']
 
 
-  @wip
   Scenario: Add a table specifying style
     Given a document
      When I add a 2 x 2 table specifying style 'Table Grid'

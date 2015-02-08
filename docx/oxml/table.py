@@ -96,6 +96,18 @@ class CT_Tbl(BaseOxmlElement):
             return None
         return tblStyle.val
 
+    @tblStyle_val.setter
+    def tblStyle_val(self, styleId):
+        """
+        Set the value of `w:tblPr/w:tblStyle/@w:val` (a table style id) to
+        *styleId*. If *styleId* is None, remove the `w:tblStyle` element.
+        """
+        tblPr = self.tblPr
+        tblPr._remove_tblStyle()
+        if styleId is None:
+            return
+        tblPr._add_tblStyle().val = styleId
+
     @classmethod
     def _tbl_xml(cls):
         return (
