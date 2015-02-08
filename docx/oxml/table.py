@@ -59,6 +59,13 @@ class CT_Tbl(BaseOxmlElement):
     tblGrid = OneAndOnlyOne('w:tblGrid')
     tr = ZeroOrMore('w:tr')
 
+    @property
+    def col_count(self):
+        """
+        The number of grid columns in this table.
+        """
+        return len(self.tblGrid.gridCol_lst)
+
     def iter_tcs(self):
         """
         Generate each of the `w:tc` elements in this table, left to right and
@@ -79,11 +86,15 @@ class CT_Tbl(BaseOxmlElement):
         return tbl
 
     @property
-    def col_count(self):
+    def tblStyle_val(self):
         """
-        The number of grid columns in this table.
+        Value of `w:tblPr/w:tblStyle/@w:val` (a table style id) or |None| if
+        not present.
         """
-        return len(self.tblGrid.gridCol_lst)
+        tblStyle = self.tblPr.tblStyle
+        if tblStyle is None:
+            return None
+        return tblStyle.val
 
     @classmethod
     def _tbl_xml(cls):

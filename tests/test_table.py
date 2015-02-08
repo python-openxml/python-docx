@@ -8,9 +8,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
+from docx.parts.document import DocumentPart
 from docx.shared import Inches
 from docx.table import _Cell, _Column, _Columns, _Row, _Rows, Table
 from docx.text.paragraph import Paragraph
@@ -42,9 +44,13 @@ class DescribeTable(object):
         table.autofit = new_value
         assert table._tbl.xml == expected_xml
 
-    def it_knows_its_table_style(self, table_style_get_fixture):
-        table, style = table_style_get_fixture
-        assert table.style == style
+    def it_knows_its_table_style(self, style_get_fixture):
+        table, style_id_, style_ = style_get_fixture
+        style = table.style
+        table.part.get_style.assert_called_once_with(
+            style_id_, WD_STYLE_TYPE.TABLE
+        )
+        assert style is style_
 
     def it_can_apply_a_table_style_by_name(self, table_style_set_fixture):
         table, style_name, expected_xml = table_style_set_fixture
@@ -220,18 +226,17 @@ class DescribeTable(object):
         return table, row_idx, expected_cells
 
     @pytest.fixture
+    def style_get_fixture(self, part_prop_):
+        style_id = 'Barbaz'
+        tbl_cxml = 'w:tbl/w:tblPr/w:tblStyle{w:val=%s}' % style_id
+        table = Table(element(tbl_cxml), None)
+        style_ = part_prop_.return_value.get_style.return_value
+        return table, style_id, style_
+
+    @pytest.fixture
     def table_fixture(self):
         table = Table(None, None)
         return table
-
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr', None),
-        ('w:tbl/w:tblPr/w:tblStyle{w:val=foobar}', 'foobar'),
-    ])
-    def table_style_get_fixture(self, request):
-        tbl_cxml, expected_style = request.param
-        table = Table(element(tbl_cxml), None)
-        return table, expected_style
 
     @pytest.fixture(params=[
         ('w:tbl/w:tblPr', 'foobar',
@@ -258,6 +263,16 @@ class DescribeTable(object):
     @pytest.fixture
     def _column_count_(self, request):
         return property_mock(request, Table, '_column_count')
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def part_prop_(self, request, document_part_):
+        return property_mock(
+            request, Table, 'part', return_value=document_part_
+        )
 
     @pytest.fixture
     def table(self):

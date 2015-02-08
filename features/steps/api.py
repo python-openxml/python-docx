@@ -20,10 +20,10 @@ def when_add_2x2_table_specifying_only_row_and_col_count(context):
     document.add_table(rows=2, cols=2)
 
 
-@when('I add a 2 x 2 table specifying style \'foobar\'')
-def when_add_2x2_table_specifying_style_foobar(context):
+@when('I add a 2 x 2 table specifying style \'{style_name}\'')
+def when_add_2x2_table_specifying_style_name(context, style_name):
     document = context.document
-    document.add_table(rows=2, cols=2, style='foobar')
+    document.add_table(rows=2, cols=2, style=style_name)
 
 
 @when('I add a heading specifying level={level_str}')
@@ -159,9 +159,3 @@ def then_the_style_of_the_last_paragraph_is_style(context, style_name):
     assert paragraph.style.name == style_name, (
         'got %s' % paragraph.style.name
     )
-
-
-@then('the table style is \'{style}\'')
-def then_table_style_is_style(context, style):
-    table = context.table_
-    assert table.style == style

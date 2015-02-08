@@ -253,6 +253,9 @@ class _TableStyle(_ParagraphStyle):
 
     __slots__ = ()
 
+    def __repr__(self):
+        return '_TableStyle(\'%s\') id: %s' % (self.name, id(self))
+
 
 class _NumberingStyle(BaseStyle):
     """

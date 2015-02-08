@@ -7,6 +7,7 @@ The |Table| object and related proxy classes.
 from __future__ import absolute_import, print_function, unicode_literals
 
 from .blkcntnr import BlockItemContainer
+from .enum.style import WD_STYLE_TYPE
 from .oxml.simpletypes import ST_Merge
 from .shared import lazyproperty, Parented
 
@@ -110,11 +111,18 @@ class Table(Parented):
     @property
     def style(self):
         """
-        String name of style to be applied to this table, e.g.
-        'LightShading-Accent1'. Name is derived by removing spaces from the
-        table style name displayed in the Word UI.
+        Read/write. A |_TableStyle| object representing the style applied to
+        this table. The default table style for the document (often `Normal
+        Table`) is returned if the table has no directly-applied style.
+        Assigning |None| to this property removes any directly-applied table
+        style causing it to inherit the default table style of the document.
+        Note that the style name of a table style differs slightly from that
+        displayed in the user interface; a hyphen, if it appears, must be
+        removed. For example, `Light Shading - Accent 1` becomes `Light
+        Shading Accent 1`.
         """
-        return self._tblPr.style
+        style_id = self._tbl.tblStyle_val
+        return self.part.get_style(style_id, WD_STYLE_TYPE.TABLE)
 
     @style.setter
     def style(self, value):

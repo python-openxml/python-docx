@@ -4,7 +4,6 @@ Feature: Query and apply a table style
   I need the ability to get and set the style of a table
 
 
-  @wip
   Scenario Outline: Get the style of a table
     Given a table having <style> style
      Then table.style is styles['<value>']
