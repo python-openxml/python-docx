@@ -89,13 +89,6 @@ def given_a_table_having_alignment_alignment(context, alignment):
     context.table_ = document.tables[table_idx]
 
 
-@given('a table having an applied style')
-def given_a_table_having_an_applied_style(context):
-    docx_path = test_docx('tbl-having-applied-style')
-    document = Document(docx_path)
-    context.table_ = document.tables[0]
-
-
 @given('a table having an autofit layout of {autofit}')
 def given_a_table_having_an_autofit_layout_of_autofit(context, autofit):
     tbl_idx = {
@@ -105,6 +98,18 @@ def given_a_table_having_an_autofit_layout_of_autofit(context, autofit):
     }[autofit]
     document = Document(test_docx('tbl-props'))
     context.table_ = document.tables[tbl_idx]
+
+
+@given('a table having {style} style')
+def given_a_table_having_style(context, style):
+    table_idx = {
+        'no explicit': 0,
+        'Table Grid':  1,
+        'Light Shading - Accent 1': 2,
+    }[style]
+    document = Document(test_docx('tbl-having-applied-style'))
+    context.document = document
+    context.table_ = document.tables[table_idx]
 
 
 @given('a table having two columns')
@@ -137,12 +142,6 @@ def when_add_row_to_table(context):
     context.row = table.add_row()
 
 
-@when('I apply a style to the table')
-def when_apply_style_to_table(context):
-    table = context.table_
-    table.style = 'LightShading-Accent1'
-
-
 @when('I assign {value_str} to table.alignment')
 def when_I_assign_value_to_table_alignment(context, value_str):
     value = {
@@ -153,6 +152,18 @@ def when_I_assign_value_to_table_alignment(context, value_str):
     }[value_str]
     table = context.table_
     table.alignment = value
+
+
+@when('I assign {value} to table.style')
+def when_apply_value_to_table_style(context, value):
+    table, styles = context.table_, context.document.styles
+    if value == 'None':
+        new_value = None
+    elif value.startswith('styles['):
+        new_value = styles[value.split('\'')[1]]
+    else:
+        new_value = styles[value]
+    table.style = new_value
 
 
 @when('I merge from cell {origin} to cell {other}')
@@ -217,13 +228,6 @@ def then_can_access_row_collection_of_table(context):
     assert isinstance(rows, _Rows)
 
 
-@then('I can get the table style name')
-def then_can_get_table_style_name(context):
-    table = context.table_
-    msg = "got '%s'" % table.style
-    assert table.style == 'LightShading-Accent1', msg
-
-
 @then('I can iterate over the column collection')
 def then_can_iterate_over_column_collection(context):
     columns = context.columns
@@ -262,6 +266,13 @@ def then_table_cell_row_col_text_is_text(context, row, col, expected_text):
     row_idx, col_idx = int(row), int(col)
     cell_text = table.cell(row_idx, col_idx).text
     assert cell_text == expected_text, 'got %s' % cell_text
+
+
+@then('table.style is styles[\'{style_name}\']')
+def then_table_style_is_styles_style_name(context, style_name):
+    table, styles = context.table_, context.document.styles
+    expected_style = styles[style_name]
+    assert table.style == expected_style, "got '%s'" % table.style
 
 
 @then('the column cells text is {expected_text}')
@@ -323,13 +334,6 @@ def then_the_row_cells_text_is_expected_text(context, encoded_text):
     table = context.table_
     cells_text = ' '.join(c.text for row in table.rows for c in row.cells)
     assert cells_text == expected_text, 'got %s' % cells_text
-
-
-@then('the table style matches the name I applied')
-def then_table_style_matches_name_applied(context):
-    table = context.table_
-    tmpl = "table.style doesn't match, got '%s'"
-    assert table.style == 'LightShading-Accent1', tmpl % table.style
 
 
 @then('the table has {count} columns')
