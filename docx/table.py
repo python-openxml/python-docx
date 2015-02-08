@@ -86,7 +86,8 @@ class Table(Parented):
     @lazyproperty
     def columns(self):
         """
-        |_Columns| instance containing the sequence of rows in this table.
+        |_Columns| instance representing the sequence of columns in this
+        table.
         """
         return _Columns(self._tbl, self)
 

@@ -212,35 +212,35 @@ Paragraph styles in default template
 ------------------------------------
 
 * Normal
-* BodyText
-* BodyText2
-* BodyText3
+* Body Text
+* Body Text 2
+* Body Text 3
 * Caption
-* Heading1
-* Heading2
-* Heading3
-* Heading4
-* Heading5
-* Heading6
-* Heading7
-* Heading8
-* Heading9
-* IntenseQuote
+* Heading 1
+* Heading 2
+* Heading 3
+* Heading 4
+* Heading 5
+* Heading 6
+* Heading 7
+* Heading 8
+* Heading 9
+* Intense Quote
 * List
-* List2
-* List3
-* ListBullet
-* ListBullet2
-* ListBullet3
-* ListContinue
-* ListContinue2
-* ListContinue3
-* ListNumber
-* ListNumber2
-* ListNumber3
-* ListParagraph
-* MacroText
-* NoSpacing
+* List 2
+* List 3
+* List Bullet
+* List Bullet 2
+* List Bullet 3
+* List Continue
+* List Continue 2
+* List Continue 3
+* List Number
+* List Number 2
+* List Number 3
+* List Paragraph
+* Macro Text
+* No Spacing
 * Quote
 * Subtitle
 * TOCHeading
@@ -250,133 +250,133 @@ Paragraph styles in default template
 Character styles in default template
 ------------------------------------
 
-* BodyTextChar
-* BodyText2Char
-* BodyText3Char
-* BookTitle
-* DefaultParagraphFont
+* Body Text Char
+* Body Text 2 Char
+* Body Text 3 Char
+* Book Title
+* Default Paragraph Font
 * Emphasis
-* Heading1Char
-* Heading2Char
-* Heading3Char
-* Heading4Char
-* Heading5Char
-* Heading6Char
-* Heading7Char
-* Heading8Char
-* Heading9Char
-* IntenseEmphasis
-* IntenseQuoteChar
-* IntenseReference
-* MacroTextChar
-* QuoteChar
+* Heading 1 Char
+* Heading 2 Char
+* Heading 3 Char
+* Heading 4 Char
+* Heading 5 Char
+* Heading 6 Char
+* Heading 7 Char
+* Heading 8 Char
+* Heading 9 Char
+* Intense Emphasis
+* Intense Quote Char
+* Intense Reference
+* Macro Text Char
+* Quote Char
 * Strong
-* SubtitleChar
-* SubtleEmphasis
-* SubtleReference
-* TitleChar
+* Subtitle Char
+* Subtle Emphasis
+* Subtle Reference
+* Title Char
 
 
 Table styles in default template
 --------------------------------
 
-* TableNormal
-* ColorfulGrid
-* ColorfulGrid-Accent1
-* ColorfulGrid-Accent2
-* ColorfulGrid-Accent3
-* ColorfulGrid-Accent4
-* ColorfulGrid-Accent5
-* ColorfulGrid-Accent6
-* ColorfulList
-* ColorfulList-Accent1
-* ColorfulList-Accent2
-* ColorfulList-Accent3
-* ColorfulList-Accent4
-* ColorfulList-Accent5
-* ColorfulList-Accent6
-* ColorfulShading
-* ColorfulShading-Accent1
-* ColorfulShading-Accent2
-* ColorfulShading-Accent3
-* ColorfulShading-Accent4
-* ColorfulShading-Accent5
-* ColorfulShading-Accent6
-* DarkList
-* DarkList-Accent1
-* DarkList-Accent2
-* DarkList-Accent3
-* DarkList-Accent4
-* DarkList-Accent5
-* DarkList-Accent6
-* LightGrid
-* LightGrid-Accent1
-* LightGrid-Accent2
-* LightGrid-Accent3
-* LightGrid-Accent4
-* LightGrid-Accent5
-* LightGrid-Accent6
-* LightList
-* LightList-Accent1
-* LightList-Accent2
-* LightList-Accent3
-* LightList-Accent4
-* LightList-Accent5
-* LightList-Accent6
-* LightShading
-* LightShading-Accent1
-* LightShading-Accent2
-* LightShading-Accent3
-* LightShading-Accent4
-* LightShading-Accent5
-* LightShading-Accent6
-* MediumGrid1
-* MediumGrid1-Accent1
-* MediumGrid1-Accent2
-* MediumGrid1-Accent3
-* MediumGrid1-Accent4
-* MediumGrid1-Accent5
-* MediumGrid1-Accent6
-* MediumGrid2
-* MediumGrid2-Accent1
-* MediumGrid2-Accent2
-* MediumGrid2-Accent3
-* MediumGrid2-Accent4
-* MediumGrid2-Accent5
-* MediumGrid2-Accent6
-* MediumGrid3
-* MediumGrid3-Accent1
-* MediumGrid3-Accent2
-* MediumGrid3-Accent3
-* MediumGrid3-Accent4
-* MediumGrid3-Accent5
-* MediumGrid3-Accent6
-* MediumList1
-* MediumList1-Accent1
-* MediumList1-Accent2
-* MediumList1-Accent3
-* MediumList1-Accent4
-* MediumList1-Accent5
-* MediumList1-Accent6
-* MediumList2
-* MediumList2-Accent1
-* MediumList2-Accent2
-* MediumList2-Accent3
-* MediumList2-Accent4
-* MediumList2-Accent5
-* MediumList2-Accent6
-* MediumShading1
-* MediumShading1-Accent1
-* MediumShading1-Accent2
-* MediumShading1-Accent3
-* MediumShading1-Accent4
-* MediumShading1-Accent5
-* MediumShading1-Accent6
-* MediumShading2
-* MediumShading2-Accent1
-* MediumShading2-Accent2
-* MediumShading2-Accent3
-* MediumShading2-Accent4
-* MediumShading2-Accent5
-* MediumShading2-Accent6
-* TableGrid
+* Table Normal
+* Colorful Grid
+* Colorful Grid Accent 1
+* Colorful Grid Accent 2
+* Colorful Grid Accent 3
+* Colorful Grid Accent 4
+* Colorful Grid Accent 5
+* Colorful Grid Accent 6
+* Colorful List
+* Colorful List Accent 1
+* Colorful List Accent 2
+* Colorful List Accent 3
+* Colorful List Accent 4
+* Colorful List Accent 5
+* Colorful List Accent 6
+* Colorful Shading
+* Colorful Shading Accent 1
+* Colorful Shading Accent 2
+* Colorful Shading Accent 3
+* Colorful Shading Accent 4
+* Colorful Shading Accent 5
+* Colorful Shading Accent 6
+* Dark List
+* Dark List Accent 1
+* Dark List Accent 2
+* Dark List Accent 3
+* Dark List Accent 4
+* Dark List Accent 5
+* Dark List Accent 6
+* Light Grid
+* Light Grid Accent 1
+* Light Grid Accent 2
+* Light Grid Accent 3
+* Light Grid Accent 4
+* Light Grid Accent 5
+* Light Grid Accent 6
+* Light List
+* Light List Accent 1
+* Light List Accent 2
+* Light List Accent 3
+* Light List Accent 4
+* Light List Accent 5
+* Light List Accent 6
+* Light Shading
+* Light Shading Accent 1
+* Light Shading Accent 2
+* Light Shading Accent 3
+* Light Shading Accent 4
+* Light Shading Accent 5
+* Light Shading Accent 6
+* Medium Grid 1
+* Medium Grid 1 Accent 1
+* Medium Grid 1 Accent 2
+* Medium Grid 1 Accent 3
+* Medium Grid 1 Accent 4
+* Medium Grid 1 Accent 5
+* Medium Grid 1 Accent 6
+* Medium Grid 2
+* Medium Grid 2 Accent 1
+* Medium Grid 2 Accent 2
+* Medium Grid 2 Accent 3
+* Medium Grid 2 Accent 4
+* Medium Grid 2 Accent 5
+* Medium Grid 2 Accent 6
+* Medium Grid 3
+* Medium Grid 3 Accent 1
+* Medium Grid 3 Accent 2
+* Medium Grid 3 Accent 3
+* Medium Grid 3 Accent 4
+* Medium Grid 3 Accent 5
+* Medium Grid 3 Accent 6
+* Medium List 1
+* Medium List 1 Accent 1
+* Medium List 1 Accent 2
+* Medium List 1 Accent 3
+* Medium List 1 Accent 4
+* Medium List 1 Accent 5
+* Medium List 1 Accent 6
+* Medium List 2
+* Medium List 2 Accent 1
+* Medium List 2 Accent 2
+* Medium List 2 Accent 3
+* Medium List 2 Accent 4
+* Medium List 2 Accent 5
+* Medium List 2 Accent 6
+* Medium Shading 1
+* Medium Shading 1 Accent 1
+* Medium Shading 1 Accent 2
+* Medium Shading 1 Accent 3
+* Medium Shading 1 Accent 4
+* Medium Shading 1 Accent 5
+* Medium Shading 1 Accent 6
+* Medium Shading 2
+* Medium Shading 2 Accent 1
+* Medium Shading 2 Accent 2
+* Medium Shading 2 Accent 3
+* Medium Shading 2 Accent 4
+* Medium Shading 2 Accent 5
+* Medium Shading 2 Accent 6
+* Table Grid

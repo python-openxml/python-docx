@@ -95,7 +95,12 @@ class Paragraph(Parented):
     @property
     def style(self):
         """
-        Paragraph style for this paragraph. Read/Write.
+        Read/Write. |_ParagraphStyle| object representing the style assigned
+        to this paragraph. If no explicit style is assigned to this
+        paragraph, its value is the default paragraph style for the document.
+        A paragraph style name can be assigned in lieu of a paragraph style
+        object. Assigning |None| removes any applied style, making its
+        effective value the default paragraph style for the document.
         """
         style_id = self._p.style
         return self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
