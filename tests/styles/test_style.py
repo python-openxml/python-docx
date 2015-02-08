@@ -468,6 +468,11 @@ class Describe_ParagraphStyle(object):
         style, expected_value = next_get_fixture
         assert style.next_paragraph_style == expected_value
 
+    def it_can_change_its_next_paragraph_style(self, next_set_fixture):
+        style, next_style, expected_xml = next_set_fixture
+        style.next_paragraph_style = next_style
+        assert style.element.xml == expected_xml
+
     def it_provides_access_to_its_paragraph_format(self, parfmt_fixture):
         style, ParagraphFormat_, paragraph_format_ = parfmt_fixture
         paragraph_format = style.paragraph_format
@@ -501,6 +506,27 @@ class Describe_ParagraphStyle(object):
         else:
             next_style = style
         return style, next_style
+
+    @pytest.fixture(params=[
+        ('H', 'B',  'w:style{w:type=paragraph,w:styleId=H}/w:next{w:val=B}'),
+        ('H', None, 'w:style{w:type=paragraph,w:styleId=H}'),
+        ('H', 'H',  'w:style{w:type=paragraph,w:styleId=H}'),
+    ])
+    def next_set_fixture(self, request):
+        style_name, next_style_name, style_cxml = request.param
+        styles = element(
+            'w:styles/('
+            'w:style{w:type=paragraph,w:styleId=H},'
+            'w:style{w:type=paragraph,w:styleId=B})'
+        )
+        style_elms = {'H': styles[0], 'B': styles[1]}
+        style = _ParagraphStyle(style_elms[style_name])
+        next_style = (
+            None if next_style_name is None else
+            _ParagraphStyle(style_elms[next_style_name])
+        )
+        expected_xml = xml(style_cxml)
+        return style, next_style, expected_xml
 
     @pytest.fixture
     def parfmt_fixture(self, ParagraphFormat_, paragraph_format_):

@@ -92,7 +92,6 @@ Feature: Get and set style properties
       | Foobar     | Sub Normal |
 
 
-  @wip
   Scenario Outline: Set next paragraph style
     Given a style having next paragraph style set to <setting>
      When I assign <new-value> to style.next_paragraph_style
