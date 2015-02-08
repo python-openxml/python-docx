@@ -464,6 +464,10 @@ class Describe_CharacterStyle(object):
 
 class Describe_ParagraphStyle(object):
 
+    def it_knows_its_next_paragraph_style(self, next_get_fixture):
+        style, expected_value = next_get_fixture
+        assert style.next_paragraph_style == expected_value
+
     def it_provides_access_to_its_paragraph_format(self, parfmt_fixture):
         style, ParagraphFormat_, paragraph_format_ = parfmt_fixture
         paragraph_format = style.paragraph_format
@@ -471,6 +475,32 @@ class Describe_ParagraphStyle(object):
         assert paragraph_format is paragraph_format_
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('H1',   'Body'),
+        ('H2',   'H2'),
+        ('Body', 'Body'),
+        ('Foo',  'Foo'),
+    ])
+    def next_get_fixture(self, request):
+        style_name, next_style_name = request.param
+        styles = element(
+            'w:styles/('
+            'w:style{w:type=paragraph,w:styleId=H1}/w:next{w:val=Body},'
+            'w:style{w:type=paragraph,w:styleId=H2}/w:next{w:val=Char},'
+            'w:style{w:type=paragraph,w:styleId=Body},'
+            'w:style{w:type=paragraph,w:styleId=Foo}/w:next{w:val=Bar},'
+            'w:style{w:type=character,w:styleId=Char})'
+        )
+        style_names = ['H1', 'H2', 'Body', 'Foo', 'Char']
+        style_elm = styles[style_names.index(style_name)]
+        next_style_elm = styles[style_names.index(next_style_name)]
+        style = _ParagraphStyle(style_elm)
+        if style_name == 'H1':
+            next_style = _ParagraphStyle(next_style_elm)
+        else:
+            next_style = style
+        return style, next_style
 
     @pytest.fixture
     def parfmt_fixture(self, ParagraphFormat_, paragraph_format_):

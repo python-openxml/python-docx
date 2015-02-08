@@ -81,7 +81,6 @@ Feature: Get and set style properties
      Then style.name is the new name
 
 
-  @wip
   Scenario Outline: Get next paragraph style
     Given a style having next paragraph style set to <setting>
      Then style.next_paragraph_style is <value>

@@ -229,6 +229,25 @@ class _ParagraphStyle(_CharacterStyle):
 
     __slots__ = ()
 
+    def __repr__(self):
+        return '_ParagraphStyle(\'%s\') id: %s' % (self.name, id(self))
+
+    @property
+    def next_paragraph_style(self):
+        """
+        |_ParagraphStyle| object representing the style to be applied
+        automatically to a new paragraph inserted after a paragraph of this
+        style. Returns self if no next paragraph style is defined. Assigning
+        |None| or *self* removes the setting such that new paragraphs are
+        created using this same style.
+        """
+        next_style_elm = self._element.next_style
+        if next_style_elm is None:
+            return self
+        if next_style_elm.type != WD_STYLE_TYPE.PARAGRAPH:
+            return self
+        return StyleFactory(next_style_elm)
+
     @property
     def paragraph_format(self):
         """
