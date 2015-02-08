@@ -10,4 +10,3 @@ Text
    underline
    run-content
    breaks
-   char-style

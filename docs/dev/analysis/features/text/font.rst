@@ -221,7 +221,6 @@ Specimen XML
     </w:r>
 
 
-
 Schema excerpt
 --------------
 
