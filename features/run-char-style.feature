@@ -4,26 +4,28 @@ Feature: Each run has a read/write style
   I need the ability to get and set the character style of a run
 
 
+  @wip
   Scenario Outline: Get the character style of a run
-    Given a run having style <char style>
-     Then the style of the run is <char style>
+    Given a run having <style> style
+     Then run.style is styles['<value>']
 
     Examples: Character styles
-      | char style |
-      | None       |
-      | Emphasis   |
-      | Strong     |
+      | style       | value                  |
+      | no explicit | Default Paragraph Font |
+      | Emphasis    | Emphasis               |
+      | Strong      | Strong                 |
 
 
+  @wip
   Scenario Outline: Set the style of a run
-    Given a run having style <char style>
-     When I set the character style of the run to <new char style>
-     Then the style of the run is <new char style>
+    Given a run having <style> style
+     When I assign <value> to run.style
+     Then run.style is styles['<style-name>']
 
     Examples: Character style transitions
-      | char style | new char style |
-      | None       | None           |
-      | None       | Emphasis       |
-      | Emphasis   | None           |
-      | Emphasis   | Emphasis       |
-      | Emphasis   | Strong         |
+      | style       | value              | style-name             |
+      | no explicit | Emphasis           | Emphasis               |
+      | no explicit | styles['Emphasis'] | Emphasis               |
+      | Emphasis    | Strong             | Strong                 |
+      | Emphasis    | styles['Strong']   | Strong                 |
+      | Strong      | None               | Default Paragraph Font |

@@ -173,12 +173,14 @@ def given_a_run_having_underline_type(context, underline_type):
     context.run = document.paragraphs[0].runs[run_idx]
 
 
-@given('a run having style {char_style}')
-def given_a_run_having_style_char_style(context, char_style):
+@given('a run having {style} style')
+def given_a_run_having_style(context, style):
     run_idx = {
-        'None': 0, 'Emphasis': 1, 'Strong': 2
-    }[char_style]
-    document = Document(test_docx('run-char-style'))
+        'no explicit': 0,
+        'Emphasis':    1,
+        'Strong':      2,
+    }[style]
+    context.document = document = Document(test_docx('run-char-style'))
     context.run = document.paragraphs[0].runs[run_idx]
 
 
@@ -361,17 +363,21 @@ def when_assign_true_to_bool_run_prop(context, value_str, bool_prop_name):
     setattr(run, bool_prop_name, value)
 
 
+@when('I assign {value} to run.style')
+def when_I_assign_value_to_run_style(context, value):
+    if value == 'None':
+        new_value = None
+    elif value.startswith('styles['):
+        new_value = context.document.styles[value.split('\'')[1]]
+    else:
+        new_value = context.document.styles[value]
+
+    context.run.style = new_value
+
+
 @when('I clear the run')
 def when_I_clear_the_run(context):
     context.run.clear()
-
-
-@when('I set the character style of the run to {char_style}')
-def when_I_set_the_character_style_of_the_run(context, char_style):
-    style_value = {
-        'None': None, 'Emphasis': 'Emphasis', 'Strong': 'Strong'
-    }[char_style]
-    context.run.style = style_value
 
 
 @when('I set the run underline to {underline_value}')
@@ -521,6 +527,13 @@ def then_run_font_is_the_Font_object_for_the_run(context):
     assert font.element is run.element
 
 
+@then('run.style is styles[\'{style_name}\']')
+def then_run_style_is_style(context, style_name):
+    expected_value = context.document.styles[style_name]
+    run = context.run
+    assert run.style == expected_value, 'got %s' % run.style
+
+
 @then('the last item in the run is a break')
 def then_last_item_in_run_is_a_break(context):
     run = context.run
@@ -589,14 +602,6 @@ def then_the_run_underline_property_value_is(context, underline_value):
         'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE
     }[underline_value]
     assert context.run.underline == expected_value
-
-
-@then('the style of the run is {char_style}')
-def then_the_style_of_the_run_is_char_style(context, char_style):
-    expected_value = {
-        'None': None, 'Emphasis': 'Emphasis', 'Strong': 'Strong'
-    }[char_style]
-    assert context.run.style == expected_value
 
 
 @then('the tab appears at the end of the run')
