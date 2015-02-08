@@ -56,7 +56,7 @@ class DescribeLatentStyle(object):
         return latent_style, latent_styles, expected_xml
 
     @pytest.fixture(params=[
-        ('w:lsdException{w:name=Foobar}', 'Foobar'),
+        ('w:lsdException{w:name=heading 1}', 'Heading 1'),
     ])
     def name_get_fixture(self, request):
         lsdException_cxml, expected_value = request.param
@@ -194,8 +194,8 @@ class DescribeLatentStyles(object):
     @pytest.fixture
     def add_fixture(self):
         latent_styles = LatentStyles(element('w:latentStyles'))
-        name = 'Foobar'
-        expected_xml = xml('w:latentStyles/w:lsdException{w:name=Foobar}')
+        name = 'Heading 1'
+        expected_xml = xml('w:latentStyles/w:lsdException{w:name=heading 1}')
         return latent_styles, name, expected_xml
 
     @pytest.fixture(params=[
@@ -261,6 +261,7 @@ class DescribeLatentStyles(object):
         ('w:lsdException{w:name=Ab},w:lsdException,w:lsdException', 'Ab', 0),
         ('w:lsdException,w:lsdException{w:name=Cd},w:lsdException', 'Cd', 1),
         ('w:lsdException,w:lsdException,w:lsdException{w:name=Ef}', 'Ef', 2),
+        ('w:lsdException{w:name=heading 1}', 'Heading 1', 0),
     ])
     def getitem_fixture(self, request):
         cxml, name, idx = request.param

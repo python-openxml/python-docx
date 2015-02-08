@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from . import BabelFish
 from ..shared import ElementProxy
 
 
@@ -24,7 +25,8 @@ class LatentStyles(ElementProxy):
         """
         Enables dictionary-style access to a latent style by name.
         """
-        lsdException = self._element.get_by_name(key)
+        style_name = BabelFish.ui2internal(key)
+        lsdException = self._element.get_by_name(style_name)
         if lsdException is None:
             raise KeyError("no latent style with name '%s'" % key)
         return _LatentStyle(lsdException)
@@ -42,7 +44,7 @@ class LatentStyles(ElementProxy):
         having *name*.
         """
         lsdException = self._element.add_lsdException()
-        lsdException.name = name
+        lsdException.name = BabelFish.ui2internal(name)
         return _LatentStyle(lsdException)
 
     @property
@@ -179,7 +181,7 @@ class _LatentStyle(ElementProxy):
         """
         The name of the built-in style this exception applies to.
         """
-        return self._element.name
+        return BabelFish.internal2ui(self._element.name)
 
     @property
     def priority(self):
