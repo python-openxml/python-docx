@@ -6,6 +6,7 @@ Run-related proxy objects for python-docx, Run in particular.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
 from ..shared import ElementProxy, Parented
 
@@ -133,13 +134,14 @@ class Run(Parented):
     @property
     def style(self):
         """
-        Read/write. The string style ID of the character style applied to
-        this run, or |None| if it has no directly-applied character style.
-        Setting this property to |None| causes any directly-applied character
-        style to be removed such that the run inherits character formatting
-        from its containing paragraph.
+        Read/write. A |_CharacterStyle| object representing the character
+        style applied to this run. The default character style for the
+        document (often `Default Character Font`) is returned if the run has
+        no directly-applied character style. Setting this property to |None|
+        removes any directly-applied character style.
         """
-        return self._r.style
+        style_id = self._r.style
+        return self.part.get_style(style_id, WD_STYLE_TYPE.CHARACTER)
 
     @style.setter
     def style(self, char_style):

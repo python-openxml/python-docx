@@ -8,8 +8,9 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
-from docx.parts.document import InlineShapes
+from docx.parts.document import DocumentPart, InlineShapes
 from docx.shape import InlineShape
 from docx.shared import Pt
 from docx.text.paragraph import Paragraph
@@ -18,7 +19,7 @@ from docx.text.run import Font, Run
 import pytest
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import class_mock, instance_mock
+from ..unitutil.mock import class_mock, instance_mock, property_mock
 
 
 class DescribeRun(object):
@@ -33,8 +34,12 @@ class DescribeRun(object):
         assert run._r.xml == expected_xml
 
     def it_knows_its_character_style(self, style_get_fixture):
-        run, expected_style = style_get_fixture
-        assert run.style == expected_style
+        run, style_id_, style_ = style_get_fixture
+        style = run.style
+        run.part.get_style.assert_called_once_with(
+            style_id_, WD_STYLE_TYPE.CHARACTER
+        )
+        assert style is style_
 
     def it_can_change_its_character_style(self, style_set_fixture):
         run, style, expected_xml = style_set_fixture
@@ -220,14 +225,13 @@ class DescribeRun(object):
         run = Run(element('w:r'), None)
         return run, Font_, font_
 
-    @pytest.fixture(params=[
-        ('w:r',                              None),
-        ('w:r/w:rPr/w:rStyle{w:val=Foobar}', 'Foobar'),
-    ])
-    def style_get_fixture(self, request):
-        r_cxml, expected_style = request.param
+    @pytest.fixture
+    def style_get_fixture(self, part_prop_):
+        style_id = 'Barfoo'
+        r_cxml = 'w:r/w:rPr/w:rStyle{w:val=%s}' % style_id
         run = Run(element(r_cxml), None)
-        return run, expected_style
+        style_ = part_prop_.return_value.get_style.return_value
+        return run, style_id, style_
 
     @pytest.fixture(params=[
         ('w:r',                            None,
@@ -314,6 +318,10 @@ class DescribeRun(object):
     # fixture components ---------------------------------------------
 
     @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
     def Font_(self, request, font_):
         return class_mock(request, 'docx.text.run.Font', return_value=font_)
 
@@ -330,6 +338,12 @@ class DescribeRun(object):
     @pytest.fixture
     def paragraph_(self, request):
         return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def part_prop_(self, request, document_part_):
+        return property_mock(
+            request, Run, 'part', return_value=document_part_
+        )
 
     @pytest.fixture
     def picture_(self, request):
