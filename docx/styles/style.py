@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from . import BabelFish
 from ..enum.style import WD_STYLE_TYPE
 from ..shared import ElementProxy
 from ..text.paragraph import ParagraphFormat
@@ -94,9 +95,9 @@ class BaseStyle(ElementProxy):
         The UI name of this style.
         """
         name = self._element.name_val
-        if name is not None:
-            return self._translate_special_case_names(name)
-        return name
+        if name is None:
+            return None
+        return BabelFish.internal2ui(name)
 
     @name.setter
     def name(self, value):
@@ -165,26 +166,6 @@ class BaseStyle(ElementProxy):
     @unhide_when_used.setter
     def unhide_when_used(self, value):
         self._element.unhideWhenUsed_val = value
-
-    @staticmethod
-    def _translate_special_case_names(name):
-        """
-        Translate special-case style names to their English UI counterparts.
-        Some style names are stored differently than they appear in the UI,
-        with a leading lowercase letter, perhaps for legacy reasons.
-        """
-        return {
-            'caption':   'Caption',
-            'heading 1': 'Heading 1',
-            'heading 2': 'Heading 2',
-            'heading 3': 'Heading 3',
-            'heading 4': 'Heading 4',
-            'heading 5': 'Heading 5',
-            'heading 6': 'Heading 6',
-            'heading 7': 'Heading 7',
-            'heading 8': 'Heading 8',
-            'heading 9': 'Heading 9',
-        }.get(name, name)
 
 
 class _CharacterStyle(BaseStyle):
