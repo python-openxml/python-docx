@@ -15,7 +15,6 @@ Feature: Each run has a read/write style
       | Strong      | Strong                 |
 
 
-  @wip
   Scenario Outline: Set the style of a run
     Given a run having <style> style
      When I assign <value> to run.style

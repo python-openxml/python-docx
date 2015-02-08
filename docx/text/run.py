@@ -144,8 +144,11 @@ class Run(Parented):
         return self.part.get_style(style_id, WD_STYLE_TYPE.CHARACTER)
 
     @style.setter
-    def style(self, char_style):
-        self._r.style = char_style
+    def style(self, style_or_name):
+        style_id = self.part.get_style_id(
+            style_or_name, WD_STYLE_TYPE.CHARACTER
+        )
+        self._r.style = style_id
 
     @property
     def text(self):

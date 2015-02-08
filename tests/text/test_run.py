@@ -42,8 +42,11 @@ class DescribeRun(object):
         assert style is style_
 
     def it_can_change_its_character_style(self, style_set_fixture):
-        run, style, expected_xml = style_set_fixture
-        run.style = style
+        run, value, expected_xml = style_set_fixture
+        run.style = value
+        run.part.get_style_id.assert_called_once_with(
+            value, WD_STYLE_TYPE.CHARACTER
+        )
         assert run._r.xml == expected_xml
 
     def it_knows_its_underline_type(self, underline_get_fixture):
@@ -234,20 +237,23 @@ class DescribeRun(object):
         return run, style_id, style_
 
     @pytest.fixture(params=[
-        ('w:r',                            None,
+        ('w:r',                                'Foo Font', 'FooFont',
+         'w:r/w:rPr/w:rStyle{w:val=FooFont}'),
+        ('w:r/w:rPr',                          'Foo Font', 'FooFont',
+         'w:r/w:rPr/w:rStyle{w:val=FooFont}'),
+        ('w:r/w:rPr/w:rStyle{w:val=FooFont}',  'Bar Font', 'BarFont',
+         'w:r/w:rPr/w:rStyle{w:val=BarFont}'),
+        ('w:r/w:rPr/w:rStyle{w:val=FooFont}',  None,       None,
          'w:r/w:rPr'),
-        ('w:r',                            'Foo',
-         'w:r/w:rPr/w:rStyle{w:val=Foo}'),
-        ('w:r/w:rPr/w:rStyle{w:val=Foo}',  None,
+        ('w:r',                                None,       None,
          'w:r/w:rPr'),
-        ('w:r/w:rPr/w:rStyle{w:val=Foo}',  'Bar',
-         'w:r/w:rPr/w:rStyle{w:val=Bar}'),
     ])
-    def style_set_fixture(self, request):
-        initial_r_cxml, new_style, expected_cxml = request.param
-        run = Run(element(initial_r_cxml), None)
+    def style_set_fixture(self, request, part_prop_):
+        r_cxml, value, style_id, expected_cxml = request.param
+        run = Run(element(r_cxml), None)
+        part_prop_.return_value.get_style_id.return_value = style_id
         expected_xml = xml(expected_cxml)
-        return run, new_style, expected_xml
+        return run, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:r', ''),

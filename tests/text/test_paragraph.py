@@ -78,11 +78,13 @@ class DescribeParagraph(object):
         assert runs == [run_, run_2_]
 
     def it_can_add_a_run_to_itself(self, add_run_fixture):
-        paragraph, text, style, expected_xml = add_run_fixture
+        paragraph, text, style, style_prop_, expected_xml = add_run_fixture
         run = paragraph.add_run(text, style)
         assert paragraph._p.xml == expected_xml
         assert isinstance(run, Run)
         assert run._r is paragraph._p.r_lst[0]
+        if style:
+            style_prop_.assert_called_once_with(style)
 
     def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
         paragraph, text, style, paragraph_, add_run_calls = (
@@ -111,20 +113,16 @@ class DescribeParagraph(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        ('w:p', None, None,
-         'w:p/w:r'),
-        ('w:p', 'foobar', None,
-         'w:p/w:r/w:t"foobar"'),
-        ('w:p', None, 'Strong',
-         'w:p/w:r/w:rPr/w:rStyle{w:val=Strong}'),
-        ('w:p', 'foobar', 'Strong',
-         'w:p/w:r/(w:rPr/w:rStyle{w:val=Strong}, w:t"foobar")'),
+        ('w:p', None,     None,     'w:p/w:r'),
+        ('w:p', 'foobar', None,     'w:p/w:r/w:t"foobar"'),
+        ('w:p', None,     'Strong', 'w:p/w:r'),
+        ('w:p', 'foobar', 'Strong', 'w:p/w:r/w:t"foobar"'),
     ])
-    def add_run_fixture(self, request):
+    def add_run_fixture(self, request, run_style_prop_):
         before_cxml, text, style, after_cxml = request.param
         paragraph = Paragraph(element(before_cxml), None)
         expected_xml = xml(after_cxml)
-        return paragraph, text, style, expected_xml
+        return paragraph, text, style, run_style_prop_, expected_xml
 
     @pytest.fixture(params=[
         ('w:p/w:pPr/w:jc{w:val=center}', WD_ALIGN_PARAGRAPH.CENTER),
@@ -300,6 +298,10 @@ class DescribeParagraph(object):
     @pytest.fixture
     def r_2_(self, request):
         return instance_mock(request, CT_R)
+
+    @pytest.fixture
+    def run_style_prop_(self, request):
+        return property_mock(request, Run, 'style')
 
     @pytest.fixture
     def runs_(self, request):
