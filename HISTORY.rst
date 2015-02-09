@@ -3,6 +3,45 @@
 Release History
 ---------------
 
+0.8.0 (2015-01-08)
+++++++++++++++++++
+
+- Add styles. Provides general capability to access and manipulate paragraph,
+  character, and table styles.
+
+- Add ParagraphFormat object, accessible on Paragraph.paragraph_format, and
+  providing the following paragraph formatting properties:
+
+  + paragraph alignment (justfification)
+  + space before and after paragraph
+  + line spacing
+  + indentation
+  + keep together, keep with next, page break before, and widow control
+
+- Add Font object, accessible on Run.font, providing character-level
+  formatting including:
+
+  + typeface (e.g. 'Arial')
+  + point size
+  + underline
+  + italic
+  + bold
+  + superscript and subscript
+
+The following issues were retired:
+
+- Add feature #56: superscript/subscript
+- Add feature #67: lookup style by UI name
+- Add feature #98: Paragraph indentation
+- Add feature #120: Document.styles
+
+**Backward incompatibilities**
+
+Paragraph.style now returns a Style object. Previously it returned the style
+name as a string. The name can now be retrieved using the Style.name
+property, for example, `paragraph.style.name`.
+
+
 0.7.6 (2014-12-14)
 ++++++++++++++++++
 
