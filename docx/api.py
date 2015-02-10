@@ -46,7 +46,7 @@ class Document(object):
         """
         if not 0 <= level <= 9:
             raise ValueError("level must be in range 0-9, got %d" % level)
-        style = 'Title' if level == 0 else 'Heading%d' % level
+        style = 'Title' if level == 0 else 'Heading %d' % level
         return self.add_paragraph(text, style)
 
     def add_page_break(self):
@@ -96,7 +96,7 @@ class Document(object):
         """
         return self._document_part.add_section(start_type)
 
-    def add_table(self, rows, cols, style='LightShading-Accent1'):
+    def add_table(self, rows, cols, style='Light Shading Accent 1'):
         """
         Add a table having row and column counts of *rows* and *cols*
         respectively and table style of *style*. If *style* is |None|, a
