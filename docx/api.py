@@ -40,8 +40,8 @@ class Document(object):
         Return a heading paragraph newly added to the end of the document,
         populated with *text* and having the heading paragraph style
         determined by *level*. If *level* is 0, the style is set to
-        ``'Title'``. If *level* is 1 (or not present), ``'Heading1'`` is used.
-        Otherwise the style is set to ``'Heading{level}'``. If *level* is
+        ``'Title'``. If *level* is 1 (or not present), ``'Heading 1'`` is used.
+        Otherwise the style is set to ``'Heading {level}'``. If *level* is
         outside the range 0-9, |ValueError| is raised.
         """
         if not 0 <= level <= 9:
@@ -100,7 +100,7 @@ class Document(object):
         """
         Add a table having row and column counts of *rows* and *cols*
         respectively and table style of *style*. If *style* is |None|, a
-        table with no style is produced.
+        table with 'Light Shading Accent 1' style is produced.
         """
         table = self._document_part.add_table(rows, cols)
         if style:

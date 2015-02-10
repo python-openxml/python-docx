@@ -165,8 +165,8 @@ class DescribeDocument(object):
 
     @pytest.fixture(params=[
         ('',         None),
-        ('',         'Heading1'),
-        ('foo\rbar', 'BodyText'),
+        ('',         'Heading 1'),
+        ('foo\rbar', 'Body Text'),
     ])
     def add_paragraph_fixture(
             self, request, document, document_part_, paragraph_):
@@ -178,7 +178,7 @@ class DescribeDocument(object):
             self, request, document, add_paragraph_, paragraph_):
         level = request.param
         text = 'Spam vs. Bacon'
-        style = 'Title' if level == 0 else 'Heading%d' % level
+        style = 'Title' if level == 0 else 'Heading %d' % level
         return document, add_paragraph_, paragraph_, text, level, style
 
     @pytest.fixture
@@ -199,7 +199,7 @@ class DescribeDocument(object):
     def add_section_fixture(self, document, start_type_, section_):
         return document, start_type_, section_
 
-    @pytest.fixture(params=[None, 'LightShading-Accent1', 'foobar'])
+    @pytest.fixture(params=[None, 'Light Shading Accent 1', 'foobar'])
     def add_table_fixture(self, request, document, document_part_, table_):
         rows, cols = 4, 2
         style = expected_style = request.param
