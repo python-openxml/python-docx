@@ -55,11 +55,9 @@ class DescribeDocument(object):
             Document._open(docx_)
 
     def it_can_add_a_heading(self, add_heading_fixture):
-        document, add_paragraph_, paragraph_, text, level, style = (
-            add_heading_fixture
-        )
+        document, text, level, style, paragraph_ = add_heading_fixture
         paragraph = document.add_heading(text, level)
-        add_paragraph_.assert_called_once_with(text, style)
+        document.add_paragraph.assert_called_once_with(text, style)
         assert paragraph is paragraph_
 
     def it_should_raise_on_heading_level_out_of_range(self, document):
@@ -69,11 +67,11 @@ class DescribeDocument(object):
             document.add_heading(level=10)
 
     def it_can_add_a_paragraph(self, add_paragraph_fixture):
-        document, document_part_, text, style, paragraph_ = (
-            add_paragraph_fixture
-        )
+        document, text, style, paragraph_ = add_paragraph_fixture
         paragraph = document.add_paragraph(text, style)
-        document_part_.add_paragraph.assert_called_once_with(text, style)
+        document._document_part.add_paragraph.assert_called_once_with(
+            text, style
+        )
         assert paragraph is paragraph_
 
     def it_can_add_a_page_break(self, add_page_break_fixture):
@@ -101,12 +99,10 @@ class DescribeDocument(object):
         assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
-        document, rows, cols, style, document_part_, expected_style, table_ = (
-            add_table_fixture
-        )
+        document, rows, cols, style, table_ = add_table_fixture
         table = document.add_table(rows, cols, style)
-        document_part_.add_table.assert_called_once_with(rows, cols)
-        assert table.style == expected_style
+        document._document_part.add_table.assert_called_once_with(rows, cols)
+        assert table.style == style
         assert table == table_
 
     def it_provides_access_to_the_document_inline_shapes(self, document):
@@ -165,21 +161,25 @@ class DescribeDocument(object):
 
     @pytest.fixture(params=[
         ('',         None),
-        ('',         'Heading1'),
-        ('foo\rbar', 'BodyText'),
+        ('',         'Heading 1'),
+        ('foo\rbar', 'Body Text'),
     ])
-    def add_paragraph_fixture(
-            self, request, document, document_part_, paragraph_):
+    def add_paragraph_fixture(self, request, document, document_part_,
+                              paragraph_):
         text, style = request.param
-        return document, document_part_, text, style, paragraph_
+        return document, text, style, paragraph_
 
-    @pytest.fixture(params=[0, 1, 2, 5, 9])
-    def add_heading_fixture(
-            self, request, document, add_paragraph_, paragraph_):
-        level = request.param
+    @pytest.fixture(params=[
+        (0, 'Title'),
+        (1, 'Heading 1'),
+        (2, 'Heading 2'),
+        (9, 'Heading 9'),
+    ])
+    def add_heading_fixture(self, request, document, add_paragraph_,
+                            paragraph_):
+        level, style = request.param
         text = 'Spam vs. Bacon'
-        style = 'Title' if level == 0 else 'Heading%d' % level
-        return document, add_paragraph_, paragraph_, text, level, style
+        return document, text, level, style, paragraph_
 
     @pytest.fixture
     def add_page_break_fixture(
@@ -199,14 +199,11 @@ class DescribeDocument(object):
     def add_section_fixture(self, document, start_type_, section_):
         return document, start_type_, section_
 
-    @pytest.fixture(params=[None, 'LightShading-Accent1', 'foobar'])
+    @pytest.fixture
     def add_table_fixture(self, request, document, document_part_, table_):
         rows, cols = 4, 2
-        style = expected_style = request.param
-        return (
-            document, rows, cols, style, document_part_, expected_style,
-            table_
-        )
+        style = 'Light Shading Accent 1'
+        return document, rows, cols, style, table_
 
     @pytest.fixture
     def core_props_fixture(self, document, core_properties_):
