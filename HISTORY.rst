@@ -3,7 +3,13 @@
 Release History
 ---------------
 
-0.8.0 (2015-01-08)
+0.8.1 (2015-02-10)
+++++++++++++++++++
+
+- Fix #140: Warning triggered on Document.add_heading/table()
+
+
+0.8.0 (2015-02-08)
 ++++++++++++++++++
 
 - Add styles. Provides general capability to access and manipulate paragraph,
