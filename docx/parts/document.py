@@ -11,6 +11,7 @@ from __future__ import (
 from collections import Sequence
 
 from ..blkcntnr import BlockItemContainer
+from ..document import Document
 from ..enum.section import WD_SECTION
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
@@ -52,6 +53,13 @@ class DocumentPart(XmlPart):
         The |_Body| instance containing the content for this document.
         """
         return _Body(self._element.body, self)
+
+    @property
+    def document(self):
+        """
+        A |Document| object providing access to the content of this document.
+        """
+        return Document(self._element, self)
 
     def get_or_add_image_part(self, image_descriptor):
         """

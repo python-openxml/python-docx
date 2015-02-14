@@ -98,7 +98,7 @@ class OpcPackage(object):
         return self.rels.add_relationship(reltype, target, rId, is_external)
 
     @property
-    def main_document(self):
+    def main_document_part(self):
         """
         Return a reference to the main document part for this package.
         Examples include a document part for a WordprocessingML package, a

@@ -4,15 +4,25 @@
 Step implementations for basic API features
 """
 
-from behave import then, when
+from behave import given, then, when
 
+import docx
+
+from docx import DocumentNew
 from docx.shared import Inches
 from docx.table import Table
 
-from helpers import test_file
+from helpers import test_docx, test_file
 
 
-# when ====================================================
+# given ====================================================
+
+@given('I have python-docx installed')
+def given_I_have_python_docx_installed(context):
+    pass
+
+
+# when =====================================================
 
 @when('I add a 2 x 2 table specifying only row and column count')
 def when_add_2x2_table_specifying_only_row_and_col_count(context):
@@ -101,7 +111,23 @@ def when_add_picture_specifying_only_image_file(context):
     context.picture = document.add_picture(test_file('monty-truth.png'))
 
 
+@when('I call docx.Document() with no arguments')
+def when_I_call_docx_Document_with_no_arguments(context):
+    context.document = DocumentNew()
+
+
+@when('I call docx.Document() with the path of a .docx file')
+def when_I_call_docx_Document_with_the_path_of_a_docx_file(context):
+    context.document = DocumentNew(test_docx('doc-default'))
+
+
 # then =====================================================
+
+@then('document is a Document object')
+def then_document_is_a_Document_object(context):
+    document = context.document
+    assert isinstance(document, docx.document.Document)
+
 
 @then('the document contains a 2 x 2 table')
 def then_document_contains_2x2_table(context):

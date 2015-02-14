@@ -18,8 +18,27 @@ from docx.parts.numbering import NumberingPart
 from docx.shared import lazyproperty
 
 
-_thisdir = os.path.split(__file__)[0]
-_default_docx_path = os.path.join(_thisdir, 'templates', 'default.docx')
+def DocumentNew(docx=None):
+    """
+    Return a |Document| object loaded from *docx*, where *docx* can be
+    either a path to a ``.docx`` file (a string) or a file-like object. If
+    *docx* is missing or ``None``, the built-in default document "template"
+    is loaded.
+    """
+    docx = _default_docx_path() if docx is None else docx
+    document_part = Package.open(docx).main_document_part
+    if document_part.content_type != CT.WML_DOCUMENT_MAIN:
+        tmpl = "file '%s' is not a Word file, content type is '%s'"
+        raise ValueError(tmpl % (docx, document_part.content_type))
+    return document_part.document
+
+
+def _default_docx_path():
+    """
+    Return the path to the built-in default .docx package.
+    """
+    _thisdir = os.path.split(__file__)[0]
+    return os.path.join(_thisdir, 'templates', 'default.docx')
 
 
 class Document(object):
@@ -30,10 +49,9 @@ class Document(object):
     is loaded.
     """
     def __init__(self, docx=None):
-        super(Document, self).__init__()
-        document_part, package = self._open(docx)
-        self._document_part = document_part
-        self._package = package
+        document = DocumentNew(docx)
+        self._document_part = document._part
+        self._package = document._part.package
 
     def add_heading(self, text='', level=1):
         """
@@ -172,19 +190,3 @@ class Document(object):
         such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self._document_part.tables
-
-    @staticmethod
-    def _open(docx):
-        """
-        Return a (document_part, package) 2-tuple loaded from *docx*, where
-        *docx* can be either a path to a ``.docx`` file (a string) or a
-        file-like object. If *docx* is ``None``, the built-in default
-        document "template" is loaded.
-        """
-        docx = _default_docx_path if docx is None else docx
-        package = Package.open(docx)
-        document_part = package.main_document
-        if document_part.content_type != CT.WML_DOCUMENT_MAIN:
-            tmpl = "file '%s' is not a Word file, content type is '%s'"
-            raise ValueError(tmpl % (docx, document_part.content_type))
-        return document_part, package

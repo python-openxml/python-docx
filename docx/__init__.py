@@ -1,6 +1,7 @@
 # encoding: utf-8
 
-from docx.api import Document  # noqa
+from docx.api import Document     # noqa
+from docx.api import DocumentNew  # noqa
 
 __version__ = '0.8.1'
 
