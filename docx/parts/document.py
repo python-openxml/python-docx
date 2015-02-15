@@ -32,6 +32,14 @@ class DocumentPart(XmlPart):
         return _Body(self._element.body, self)
 
     @property
+    def core_properties(self):
+        """
+        A |CoreProperties| object providing read/write access to the core
+        properties of this document.
+        """
+        raise NotImplementedError
+
+    @property
     def document(self):
         """
         A |Document| object providing access to the content of this document.

@@ -13,6 +13,7 @@ import pytest
 from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
+from docx.opc.coreprops import CoreProperties
 from docx.parts.document import DocumentPart
 from docx.shape import InlineShape
 from docx.table import Table
@@ -77,6 +78,11 @@ class DescribeDocument(object):
         document._body.add_table.assert_called_once_with(rows, cols)
         assert table == table_
         assert table.style == style
+
+    def it_provides_access_to_its_core_properties(self, core_props_fixture):
+        document, core_properties_ = core_props_fixture
+        core_properties = document.core_properties
+        assert core_properties is core_properties_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -163,6 +169,12 @@ class DescribeDocument(object):
         return document, body_elm, _Body_, body_
 
     @pytest.fixture
+    def core_props_fixture(self, document_part_, core_properties_):
+        document = Document(None, document_part_)
+        document_part_.core_properties = core_properties_
+        return document, core_properties_
+
+    @pytest.fixture
     def part_fixture(self, document_part_):
         document = Document(None, document_part_)
         return document, document_part_
@@ -184,6 +196,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def body_prop_(self, request, body_):
         return property_mock(request, Document, '_body', return_value=body_)
+
+    @pytest.fixture
+    def core_properties_(self, request):
+        return instance_mock(request, CoreProperties)
 
     @pytest.fixture
     def document_part_(self, request):

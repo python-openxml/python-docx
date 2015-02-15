@@ -99,6 +99,14 @@ class Document(ElementProxy):
         return table
 
     @property
+    def core_properties(self):
+        """
+        A |CoreProperties| object providing read/write access to the core
+        properties of this document.
+        """
+        return self._part.core_properties
+
+    @property
     def part(self):
         """
         The |DocumentPart| object of this document.
