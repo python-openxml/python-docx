@@ -117,6 +117,15 @@ class Document(ElementProxy):
         return self._part.inline_shapes
 
     @property
+    def paragraphs(self):
+        """
+        A list of |Paragraph| instances corresponding to the paragraphs in
+        the document, in document order. Note that paragraphs within revision
+        marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
+        """
+        return self._body.paragraphs
+
+    @property
     def part(self):
         """
         The |DocumentPart| object of this document.

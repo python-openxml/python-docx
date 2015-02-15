@@ -89,6 +89,11 @@ class DescribeDocument(object):
         inline_shapes = document.inline_shapes
         assert inline_shapes is inline_shapes_
 
+    def it_provides_access_to_its_paragraphs(self, paragraphs_fixture):
+        document, paragraphs_ = paragraphs_fixture
+        paragraphs = document.paragraphs
+        assert paragraphs is paragraphs_
+
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
         assert document.part is part_
@@ -186,6 +191,12 @@ class DescribeDocument(object):
         return document, inline_shapes_
 
     @pytest.fixture
+    def paragraphs_fixture(self, body_prop_, paragraphs_):
+        document = Document(None, None)
+        body_prop_.return_value.paragraphs = paragraphs_
+        return document, paragraphs_
+
+    @pytest.fixture
     def part_fixture(self, document_part_):
         document = Document(None, document_part_)
         return document, document_part_
@@ -223,6 +234,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def paragraph_(self, request):
         return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def paragraphs_(self, request):
+        return instance_mock(request, list)
 
     @pytest.fixture
     def picture_(self, request):
