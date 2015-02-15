@@ -10,12 +10,19 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.section import Section
 from docx.shared import Inches
 
 from helpers import test_docx
 
 
 # given ====================================================
+
+@given('a section collection containing 3 sections')
+def given_a_section_collection_containing_3_sections(context):
+    document = Document(test_docx('doc-access-sections'))
+    context.sections = document.sections
+
 
 @given('a section having known page dimension')
 def given_a_section_having_known_page_dimension(context):
@@ -103,6 +110,32 @@ def when_I_set_the_section_start_type_to_start_type(context, start_type):
 
 
 # then =====================================================
+
+@then('I can access a section by index')
+def then_I_can_access_a_section_by_index(context):
+    sections = context.sections
+    for idx in range(3):
+        section = sections[idx]
+        assert isinstance(section, Section)
+
+
+@then('I can iterate over the sections')
+def then_I_can_iterate_over_the_sections(context):
+    sections = context.sections
+    actual_count = 0
+    for section in sections:
+        actual_count += 1
+        assert isinstance(section, Section)
+    assert actual_count == 3
+
+
+@then('len(sections) is 3')
+def then_len_sections_is_3(context):
+    sections = context.sections
+    assert len(sections) == 3, (
+        'expected len(sections) of 3, got %s' % len(sections)
+    )
+
 
 @then('the reported {margin_side} margin is {inches} inches')
 def then_the_reported_margin_is_inches(context, margin_side, inches):

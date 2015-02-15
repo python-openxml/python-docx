@@ -6,9 +6,14 @@ Feature: Access document collections
 
   Scenario: Access the inline shapes collection of a document
      Given a document having inline shapes
-      Then I can access the inline shape collection of the document
+      Then document.inline_shapes is an InlineShapes object
 
 
   Scenario: Access the paragraphs in the document body as a list
      Given a document containing three paragraphs
       Then document.paragraphs is a list containing three paragraphs
+
+
+  Scenario: Access the section collection of a document
+     Given a document having sections
+      Then document.sections is a Sections object

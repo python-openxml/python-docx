@@ -11,7 +11,6 @@ from behave import given, then, when
 from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import InlineShapes, Sections
-from docx.section import Section
 from docx.shared import Inches
 from docx.table import Table
 
@@ -30,15 +29,9 @@ def given_a_document_having_inline_shapes(context):
     context.document = Document(test_docx('shp-inline-shape-access'))
 
 
-@given('a document having three sections')
-def given_a_document_having_three_sections(context):
+@given('a document having sections')
+def given_a_document_having_sections(context):
     context.document = Document(test_docx('doc-access-sections'))
-
-
-@given('a section collection')
-def given_a_section_collection(context):
-    document = Document(test_docx('doc-access-sections'))
-    context.sections = document.sections
 
 
 @given('a single-section document having portrait layout')
@@ -151,44 +144,26 @@ def when_I_change_the_new_section_layout_to_landscape(context):
 
 # then ====================================================
 
+@then('document.inline_shapes is an InlineShapes object')
+def then_document_inline_shapes_is_an_InlineShapes_object(context):
+    document = context.document
+    inline_shapes = document.inline_shapes
+    assert isinstance(inline_shapes, InlineShapes)
+
+
+@then('document.sections is a Sections object')
+def then_document_sections_is_a_Sections_object(context):
+    sections = context.document.sections
+    msg = 'document.sections not instance of Sections'
+    assert isinstance(sections, Sections), msg
+
+
 @then('document.paragraphs is a list containing three paragraphs')
 def then_document_paragraphs_is_a_list_containing_three_paragraphs(context):
     document = context.document
     paragraphs = document.paragraphs
     assert isinstance(paragraphs, list)
     assert len(paragraphs) == 3
-
-
-@then('I can access a section by index')
-def then_I_can_access_a_section_by_index(context):
-    sections = context.sections
-    for idx in range(3):
-        section = sections[idx]
-        assert isinstance(section, Section)
-
-
-@then('I can access the inline shape collection of the document')
-def then_can_access_inline_shape_collection_of_document(context):
-    document = context.document
-    inline_shapes = document.inline_shapes
-    assert isinstance(inline_shapes, InlineShapes)
-
-
-@then('I can access the section collection of the document')
-def then_I_can_access_the_section_collection_of_the_document(context):
-    sections = context.document.sections
-    msg = 'document.sections not instance of Sections'
-    assert isinstance(sections, Sections), msg
-
-
-@then('I can iterate over the sections')
-def then_I_can_iterate_over_the_sections(context):
-    sections = context.sections
-    actual_count = 0
-    for section in sections:
-        actual_count += 1
-        assert isinstance(section, Section)
-    assert actual_count == 3
 
 
 @then('the document contains a 2 x 2 table')
@@ -230,14 +205,6 @@ def then_last_p_contains_heading_text(context):
     text = context.heading_text
     paragraph = document.paragraphs[-1]
     assert paragraph.text == text
-
-
-@then('the length of the section collection is 3')
-def then_the_length_of_the_section_collection_is_3(context):
-    sections = context.document.sections
-    assert len(sections) == 3, (
-        'expected len(sections) of 2, got %s' % len(sections)
-    )
 
 
 @then('the second section is landscape')
