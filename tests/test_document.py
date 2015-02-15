@@ -15,6 +15,7 @@ from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
 from docx.parts.document import DocumentPart, InlineShapes
+from docx.section import Sections
 from docx.shape import InlineShape
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -98,6 +99,12 @@ class DescribeDocument(object):
         document, paragraphs_ = paragraphs_fixture
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
+
+    def it_provides_access_to_its_sections(self, sections_fixture):
+        document, Sections_, sections_ = sections_fixture
+        sections = document.sections
+        Sections_.assert_called_once_with(document._element)
+        assert sections is sections_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -212,6 +219,13 @@ class DescribeDocument(object):
         file_ = 'foobar.docx'
         return document, file_
 
+    @pytest.fixture
+    def sections_fixture(self, Sections_, sections_):
+        document_elm = element('w:document')
+        document = Document(document_elm, None)
+        Sections_.return_value = sections_
+        return document, Sections_, sections_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -261,6 +275,14 @@ class DescribeDocument(object):
     @pytest.fixture
     def Section_(self, request):
         return class_mock(request, 'docx.document.Section')
+
+    @pytest.fixture
+    def Sections_(self, request):
+        return class_mock(request, 'docx.document.Sections')
+
+    @pytest.fixture
+    def sections_(self, request):
+        return instance_mock(request, Sections)
 
     @pytest.fixture
     def table_(self, request):

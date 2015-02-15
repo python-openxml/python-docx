@@ -11,7 +11,7 @@ from __future__ import (
 from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
-from .section import Section
+from .section import Section, Sections
 from .shared import ElementProxy
 
 
@@ -138,6 +138,14 @@ class Document(ElementProxy):
         a filesystem location (a string) or a file-like object.
         """
         self._part.save(path_or_stream)
+
+    @property
+    def sections(self):
+        """
+        A |Sections| object providing access to each section in this
+        document.
+        """
+        return Sections(self._element)
 
     @property
     def _body(self):
