@@ -36,12 +36,6 @@ def when_add_2x2_table_specifying_style_name(context, style_name):
     document.add_table(rows=2, cols=2, style=style_name)
 
 
-@when('I add a page break to the document')
-def when_add_page_break_to_document(context):
-    document = context.document
-    document.add_page_break()
-
-
 @when('I add a picture specifying 1.75" width and 2.5" height')
 def when_add_picture_specifying_width_and_height(context):
     document = context.document
@@ -99,15 +93,6 @@ def then_document_contains_2x2_table(context):
     assert len(table.rows) == 2
     assert len(table.columns) == 2
     context.table_ = table
-
-
-@then('the last paragraph contains only a page break')
-def then_last_paragraph_contains_only_a_page_break(context):
-    document = context.document
-    p = document.paragraphs[-1]
-    assert len(p.runs) == 1
-    assert len(p.runs[0]._r) == 1
-    assert p.runs[0]._r[0].type == 'page'
 
 
 @then('the last paragraph contains the text I specified')

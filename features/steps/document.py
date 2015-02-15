@@ -55,6 +55,12 @@ def when_add_heading_specifying_only_its_text(context):
     document.add_heading(text)
 
 
+@when('I add a page break to the document')
+def when_add_page_break_to_document(context):
+    document = context.document
+    document.add_page_break()
+
+
 @when('I add a paragraph specifying its style as a {kind}')
 def when_I_add_a_paragraph_specifying_its_style_as_a(context, kind):
     document = context.document
@@ -132,6 +138,15 @@ def then_the_first_section_is_portrait(context):
     assert first_section.orientation == WD_ORIENT.PORTRAIT
     assert first_section.page_width == expected_width
     assert first_section.page_height == expected_height
+
+
+@then('the last paragraph contains only a page break')
+def then_last_paragraph_contains_only_a_page_break(context):
+    document = context.document
+    paragraph = document.paragraphs[-1]
+    assert len(paragraph.runs) == 1
+    assert len(paragraph.runs[0]._r) == 1
+    assert paragraph.runs[0]._r[0].type == 'page'
 
 
 @then('the last paragraph contains the heading text')
