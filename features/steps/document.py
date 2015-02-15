@@ -151,6 +151,14 @@ def when_I_change_the_new_section_layout_to_landscape(context):
 
 # then ====================================================
 
+@then('document.paragraphs is a list containing three paragraphs')
+def then_document_paragraphs_is_a_list_containing_three_paragraphs(context):
+    document = context.document
+    paragraphs = document.paragraphs
+    assert isinstance(paragraphs, list)
+    assert len(paragraphs) == 3
+
+
 @then('I can access a section by index')
 def then_I_can_access_a_section_by_index(context):
     sections = context.sections
