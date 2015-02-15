@@ -14,7 +14,6 @@ import docx
 
 from docx.api import Document, DocumentNew
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
-from docx.opc.coreprops import CoreProperties
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
@@ -112,11 +111,6 @@ class DescribeDocumentOld(object):
         document.save(file_)
         package_.save.assert_called_once_with(file_)
 
-    def it_provides_access_to_its_core_properties(self, core_props_fixture):
-        document, core_properties_ = core_props_fixture
-        core_properties = document.core_properties
-        assert core_properties is core_properties_
-
     def it_provides_access_to_its_styles(self, styles_fixture):
         document, styles_ = styles_fixture
         styles = document.styles
@@ -141,11 +135,6 @@ class DescribeDocumentOld(object):
         assert numbering_part is numbering_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def core_props_fixture(self, document, core_properties_):
-        document._package.core_properties = core_properties_
-        return document, core_properties_
 
     @pytest.fixture
     def init_fixture(self, docx_, open_):
@@ -176,10 +165,6 @@ class DescribeDocumentOld(object):
         return document, tables_
 
     # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def core_properties_(self, request):
-        return instance_mock(request, CoreProperties)
 
     @pytest.fixture
     def Document_inline_shapes_(self, request, inline_shapes_):

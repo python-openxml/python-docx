@@ -72,11 +72,7 @@ class Document(object):
 
     @property
     def core_properties(self):
-        """
-        A |CoreProperties| object providing read/write access to the core
-        properties of this document.
-        """
-        return self._package.core_properties
+        return self._document.core_properties
 
     @property
     def inline_shapes(self):
