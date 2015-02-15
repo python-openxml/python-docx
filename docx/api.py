@@ -85,11 +85,7 @@ class Document(object):
         return self._document.part
 
     def save(self, path_or_stream):
-        """
-        Save this document to *path_or_stream*, which can be either a path to
-        a filesystem location (a string) or a file-like object.
-        """
-        self._package.save(path_or_stream)
+        self._document.save(path_or_stream)
 
     @property
     def sections(self):

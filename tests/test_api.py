@@ -16,9 +16,7 @@ from docx.api import Document, DocumentNew
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
-from docx.section import Section
 from docx.styles.styles import Styles
-from docx.text.run import Run
 
 from .unitutil.mock import (
     function_mock, instance_mock, class_mock, property_mock
@@ -95,27 +93,12 @@ class DescribeDocumentOld(object):
         tables = document.tables
         assert tables is tables_
 
-    def it_can_save_the_package(self, save_fixture):
-        document, package_, file_ = save_fixture
-        document.save(file_)
-        package_.save.assert_called_once_with(file_)
-
     def it_provides_access_to_its_styles(self, styles_fixture):
         document, styles_ = styles_fixture
         styles = document.styles
         assert styles is styles_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def init_fixture(self, docx_, open_):
-        return docx_, open_
-
-    @pytest.fixture
-    def save_fixture(self, request, open_, package_):
-        file_ = instance_mock(request, str)
-        document = Document()
-        return document, package_, file_
 
     @pytest.fixture
     def styles_fixture(self, document, styles_):
@@ -164,24 +147,10 @@ class DescribeDocumentOld(object):
         )
 
     @pytest.fixture
-    def Package_(self, request, package_):
-        Package_ = class_mock(request, 'docx.api.Package')
-        Package_.open.return_value = package_
-        return Package_
-
-    @pytest.fixture
     def package_(self, request, document_part_):
         package_ = instance_mock(request, Package)
         package_.main_document_part = document_part_
         return package_
-
-    @pytest.fixture
-    def run_(self, request):
-        return instance_mock(request, Run)
-
-    @pytest.fixture
-    def section_(self, request):
-        return instance_mock(request, Section)
 
     @pytest.fixture
     def styles_(self, request):
