@@ -9,8 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
-from docx.oxml.parts.document import CT_Body, CT_Document
-from docx.oxml.section import CT_SectPr
+from docx.oxml.parts.document import CT_Body
 from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
 from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
@@ -68,15 +67,6 @@ class DescribeDocumentPart(object):
         inline_shapes = document.inline_shapes
         InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
-
-    def it_can_add_a_section(self, add_section_fixture):
-        (document_part, start_type_, body_elm_, new_sectPr_, Section_,
-         section_) = add_section_fixture
-        section = document_part.add_section(start_type_)
-        body_elm_.add_section_break.assert_called_once_with()
-        assert new_sectPr_.start_type == start_type_
-        Section_.assert_called_once_with(new_sectPr_)
-        assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
         document_part, rows, cols, body_, table_ = add_table_fixture
@@ -137,16 +127,6 @@ class DescribeDocumentPart(object):
         assert styles_part is styles_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_section_fixture(
-            self, document_elm_, start_type_, body_elm_, sectPr_, Section_,
-            section_):
-        document_part = DocumentPart(None, None, document_elm_, None)
-        return (
-            document_part, start_type_, body_elm_, sectPr_, Section_,
-            section_
-        )
 
     @pytest.fixture
     def add_table_fixture(self, document_part_body_, body_, table_):
@@ -256,16 +236,6 @@ class DescribeDocumentPart(object):
         return body_
 
     @pytest.fixture
-    def body_elm_(self, request, sectPr_):
-        body_elm_ = instance_mock(request, CT_Body)
-        body_elm_.add_section_break.return_value = sectPr_
-        return body_elm_
-
-    @pytest.fixture
-    def document_elm_(self, request, body_elm_):
-        return instance_mock(request, CT_Document, body=body_elm_)
-
-    @pytest.fixture
     def document_part_body_(self, request, body_):
         return property_mock(
             request, DocumentPart, 'body', return_value=body_
@@ -327,26 +297,8 @@ class DescribeDocumentPart(object):
         return instance_mock(request, str)
 
     @pytest.fixture
-    def Section_(self, request, section_):
-        return class_mock(
-            request, 'docx.parts.document.Section', return_value=section_
-        )
-
-    @pytest.fixture
-    def section_(self, request):
-        return instance_mock(request, Section)
-
-    @pytest.fixture
     def Sections_(self, request):
         return class_mock(request, 'docx.parts.document.Sections')
-
-    @pytest.fixture
-    def sectPr_(self, request):
-        return instance_mock(request, CT_SectPr)
-
-    @pytest.fixture
-    def start_type_(self, request):
-        return instance_mock(request, int)
 
     @pytest.fixture
     def style_(self, request):

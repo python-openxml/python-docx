@@ -12,7 +12,6 @@ from collections import Sequence
 
 from ..blkcntnr import BlockItemContainer
 from ..document import Document
-from ..enum.section import WD_SECTION
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
 from ..section import Section
@@ -25,15 +24,6 @@ class DocumentPart(XmlPart):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
-    def add_section(self, start_type=WD_SECTION.NEW_PAGE):
-        """
-        Return a |Section| object representing a new section added at the end
-        of the document.
-        """
-        new_sectPr = self._element.body.add_section_break()
-        new_sectPr.start_type = start_type
-        return Section(new_sectPr)
-
     def add_table(self, rows, cols):
         """
         Return a table having *rows* rows and *cols* columns, newly appended

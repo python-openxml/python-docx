@@ -89,14 +89,6 @@ class DescribeDocument(object):
 
 class DescribeDocumentOld(object):
 
-    def it_can_add_a_section(self, add_section_fixture):
-        document, start_type_, section_ = add_section_fixture
-        section = document.add_section(start_type_)
-        document._document_part.add_section.assert_called_once_with(
-            start_type_
-        )
-        assert section is section_
-
     def it_can_add_a_table(self, add_table_fixture):
         document, rows, cols, style, table_ = add_table_fixture
         table = document.add_table(rows, cols, style)
@@ -159,10 +151,6 @@ class DescribeDocumentOld(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def add_section_fixture(self, document, start_type_, section_):
-        return document, start_type_, section_
-
-    @pytest.fixture
     def add_table_fixture(self, request, document, document_part_, table_):
         rows, cols = 4, 2
         style = 'Light Shading Accent 1'
@@ -222,11 +210,10 @@ class DescribeDocumentOld(object):
         return instance_mock(request, docx.document.Document)
 
     @pytest.fixture
-    def document_part_(self, request, paragraphs_, section_, table_, tables_):
+    def document_part_(self, request, paragraphs_, table_, tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
-        document_part_.add_section.return_value = section_
         document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
         document_part_.tables = tables_
@@ -284,10 +271,6 @@ class DescribeDocumentOld(object):
     @pytest.fixture
     def section_(self, request):
         return instance_mock(request, Section)
-
-    @pytest.fixture
-    def start_type_(self, request):
-        return instance_mock(request, int)
 
     @pytest.fixture
     def styles_(self, request):

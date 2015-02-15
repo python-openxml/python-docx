@@ -65,13 +65,7 @@ class Document(object):
         return self._document.add_picture(image_descriptor, width, height)
 
     def add_section(self, start_type=WD_SECTION.NEW_PAGE):
-        """
-        Return a |Section| object representing a new section added at the end
-        of the document. The optional *start_type* argument must be a member
-        of the :ref:`WdSectionStart` enumeration defaulting to
-        ``WD_SECTION.NEW_PAGE`` if not provided.
-        """
-        return self._document_part.add_section(start_type)
+        return self._document.add_section(start_type)
 
     def add_table(self, rows, cols, style='Light Shading Accent 1'):
         """
