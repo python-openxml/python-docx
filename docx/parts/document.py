@@ -24,13 +24,6 @@ class DocumentPart(XmlPart):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
-    def add_table(self, rows, cols):
-        """
-        Return a table having *rows* rows and *cols* columns, newly appended
-        to the main document story.
-        """
-        return self.body.add_table(rows, cols)
-
     @lazyproperty
     def body(self):
         """

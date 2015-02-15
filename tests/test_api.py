@@ -20,7 +20,6 @@ from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
 from docx.section import Section
 from docx.styles.styles import Styles
-from docx.table import Table
 from docx.text.run import Run
 
 from .unitutil.mock import (
@@ -89,13 +88,6 @@ class DescribeDocument(object):
 
 class DescribeDocumentOld(object):
 
-    def it_can_add_a_table(self, add_table_fixture):
-        document, rows, cols, style, table_ = add_table_fixture
-        table = document.add_table(rows, cols, style)
-        document._document_part.add_table.assert_called_once_with(rows, cols)
-        assert table.style == style
-        assert table == table_
-
     def it_provides_access_to_the_document_inline_shapes(self, document):
         body = document.inline_shapes
         assert body is document._document_part.inline_shapes
@@ -151,12 +143,6 @@ class DescribeDocumentOld(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def add_table_fixture(self, request, document, document_part_, table_):
-        rows, cols = 4, 2
-        style = 'Light Shading Accent 1'
-        return document, rows, cols, style, table_
-
-    @pytest.fixture
     def core_props_fixture(self, document, core_properties_):
         document._package.core_properties = core_properties_
         return document, core_properties_
@@ -210,11 +196,10 @@ class DescribeDocumentOld(object):
         return instance_mock(request, docx.document.Document)
 
     @pytest.fixture
-    def document_part_(self, request, paragraphs_, table_, tables_):
+    def document_part_(self, request, paragraphs_, tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
-        document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
         document_part_.tables = tables_
         return document_part_
@@ -275,10 +260,6 @@ class DescribeDocumentOld(object):
     @pytest.fixture
     def styles_(self, request):
         return instance_mock(request, Styles)
-
-    @pytest.fixture
-    def table_(self, request):
-        return instance_mock(request, Table, style=None)
 
     @pytest.fixture
     def tables_(self, request):

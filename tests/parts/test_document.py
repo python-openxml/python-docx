@@ -68,12 +68,6 @@ class DescribeDocumentPart(object):
         InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
 
-    def it_can_add_a_table(self, add_table_fixture):
-        document_part, rows, cols, body_, table_ = add_table_fixture
-        table = document_part.add_table(rows, cols)
-        body_.add_table.assert_called_once_with(rows, cols)
-        assert table is table_
-
     def it_can_add_an_image_part_to_the_document(
             self, get_or_add_image_fixture):
         (document, image_descriptor_, image_parts_, relate_to_, image_part_,
@@ -127,12 +121,6 @@ class DescribeDocumentPart(object):
         assert styles_part is styles_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_table_fixture(self, document_part_body_, body_, table_):
-        document_part = DocumentPart(None, None, None, None)
-        rows, cols = 2, 4
-        return document_part, rows, cols, body_, table_
 
     @pytest.fixture
     def body_fixture(self, _Body_):
@@ -229,11 +217,8 @@ class DescribeDocumentPart(object):
         return class_mock(request, 'docx.parts.document._Body')
 
     @pytest.fixture
-    def body_(self, request, p_, table_):
-        body_ = instance_mock(request, _Body)
-        body_.add_paragraph.return_value = p_
-        body_.add_table.return_value = table_
-        return body_
+    def body_(self, request):
+        return instance_mock(request, _Body)
 
     @pytest.fixture
     def document_part_body_(self, request, body_):
@@ -325,10 +310,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def _styles_part_prop_(self, request):
         return property_mock(request, DocumentPart, '_styles_part')
-
-    @pytest.fixture
-    def table_(self, request):
-        return instance_mock(request, Table)
 
     @pytest.fixture
     def tables_(self, request):

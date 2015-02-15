@@ -68,14 +68,7 @@ class Document(object):
         return self._document.add_section(start_type)
 
     def add_table(self, rows, cols, style='Light Shading Accent 1'):
-        """
-        Add a table having row and column counts of *rows* and *cols*
-        respectively and table style of *style*. If *style* is |None|, a
-        table with no style is produced.
-        """
-        table = self._document_part.add_table(rows, cols)
-        table.style = style
-        return table
+        return self._document.add_table(rows, cols, style)
 
     @property
     def core_properties(self):
