@@ -10,24 +10,19 @@ import pytest
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
-from docx.oxml.parts.document import CT_Body
-from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
-from docx.parts.document import DocumentPart, InlineShapes
+from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
-from docx.shape import InlineShape
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 from docx.text.paragraph import Paragraph
-from docx.text.run import Run
 
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.text import a_p
-from ..unitutil.cxml import element
 from ..unitutil.mock import (
-    instance_mock, class_mock, loose_mock, method_mock, property_mock
+    instance_mock, class_mock, method_mock, property_mock
 )
 
 
@@ -300,133 +295,3 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def _styles_part_prop_(self, request):
         return property_mock(request, DocumentPart, '_styles_part')
-
-
-class DescribeInlineShapes(object):
-
-    def it_knows_how_many_inline_shapes_it_contains(
-            self, inline_shapes_fixture):
-        inline_shapes, expected_count = inline_shapes_fixture
-        assert len(inline_shapes) == expected_count
-
-    def it_can_iterate_over_its_InlineShape_instances(
-            self, inline_shapes_fixture):
-        inline_shapes, inline_shape_count = inline_shapes_fixture
-        actual_count = 0
-        for inline_shape in inline_shapes:
-            assert isinstance(inline_shape, InlineShape)
-            actual_count += 1
-        assert actual_count == inline_shape_count
-
-    def it_provides_indexed_access_to_inline_shapes(
-            self, inline_shapes_fixture):
-        inline_shapes, inline_shape_count = inline_shapes_fixture
-        for idx in range(-inline_shape_count, inline_shape_count):
-            inline_shape = inline_shapes[idx]
-            assert isinstance(inline_shape, InlineShape)
-
-    def it_raises_on_indexed_access_out_of_range(
-            self, inline_shapes_fixture):
-        inline_shapes, inline_shape_count = inline_shapes_fixture
-        with pytest.raises(IndexError):
-            too_low = -1 - inline_shape_count
-            inline_shapes[too_low]
-        with pytest.raises(IndexError):
-            too_high = inline_shape_count
-            inline_shapes[too_high]
-
-    def it_can_add_an_inline_picture_to_the_document(
-            self, add_picture_fixture):
-        # fixture ----------------------
-        (inline_shapes, image_descriptor_, document_, InlineShape_,
-         run, r_, image_part_, rId_, shape_id_, new_picture_shape_
-         ) = add_picture_fixture
-        # exercise ---------------------
-        picture_shape = inline_shapes.add_picture(image_descriptor_, run)
-        # verify -----------------------
-        document_.get_or_add_image_part.assert_called_once_with(
-            image_descriptor_
-        )
-        InlineShape_.new_picture.assert_called_once_with(
-            r_, image_part_, rId_, shape_id_
-        )
-        assert picture_shape is new_picture_shape_
-
-    def it_knows_the_part_it_belongs_to(self, inline_shapes_with_parent_):
-        inline_shapes, parent_ = inline_shapes_with_parent_
-        part = inline_shapes.part
-        assert part is parent_.part
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_picture_fixture(
-            self, request, body_, document_, image_descriptor_, InlineShape_,
-            r_, image_part_, rId_, shape_id_, new_picture_shape_):
-        inline_shapes = InlineShapes(body_, None)
-        property_mock(request, InlineShapes, 'part', return_value=document_)
-        run = Run(r_, None)
-        return (
-            inline_shapes, image_descriptor_, document_, InlineShape_, run,
-            r_, image_part_, rId_, shape_id_, new_picture_shape_
-        )
-
-    @pytest.fixture
-    def inline_shapes_fixture(self):
-        body = element(
-            'w:body/w:p/(w:r/w:drawing/wp:inline, w:r/w:drawing/wp:inline)'
-        )
-        inline_shapes = InlineShapes(body, None)
-        expected_count = 2
-        return inline_shapes, expected_count
-
-    # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def body_(self, request, r_):
-        body_ = instance_mock(request, CT_Body)
-        body_.add_p.return_value.add_r.return_value = r_
-        return body_
-
-    @pytest.fixture
-    def document_(self, request, rId_, image_part_, shape_id_):
-        document_ = instance_mock(request, DocumentPart, name='document_')
-        document_.get_or_add_image_part.return_value = image_part_, rId_
-        document_.next_id = shape_id_
-        return document_
-
-    @pytest.fixture
-    def image_part_(self, request):
-        return instance_mock(request, ImagePart)
-
-    @pytest.fixture
-    def image_descriptor_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def InlineShape_(self, request, new_picture_shape_):
-        InlineShape_ = class_mock(request, 'docx.parts.document.InlineShape')
-        InlineShape_.new_picture.return_value = new_picture_shape_
-        return InlineShape_
-
-    @pytest.fixture
-    def inline_shapes_with_parent_(self, request):
-        parent_ = loose_mock(request, name='parent_')
-        inline_shapes = InlineShapes(None, parent_)
-        return inline_shapes, parent_
-
-    @pytest.fixture
-    def new_picture_shape_(self, request):
-        return instance_mock(request, InlineShape)
-
-    @pytest.fixture
-    def r_(self, request):
-        return instance_mock(request, CT_R)
-
-    @pytest.fixture
-    def rId_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def shape_id_(self, request):
-        return instance_mock(request, int)

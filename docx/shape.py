@@ -12,6 +12,53 @@ from __future__ import (
 from .enum.shape import WD_INLINE_SHAPE
 from .oxml.shape import CT_Inline, CT_Picture
 from .oxml.ns import nsmap
+from .shared import Parented
+
+
+class InlineShapes(Parented):
+    """
+    Sequence of |InlineShape| instances, supporting len(), iteration, and
+    indexed access.
+    """
+    def __init__(self, body_elm, parent):
+        super(InlineShapes, self).__init__(parent)
+        self._body = body_elm
+
+    def __getitem__(self, idx):
+        """
+        Provide indexed access, e.g. 'inline_shapes[idx]'
+        """
+        try:
+            inline = self._inline_lst[idx]
+        except IndexError:
+            msg = "inline shape index [%d] out of range" % idx
+            raise IndexError(msg)
+        return InlineShape(inline)
+
+    def __iter__(self):
+        return (InlineShape(inline) for inline in self._inline_lst)
+
+    def __len__(self):
+        return len(self._inline_lst)
+
+    def add_picture(self, image_descriptor, run):
+        """
+        Return an |InlineShape| instance containing the picture identified by
+        *image_descriptor* and added to the end of *run*. The picture shape
+        has the native size of the image. *image_descriptor* can be a path (a
+        string) or a file-like object containing a binary image.
+        """
+        image_part, rId = self.part.get_or_add_image_part(image_descriptor)
+        shape_id = self.part.next_id
+        r = run._r
+        picture = InlineShape.new_picture(r, image_part, rId, shape_id)
+        return picture
+
+    @property
+    def _inline_lst(self):
+        body = self._body
+        xpath = '//w:p/w:r/w:drawing/wp:inline'
+        return body.xpath(xpath)
 
 
 class InlineShape(object):

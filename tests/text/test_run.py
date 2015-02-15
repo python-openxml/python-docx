@@ -10,8 +10,8 @@ from __future__ import (
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
-from docx.parts.document import DocumentPart, InlineShapes
-from docx.shape import InlineShape
+from docx.parts.document import DocumentPart
+from docx.shape import InlineShape, InlineShapes
 from docx.shared import Pt
 from docx.text.paragraph import Paragraph
 from docx.text.run import Font, Run

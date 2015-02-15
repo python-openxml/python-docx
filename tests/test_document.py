@@ -14,9 +14,9 @@ from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
-from docx.parts.document import DocumentPart, InlineShapes
+from docx.parts.document import DocumentPart
 from docx.section import Sections
-from docx.shape import InlineShape
+from docx.shape import InlineShape, InlineShapes
 from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
