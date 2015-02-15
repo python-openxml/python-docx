@@ -113,15 +113,6 @@ class DocumentPart(XmlPart):
             self.relate_to(numbering_part, RT.NUMBERING)
             return numbering_part
 
-    @property
-    def paragraphs(self):
-        """
-        A list of |Paragraph| instances corresponding to the paragraphs in
-        the document, in document order. Note that paragraphs within revision
-        marks such as inserted or deleted do not appear in this list.
-        """
-        return self.body.paragraphs
-
     @lazyproperty
     def sections(self):
         """

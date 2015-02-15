@@ -78,12 +78,7 @@ class Document(object):
 
     @property
     def paragraphs(self):
-        """
-        A list of |Paragraph| instances corresponding to the paragraphs in
-        the document, in document order. Note that paragraphs within revision
-        marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
-        """
-        return self._document_part.paragraphs
+        return self._document.paragraphs
 
     @property
     def part(self):

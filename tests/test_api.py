@@ -86,12 +86,6 @@ class DescribeDocument(object):
 
 class DescribeDocumentOld(object):
 
-    def it_provides_access_to_the_document_paragraphs(
-            self, paragraphs_fixture):
-        document, paragraphs_ = paragraphs_fixture
-        paragraphs = document.paragraphs
-        assert paragraphs is paragraphs_
-
     def it_provides_access_to_the_document_sections(self, document):
         body = document.sections
         assert body is document._document_part.sections
@@ -116,10 +110,6 @@ class DescribeDocumentOld(object):
     @pytest.fixture
     def init_fixture(self, docx_, open_):
         return docx_, open_
-
-    @pytest.fixture
-    def paragraphs_fixture(self, document, paragraphs_):
-        return document, paragraphs_
 
     @pytest.fixture
     def save_fixture(self, request, open_, package_):
@@ -153,11 +143,10 @@ class DescribeDocumentOld(object):
         return instance_mock(request, docx.document.Document)
 
     @pytest.fixture
-    def document_part_(self, request, paragraphs_, tables_):
+    def document_part_(self, request, tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
-        document_part_.paragraphs = paragraphs_
         document_part_.tables = tables_
         return document_part_
 
@@ -185,10 +174,6 @@ class DescribeDocumentOld(object):
         package_ = instance_mock(request, Package)
         package_.main_document_part = document_part_
         return package_
-
-    @pytest.fixture
-    def paragraphs_(self, request):
-        return instance_mock(request, list)
 
     @pytest.fixture
     def run_(self, request):
