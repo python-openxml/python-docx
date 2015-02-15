@@ -43,6 +43,18 @@ def given_a_single_section_document_having_portrait_layout(context):
 
 # when ====================================================
 
+@when('I add a heading specifying level={level}')
+def when_add_heading_specifying_level(context, level):
+    context.document.add_heading(level=int(level))
+
+
+@when('I add a heading specifying only its text')
+def when_add_heading_specifying_only_its_text(context):
+    document = context.document
+    context.heading_text = text = 'Spam vs. Eggs'
+    document.add_heading(text)
+
+
 @when('I add a paragraph specifying its style as a {kind}')
 def when_I_add_a_paragraph_specifying_its_style_as_a(context, kind):
     document = context.document
@@ -122,6 +134,14 @@ def then_the_first_section_is_portrait(context):
     assert first_section.page_height == expected_height
 
 
+@then('the last paragraph contains the heading text')
+def then_last_p_contains_heading_text(context):
+    document = context.document
+    text = context.heading_text
+    paragraph = document.paragraphs[-1]
+    assert paragraph.text == text
+
+
 @then('the length of the section collection is 3')
 def then_the_length_of_the_section_collection_is_3(context):
     sections = context.document.sections
@@ -137,3 +157,12 @@ def then_the_second_section_is_landscape(context):
     assert new_section.orientation == WD_ORIENT.LANDSCAPE
     assert new_section.page_width == expected_width
     assert new_section.page_height == expected_height
+
+
+@then('the style of the last paragraph is \'{style_name}\'')
+def then_the_style_of_the_last_paragraph_is_style(context, style_name):
+    document = context.document
+    paragraph = document.paragraphs[-1]
+    assert paragraph.style.name == style_name, (
+        'got %s' % paragraph.style.name
+    )
