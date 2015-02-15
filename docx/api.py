@@ -49,7 +49,7 @@ class Document(object):
     is loaded.
     """
     def __init__(self, docx=None):
-        document = DocumentNew(docx)
+        self._document = document = DocumentNew(docx)
         self._document_part = document._part
         self._package = document._part.package
 
@@ -78,15 +78,7 @@ class Document(object):
         return p
 
     def add_paragraph(self, text='', style=None):
-        """
-        Return a paragraph newly added to the end of the document, populated
-        with *text* and having paragraph style *style*. *text* can contain
-        tab (``\\t``) characters, which are converted to the appropriate XML
-        form for a tab. *text* can also include newline (``\\n``) or carriage
-        return (``\\r``) characters, each of which is converted to a line
-        break.
-        """
-        return self._document_part.add_paragraph(text, style)
+        return self._document.add_paragraph(text, style)
 
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """

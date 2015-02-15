@@ -104,14 +104,6 @@ class DescribeDocumentOld(object):
         with pytest.raises(ValueError):
             document.add_heading(level=10)
 
-    def it_can_add_a_paragraph(self, add_paragraph_fixture):
-        document, text, style, paragraph_ = add_paragraph_fixture
-        paragraph = document.add_paragraph(text, style)
-        document._document_part.add_paragraph.assert_called_once_with(
-            text, style
-        )
-        assert paragraph is paragraph_
-
     def it_can_add_a_page_break(self, add_page_break_fixture):
         document, document_part_, paragraph_, run_ = add_page_break_fixture
         paragraph = document.add_page_break()
@@ -196,16 +188,6 @@ class DescribeDocumentOld(object):
         assert numbering_part is numbering_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture(params=[
-        ('',         None),
-        ('',         'Heading 1'),
-        ('foo\rbar', 'Body Text'),
-    ])
-    def add_paragraph_fixture(self, request, document, document_part_,
-                              paragraph_):
-        text, style = request.param
-        return document, text, style, paragraph_
 
     @pytest.fixture(params=[
         (0, 'Title'),
