@@ -14,7 +14,7 @@ from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
-from docx.parts.document import DocumentPart
+from docx.parts.document import DocumentPart, InlineShapes
 from docx.shape import InlineShape
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -83,6 +83,11 @@ class DescribeDocument(object):
         document, core_properties_ = core_props_fixture
         core_properties = document.core_properties
         assert core_properties is core_properties_
+
+    def it_provides_access_to_its_inline_shapes(self, inline_shapes_fixture):
+        document, inline_shapes_ = inline_shapes_fixture
+        inline_shapes = document.inline_shapes
+        assert inline_shapes is inline_shapes_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -175,6 +180,12 @@ class DescribeDocument(object):
         return document, core_properties_
 
     @pytest.fixture
+    def inline_shapes_fixture(self, document_part_, inline_shapes_):
+        document = Document(None, document_part_)
+        document_part_.inline_shapes = inline_shapes_
+        return document, inline_shapes_
+
+    @pytest.fixture
     def part_fixture(self, document_part_):
         document = Document(None, document_part_)
         return document, document_part_
@@ -204,6 +215,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def inline_shapes_(self, request):
+        return instance_mock(request, InlineShapes)
 
     @pytest.fixture
     def paragraph_(self, request):

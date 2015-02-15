@@ -107,6 +107,16 @@ class Document(ElementProxy):
         return self._part.core_properties
 
     @property
+    def inline_shapes(self):
+        """
+        An |InlineShapes| object providing access to the inline shapes in
+        this document. An inline shape is a graphical object, such as
+        a picture, contained in a run of text and behaving like a character
+        glyph, being flowed like other text in a paragraph.
+        """
+        return self._part.inline_shapes
+
+    @property
     def part(self):
         """
         The |DocumentPart| object of this document.
