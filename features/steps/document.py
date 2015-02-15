@@ -13,6 +13,7 @@ from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import Sections
 from docx.section import Section
 from docx.shared import Inches
+from docx.table import Table
 
 from helpers import test_docx, test_file
 
@@ -43,6 +44,18 @@ def given_a_single_section_document_having_portrait_layout(context):
 
 
 # when ====================================================
+
+@when('I add a 2 x 2 table specifying only row and column count')
+def when_add_2x2_table_specifying_only_row_and_col_count(context):
+    document = context.document
+    document.add_table(rows=2, cols=2)
+
+
+@when('I add a 2 x 2 table specifying style \'{style_name}\'')
+def when_add_2x2_table_specifying_style_name(context, style_name):
+    document = context.document
+    document.add_table(rows=2, cols=2, style=style_name)
+
 
 @when('I add a heading specifying level={level}')
 def when_add_heading_specifying_level(context, level):
@@ -156,6 +169,16 @@ def then_I_can_iterate_over_the_sections(context):
         actual_count += 1
         assert isinstance(section, Section)
     assert actual_count == 3
+
+
+@then('the document contains a 2 x 2 table')
+def then_document_contains_2x2_table(context):
+    document = context.document
+    table = document.tables[-1]
+    assert isinstance(table, Table)
+    assert len(table.rows) == 2
+    assert len(table.columns) == 2
+    context.table_ = table
 
 
 @then('the document has two sections')
