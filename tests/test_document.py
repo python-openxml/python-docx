@@ -13,6 +13,7 @@ import pytest
 from docx.document import _Body, Document
 from docx.enum.text import WD_BREAK
 from docx.parts.document import DocumentPart
+from docx.shape import InlineShape
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
@@ -50,6 +51,12 @@ class DescribeDocument(object):
         paragraph = document.add_paragraph(text, style)
         document._body.add_paragraph.assert_called_once_with(text, style)
         assert paragraph is paragraph_
+
+    def it_can_add_a_picture(self, add_picture_fixture):
+        document, path, width, height, run_, picture_ = add_picture_fixture
+        picture = document.add_picture(path, width, height)
+        run_.add_picture.assert_called_once_with(path, width, height)
+        assert picture is picture_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -95,6 +102,14 @@ class DescribeDocument(object):
         return document, text, style, paragraph_
 
     @pytest.fixture
+    def add_picture_fixture(self, request, add_paragraph_, run_, picture_):
+        document = Document(None, None)
+        path, width, height = 'foobar.png', 100, 200
+        add_paragraph_.return_value.add_run.return_value = run_
+        run_.add_picture.return_value = picture_
+        return document, path, width, height, run_, picture_
+
+    @pytest.fixture
     def body_fixture(self, _Body_, body_):
         document_elm = element('w:document/w:body')
         body_elm = document_elm[0]
@@ -131,6 +146,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def paragraph_(self, request):
         return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def picture_(self, request):
+        return instance_mock(request, InlineShape)
 
     @pytest.fixture
     def run_(self, request):
