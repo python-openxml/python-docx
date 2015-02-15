@@ -15,7 +15,7 @@ from docx.styles.style import (
     BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
     StyleFactory, _TableStyle
 )
-from docx.text.paragraph import ParagraphFormat
+from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Font
 
 from ..unitutil.cxml import element, xml

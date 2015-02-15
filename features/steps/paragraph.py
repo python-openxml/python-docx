@@ -8,7 +8,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.text.paragraph import ParagraphFormat
+from docx.text.parfmt import ParagraphFormat
 
 from helpers import saved_docx_path, test_docx, test_text
 
