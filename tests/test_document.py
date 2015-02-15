@@ -11,12 +11,17 @@ from __future__ import (
 import pytest
 
 from docx.document import _Body, Document
+from docx.parts.document import DocumentPart
 
 from .unitutil.cxml import element
 from .unitutil.mock import class_mock, instance_mock
 
 
 class DescribeDocument(object):
+
+    def it_provides_access_to_the_document_part(self, part_fixture):
+        document, part_ = part_fixture
+        assert document.part is part_
 
     def it_provides_access_to_the_document_body(self, body_fixture):
         document, body_elm, _Body_, body_ = body_fixture
@@ -33,6 +38,11 @@ class DescribeDocument(object):
         document = Document(document_elm, None)
         return document, body_elm, _Body_, body_
 
+    @pytest.fixture
+    def part_fixture(self, document_part_):
+        document = Document(None, document_part_)
+        return document, document_part_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -42,3 +52,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def body_(self, request):
         return instance_mock(request, _Body)
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)

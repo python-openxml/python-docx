@@ -25,6 +25,13 @@ class Document(ElementProxy):
         self.__body = None
 
     @property
+    def part(self):
+        """
+        The |DocumentPart| object of this document.
+        """
+        return self._part
+
+    @property
     def _body(self):
         """
         The |_Body| instance containing the content for this document.
