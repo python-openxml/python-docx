@@ -76,10 +76,7 @@ class Document(object):
 
     @property
     def inline_shapes(self):
-        """
-        Return a reference to the |InlineShapes| instance for this document.
-        """
-        return self._document_part.inline_shapes
+        return self._document.inline_shapes
 
     @lazyproperty
     def numbering_part(self):

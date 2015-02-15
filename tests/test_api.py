@@ -87,10 +87,6 @@ class DescribeDocument(object):
 
 class DescribeDocumentOld(object):
 
-    def it_provides_access_to_the_document_inline_shapes(self, document):
-        body = document.inline_shapes
-        assert body is document._document_part.inline_shapes
-
     def it_provides_access_to_the_document_paragraphs(
             self, paragraphs_fixture):
         document, paragraphs_ = paragraphs_fixture
