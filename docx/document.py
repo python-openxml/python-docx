@@ -88,6 +88,16 @@ class Document(ElementProxy):
         new_sectPr.start_type = start_type
         return Section(new_sectPr)
 
+    def add_table(self, rows, cols, style='Light Shading Accent 1'):
+        """
+        Add a table having row and column counts of *rows* and *cols*
+        respectively and table style of *style*. If *style* is |None|, a
+        table with no style is produced.
+        """
+        table = self._body.add_table(rows, cols)
+        table.style = style
+        return table
+
     @property
     def part(self):
         """

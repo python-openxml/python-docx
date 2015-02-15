@@ -15,6 +15,7 @@ from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.parts.document import DocumentPart
 from docx.shape import InlineShape
+from docx.table import Table
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
@@ -69,6 +70,13 @@ class DescribeDocument(object):
         sectPr = document.element.xpath('w:body/w:sectPr')[0]
         Section_.assert_called_once_with(sectPr)
         assert section is section_
+
+    def it_can_add_a_table(self, add_table_fixture):
+        document, rows, cols, style, table_ = add_table_fixture
+        table = document.add_table(rows, cols, style)
+        document._body.add_table.assert_called_once_with(rows, cols)
+        assert table == table_
+        assert table.style == style
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -141,6 +149,13 @@ class DescribeDocument(object):
         return document, start_type, Section_, section_, expected_xml
 
     @pytest.fixture
+    def add_table_fixture(self, body_prop_, table_):
+        document = Document(None, None)
+        rows, cols, style = 4, 2, 'Light Shading Accent 1'
+        body_prop_.return_value.add_table.return_value = table_
+        return document, rows, cols, style, table_
+
+    @pytest.fixture
     def body_fixture(self, _Body_, body_):
         document_elm = element('w:document/w:body')
         body_elm = document_elm[0]
@@ -167,8 +182,8 @@ class DescribeDocument(object):
         return instance_mock(request, _Body)
 
     @pytest.fixture
-    def body_prop_(self, request):
-        return property_mock(request, Document, '_body')
+    def body_prop_(self, request, body_):
+        return property_mock(request, Document, '_body', return_value=body_)
 
     @pytest.fixture
     def document_part_(self, request):
@@ -189,3 +204,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def Section_(self, request):
         return class_mock(request, 'docx.document.Section')
+
+    @pytest.fixture
+    def table_(self, request):
+        return instance_mock(request, Table, style='UNASSIGNED')
