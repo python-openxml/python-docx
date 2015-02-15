@@ -10,12 +10,11 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-from docx.enum.section import WD_SECTION
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 
 
-def DocumentNew(docx=None):
+def Document(docx=None):
     """
     Return a |Document| object loaded from *docx*, where *docx* can be
     either a path to a ``.docx`` file (a string) or a file-like object. If
@@ -36,65 +35,3 @@ def _default_docx_path():
     """
     _thisdir = os.path.split(__file__)[0]
     return os.path.join(_thisdir, 'templates', 'default.docx')
-
-
-class Document(object):
-    """
-    Return a |Document| instance loaded from *docx*, where *docx* can be
-    either a path to a ``.docx`` file (a string) or a file-like object. If
-    *docx* is missing or ``None``, the built-in default document "template"
-    is loaded.
-    """
-    def __init__(self, docx=None):
-        self._document = document = DocumentNew(docx)
-        self._document_part = document._part
-        self._package = document._part.package
-
-    def add_heading(self, text='', level=1):
-        return self._document.add_heading(text, level)
-
-    def add_page_break(self):
-        return self._document.add_page_break()
-
-    def add_paragraph(self, text='', style=None):
-        return self._document.add_paragraph(text, style)
-
-    def add_picture(self, image_descriptor, width=None, height=None):
-        return self._document.add_picture(image_descriptor, width, height)
-
-    def add_section(self, start_type=WD_SECTION.NEW_PAGE):
-        return self._document.add_section(start_type)
-
-    def add_table(self, rows, cols, style='Light Shading Accent 1'):
-        return self._document.add_table(rows, cols, style)
-
-    @property
-    def core_properties(self):
-        return self._document.core_properties
-
-    @property
-    def inline_shapes(self):
-        return self._document.inline_shapes
-
-    @property
-    def paragraphs(self):
-        return self._document.paragraphs
-
-    @property
-    def part(self):
-        return self._document.part
-
-    def save(self, path_or_stream):
-        self._document.save(path_or_stream)
-
-    @property
-    def sections(self):
-        return self._document.sections
-
-    @property
-    def styles(self):
-        return self._document.styles
-
-    @property
-    def tables(self):
-        return self._document.tables

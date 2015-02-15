@@ -128,7 +128,7 @@ def then_the_document_contains_the_inline_picture(context):
     picture_shape = document.inline_shapes[0]
     blip = picture_shape._inline.graphic.graphicData.pic.blipFill.blip
     rId = blip.embed
-    image_part = document._document_part.related_parts[rId]
+    image_part = document.part.related_parts[rId]
     image_sha1 = hashlib.sha1(image_part.blob).hexdigest()
     expected_sha1 = '79769f1e202add2e963158b532e36c2c0f76a70c'
     assert image_sha1 == expected_sha1, (

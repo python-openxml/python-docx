@@ -12,7 +12,7 @@ import pytest
 
 import docx
 
-from docx.api import Document, DocumentNew
+from docx.api import Document
 from docx.opc.constants import CONTENT_TYPE as CT
 
 from .unitutil.mock import function_mock, instance_mock, class_mock
@@ -22,13 +22,13 @@ class DescribeDocument(object):
 
     def it_opens_a_docx_file(self, open_fixture):
         docx, Package_, document_ = open_fixture
-        document = DocumentNew(docx)
+        document = Document(docx)
         Package_.open.assert_called_once_with(docx)
         assert document is document_
 
     def it_opens_the_default_docx_if_none_specified(self, default_fixture):
         docx, Package_, document_ = default_fixture
-        document = DocumentNew()
+        document = Document()
         Package_.open.assert_called_once_with(docx)
         assert document is document_
 

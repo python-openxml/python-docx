@@ -8,7 +8,7 @@ from behave import given, then, when
 
 import docx
 
-from docx import DocumentNew
+from docx import Document
 
 from helpers import test_docx
 
@@ -24,12 +24,12 @@ def given_I_have_python_docx_installed(context):
 
 @when('I call docx.Document() with no arguments')
 def when_I_call_docx_Document_with_no_arguments(context):
-    context.document = DocumentNew()
+    context.document = Document()
 
 
 @when('I call docx.Document() with the path of a .docx file')
 def when_I_call_docx_Document_with_the_path_of_a_docx_file(context):
-    context.document = DocumentNew(test_docx('doc-default'))
+    context.document = Document(test_docx('doc-default'))
 
 
 # then =====================================================
