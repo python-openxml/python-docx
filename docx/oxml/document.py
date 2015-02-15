@@ -5,8 +5,8 @@ Custom element classes that correspond to the document part, e.g.
 <w:document>.
 """
 
-from ..table import CT_Tbl
-from ..xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
+from .table import CT_Tbl
+from .xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
 
 
 class CT_Document(BaseOxmlElement):

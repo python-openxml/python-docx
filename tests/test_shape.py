@@ -9,8 +9,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.enum.shape import WD_INLINE_SHAPE
+from docx.oxml.document import CT_Body
 from docx.oxml.ns import nsmap
-from docx.oxml.parts.document import CT_Body
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
