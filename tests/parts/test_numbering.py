@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.oxml.parts.numbering import CT_Numbering
+from docx.oxml.numbering import CT_Numbering
 from docx.parts.numbering import NumberingPart, _NumberingDefinitions
 
 from ..oxml.unitdata.numbering import a_num, a_numbering

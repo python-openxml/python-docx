@@ -4,10 +4,10 @@
 Custom element classes related to the numbering part
 """
 
-from .. import OxmlElement
-from ..shared import CT_DecimalNumber
-from ..simpletypes import ST_DecimalNumber
-from ..xmlchemy import (
+from . import OxmlElement
+from .shared import CT_DecimalNumber
+from .simpletypes import ST_DecimalNumber
+from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
 )
 

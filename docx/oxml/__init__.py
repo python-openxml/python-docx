@@ -74,7 +74,7 @@ from .document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
-from .parts.numbering import (
+from .numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
 )
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
