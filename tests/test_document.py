@@ -11,8 +11,10 @@ from __future__ import (
 import pytest
 
 from docx.document import _Body, Document
+from docx.enum.text import WD_BREAK
 from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
+from docx.text.run import Run
 
 from .unitutil.cxml import element
 from .unitutil.mock import (
@@ -34,6 +36,14 @@ class DescribeDocument(object):
             document.add_heading(level=-1)
         with pytest.raises(ValueError):
             document.add_heading(level=10)
+
+    def it_can_add_a_page_break(self, add_page_break_fixture):
+        document, paragraph_, run_ = add_page_break_fixture
+        paragraph = document.add_page_break()
+        document.add_paragraph.assert_called_once_with()
+        paragraph_.add_run.assert_called_once_with()
+        run_.add_break.assert_called_once_with(WD_BREAK.PAGE)
+        assert paragraph is paragraph_
 
     def it_can_add_a_paragraph(self, add_paragraph_fixture):
         document, text, style, paragraph_ = add_paragraph_fixture
@@ -65,6 +75,13 @@ class DescribeDocument(object):
         text = 'Spam vs. Bacon'
         add_paragraph_.return_value = paragraph_
         return document, text, level, style, paragraph_
+
+    @pytest.fixture
+    def add_page_break_fixture(self, add_paragraph_, paragraph_, run_):
+        document = Document(None, None)
+        add_paragraph_.return_value = paragraph_
+        paragraph_.add_run.return_value = run_
+        return document, paragraph_, run_
 
     @pytest.fixture(params=[
         ('',         None),
@@ -114,3 +131,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def paragraph_(self, request):
         return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def run_(self, request):
+        return instance_mock(request, Run)

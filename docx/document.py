@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from .blkcntnr import BlockItemContainer
+from .enum.text import WD_BREAK
 from .shared import ElementProxy
 
 
@@ -37,6 +38,15 @@ class Document(ElementProxy):
             raise ValueError("level must be in range 0-9, got %d" % level)
         style = 'Title' if level == 0 else 'Heading %d' % level
         return self.add_paragraph(text, style)
+
+    def add_page_break(self):
+        """
+        Return a paragraph newly added to the end of the document and
+        containing only a page break.
+        """
+        paragraph = self.add_paragraph()
+        paragraph.add_run().add_break(WD_BREAK.PAGE)
+        return paragraph
 
     def add_paragraph(self, text='', style=None):
         """
