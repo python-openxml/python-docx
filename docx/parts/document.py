@@ -8,14 +8,12 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from collections import Sequence
-
 from ..blkcntnr import BlockItemContainer
 from ..document import Document
 from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
-from ..section import Section
+from ..section import Sections
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from .styles import StylesPart
@@ -221,27 +219,3 @@ class InlineShapes(Parented):
         body = self._body
         xpath = '//w:p/w:r/w:drawing/wp:inline'
         return body.xpath(xpath)
-
-
-class Sections(Sequence):
-    """
-    Sequence of |Section| objects corresponding to the sections in the
-    document. Supports ``len()``, iteration, and indexed access.
-    """
-    def __init__(self, document_elm):
-        super(Sections, self).__init__()
-        self._document_elm = document_elm
-
-    def __getitem__(self, key):
-        if isinstance(key, slice):
-            sectPr_lst = self._document_elm.sectPr_lst[key]
-            return [Section(sectPr) for sectPr in sectPr_lst]
-        sectPr = self._document_elm.sectPr_lst[key]
-        return Section(sectPr)
-
-    def __iter__(self):
-        for sectPr in self._document_elm.sectPr_lst:
-            yield Section(sectPr)
-
-    def __len__(self):
-        return len(self._document_elm.sectPr_lst)

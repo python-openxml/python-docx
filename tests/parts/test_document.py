@@ -13,11 +13,10 @@ from docx.opc.coreprops import CoreProperties
 from docx.oxml.parts.document import CT_Body
 from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
-from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
+from docx.parts.document import _Body, DocumentPart, InlineShapes
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
-from docx.section import Section
 from docx.shape import InlineShape
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
@@ -579,47 +578,3 @@ class DescribeInlineShapes(object):
     @pytest.fixture
     def shape_id_(self, request):
         return instance_mock(request, int)
-
-
-class DescribeSections(object):
-
-    def it_knows_how_many_sections_it_contains(self, len_fixture):
-        sections, expected_len = len_fixture
-        assert len(sections) == expected_len
-
-    def it_can_iterate_over_its_Section_instances(self, iter_fixture):
-        sections, expected_count = iter_fixture
-        section_count = 0
-        for section in sections:
-            section_count += 1
-            assert isinstance(section, Section)
-        assert section_count == expected_count
-
-    def it_can_access_its_Section_instances_by_index(self, index_fixture):
-        sections, indicies = index_fixture
-        assert len(sections[0:2]) == 2
-        for index in indicies:
-            assert isinstance(sections[index], Section)
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def index_fixture(self, document_elm):
-        sections = Sections(document_elm)
-        return sections, [0, 1]
-
-    @pytest.fixture
-    def iter_fixture(self, document_elm):
-        sections = Sections(document_elm)
-        return sections, 2
-
-    @pytest.fixture
-    def len_fixture(self, document_elm):
-        sections = Sections(document_elm)
-        return sections, 2
-
-    # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def document_elm(self):
-        return element('w:document/w:body/(w:p/w:pPr/w:sectPr, w:sectPr)')

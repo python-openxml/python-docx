@@ -6,6 +6,32 @@ The |Section| object and related proxy classes.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from collections import Sequence
+
+
+class Sections(Sequence):
+    """
+    Sequence of |Section| objects corresponding to the sections in the
+    document. Supports ``len()``, iteration, and indexed access.
+    """
+    def __init__(self, document_elm):
+        super(Sections, self).__init__()
+        self._document_elm = document_elm
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            sectPr_lst = self._document_elm.sectPr_lst[key]
+            return [Section(sectPr) for sectPr in sectPr_lst]
+        sectPr = self._document_elm.sectPr_lst[key]
+        return Section(sectPr)
+
+    def __iter__(self):
+        for sectPr in self._document_elm.sectPr_lst:
+            yield Section(sectPr)
+
+    def __len__(self):
+        return len(self._document_elm.sectPr_lst)
+
 
 class Section(object):
     """
