@@ -9,10 +9,9 @@ from behave import given, then, when
 import docx
 
 from docx import DocumentNew
-from docx.shared import Inches
 from docx.table import Table
 
-from helpers import test_docx, test_file
+from helpers import test_docx
 
 
 # given ====================================================
@@ -34,37 +33,6 @@ def when_add_2x2_table_specifying_only_row_and_col_count(context):
 def when_add_2x2_table_specifying_style_name(context, style_name):
     document = context.document
     document.add_table(rows=2, cols=2, style=style_name)
-
-
-@when('I add a picture specifying 1.75" width and 2.5" height')
-def when_add_picture_specifying_width_and_height(context):
-    document = context.document
-    context.picture = document.add_picture(
-        test_file('monty-truth.png'),
-        width=Inches(1.75), height=Inches(2.5)
-    )
-
-
-@when('I add a picture specifying a height of 1.5 inches')
-def when_add_picture_specifying_height(context):
-    document = context.document
-    context.picture = document.add_picture(
-        test_file('monty-truth.png'), height=Inches(1.5)
-    )
-
-
-@when('I add a picture specifying a width of 1.5 inches')
-def when_add_picture_specifying_width(context):
-    document = context.document
-    context.picture = document.add_picture(
-        test_file('monty-truth.png'), width=Inches(1.5)
-    )
-
-
-@when('I add a picture specifying only the image file')
-def when_add_picture_specifying_only_image_file(context):
-    document = context.document
-    context.picture = document.add_picture(test_file('monty-truth.png'))
 
 
 @when('I call docx.Document() with no arguments')

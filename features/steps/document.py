@@ -12,8 +12,9 @@ from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import Sections
 from docx.section import Section
+from docx.shared import Inches
 
-from helpers import test_docx
+from helpers import test_docx, test_file
 
 
 # given ===================================================
@@ -83,6 +84,37 @@ def when_add_paragraph_specifying_text(context):
 def when_add_paragraph_without_specifying_text_or_style(context):
     document = context.document
     document.add_paragraph()
+
+
+@when('I add a picture specifying 1.75" width and 2.5" height')
+def when_add_picture_specifying_width_and_height(context):
+    document = context.document
+    context.picture = document.add_picture(
+        test_file('monty-truth.png'),
+        width=Inches(1.75), height=Inches(2.5)
+    )
+
+
+@when('I add a picture specifying a height of 1.5 inches')
+def when_add_picture_specifying_height(context):
+    document = context.document
+    context.picture = document.add_picture(
+        test_file('monty-truth.png'), height=Inches(1.5)
+    )
+
+
+@when('I add a picture specifying a width of 1.5 inches')
+def when_add_picture_specifying_width(context):
+    document = context.document
+    context.picture = document.add_picture(
+        test_file('monty-truth.png'), width=Inches(1.5)
+    )
+
+
+@when('I add a picture specifying only the image file')
+def when_add_picture_specifying_only_image_file(context):
+    document = context.document
+    context.picture = document.add_picture(test_file('monty-truth.png'))
 
 
 @when('I add an even-page section to the document')

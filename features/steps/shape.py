@@ -164,25 +164,21 @@ def then_picture_has_native_width_and_height(context):
     assert picture.height == 2717800, 'got %d' % picture.height
 
 
-@then('the picture height is 2.14 inches')
-def then_picture_height_is_value_2(context):
+@then('picture.height is {inches} inches')
+def then_picture_height_is_value(context, inches):
+    expected_value = {
+        '2.14': 1956816,
+        '2.5':  2286000,
+    }[inches]
     picture = context.picture
-    assert picture.height == 1956816, 'got %d' % picture.height
+    assert picture.height == expected_value, 'got %d' % picture.height
 
 
-@then('the picture height is 2.5 inches')
-def then_picture_height_is_value(context):
+@then('picture.width is {inches} inches')
+def then_picture_width_is_value(context, inches):
+    expected_value = {
+        '1.05':  961402,
+        '1.75': 1600200,
+    }[inches]
     picture = context.picture
-    assert picture.height == 2286000, 'got %d' % picture.height
-
-
-@then('the picture width is 1.05 inches')
-def then_picture_width_is_value_2(context):
-    picture = context.picture
-    assert picture.width == 961402, 'got %d' % picture.width
-
-
-@then('the picture width is 1.75 inches')
-def then_picture_width_is_value(context):
-    picture = context.picture
-    assert picture.width == 1600200, 'got %d' % picture.width
+    assert picture.width == expected_value, 'got %d' % picture.width
