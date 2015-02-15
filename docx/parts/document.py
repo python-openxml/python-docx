@@ -118,7 +118,7 @@ class DocumentPart(XmlPart):
         Save this document to *path_or_stream*, which can be either a path to
         a filesystem location (a string) or a file-like object.
         """
-        raise NotImplementedError
+        self.package.save(path_or_stream)
 
     @lazyproperty
     def sections(self):

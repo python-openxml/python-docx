@@ -35,6 +35,11 @@ from ..unitutil.mock import (
 
 class DescribeDocumentPart(object):
 
+    def it_can_save_the_package_to_a_file(self, save_fixture):
+        document, file_ = save_fixture
+        document.save(file_)
+        document._package.save.assert_called_once_with(file_)
+
     def it_has_a_body(self, body_fixture):
         document_part, _Body_, body_elm = body_fixture
         _body = document_part.body
@@ -205,6 +210,12 @@ class DescribeDocumentPart(object):
         document_part = DocumentPart(None, None, None, None)
         part_related_by_.return_value = numbering_part_
         return document_part, numbering_part_
+
+    @pytest.fixture
+    def save_fixture(self, package_):
+        document_part = DocumentPart(None, None, None, package_)
+        file_ = 'foobar.docx'
+        return document_part, file_
 
     @pytest.fixture
     def sections_fixture(self, Sections_):
