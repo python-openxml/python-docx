@@ -54,18 +54,7 @@ class Document(object):
         self._package = document._part.package
 
     def add_heading(self, text='', level=1):
-        """
-        Return a heading paragraph newly added to the end of the document,
-        containing *text* and having its paragraph style determined by
-        *level*. If *level* is 0, the style is set to `Title`. If *level* is
-        1 (or omitted), `Heading 1` is used. Otherwise the style is set to
-        `Heading {level}`. Raises |ValueError| if *level* is outside the
-        range 0-9.
-        """
-        if not 0 <= level <= 9:
-            raise ValueError("level must be in range 0-9, got %d" % level)
-        style = 'Title' if level == 0 else 'Heading %d' % level
-        return self.add_paragraph(text, style)
+        return self._document.add_heading(text, level)
 
     def add_page_break(self):
         """
