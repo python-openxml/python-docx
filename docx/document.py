@@ -155,6 +155,17 @@ class Document(ElementProxy):
         return self._part.styles
 
     @property
+    def tables(self):
+        """
+        A list of |Table| instances corresponding to the tables in the
+        document, in document order. Note that only tables appearing at the
+        top level of the document appear in this list; a table nested inside
+        a table cell does not appear. A table within revision marks such as
+        ``<w:ins>`` or ``<w:del>`` will also not appear in the list.
+        """
+        return self._body.tables
+
+    @property
     def _body(self):
         """
         The |_Body| instance containing the content for this document.

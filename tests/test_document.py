@@ -110,6 +110,11 @@ class DescribeDocument(object):
         document, styles_ = styles_fixture
         assert document.styles is styles_
 
+    def it_provides_access_to_its_tables(self, tables_fixture):
+        document, tables_ = tables_fixture
+        tables = document.tables
+        assert tables is tables_
+
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
         assert document.part is part_
@@ -236,6 +241,12 @@ class DescribeDocument(object):
         document_part_.styles = styles_
         return document, styles_
 
+    @pytest.fixture
+    def tables_fixture(self, body_prop_, tables_):
+        document = Document(None, None)
+        body_prop_.return_value.tables = tables_
+        return document, tables_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -301,3 +312,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def table_(self, request):
         return instance_mock(request, Table, style='UNASSIGNED')
+
+    @pytest.fixture
+    def tables_(self, request):
+        return instance_mock(request, list)
