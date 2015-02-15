@@ -316,3 +316,89 @@ class DescribeDocument(object):
     @pytest.fixture
     def tables_(self, request):
         return instance_mock(request, list)
+
+
+class Describe_Body(object):
+
+    def it_can_add_a_paragraph(self, add_paragraph_fixture):
+        body, expected_xml = add_paragraph_fixture
+        p = body.add_paragraph()
+        assert body._body.xml == expected_xml
+        assert isinstance(p, Paragraph)
+
+    def it_can_add_a_table(self, add_table_fixture):
+        body, rows, cols, expected_xml = add_table_fixture
+        table = body.add_table(rows, cols)
+        assert body._element.xml == expected_xml
+        assert isinstance(table, Table)
+
+    def it_can_clear_itself_of_all_content_it_holds(self, clear_fixture):
+        body, expected_xml = clear_fixture
+        _body = body.clear_content()
+        assert body._body.xml == expected_xml
+        assert _body is body
+
+    def it_provides_access_to_the_paragraphs_it_contains(
+            self, paragraphs_fixture):
+        body = paragraphs_fixture
+        paragraphs = body.paragraphs
+        assert len(paragraphs) == 2
+        for p in paragraphs:
+            assert isinstance(p, Paragraph)
+
+    def it_provides_access_to_the_tables_it_contains(self, tables_fixture):
+        body = tables_fixture
+        tables = body.tables
+        assert len(tables) == 2
+        for table in tables:
+            assert isinstance(table, Table)
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:body',                 'w:body/w:p'),
+        ('w:body/w:p',             'w:body/(w:p, w:p)'),
+        ('w:body/w:sectPr',        'w:body/(w:p, w:sectPr)'),
+        ('w:body/(w:p, w:sectPr)', 'w:body/(w:p, w:p, w:sectPr)'),
+    ])
+    def add_paragraph_fixture(self, request):
+        before_cxml, after_cxml = request.param
+        body = _Body(element(before_cxml), None)
+        expected_xml = xml(after_cxml)
+        return body, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:body', 0, 0, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid)'),
+        ('w:body', 1, 0, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid,w:tr)'),
+        ('w:body', 0, 1, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid/w:gridCol)'),
+        ('w:body', 1, 1, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
+         'tblGrid/w:gridCol,w:tr/w:tc/w:p)'),
+    ])
+    def add_table_fixture(self, request):
+        body_cxml, rows, cols, after_cxml = request.param
+        body = _Body(element(body_cxml), None)
+        expected_xml = xml(after_cxml)
+        return body, rows, cols, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:body',                 'w:body'),
+        ('w:body/w:p',             'w:body'),
+        ('w:body/w:sectPr',        'w:body/w:sectPr'),
+        ('w:body/(w:p, w:sectPr)', 'w:body/w:sectPr'),
+    ])
+    def clear_fixture(self, request):
+        before_cxml, after_cxml = request.param
+        body = _Body(element(before_cxml), None)
+        expected_xml = xml(after_cxml)
+        return body, expected_xml
+
+    @pytest.fixture
+    def paragraphs_fixture(self):
+        return _Body(element('w:body/(w:p, w:p)'), None)
+
+    @pytest.fixture
+    def tables_fixture(self):
+        return _Body(element('w:body/(w:tbl, w:tbl)'), None)

@@ -183,3 +183,12 @@ class _Body(BlockItemContainer):
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
+
+    def clear_content(self):
+        """
+        Return this |_Body| instance after clearing it of all content.
+        Section properties for the main document story, if present, are
+        preserved.
+        """
+        self._body.clear_content()
+        return self

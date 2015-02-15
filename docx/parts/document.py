@@ -8,7 +8,6 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from ..blkcntnr import BlockItemContainer
 from ..document import Document
 from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
@@ -130,25 +129,6 @@ class DocumentPart(XmlPart):
             styles_part = StylesPart.default(self.package)
             self.relate_to(styles_part, RT.STYLES)
             return styles_part
-
-
-class _Body(BlockItemContainer):
-    """
-    Proxy for ``<w:body>`` element in this document, having primarily a
-    container role.
-    """
-    def __init__(self, body_elm, parent):
-        super(_Body, self).__init__(body_elm, parent)
-        self._body = body_elm
-
-    def clear_content(self):
-        """
-        Return this |_Body| instance after clearing it of all content.
-        Section properties for the main document story, if present, are
-        preserved.
-        """
-        self._body.clear_content()
-        return self
 
 
 class InlineShapes(Parented):
