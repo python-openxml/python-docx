@@ -19,7 +19,6 @@ from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.parts.numbering import NumberingPart
 from docx.section import Section
-from docx.shape import InlineShape
 from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.run import Run
@@ -90,14 +89,6 @@ class DescribeDocument(object):
 
 class DescribeDocumentOld(object):
 
-    def it_can_add_a_picture(self, add_picture_fixture):
-        document, image_path_, width, height, run_, picture_ = (
-            add_picture_fixture
-        )
-        picture = document.add_picture(image_path_, width, height)
-        run_.add_picture.assert_called_once_with(image_path_, width, height)
-        assert picture is picture_
-
     def it_can_add_a_section(self, add_section_fixture):
         document, start_type_, section_ = add_section_fixture
         section = document.add_section(start_type_)
@@ -166,15 +157,6 @@ class DescribeDocumentOld(object):
         assert numbering_part is numbering_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_picture_fixture(self, request, run_, picture_):
-        document = Document()
-        image_path_ = instance_mock(request, str, name='image_path_')
-        width, height = 100, 200
-        class_mock(request, 'docx.text.paragraph.Run', return_value=run_)
-        run_.add_picture.return_value = picture_
-        return (document, image_path_, width, height, run_, picture_)
 
     @pytest.fixture
     def add_section_fixture(self, document, start_type_, section_):
@@ -294,10 +276,6 @@ class DescribeDocumentOld(object):
     @pytest.fixture
     def paragraphs_(self, request):
         return instance_mock(request, list)
-
-    @pytest.fixture
-    def picture_(self, request):
-        return instance_mock(request, InlineShape)
 
     @pytest.fixture
     def run_(self, request):
