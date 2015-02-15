@@ -12,9 +12,9 @@ import re
 
 from datetime import datetime, timedelta
 
-from .. import parse_xml
-from ..ns import nsdecls, qn
-from ..xmlchemy import BaseOxmlElement, ZeroOrOne
+from . import parse_xml
+from .ns import nsdecls, qn
+from .xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
 class CT_CoreProperties(BaseOxmlElement):

@@ -14,7 +14,7 @@ import pytest
 
 from docx.opc.coreprops import CoreProperties
 from docx.opc.parts.coreprops import CorePropertiesPart
-from docx.oxml.parts.coreprops import CT_CoreProperties
+from docx.oxml.coreprops import CT_CoreProperties
 
 from ...unitutil.mock import class_mock, instance_mock
 

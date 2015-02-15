@@ -12,7 +12,7 @@ from datetime import datetime
 
 from ..constants import CONTENT_TYPE as CT
 from ..coreprops import CoreProperties
-from ...oxml.parts.coreprops import CT_CoreProperties
+from ...oxml.coreprops import CT_CoreProperties
 from ..packuri import PackURI
 from ..part import XmlPart
 

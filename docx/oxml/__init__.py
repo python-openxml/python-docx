@@ -67,12 +67,12 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 from .shared import CT_DecimalNumber, CT_OnOff, CT_String
 
 
+from .coreprops import CT_CoreProperties
+register_element_cls('cp:coreProperties', CT_CoreProperties)
+
 from .document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
-
-from .parts.coreprops import CT_CoreProperties
-register_element_cls('cp:coreProperties', CT_CoreProperties)
 
 from .parts.numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
