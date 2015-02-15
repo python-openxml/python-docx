@@ -39,12 +39,6 @@ class DescribeDocumentPart(object):
         document.save(file_)
         document._package.save.assert_called_once_with(file_)
 
-    def it_has_a_body(self, body_fixture):
-        document_part, _Body_, body_elm = body_fixture
-        _body = document_part.body
-        _Body_.assert_called_once_with(body_elm, document_part)
-        assert _body is _Body_.return_value
-
     def it_provides_access_to_the_document_styles(self, styles_fixture):
         document_part, styles_ = styles_fixture
         styles = document_part.styles
@@ -130,16 +124,6 @@ class DescribeDocumentPart(object):
         assert styles_part is styles_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def body_fixture(self, _Body_):
-        document_elm = (
-            a_document().with_nsdecls().with_child(
-                a_body())
-        ).element
-        body_elm = document_elm[0]
-        document_part = DocumentPart(None, None, document_elm, None)
-        return document_part, _Body_, body_elm
 
     @pytest.fixture
     def core_props_fixture(self, package_, core_properties_):
@@ -228,10 +212,6 @@ class DescribeDocumentPart(object):
         return document_part, styles_part_
 
     # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def _Body_(self, request):
-        return class_mock(request, 'docx.parts.document._Body')
 
     @pytest.fixture
     def core_properties_(self, request):

@@ -22,13 +22,6 @@ class DocumentPart(XmlPart):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
-    @lazyproperty
-    def body(self):
-        """
-        The |_Body| instance containing the content for this document.
-        """
-        return _Body(self._element.body, self)
-
     @property
     def core_properties(self):
         """
