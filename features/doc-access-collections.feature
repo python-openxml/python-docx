@@ -22,3 +22,8 @@ Feature: Access document collections
   Scenario: Access the styles collection of a document
     Given a document having styles
      Then document.styles is a Styles object
+
+
+  Scenario: Access the tables collection of a document
+    Given a document having three tables
+     Then document.tables is a list containing three tables

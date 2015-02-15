@@ -15,6 +15,7 @@ from docx.shared import Inches
 from docx.section import Sections
 from docx.styles.styles import Styles
 from docx.table import Table
+from docx.text.paragraph import Paragraph
 
 from helpers import test_docx, test_file
 
@@ -39,6 +40,11 @@ def given_a_document_having_sections(context):
 @given('a document having styles')
 def given_a_document_having_styles(context):
     context.document = Document(test_docx('sty-having-styles-part'))
+
+
+@given('a document having three tables')
+def given_a_document_having_three_tables(context):
+    context.document = Document(test_docx('tbl-having-tables'))
 
 
 @given('a single-section document having portrait layout')
@@ -164,6 +170,8 @@ def then_document_paragraphs_is_a_list_containing_three_paragraphs(context):
     paragraphs = document.paragraphs
     assert isinstance(paragraphs, list)
     assert len(paragraphs) == 3
+    for paragraph in paragraphs:
+        assert isinstance(paragraph, Paragraph)
 
 
 @then('document.sections is a Sections object')
@@ -177,6 +185,16 @@ def then_document_sections_is_a_Sections_object(context):
 def then_document_styles_is_a_Styles_object(context):
     styles = context.document.styles
     assert isinstance(styles, Styles)
+
+
+@then('document.tables is a list containing three tables')
+def then_document_tables_is_a_list_containing_three_tables(context):
+    document = context.document
+    tables = document.tables
+    assert isinstance(tables, list)
+    assert len(tables) == 3
+    for table in tables:
+        assert isinstance(table, Table)
 
 
 @then('the document contains a 2 x 2 table')
