@@ -148,6 +148,13 @@ class Document(ElementProxy):
         return Sections(self._element)
 
     @property
+    def styles(self):
+        """
+        A |Styles| object providing access to the styles in this document.
+        """
+        return self._part.styles
+
+    @property
     def _body(self):
         """
         The |_Body| instance containing the content for this document.

@@ -17,6 +17,7 @@ from docx.opc.coreprops import CoreProperties
 from docx.parts.document import DocumentPart, InlineShapes
 from docx.section import Sections
 from docx.shape import InlineShape
+from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
@@ -92,8 +93,7 @@ class DescribeDocument(object):
 
     def it_provides_access_to_its_inline_shapes(self, inline_shapes_fixture):
         document, inline_shapes_ = inline_shapes_fixture
-        inline_shapes = document.inline_shapes
-        assert inline_shapes is inline_shapes_
+        assert document.inline_shapes is inline_shapes_
 
     def it_provides_access_to_its_paragraphs(self, paragraphs_fixture):
         document, paragraphs_ = paragraphs_fixture
@@ -105,6 +105,10 @@ class DescribeDocument(object):
         sections = document.sections
         Sections_.assert_called_once_with(document._element)
         assert sections is sections_
+
+    def it_provides_access_to_its_styles(self, styles_fixture):
+        document, styles_ = styles_fixture
+        assert document.styles is styles_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -226,6 +230,12 @@ class DescribeDocument(object):
         Sections_.return_value = sections_
         return document, Sections_, sections_
 
+    @pytest.fixture
+    def styles_fixture(self, document_part_, styles_):
+        document = Document(None, document_part_)
+        document_part_.styles = styles_
+        return document, styles_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -283,6 +293,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def sections_(self, request):
         return instance_mock(request, Sections)
+
+    @pytest.fixture
+    def styles_(self, request):
+        return instance_mock(request, Styles)
 
     @pytest.fixture
     def table_(self, request):
