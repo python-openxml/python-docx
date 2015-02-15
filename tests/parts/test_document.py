@@ -45,11 +45,6 @@ class DescribeDocumentPart(object):
         _Body_.assert_called_once_with(body_elm, document_part)
         assert _body is _Body_.return_value
 
-    def it_provides_access_to_the_document_tables(self, tables_fixture):
-        document_part, tables_ = tables_fixture
-        tables = document_part.tables
-        assert tables is tables_
-
     def it_provides_access_to_the_document_styles(self, styles_fixture):
         document_part, styles_ = styles_fixture
         styles = document_part.styles
@@ -232,12 +227,6 @@ class DescribeDocumentPart(object):
         part_related_by_.return_value = styles_part_
         return document_part, styles_part_
 
-    @pytest.fixture
-    def tables_fixture(self, document_part_body_, body_, tables_):
-        document_part = DocumentPart(None, None, None, None)
-        body_.tables = tables_
-        return document_part, tables_
-
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -245,18 +234,8 @@ class DescribeDocumentPart(object):
         return class_mock(request, 'docx.parts.document._Body')
 
     @pytest.fixture
-    def body_(self, request):
-        return instance_mock(request, _Body)
-
-    @pytest.fixture
     def core_properties_(self, request):
         return instance_mock(request, CoreProperties)
-
-    @pytest.fixture
-    def document_part_body_(self, request, body_):
-        return property_mock(
-            request, DocumentPart, 'body', return_value=body_
-        )
 
     @pytest.fixture
     def get_or_add_image_fixture(
@@ -342,10 +321,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def _styles_part_prop_(self, request):
         return property_mock(request, DocumentPart, '_styles_part')
-
-    @pytest.fixture
-    def tables_(self, request):
-        return instance_mock(request, list)
 
 
 class Describe_Body(object):

@@ -126,15 +126,6 @@ class DocumentPart(XmlPart):
         return self._styles_part.styles
 
     @property
-    def tables(self):
-        """
-        A list of |Table| instances corresponding to the tables in the
-        document, in document order. Note that tables within revision marks
-        such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
-        """
-        return self.body.tables
-
-    @property
     def _styles_part(self):
         """
         Instance of |StylesPart| for this document. Creates an empty styles

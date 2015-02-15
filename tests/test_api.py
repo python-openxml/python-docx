@@ -14,8 +14,6 @@ import docx
 
 from docx.api import Document, DocumentNew
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.package import Package
-from docx.parts.document import DocumentPart
 
 from .unitutil.mock import function_mock, instance_mock, class_mock
 
@@ -77,54 +75,3 @@ class DescribeDocument(object):
     @pytest.fixture
     def Package_(self, request):
         return class_mock(request, 'docx.api.Package')
-
-
-class DescribeDocumentOld(object):
-
-    def it_provides_access_to_the_document_tables(self, tables_fixture):
-        document, tables_ = tables_fixture
-        tables = document.tables
-        assert tables is tables_
-
-    # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def tables_fixture(self, document, tables_):
-        return document, tables_
-
-    # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def document(self, open_):
-        return Document()
-
-    @pytest.fixture
-    def document_obj_(self, request):
-        return instance_mock(request, docx.document.Document)
-
-    @pytest.fixture
-    def document_part_(self, request, tables_):
-        document_part_ = instance_mock(
-            request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
-        )
-        document_part_.tables = tables_
-        return document_part_
-
-    @pytest.fixture
-    def open_(self, request, document_obj_, document_part_, package_):
-        document_part_.package = package_
-        document_obj_._part = document_part_
-        return function_mock(
-            request, 'docx.api.DocumentNew',
-            return_value=document_obj_
-        )
-
-    @pytest.fixture
-    def package_(self, request, document_part_):
-        package_ = instance_mock(request, Package)
-        package_.main_document_part = document_part_
-        return package_
-
-    @pytest.fixture
-    def tables_(self, request):
-        return instance_mock(request, list)

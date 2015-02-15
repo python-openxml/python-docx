@@ -97,9 +97,4 @@ class Document(object):
 
     @property
     def tables(self):
-        """
-        A list of |Table| instances corresponding to the tables in the
-        document, in document order. Note that tables within revision marks
-        such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
-        """
-        return self._document_part.tables
+        return self._document.tables
