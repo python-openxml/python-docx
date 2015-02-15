@@ -12,7 +12,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.shape import WD_INLINE_SHAPE
-from docx.parts.document import InlineShape, InlineShapes
+from docx.parts.document import InlineShape
 from docx.shared import Inches
 
 from helpers import test_docx, test_file
@@ -20,14 +20,8 @@ from helpers import test_docx, test_file
 
 # given ===================================================
 
-@given('a document containing five inline shapes')
-def given_a_document_containing_two_inline_shapes(context):
-    docx_path = test_docx('shp-inline-shape-access')
-    context.document = Document(docx_path)
-
-
 @given('an inline shape collection containing five shapes')
-def given_inline_shape_collection_containing_two_shapes(context):
+def given_an_inline_shape_collection_containing_five_shapes(context):
     docx_path = test_docx('shp-inline-shape-access')
     document = Document(docx_path)
     context.inline_shapes = document.inline_shapes
@@ -89,13 +83,6 @@ def then_can_access_each_inline_shape_by_index(context):
         assert isinstance(inline_shape, InlineShape)
 
 
-@then('I can access the inline shape collection of the document')
-def then_can_access_inline_shape_collection_of_document(context):
-    document = context.document
-    inline_shapes = document.inline_shapes
-    assert isinstance(inline_shapes, InlineShapes)
-
-
 @then('I can iterate over the inline shape collection')
 def then_can_iterate_over_inline_shape_collection(context):
     inline_shapes = context.inline_shapes
@@ -152,7 +139,7 @@ def then_the_document_contains_the_inline_picture(context):
 
 @then('the length of the inline shape collection is 5')
 def then_len_of_inline_shape_collection_is_5(context):
-    inline_shapes = context.document.inline_shapes
+    inline_shapes = context.inline_shapes
     shape_count = len(inline_shapes)
     assert shape_count == 5, 'got %s' % shape_count
 

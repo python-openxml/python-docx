@@ -10,7 +10,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
-from docx.parts.document import Sections
+from docx.parts.document import InlineShapes, Sections
 from docx.section import Section
 from docx.shared import Inches
 from docx.table import Table
@@ -23,6 +23,11 @@ from helpers import test_docx, test_file
 @given('a blank document')
 def given_a_blank_document(context):
     context.document = Document()
+
+
+@given('a document having inline shapes')
+def given_a_document_having_inline_shapes(context):
+    context.document = Document(test_docx('shp-inline-shape-access'))
 
 
 @given('a document having three sections')
@@ -152,6 +157,13 @@ def then_I_can_access_a_section_by_index(context):
     for idx in range(3):
         section = sections[idx]
         assert isinstance(section, Section)
+
+
+@then('I can access the inline shape collection of the document')
+def then_can_access_inline_shape_collection_of_document(context):
+    document = context.document
+    inline_shapes = document.inline_shapes
+    assert isinstance(inline_shapes, InlineShapes)
 
 
 @then('I can access the section collection of the document')
