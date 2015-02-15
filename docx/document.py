@@ -132,6 +132,13 @@ class Document(ElementProxy):
         """
         return self._part
 
+    def save(self, path_or_stream):
+        """
+        Save this document to *path_or_stream*, which can be either a path to
+        a filesystem location (a string) or a file-like object.
+        """
+        self._part.save(path_or_stream)
+
     @property
     def _body(self):
         """

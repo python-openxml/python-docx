@@ -79,6 +79,11 @@ class DescribeDocument(object):
         assert table == table_
         assert table.style == style
 
+    def it_can_save_the_document_to_a_file(self, save_fixture):
+        document, file_ = save_fixture
+        document.save(file_)
+        document._part.save.assert_called_once_with(file_)
+
     def it_provides_access_to_its_core_properties(self, core_props_fixture):
         document, core_properties_ = core_props_fixture
         core_properties = document.core_properties
@@ -200,6 +205,12 @@ class DescribeDocument(object):
     def part_fixture(self, document_part_):
         document = Document(None, document_part_)
         return document, document_part_
+
+    @pytest.fixture
+    def save_fixture(self, document_part_):
+        document = Document(None, document_part_)
+        file_ = 'foobar.docx'
+        return document, file_
 
     # fixture components ---------------------------------------------
 
