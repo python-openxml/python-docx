@@ -100,6 +100,10 @@ class Document(object):
         """
         return self._document_part.paragraphs
 
+    @property
+    def part(self):
+        return self._document.part
+
     def save(self, path_or_stream):
         """
         Save this document to *path_or_stream*, which can be either a path to

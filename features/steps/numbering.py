@@ -15,8 +15,7 @@ from helpers import test_docx
 
 @given('a document having a numbering part')
 def given_a_document_having_a_numbering_part(context):
-    docx_path = test_docx('num-having-numbering-part')
-    context.document = Document(docx_path)
+    context.document = Document(test_docx('num-having-numbering-part'))
 
 
 # when ====================================================
@@ -24,7 +23,7 @@ def given_a_document_having_a_numbering_part(context):
 @when('I get the numbering part from the document')
 def when_get_numbering_part_from_document(context):
     document = context.document
-    context.numbering_part = document.numbering_part
+    context.numbering_part = document.part.numbering_part
 
 
 # then =====================================================
