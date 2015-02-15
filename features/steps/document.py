@@ -13,6 +13,7 @@ from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import InlineShapes
 from docx.shared import Inches
 from docx.section import Sections
+from docx.styles.styles import Styles
 from docx.table import Table
 
 from helpers import test_docx, test_file
@@ -33,6 +34,11 @@ def given_a_document_having_inline_shapes(context):
 @given('a document having sections')
 def given_a_document_having_sections(context):
     context.document = Document(test_docx('doc-access-sections'))
+
+
+@given('a document having styles')
+def given_a_document_having_styles(context):
+    context.document = Document(test_docx('sty-having-styles-part'))
 
 
 @given('a single-section document having portrait layout')
@@ -152,6 +158,14 @@ def then_document_inline_shapes_is_an_InlineShapes_object(context):
     assert isinstance(inline_shapes, InlineShapes)
 
 
+@then('document.paragraphs is a list containing three paragraphs')
+def then_document_paragraphs_is_a_list_containing_three_paragraphs(context):
+    document = context.document
+    paragraphs = document.paragraphs
+    assert isinstance(paragraphs, list)
+    assert len(paragraphs) == 3
+
+
 @then('document.sections is a Sections object')
 def then_document_sections_is_a_Sections_object(context):
     sections = context.document.sections
@@ -159,12 +173,10 @@ def then_document_sections_is_a_Sections_object(context):
     assert isinstance(sections, Sections), msg
 
 
-@then('document.paragraphs is a list containing three paragraphs')
-def then_document_paragraphs_is_a_list_containing_three_paragraphs(context):
-    document = context.document
-    paragraphs = document.paragraphs
-    assert isinstance(paragraphs, list)
-    assert len(paragraphs) == 3
+@then('document.styles is a Styles object')
+def then_document_styles_is_a_Styles_object(context):
+    styles = context.document.styles
+    assert isinstance(styles, Styles)
 
 
 @then('the document contains a 2 x 2 table')

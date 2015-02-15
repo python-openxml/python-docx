@@ -17,3 +17,8 @@ Feature: Access document collections
   Scenario: Access the section collection of a document
      Given a document having sections
       Then document.sections is a Sections object
+
+
+  Scenario: Access the styles collection of a document
+    Given a document having styles
+     Then document.styles is a Styles object

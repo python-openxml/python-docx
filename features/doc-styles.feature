@@ -1,13 +1,15 @@
-Feature: Access document styles
-  In order to discover and manipulate document styles
+Feature: Access a document style
+  In order to operate on a particular document style
   As a developer using python-docx
-  I need a way to access document styles
+  I access to each style in the document style collection
 
 
-  Scenario Outline: Access document styles collection
+  Scenario Outline: Access style in style collection
     Given a document having <styles-state>
-     Then I can access the document styles collection
-      And len(styles) is <style-count>
+     Then len(styles) is <style-count>
+      And I can iterate over its styles
+      And I can access a style by style id
+      And I can access a style by its UI name
 
     Examples: having styles or not
       | styles-state   | style-count |
@@ -15,8 +17,3 @@ Feature: Access document styles
       | no styles part |      4      |
 
 
-  Scenario: Access style in style collection
-    Given a document having a styles part
-     Then I can iterate over its styles
-      And I can access a style by style id
-      And I can access a style by its UI name

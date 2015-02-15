@@ -9,7 +9,6 @@ from behave import given, then, when
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.latent import _LatentStyle, LatentStyles
-from docx.styles.styles import Styles
 from docx.styles.style import BaseStyle
 from docx.text.paragraph import ParagraphFormat
 from docx.text.run import Font
@@ -329,13 +328,6 @@ def then_I_can_access_a_style_by_style_id(context):
     styles = context.document.styles
     style = styles['DefaultParagraphFont']
     assert isinstance(style, BaseStyle)
-
-
-@then('I can access the document styles collection')
-def then_I_can_access_the_document_styles_collection(context):
-    document = context.document
-    styles = document.styles
-    assert isinstance(styles, Styles)
 
 
 @then('I can iterate over its styles')
