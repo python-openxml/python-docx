@@ -11,10 +11,8 @@ from __future__ import absolute_import, division, print_function
 import os
 
 from docx.enum.section import WD_SECTION
-from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
+from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
-from docx.parts.numbering import NumberingPart
-from docx.shared import lazyproperty
 
 
 def DocumentNew(docx=None):
@@ -77,19 +75,6 @@ class Document(object):
     @property
     def inline_shapes(self):
         return self._document.inline_shapes
-
-    @lazyproperty
-    def numbering_part(self):
-        """
-        Instance of |NumberingPart| for this document. Creates an empty
-        numbering part if one is not present.
-        """
-        try:
-            return self._document_part.part_related_by(RT.NUMBERING)
-        except KeyError:
-            numbering_part = NumberingPart.new()
-            self._document_part.relate_to(numbering_part, RT.NUMBERING)
-            return numbering_part
 
     @property
     def paragraphs(self):

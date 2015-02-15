@@ -13,10 +13,9 @@ import pytest
 import docx
 
 from docx.api import Document, DocumentNew
-from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
+from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 from docx.parts.document import DocumentPart, InlineShapes
-from docx.parts.numbering import NumberingPart
 from docx.section import Section
 from docx.styles.styles import Styles
 from docx.text.run import Run
@@ -112,34 +111,11 @@ class DescribeDocumentOld(object):
         styles = document.styles
         assert styles is styles_
 
-    def it_provides_access_to_the_numbering_part(self, num_part_get_fixture):
-        document, document_part_, numbering_part_ = num_part_get_fixture
-        numbering_part = document.numbering_part
-        document_part_.part_related_by.assert_called_once_with(RT.NUMBERING)
-        assert numbering_part is numbering_part_
-
-    def it_creates_numbering_part_on_first_access_if_not_present(
-            self, num_part_create_fixture):
-        document, NumberingPart_, document_part_, numbering_part_ = (
-            num_part_create_fixture
-        )
-        numbering_part = document.numbering_part
-        NumberingPart_.new.assert_called_once_with()
-        document_part_.relate_to.assert_called_once_with(
-            numbering_part_, RT.NUMBERING
-        )
-        assert numbering_part is numbering_part_
-
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def init_fixture(self, docx_, open_):
         return docx_, open_
-
-    @pytest.fixture
-    def num_part_get_fixture(self, document, document_part_, numbering_part_):
-        document_part_.part_related_by.return_value = numbering_part_
-        return document, document_part_, numbering_part_
 
     @pytest.fixture
     def paragraphs_fixture(self, document, paragraphs_):
@@ -188,22 +164,6 @@ class DescribeDocumentOld(object):
     @pytest.fixture
     def inline_shapes_(self, request):
         return instance_mock(request, InlineShapes)
-
-    @pytest.fixture
-    def num_part_create_fixture(
-            self, document, NumberingPart_, document_part_, numbering_part_):
-        document_part_.part_related_by.side_effect = KeyError
-        return document, NumberingPart_, document_part_, numbering_part_
-
-    @pytest.fixture
-    def NumberingPart_(self, request, numbering_part_):
-        NumberingPart_ = class_mock(request, 'docx.api.NumberingPart')
-        NumberingPart_.new.return_value = numbering_part_
-        return NumberingPart_
-
-    @pytest.fixture
-    def numbering_part_(self, request):
-        return instance_mock(request, NumberingPart)
 
     @pytest.fixture
     def open_(self, request, document_obj_, document_part_, package_):
