@@ -89,10 +89,7 @@ class Document(object):
 
     @property
     def sections(self):
-        """
-        Return a reference to the |Sections| instance for this document.
-        """
-        return self._document_part.sections
+        return self._document.sections
 
     @property
     def styles(self):

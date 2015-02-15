@@ -84,10 +84,6 @@ class DescribeDocument(object):
 
 class DescribeDocumentOld(object):
 
-    def it_provides_access_to_the_document_sections(self, document):
-        body = document.sections
-        assert body is document._document_part.sections
-
     def it_provides_access_to_the_document_tables(self, tables_fixture):
         document, tables_ = tables_fixture
         tables = document.tables

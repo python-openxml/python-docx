@@ -10,8 +10,9 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
-from docx.parts.document import InlineShapes, Sections
+from docx.parts.document import InlineShapes
 from docx.shared import Inches
+from docx.section import Sections
 from docx.table import Table
 
 from helpers import test_docx, test_file

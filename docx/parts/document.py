@@ -13,7 +13,6 @@ from ..document import Document
 from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
-from ..section import Sections
 from ..shape import InlineShape
 from ..shared import lazyproperty, Parented
 from .styles import StylesPart
@@ -117,13 +116,6 @@ class DocumentPart(XmlPart):
         a filesystem location (a string) or a file-like object.
         """
         self.package.save(path_or_stream)
-
-    @lazyproperty
-    def sections(self):
-        """
-        The |Sections| instance organizing the sections in this document.
-        """
-        return Sections(self._element)
 
     @property
     def styles(self):
