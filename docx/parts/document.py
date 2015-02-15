@@ -12,6 +12,7 @@ from collections import Sequence
 
 from ..blkcntnr import BlockItemContainer
 from ..document import Document
+from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
 from ..section import Section
@@ -97,6 +98,20 @@ class DocumentPart(XmlPart):
         for n in range(1, len(used_ids)+2):
             if n not in used_ids:
                 return n
+
+    @lazyproperty
+    def numbering_part(self):
+        """
+        A |NumberingPart| object providing access to the numbering
+        definitions for this document. Creates an empty numbering part if one
+        is not present.
+        """
+        try:
+            return self.part_related_by(RT.NUMBERING)
+        except KeyError:
+            numbering_part = NumberingPart.new()
+            self.relate_to(numbering_part, RT.NUMBERING)
+            return numbering_part
 
     @property
     def paragraphs(self):

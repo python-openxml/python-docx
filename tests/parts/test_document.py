@@ -15,6 +15,7 @@ from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
 from docx.parts.document import _Body, DocumentPart, InlineShapes, Sections
 from docx.parts.image import ImagePart
+from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
 from docx.section import Section
 from docx.shape import InlineShape
@@ -73,6 +74,21 @@ class DescribeDocumentPart(object):
         inline_shapes = document.inline_shapes
         InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
+
+    def it_provides_access_to_the_numbering_part(self, nmprt_get_fixture):
+        document_part, numbering_part_ = nmprt_get_fixture
+        numbering_part = document_part.numbering_part
+        document_part.part_related_by.assert_called_once_with(RT.NUMBERING)
+        assert numbering_part is numbering_part_
+
+    def it_creates_numbering_part_if_not_present(self, nmprt_create_fixture):
+        document_part, NumberingPart_, numbering_part_ = nmprt_create_fixture
+        numbering_part = document_part.numbering_part
+        NumberingPart_.new.assert_called_once_with()
+        document_part.relate_to.assert_called_once_with(
+            numbering_part_, RT.NUMBERING
+        )
+        assert numbering_part is numbering_part_
 
     def it_can_add_an_image_part_to_the_document(
             self, get_or_add_image_fixture):
@@ -183,6 +199,20 @@ class DescribeDocumentPart(object):
         return document, expected_id
 
     @pytest.fixture
+    def nmprt_create_fixture(self, part_related_by_, relate_to_,
+                             NumberingPart_, numbering_part_):
+        document_part = DocumentPart(None, None, None, None)
+        part_related_by_.side_effect = KeyError
+        NumberingPart_.new.return_value = numbering_part_
+        return document_part, NumberingPart_, numbering_part_
+
+    @pytest.fixture
+    def nmprt_get_fixture(self, part_related_by_, numbering_part_):
+        document_part = DocumentPart(None, None, None, None)
+        part_related_by_.return_value = numbering_part_
+        return document_part, numbering_part_
+
+    @pytest.fixture
     def paragraphs_fixture(self, document_part_body_, body_, paragraphs_):
         document_part = DocumentPart(None, None, None, None)
         body_.paragraphs = paragraphs_
@@ -270,6 +300,14 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def InlineShapes_(self, request):
         return class_mock(request, 'docx.parts.document.InlineShapes')
+
+    @pytest.fixture
+    def NumberingPart_(self, request):
+        return class_mock(request, 'docx.parts.document.NumberingPart')
+
+    @pytest.fixture
+    def numbering_part_(self, request):
+        return instance_mock(request, NumberingPart)
 
     @pytest.fixture
     def p_(self, request):
