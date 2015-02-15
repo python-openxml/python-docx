@@ -93,10 +93,7 @@ class Document(object):
 
     @property
     def styles(self):
-        """
-        A |Styles| object providing access to the styles for this document.
-        """
-        return self._document_part.styles
+        return self._document.styles
 
     @property
     def tables(self):

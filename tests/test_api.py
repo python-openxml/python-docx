@@ -15,12 +15,9 @@ import docx
 from docx.api import Document, DocumentNew
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
-from docx.parts.document import DocumentPart, InlineShapes
-from docx.styles.styles import Styles
+from docx.parts.document import DocumentPart
 
-from .unitutil.mock import (
-    function_mock, instance_mock, class_mock, property_mock
-)
+from .unitutil.mock import function_mock, instance_mock, class_mock
 
 
 class DescribeDocument(object):
@@ -89,29 +86,13 @@ class DescribeDocumentOld(object):
         tables = document.tables
         assert tables is tables_
 
-    def it_provides_access_to_its_styles(self, styles_fixture):
-        document, styles_ = styles_fixture
-        styles = document.styles
-        assert styles is styles_
-
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def styles_fixture(self, document, styles_):
-        document._document_part.styles = styles_
-        return document, styles_
 
     @pytest.fixture
     def tables_fixture(self, document, tables_):
         return document, tables_
 
     # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def Document_inline_shapes_(self, request, inline_shapes_):
-        return property_mock(
-            request, Document, 'inline_shapes', return_value=inline_shapes_
-        )
 
     @pytest.fixture
     def document(self, open_):
@@ -130,10 +111,6 @@ class DescribeDocumentOld(object):
         return document_part_
 
     @pytest.fixture
-    def inline_shapes_(self, request):
-        return instance_mock(request, InlineShapes)
-
-    @pytest.fixture
     def open_(self, request, document_obj_, document_part_, package_):
         document_part_.package = package_
         document_obj_._part = document_part_
@@ -147,10 +124,6 @@ class DescribeDocumentOld(object):
         package_ = instance_mock(request, Package)
         package_.main_document_part = document_part_
         return package_
-
-    @pytest.fixture
-    def styles_(self, request):
-        return instance_mock(request, Styles)
 
     @pytest.fixture
     def tables_(self, request):
