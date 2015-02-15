@@ -9,7 +9,9 @@ from __future__ import (
 )
 
 from .blkcntnr import BlockItemContainer
+from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
+from .section import Section
 from .shared import ElementProxy
 
 
@@ -74,6 +76,17 @@ class Document(ElementProxy):
         """
         run = self.add_paragraph().add_run()
         return run.add_picture(image_path_or_stream, width, height)
+
+    def add_section(self, start_type=WD_SECTION.NEW_PAGE):
+        """
+        Return a |Section| object representing a new section added at the end
+        of the document. The optional *start_type* argument must be a member
+        of the :ref:`WdSectionStart` enumeration, and defaults to
+        ``WD_SECTION.NEW_PAGE`` if not provided.
+        """
+        new_sectPr = self._element.body.add_section_break()
+        new_sectPr.start_type = start_type
+        return Section(new_sectPr)
 
     @property
     def part(self):

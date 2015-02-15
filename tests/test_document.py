@@ -11,13 +11,14 @@ from __future__ import (
 import pytest
 
 from docx.document import _Body, Document
+from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.parts.document import DocumentPart
 from docx.shape import InlineShape
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
-from .unitutil.cxml import element
+from .unitutil.cxml import element, xml
 from .unitutil.mock import (
     class_mock, instance_mock, method_mock, property_mock
 )
@@ -57,6 +58,17 @@ class DescribeDocument(object):
         picture = document.add_picture(path, width, height)
         run_.add_picture.assert_called_once_with(path, width, height)
         assert picture is picture_
+
+    def it_can_add_a_section(self, add_section_fixture):
+        document, start_type, Section_ = add_section_fixture[:3]
+        section_, expected_xml = add_section_fixture[3:]
+
+        section = document.add_section(start_type)
+
+        assert document.element.xml == expected_xml
+        sectPr = document.element.xpath('w:body/w:sectPr')[0]
+        Section_.assert_called_once_with(sectPr)
+        assert section is section_
 
     def it_provides_access_to_the_document_part(self, part_fixture):
         document, part_ = part_fixture
@@ -109,6 +121,25 @@ class DescribeDocument(object):
         run_.add_picture.return_value = picture_
         return document, path, width, height, run_, picture_
 
+    @pytest.fixture(params=[
+        ('w:sectPr',                        WD_SECTION.EVEN_PAGE,
+         'w:sectPr/w:type{w:val=evenPage}'),
+        ('w:sectPr/w:type{w:val=evenPage}', WD_SECTION.ODD_PAGE,
+         'w:sectPr/w:type{w:val=oddPage}'),
+        ('w:sectPr/w:type{w:val=oddPage}',  WD_SECTION.NEW_PAGE,
+         'w:sectPr'),
+    ])
+    def add_section_fixture(self, request, Section_):
+        sentinel, start_type, new_sentinel = request.param
+        document_cxml = 'w:document/w:body/(w:p,%s)' % sentinel
+        document = Document(element(document_cxml), None)
+        expected_xml = xml(
+            'w:document/w:body/(w:p,w:p/w:pPr/%s,%s)' %
+            (sentinel, new_sentinel)
+        )
+        section_ = Section_.return_value
+        return document, start_type, Section_, section_, expected_xml
+
     @pytest.fixture
     def body_fixture(self, _Body_, body_):
         document_elm = element('w:document/w:body')
@@ -154,3 +185,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def run_(self, request):
         return instance_mock(request, Run)
+
+    @pytest.fixture
+    def Section_(self, request):
+        return class_mock(request, 'docx.document.Section')
