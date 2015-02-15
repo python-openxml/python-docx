@@ -15,10 +15,25 @@ from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element
-from .unitutil.mock import class_mock, instance_mock, property_mock
+from .unitutil.mock import (
+    class_mock, instance_mock, method_mock, property_mock
+)
 
 
 class DescribeDocument(object):
+
+    def it_can_add_a_heading(self, add_heading_fixture):
+        document, text, level, style, paragraph_ = add_heading_fixture
+        paragraph = document.add_heading(text, level)
+        document.add_paragraph.assert_called_once_with(text, style)
+        assert paragraph is paragraph_
+
+    def it_raises_on_heading_level_out_of_range(self):
+        document = Document(None, None)
+        with pytest.raises(ValueError):
+            document.add_heading(level=-1)
+        with pytest.raises(ValueError):
+            document.add_heading(level=10)
 
     def it_can_add_a_paragraph(self, add_paragraph_fixture):
         document, text, style, paragraph_ = add_paragraph_fixture
@@ -37,6 +52,19 @@ class DescribeDocument(object):
         assert body is body_
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (0, 'Title'),
+        (1, 'Heading 1'),
+        (2, 'Heading 2'),
+        (9, 'Heading 9'),
+    ])
+    def add_heading_fixture(self, request, add_paragraph_, paragraph_):
+        level, style = request.param
+        document = Document(None, None)
+        text = 'Spam vs. Bacon'
+        add_paragraph_.return_value = paragraph_
+        return document, text, level, style, paragraph_
 
     @pytest.fixture(params=[
         ('',         None),
@@ -62,6 +90,10 @@ class DescribeDocument(object):
         return document, document_part_
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def add_paragraph_(self, request):
+        return method_mock(request, Document, 'add_paragraph')
 
     @pytest.fixture
     def _Body_(self, request, body_):
