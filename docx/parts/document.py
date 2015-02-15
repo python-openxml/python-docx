@@ -25,12 +25,6 @@ class DocumentPart(XmlPart):
     """
     Main document part of a WordprocessingML (WML) package, aka a .docx file.
     """
-    def add_paragraph(self, text='', style=None):
-        """
-        Return a paragraph newly added to the end of body content.
-        """
-        return self.body.add_paragraph(text, style)
-
     def add_section(self, start_type=WD_SECTION.NEW_PAGE):
         """
         Return a |Section| object representing a new section added at the end

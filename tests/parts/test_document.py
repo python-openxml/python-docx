@@ -69,12 +69,6 @@ class DescribeDocumentPart(object):
         InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
 
-    def it_can_add_a_paragraph(self, add_paragraph_fixture):
-        document_part, body_, p_ = add_paragraph_fixture
-        p = document_part.add_paragraph()
-        body_.add_paragraph.assert_called_once_with('', None)
-        assert p is p_
-
     def it_can_add_a_section(self, add_section_fixture):
         (document_part, start_type_, body_elm_, new_sectPr_, Section_,
          section_) = add_section_fixture
@@ -143,11 +137,6 @@ class DescribeDocumentPart(object):
         assert styles_part is styles_part_
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def add_paragraph_fixture(self, document_part_body_, body_, p_):
-        document_part = DocumentPart(None, None, None, None)
-        return document_part, body_, p_
 
     @pytest.fixture
     def add_section_fixture(

@@ -13,7 +13,6 @@ import pytest
 import docx
 
 from docx.api import Document, DocumentNew
-from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.package import Package
@@ -23,7 +22,6 @@ from docx.section import Section
 from docx.shape import InlineShape
 from docx.styles.styles import Styles
 from docx.table import Table
-from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 from .unitutil.mock import (
@@ -91,14 +89,6 @@ class DescribeDocument(object):
 
 
 class DescribeDocumentOld(object):
-
-    def it_can_add_a_page_break(self, add_page_break_fixture):
-        document, document_part_, paragraph_, run_ = add_page_break_fixture
-        paragraph = document.add_page_break()
-        document_part_.add_paragraph.assert_called_once_with()
-        paragraph_.add_run.assert_called_once_with()
-        run_.add_break.assert_called_once_with(WD_BREAK.PAGE)
-        assert paragraph is paragraph_
 
     def it_can_add_a_picture(self, add_picture_fixture):
         document, image_path_, width, height, run_, picture_ = (
@@ -178,11 +168,6 @@ class DescribeDocumentOld(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def add_page_break_fixture(
-            self, document, document_part_, paragraph_, run_):
-        return document, document_part_, paragraph_, run_
-
-    @pytest.fixture
     def add_picture_fixture(self, request, run_, picture_):
         document = Document()
         image_path_ = instance_mock(request, str, name='image_path_')
@@ -255,13 +240,10 @@ class DescribeDocumentOld(object):
         return instance_mock(request, docx.document.Document)
 
     @pytest.fixture
-    def document_part_(
-            self, request, paragraph_, paragraphs_, section_, table_,
-            tables_):
+    def document_part_(self, request, paragraphs_, section_, table_, tables_):
         document_part_ = instance_mock(
             request, DocumentPart, content_type=CT.WML_DOCUMENT_MAIN
         )
-        document_part_.add_paragraph.return_value = paragraph_
         document_part_.add_section.return_value = section_
         document_part_.add_table.return_value = table_
         document_part_.paragraphs = paragraphs_
@@ -308,12 +290,6 @@ class DescribeDocumentOld(object):
         package_ = instance_mock(request, Package)
         package_.main_document_part = document_part_
         return package_
-
-    @pytest.fixture
-    def paragraph_(self, request, run_):
-        paragraph_ = instance_mock(request, Paragraph)
-        paragraph_.add_run.return_value = run_
-        return paragraph_
 
     @pytest.fixture
     def paragraphs_(self, request):

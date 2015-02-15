@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 import os
 
 from docx.enum.section import WD_SECTION
-from docx.enum.text import WD_BREAK
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.numbering import NumberingPart
@@ -57,14 +56,7 @@ class Document(object):
         return self._document.add_heading(text, level)
 
     def add_page_break(self):
-        """
-        Return a paragraph newly added to the end of the document and
-        containing only a page break.
-        """
-        p = self._document_part.add_paragraph()
-        r = p.add_run()
-        r.add_break(WD_BREAK.PAGE)
-        return p
+        return self._document.add_page_break()
 
     def add_paragraph(self, text='', style=None):
         return self._document.add_paragraph(text, style)
