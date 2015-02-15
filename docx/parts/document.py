@@ -37,7 +37,7 @@ class DocumentPart(XmlPart):
         A |CoreProperties| object providing read/write access to the core
         properties of this document.
         """
-        raise NotImplementedError
+        return self.package.core_properties
 
     @property
     def document(self):

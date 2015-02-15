@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.coreprops import CoreProperties
 from docx.oxml.parts.document import CT_Body
 from docx.oxml.text.run import CT_R
 from docx.package import ImageParts, Package
@@ -60,6 +61,11 @@ class DescribeDocumentPart(object):
         document_part, styles_ = styles_fixture
         styles = document_part.styles
         assert styles is styles_
+
+    def it_provides_access_to_its_core_properties(self, core_props_fixture):
+        document_part, core_properties_ = core_props_fixture
+        core_properties = document_part.core_properties
+        assert core_properties is core_properties_
 
     def it_provides_access_to_the_inline_shapes_in_the_document(
             self, inline_shapes_fixture):
@@ -131,6 +137,12 @@ class DescribeDocumentPart(object):
         body_elm = document_elm[0]
         document_part = DocumentPart(None, None, document_elm, None)
         return document_part, _Body_, body_elm
+
+    @pytest.fixture
+    def core_props_fixture(self, package_, core_properties_):
+        document_part = DocumentPart(None, None, None, package_)
+        package_.core_properties = core_properties_
+        return document_part, core_properties_
 
     @pytest.fixture
     def get_style_fixture(self, styles_prop_, style_):
@@ -219,6 +231,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def body_(self, request):
         return instance_mock(request, _Body)
+
+    @pytest.fixture
+    def core_properties_(self, request):
+        return instance_mock(request, CoreProperties)
 
     @pytest.fixture
     def document_part_body_(self, request, body_):
