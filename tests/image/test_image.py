@@ -17,11 +17,12 @@ from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.image.tiff import Tiff
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.shared import Length
+from docx.shared import Emu, Length
 
 from ..unitutil.file import test_file
 from ..unitutil.mock import (
-    function_mock, class_mock, initializer_mock, instance_mock, method_mock
+    function_mock, class_mock, initializer_mock, instance_mock, method_mock,
+    property_mock
 )
 
 
@@ -89,6 +90,15 @@ class DescribeImage(object):
         assert (image.width, image.height) == (width, height)
         assert isinstance(image.width, Length)
         assert isinstance(image.height, Length)
+
+    def it_can_scale_its_dimensions(self, scale_fixture):
+        image, width, height, expected_value = scale_fixture
+
+        scaled_width, scaled_height = image.scaled_dimensions(width, height)
+
+        assert (scaled_width, scaled_height) == expected_value
+        assert isinstance(scaled_width, Length)
+        assert isinstance(scaled_height, Length)
 
     def it_knows_the_image_filename(self):
         filename = 'foobar.png'
@@ -189,6 +199,19 @@ class DescribeImage(object):
         image_filename, characteristics = cases[request.param]
         return image_filename, characteristics
 
+    @pytest.fixture(params=[
+        (None, None, 1000, 2000),
+        (100,  None,  100,  200),
+        (None,  500,  250,  500),
+        (1500, 1500, 1500, 1500),
+    ])
+    def scale_fixture(self, request, width_prop_, height_prop_):
+        width, height, scaled_width, scaled_height = request.param
+        width_prop_.return_value = Emu(1000)
+        height_prop_.return_value = Emu(2000)
+        image = Image(None, None, None)
+        return image, width, height, (scaled_width, scaled_height)
+
     @pytest.fixture
     def size_fixture(self, image_header_):
         image_header_.px_width, image_header_.px_height = 150, 75
@@ -219,6 +242,10 @@ class DescribeImage(object):
         )
 
     @pytest.fixture
+    def height_prop_(self, request):
+        return property_mock(request, Image, 'height')
+
+    @pytest.fixture
     def image_(self, request):
         return instance_mock(request, Image)
 
@@ -240,6 +267,10 @@ class DescribeImage(object):
     @pytest.fixture
     def stream_(self, request):
         return instance_mock(request, BytesIO)
+
+    @pytest.fixture
+    def width_prop_(self, request):
+        return property_mock(request, Image, 'width')
 
 
 class Describe_ImageHeaderFactory(object):

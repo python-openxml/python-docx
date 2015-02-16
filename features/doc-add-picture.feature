@@ -4,7 +4,6 @@ Feature: Append an inline picture in its own paragraph
   I need a way to add a picture in its own paragraph
 
 
-  @wip
   Scenario: Add a picture at native size
     Given a blank document
      When I add a picture specifying only the image file
@@ -12,7 +11,6 @@ Feature: Append an inline picture in its own paragraph
       And the picture has its native width and height
 
 
-  @wip
   Scenario: Add a picture specifying both width and height
     Given a blank document
      When I add a picture specifying 1.75" width and 2.5" height
@@ -20,14 +18,12 @@ Feature: Append an inline picture in its own paragraph
       And picture.height is 2.5 inches
 
 
-  @wip
   Scenario: Add a picture specifying only width
     Given a blank document
      When I add a picture specifying a width of 1.5 inches
      Then picture.height is 2.14 inches
 
 
-  @wip
   Scenario: Add a picture specifying only height
     Given a blank document
      When I add a picture specifying a height of 1.5 inches

@@ -12,7 +12,7 @@ import os
 
 from ..compat import BytesIO, is_string
 from .exceptions import UnrecognizedImageError
-from ..shared import Inches, lazyproperty
+from ..shared import Emu, Inches, lazyproperty
 
 
 class Image(object):
@@ -133,7 +133,7 @@ class Image(object):
         """
         return Inches(self.px_height / self.vert_dpi)
 
-    def scaled_dimensions(self, width, height):
+    def scaled_dimensions(self, width=None, height=None):
         """
         Return a (cx, cy) 2-tuple representing the native dimensions of this
         image scaled by applying the following rules to *width* and *height*.
@@ -147,7 +147,18 @@ class Image(object):
         dpi if no value is specified, as is often the case. The returned
         values are both |Length| objects.
         """
-        raise NotImplementedError
+        if width is None and height is None:
+            return self.width, self.height
+
+        if width is None:
+            scaling_factor = float(height) / float(self.height)
+            width = round(self.width * scaling_factor)
+
+        if height is None:
+            scaling_factor = float(width) / float(self.width)
+            height = round(self.height * scaling_factor)
+
+        return Emu(width), Emu(height)
 
     @lazyproperty
     def sha1(self):
