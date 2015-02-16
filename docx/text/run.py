@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
+from ..shape import InlineShape
 from ..shared import ElementProxy, Parented
 
 
@@ -57,7 +58,9 @@ class Run(Parented):
         (dpi) value specified in the image file, defaulting to 72 dpi if no
         value is specified, as is often the case.
         """
-        raise NotImplementedError
+        inline = self.part.new_pic_inline(image_path_or_stream, width, height)
+        self._r.add_drawing(inline)
+        return InlineShape(inline)
 
     def add_tab(self):
         """

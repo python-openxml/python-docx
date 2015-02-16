@@ -80,6 +80,14 @@ class DocumentPart(XmlPart):
         """
         return InlineShapes(self._element.body, self)
 
+    def new_pic_inline(self, image_descriptor, width, height):
+        """
+        Return a newly-created `w:inline` element containing the image
+        specified by *image_descriptor* and scaled based on the values of
+        *width* and *height*.
+        """
+        raise NotImplementedError
+
     @property
     def next_id(self):
         """

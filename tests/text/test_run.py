@@ -11,6 +11,7 @@ from __future__ import (
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.parts.document import DocumentPart
+from docx.shape import InlineShape
 from docx.shared import Pt
 from docx.text.run import Font, Run
 
@@ -84,6 +85,17 @@ class DescribeRun(object):
         run.add_tab()
         assert run._r.xml == expected_xml
 
+    def it_can_add_a_picture(self, add_picture_fixture):
+        run, image, width, height, inline = add_picture_fixture[:5]
+        expected_xml, InlineShape_, picture_ = add_picture_fixture[5:]
+
+        picture = run.add_picture(image, width, height)
+
+        run.part.new_pic_inline.assert_called_once_with(image, width, height)
+        assert run._r.xml == expected_xml
+        InlineShape_.assert_called_once_with(inline)
+        assert picture is picture_
+
     def it_can_remove_its_content_but_keep_formatting(self, clear_fixture):
         run, expected_xml = clear_fixture
         _run = run.clear()
@@ -117,6 +129,20 @@ class DescribeRun(object):
         run = Run(element('w:r'), None)
         expected_xml = xml(expected_cxml)
         return run, break_type, expected_xml
+
+    @pytest.fixture
+    def add_picture_fixture(self, part_prop_, document_part_, InlineShape_,
+                            picture_):
+        run = Run(element('w:r/wp:x'), None)
+        image = 'foobar.png'
+        width, height, inline = 1111, 2222, element('wp:inline{id=42}')
+        expected_xml = xml('w:r/(wp:x,w:drawing/wp:inline{id=42})')
+        document_part_.new_pic_inline.return_value = inline
+        InlineShape_.return_value = picture_
+        return (
+            run, image, width, height, inline, expected_xml, InlineShape_,
+            picture_
+        )
 
     @pytest.fixture(params=[
         ('w:r/w:t"foo"', 'w:r/(w:t"foo", w:tab)'),
@@ -305,10 +331,18 @@ class DescribeRun(object):
         return instance_mock(request, Font)
 
     @pytest.fixture
+    def InlineShape_(self, request):
+        return class_mock(request, 'docx.text.run.InlineShape')
+
+    @pytest.fixture
     def part_prop_(self, request, document_part_):
         return property_mock(
             request, Run, 'part', return_value=document_part_
         )
+
+    @pytest.fixture
+    def picture_(self, request):
+        return instance_mock(request, InlineShape)
 
     @pytest.fixture
     def Text_(self, request):
