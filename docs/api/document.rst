@@ -7,27 +7,18 @@ Document objects
 The main Document and related objects.
 
 
-.. currentmodule:: docx.api
+|Document| constructor
+----------------------
+
+.. autofunction:: docx.Document
 
 
 |Document| objects
 ------------------
 
-
-.. autoclass:: Document
+.. autoclass:: docx.document.Document()
    :members:
-   :exclude-members: numbering_part, styles_part
-
-
-.. currentmodule:: docx.parts.document
-
-
-|Sections| objects
-------------------
-
-
-.. autoclass:: Sections
-   :members:
+   :exclude-members: styles_part
 
 
 |CoreProperties| objects

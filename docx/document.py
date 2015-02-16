@@ -17,7 +17,8 @@ from .shared import ElementProxy
 
 class Document(ElementProxy):
     """
-    WordprocessingML (WML) document.
+    WordprocessingML (WML) document. Not intended to be constructed directly.
+    Use :func:`docx.Document` to open or create a document.
     """
 
     __slots__ = ('_part', '__body')

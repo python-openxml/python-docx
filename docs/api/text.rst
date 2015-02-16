@@ -8,34 +8,26 @@ Text-related objects
 |Paragraph| objects
 -------------------
 
-.. currentmodule:: docx.text.paragraph
-
-.. autoclass:: Paragraph
+.. autoclass:: docx.text.paragraph.Paragraph()
    :members:
 
 
 |ParagraphFormat| objects
 -------------------------
 
-.. currentmodule:: docx.text.paragraph
-
-.. autoclass:: ParagraphFormat
+.. autoclass:: docx.text.parfmt.ParagraphFormat()
    :members:
 
 
 |Run| objects
 -------------
 
-.. currentmodule:: docx.text.run
-
-.. autoclass:: Run
+.. autoclass:: docx.text.run.Run()
    :members:
 
 
 |Font| objects
 --------------
 
-.. currentmodule:: docx.text.run
-
-.. autoclass:: Font
+.. autoclass:: docx.text.run.Font()
    :members:

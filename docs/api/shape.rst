@@ -4,7 +4,7 @@
 Shape-related objects
 =====================
 
-.. currentmodule:: docx.parts.document
+.. currentmodule:: docx.shape
 
 
 |InlineShapes| objects
@@ -12,9 +12,7 @@ Shape-related objects
 
 .. autoclass:: InlineShapes
    :members:
-
-
-.. currentmodule:: docx.shape
+   :exclude-members: add_picture
 
 
 |InlineShape| objects
