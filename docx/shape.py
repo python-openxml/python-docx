@@ -10,7 +10,6 @@ from __future__ import (
 )
 
 from .enum.shape import WD_INLINE_SHAPE
-from .oxml.shape import CT_Inline, CT_Picture
 from .oxml.ns import nsmap
 from .shared import Parented
 
@@ -41,19 +40,6 @@ class InlineShapes(Parented):
     def __len__(self):
         return len(self._inline_lst)
 
-    def add_picture(self, image_descriptor, run):
-        """
-        Return an |InlineShape| instance containing the picture identified by
-        *image_descriptor* and added to the end of *run*. The picture shape
-        has the native size of the image. *image_descriptor* can be a path (a
-        string) or a file-like object containing a binary image.
-        """
-        image_part, rId = self.part.get_or_add_image_part(image_descriptor)
-        shape_id = self.part.next_id
-        r = run._r
-        picture = InlineShape.new_picture(r, image_part, rId, shape_id)
-        return picture
-
     @property
     def _inline_lst(self):
         body = self._body
@@ -83,22 +69,6 @@ class InlineShape(object):
         assert isinstance(cy, int)
         assert 0 < cy
         self._inline.extent.cy = cy
-
-    @classmethod
-    def new_picture(cls, r, image_part, rId, shape_id):
-        """
-        Return a new |InlineShape| instance containing an inline picture
-        placement of *image_part* appended to run *r* and uniquely identified
-        by *shape_id*.
-        """
-        cx, cy, filename = (
-            image_part.default_cx, image_part.default_cy, image_part.filename
-        )
-        pic_id = 0
-        pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
-        inline = CT_Inline.new(cx, cy, shape_id, pic)
-        r.add_drawing(inline)
-        return cls(inline)
 
     @property
     def type(self):

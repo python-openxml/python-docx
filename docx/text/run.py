@@ -57,23 +57,7 @@ class Run(Parented):
         (dpi) value specified in the image file, defaulting to 72 dpi if no
         value is specified, as is often the case.
         """
-        inline_shapes = self.part.inline_shapes
-        picture = inline_shapes.add_picture(image_path_or_stream, self)
-
-        # scale picture dimensions if width and/or height provided
-        if width is not None or height is not None:
-            native_width, native_height = picture.width, picture.height
-            if width is None:
-                scaling_factor = float(height) / float(native_height)
-                width = int(round(native_width * scaling_factor))
-            elif height is None:
-                scaling_factor = float(width) / float(native_width)
-                height = int(round(native_height * scaling_factor))
-            # set picture to scaled dimensions
-            picture.width = width
-            picture.height = height
-
-        return picture
+        raise NotImplementedError
 
     def add_tab(self):
         """

@@ -15,7 +15,7 @@ from docx.enum.shape import WD_INLINE_SHAPE
 from docx.shape import InlineShape
 from docx.shared import Inches
 
-from helpers import test_docx, test_file
+from helpers import test_docx
 
 
 # given ===================================================
@@ -48,23 +48,6 @@ def given_inline_shape_known_to_be_shape_of_type(context, shp_of_type):
 
 
 # when =====================================================
-
-@when('I add an inline picture from a file-like object')
-def when_add_inline_picture_from_file_like_object(context):
-    document = context.document
-    run = document.add_paragraph().add_run()
-    with open(test_file('monty-truth.png'), 'rb') as f:
-        context.inline_shape = document.inline_shapes.add_picture(f, run)
-
-
-@when('I add an inline picture to the document')
-def when_add_inline_picture_to_document(context):
-    document = context.document
-    run = document.add_paragraph().add_run()
-    context.inline_shape = (document.inline_shapes.add_picture(
-        test_file('monty-truth.png'), run
-    ))
-
 
 @when('I change the dimensions of the inline shape')
 def when_change_dimensions_of_inline_shape(context):
