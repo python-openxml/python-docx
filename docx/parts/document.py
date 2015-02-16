@@ -50,20 +50,11 @@ class DocumentPart(XmlPart):
         *rId* is the key for the relationship between this document part and
         the image part, reused if already present, newly created if not.
         """
-        raise NotImplementedError
-
-    def get_or_add_image_part(self, image_descriptor):
-        """
-        Return an ``(image_part, rId)`` 2-tuple for the image identified by
-        *image_descriptor*. *image_part* is an |Image| instance corresponding
-        to the image, newly created if no matching image part is found. *rId*
-        is the key for the relationship between this document part and the
-        image part, reused if already present, newly created if not.
-        """
-        image_parts = self._package.image_parts
-        image_part = image_parts.get_or_add_image_part(image_descriptor)
+        image_part = self._package.image_parts.get_or_add_image_part(
+            image_descriptor
+        )
         rId = self.relate_to(image_part, RT.IMAGE)
-        return (image_part, rId)
+        return rId, image_part.image
 
     def get_style(self, style_id, style_type):
         """

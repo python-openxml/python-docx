@@ -11,7 +11,7 @@ import pytest
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
-from docx.package import ImageParts, Package
+from docx.package import Package
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
@@ -34,6 +34,16 @@ class DescribeDocumentPart(object):
         document, file_ = save_fixture
         document.save(file_)
         document._package.save.assert_called_once_with(file_)
+
+    def it_can_get_or_add_an_image(self, get_image_fixture):
+        document_part, path, image_part_, rId_, image_ = get_image_fixture
+
+        rId, image = document_part.get_or_add_image(path)
+
+        image_parts = document_part._package.image_parts
+        image_parts.get_or_add_image_part.assert_called_once_with(path)
+        document_part.relate_to.assert_called_once_with(image_part_, RT.IMAGE)
+        assert (rId, image) == (rId_, image_)
 
     def it_provides_access_to_the_document_styles(self, styles_fixture):
         document_part, styles_ = styles_fixture
@@ -66,18 +76,6 @@ class DescribeDocumentPart(object):
             numbering_part_, RT.NUMBERING
         )
         assert numbering_part is numbering_part_
-
-    def it_can_add_an_image_part_to_the_document(
-            self, get_or_add_image_fixture):
-        (document, image_descriptor_, image_parts_, relate_to_, image_part_,
-         rId_) = get_or_add_image_fixture
-        image_part, rId = document.get_or_add_image_part(image_descriptor_)
-        image_parts_.get_or_add_image_part.assert_called_once_with(
-            image_descriptor_
-        )
-        relate_to_.assert_called_once_with(image_part_, RT.IMAGE)
-        assert image_part is image_part_
-        assert rId == rId_
 
     def it_knows_the_next_available_xml_id(self, next_id_fixture):
         document, expected_id = next_id_fixture
@@ -136,6 +134,17 @@ class DescribeDocumentPart(object):
         document_part = DocumentPart(None, None, None, package_)
         package_.core_properties = core_properties_
         return document_part, core_properties_
+
+    @pytest.fixture
+    def get_image_fixture(self, package_, image_part_, image_, relate_to_):
+        document_part = DocumentPart(None, None, None, package_)
+        path, rId_ = 'foobar.png', 'rId42'
+
+        package_.image_parts.get_or_add_image_part.return_value = image_part_
+        relate_to_.return_value = rId_
+        image_part_.image = image_
+
+        return document_part, path, image_part_, rId_, image_
 
     @pytest.fixture
     def get_style_fixture(self, styles_prop_, style_):
@@ -237,17 +246,6 @@ class DescribeDocumentPart(object):
         return instance_mock(request, CoreProperties)
 
     @pytest.fixture
-    def get_or_add_image_fixture(
-            self, request, package_, image_descriptor_, image_parts_,
-            relate_to_, image_part_, rId_):
-        package_.image_parts = image_parts_
-        document = DocumentPart(None, None, None, package_)
-        return (
-            document, image_descriptor_, image_parts_, relate_to_,
-            image_part_, rId_
-        )
-
-    @pytest.fixture
     def get_or_add_image_(self, request):
         return method_mock(request, DocumentPart, 'get_or_add_image')
 
@@ -256,18 +254,8 @@ class DescribeDocumentPart(object):
         return instance_mock(request, Image)
 
     @pytest.fixture
-    def image_descriptor_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
     def image_part_(self, request):
         return instance_mock(request, ImagePart)
-
-    @pytest.fixture
-    def image_parts_(self, request, image_part_):
-        image_parts_ = instance_mock(request, ImageParts)
-        image_parts_.get_or_add_image_part.return_value = image_part_
-        return image_parts_
 
     @pytest.fixture
     def InlineShapes_(self, request):
@@ -298,14 +286,8 @@ class DescribeDocumentPart(object):
         return method_mock(request, DocumentPart, 'part_related_by')
 
     @pytest.fixture
-    def relate_to_(self, request, rId_):
-        relate_to_ = method_mock(request, DocumentPart, 'relate_to')
-        relate_to_.return_value = rId_
-        return relate_to_
-
-    @pytest.fixture
-    def rId_(self, request):
-        return instance_mock(request, str)
+    def relate_to_(self, request):
+        return method_mock(request, DocumentPart, 'relate_to')
 
     @pytest.fixture
     def style_(self, request):
