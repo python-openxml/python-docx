@@ -3,6 +3,24 @@
 Release History
 ---------------
 
+0.8.2 (2015-02-16)
+++++++++++++++++++
+
+- Fix #94: picture prints at wrong size when scaled
+- Extract `docx.document.Document` object from `DocumentPart`
+
+  Refactor `docx.Document` from an object into a factory function for new
+  `docx.document.Document object`. Extract methods from prior `docx.Document`
+  and `docx.parts.document.DocumentPart` to form the new API class and retire
+  `docx.Document` class.
+
+- Migrate `Document.numbering_part` to `DocumentPart.numbering_part`. The
+  `numbering_part` property is not part of the published API and is an
+  interim internal feature to be replaced in a future release, perhaps with
+  something like `Document.numbering_definitions`. In the meantime, it can
+  now be accessed using ``Document.part.numbering_part``.
+
+
 0.8.1 (2015-02-10)
 ++++++++++++++++++
 
