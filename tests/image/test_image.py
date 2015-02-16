@@ -17,6 +17,7 @@ from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.image.tiff import Tiff
 from docx.opc.constants import CONTENT_TYPE as CT
+from docx.shared import Length
 
 from ..unitutil.file import test_file
 from ..unitutil.mock import (
@@ -71,7 +72,7 @@ class DescribeImage(object):
         image = Image(None, None, image_header_)
         assert image.content_type == content_type
 
-    def it_knows_the_image_dimensions(self, dimensions_fixture):
+    def it_knows_the_image_px_dimensions(self, dimensions_fixture):
         image_header_, px_width, px_height = dimensions_fixture
         image = Image(None, None, image_header_)
         assert image.px_width == px_width
@@ -82,6 +83,12 @@ class DescribeImage(object):
         image = Image(None, None, image_header_)
         assert image.horz_dpi == horz_dpi
         assert image.vert_dpi == vert_dpi
+
+    def it_knows_the_image_native_size(self, size_fixture):
+        image, width, height = size_fixture
+        assert (image.width, image.height) == (width, height)
+        assert isinstance(image.width, Length)
+        assert isinstance(image.height, Length)
 
     def it_knows_the_image_filename(self):
         filename = 'foobar.png'
@@ -181,6 +188,13 @@ class DescribeImage(object):
         )
         image_filename, characteristics = cases[request.param]
         return image_filename, characteristics
+
+    @pytest.fixture
+    def size_fixture(self, image_header_):
+        image_header_.px_width, image_header_.px_height = 150, 75
+        image_header_.horz_dpi, image_header_.vert_dpi = 72, 200
+        image = Image(None, None, image_header_)
+        return image, 1905000, 342900
 
     # fixture components ---------------------------------------------
 

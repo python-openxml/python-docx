@@ -11,8 +11,8 @@ import hashlib
 import os
 
 from ..compat import BytesIO, is_string
-from ..shared import lazyproperty
 from .exceptions import UnrecognizedImageError
+from ..shared import Inches, lazyproperty
 
 
 class Image(object):
@@ -116,6 +116,22 @@ class Image(object):
         when not present in the file, as is often the case.
         """
         return self._image_header.vert_dpi
+
+    @property
+    def width(self):
+        """
+        A |Length| value representing the native width of the image,
+        calculated from the values of `px_width` and `horz_dpi`.
+        """
+        return Inches(self.px_width / self.horz_dpi)
+
+    @property
+    def height(self):
+        """
+        A |Length| value representing the native height of the image,
+        calculated from the values of `px_height` and `vert_dpi`.
+        """
+        return Inches(self.px_height / self.vert_dpi)
 
     def scaled_dimensions(self, width, height):
         """
