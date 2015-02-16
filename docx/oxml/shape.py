@@ -75,6 +75,18 @@ class CT_Inline(BaseOxmlElement):
         return inline
 
     @classmethod
+    def new_pic_inline(cls, shape_id, rId, filename, cx, cy):
+        """
+        Return a new `wp:inline` element containing the `pic:pic` element
+        specified by the argument values.
+        """
+        pic_id = 0  # Word doesn't seem to use this, but does not omit it
+        pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
+        inline = cls.new(cx, cy, shape_id, pic)
+        inline.graphic.graphicData._insert_pic(pic)
+        return inline
+
+    @classmethod
     def _inline_xml(cls):
         return (
             '<wp:inline %s>\n'

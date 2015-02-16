@@ -12,6 +12,7 @@ from ..document import Document
 from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
+from ..oxml.shape import CT_Inline
 from ..shape import InlineShapes
 from ..shared import lazyproperty
 from .styles import StylesPart
@@ -40,6 +41,16 @@ class DocumentPart(XmlPart):
         A |Document| object providing access to the content of this document.
         """
         return Document(self._element, self)
+
+    def get_or_add_image(self, image_descriptor):
+        """
+        Return an (rId, image) 2-tuple for the image identified by
+        *image_descriptor*. *image* is an |Image| instance providing access
+        to the properties of the image, such as dimensions and image type.
+        *rId* is the key for the relationship between this document part and
+        the image part, reused if already present, newly created if not.
+        """
+        raise NotImplementedError
 
     def get_or_add_image_part(self, image_descriptor):
         """
@@ -86,7 +97,10 @@ class DocumentPart(XmlPart):
         specified by *image_descriptor* and scaled based on the values of
         *width* and *height*.
         """
-        raise NotImplementedError
+        rId, image = self.get_or_add_image(image_descriptor)
+        cx, cy = image.scaled_dimensions(width, height)
+        shape_id, filename = self.next_id, image.filename
+        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
 
     @property
     def next_id(self):

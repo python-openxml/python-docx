@@ -117,6 +117,22 @@ class Image(object):
         """
         return self._image_header.vert_dpi
 
+    def scaled_dimensions(self, width, height):
+        """
+        Return a (cx, cy) 2-tuple representing the native dimensions of this
+        image scaled by applying the following rules to *width* and *height*.
+        If both *width* and *height* are specified, the return value is
+        (*width*, *height*); no scaling is performed. If only one is
+        specified, it is used to compute a scaling factor that is then
+        applied to the unspecified dimension, preserving the aspect ratio of
+        the image. If both *width* and *height* are |None|, the native
+        dimensions are returned. The native dimensions are calculated using
+        the dots-per-inch (dpi) value embedded in the image, defaulting to 72
+        dpi if no value is specified, as is often the case. The returned
+        values are both |Length| objects.
+        """
+        raise NotImplementedError
+
     @lazyproperty
     def sha1(self):
         """
