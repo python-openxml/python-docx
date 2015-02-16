@@ -66,9 +66,8 @@ class InlineShape(object):
 
     @height.setter
     def height(self, cy):
-        assert isinstance(cy, int)
-        assert 0 < cy
         self._inline.extent.cy = cy
+        self._inline.graphic.graphicData.pic.spPr.cy = cy
 
     @property
     def type(self):
@@ -100,6 +99,5 @@ class InlineShape(object):
 
     @width.setter
     def width(self, cx):
-        assert isinstance(cx, int)
-        assert 0 < cx
         self._inline.extent.cx = cx
+        self._inline.graphic.graphicData.pic.spPr.cx = cx

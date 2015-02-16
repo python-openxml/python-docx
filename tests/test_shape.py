@@ -112,8 +112,11 @@ class DescribeInlineShape(object):
     @pytest.fixture
     def dimensions_set_fixture(self):
         inline_cxml, new_cx, new_cy, expected_cxml = (
-            'wp:inline/wp:extent{cx=333, cy=666}', 444, 888,
-            'wp:inline/wp:extent{cx=444, cy=888}'
+            'wp:inline/(wp:extent{cx=333,cy=666},a:graphic/a:graphicData/'
+            'pic:pic/pic:spPr/a:xfrm/a:ext{cx=333,cy=666})',
+            444, 888,
+            'wp:inline/(wp:extent{cx=444,cy=888},a:graphic/a:graphicData/'
+            'pic:pic/pic:spPr/a:xfrm/a:ext{cx=444,cy=888})'
         )
         inline_shape = InlineShape(element(inline_cxml))
         expected_xml = xml(expected_cxml)
