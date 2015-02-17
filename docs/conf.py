@@ -141,6 +141,8 @@ rst_epilog = """
 
 .. |Relationships| replace:: :class:`._Relationships`
 
+.. |RGBColor| replace:: :class:`.RGBColor`
+
 .. |_Row| replace:: :class:`._Row`
 
 .. |_Rows| replace:: :class:`._Rows`

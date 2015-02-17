@@ -7,6 +7,7 @@ Text
 
    paragraph-format
    font
+   font-color
    underline
    run-content
    breaks
