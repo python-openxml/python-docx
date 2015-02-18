@@ -11,7 +11,9 @@ from __future__ import (
 import pytest
 
 from docx.opc.part import XmlPart
-from docx.shared import ElementProxy, Length, Cm, Emu, Inches, Mm, Pt, Twips
+from docx.shared import (
+    ElementProxy, Length, Cm, Emu, Inches, Mm, Pt, RGBColor, Twips
+)
 
 from .unitutil.cxml import element
 from .unitutil.mock import instance_mock
@@ -113,3 +115,26 @@ class DescribeLength(object):
     def units_fixture(self, request):
         emu, units_prop_name, expected_length_in_units, type_ = request.param
         return emu, units_prop_name, expected_length_in_units, type_
+
+
+class DescribeRGBColor(object):
+
+    def it_is_natively_constructed_using_three_ints_0_to_255(self):
+        RGBColor(0x12, 0x34, 0x56)
+        with pytest.raises(ValueError):
+            RGBColor('12', '34', '56')
+        with pytest.raises(ValueError):
+            RGBColor(-1, 34, 56)
+        with pytest.raises(ValueError):
+            RGBColor(12, 256, 56)
+
+    def it_can_construct_from_a_hex_string_rgb_value(self):
+        rgb = RGBColor.from_string('123456')
+        assert rgb == RGBColor(0x12, 0x34, 0x56)
+
+    def it_can_provide_a_hex_string_rgb_value(self):
+        assert str(RGBColor(0x12, 0x34, 0x56)) == '123456'
+
+    def it_has_a_custom_repr(self):
+        rgb_color = RGBColor(0x42, 0xF0, 0xBA)
+        assert repr(rgb_color) == 'RGBColor(0x42, 0xf0, 0xba)'
