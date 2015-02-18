@@ -14,7 +14,8 @@ from docx import Document
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
-from docx.text.run import Font, Run
+from docx.text.font import Font
+from docx.text.run import Run
 
 from helpers import test_docx, test_file, test_text
 

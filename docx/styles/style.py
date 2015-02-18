@@ -11,8 +11,8 @@ from __future__ import (
 from . import BabelFish
 from ..enum.style import WD_STYLE_TYPE
 from ..shared import ElementProxy
+from ..text.font import Font
 from ..text.parfmt import ParagraphFormat
-from ..text.run import Font
 
 
 def StyleFactory(style_elm):

@@ -15,8 +15,8 @@ from docx.styles.style import (
     BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
     StyleFactory, _TableStyle
 )
+from docx.text.font import Font
 from docx.text.parfmt import ParagraphFormat
-from docx.text.run import Font
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, function_mock, instance_mock

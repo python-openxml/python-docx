@@ -10,8 +10,8 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.latent import _LatentStyle, LatentStyles
 from docx.styles.style import BaseStyle
+from docx.text.font import Font
 from docx.text.parfmt import ParagraphFormat
-from docx.text.run import Font
 
 from helpers import test_docx
 
