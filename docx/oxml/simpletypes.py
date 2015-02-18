@@ -11,7 +11,7 @@ from __future__ import (
 )
 
 from ..exceptions import InvalidXmlError
-from ..shared import Emu, Pt, Twips
+from ..shared import Emu, Pt, RGBColor, Twips
 
 
 class BaseSimpleType(object):
@@ -235,6 +235,41 @@ class ST_DecimalNumber(XsdInt):
 
 class ST_DrawingElementId(XsdUnsignedInt):
     pass
+
+
+class ST_HexColor(BaseStringType):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        if str_value == 'auto':
+            return ST_HexColorAuto.AUTO
+        return RGBColor.from_string(str_value)
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        """
+        Keep alpha hex numerals all uppercase just for consistency.
+        """
+        # expecting 3-tuple of ints in range 0-255
+        return '%02X%02X%02X' % value
+
+    @classmethod
+    def validate(cls, value):
+        # must be an RGBColor object ---
+        if not isinstance(value, RGBColor):
+            raise ValueError(
+                "rgb color value must be RGBColor object, got %s %s"
+                % (type(value), value)
+            )
+
+
+class ST_HexColorAuto(XsdStringEnumeration):
+    """
+    Value for `w:color/[@val="auto"] attribute setting
+    """
+    AUTO = 'auto'
+
+    _members = (AUTO,)
 
 
 class ST_HpsMeasure(XsdUnsignedLong):

@@ -4,12 +4,24 @@
 Custom element classes related to run properties (font).
 """
 
+from ...enum.dml import MSO_THEME_COLOR
 from ...enum.text import WD_UNDERLINE
 from ..ns import qn
-from ..simpletypes import ST_HpsMeasure, ST_String, ST_VerticalAlignRun
+from ..simpletypes import (
+    ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
+)
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
 )
+
+
+class CT_Color(BaseOxmlElement):
+    """
+    `w:color` element, specifying the color of a font and perhaps other
+    objects.
+    """
+    val = RequiredAttribute('w:val', ST_HexColor)
+    themeColor = OptionalAttribute('w:themeColor', MSO_THEME_COLOR)
 
 
 class CT_Fonts(BaseOxmlElement):
@@ -60,6 +72,7 @@ class CT_RPr(BaseOxmlElement):
     snapToGrid = ZeroOrOne('w:snapToGrid', successors=_tag_seq[16:])
     vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
+    color = ZeroOrOne('w:color', successors=_tag_seq[19:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
     vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
