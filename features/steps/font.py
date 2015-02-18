@@ -12,6 +12,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.dml.color import ColorFormat
+from docx.enum.dml import MSO_COLOR_TYPE
 from docx.enum.text import WD_UNDERLINE
 
 from helpers import test_docx
@@ -23,6 +24,13 @@ from helpers import test_docx
 def given_a_font(context):
     document = Document(test_docx('txt-font-props'))
     context.font = document.paragraphs[0].runs[0].font
+
+
+@given('a font having {type} color')
+def given_a_font_having_type_color(context, type):
+    run_idx = ['no', 'auto', 'an RGB', 'a theme'].index(type)
+    document = Document(test_docx('fnt-color'))
+    context.font = document.paragraphs[0].runs[run_idx].font
 
 
 @given('a font having typeface name {name}')
@@ -120,6 +128,15 @@ def when_I_assign_value_to_font_sub_super(context, value, sub_super):
 def then_font_color_is_a_ColorFormat_object(context):
     font = context.font
     assert isinstance(font.color, ColorFormat)
+
+
+@then('font.color.type is {value}')
+def then_font_color_type_is_value(context, value):
+    font = context.font
+    expected_value = (
+        None if value == 'None' else getattr(MSO_COLOR_TYPE, value)
+    )
+    assert font.color.type == expected_value
 
 
 @then('font.name is {value}')
