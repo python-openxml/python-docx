@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from ..dml.color import ColorFormat
 from ..shared import ElementProxy
 
 
@@ -41,6 +42,14 @@ class Font(ElementProxy):
     @bold.setter
     def bold(self, value):
         self._set_bool_prop('b', value)
+
+    @property
+    def color(self):
+        """
+        A |ColorFormat| object providing a way to get and set the text color
+        for this font.
+        """
+        return ColorFormat(self._element)
 
     @property
     def complex_script(self):

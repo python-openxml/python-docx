@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from docx.dml.color import ColorFormat
 from docx.enum.text import WD_UNDERLINE
 from docx.shared import Pt
 from docx.text.font import Font
@@ -15,9 +16,16 @@ from docx.text.font import Font
 import pytest
 
 from ..unitutil.cxml import element, xml
+from ..unitutil.mock import class_mock, instance_mock
 
 
 class DescribeFont(object):
+
+    def it_provides_access_to_its_color_object(self, color_fixture):
+        font, color_, ColorFormat_ = color_fixture
+        color = font.color
+        ColorFormat_.assert_called_once_with(font.element)
+        assert color is color_
 
     def it_knows_its_typeface_name(self, name_get_fixture):
         font, expected_value = name_get_fixture
@@ -160,6 +168,11 @@ class DescribeFont(object):
         font = Font(element(r_cxml))
         expected_xml = xml(expected_cxml)
         return font, prop_name, value, expected_xml
+
+    @pytest.fixture
+    def color_fixture(self, ColorFormat_, color_):
+        font = Font(element('w:r'))
+        return font, color_, ColorFormat_
 
     @pytest.fixture(params=[
         ('w:r',                               None),
@@ -325,3 +338,15 @@ class DescribeFont(object):
         run = Font(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, value, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def color_(self, request):
+        return instance_mock(request, ColorFormat)
+
+    @pytest.fixture
+    def ColorFormat_(self, request, color_):
+        return class_mock(
+            request, 'docx.text.font.ColorFormat', return_value=color_
+        )

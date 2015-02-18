@@ -81,6 +81,8 @@ rst_epilog = """
 
 .. |Cm| replace:: :class:`.Cm`
 
+.. |ColorFormat| replace:: :class:`.ColorFormat`
+
 .. |_Column| replace:: :class:`._Column`
 
 .. |_Columns| replace:: :class:`._Columns`
