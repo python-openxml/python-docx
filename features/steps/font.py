@@ -11,12 +11,19 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
+from docx.dml.color import ColorFormat
 from docx.enum.text import WD_UNDERLINE
 
 from helpers import test_docx
 
 
 # given ===================================================
+
+@given('a font')
+def given_a_font(context):
+    document = Document(test_docx('txt-font-props'))
+    context.font = document.paragraphs[0].runs[0].font
+
 
 @given('a font having typeface name {name}')
 def given_a_font_having_typeface_name(context, name):
@@ -108,6 +115,12 @@ def when_I_assign_value_to_font_sub_super(context, value, sub_super):
 
 
 # then =====================================================
+
+@then('font.color is a ColorFormat object')
+def then_font_color_is_a_ColorFormat_object(context):
+    font = context.font
+    assert isinstance(font.color, ColorFormat)
+
 
 @then('font.name is {value}')
 def then_font_name_is_value(context, value):

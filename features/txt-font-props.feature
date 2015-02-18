@@ -48,6 +48,12 @@ Feature: Get or set font properties
       | 18 pt       | None   |
 
 
+  @wip
+  Scenario: Get font color object
+    Given a font
+     Then font.color is a ColorFormat object
+
+
   Scenario Outline: Get font underline value
     Given a font having <underline-type> underline
      Then font.underline is <value>
