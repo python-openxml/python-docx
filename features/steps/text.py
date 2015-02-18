@@ -24,50 +24,6 @@ from helpers import test_docx, test_file, test_text
 
 # given ===================================================
 
-@given('a font having typeface name {name}')
-def given_a_font_having_typeface_name(context, name):
-    document = Document(test_docx('txt-font-props'))
-    style_name = {
-        'not specified': 'Normal',
-        'Avenir Black':  'Having Typeface',
-    }[name]
-    context.font = document.styles[style_name].font
-
-
-@given('a font having {underline_type} underline')
-def given_a_font_having_type_underline(context, underline_type):
-    style_name = {
-        'inherited': 'Normal',
-        'no':        'None Underlined',
-        'single':    'Underlined',
-        'double':    'Double Underlined',
-    }[underline_type]
-    document = Document(test_docx('txt-font-props'))
-    context.font = document.styles[style_name].font
-
-
-@given('a font having {vertAlign_state} vertical alignment')
-def given_a_font_having_vertAlign_state(context, vertAlign_state):
-    style_name = {
-        'inherited':   'Normal',
-        'subscript':   'Subscript',
-        'superscript': 'Superscript',
-    }[vertAlign_state]
-    document = Document(test_docx('txt-font-props'))
-    context.font = document.styles[style_name].font
-
-
-@given('a font of size {size}')
-def given_a_font_of_size(context, size):
-    document = Document(test_docx('txt-font-props'))
-    style_name = {
-        'unspecified': 'Normal',
-        '14 pt':       'Having Typeface',
-        '18 pt':       'Large Size',
-    }[size]
-    context.font = document.styles[style_name].font
-
-
 @given('a paragraph format having {prop_name} set {setting}')
 def given_a_paragraph_format_having_prop_set(context, prop_name, setting):
     style_name = {
@@ -250,33 +206,6 @@ def when_I_assign_mixed_text_to_the_text_property(context):
     context.run.text = 'abc\tdef\nghi\rjkl'
 
 
-@when('I assign {value} to font.name')
-def when_I_assign_value_to_font_name(context, value):
-    font = context.font
-    value = None if value == 'None' else value
-    font.name = value
-
-
-@when('I assign {value} to font.size')
-def when_I_assign_value_str_to_font_size(context, value):
-    value = None if value == 'None' else int(value)
-    font = context.font
-    font.size = value
-
-
-@when('I assign {value_key} to font.underline')
-def when_I_assign_value_to_font_underline(context, value_key):
-    value = {
-        'True':                True,
-        'False':               False,
-        'None':                None,
-        'WD_UNDERLINE.SINGLE': WD_UNDERLINE.SINGLE,
-        'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE,
-    }[value_key]
-    font = context.font
-    font.underline = value
-
-
 @when('I assign {value_key} to paragraph_format.line_spacing')
 def when_I_assign_value_to_paragraph_format_line_spacing(context, value_key):
     value = {
@@ -300,22 +229,6 @@ def when_I_assign_value_to_paragraph_format_line_rule(context, value_key):
     }[value_key]
     paragraph_format = context.paragraph_format
     paragraph_format.line_spacing_rule = value
-
-
-@when('I assign {value_key} to font.{sub_super}script')
-def when_I_assign_value_to_font_sub_super(context, value_key, sub_super):
-    font = context.font
-    name = {
-        'sub':   'subscript',
-        'super': 'superscript',
-    }[sub_super]
-    value = {
-        'None':  None,
-        'True':  True,
-        'False': False,
-    }[value_key]
-
-    setattr(font, name, value)
 
 
 @when('I assign {value_key} to paragraph_format.alignment')
@@ -391,47 +304,6 @@ def when_I_set_the_run_underline_to_value(context, underline_value):
 
 
 # then =====================================================
-
-@then('font.name is {value}')
-def then_font_name_is_value(context, value):
-    font = context.font
-    value = None if value == 'None' else value
-    assert font.name == value
-
-
-@then('font.size is {value}')
-def then_font_size_is_value(context, value):
-    value = None if value == 'None' else int(value)
-    font = context.font
-    assert font.size == value
-
-
-@then('font.underline is {value_key}')
-def then_font_underline_is_value(context, value_key):
-    value = {
-        'None':                None,
-        'True':                True,
-        'False':               False,
-        'WD_UNDERLINE.DOUBLE': WD_UNDERLINE.DOUBLE,
-    }[value_key]
-    font = context.font
-    assert font.underline == value
-
-
-@then('font.{sub_super}script is {value_key}')
-def then_font_sub_super_is_value(context, sub_super, value_key):
-    name = {
-        'sub':   'subscript',
-        'super': 'superscript',
-    }[sub_super]
-    expected_value = {
-        'None':  None,
-        'True':  True,
-        'False': False,
-    }[value_key]
-    font = context.font
-    actual_value = getattr(font, name)
-    assert actual_value == expected_value
 
 
 @then('it is a column break')
