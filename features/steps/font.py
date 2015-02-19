@@ -12,7 +12,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.dml.color import ColorFormat
-from docx.enum.dml import MSO_COLOR_TYPE
+from docx.enum.dml import MSO_COLOR_TYPE, MSO_THEME_COLOR
 from docx.enum.text import WD_UNDERLINE
 from docx.shared import RGBColor
 
@@ -87,6 +87,13 @@ def when_I_assign_value_to_font_color_rgb(context, value):
     font.color.rgb = new_value
 
 
+@when('I assign {value} to font.color.theme_color')
+def when_I_assign_value_to_font_color_theme_color(context, value):
+    font = context.font
+    new_value = None if value == 'None' else getattr(MSO_THEME_COLOR, value)
+    font.color.theme_color = new_value
+
+
 @when('I assign {value} to font.name')
 def when_I_assign_value_to_font_name(context, value):
     font = context.font
@@ -143,6 +150,15 @@ def then_font_color_rgb_is_value(context, value):
     font = context.font
     expected_value = None if value == 'None' else RGBColor.from_string(value)
     assert font.color.rgb == expected_value
+
+
+@then('font.color.theme_color is {value}')
+def then_font_color_theme_color_is_value(context, value):
+    font = context.font
+    expected_value = (
+        None if value == 'None' else getattr(MSO_THEME_COLOR, value)
+    )
+    assert font.color.theme_color == expected_value
 
 
 @then('font.color.type is {value}')
