@@ -36,6 +36,11 @@ class DescribeColorFormat(object):
         color_format, expected_value = theme_color_get_fixture
         assert color_format.theme_color == expected_value
 
+    def it_can_change_its_theme_color(self, theme_color_set_fixture):
+        color_format, new_value, expected_xml = theme_color_set_fixture
+        color_format.theme_color = new_value
+        assert color_format._element.xml == expected_xml
+
     # fixtures ---------------------------------------------
 
     @pytest.fixture(params=[
@@ -86,6 +91,28 @@ class DescribeColorFormat(object):
             None if value is None else getattr(MSO_THEME_COLOR, value)
         )
         return color_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r', 'ACCENT_1',
+         'w:r/w:rPr/w:color{w:val=000000,w:themeColor=accent1}'),
+        ('w:r/w:rPr', 'ACCENT_2',
+         'w:r/w:rPr/w:color{w:val=000000,w:themeColor=accent2}'),
+        ('w:r/w:rPr/w:color{w:val=101112}', 'ACCENT_3',
+         'w:r/w:rPr/w:color{w:val=101112,w:themeColor=accent3}'),
+        ('w:r/w:rPr/w:color{w:val=234bcd,w:themeColor=dark1}', 'LIGHT_2',
+         'w:r/w:rPr/w:color{w:val=234bcd,w:themeColor=light2}'),
+        ('w:r/w:rPr/w:color{w:val=234bcd,w:themeColor=dark1}', None,
+         'w:r/w:rPr'),
+        ('w:r', None, 'w:r'),
+    ])
+    def theme_color_set_fixture(self, request):
+        r_cxml, member, expected_cxml = request.param
+        color_format = ColorFormat(element(r_cxml))
+        new_value = (
+            None if member is None else getattr(MSO_THEME_COLOR, member)
+        )
+        expected_xml = xml(expected_cxml)
+        return color_format, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:r',                                   None),

@@ -4,9 +4,10 @@
 Custom element classes related to run properties (font).
 """
 
+from .. import parse_xml
 from ...enum.dml import MSO_THEME_COLOR
 from ...enum.text import WD_UNDERLINE
-from ..ns import qn
+from ..ns import nsdecls, qn
 from ..simpletypes import (
     ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
 )
@@ -81,6 +82,13 @@ class CT_RPr(BaseOxmlElement):
     specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
     oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
     del _tag_seq
+
+    def _new_color(self):
+        """
+        Override metaclass method to set `w:color/@val` to RGB black on
+        create.
+        """
+        return parse_xml('<w:color %s w:val="000000"/>' % nsdecls('w'))
 
     @property
     def rFonts_ascii(self):

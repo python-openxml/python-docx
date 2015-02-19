@@ -79,6 +79,14 @@ class ColorFormat(ElementProxy):
             return None
         return color.themeColor
 
+    @theme_color.setter
+    def theme_color(self, value):
+        if value is None:
+            if self._color is not None:
+                self._element.rPr._remove_color()
+            return
+        self._element.get_or_add_rPr().get_or_add_color().themeColor = value
+
     @property
     def type(self):
         """

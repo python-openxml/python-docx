@@ -56,7 +56,6 @@ Feature: Get and set font color
       | a theme | ACCENT_1 |
 
 
-  @wip
   Scenario Outline: Set font theme color
     Given a font having <type> color
      When I assign <value> to font.color.theme_color
