@@ -50,6 +50,15 @@ class ColorFormat(ElementProxy):
             return None
         return color.val
 
+    @rgb.setter
+    def rgb(self, value):
+        if value is None and self._color is None:
+            return
+        rPr = self._element.get_or_add_rPr()
+        rPr._remove_color()
+        if value is not None:
+            rPr.get_or_add_color().val = value
+
     @property
     def type(self):
         """

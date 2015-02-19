@@ -28,7 +28,6 @@ Feature: Get and set font color
       | a theme | 4f81bd |
 
 
-  @wip
   Scenario Outline: Set font RGB color
     Given a font having <type> color
      When I assign <value> to font.color.rgb

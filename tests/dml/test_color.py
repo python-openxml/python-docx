@@ -12,7 +12,7 @@ from docx.enum.dml import MSO_COLOR_TYPE
 from docx.dml.color import ColorFormat
 from docx.shared import RGBColor
 
-from ..unitutil.cxml import element
+from ..unitutil.cxml import element, xml
 
 import pytest
 
@@ -26,6 +26,11 @@ class DescribeColorFormat(object):
     def it_knows_its_RGB_value(self, rgb_get_fixture):
         color_format, expected_value = rgb_get_fixture
         assert color_format.rgb == expected_value
+
+    def it_can_change_its_RGB_value(self, rgb_set_fixture):
+        color_format, new_value, expected_xml = rgb_set_fixture
+        color_format.rgb = new_value
+        assert color_format._element.xml == expected_xml
 
     # fixtures ---------------------------------------------
 
@@ -42,6 +47,25 @@ class DescribeColorFormat(object):
         color_format = ColorFormat(element(r_cxml))
         expected_value = None if rgb is None else RGBColor.from_string(rgb)
         return color_format, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r', RGBColor(10, 20, 30), 'w:r/w:rPr/w:color{w:val=0A141E}'),
+        ('w:r/w:rPr', RGBColor(1, 2, 3), 'w:r/w:rPr/w:color{w:val=010203}'),
+        ('w:r/w:rPr/w:color{w:val=123abc}', RGBColor(42, 24, 99),
+         'w:r/w:rPr/w:color{w:val=2A1863}'),
+        ('w:r/w:rPr/w:color{w:val=auto}', RGBColor(16, 17, 18),
+         'w:r/w:rPr/w:color{w:val=101112}'),
+        ('w:r/w:rPr/w:color{w:val=234bcd,w:themeColor=dark1}',
+         RGBColor(24, 42, 99), 'w:r/w:rPr/w:color{w:val=182A63}'),
+        ('w:r/w:rPr/w:color{w:val=234bcd,w:themeColor=dark1}',
+         None, 'w:r/w:rPr'),
+        ('w:r', None, 'w:r'),
+    ])
+    def rgb_set_fixture(self, request):
+        r_cxml, new_value, expected_cxml = request.param
+        color_format = ColorFormat(element(r_cxml))
+        expected_xml = xml(expected_cxml)
+        return color_format, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:r',                                   None),
