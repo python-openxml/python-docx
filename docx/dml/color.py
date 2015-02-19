@@ -60,6 +60,26 @@ class ColorFormat(ElementProxy):
             rPr.get_or_add_color().val = value
 
     @property
+    def theme_color(self):
+        """
+        A member of :ref:`MsoThemeColorIndex` or |None| if no theme color is
+        specified. When :attr:`type` is `MSO_COLOR_TYPE.THEME`, the value of
+        this property will always be a member of :ref:`MsoThemeColorIndex`.
+        When :attr:`type` has any other value, the value of this property is
+        |None|.
+
+        Assigning a member of :ref:`MsoThemeColorIndex` causes :attr:`type`
+        to become `MSO_COLOR_TYPE.THEME`. Any existing RGB value is retained
+        but ignored by Word. Assigning |None| causes any color specification
+        to be removed such that the effective color is inherited from the
+        style hierarchy.
+        """
+        color = self._color
+        if color is None or color.themeColor is None:
+            return None
+        return color.themeColor
+
+    @property
     def type(self):
         """
         Read-only. A member of :ref:`MsoColorType`, one of RGB, THEME, or

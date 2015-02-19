@@ -44,7 +44,6 @@ Feature: Get and set font color
       | a theme | None   | None       | None      |
 
 
-  @wip
   Scenario Outline: Get font theme color
     Given a font having <type> color
      Then font.color.theme_color is <value>

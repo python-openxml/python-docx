@@ -8,7 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from docx.enum.dml import MSO_COLOR_TYPE
+from docx.enum.dml import MSO_COLOR_TYPE, MSO_THEME_COLOR
 from docx.dml.color import ColorFormat
 from docx.shared import RGBColor
 
@@ -31,6 +31,10 @@ class DescribeColorFormat(object):
         color_format, new_value, expected_xml = rgb_set_fixture
         color_format.rgb = new_value
         assert color_format._element.xml == expected_xml
+
+    def it_knows_its_theme_color(self, theme_color_get_fixture):
+        color_format, expected_value = theme_color_get_fixture
+        assert color_format.theme_color == expected_value
 
     # fixtures ---------------------------------------------
 
@@ -66,6 +70,22 @@ class DescribeColorFormat(object):
         color_format = ColorFormat(element(r_cxml))
         expected_xml = xml(expected_cxml)
         return color_format, new_value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:r',                                                None),
+        ('w:r/w:rPr',                                          None),
+        ('w:r/w:rPr/w:color{w:val=auto}',                      None),
+        ('w:r/w:rPr/w:color{w:val=4224FF}',                    None),
+        ('w:r/w:rPr/w:color{w:themeColor=accent1}',            'ACCENT_1'),
+        ('w:r/w:rPr/w:color{w:val=F00BA9,w:themeColor=dark1}', 'DARK_1'),
+    ])
+    def theme_color_get_fixture(self, request):
+        r_cxml, value = request.param
+        color_format = ColorFormat(element(r_cxml))
+        expected_value = (
+            None if value is None else getattr(MSO_THEME_COLOR, value)
+        )
+        return color_format, expected_value
 
     @pytest.fixture(params=[
         ('w:r',                                   None),
