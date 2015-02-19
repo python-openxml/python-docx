@@ -14,6 +14,7 @@ from docx import Document
 from docx.dml.color import ColorFormat
 from docx.enum.dml import MSO_COLOR_TYPE
 from docx.enum.text import WD_UNDERLINE
+from docx.shared import RGBColor
 
 from helpers import test_docx
 
@@ -79,6 +80,13 @@ def given_a_font_of_size(context, size):
 
 # when ====================================================
 
+@when('I assign {value} to font.color.rgb')
+def when_I_assign_value_to_font_color_rgb(context, value):
+    font = context.font
+    new_value = None if value == 'None' else RGBColor.from_string(value)
+    font.color.rgb = new_value
+
+
 @when('I assign {value} to font.name')
 def when_I_assign_value_to_font_name(context, value):
     font = context.font
@@ -128,6 +136,13 @@ def when_I_assign_value_to_font_sub_super(context, value, sub_super):
 def then_font_color_is_a_ColorFormat_object(context):
     font = context.font
     assert isinstance(font.color, ColorFormat)
+
+
+@then('font.color.rgb is {value}')
+def then_font_color_rgb_is_value(context, value):
+    font = context.font
+    expected_value = None if value == 'None' else RGBColor.from_string(value)
+    assert font.color.rgb == expected_value
 
 
 @then('font.color.type is {value}')
