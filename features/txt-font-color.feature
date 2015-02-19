@@ -16,7 +16,6 @@ Feature: Get and set font color
       | a theme | THEME |
 
 
-  @wip
   Scenario Outline: Get font RGB color
     Given a font having <type> color
      Then font.color.rgb is <value>
