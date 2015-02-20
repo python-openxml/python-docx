@@ -43,3 +43,17 @@ allowing values to be expressed in the units most appropriate to the context.
 
 .. autoclass:: Emu
    :members:
+
+
+|RGBColor| objects
+------------------
+
+.. autoclass:: RGBColor(r, g, b)
+   :members:
+   :undoc-members:
+
+   *r*, *g*, and *b* are each an integer in the range 0-255 inclusive. Using
+   the hexidecimal integer notation, e.g. `0x42` may enhance readability
+   where hex RGB values are in use::
+
+       >>> lavender = RGBColor(0xff, 0x99, 0xcc)

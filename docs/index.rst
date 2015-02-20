@@ -88,6 +88,7 @@ API Documentation
    api/table
    api/section
    api/shape
+   api/dml
    api/shared
    api/enum/index
 
