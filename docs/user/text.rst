@@ -228,3 +228,115 @@ from the style hierarchy. |True| means "on" and |False| means "off"::
     >>> paragraph_format.page_break_before = False
     >>> paragraph_format.page_break_before
     False
+
+
+Apply character formatting
+--------------------------
+
+Character formatting is applied at the Run level. Examples include font
+typeface and size, bold, italic, and underline.
+
+A |Run| object has a read-only :attr:`~.Run.font` property providing access
+to a |Font| object. A run's |Font| object provides properties for getting
+and setting the character formatting for that run.
+
+Several examples are provided here. For a complete set of the available
+properties, see the |Font| API documentation.
+
+The font for a run can be accessed like this::
+
+    >>> from docx import Document
+    >>> document = Document()
+    >>> run = document.add_paragraph().add_run()
+    >>> font = run.font
+
+Typeface and size are set like this::
+
+    >>> from docx.shared import Pt
+    >>> font.name = 'Calibri'
+    >>> font.size = Pt(12)
+
+Many font properties are *tri-state*, meaning they can take the values
+|True|, |False|, and |None|. |True| means the property is "on", |False| means
+it is "off". Conceptually, the |None| value means "inherit". A run exists in
+the style inheritance hierarchy and by default inherits its character
+formatting from that hierarchy. Any character formatting directly applied
+using the |Font| object overrides the inherited values.
+
+Bold and italic are tri-state properties, as are all-caps, strikethrough,
+superscript, and many others. See the |Font| API documentation for a full
+list::
+
+    >>> font.bold, font.italic
+    (None, None)
+    >>> font.italic = True
+    >>> font.italic
+    True
+    >>> font.italic = False
+    >>> font.italic
+    False
+    >>> font.italic = None
+    >>> font.italic
+    None
+
+Underline is a bit of a special case. It is a hybrid of a tri-state property
+and an enumerated value property. |True| means single underline, by far the
+most common. |False| means no underline, but more often |None| is the right
+choice if no underlining is wanted. The other forms of underlining, such as
+double or dashed, are specified with a member of the :ref:`WdUnderline`
+enumeration::
+
+    >>> font.underline
+    None
+    >>> font.underline = True
+    >>> # or perhaps
+    >>> font.underline = WD_UNDERLINE.DOT_DASH
+
+Font color
+~~~~~~~~~~
+
+Each |Font| object has a |ColorFormat| object that provides access to its
+color, accessed via its read-only :attr:`~.Font.color` property.
+
+Apply a specific RGB color to a font::
+
+    >>> from docx.shared import RGBColor
+    >>> font.color.rgb = RGBColor(0x42, 0x24, 0xE9)
+
+A font can also be set to a theme color by assigning a member of the
+:ref:`MsoThemeColorIndex` enumeration::
+
+    >>> from docx.enum.dml import MSO_THEME_COLOR
+    >>> font.color.theme_color = MSO_THEME_COLOR.ACCENT_1
+
+A font's color can be restored to its default (inherited) value by assigning
+|None| to either the :attr:`~.ColorFormat.rgb` or
+:attr:`~.ColorFormat.theme_color` attribute of |ColorFormat|::
+
+    >>> font.color.rgb = None
+
+Determining the color of a font begins with determining its color type::
+
+    >>> font.color.type
+    RGB (1)
+
+The value of the :attr:`~.ColorFormat.type` property can be a member of the
+:ref:`MsoColorType` enumeration or None. `MSO_COLOR_TYPE.RGB` indicates it is
+an RGB color. `MSO_COLOR_TYPE.THEME` indicates a theme color.
+`MSO_COLOR_TYPE.AUTO` indicates its value is determined automatically by the
+application, usually set to black. (This value is relatively rare.) |None|
+indicates no color is applied and the color is inherited from the style
+hierarchy; this is the most common case.
+
+When the color type is `MSO_COLOR_TYPE.RGB`, the :attr:`~.ColorFormat.rgb`
+property will be an |RGBColor| value indicating the RGB color::
+
+    >>> font.color.rgb
+    RGBColor(0x42, 0x24, 0xe9)
+
+When the color type is `MSO_COLOR_TYPE.THEME`, the
+:attr:`~.ColorFormat.theme_color` property will be a member of
+:ref:`MsoThemeColorIndex` indicating the theme color::
+
+    >>> font.color.theme_color
+    ACCENT_1 (5)
