@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+NEXT
+++++++++++++++++++
+
+- Fix #124: default to inches on no TIFF resolution unit
+
+
 0.8.3 (2015-02-19)
 ++++++++++++++++++
 

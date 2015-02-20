@@ -116,16 +116,19 @@ class Describe_TiffParser(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        (1,  150,  240,  72,  72),
-        (2,   42,   24,  42,  24),
-        (3,  100,  200, 254, 508),
-        (6, None, None,  72,  72),
+        (1,     150,  240,  72,  72),
+        (2,      42,   24,  42,  24),
+        (3,     100,  200, 254, 508),
+        (2,    None, None,  72,  72),
+        (None,   96,  100,  96, 100),
     ])
     def dpi_fixture(self, request):
         resolution_unit, x_resolution, y_resolution = request.param[:3]
         expected_horz_dpi, expected_vert_dpi = request.param[3:]
 
-        entries = {TIFF_TAG.RESOLUTION_UNIT: resolution_unit}
+        entries = {}
+        if resolution_unit is not None:
+            entries[TIFF_TAG.RESOLUTION_UNIT] = resolution_unit
         if x_resolution is not None:
             entries[TIFF_TAG.X_RESOLUTION] = x_resolution
         if y_resolution is not None:

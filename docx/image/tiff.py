@@ -116,14 +116,22 @@ class _TiffParser(object):
         calculation is based on the values of both that tag and the
         TIFF_TAG.RESOLUTION_UNIT tag in this parser's |_IfdEntries| instance.
         """
-        if resolution_tag not in self._ifd_entries:
+        ifd_entries = self._ifd_entries
+
+        if resolution_tag not in ifd_entries:
             return 72
-        resolution_unit = self._ifd_entries[TIFF_TAG.RESOLUTION_UNIT]
+
+        # resolution unit defaults to inches (2)
+        resolution_unit = (
+            ifd_entries[TIFF_TAG.RESOLUTION_UNIT]
+            if TIFF_TAG.RESOLUTION_UNIT in ifd_entries else 2
+        )
+
         if resolution_unit == 1:  # aspect ratio only
             return 72
         # resolution_unit == 2 for inches, 3 for centimeters
         units_per_inch = 1 if resolution_unit == 2 else 2.54
-        dots_per_unit = self._ifd_entries[resolution_tag]
+        dots_per_unit = ifd_entries[resolution_tag]
         return int(round(dots_per_unit * units_per_inch))
 
     @classmethod
