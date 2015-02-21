@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .blkcntnr import BlockItemContainer
 from .enum.style import WD_STYLE_TYPE
 from .oxml.simpletypes import ST_Merge
-from .shared import lazyproperty, Parented
+from .shared import Inches, lazyproperty, Parented
 
 
 class Table(Parented):
@@ -201,9 +201,10 @@ class _Cell(BlockItemContainer):
         added after the table because Word requires a paragraph element as
         the last element in every cell.
         """
-        new_table = super(_Cell, self).add_table(rows, cols, 914400)
+        width = self.width if self.width is not None else Inches(1)
+        table = super(_Cell, self).add_table(rows, cols, width)
         self.add_paragraph()
-        return new_table
+        return table
 
     def merge(self, other_cell):
         """

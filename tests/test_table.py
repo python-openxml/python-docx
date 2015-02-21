@@ -338,8 +338,8 @@ class Describe_Cell(object):
 
     def it_can_add_a_table(self, add_table_fixture):
         cell, expected_xml = add_table_fixture
-        table = cell.add_table(rows=0, cols=1)
-        assert cell._tc.xml == expected_xml
+        table = cell.add_table(rows=2, cols=2)
+        assert cell._element.xml == expected_xml
         assert isinstance(table, Table)
 
     def it_can_merge_itself_with_other_cells(self, merge_fixture):
@@ -363,21 +363,10 @@ class Describe_Cell(object):
         expected_xml = xml(after_tc_cxml)
         return cell, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:tc',     'w:tc/(w:tbl'),
-        ('w:tc/w:p', 'w:tc/(w:p, w:tbl'),
-    ])
+    @pytest.fixture
     def add_table_fixture(self, request):
-        tc_cxml, after_tc_cxml = request.param
-        # the table has some overhead elements, also a blank para after since
-        # it's in a cell.
-        after_tc_cxml += (
-            '/(w:tblPr/(w:tblW{w:type=auto,w:w=0},w:tblLook{w:firstColumn=1,'
-            'w:firstRow=1,w:lastColumn=0,w:lastRow=0,w:noHBand=0,w:noVBand=1'
-            ',w:val=04A0}),w:tblGrid/w:gridCol{w:w=1440}),w:p)'
-        )
-        cell = _Cell(element(tc_cxml), None)
-        expected_xml = xml(after_tc_cxml)
+        cell = _Cell(element('w:tc/w:p'), None)
+        expected_xml = snippet_seq('new-tbl')[1]
         return cell, expected_xml
 
     @pytest.fixture

@@ -4,7 +4,6 @@ Feature: Add a table into a table cell
   I need a way to add a table to a table cell
 
 
-  @wip
   Scenario: Add a table into a table cell
     Given a table cell
      When I add a 2 x 2 table into the first cell
