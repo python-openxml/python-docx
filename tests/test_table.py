@@ -338,7 +338,7 @@ class Describe_Cell(object):
 
     def it_can_add_a_table(self, add_table_fixture):
         cell, expected_xml = add_table_fixture
-        table = cell.add_table(rows=0, cols=0)
+        table = cell.add_table(rows=0, cols=1)
         assert cell._tc.xml == expected_xml
         assert isinstance(table, Table)
 
@@ -372,7 +372,9 @@ class Describe_Cell(object):
         # the table has some overhead elements, also a blank para after since
         # it's in a cell.
         after_tc_cxml += (
-            '/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:tblGrid),w:p)'
+            '/(w:tblPr/(w:tblW{w:type=auto,w:w=0},w:tblLook{w:firstColumn=1,'
+            'w:firstRow=1,w:lastColumn=0,w:lastRow=0,w:noHBand=0,w:noVBand=1'
+            ',w:val=04A0}),w:tblGrid/w:gridCol{w:w=1440}),w:p)'
         )
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(after_tc_cxml)

@@ -4,7 +4,9 @@
 Custom element classes for tables
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 from . import parse_xml
 from ..exceptions import InvalidSpanError
@@ -77,13 +79,12 @@ class CT_Tbl(BaseOxmlElement):
                 yield tc
 
     @classmethod
-    def new(cls):
+    def new_tbl(cls, rows, cols, width):
         """
-        Return a new ``<w:tbl>`` element, containing the required
-        ``<w:tblPr>`` and ``<w:tblGrid>`` child elements.
+        Return a new `w:tbl` element having *rows* rows and *cols* columns
+        with *width* distributed evenly between the columns.
         """
-        tbl = parse_xml(cls._tbl_xml())
-        return tbl
+        return parse_xml(cls._tbl_xml(rows, cols, width))
 
     @property
     def tblStyle_val(self):
@@ -109,15 +110,57 @@ class CT_Tbl(BaseOxmlElement):
         tblPr._add_tblStyle().val = styleId
 
     @classmethod
-    def _tbl_xml(cls):
+    def _tbl_xml(cls, rows, cols, width):
+        col_width = Emu(width/cols) if cols > 0 else Emu(0)
         return (
             '<w:tbl %s>\n'
             '  <w:tblPr>\n'
             '    <w:tblW w:type="auto" w:w="0"/>\n'
+            '    <w:tblLook w:firstColumn="1" w:firstRow="1"\n'
+            '               w:lastColumn="0" w:lastRow="0" w:noHBand="0"\n'
+            '               w:noVBand="1" w:val="04A0"/>\n'
             '  </w:tblPr>\n'
-            '  <w:tblGrid/>\n'
-            '</w:tbl>' % nsdecls('w')
+            '%s'  # tblGrid
+            '%s'  # trs
+            '</w:tbl>\n'
+        ) % (
+            nsdecls('w'),
+            cls._tblGrid_xml(cols, col_width),
+            cls._trs_xml(rows, cols, col_width)
         )
+
+    @classmethod
+    def _tblGrid_xml(cls, col_count, col_width):
+        xml = '  <w:tblGrid>\n'
+        for i in range(col_count):
+            xml += '    <w:gridCol w:w="%d"/>\n' % col_width.twips
+        xml += '  </w:tblGrid>\n'
+        return xml
+
+    @classmethod
+    def _trs_xml(cls, row_count, col_count, col_width):
+        xml = ''
+        for i in range(row_count):
+            xml += (
+                '  <w:tr>\n'
+                '%s'
+                '  </w:tr>\n'
+            ) % cls._tcs_xml(col_count, col_width)
+        return xml
+
+    @classmethod
+    def _tcs_xml(cls, col_count, col_width):
+        xml = ''
+        for i in range(col_count):
+            xml += (
+                '    <w:tc>\n'
+                '      <w:tcPr>\n'
+                '        <w:tcW w:type="dxa" w:w="%d"/>\n'
+                '      </w:tcPr>\n'
+                '      <w:p/>\n'
+                '    </w:tc>\n'
+            ) % col_width.twips
+        return xml
 
 
 class CT_TblGrid(BaseOxmlElement):

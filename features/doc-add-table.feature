@@ -4,7 +4,6 @@ Feature: Add a table
   I need a way to add a table
 
 
-  @wip
   Scenario: Add a table specifying only row and column count
     Given a blank document
      When I add a 2 x 2 table specifying only row and column count

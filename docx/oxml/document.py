@@ -5,7 +5,6 @@ Custom element classes that correspond to the document part, e.g.
 <w:document>.
 """
 
-from .table import CT_Tbl
 from .xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
 
 
@@ -46,9 +45,6 @@ class CT_Body(BaseOxmlElement):
         p = self.add_p()
         p.set_sectPr(cloned_sectPr)
         return sentinel_sectPr
-
-    def _new_tbl(self):
-        return CT_Tbl.new()
 
     def clear_content(self):
         """

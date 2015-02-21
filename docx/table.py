@@ -18,7 +18,7 @@ class Table(Parented):
     """
     def __init__(self, tbl, parent):
         super(Table, self).__init__(parent)
-        self._tbl = tbl
+        self._element = self._tbl = tbl
 
     def add_column(self):
         """

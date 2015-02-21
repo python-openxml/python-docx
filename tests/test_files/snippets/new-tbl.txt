@@ -1,0 +1,38 @@
+<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblPr>
+    <w:tblW w:type="auto" w:w="0"/>
+    <w:tblLook w:firstColumn="1" w:firstRow="1" w:lastColumn="0" w:lastRow="0" w:noHBand="0" w:noVBand="1" w:val="04A0"/>
+  </w:tblPr>
+  <w:tblGrid>
+    <w:gridCol w:w="1440"/>
+    <w:gridCol w:w="1440"/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:type="dxa" w:w="1440"/>
+      </w:tcPr>
+      <w:p/>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:type="dxa" w:w="1440"/>
+      </w:tcPr>
+      <w:p/>
+    </w:tc>
+  </w:tr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:type="dxa" w:w="1440"/>
+      </w:tcPr>
+      <w:p/>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:type="dxa" w:w="1440"/>
+      </w:tcPr>
+      <w:p/>
+    </w:tc>
+  </w:tr>
+</w:tbl>

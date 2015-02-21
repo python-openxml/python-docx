@@ -9,10 +9,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.blkcntnr import BlockItemContainer
+from docx.shared import Inches
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element, xml
+from .unitutil.file import snippet_seq
 from .unitutil.mock import call, instance_mock, method_mock
 
 
@@ -30,10 +32,11 @@ class DescribeBlockItemContainer(object):
         assert new_paragraph is paragraph_
 
     def it_can_add_a_table(self, add_table_fixture):
-        blkcntnr, rows, cols, expected_xml = add_table_fixture
-        table = blkcntnr.add_table(rows, cols, None)
-        assert blkcntnr._element.xml == expected_xml
+        blkcntnr, rows, cols, width, expected_xml = add_table_fixture
+        table = blkcntnr.add_table(rows, cols, width)
         assert isinstance(table, Table)
+        assert table._element.xml == expected_xml
+        assert table._parent is blkcntnr
 
     def it_provides_access_to_the_paragraphs_it_contains(
             self, paragraphs_fixture):
@@ -91,21 +94,12 @@ class DescribeBlockItemContainer(object):
         expected_xml = xml(after_cxml)
         return blkcntnr, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:body', 0, 0, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
-         'tblGrid)'),
-        ('w:body', 1, 0, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
-         'tblGrid,w:tr)'),
-        ('w:body', 0, 1, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
-         'tblGrid/w:gridCol)'),
-        ('w:body', 1, 1, 'w:body/w:tbl/(w:tblPr/w:tblW{w:type=auto,w:w=0},w:'
-         'tblGrid/w:gridCol,w:tr/w:tc/w:p)'),
-    ])
-    def add_table_fixture(self, request):
-        blkcntnr_cxml, rows, cols, after_cxml = request.param
-        blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
-        expected_xml = xml(after_cxml)
-        return blkcntnr, rows, cols, expected_xml
+    @pytest.fixture
+    def add_table_fixture(self):
+        blkcntnr = BlockItemContainer(element('w:body'), None)
+        rows, cols, width = 2, 2, Inches(2)
+        expected_xml = snippet_seq('new-tbl')[0]
+        return blkcntnr, rows, cols, width, expected_xml
 
     @pytest.fixture(params=[
         ('w:body',                 0),

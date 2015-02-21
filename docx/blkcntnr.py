@@ -8,6 +8,7 @@ ones like structured document tags.
 
 from __future__ import absolute_import, print_function
 
+from .oxml.table import CT_Tbl
 from .shared import Parented
 from .text.paragraph import Paragraph
 
@@ -44,13 +45,9 @@ class BlockItemContainer(Parented):
         distributed between the table columns.
         """
         from .table import Table
-        tbl = self._element.add_tbl()
-        table = Table(tbl, self)
-        for i in range(cols):
-            table.add_column()
-        for i in range(rows):
-            table.add_row()
-        return table
+        tbl = CT_Tbl.new_tbl(rows, cols, width)
+        self._element._insert_tbl(tbl)
+        return Table(tbl, self)
 
     @property
     def paragraphs(self):
