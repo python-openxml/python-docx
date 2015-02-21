@@ -73,6 +73,14 @@ class CT_Tbl(BaseOxmlElement):
             return None
         return bidiVisual.val
 
+    @bidiVisual_val.setter
+    def bidiVisual_val(self, value):
+        tblPr = self.tblPr
+        if value is None:
+            tblPr._remove_bidiVisual()
+        else:
+            tblPr.get_or_add_bidiVisual().val = value
+
     @property
     def col_count(self):
         """

@@ -66,7 +66,6 @@ Feature: Get and set table properties
       | left-to-right | LTR   |
 
 
-  @wip
   Scenario Outline: Set table direction
     Given a table having table direction set <setting>
      When I assign <new-value> to table.table_direction

@@ -8,6 +8,7 @@ NEXT
 
 - Fix #149: KeyError on Document.add_table()
 - Fix #78: feature: add_table() sets cell widths
+- Add #106: feature: Table.direction (i.e. right-to-left)
 
 
 0.8.4 (2015-02-20)

@@ -95,6 +95,11 @@ class DescribeTable(object):
         table, expected_value = direction_get_fixture
         assert table.table_direction == expected_value
 
+    def it_can_change_its_direction(self, direction_set_fixture):
+        table, new_value, expected_xml = direction_set_fixture
+        table.table_direction = new_value
+        assert table._element.xml == expected_xml
+
     def it_knows_its_table_style(self, style_get_fixture):
         table, style_id_, style_ = style_get_fixture
         style = table.style
@@ -238,6 +243,22 @@ class DescribeTable(object):
         tbl_cxml, expected_value = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr',                       WD_TABLE_DIRECTION.RTL,
+         'w:tbl/w:tblPr/w:bidiVisual'),
+        ('w:tbl/w:tblPr/w:bidiVisual',          WD_TABLE_DIRECTION.LTR,
+         'w:tbl/w:tblPr/w:bidiVisual{w:val=0}'),
+        ('w:tbl/w:tblPr/w:bidiVisual{w:val=0}', WD_TABLE_DIRECTION.RTL,
+         'w:tbl/w:tblPr/w:bidiVisual'),
+        ('w:tbl/w:tblPr/w:bidiVisual{w:val=1}', None,
+         'w:tbl/w:tblPr'),
+    ])
+    def direction_set_fixture(self, request):
+        tbl_cxml, new_value, expected_cxml = request.param
+        table = Table(element(tbl_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return table, new_value, expected_xml
 
     @pytest.fixture
     def row_cells_fixture(self, _cells_, _column_count_):

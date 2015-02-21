@@ -154,6 +154,10 @@ class Table(Parented):
         """
         return self._element.bidiVisual_val
 
+    @table_direction.setter
+    def table_direction(self, value):
+        self._element.bidiVisual_val = value
+
     @property
     def _cells(self):
         """
