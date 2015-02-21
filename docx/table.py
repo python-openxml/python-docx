@@ -152,7 +152,7 @@ class Table(Parented):
         the table cells are ordered, e.g. `WD_TABLE_DIRECTION.LTR`. |None|
         indicates the value is inherited from the style hierarchy.
         """
-        raise NotImplementedError
+        return self._element.bidiVisual_val
 
     @property
     def _cells(self):

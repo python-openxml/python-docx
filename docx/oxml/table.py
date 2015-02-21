@@ -62,6 +62,18 @@ class CT_Tbl(BaseOxmlElement):
     tr = ZeroOrMore('w:tr')
 
     @property
+    def bidiVisual_val(self):
+        """
+        Value of `w:tblPr/w:bidiVisual/@w:val` or |None| if not present.
+        Controls whether table cells are displayed right-to-left or
+        left-to-right.
+        """
+        bidiVisual = self.tblPr.bidiVisual
+        if bidiVisual is None:
+            return None
+        return bidiVisual.val
+
+    @property
     def col_count(self):
         """
         The number of grid columns in this table.
@@ -208,6 +220,7 @@ class CT_TblPr(BaseOxmlElement):
         'w:tblDescription', 'w:tblPrChange'
     )
     tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
+    bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
     del _tag_seq

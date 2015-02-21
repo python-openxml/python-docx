@@ -55,7 +55,6 @@ Feature: Get and set table properties
       | autofit             | fixed       | fixed            |
 
 
-  @wip
   Scenario Outline: Get table direction
     Given a table having table direction set <setting>
      Then table.table_direction is <value>

@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.parts.document import DocumentPart
@@ -90,6 +90,10 @@ class DescribeTable(object):
     def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
         table = table_fixture
         assert table.table is table
+
+    def it_knows_its_direction(self, direction_get_fixture):
+        table, expected_value = direction_get_fixture
+        assert table.table_direction == expected_value
 
     def it_knows_its_table_style(self, style_get_fixture):
         table, style_id_, style_ = style_get_fixture
@@ -221,6 +225,17 @@ class DescribeTable(object):
     def column_count_fixture(self):
         tbl_cxml = 'w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)'
         expected_value = 3
+        table = Table(element(tbl_cxml), None)
+        return table, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tbl/w:tblPr',                        None),
+        ('w:tbl/w:tblPr/w:bidiVisual',           WD_TABLE_DIRECTION.RTL),
+        ('w:tbl/w:tblPr/w:bidiVisual{w:val=0}',  WD_TABLE_DIRECTION.LTR),
+        ('w:tbl/w:tblPr/w:bidiVisual{w:val=on}', WD_TABLE_DIRECTION.RTL),
+    ])
+    def direction_get_fixture(self, request):
+        tbl_cxml, expected_value = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_value
 
