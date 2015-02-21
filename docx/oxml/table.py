@@ -23,6 +23,7 @@ class CT_Row(BaseOxmlElement):
     """
     ``<w:tr>`` element
     """
+    trPr = ZeroOrOne('w:trPr')
     tc = ZeroOrMore('w:tc')
 
     def tc_at_grid_col(self, idx):
