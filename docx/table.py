@@ -146,6 +146,15 @@ class Table(Parented):
         return self
 
     @property
+    def table_direction(self):
+        """
+        A member of :ref:`WdTableDirection` indicating the direction in which
+        the table cells are ordered, e.g. `WD_TABLE_DIRECTION.LTR`. |None|
+        indicates the value is inherited from the style hierarchy.
+        """
+        raise NotImplementedError
+
+    @property
     def _cells(self):
         """
         A sequence of |_Cell| objects, one for each cell of the layout grid.

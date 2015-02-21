@@ -4,7 +4,7 @@ Feature: Get and set table properties
   I need a way to get and set a table's properties
 
 
-  Scenario Outline: Determine table alignment
+  Scenario Outline: Get table alignment
     Given a table having <alignment> alignment
      Then table.alignment is <value>
 
@@ -53,3 +53,28 @@ Feature: Get and set table properties
       | autofit             | autofit     | autofit          |
       | fixed               | fixed       | fixed            |
       | autofit             | fixed       | fixed            |
+
+
+  @wip
+  Scenario Outline: Get table direction
+    Given a table having table direction set <setting>
+     Then table.table_direction is <value>
+
+    Examples: Table on/off property values
+      | setting       | value |
+      | to inherit    | None  |
+      | right-to-left | RTL   |
+      | left-to-right | LTR   |
+
+
+  @wip
+  Scenario Outline: Set table direction
+    Given a table having table direction set <setting>
+     When I assign <new-value> to table.table_direction
+     Then table.table_direction is <value>
+
+    Examples: Results of assignment to Table.table_direction
+      | setting       | new-value | value |
+      | to inherit    | RTL       | RTL   |
+      | right-to-left | LTR       | LTR   |
+      | left-to-right | None      | None  |

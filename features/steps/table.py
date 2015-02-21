@@ -11,7 +11,7 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
 from docx.shared import Inches
 from docx.table import _Column, _Columns, _Row, _Rows
 
@@ -112,6 +112,17 @@ def given_a_table_having_style(context, style):
     context.table_ = document.tables[table_idx]
 
 
+@given('a table having table direction set {setting}')
+def given_a_table_having_table_direction_setting(context, setting):
+    table_idx = [
+        'to inherit',
+        'right-to-left',
+        'left-to-right'
+    ].index(setting)
+    document = Document(test_docx('tbl-on-off-props'))
+    context.table_ = document.tables[table_idx]
+
+
 @given('a table having two columns')
 def given_a_table_having_two_columns(context):
     docx_path = test_docx('blk-containing-table')
@@ -163,6 +174,14 @@ def when_apply_value_to_table_style(context, value):
     else:
         new_value = styles[value]
     table.style = new_value
+
+
+@when('I assign {value} to table.table_direction')
+def when_assign_value_to_table_table_direction(context, value):
+    new_value = (
+        None if value == 'None' else getattr(WD_TABLE_DIRECTION, value)
+    )
+    context.table_.table_direction = new_value
 
 
 @when('I merge from cell {origin} to cell {other}')
@@ -272,6 +291,15 @@ def then_table_style_is_styles_style_name(context, style_name):
     table, styles = context.table_, context.document.styles
     expected_style = styles[style_name]
     assert table.style == expected_style, "got '%s'" % table.style
+
+
+@then('table.table_direction is {value}')
+def then_table_table_direction_is_value(context, value):
+    expected_value = (
+        None if value == 'None' else getattr(WD_TABLE_DIRECTION, value)
+    )
+    actual_value = context.table_.table_direction
+    assert actual_value == expected_value, "got '%s'" % actual_value
 
 
 @then('the column cells text is {expected_text}')
