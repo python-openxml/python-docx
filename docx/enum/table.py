@@ -4,9 +4,13 @@
 Enumerations related to tables in WordprocessingML files
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
-from .base import XmlEnumeration, XmlMappedEnumMember
+from .base import (
+    Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember
+)
 
 
 class WD_TABLE_ALIGNMENT(XmlEnumeration):
@@ -34,5 +38,34 @@ class WD_TABLE_ALIGNMENT(XmlEnumeration):
         ),
         XmlMappedEnumMember(
             'RIGHT', 2, 'right', 'Right-aligned.'
+        ),
+    )
+
+
+class WD_TABLE_DIRECTION(Enumeration):
+    """
+    Specifies the direction in which an application orders cells in the
+    specified table or row.
+
+    Example::
+
+        from docx.enum.table import WD_TABLE_DIRECTION
+
+        table = document.add_table(3, 3)
+        table.direction = WD_TABLE_DIRECTION.RTL
+    """
+
+    __ms_name__ = 'WdTableDirection'
+
+    __url__ = ' http://msdn.microsoft.com/en-us/library/ff835141.aspx'
+
+    __members__ = (
+        EnumMember(
+            'LTR', 0, 'The table or row is arranged with the first column '
+            'in the leftmost position.'
+        ),
+        EnumMember(
+            'RTL', 1, 'The table or row is arranged with the first column '
+            'in the rightmost position.'
         ),
     )

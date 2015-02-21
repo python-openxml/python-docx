@@ -17,4 +17,5 @@ can be found here:
    WdSectionStart
    WdStyleType
    WdRowAlignment
+   WdTableDirection
    WdUnderline
