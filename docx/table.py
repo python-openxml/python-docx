@@ -37,7 +37,8 @@ class Table(Parented):
         tbl = self._tbl
         tr = tbl.add_tr()
         for gridCol in tbl.tblGrid.gridCol_lst:
-            tr.add_tc()
+            tc = tr.add_tc()
+            tc.width = gridCol.w
         return _Row(tr, self)
 
     @property

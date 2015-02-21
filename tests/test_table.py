@@ -101,7 +101,8 @@ class DescribeTable(object):
         row = table.add_row()
         assert table._tbl.xml == expected_xml
         assert isinstance(row, _Row)
-        assert row._tr is table._tbl.tr_lst[1]
+        assert row._tr is table._tbl.tr_lst[-1]
+        assert row._parent is table
 
     def it_can_add_a_column(self, add_column_fixture):
         table, expected_xml = add_column_fixture
@@ -131,9 +132,10 @@ class DescribeTable(object):
 
     @pytest.fixture
     def add_row_fixture(self):
-        tbl = _tbl_bldr(rows=1, cols=2).element
+        snippets = snippet_seq('add-row-col')
+        tbl = parse_xml(snippets[0])
         table = Table(tbl, None)
-        expected_xml = _tbl_bldr(rows=2, cols=2).xml()
+        expected_xml = snippets[1]
         return table, expected_xml
 
     @pytest.fixture(params=[

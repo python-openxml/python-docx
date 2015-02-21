@@ -4,7 +4,6 @@ Feature: Add a row or column to a table
   I need methods to add a row or column
 
 
-  @wip
   Scenario: Add a row to a table
      Given a 2 x 2 table
       When I add a row to the table
