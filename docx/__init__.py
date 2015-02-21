@@ -1,8 +1,8 @@
 # encoding: utf-8
 
-from docx.api import Document     # noqa
+from docx.api import Document  # noqa
 
-__version__ = '0.8.3'
+__version__ = '0.8.4'
 
 
 # register custom Part classes with opc package reader

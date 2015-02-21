@@ -3,9 +3,10 @@
 Release History
 ---------------
 
-NEXT
+0.8.4 (2015-02-20)
 ++++++++++++++++++
 
+- Fix #151: tests won't run on PyPI distribution
 - Fix #124: default to inches on no TIFF resolution unit
 
 
