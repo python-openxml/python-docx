@@ -26,6 +26,49 @@ from .unitutil.mock import instance_mock, property_mock
 
 class DescribeTable(object):
 
+    def it_can_add_a_row(self, add_row_fixture):
+        table, expected_xml = add_row_fixture
+        row = table.add_row()
+        assert table._tbl.xml == expected_xml
+        assert isinstance(row, _Row)
+        assert row._tr is table._tbl.tr_lst[-1]
+        assert row._parent is table
+
+    def it_can_add_a_column(self, add_column_fixture):
+        table, width, expected_xml = add_column_fixture
+        column = table.add_column(width)
+        assert table._tbl.xml == expected_xml
+        assert isinstance(column, _Column)
+        assert column._gridCol is table._tbl.tblGrid.gridCol_lst[-1]
+        assert column._parent is table
+
+    def it_provides_access_to_a_cell_by_row_and_col_indices(self, table):
+        for row_idx in range(2):
+            for col_idx in range(2):
+                cell = table.cell(row_idx, col_idx)
+                assert isinstance(cell, _Cell)
+                tr = table._tbl.tr_lst[row_idx]
+                tc = tr.tc_lst[col_idx]
+                assert tc is cell._tc
+
+    def it_provides_access_to_the_table_rows(self, table):
+        rows = table.rows
+        assert isinstance(rows, _Rows)
+
+    def it_provides_access_to_the_table_columns(self, table):
+        columns = table.columns
+        assert isinstance(columns, _Columns)
+
+    def it_provides_access_to_the_cells_in_a_column(self, col_cells_fixture):
+        table, column_idx, expected_cells = col_cells_fixture
+        column_cells = table.column_cells(column_idx)
+        assert column_cells == expected_cells
+
+    def it_provides_access_to_the_cells_in_a_row(self, row_cells_fixture):
+        table, row_idx, expected_cells = row_cells_fixture
+        row_cells = table.row_cells(row_idx)
+        assert row_cells == expected_cells
+
     def it_knows_its_alignment_setting(self, alignment_get_fixture):
         table, expected_value = alignment_get_fixture
         assert table.alignment == expected_value
@@ -44,6 +87,10 @@ class DescribeTable(object):
         table.autofit = new_value
         assert table._tbl.xml == expected_xml
 
+    def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
+        table = table_fixture
+        assert table.table is table
+
     def it_knows_its_table_style(self, style_get_fixture):
         table, style_id_, style_ = style_get_fixture
         style = table.style
@@ -60,58 +107,6 @@ class DescribeTable(object):
         )
         assert table._tbl.xml == expected_xml
 
-    def it_knows_it_is_the_table_its_children_belong_to(self, table_fixture):
-        table = table_fixture
-        assert table.table is table
-
-    def it_knows_its_column_count_to_help(self, column_count_fixture):
-        table, expected_value = column_count_fixture
-        column_count = table._column_count
-        assert column_count == expected_value
-
-    def it_provides_access_to_the_table_rows(self, table):
-        rows = table.rows
-        assert isinstance(rows, _Rows)
-
-    def it_provides_access_to_the_table_columns(self, table):
-        columns = table.columns
-        assert isinstance(columns, _Columns)
-
-    def it_provides_access_to_a_cell_by_row_and_col_indices(self, table):
-        for row_idx in range(2):
-            for col_idx in range(2):
-                cell = table.cell(row_idx, col_idx)
-                assert isinstance(cell, _Cell)
-                tr = table._tbl.tr_lst[row_idx]
-                tc = tr.tc_lst[col_idx]
-                assert tc is cell._tc
-
-    def it_provides_access_to_the_cells_in_a_column(self, col_cells_fixture):
-        table, column_idx, expected_cells = col_cells_fixture
-        column_cells = table.column_cells(column_idx)
-        assert column_cells == expected_cells
-
-    def it_provides_access_to_the_cells_in_a_row(self, row_cells_fixture):
-        table, row_idx, expected_cells = row_cells_fixture
-        row_cells = table.row_cells(row_idx)
-        assert row_cells == expected_cells
-
-    def it_can_add_a_row(self, add_row_fixture):
-        table, expected_xml = add_row_fixture
-        row = table.add_row()
-        assert table._tbl.xml == expected_xml
-        assert isinstance(row, _Row)
-        assert row._tr is table._tbl.tr_lst[-1]
-        assert row._parent is table
-
-    def it_can_add_a_column(self, add_column_fixture):
-        table, width, expected_xml = add_column_fixture
-        column = table.add_column(width)
-        assert table._tbl.xml == expected_xml
-        assert isinstance(column, _Column)
-        assert column._gridCol is table._tbl.tblGrid.gridCol_lst[-1]
-        assert column._parent is table
-
     def it_provides_access_to_its_cells_to_help(self, cells_fixture):
         table, cell_count, unique_count, matches = cells_fixture
         cells = table._cells
@@ -121,6 +116,11 @@ class DescribeTable(object):
             comparator_idx = matching_idxs[0]
             for idx in matching_idxs[1:]:
                 assert cells[idx] is cells[comparator_idx]
+
+    def it_knows_its_column_count_to_help(self, column_count_fixture):
+        table, expected_value = column_count_fixture
+        column_count = table._column_count
+        assert column_count == expected_value
 
     # fixtures -------------------------------------------------------
 
