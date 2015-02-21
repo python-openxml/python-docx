@@ -7,6 +7,7 @@ NEXT
 ++++++++++++++++++
 
 - Fix #149: KeyError on Document.add_table()
+- Fix #78: feature: add_table() sets cell widths
 
 
 0.8.4 (2015-02-20)

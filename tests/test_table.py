@@ -105,11 +105,12 @@ class DescribeTable(object):
         assert row._parent is table
 
     def it_can_add_a_column(self, add_column_fixture):
-        table, expected_xml = add_column_fixture
-        column = table.add_column()
+        table, width, expected_xml = add_column_fixture
+        column = table.add_column(width)
         assert table._tbl.xml == expected_xml
         assert isinstance(column, _Column)
-        assert column._gridCol is table._tbl.tblGrid.gridCol_lst[1]
+        assert column._gridCol is table._tbl.tblGrid.gridCol_lst[-1]
+        assert column._parent is table
 
     def it_provides_access_to_its_cells_to_help(self, cells_fixture):
         table, cell_count, unique_count, matches = cells_fixture
@@ -125,10 +126,12 @@ class DescribeTable(object):
 
     @pytest.fixture
     def add_column_fixture(self):
-        tbl = _tbl_bldr(2, 1).element
+        snippets = snippet_seq('add-row-col')
+        tbl = parse_xml(snippets[0])
         table = Table(tbl, None)
-        expected_xml = _tbl_bldr(2, 2).xml()
-        return table, expected_xml
+        width = Inches(1.5)
+        expected_xml = snippets[2]
+        return table, width, expected_xml
 
     @pytest.fixture
     def add_row_fixture(self):

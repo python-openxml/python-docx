@@ -12,7 +12,6 @@ Feature: Add a row or column to a table
        And the width of each cell is 3.0 inches
 
 
-  @wip
   Scenario: Add a column to a table
      Given a 2 x 2 table
       When I add a 1.0 inch column to the table

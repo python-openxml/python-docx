@@ -20,14 +20,17 @@ class Table(Parented):
         super(Table, self).__init__(parent)
         self._element = self._tbl = tbl
 
-    def add_column(self):
+    def add_column(self, width):
         """
-        Return a |_Column| instance, newly added rightmost to the table.
+        Return a |_Column| object of *width*, newly added rightmost to the
+        table.
         """
         tblGrid = self._tbl.tblGrid
         gridCol = tblGrid.add_gridCol()
+        gridCol.w = width
         for tr in self._tbl.tr_lst:
-            tr.add_tc()
+            tc = tr.add_tc()
+            tc.width = width
         return _Column(gridCol, self)
 
     def add_row(self):
