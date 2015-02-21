@@ -5,10 +5,10 @@ Feature: Add a table
 
 
   Scenario: Add a table specifying only row and column count
-    Given a document having built-in styles
+    Given a blank document
      When I add a 2 x 2 table specifying only row and column count
      Then the document contains a 2 x 2 table
-      And table.style is styles['Light Shading Accent 1']
+      And table.style is styles['Normal Table']
 
 
   Scenario: Add a table specifying style

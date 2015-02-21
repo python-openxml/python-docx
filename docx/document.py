@@ -89,11 +89,12 @@ class Document(ElementProxy):
         new_sectPr.start_type = start_type
         return Section(new_sectPr)
 
-    def add_table(self, rows, cols, style='Light Shading Accent 1'):
+    def add_table(self, rows, cols, style=None):
         """
         Add a table having row and column counts of *rows* and *cols*
-        respectively and table style of *style*. If *style* is |None|, a
-        table with no style is produced.
+        respectively and table style of *style*. *style* may be a paragraph
+        style object or a paragraph style name. If *style* is |None|, the
+        table inherits the default table style of the document.
         """
         table = self._body.add_table(rows, cols)
         table.style = style
