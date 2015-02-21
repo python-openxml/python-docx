@@ -130,10 +130,9 @@ def given_a_table_having_two_rows(context):
 
 # when =====================================================
 
-@when('I add a column to the table')
-def when_add_column_to_table(context):
-    table = context.table_
-    context.column = table.add_column()
+@when('I add a 1.0 inch column to the table')
+def when_I_add_a_1_inch_column_to_table(context):
+    context.column = context.table_.add_column(Inches(1.0))
 
 
 @when('I add a row to the table')
@@ -297,6 +296,11 @@ def then_len_of_row_collection_is_2(context):
 @then('the new column has 2 cells')
 def then_new_column_has_2_cells(context):
     assert len(context.column.cells) == 2
+
+
+@then('the new column is 1.0 inches wide')
+def then_new_column_is_1_inches_wide(context):
+    assert context.column.width == Inches(1)
 
 
 @then('the new row has 2 cells')
