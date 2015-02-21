@@ -358,3 +358,19 @@ def then_the_width_of_cell_n_is_x_inches(context, n_str, inches_str):
     idx, inches = int(n_str) - 1, float(inches_str)
     cell = _cell(context.table_, idx)
     assert cell.width == Inches(inches), 'got %s' % cell.width.inches
+
+
+@then('the width of each cell is {inches} inches')
+def then_the_width_of_each_cell_is_inches(context, inches):
+    table = context.table_
+    expected_width = Inches(float(inches))
+    for cell in table._cells:
+        assert cell.width == expected_width, 'got %s' % cell.width.inches
+
+
+@then('the width of each column is {inches} inches')
+def then_the_width_of_each_column_is_inches(context, inches):
+    table = context.table_
+    expected_width = Inches(float(inches))
+    for column in table.columns:
+        assert column.width == expected_width, 'got %s' % column.width.inches
