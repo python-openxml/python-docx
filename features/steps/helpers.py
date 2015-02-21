@@ -16,7 +16,18 @@ scratch_dir = absjoin(thisdir, '../_scratch')
 # scratch output docx file -------------
 saved_docx_path = absjoin(scratch_dir, 'test_out.docx')
 
+bool_vals = {
+    'True':  True,
+    'False': False
+}
+
 test_text = 'python-docx was here!'
+
+tri_state_vals = {
+    'True':  True,
+    'False': False,
+    'None':  None,
+}
 
 
 def test_docx(name):

@@ -5,14 +5,14 @@ Feature: Add a heading paragraph
 
 
   Scenario: Add a heading specifying only its text
-    Given a blank document
+    Given a document having built-in styles
      When I add a heading specifying only its text
      Then the style of the last paragraph is 'Heading 1'
       And the last paragraph contains the heading text
 
 
   Scenario Outline: Add a heading specifying level
-    Given a blank document
+    Given a document having built-in styles
      When I add a heading specifying level=<level>
      Then the style of the last paragraph is '<style>'
 

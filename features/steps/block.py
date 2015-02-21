@@ -16,8 +16,7 @@ from helpers import test_docx
 
 @given('a document containing a table')
 def given_a_document_containing_a_table(context):
-    docx_path = test_docx('blk-containing-table')
-    context.document = Document(docx_path)
+    context.document = Document(test_docx('blk-containing-table'))
 
 
 @given('a paragraph')

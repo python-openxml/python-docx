@@ -24,6 +24,11 @@ from helpers import test_docx, test_file
 
 @given('a blank document')
 def given_a_blank_document(context):
+    context.document = Document(test_docx('doc-word-default-blank'))
+
+
+@given('a document having built-in styles')
+def given_a_document_having_builtin_styles(context):
     context.document = Document()
 
 
@@ -198,9 +203,8 @@ def then_document_tables_is_a_list_containing_three_tables(context):
 
 
 @then('the document contains a 2 x 2 table')
-def then_document_contains_2x2_table(context):
-    document = context.document
-    table = document.tables[-1]
+def then_the_document_contains_a_2x2_table(context):
+    table = context.document.tables[-1]
     assert isinstance(table, Table)
     assert len(table.rows) == 2
     assert len(table.columns) == 2

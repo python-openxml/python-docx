@@ -13,24 +13,13 @@ from docx.styles.style import BaseStyle
 from docx.text.font import Font
 from docx.text.parfmt import ParagraphFormat
 
-from helpers import test_docx
-
-bool_vals = {
-    'True':  True,
-    'False': False
-}
+from helpers import bool_vals, test_docx, tri_state_vals
 
 style_types = {
     'WD_STYLE_TYPE.CHARACTER': WD_STYLE_TYPE.CHARACTER,
     'WD_STYLE_TYPE.PARAGRAPH': WD_STYLE_TYPE.PARAGRAPH,
     'WD_STYLE_TYPE.LIST':      WD_STYLE_TYPE.LIST,
     'WD_STYLE_TYPE.TABLE':     WD_STYLE_TYPE.TABLE,
-}
-
-tri_state_vals = {
-    'True':  True,
-    'False': False,
-    'None':  None,
 }
 
 
