@@ -31,7 +31,7 @@ class DescribeBlockItemContainer(object):
 
     def it_can_add_a_table(self, add_table_fixture):
         blkcntnr, rows, cols, expected_xml = add_table_fixture
-        table = blkcntnr.add_table(rows, cols)
+        table = blkcntnr.add_table(rows, cols, None)
         assert blkcntnr._element.xml == expected_xml
         assert isinstance(table, Table)
 

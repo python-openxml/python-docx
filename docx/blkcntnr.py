@@ -37,10 +37,11 @@ class BlockItemContainer(Parented):
             paragraph.style = style
         return paragraph
 
-    def add_table(self, rows, cols):
+    def add_table(self, rows, cols, width):
         """
-        Return a newly added table having *rows* rows and *cols* cols,
-        appended to the content in this container.
+        Return a table of *width* having *rows* rows and *cols* columns,
+        newly appended to the content in this container. *width* is evenly
+        distributed between the table columns.
         """
         from .table import Table
         tbl = self._element.add_tbl()

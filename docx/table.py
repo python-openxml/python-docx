@@ -201,7 +201,7 @@ class _Cell(BlockItemContainer):
         added after the table because Word requires a paragraph element as
         the last element in every cell.
         """
-        new_table = super(_Cell, self).add_table(rows, cols)
+        new_table = super(_Cell, self).add_table(rows, cols, 914400)
         self.add_paragraph()
         return new_table
 

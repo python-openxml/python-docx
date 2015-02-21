@@ -15,8 +15,9 @@ from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
 from docx.parts.document import DocumentPart
-from docx.section import Sections
+from docx.section import Section, Sections
 from docx.shape import InlineShape, InlineShapes
+from docx.shared import Length
 from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -75,9 +76,9 @@ class DescribeDocument(object):
         assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
-        document, rows, cols, style, table_ = add_table_fixture
+        document, rows, cols, style, width, table_ = add_table_fixture
         table = document.add_table(rows, cols, style)
-        document._body.add_table.assert_called_once_with(rows, cols)
+        document._body.add_table.assert_called_once_with(rows, cols, width)
         assert table == table_
         assert table.style == style
 
@@ -124,6 +125,12 @@ class DescribeDocument(object):
         body = document._body
         _Body_.assert_called_once_with(body_elm, document)
         assert body is body_
+
+    def it_determines_block_width_to_help(self, block_width_fixture):
+        document, expected_value = block_width_fixture
+        width = document._block_width
+        assert isinstance(width, Length)
+        assert width == expected_value
 
     # fixtures -------------------------------------------------------
 
@@ -186,11 +193,22 @@ class DescribeDocument(object):
         return document, start_type, Section_, section_, expected_xml
 
     @pytest.fixture
-    def add_table_fixture(self, body_prop_, table_):
+    def add_table_fixture(self, _block_width_prop_, body_prop_, table_):
         document = Document(None, None)
         rows, cols, style = 4, 2, 'Light Shading Accent 1'
         body_prop_.return_value.add_table.return_value = table_
-        return document, rows, cols, style, table_
+        _block_width_prop_.return_value = width = 42
+        return document, rows, cols, style, width, table_
+
+    @pytest.fixture
+    def block_width_fixture(self, sections_prop_, section_):
+        document = Document(None, None)
+        sections_prop_.return_value = [None, section_]
+        section_.page_width = 6000
+        section_.left_margin = 1500
+        section_.right_margin = 1000
+        expected_value = 3500
+        return document, expected_value
 
     @pytest.fixture
     def body_fixture(self, _Body_, body_):
@@ -262,6 +280,10 @@ class DescribeDocument(object):
         return instance_mock(request, _Body)
 
     @pytest.fixture
+    def _block_width_prop_(self, request):
+        return property_mock(request, Document, '_block_width')
+
+    @pytest.fixture
     def body_prop_(self, request, body_):
         return property_mock(request, Document, '_body', return_value=body_)
 
@@ -298,12 +320,20 @@ class DescribeDocument(object):
         return class_mock(request, 'docx.document.Section')
 
     @pytest.fixture
+    def section_(self, request):
+        return instance_mock(request, Section)
+
+    @pytest.fixture
     def Sections_(self, request):
         return class_mock(request, 'docx.document.Sections')
 
     @pytest.fixture
     def sections_(self, request):
         return instance_mock(request, Sections)
+
+    @pytest.fixture
+    def sections_prop_(self, request):
+        return property_mock(request, Document, 'sections')
 
     @pytest.fixture
     def styles_(self, request):

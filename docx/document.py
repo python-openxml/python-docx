@@ -12,7 +12,7 @@ from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
 from .section import Section, Sections
-from .shared import ElementProxy
+from .shared import ElementProxy, Emu
 
 
 class Document(ElementProxy):
@@ -96,7 +96,7 @@ class Document(ElementProxy):
         style object or a paragraph style name. If *style* is |None|, the
         table inherits the default table style of the document.
         """
-        table = self._body.add_table(rows, cols)
+        table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
 
@@ -166,6 +166,17 @@ class Document(ElementProxy):
         ``<w:ins>`` or ``<w:del>`` will also not appear in the list.
         """
         return self._body.tables
+
+    @property
+    def _block_width(self):
+        """
+        Return a |Length| object specifying the width of available "writing"
+        space between the margins of the last section of this document.
+        """
+        section = self.sections[-1]
+        return Emu(
+            section.page_width - section.left_margin - section.right_margin
+        )
 
     @property
     def _body(self):
