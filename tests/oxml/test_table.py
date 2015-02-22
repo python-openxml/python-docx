@@ -21,12 +21,29 @@ from ..unitutil.mock import call, instance_mock, method_mock, property_mock
 
 class DescribeCT_Row(object):
 
+    def it_can_add_a_trPr(self, add_trPr_fixture):
+        tr, expected_xml = add_trPr_fixture
+        tr._add_trPr()
+        assert tr.xml == expected_xml
+
     def it_raises_on_tc_at_grid_col(self, tc_raise_fixture):
         tr, idx = tc_raise_fixture
         with pytest.raises(ValueError):
             tr.tc_at_grid_col(idx)
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:tr',                    'w:tr/w:trPr'),
+        ('w:tr/w:tblPrEx',          'w:tr/(w:tblPrEx,w:trPr)'),
+        ('w:tr/w:tc',               'w:tr/(w:trPr,w:tc)'),
+        ('w:tr/(w:sdt,w:del,w:tc)', 'w:tr/(w:trPr,w:sdt,w:del,w:tc)'),
+    ])
+    def add_trPr_fixture(self, request):
+        tr_cxml, expected_cxml = request.param
+        tr = element(tr_cxml)
+        expected_xml = xml(expected_cxml)
+        return tr, expected_xml
 
     @pytest.fixture(params=[(0, 0, 3), (1, 0, 1)])
     def tc_raise_fixture(self, request):

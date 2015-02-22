@@ -25,6 +25,8 @@ class CT_Row(BaseOxmlElement):
     """
     ``<w:tr>`` element
     """
+    tblPrEx = ZeroOrOne('w:tblPrEx')  # custom inserter below
+    trPr = ZeroOrOne('w:trPr')        # custom inserter below
     tc = ZeroOrMore('w:tc')
 
     def tc_at_grid_col(self, idx):
@@ -48,6 +50,16 @@ class CT_Row(BaseOxmlElement):
         element.
         """
         return self.getparent().tr_lst.index(self)
+
+    def _insert_tblPrEx(self, tblPrEx):
+        self.insert(0, tblPrEx)
+
+    def _insert_trPr(self, trPr):
+        tblPrEx = self.tblPrEx
+        if tblPrEx is not None:
+            tblPrEx.addnext(trPr)
+        else:
+            self.insert(0, trPr)
 
     def _new_tc(self):
         return CT_Tc.new()
