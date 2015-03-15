@@ -11,12 +11,9 @@ Feature Analysis
    :titlesonly:
 
    features/text/index
+   features/table/index
    features/styles/index
    features/coreprops
-   features/cell-merge
-   features/table
-   features/table-props
-   features/table-cell
    features/numbering
    features/sections
    features/shapes

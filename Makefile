@@ -28,7 +28,7 @@ coverage:
 	py.test --cov-report term-missing --cov=docx tests/
 
 docs:
-	$(MAKE) -C docs clean html
+	$(MAKE) -C docs html
 
 readme:
 	rst2html README.rst >README.html
