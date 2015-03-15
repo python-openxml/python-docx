@@ -13,13 +13,10 @@ Feature Analysis
    features/text/index
    features/table/index
    features/styles/index
+   features/shapes/index
    features/coreprops
    features/numbering
    features/sections
-   features/shapes
-   features/shapes-inline
-   features/shapes-inline-size
-   features/picture
 
 
 Schema Analysis

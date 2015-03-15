@@ -2,10 +2,6 @@
 Inline shape size
 =================
 
-
-Overview
---------
-
 The position of an inline shape is completely determined by the text it is
 inline with, however its dimensions can be specified. For some shape types,
 both the contained shape and the shape container specify a width and height.

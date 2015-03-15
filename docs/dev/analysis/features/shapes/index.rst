@@ -2,10 +2,6 @@
 Shapes (in general)
 ===================
 
-
-Overview
---------
-
 A graphical object that appears in a Word document is known as a *shape*.
 A shape can be *inline* or *floating*. An inline shape appears on a text
 baseline as though it were a character glyph and affects the line height.
@@ -17,6 +13,16 @@ The graphical object itself is placed in a container, and it is the container
 that determines the placement of the graphic. The same graphical object can be
 placed inline or floating by changing its container. The graphic itself is
 unaffected.
+
+In addition to this overview, there are the following more specialized
+feature analyses:
+
+.. toctree::
+   :titlesonly:
+
+   shapes-inline
+   shapes-inline-size
+   picture
 
 
 MS API
