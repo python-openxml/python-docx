@@ -133,7 +133,7 @@ class DocumentPart(XmlPart):
         A |Settings| object providing access to the settings in the settings
         part of this document.
         """
-        raise NotImplementedError
+        return self._settings_part.settings
 
     @property
     def styles(self):
@@ -142,6 +142,15 @@ class DocumentPart(XmlPart):
         of this document.
         """
         return self._styles_part.styles
+
+    @property
+    def _settings_part(self):
+        """
+        A |SettingsPart| object providing access to the document-level
+        settings for this document. Creates a default settings part if one is
+        not present.
+        """
+        raise NotImplementedError
 
     @property
     def _styles_part(self):
