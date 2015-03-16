@@ -16,6 +16,7 @@ from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
 from docx.parts.document import DocumentPart
 from docx.section import Section, Sections
+from docx.settings import Settings
 from docx.shape import InlineShape, InlineShapes
 from docx.shared import Length
 from docx.styles.styles import Styles
@@ -106,6 +107,10 @@ class DescribeDocument(object):
         sections = document.sections
         Sections_.assert_called_once_with(document._element)
         assert sections is sections_
+
+    def it_provides_access_to_its_settings(self, settings_fixture):
+        document, settings_ = settings_fixture
+        assert document.settings is settings_
 
     def it_provides_access_to_its_styles(self, styles_fixture):
         document, styles_ = styles_fixture
@@ -254,6 +259,12 @@ class DescribeDocument(object):
         return document, Sections_, sections_
 
     @pytest.fixture
+    def settings_fixture(self, document_part_, settings_):
+        document = Document(None, document_part_)
+        document_part_.settings = settings_
+        return document, settings_
+
+    @pytest.fixture
     def styles_fixture(self, document_part_, styles_):
         document = Document(None, document_part_)
         document_part_.styles = styles_
@@ -334,6 +345,10 @@ class DescribeDocument(object):
     @pytest.fixture
     def sections_prop_(self, request):
         return property_mock(request, Document, 'sections')
+
+    @pytest.fixture
+    def settings_(self, request):
+        return instance_mock(request, Settings)
 
     @pytest.fixture
     def styles_(self, request):

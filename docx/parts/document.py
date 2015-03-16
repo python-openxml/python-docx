@@ -128,6 +128,14 @@ class DocumentPart(XmlPart):
         self.package.save(path_or_stream)
 
     @property
+    def settings(self):
+        """
+        A |Settings| object providing access to the settings in the settings
+        part of this document.
+        """
+        raise NotImplementedError
+
+    @property
     def styles(self):
         """
         A |Styles| object providing access to the styles in the styles part

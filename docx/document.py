@@ -150,6 +150,14 @@ class Document(ElementProxy):
         return Sections(self._element)
 
     @property
+    def settings(self):
+        """
+        A |Settings| object providing access to the document-level settings
+        for this document.
+        """
+        return self._part.settings
+
+    @property
     def styles(self):
         """
         A |Styles| object providing access to the styles in this document.
