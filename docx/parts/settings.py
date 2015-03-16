@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from ..opc.part import XmlPart
+from ..settings import Settings
 
 
 class SettingsPart(XmlPart):
@@ -29,4 +30,4 @@ class SettingsPart(XmlPart):
         A |Settings| proxy object for the `w:settings` element in this part,
         containing the document-level settings for this document.
         """
-        raise NotImplementedError
+        return Settings(self.element)
