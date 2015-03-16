@@ -83,6 +83,7 @@ API Documentation
    :maxdepth: 2
 
    api/document
+   api/settings
    api/style
    api/text
    api/table
