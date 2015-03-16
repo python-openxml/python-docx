@@ -155,6 +155,8 @@ rst_epilog = """
 
 .. |Sections| replace:: :class:`.Sections`
 
+.. |Settings| replace:: :class:`.Settings`
+
 .. |str| replace:: :class:`.str`
 
 .. |Styles| replace:: :class:`.Styles`
