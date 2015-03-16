@@ -11,6 +11,7 @@ from __future__ import (
 import pytest
 
 from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.package import OpcPackage
 from docx.opc.part import PartFactory
 from docx.package import Package
 from docx.parts.settings import SettingsPart
@@ -35,6 +36,15 @@ class DescribeSettingsPart(object):
         settings = settings_part.settings
         Settings_.assert_called_once_with(settings_part.element)
         assert settings is settings_
+
+    def it_constructs_a_default_settings_part_to_help(self):
+        package = OpcPackage()
+        settings_part = SettingsPart.default(package)
+        assert isinstance(settings_part, SettingsPart)
+        assert settings_part.partname == '/word/settings.xml'
+        assert settings_part.content_type == CT.WML_SETTINGS
+        assert settings_part.package is package
+        assert len(settings_part.element) == 6
 
     # fixtures -------------------------------------------------------
 

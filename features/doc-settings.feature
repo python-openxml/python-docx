@@ -4,7 +4,6 @@ Feature: Access to document settings
   I access to settings stored in the settings part
 
 
-  @wip
   Scenario Outline: Access document settings
     Given a document having <a-or-no> settings part
      Then document.settings is a Settings object
