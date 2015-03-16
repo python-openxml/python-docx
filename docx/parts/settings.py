@@ -15,6 +15,14 @@ class SettingsPart(XmlPart):
     """
     Document-level settings part of a WordprocessingML (WML) package.
     """
+    @classmethod
+    def default(cls, package):
+        """
+        Return a newly created settings part, containing a default
+        `w:settings` element tree.
+        """
+        raise NotImplementedError
+
     @property
     def settings(self):
         """

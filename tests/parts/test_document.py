@@ -117,6 +117,26 @@ class DescribeDocumentPart(object):
         )
         assert style_id is style_id_
 
+    def it_provides_access_to_its_settings_part_to_help(
+            self, settings_part_get_fixture):
+        document_part, settings_part_ = settings_part_get_fixture
+        settings_part = document_part._settings_part
+        document_part.part_related_by.assert_called_once_with(RT.SETTINGS)
+        assert settings_part is settings_part_
+
+    def it_creates_default_settings_part_if_not_present_to_help(
+            self, settings_part_create_fixture):
+        document_part, SettingsPart_, settings_part_ = (
+            settings_part_create_fixture
+        )
+        settings_part = document_part._settings_part
+
+        SettingsPart_.default.assert_called_once_with(document_part.package)
+        document_part.relate_to.assert_called_once_with(
+            settings_part_, RT.SETTINGS
+        )
+        assert settings_part is settings_part_
+
     def it_provides_access_to_its_styles_part_to_help(
             self, styles_part_get_fixture):
         document_part, styles_part_ = styles_part_get_fixture
@@ -233,6 +253,21 @@ class DescribeDocumentPart(object):
         return document_part, settings_
 
     @pytest.fixture
+    def settings_part_create_fixture(
+            self, package_, part_related_by_, SettingsPart_, settings_part_,
+            relate_to_):
+        document_part = DocumentPart(None, None, None, package_)
+        part_related_by_.side_effect = KeyError
+        SettingsPart_.default.return_value = settings_part_
+        return document_part, SettingsPart_, settings_part_
+
+    @pytest.fixture
+    def settings_part_get_fixture(self, part_related_by_, settings_part_):
+        document_part = DocumentPart(None, None, None, None)
+        part_related_by_.return_value = settings_part_
+        return document_part, settings_part_
+
+    @pytest.fixture
     def styles_fixture(self, _styles_part_prop_, styles_part_, styles_):
         document_part = DocumentPart(None, None, None, None)
         _styles_part_prop_.return_value = styles_part_
@@ -303,6 +338,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def relate_to_(self, request):
         return method_mock(request, DocumentPart, 'relate_to')
+
+    @pytest.fixture
+    def SettingsPart_(self, request):
+        return class_mock(request, 'docx.parts.document.SettingsPart')
 
     @pytest.fixture
     def settings_(self, request):

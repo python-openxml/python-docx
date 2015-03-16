@@ -15,6 +15,7 @@ from ..opc.part import XmlPart
 from ..oxml.shape import CT_Inline
 from ..shape import InlineShapes
 from ..shared import lazyproperty
+from .settings import SettingsPart
 from .styles import StylesPart
 
 
@@ -150,7 +151,12 @@ class DocumentPart(XmlPart):
         settings for this document. Creates a default settings part if one is
         not present.
         """
-        raise NotImplementedError
+        try:
+            return self.part_related_by(RT.SETTINGS)
+        except KeyError:
+            settings_part = SettingsPart.default(self.package)
+            self.relate_to(settings_part, RT.SETTINGS)
+            return settings_part
 
     @property
     def _styles_part(self):
