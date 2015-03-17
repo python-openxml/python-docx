@@ -180,6 +180,9 @@ register_element_cls('w:webHidden',  CT_OnOff)
 from .text.paragraph import CT_P
 register_element_cls('w:p', CT_P)
 
+from .text.hyperlink import CT_Hyperlink
+register_element_cls('w:hyperlink', CT_Hyperlink)
+
 from .text.parfmt import CT_Ind, CT_Jc, CT_PPr, CT_Spacing
 register_element_cls('w:ind',             CT_Ind)
 register_element_cls('w:jc',              CT_Jc)
