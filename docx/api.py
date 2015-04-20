@@ -9,6 +9,10 @@ OpcPackage graph.
 from __future__ import absolute_import, division, print_function
 
 import os
+try:
+    from pkg_resources import resource_stream
+except ImportError:
+    resource_stream = None
 
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
@@ -32,6 +36,9 @@ def Document(docx=None):
 def _default_docx_path():
     """
     Return the path to the built-in default .docx package.
+    Will use resource_stream to cover freeze versions which have problem handling files in library.zip
     """
     _thisdir = os.path.split(__file__)[0]
+    if not os.path.exists(_thisdir) and resource_stream is not None:
+        return resource_stream(__name__, 'templates/default.docx')
     return os.path.join(_thisdir, 'templates', 'default.docx')
