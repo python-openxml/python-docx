@@ -93,24 +93,24 @@ inheritance from the style hierarchy::
     >>> paragraph = document.add_paragraph()
     >>> paragraph_format = paragraph.paragraph_format
 
-    >>> paragraph.left_indent
+    >>> paragraph_format.left_indent
     None  # indicating indentation is inherited from the style hierarchy
-    >>> paragraph.left_indent = Inches(0.5)
-    >>> paragraph.left_indent
+    >>> paragraph_format.left_indent = Inches(0.5)
+    >>> paragraph_format.left_indent
     457200
-    >>> paragraph.left_indent.inches
+    >>> paragraph_format.left_indent.inches
     0.5
 
 
 Right-side indent works in a similar way::
 
     >>> from docx.shared import Pt
-    >>> paragraph.right_indent
+    >>> paragraph_format.right_indent
     None
-    >>> paragraph.right_indent = Pt(24)
-    >>> paragraph.right_indent
+    >>> paragraph_format.right_indent = Pt(24)
+    >>> paragraph_format.right_indent
     304800
-    >>> paragraph.right_indent.pt
+    >>> paragraph_format.right_indent.pt
     24.0
 
 
@@ -118,12 +118,12 @@ First-line indent is specified using the
 :attr:`~.ParagraphFormat.first_line_indent` property and is interpreted
 relative to the left indent. A negative value indicates a hanging indent::
 
-    >>> paragraph.first_line_indent
+    >>> paragraph_format.first_line_indent
     None
-    >>> paragraph.first_line_indent = Inches(-0.25)
-    >>> paragraph.first_line_indent
+    >>> paragraph_format.first_line_indent = Inches(-0.25)
+    >>> paragraph_format.first_line_indent
     -228600
-    >>> paragraph.first_line_indent.inches
+    >>> paragraph_format.first_line_indent.inches
     -0.25
 
 
