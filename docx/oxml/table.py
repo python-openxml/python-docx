@@ -13,7 +13,8 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_HexColor, ST_Merge, ST_Shd, ST_TblLayoutType, ST_TblWidth,
+    ST_TwipsMeasure, XsdInt
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -455,6 +456,54 @@ class CT_Tc(BaseOxmlElement):
         tcPr.vMerge_val = value
 
     @property
+    def shd_fill(self):
+        """
+        The value of the ./w:tcPr/w:shd/@fill attribute, or |None| if the
+        w:shd element is not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.shd_fill
+
+    @shd_fill.setter
+    def shd_fill(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.shd_fill = value
+
+    @property
+    def shd_color(self):
+        """
+        The value of the ./w:tcPr/w:shd/@color attribute, or |None| if the
+        w:shd element is not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.shd_color
+
+    @shd_color.setter
+    def shd_color(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.shd_color = value
+
+    @property
+    def shd_val(self):
+        """
+        The value of the ./w:tcPr/w:shd/@val attribute, or |None| if the
+        w:shd element is not present.
+        """
+        tcPr = self.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.shd_val
+
+    @shd_val.setter
+    def shd_val(self, value):
+        tcPr = self.get_or_add_tcPr()
+        tcPr.shd_val = value
+
+    @property
     def width(self):
         """
         Return the EMU length value represented in the ``./w:tcPr/w:tcW``
@@ -723,6 +772,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    shd = ZeroOrOne('w:shd', successors=_tag_seq[7:])
     del _tag_seq
 
     @property
@@ -760,6 +810,51 @@ class CT_TcPr(BaseOxmlElement):
             self._add_vMerge().val = value
 
     @property
+    def shd_fill(self):
+        """
+        The value of the ./w:shd/@fill attribute, or |None| if the
+        w:shd element is not present.
+        """
+        shd = self.shd
+        if shd is None:
+            return None
+        return shd.fill
+
+    @shd_fill.setter
+    def shd_fill(self, value):
+        self.get_or_add_shd().fill = value
+
+    @property
+    def shd_color(self):
+        """
+        The value of the ./w:shd/@color attribute, or |None| if the
+        w:shd element is not present.
+        """
+        shd = self.shd
+        if shd is None:
+            return None
+        return shd.color
+
+    @shd_color.setter
+    def shd_color(self, value):
+        self.get_or_add_shd().color = value
+
+    @property
+    def shd_val(self):
+        """
+        The value of the ./w:shd/@val attribute, or |None| if the
+        w:shd element is not present.
+        """
+        shd = self.shd
+        if shd is None:
+            return None
+        return shd.val
+
+    @shd_val.setter
+    def shd_val(self, value):
+        self.get_or_add_shd().val = value
+
+    @property
     def width(self):
         """
         Return the EMU length value represented in the ``<w:tcW>`` child
@@ -781,3 +876,11 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
     val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+class CT_Shd(BaseOxmlElement):
+    """
+    ``<w:shd>`` element, specifying shading of a cell.
+    """
+    fill = OptionalAttribute('w:fill', ST_HexColor)
+    color = OptionalAttribute('w:color', ST_HexColor)
+    val = OptionalAttribute('w:val', ST_Shd)

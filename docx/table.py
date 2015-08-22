@@ -281,6 +281,42 @@ class _Cell(BlockItemContainer):
     def width(self, value):
         self._tc.width = value
 
+    @property
+    def shd_fill(self):
+        """
+        Read/write. Fill value of cell shading. |None| if no setting is specified.
+        """
+        return self._tcPr.shd_fill
+
+    @shd_fill.setter
+    def shd_fill(self, value):
+        self._tcPr.shd_fill = value
+
+    @property
+    def shd_color(self):
+        """
+        Read/write. Color value of cell shading. |None| if no setting is specified.
+        """
+        return self._tcPr.shd_color
+
+    @shd_color.setter
+    def shd_color(self, value):
+        self._tcPr.shd_color = value
+
+    @property
+    def shd_val(self):
+        """
+        Read/write. Val value of cell shading. |None| if no setting is specified.
+        """
+        return self._tcPr.shd_val
+
+    @shd_val.setter
+    def shd_val(self, value):
+        self._tcPr.shd_val = value
+
+    @property
+    def _tcPr(self):
+        return self._tc.tcPr
 
 class _Column(Parented):
     """
