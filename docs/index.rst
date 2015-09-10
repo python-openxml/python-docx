@@ -133,6 +133,15 @@ Here's an example of what |docx| can do:
   # save the modified document (override the existing copied file)
   document.save('./Document_copy.docx')
 
+The document before (left) and after (right) the modification:
+
+.. |img_before| image:: /_static/img/example-docx-before-modification.png
+.. |img_after| image:: /_static/img/example-docx-after-modification.png
+
+============================================  ============================================
+|img_before|                                  |img_after|
+============================================  ============================================
+
 User Guide
 ----------
 
