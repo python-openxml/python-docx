@@ -43,5 +43,8 @@ class _NumberingDefinitions(object):
         super(_NumberingDefinitions, self).__init__()
         self._numbering = numbering_elm
 
+    def add_num(self, abstractNum_id, restart=False):
+        return self._numbering.add_num(abstractNum_id, restart).numId
+
     def __len__(self):
         return len(self._numbering.num_lst)
