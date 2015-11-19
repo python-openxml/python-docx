@@ -58,7 +58,7 @@ class CT_Inline(BaseOxmlElement):
     graphic = OneAndOnlyOne('a:graphic')
 
     @classmethod
-    def new(cls, cx, cy, shape_id, pic):
+    def new(cls, cx, cy, shape_id, pic, title=None, descr=None):
         """
         Return a new ``<wp:inline>`` element populated with the values passed
         as parameters.
@@ -68,6 +68,11 @@ class CT_Inline(BaseOxmlElement):
         inline.extent.cy = cy
         inline.docPr.id = shape_id
         inline.docPr.name = 'Picture %d' % shape_id
+
+        if title:
+            inline.docPr.title = title
+        if descr:
+            inline.docPr.descr = descr
         inline.graphic.graphicData.uri = (
             'http://schemas.openxmlformats.org/drawingml/2006/picture'
         )
@@ -75,14 +80,14 @@ class CT_Inline(BaseOxmlElement):
         return inline
 
     @classmethod
-    def new_pic_inline(cls, shape_id, rId, filename, cx, cy):
+    def new_pic_inline(cls, shape_id, rId, filename, cx, cy, title=None, descr=None):
         """
         Return a new `wp:inline` element containing the `pic:pic` element
         specified by the argument values.
         """
         pic_id = 0  # Word doesn't seem to use this, but does not omit it
         pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
-        inline = cls.new(cx, cy, shape_id, pic)
+        inline = cls.new(cx, cy, shape_id, pic, title=title, descr=descr)
         inline.graphic.graphicData._insert_pic(pic)
         return inline
 
@@ -109,7 +114,8 @@ class CT_NonVisualDrawingProps(BaseOxmlElement):
     """
     id = RequiredAttribute('id', ST_DrawingElementId)
     name = RequiredAttribute('name', XsdString)
-
+    title = OptionalAttribute('title', XsdString)
+    descr = OptionalAttribute('descr', XsdString)
 
 class CT_NonVisualPictureProperties(BaseOxmlElement):
     """
