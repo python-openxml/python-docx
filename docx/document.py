@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from .opc.constants import RELATIONSHIP_TYPE as RT
 from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
@@ -99,6 +100,18 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+
+    def clear_headers(self):
+        """
+        clears existing header elements and references from a docx
+        """
+        header_elm_tag = 'w:headerReference'
+        sentinel_sectPr = self._element.body.get_or_add_sectPr()
+        sentinel_sectPr.remove_all(header_elm_tag)
+
+        for rel_id, rel in self.part.rels.items():
+            if rel.reltype == RT.HEADER:
+                self.part.rels.remove_relationship(rel_id)
 
     @property
     def core_properties(self):
