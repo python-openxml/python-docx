@@ -101,17 +101,14 @@ class Document(ElementProxy):
         table.style = style
         return table
 
-    def clear_headers(self):
-        """
-        clears existing header elements and references from a docx
-        """
-        header_elm_tag = 'w:headerReference'
-        sentinel_sectPr = self._element.body.get_or_add_sectPr()
-        sentinel_sectPr.remove_all(header_elm_tag)
+    def add_header(self, text):
+        return self._body.add_header(text)
 
-        for rel_id, rel in self.part.rels.items():
-            if rel.reltype == RT.HEADER:
-                self.part.rels.remove_relationship(rel_id)
+    def remove_headers(self):
+        """
+        clears existing header elements and references from document
+        """
+        self._body.remove_headers()
 
     @property
     def core_properties(self):
@@ -209,6 +206,21 @@ class _Body(BlockItemContainer):
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
+
+    def add_header(self, text):
+        return text
+
+    def remove_headers(self):
+        """
+        clears existing header elements and references from sentinel sect pr
+        """
+        header_elm_tag = 'w:headerReference'
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.remove_all(header_elm_tag)
+
+        for rel_id, rel in self._parent.part.rels.items():
+            if rel.reltype == RT.HEADER:
+                self.part.rels.remove_relationship(rel_id)
 
     def clear_content(self):
         """

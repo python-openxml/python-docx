@@ -33,16 +33,26 @@ class DescribeHeaderLoad(object):
 class DescribeClearHeader(object):
     def it_removes_header_part(self):
         document = Document(dir_pkg_path)
-        document.clear_headers()
+        document.remove_headers()
 
         for rel_id, part in document.part.related_parts.items():
             assert part.content_type != CT.WML_HEADER
 
         header_elm_tag = 'w:headerReference'
-        sentinel_sectPr = document._element.body.get_or_add_sectPr()
+        sentinel_sectPr = document._body._body.get_or_add_sectPr()
         header_elms = sentinel_sectPr.findall(qn(header_elm_tag))
         assert len(header_elms) == 0
 
+
+class DescribeAddHeader(object):
+    def it_adds_a_header(self):
+        document = Document(dir_pkg_path)
+        document.remove_headers()
+
+        header = document.add_header('foobar')
+
+        assert header
+        assert header != 'foobar'
         # import uuid
         # random_name = uuid.uuid4().hex
         # finish_path = '{}.docx'.format(random_name)
