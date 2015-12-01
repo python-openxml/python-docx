@@ -14,8 +14,8 @@ import re
 from . import OxmlElement
 from ..compat import Unicode
 from .exceptions import InvalidXmlError
-from .ns import NamespacePrefixedTag, nsmap, qn
 from ..shared import lazyproperty
+from .ns import NamespacePrefixedTag, nsmap, qn
 
 
 def serialize_for_reading(element):

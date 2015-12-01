@@ -50,13 +50,16 @@ class DescribeAddHeader(object):
         document.remove_headers()
 
         header = document.add_header('foobar')
+        header_elm_tag = 'w:headerReference'
+        sentinel_sectPr = document._body._body.get_or_add_sectPr()
+        header_elms = sentinel_sectPr.findall(qn(header_elm_tag))
+        assert len(header_elms) == 1
 
         assert header
-        assert header != 'foobar'
-        # import uuid
-        # random_name = uuid.uuid4().hex
-        # finish_path = '{}.docx'.format(random_name)
-        # document.save(finish_path)
-        # print 'file {} header removed!'.format(finish_path)
+        import uuid
+        random_name = uuid.uuid4().hex
+        finish_path = '{}.docx'.format(random_name)
+        document.save(finish_path)
+        print 'file {} header removed!'.format(finish_path)
 
 # class DescribeHeaderAdd(object):

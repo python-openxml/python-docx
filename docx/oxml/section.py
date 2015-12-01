@@ -13,6 +13,12 @@ from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
 
 
+class CT_HeaderReference(BaseOxmlElement):
+    """
+    ``<w:headerReference>``, the element for the header reference
+    """
+
+
 class CT_PageMar(BaseOxmlElement):
     """
     ``<w:pgMar>`` element, defining page margins.

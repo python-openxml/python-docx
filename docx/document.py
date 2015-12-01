@@ -8,7 +8,12 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from .opc.constants import RELATIONSHIP_TYPE as RT
+from .oxml import OxmlElement
+from .oxml.header import CT_Header
+from .oxml.ns import qn
+from .parts.header import HeaderPart
+from .opc.constants import RELATIONSHIP_TYPE as RT, CONTENT_TYPE as CT
+from .opc.packuri import PackURI
 from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
@@ -208,7 +213,39 @@ class _Body(BlockItemContainer):
         self._body = body_elm
 
     def add_header(self, text):
-        return text
+        rel_id = 'rId9'
+        target = 'header1.xml'
+
+        # make header_ref_elm
+        header_ref_elm_tag = 'w:headerReference'
+        header_attrs = {
+            qn('r:id'): rel_id,
+            qn('w:type'): "default"
+        }
+        header_ref_elm = OxmlElement(header_ref_elm_tag, attrs=header_attrs)
+
+        # make header_elm
+        header_elm_tag = 'w:hdr'
+        # WRITE THE NEW METHOD YO WITH header_elm_tag
+        header_elm = CT_Header.new(partname, content_type)
+
+        # make header instance (wrapper around elm)
+        header = BlockItemContainer(header_elm, self)
+        header.add_paragraph(text)
+
+        # make target part
+        partname = PackURI('/word/header1.xml')
+        content_type = CT.WML_HEADER
+        target = HeaderPart(partname, content_type, header_elm, self._parent._part.package)
+
+        # TODO figure out nicer way to get this
+        RELATIONSHIPS_SCHEMA = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+        reltype = '%s/header' % RELATIONSHIPS_SCHEMA
+        rel = self._parent.part.rels.add_relationship(reltype, target, rel_id)
+
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.append(header_ref_elm)
+        return rel
 
     def remove_headers(self):
         """
