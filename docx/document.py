@@ -10,7 +10,7 @@ from __future__ import (
 
 from .oxml import OxmlElement
 from .oxml.header import CT_Hdr
-from .oxml.ns import qn
+from .oxml.ns import qn, nsmap
 from .opc.constants import RELATIONSHIP_TYPE as RT, CONTENT_TYPE as CT
 from .opc.packuri import PackURI
 from .opc.part import XmlPart
@@ -112,6 +112,13 @@ class Document(ElementProxy):
         """
         self.remove_headers()
         return self._body.add_header()
+
+    def add_footer(self):
+        """
+        removes all footers from doc then adds a new one
+        """
+        self.remove_footers()
+        return self._body.add_footer()
 
     def remove_headers(self):
         """
@@ -245,14 +252,42 @@ class _Body(BlockItemContainer):
         content_type = CT.WML_HEADER
         target = XmlPart(partname, content_type, header_elm, self._parent._part.package)
 
-        # TODO figure out nicer way to get this
-        RELATIONSHIPS_SCHEMA = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
-        reltype = '%s/header' % RELATIONSHIPS_SCHEMA
+        reltype = nsmap['r'] + '/header'
         self._parent.part.rels.add_relationship(reltype, target, rel_id)
 
         sentinel_sectPr = self._body.get_or_add_sectPr()
         sentinel_sectPr.append(header_ref_elm)
         return header
+
+    def add_footer(self):
+        rel_id = self._parent.part.rels._next_rId
+        target = 'footer1.xml'
+
+        # make footer_ref_elm
+        footer_ref_elm_tag = 'w:footerReference'
+        footer_attrs = {
+            qn('r:id'): rel_id,
+            qn('w:type'): "default"
+        }
+        footer_ref_elm = OxmlElement(footer_ref_elm_tag, attrs=footer_attrs)
+
+        # make footer_elm
+        footer_elm = CT_Hdr.new()
+
+        # make footer instance (wrapper around elm)
+        footer = BlockItemContainer(footer_elm, self)
+
+        # make target part
+        partname = PackURI('/word/footer1.xml')
+        content_type = CT.WML_FOOTER
+        target = XmlPart(partname, content_type, footer_elm, self._parent._part.package)
+
+        reltype = nsmap['r'] + '/footer'
+        self._parent.part.rels.add_relationship(reltype, target, rel_id)
+
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.append(footer_ref_elm)
+        return footer
 
     def remove_headers(self):
         """
