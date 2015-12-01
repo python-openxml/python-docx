@@ -107,6 +107,10 @@ class Document(ElementProxy):
         return table
 
     def add_header(self):
+        """
+        removes all headers from doc then adds a new one
+        """
+        self.remove_headers()
         return self._body.add_header()
 
     def remove_headers(self):
@@ -114,6 +118,12 @@ class Document(ElementProxy):
         clears existing header elements and references from document
         """
         self._body.remove_headers()
+
+    def remove_footers(self):
+        """
+        clears existing footer elements and references from document
+        """
+        self._body.remove_footers()
 
     @property
     def core_properties(self):
@@ -213,10 +223,6 @@ class _Body(BlockItemContainer):
         self._body = body_elm
 
     def add_header(self):
-        """
-        removes all headers from doc then adds a new one
-        """
-        self.remove_headers()
         rel_id = self._parent.part.rels._next_rId
         target = 'header1.xml'
 
@@ -258,6 +264,18 @@ class _Body(BlockItemContainer):
 
         for rel_id, rel in self._parent.part.rels.items():
             if rel.reltype == RT.HEADER:
+                self.part.rels.remove_relationship(rel_id)
+
+    def remove_footers(self):
+        """
+        clears existing footer elements and references from sentinel sect pr
+        """
+        footer_elm_tag = 'w:footerReference'
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.remove_all(footer_elm_tag)
+
+        for rel_id, rel in self._parent.part.rels.items():
+            if rel.reltype == RT.FOOTER:
                 self.part.rels.remove_relationship(rel_id)
 
     def clear_content(self):

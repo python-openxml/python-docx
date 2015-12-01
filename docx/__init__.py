@@ -8,14 +8,13 @@ __version__ = '0.8.5'
 # register custom Part classes with opc package reader
 
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
-from docx.opc.part import PartFactory
+from docx.opc.part import PartFactory, XmlPart
 from docx.opc.parts.coreprops import CorePropertiesPart
 
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.styles import StylesPart
-from docx.parts.header import HeaderPart
 
 
 def part_class_selector(content_type, reltype):
@@ -29,8 +28,8 @@ PartFactory.part_type_for[CT.OPC_CORE_PROPERTIES] = CorePropertiesPart
 PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
-PartFactory.part_type_for[CT.WML_HEADER] = HeaderPart
-# PartFactory.part_type_for[CT.WML_FOOTER] = FooterPart
+PartFactory.part_type_for[CT.WML_HEADER] = XmlPart
+PartFactory.part_type_for[CT.WML_FOOTER] = XmlPart
 
 del (
     CT, CorePropertiesPart, DocumentPart, NumberingPart, PartFactory,

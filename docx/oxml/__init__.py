@@ -75,7 +75,9 @@ register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
 from .header import CT_Hdr
+from .footer import CT_Ftr
 register_element_cls('w:hdr',      CT_Hdr)
+register_element_cls('w:ftr',      CT_Ftr)
 
 from .numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
