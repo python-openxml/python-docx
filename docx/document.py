@@ -11,9 +11,9 @@ from __future__ import (
 from .oxml import OxmlElement
 from .oxml.header import CT_Hdr
 from .oxml.ns import qn
-from .parts.header import HeaderPart
 from .opc.constants import RELATIONSHIP_TYPE as RT, CONTENT_TYPE as CT
 from .opc.packuri import PackURI
+from .opc.part import XmlPart
 from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
@@ -216,7 +216,7 @@ class _Body(BlockItemContainer):
         """
         removes all headers from doc then adds a new one
         """
-        self._parent.remove_headers()
+        self.remove_headers()
         rel_id = self._parent.part.rels._next_rId
         target = 'header1.xml'
 
@@ -237,7 +237,7 @@ class _Body(BlockItemContainer):
         # make target part
         partname = PackURI('/word/header1.xml')
         content_type = CT.WML_HEADER
-        target = HeaderPart(partname, content_type, header_elm, self._parent._part.package)
+        target = XmlPart(partname, content_type, header_elm, self._parent._part.package)
 
         # TODO figure out nicer way to get this
         RELATIONSHIPS_SCHEMA = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'

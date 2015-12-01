@@ -3,7 +3,7 @@ from docx.api import Document
 from docx.oxml.header import CT_Hdr
 from docx.oxml.ns import qn
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
-from docx.parts.header import HeaderPart
+from docx.opc.part import XmlPart
 
 
 dir_pkg_path = absjoin(test_file_dir, 'expanded_docx')
@@ -16,7 +16,7 @@ class DescribeHeaderLoad(object):
         for rel_id, part in document.part.related_parts.items():
             if part.content_type == CT.WML_HEADER:
                 header_part_exists = True
-                assert isinstance(part, HeaderPart)
+                assert isinstance(part, XmlPart)
 
         assert header_part_exists
 
