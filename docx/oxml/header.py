@@ -1,23 +1,14 @@
+from . import OxmlElement
 from .xmlchemy import BaseOxmlElement, ZeroOrMore
 
 
-class CT_Header(BaseOxmlElement):
+class CT_Hdr(BaseOxmlElement):
     """
-    ``<w:body>``, the container element for the main document story in
-    ``document.xml``.
+    ``<w:hdr>``, the container element for the header content
     """
     p = ZeroOrMore('w:p', successors=())
 
-    # TODO DO THIS METHOD!
-    @staticmethod
-    def new(partname, content_type):
-        """
-        Return a new ``<Override>`` element with attributes set to parameter
-        values.
-        """
-        pass
-        # xml = '<Override xmlns="%s"/>' % nsmap['ct']
-        # override = parse_xml(xml)
-        # override.set('PartName', partname)
-        # override.set('ContentType', content_type)
-        # return override
+    @classmethod
+    def new(cls):
+        header_elm = OxmlElement('w:hdr')
+        return header_elm

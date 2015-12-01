@@ -74,6 +74,9 @@ from .document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
+from .header import CT_Hdr
+register_element_cls('w:hdr',      CT_Hdr)
+
 from .numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
 )

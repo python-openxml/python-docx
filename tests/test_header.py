@@ -1,6 +1,6 @@
-# import pytest
 from unitutil.file import absjoin, test_file_dir
 from docx.api import Document
+from docx.oxml.header import CT_Hdr
 from docx.oxml.ns import qn
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.parts.header import HeaderPart
@@ -30,7 +30,7 @@ class DescribeHeaderLoad(object):
         assert header_rel_exists
 
 
-class DescribeClearHeader(object):
+class DescribeRemoveHeader(object):
     def it_removes_header_part(self):
         document = Document(dir_pkg_path)
         document.remove_headers()
@@ -45,21 +45,28 @@ class DescribeClearHeader(object):
 
 
 class DescribeAddHeader(object):
-    def it_adds_a_header(self):
+    def it_adds_to_doc_without_header(self):
         document = Document(dir_pkg_path)
-        document.remove_headers()
 
-        header = document.add_header('foobar')
+        header = document.add_header()
         header_elm_tag = 'w:headerReference'
         sentinel_sectPr = document._body._body.get_or_add_sectPr()
         header_elms = sentinel_sectPr.findall(qn(header_elm_tag))
         assert len(header_elms) == 1
 
         assert header
-        import uuid
-        random_name = uuid.uuid4().hex
-        finish_path = '{}.docx'.format(random_name)
-        document.save(finish_path)
-        print 'file {} header removed!'.format(finish_path)
+        assert len(header.paragraphs) == 0
 
-# class DescribeHeaderAdd(object):
+        header.add_paragraph('foobar')
+        assert len(header.paragraphs) == 1
+        # import uuid
+        # random_name = uuid.uuid4().hex
+        # finish_path = '{}.docx'.format(random_name)
+        # document.save(finish_path)
+        # print 'file {} header added!'.format(finish_path)
+
+
+class DescribeCTHdr(object):
+    def it_creates_an_element_of_type_w_hdr(self):
+        header = CT_Hdr.new()
+        assert header.tag.endswith('hdr')
