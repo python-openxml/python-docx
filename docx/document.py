@@ -256,7 +256,7 @@ class _Body(BlockItemContainer):
         self._parent.part.rels.add_relationship(reltype, header_part, rel_id)
 
         sentinel_sectPr = self._body.get_or_add_sectPr()
-        sentinel_sectPr.append(header_ref_elm)
+        sentinel_sectPr.insert(0, header_ref_elm)
         return header
 
     def add_footer(self):
@@ -285,7 +285,8 @@ class _Body(BlockItemContainer):
         self._parent.part.rels.add_relationship(reltype, footer_part, rel_id)
 
         sentinel_sectPr = self._body.get_or_add_sectPr()
-        sentinel_sectPr.append(footer_ref_elm)
+        # TODO check whether there is headerRef and decide 0 or 1
+        sentinel_sectPr.insert(1, footer_ref_elm)
         return footer
 
     def remove_headers(self):
