@@ -9,11 +9,12 @@ from __future__ import (
 )
 
 from .oxml import OxmlElement
-from .oxml.header import CT_Hdr
+from .oxml.header import CT_Hdr, CT_Ftr
 from .oxml.ns import qn, nsmap
 from .opc.constants import RELATIONSHIP_TYPE as RT, CONTENT_TYPE as CT
 from .opc.packuri import PackURI
-from .opc.part import XmlPart
+from .parts.header import HeaderPart, FooterPart
+from .header import Header, Footer
 from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
@@ -231,7 +232,6 @@ class _Body(BlockItemContainer):
 
     def add_header(self):
         rel_id = self._parent.part.rels._next_rId
-        target = 'header1.xml'
 
         # make header_ref_elm
         header_ref_elm_tag = 'w:headerReference'
@@ -244,16 +244,16 @@ class _Body(BlockItemContainer):
         # make header_elm
         header_elm = CT_Hdr.new()
 
-        # make header instance (wrapper around elm)
-        header = BlockItemContainer(header_elm, self)
-
         # make target part
         partname = PackURI('/word/header1.xml')
         content_type = CT.WML_HEADER
-        target = XmlPart(partname, content_type, header_elm, self._parent._part.package)
+        header_part = HeaderPart(partname, content_type, header_elm, self._parent._part.package)
+
+        # make header instance (wrapper around elm)
+        header = Header(header_elm, self._parent, header_part)
 
         reltype = nsmap['r'] + '/header'
-        self._parent.part.rels.add_relationship(reltype, target, rel_id)
+        self._parent.part.rels.add_relationship(reltype, header_part, rel_id)
 
         sentinel_sectPr = self._body.get_or_add_sectPr()
         sentinel_sectPr.append(header_ref_elm)
@@ -261,7 +261,6 @@ class _Body(BlockItemContainer):
 
     def add_footer(self):
         rel_id = self._parent.part.rels._next_rId
-        target = 'footer1.xml'
 
         # make footer_ref_elm
         footer_ref_elm_tag = 'w:footerReference'
@@ -272,18 +271,18 @@ class _Body(BlockItemContainer):
         footer_ref_elm = OxmlElement(footer_ref_elm_tag, attrs=footer_attrs)
 
         # make footer_elm
-        footer_elm = CT_Hdr.new()
-
-        # make footer instance (wrapper around elm)
-        footer = BlockItemContainer(footer_elm, self)
+        footer_elm = CT_Ftr.new()
 
         # make target part
         partname = PackURI('/word/footer1.xml')
         content_type = CT.WML_FOOTER
-        target = XmlPart(partname, content_type, footer_elm, self._parent._part.package)
+        footer_part = FooterPart(partname, content_type, footer_elm, self._parent._part.package)
+
+        # make footer instance (wrapper around elm)
+        footer = Footer(footer_elm, self, footer_part)
 
         reltype = nsmap['r'] + '/footer'
-        self._parent.part.rels.add_relationship(reltype, target, rel_id)
+        self._parent.part.rels.add_relationship(reltype, footer_part, rel_id)
 
         sentinel_sectPr = self._body.get_or_add_sectPr()
         sentinel_sectPr.append(footer_ref_elm)
