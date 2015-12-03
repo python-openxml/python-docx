@@ -7,17 +7,24 @@ from .styles import StylesPart
 
 
 class HeaderPart(XmlPart):
-    # COPYPASTA FROM DOCUMENT PART BELOW THIS POINT
+    @property
+    def _styles_part(self):
+        """
+        Instance of |StylesPart| for this document. Creates an empty styles
+        part if one is not present.
+        """
+        # HACK
+        # one styles to rule them all, maybe this is the way it's supposed to be?
+        document = self.package.main_document_part
+        try:
+            return document.part_related_by(RT.STYLES)
+        except KeyError:
+            styles_part = StylesPart.default(self.package)
+            document.relate_to(styles_part, RT.STYLES)
+            return styles_part
+
+    # MOSTLY COPYPASTA FROM DOCUMENT PART BELOW THIS POINT
     # TODO ABSTRACT?
-
-    # @lazyproperty
-    # def inline_shapes(self):
-        # """
-        # The |InlineShapes| instance containing the inline shapes in the
-        # document.
-        # """
-        # return InlineShapes(self._element.body, self)
-
     @property
     def next_id(self):
         """
@@ -90,23 +97,7 @@ class HeaderPart(XmlPart):
         """
         return self._styles_part.styles
 
-    @property
-    def _styles_part(self):
-        """
-        Instance of |StylesPart| for this document. Creates an empty styles
-        part if one is not present.
-        """
-        # HACK
-        # one styles to rule them all
-        document = self.package.main_document_part
-        try:
-            return document.part_related_by(RT.STYLES)
-        except KeyError:
-            styles_part = StylesPart.default(self.package)
-            document.relate_to(styles_part, RT.STYLES)
-            return styles_part
-
 
 class FooterPart(HeaderPart):
-    # identical to HeaderPart for now
+    # identical to HeaderPart, ABSTRACT
     pass
