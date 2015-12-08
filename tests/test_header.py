@@ -1,4 +1,4 @@
-from unitutil.file import absjoin, test_file_dir
+from .unitutil.file import absjoin, test_file_dir
 from docx.api import Document
 from docx.oxml.header import CT_Hdr
 from docx.oxml.ns import qn

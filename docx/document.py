@@ -297,9 +297,9 @@ class _Body(BlockItemContainer):
         sentinel_sectPr = self._body.get_or_add_sectPr()
         sentinel_sectPr.remove_all(header_elm_tag)
 
-        for rel_id, rel in self._parent.part.rels.items():
-            if rel.reltype == RT.HEADER:
-                self.part.rels.remove_relationship(rel_id)
+        header_rel_ids = [rel_id for rel_id, rel in self._parent.part.rels.items() if rel.reltype == RT.HEADER]
+        for rel_id in header_rel_ids:
+            self.part.rels.remove_relationship(rel_id)
 
     def remove_footers(self):
         """
@@ -309,9 +309,9 @@ class _Body(BlockItemContainer):
         sentinel_sectPr = self._body.get_or_add_sectPr()
         sentinel_sectPr.remove_all(footer_elm_tag)
 
-        for rel_id, rel in self._parent.part.rels.items():
-            if rel.reltype == RT.FOOTER:
-                self.part.rels.remove_relationship(rel_id)
+        footer_rel_ids = [rel_id for rel_id, rel in self._parent.part.rels.items() if rel.reltype == RT.FOOTER]
+        for rel_id in footer_rel_ids:
+            self.part.rels.remove_relationship(rel_id)
 
     def clear_content(self):
         """
