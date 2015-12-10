@@ -23,6 +23,7 @@ Feature Analysis
    features/shapes-inline
    features/shapes-inline-size
    features/picture
+   features/header-footer
 
 
 Schema Analysis
