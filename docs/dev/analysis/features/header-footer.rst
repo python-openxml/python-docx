@@ -218,7 +218,7 @@ header.add_paragraph
 --------------------
 
 A :class:`docx.header.Header` instance behaves just like any other BlockItemContainer subclass
-(e.g. Body).
+(e.g. ``_Body``).
 It possesses methods for adding and removing child paragraphs, which in turn
 have methods for adding and removing runs.
 
