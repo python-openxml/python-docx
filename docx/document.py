@@ -107,10 +107,16 @@ class Document(ElementProxy):
         table.style = style
         return table
 
+    @property
+    def headers(self):
+        raise NotImplementedError('todo')
+
     def add_header(self):
         """
         removes all headers from doc then adds a new one
         """
+        # TODO raise exception if header present, telling user to remove them first!
+        # dont clear headers invisibly
         self.remove_headers()
         return self._body.add_header()
 
@@ -118,6 +124,8 @@ class Document(ElementProxy):
         """
         removes all footers from doc then adds a new one
         """
+        # TODO raise exception if footer present, telling user to remove them first!
+        # dont clear footers invisibly
         self.remove_footers()
         return self._body.add_footer()
 
