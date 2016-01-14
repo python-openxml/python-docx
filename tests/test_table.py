@@ -16,12 +16,13 @@ from docx.parts.document import DocumentPart
 from docx.shared import Inches
 from docx.table import _Cell, _Column, _Columns, _Row, _Rows, Table
 from docx.text.paragraph import Paragraph
+from docx.shading import Shd
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
 from .unitutil.cxml import element, xml
 from .unitutil.file import snippet_seq
-from .unitutil.mock import instance_mock, property_mock
+from .unitutil.mock import class_mock, instance_mock, property_mock
 
 
 class DescribeTable(object):
@@ -130,6 +131,12 @@ class DescribeTable(object):
         table, expected_value = column_count_fixture
         column_count = table._column_count
         assert column_count == expected_value
+
+    def it_provides_access_to_its_shd(self, shd_fixture):
+        table, Shd_, shd_ = shd_fixture
+        shd = table.shd
+        Shd_.assert_called_once_with(table._element)
+        assert shd is shd_
 
     # fixtures -------------------------------------------------------
 
@@ -297,6 +304,11 @@ class DescribeTable(object):
         table = Table(None, None)
         return table
 
+    @pytest.fixture
+    def shd_fixture(self, Shd_, shd_):
+        table = Table(element('w:tbl'), None)
+        return table, Shd_, shd_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -322,6 +334,16 @@ class DescribeTable(object):
         tbl = _tbl_bldr(rows=2, cols=2).element
         table = Table(tbl, None)
         return table
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Shd_(self, request, shd_):
+        return class_mock(request, 'docx.mixins.ShdMixin.Shd', return_value=shd_)
+
+    @pytest.fixture
+    def shd_(self, request):
+        return instance_mock(request, Shd)
 
 
 class Describe_Cell(object):
@@ -390,6 +412,12 @@ class Describe_Cell(object):
         assert isinstance(merged_cell, _Cell)
         assert merged_cell._tc is merged_tc_
         assert merged_cell._parent is cell._parent
+
+    def it_provides_access_to_its_shd(self, shd_fixture):
+        cell, Shd_, shd_ = shd_fixture
+        shd = cell.shd
+        Shd_.assert_called_once_with(cell._element)
+        assert shd is shd_
 
     # fixtures -------------------------------------------------------
 
@@ -482,6 +510,11 @@ class Describe_Cell(object):
         expected_xml = xml(expected_cxml)
         return cell, new_value, expected_xml
 
+    @pytest.fixture
+    def shd_fixture(self, Shd_, shd_):
+        cell = _Cell(element('w:tc'), None)
+        return cell, Shd_, shd_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -499,6 +532,14 @@ class Describe_Cell(object):
     @pytest.fixture
     def tc_2_(self, request):
         return instance_mock(request, CT_Tc)
+
+    @pytest.fixture
+    def Shd_(self, request, shd_):
+        return class_mock(request, 'docx.mixins.ShdMixin.Shd', return_value=shd_)
+
+    @pytest.fixture
+    def shd_(self, request):
+        return instance_mock(request, Shd)
 
 
 class Describe_Column(object):

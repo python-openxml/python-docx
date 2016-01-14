@@ -5,15 +5,15 @@ Run-related proxy objects for python-docx, Run in particular.
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
-
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
 from .font import Font
 from ..shape import InlineShape
 from ..shared import Parented
+from ..mixins.ShdMixin import ShdMixin
 
 
-class Run(Parented):
+class Run(ShdMixin, Parented):
     """
     Proxy object wrapping ``<w:r>`` element. Several of the properties on Run
     take a tri-state value, |True|, |False|, or |None|. |True| and |False|
@@ -21,6 +21,7 @@ class Run(Parented):
     not specified directly on the run and its effective value is taken from
     the style hierarchy.
     """
+
     def __init__(self, r, parent):
         super(Run, self).__init__(parent)
         self._r = self._element = self.element = r
@@ -33,12 +34,12 @@ class Run(Parented):
         *break_type* defaults to `WD_BREAK.LINE`.
         """
         type_, clear = {
-            WD_BREAK.LINE:             (None,           None),
-            WD_BREAK.PAGE:             ('page',         None),
-            WD_BREAK.COLUMN:           ('column',       None),
-            WD_BREAK.LINE_CLEAR_LEFT:  ('textWrapping', 'left'),
+            WD_BREAK.LINE: (None, None),
+            WD_BREAK.PAGE: ('page', None),
+            WD_BREAK.COLUMN: ('column', None),
+            WD_BREAK.LINE_CLEAR_LEFT: ('textWrapping', 'left'),
             WD_BREAK.LINE_CLEAR_RIGHT: ('textWrapping', 'right'),
-            WD_BREAK.LINE_CLEAR_ALL:   ('textWrapping', 'all'),
+            WD_BREAK.LINE_CLEAR_ALL: ('textWrapping', 'all'),
         }[break_type]
         br = self._r.add_br()
         if type_ is not None:
@@ -181,11 +182,11 @@ class Run(Parented):
     def underline(self, value):
         self.font.underline = value
 
-
 class _Text(object):
     """
     Proxy object wrapping ``<w:t>`` element.
     """
+
     def __init__(self, t_elm):
         super(_Text, self).__init__()
         self._t = t_elm

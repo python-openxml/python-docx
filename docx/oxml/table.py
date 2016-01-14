@@ -242,6 +242,7 @@ class CT_TblPr(BaseOxmlElement):
     tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
+    shd = ZeroOrOne('w:shd', successors=_tag_seq[12:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
     del _tag_seq
 
@@ -723,6 +724,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    shd = ZeroOrOne('w:shd', successors=_tag_seq[7:])
     del _tag_seq
 
     @property

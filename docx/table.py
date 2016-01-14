@@ -10,9 +10,10 @@ from .blkcntnr import BlockItemContainer
 from .enum.style import WD_STYLE_TYPE
 from .oxml.simpletypes import ST_Merge
 from .shared import Inches, lazyproperty, Parented
+from docx.mixins.ShdMixin import ShdMixin
 
 
-class Table(Parented):
+class Table(ShdMixin, Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
     """
@@ -189,7 +190,7 @@ class Table(Parented):
         return self._tbl.tblPr
 
 
-class _Cell(BlockItemContainer):
+class _Cell(ShdMixin, BlockItemContainer):
     """
     Table cell
     """

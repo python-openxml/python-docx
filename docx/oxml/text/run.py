@@ -119,6 +119,7 @@ class _RunContentAppender(object):
     appended. Likewise a newline or carriage return character ('\n', '\r')
     causes a ``<w:cr>`` element to be appended.
     """
+
     def __init__(self, r):
         self._r = r
         self._bfr = []

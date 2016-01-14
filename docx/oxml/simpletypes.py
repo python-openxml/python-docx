@@ -9,13 +9,11 @@ type in the associated XML schema.
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 from ..exceptions import InvalidXmlError
 from ..shared import Emu, Pt, RGBColor, Twips
 
 
 class BaseSimpleType(object):
-
     @classmethod
     def from_xml(cls, str_value):
         return cls.convert_from_xml(str_value)
@@ -57,7 +55,6 @@ class BaseSimpleType(object):
 
 
 class BaseIntType(BaseSimpleType):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         return int(str_value)
@@ -72,7 +69,6 @@ class BaseIntType(BaseSimpleType):
 
 
 class BaseStringType(BaseSimpleType):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         return str_value
@@ -87,7 +83,6 @@ class BaseStringType(BaseSimpleType):
 
 
 class BaseStringEnumerationType(BaseStringType):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
@@ -106,7 +101,6 @@ class XsdAnyUri(BaseStringType):
 
 
 class XsdBoolean(BaseSimpleType):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         if str_value not in ('1', '0', 'true', 'false'):
@@ -138,14 +132,12 @@ class XsdId(BaseStringType):
 
 
 class XsdInt(BaseIntType):
-
     @classmethod
     def validate(cls, value):
         cls.validate_int_in_range(value, -2147483648, 2147483647)
 
 
 class XsdLong(BaseIntType):
-
     @classmethod
     def validate(cls, value):
         cls.validate_int_in_range(
@@ -172,21 +164,18 @@ class XsdToken(BaseStringType):
 
 
 class XsdUnsignedInt(BaseIntType):
-
     @classmethod
     def validate(cls, value):
         cls.validate_int_in_range(value, 0, 4294967295)
 
 
 class XsdUnsignedLong(BaseIntType):
-
     @classmethod
     def validate(cls, value):
         cls.validate_int_in_range(value, 0, 18446744073709551615)
 
 
 class ST_BrClear(XsdString):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
@@ -198,7 +187,6 @@ class ST_BrClear(XsdString):
 
 
 class ST_BrType(XsdString):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
@@ -210,7 +198,6 @@ class ST_BrType(XsdString):
 
 
 class ST_Coordinate(BaseIntType):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         if 'i' in str_value or 'm' in str_value or 'p' in str_value:
@@ -223,7 +210,6 @@ class ST_Coordinate(BaseIntType):
 
 
 class ST_CoordinateUnqualified(XsdLong):
-
     @classmethod
     def validate(cls, value):
         cls.validate_int_in_range(value, -27273042329600, 27273042316900)
@@ -236,9 +222,7 @@ class ST_DecimalNumber(XsdInt):
 class ST_DrawingElementId(XsdUnsignedInt):
     pass
 
-
 class ST_HexColor(BaseStringType):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         if str_value == 'auto':
@@ -250,8 +234,17 @@ class ST_HexColor(BaseStringType):
         """
         Keep alpha hex numerals all uppercase just for consistency.
         """
-        # expecting 3-tuple of ints in range 0-255
-        return '%02X%02X%02X' % value
+        if value == ST_HexColorAuto.AUTO:
+            return ST_HexColorAuto.AUTO
+        else:
+            return '%02X%02X%02X' % value
+
+    @classmethod
+    def validate(clscls, value):
+        if not value == ST_HexColorAuto.AUTO:
+            ST_HexColorRGB.validate(value)
+
+class ST_HexColorRGB(BaseStringType):
 
     @classmethod
     def validate(cls, value):
@@ -276,11 +269,12 @@ class ST_HpsMeasure(XsdUnsignedLong):
     """
     Half-point measure, e.g. 24.0 represents 12.0 points.
     """
+
     @classmethod
     def convert_from_xml(cls, str_value):
         if 'm' in str_value or 'n' in str_value or 'p' in str_value:
             return ST_UniversalMeasure.convert_from_xml(str_value)
-        return Pt(int(str_value)/2.0)
+        return Pt(int(str_value) / 2.0)
 
     @classmethod
     def convert_to_xml(cls, value):
@@ -300,7 +294,6 @@ class ST_Merge(XsdStringEnumeration):
 
 
 class ST_OnOff(XsdBoolean):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         if str_value not in ('1', '0', 'true', 'false', 'on', 'off'):
@@ -312,7 +305,6 @@ class ST_OnOff(XsdBoolean):
 
 
 class ST_PositiveCoordinate(XsdLong):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         return Emu(int(str_value))
@@ -327,7 +319,6 @@ class ST_RelationshipId(XsdString):
 
 
 class ST_SignedTwipsMeasure(XsdInt):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         if 'i' in str_value or 'm' in str_value or 'p' in str_value:
@@ -346,7 +337,6 @@ class ST_String(XsdString):
 
 
 class ST_TblLayoutType(XsdString):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
@@ -358,7 +348,6 @@ class ST_TblLayoutType(XsdString):
 
 
 class ST_TblWidth(XsdString):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
@@ -370,7 +359,6 @@ class ST_TblWidth(XsdString):
 
 
 class ST_TwipsMeasure(XsdUnsignedLong):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         if 'i' in str_value or 'm' in str_value or 'p' in str_value:
@@ -385,7 +373,6 @@ class ST_TwipsMeasure(XsdUnsignedLong):
 
 
 class ST_UniversalMeasure(BaseSimpleType):
-
     @classmethod
     def convert_from_xml(cls, str_value):
         float_part, units_part = str_value[:-2], str_value[-2:]
@@ -407,3 +394,86 @@ class ST_VerticalAlignRun(XsdStringEnumeration):
     SUBSCRIPT = 'subscript'
 
     _members = (BASELINE, SUPERSCRIPT, SUBSCRIPT)
+
+
+class ST_Shd(XsdStringEnumeration):
+    """
+    Valid values for `w:shd/@val`.
+    """
+    NIL = "nil"
+    CLEAR = "clear"
+    SOLID = "solid"
+    HORZSTRIPE = "horzStripe"
+    VERTSTRIPE = "vertStripe"
+    REVERSEDIAGSTRIPE = "reverseDiagStripe"
+    DIAGSTRIPE = "diagStripe"
+    HORZCROSS = "horzCross"
+    DIAGCROSS = "diagCross"
+    THINHORZSTRIPE = "thinHorzStripe"
+    THINVERTSTRIPE = "thinVertStripe"
+    THINREVERSEDIAGSTRIPE = "thinReverseDiagStripe"
+    THINDIAGSTRIPE = "thinDiagStripe"
+    THINHORZCROSS = "thinHorzCross"
+    THINDIAGCROSS = "thinDiagCross"
+    PCT5 = "pct5"
+    PCT10 = "pct10"
+    PCT12 = "pct12"
+    PCT15 = "pct15"
+    PCT20 = "pct20"
+    PCT25 = "pct25"
+    PCT30 = "pct30"
+    PCT35 = "pct35"
+    PCT37 = "pct37"
+    PCT40 = "pct40"
+    PCT45 = "pct45"
+    PCT50 = "pct50"
+    PCT55 = "pct55"
+    PCT60 = "pct60"
+    PCT62 = "pct62"
+    PCT65 = "pct65"
+    PCT70 = "pct70"
+    PCT75 = "pct75"
+    PCT80 = "pct80"
+    PCT85 = "pct85"
+    PCT87 = "pct87"
+    PCT90 = "pct90"
+    PCT95 = "pct95"
+
+    _members = (
+    NIL, CLEAR, SOLID, HORZSTRIPE, VERTSTRIPE, REVERSEDIAGSTRIPE, DIAGSTRIPE, HORZCROSS, DIAGCROSS, THINHORZSTRIPE,
+    THINVERTSTRIPE, THINREVERSEDIAGSTRIPE, THINDIAGSTRIPE, THINHORZCROSS, THINDIAGCROSS, PCT5, PCT10, PCT12, PCT15,
+    PCT20, PCT25, PCT30, PCT35, PCT37, PCT40, PCT45, PCT50, PCT55, PCT60, PCT62, PCT65, PCT70, PCT75, PCT80, PCT85,
+    PCT87, PCT90, PCT95)
+
+class ST_ThemeColor(XsdStringEnumeration):
+    """
+    Valid values for `w:shd/@themeColor`.
+    """
+    DARK1 = 'dark1'
+    LIGHT1 = 'light1'
+    DARK2 = 'dark2'
+    LIGHT2 = 'light2'
+    ACCENT1 = 'accent1'
+    ACCENT2 = 'accent2'
+    ACCENT3 = 'accent3'
+    ACCENT4 = 'accent4'
+    ACCENT5 = 'accent5'
+    ACCENT6 = 'accent6'
+    HYPERLINK = 'hyperlink'
+    FOLLOWEDHYPERLINK = 'followedHyperlink'
+    NONE = 'none'
+    BACKGROUND1 = 'background1'
+    TEXT1 = 'text1'
+    BACKGROUND2 = 'background2'
+    TEXT2 = 'text2'
+
+    _members = (DARK1, LIGHT1, DARK2, LIGHT2, ACCENT1, ACCENT2, ACCENT3, ACCENT4, ACCENT5, ACCENT6, HYPERLINK, FOLLOWEDHYPERLINK, NONE, BACKGROUND1, TEXT1, BACKGROUND2, TEXT2)
+
+
+class ST_UcharHexNumber(XsdString):
+    @classmethod
+    def validate(cls, value):
+        try:
+            int(value, 16)
+        except ValueError as e:
+            ValueError("must be a hexidecimal number but got '%s'" % value)

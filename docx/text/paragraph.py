@@ -12,12 +12,14 @@ from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
+from ..mixins.ShdMixin import ShdMixin
 
 
-class Paragraph(Parented):
+class Paragraph(ShdMixin, Parented):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
+
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p

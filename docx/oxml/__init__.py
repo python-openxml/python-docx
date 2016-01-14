@@ -64,7 +64,8 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # custom element class mappings
 # ===========================================================================
 
-from .shared import CT_DecimalNumber, CT_OnOff, CT_String
+from .shared import CT_DecimalNumber, CT_OnOff, CT_String, CT_Shd
+register_element_cls('w:shd', CT_Shd)
 
 
 from .coreprops import CT_CoreProperties
