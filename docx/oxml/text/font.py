@@ -53,8 +53,9 @@ class CT_RPr(BaseOxmlElement):
         'w:webHidden', 'w:color', 'w:spacing', 'w:w', 'w:kern', 'w:position',
         'w:sz', 'w:szCs', 'w:highlight', 'w:u', 'w:effect', 'w:bdr', 'w:shd',
         'w:fitText', 'w:vertAlign', 'w:rtl', 'w:cs', 'w:em', 'w:lang',
-        'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
+        'w:eastAsianLayout', 'w:specVanish', 'w:oMath', 'w:rPrChange'
     )
+
     rStyle = ZeroOrOne('w:rStyle', successors=_tag_seq[1:])
     rFonts = ZeroOrOne('w:rFonts', successors=_tag_seq[2:])
     b = ZeroOrOne('w:b', successors=_tag_seq[3:])
@@ -74,13 +75,28 @@ class CT_RPr(BaseOxmlElement):
     vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
     color = ZeroOrOne('w:color', successors=_tag_seq[19:])
+    spacing = ZeroOrOne('w:spacing', successors=_tag_seq[20:])
+    w = ZeroOrOne('w:w', successors=_tag_seq[21:])
+    kern = ZeroOrOne('w:kern', successors=_tag_seq[22:])
+    position = ZeroOrOne('w:position', successors=_tag_seq[23:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
+    szCs = ZeroOrOne('w:szCs', successors=_tag_seq[25:])
+    highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
+    effect = ZeroOrOne('w:effect', successors=_tag_seq[28:])
+    bdr = ZeroOrOne('w:bdr', successors=_tag_seq[29:])
+    shd = ZeroOrOne('w:shd', successors=_tag_seq[30:])
+    fitText = ZeroOrOne('w:fitText', successors=_tag_seq[31:])
     vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
     rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
     cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
+    em = ZeroOrOne('w:em', successors=_tag_seq[35:])
+    lang = ZeroOrOne('w:lang', successors=_tag_seq[36:])
+    eastAsianLayout = ZeroOrOne('w:eastAsianLayout', successors=_tag_seq[37:])
     specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
     oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
+    rPrChange = ZeroOrOne('w:rPrChange', successors=_tag_seq[40:])
+
     del _tag_seq
 
     def _new_color(self):
@@ -259,6 +275,7 @@ class CT_Underline(BaseOxmlElement):
     """
     ``<w:u>`` element, specifying the underlining style for a run.
     """
+
     @property
     def val(self):
         """

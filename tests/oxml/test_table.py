@@ -341,3 +341,26 @@ class DescribeCT_Tc(object):
     @pytest.fixture
     def tr_(self, request):
         return instance_mock(request, CT_Row)
+
+
+class DescribeCT_TblPr(object):
+
+    def it_can_add_an_shd(self, add_shd_fixture):
+        tblPr, expected_xml = add_shd_fixture
+        tblPr._add_shd()
+        assert tblPr.xml == expected_xml
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:tblPr',                    'w:tblPr/w:shd'),
+        ('w:tblPr/w:tblStyle',          'w:tblPr/(w:tblStyle,w:shd)'),
+        ('w:tblPr/w:bidiVisual',          'w:tblPr/(w:bidiVisual,w:shd)'),
+        ('w:tblPr/w:jc',          'w:tblPr/(w:jc,w:shd)'),
+        ('w:tblPr/w:tblLayout',          'w:tblPr/(w:shd,w:tblLayout)'),
+    ])
+    def add_shd_fixture(self, request):
+        tblPr_cxml, expected_cxml = request.param
+        tblPr = element(tblPr_cxml)
+        expected_xml = xml(expected_cxml)
+        return tblPr, expected_xml

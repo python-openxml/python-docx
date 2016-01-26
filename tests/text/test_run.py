@@ -7,22 +7,19 @@ Test suite for the docx.text.run module
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.parts.document import DocumentPart
 from docx.shape import InlineShape
 from docx.text.font import Font
 from docx.text.run import Run
-
+from docx.shading import Shd
 import pytest
-
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import class_mock, instance_mock, property_mock
 
 
 class DescribeRun(object):
-
     def it_knows_its_bool_prop_states(self, bool_prop_get_fixture):
         run, prop_name, expected_state = bool_prop_get_fixture
         assert getattr(run, prop_name) == expected_state
@@ -111,11 +108,17 @@ class DescribeRun(object):
         run.text = text
         assert run._r.xml == expected_xml
 
+    def it_provides_access_to_its_shd(self, shd_fixture):
+        run, Shd_, shd_ = shd_fixture
+        shd = run.shd
+        Shd_.assert_called_once_with(run._element)
+        assert shd is shd_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        (WD_BREAK.LINE,   'w:r/w:br'),
-        (WD_BREAK.PAGE,   'w:r/w:br{w:type=page}'),
+        (WD_BREAK.LINE, 'w:r/w:br'),
+        (WD_BREAK.PAGE, 'w:r/w:br{w:type=page}'),
         (WD_BREAK.COLUMN, 'w:r/w:br{w:type=column}'),
         (WD_BREAK.LINE_CLEAR_LEFT,
          'w:r/w:br{w:type=textWrapping, w:clear=left}'),
@@ -154,10 +157,10 @@ class DescribeRun(object):
         return run, expected_xml
 
     @pytest.fixture(params=[
-        ('w:r',          'foo', 'w:r/w:t"foo"'),
+        ('w:r', 'foo', 'w:r/w:t"foo"'),
         ('w:r/w:t"foo"', 'bar', 'w:r/(w:t"foo", w:t"bar")'),
-        ('w:r',          'fo ', 'w:r/w:t{xml:space=preserve}"fo "'),
-        ('w:r',          'f o', 'w:r/w:t"f o"'),
+        ('w:r', 'fo ', 'w:r/w:t{xml:space=preserve}"fo "'),
+        ('w:r', 'f o', 'w:r/w:t"f o"'),
     ])
     def add_text_fixture(self, request, Text_):
         r_cxml, text, expected_cxml = request.param
@@ -166,12 +169,12 @@ class DescribeRun(object):
         return run, text, expected_xml, Text_
 
     @pytest.fixture(params=[
-        ('w:r/w:rPr',                  'bold',   None),
-        ('w:r/w:rPr/w:b',              'bold',   True),
-        ('w:r/w:rPr/w:b{w:val=on}',    'bold',   True),
-        ('w:r/w:rPr/w:b{w:val=off}',   'bold',   False),
-        ('w:r/w:rPr/w:b{w:val=1}',     'bold',   True),
-        ('w:r/w:rPr/w:i{w:val=0}',     'italic', False),
+        ('w:r/w:rPr', 'bold', None),
+        ('w:r/w:rPr/w:b', 'bold', True),
+        ('w:r/w:rPr/w:b{w:val=on}', 'bold', True),
+        ('w:r/w:rPr/w:b{w:val=off}', 'bold', False),
+        ('w:r/w:rPr/w:b{w:val=1}', 'bold', True),
+        ('w:r/w:rPr/w:i{w:val=0}', 'italic', False),
     ])
     def bool_prop_get_fixture(self, request):
         r_cxml, bool_prop_name, expected_value = request.param
@@ -180,22 +183,22 @@ class DescribeRun(object):
 
     @pytest.fixture(params=[
         # nothing to True, False, and None ---------------------------
-        ('w:r', 'bold',   True,  'w:r/w:rPr/w:b'),
-        ('w:r', 'bold',   False, 'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r', 'italic', None,  'w:r/w:rPr'),
+        ('w:r', 'bold', True, 'w:r/w:rPr/w:b'),
+        ('w:r', 'bold', False, 'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r', 'italic', None, 'w:r/w:rPr'),
         # default to True, False, and None ---------------------------
-        ('w:r/w:rPr/w:b', 'bold',   True,  'w:r/w:rPr/w:b'),
-        ('w:r/w:rPr/w:b', 'bold',   False, 'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r/w:rPr/w:i', 'italic', None,  'w:r/w:rPr'),
+        ('w:r/w:rPr/w:b', 'bold', True, 'w:r/w:rPr/w:b'),
+        ('w:r/w:rPr/w:b', 'bold', False, 'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r/w:rPr/w:i', 'italic', None, 'w:r/w:rPr'),
         # True to True, False, and None ------------------------------
-        ('w:r/w:rPr/w:b{w:val=on}', 'bold', True,  'w:r/w:rPr/w:b'),
-        ('w:r/w:rPr/w:b{w:val=1}',  'bold', False, 'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r/w:rPr/w:b{w:val=1}',  'bold', None,  'w:r/w:rPr'),
+        ('w:r/w:rPr/w:b{w:val=on}', 'bold', True, 'w:r/w:rPr/w:b'),
+        ('w:r/w:rPr/w:b{w:val=1}', 'bold', False, 'w:r/w:rPr/w:b{w:val=0}'),
+        ('w:r/w:rPr/w:b{w:val=1}', 'bold', None, 'w:r/w:rPr'),
         # False to True, False, and None -----------------------------
-        ('w:r/w:rPr/w:i{w:val=false}', 'italic', True,  'w:r/w:rPr/w:i'),
-        ('w:r/w:rPr/w:i{w:val=0}',     'italic', False,
+        ('w:r/w:rPr/w:i{w:val=false}', 'italic', True, 'w:r/w:rPr/w:i'),
+        ('w:r/w:rPr/w:i{w:val=0}', 'italic', False,
          'w:r/w:rPr/w:i{w:val=0}'),
-        ('w:r/w:rPr/w:i{w:val=off}',   'italic', None,  'w:r/w:rPr'),
+        ('w:r/w:rPr/w:i{w:val=off}', 'italic', None, 'w:r/w:rPr'),
     ])
     def bool_prop_set_fixture(self, request):
         initial_r_cxml, bool_prop_name, value, expected_cxml = request.param
@@ -204,10 +207,10 @@ class DescribeRun(object):
         return run, bool_prop_name, value, expected_xml
 
     @pytest.fixture(params=[
-        ('w:r',                   'w:r'),
-        ('w:r/w:t"foo"',          'w:r'),
-        ('w:r/w:br',              'w:r'),
-        ('w:r/w:rPr',             'w:r/w:rPr'),
+        ('w:r', 'w:r'),
+        ('w:r/w:t"foo"', 'w:r'),
+        ('w:r/w:br', 'w:r'),
+        ('w:r/w:rPr', 'w:r/w:rPr'),
         ('w:r/(w:rPr, w:t"foo")', 'w:r/w:rPr'),
         ('w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
          'w:r/w:rPr/(w:b, w:i)'),
@@ -232,15 +235,15 @@ class DescribeRun(object):
         return run, style_id, style_
 
     @pytest.fixture(params=[
-        ('w:r',                                'Foo Font', 'FooFont',
+        ('w:r', 'Foo Font', 'FooFont',
          'w:r/w:rPr/w:rStyle{w:val=FooFont}'),
-        ('w:r/w:rPr',                          'Foo Font', 'FooFont',
+        ('w:r/w:rPr', 'Foo Font', 'FooFont',
          'w:r/w:rPr/w:rStyle{w:val=FooFont}'),
-        ('w:r/w:rPr/w:rStyle{w:val=FooFont}',  'Bar Font', 'BarFont',
+        ('w:r/w:rPr/w:rStyle{w:val=FooFont}', 'Bar Font', 'BarFont',
          'w:r/w:rPr/w:rStyle{w:val=BarFont}'),
-        ('w:r/w:rPr/w:rStyle{w:val=FooFont}',  None,       None,
+        ('w:r/w:rPr/w:rStyle{w:val=FooFont}', None, None,
          'w:r/w:rPr'),
-        ('w:r',                                None,       None,
+        ('w:r', None, None,
          'w:r/w:rPr'),
     ])
     def style_set_fixture(self, request, part_prop_):
@@ -275,12 +278,12 @@ class DescribeRun(object):
         return run, new_text, expected_xml
 
     @pytest.fixture(params=[
-        ('w:r',                         None),
-        ('w:r/w:rPr/w:u',               None),
+        ('w:r', None),
+        ('w:r/w:rPr/w:u', None),
         ('w:r/w:rPr/w:u{w:val=single}', True),
-        ('w:r/w:rPr/w:u{w:val=none}',   False),
+        ('w:r/w:rPr/w:u{w:val=none}', False),
         ('w:r/w:rPr/w:u{w:val=double}', WD_UNDERLINE.DOUBLE),
-        ('w:r/w:rPr/w:u{w:val=wave}',   WD_UNDERLINE.WAVY),
+        ('w:r/w:rPr/w:u{w:val=wave}', WD_UNDERLINE.WAVY),
     ])
     def underline_get_fixture(self, request):
         r_cxml, expected_underline = request.param
@@ -288,11 +291,11 @@ class DescribeRun(object):
         return run, expected_underline
 
     @pytest.fixture(params=[
-        ('w:r', True,                'w:r/w:rPr/w:u{w:val=single}'),
-        ('w:r', False,               'w:r/w:rPr/w:u{w:val=none}'),
-        ('w:r', None,                'w:r/w:rPr'),
+        ('w:r', True, 'w:r/w:rPr/w:u{w:val=single}'),
+        ('w:r', False, 'w:r/w:rPr/w:u{w:val=none}'),
+        ('w:r', None, 'w:r/w:rPr'),
         ('w:r', WD_UNDERLINE.SINGLE, 'w:r/w:rPr/w:u{w:val=single}'),
-        ('w:r', WD_UNDERLINE.THICK,  'w:r/w:rPr/w:u{w:val=thick}'),
+        ('w:r', WD_UNDERLINE.THICK, 'w:r/w:rPr/w:u{w:val=thick}'),
         ('w:r/w:rPr/w:u{w:val=single}', True,
          'w:r/w:rPr/w:u{w:val=single}'),
         ('w:r/w:rPr/w:u{w:val=single}', False,
@@ -315,6 +318,19 @@ class DescribeRun(object):
         invalid_underline_setting = request.param
         run = Run(element('w:r/w:rPr'), None)
         return run, invalid_underline_setting
+
+    @pytest.fixture
+    def shd_fixture(self, Shd_, shd_):
+        run = Run(element('w:r'), None)
+        return run, Shd_, shd_
+
+    @pytest.fixture(params=[
+        'w:shd{val=nil}'
+    ])
+    def shading_value_raise_fixture(self, request):
+        cxml = request.param
+        e = element(cxml)
+        return e
 
     # fixture components ---------------------------------------------
 
@@ -347,3 +363,11 @@ class DescribeRun(object):
     @pytest.fixture
     def Text_(self, request):
         return class_mock(request, 'docx.text.run._Text')
+
+    @pytest.fixture
+    def Shd_(self, request, shd_):
+        return class_mock(request, 'docx.mixins.ShdMixin.Shd', return_value=shd_)
+
+    @pytest.fixture
+    def shd_(self, request):
+        return instance_mock(request, Shd)

@@ -7,7 +7,6 @@ Test suite for the docx.text.paragraph module
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
-
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
@@ -16,9 +15,8 @@ from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
-
+from docx.shading import Shd
 import pytest
-
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import (
     call, class_mock, instance_mock, method_mock, property_mock
@@ -26,7 +24,6 @@ from ..unitutil.mock import (
 
 
 class DescribeParagraph(object):
-
     def it_knows_its_paragraph_style(self, style_get_fixture):
         paragraph, style_id_, style_ = style_get_fixture
         style = paragraph.style
@@ -110,12 +107,18 @@ class DescribeParagraph(object):
         assert isinstance(new_paragraph, Paragraph)
         assert body.xml == expected_xml
 
+    def it_provides_access_to_its_shd(self, shd_fixture):
+        para, Shd_, shd_ = shd_fixture
+        shd = para.shd
+        Shd_.assert_called_once_with(para._element)
+        assert shd is shd_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
-        ('w:p', None,     None,     'w:p/w:r'),
-        ('w:p', 'foobar', None,     'w:p/w:r/w:t"foobar"'),
-        ('w:p', None,     'Strong', 'w:p/w:r'),
+        ('w:p', None, None, 'w:p/w:r'),
+        ('w:p', 'foobar', None, 'w:p/w:r/w:t"foobar"'),
+        ('w:p', None, 'Strong', 'w:p/w:r'),
         ('w:p', 'foobar', 'Strong', 'w:p/w:r/w:t"foobar"'),
     ])
     def add_run_fixture(self, request, run_style_prop_):
@@ -161,9 +164,9 @@ class DescribeParagraph(object):
         return paragraph, expected_xml
 
     @pytest.fixture(params=[
-        (None,  None),
+        (None, None),
         ('Foo', None),
-        (None,  'Bar'),
+        (None, 'Bar'),
         ('Foo', 'Bar'),
     ])
     def insert_before_fixture(self, request, _insert_paragraph_before_,
@@ -207,15 +210,15 @@ class DescribeParagraph(object):
         return paragraph, style_id, style_
 
     @pytest.fixture(params=[
-        ('w:p',                                 'Heading 1', 'Heading1',
+        ('w:p', 'Heading 1', 'Heading1',
          'w:p/w:pPr/w:pStyle{w:val=Heading1}'),
-        ('w:p/w:pPr',                           'Heading 1', 'Heading1',
+        ('w:p/w:pPr', 'Heading 1', 'Heading1',
          'w:p/w:pPr/w:pStyle{w:val=Heading1}'),
-        ('w:p/w:pPr/w:pStyle{w:val=Heading1}',  'Heading 2', 'Heading2',
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', 'Heading 2', 'Heading2',
          'w:p/w:pPr/w:pStyle{w:val=Heading2}'),
-        ('w:p/w:pPr/w:pStyle{w:val=Heading1}',  'Normal',    None,
+        ('w:p/w:pPr/w:pStyle{w:val=Heading1}', 'Normal', None,
          'w:p/w:pPr'),
-        ('w:p',                                 None,        None,
+        ('w:p', None, None,
          'w:p/w:pPr'),
     ])
     def style_set_fixture(self, request, part_prop_):
@@ -248,6 +251,19 @@ class DescribeParagraph(object):
         new_text_value = 'foo\tbar\rbaz\n'
         expected_text_value = 'foo\tbar\nbaz\n'
         return paragraph, new_text_value, expected_text_value
+
+    @pytest.fixture
+    def shd_fixture(self, Shd_, shd_):
+        paragraph = Paragraph(element('w:p'), None)
+        return paragraph, Shd_, shd_
+
+    @pytest.fixture(params=[
+        'w:shd{val=nil}'
+    ])
+    def shading_value_raise_fixture(self, request):
+        cxml = request.param
+        e = element(cxml)
+        return e
 
     # fixture components ---------------------------------------------
 
@@ -308,3 +324,11 @@ class DescribeParagraph(object):
         run_ = instance_mock(request, Run, name='run_')
         run_2_ = instance_mock(request, Run, name='run_2_')
         return run_, run_2_
+
+    @pytest.fixture
+    def Shd_(self, request, shd_):
+        return class_mock(request, 'docx.mixins.ShdMixin.Shd', return_value=shd_)
+
+    @pytest.fixture
+    def shd_(self, request):
+        return instance_mock(request, Shd)

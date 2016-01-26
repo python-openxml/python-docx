@@ -4,7 +4,9 @@
 Objects shared by docx modules.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals
+)
 
 
 class Length(int):
@@ -71,6 +73,7 @@ class Inches(Length):
     Convenience constructor for length in inches, e.g.
     ``width = Inches(0.5)``.
     """
+
     def __new__(cls, inches):
         emu = int(inches * Length._EMUS_PER_INCH)
         return Length.__new__(cls, emu)
@@ -81,6 +84,7 @@ class Cm(Length):
     Convenience constructor for length in centimeters, e.g.
     ``height = Cm(12)``.
     """
+
     def __new__(cls, cm):
         emu = int(cm * Length._EMUS_PER_CM)
         return Length.__new__(cls, emu)
@@ -91,6 +95,7 @@ class Emu(Length):
     Convenience constructor for length in English Metric Units, e.g.
     ``width = Emu(457200)``.
     """
+
     def __new__(cls, emu):
         return Length.__new__(cls, int(emu))
 
@@ -100,6 +105,7 @@ class Mm(Length):
     Convenience constructor for length in millimeters, e.g.
     ``width = Mm(240.5)``.
     """
+
     def __new__(cls, mm):
         emu = int(mm * Length._EMUS_PER_MM)
         return Length.__new__(cls, emu)
@@ -109,6 +115,7 @@ class Pt(Length):
     """
     Convenience value class for specifying a length in points
     """
+
     def __new__(cls, points):
         emu = int(points * Length._EMUS_PER_PT)
         return Length.__new__(cls, emu)
@@ -119,6 +126,7 @@ class Twips(Length):
     Convenience constructor for length in twips, e.g. ``width = Twips(42)``.
     A twip is a twentieth of a point, 635 EMU.
     """
+
     def __new__(cls, twips):
         emu = int(twips * Length._EMUS_PER_TWIP)
         return Length.__new__(cls, emu)
@@ -128,6 +136,7 @@ class RGBColor(tuple):
     """
     Immutable value object defining a particular RGB color.
     """
+
     def __new__(cls, r, g, b):
         msg = 'RGBColor() takes three integer values 0-255'
         for val in (r, g, b):
@@ -238,6 +247,7 @@ class Parented(object):
     such as add or drop a relationship. Provides ``self._parent`` attribute
     to subclasses.
     """
+
     def __init__(self, parent):
         super(Parented, self).__init__()
         self._parent = parent
@@ -248,3 +258,5 @@ class Parented(object):
         The package part containing this object
         """
         return self._parent.part
+
+
