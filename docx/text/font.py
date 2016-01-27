@@ -132,14 +132,24 @@ class Font(ElementProxy):
         color (which Word calls a highlignt) for this font.
         """
         rPr = self._element.rPr
-        if rPr is None:
+        if (rPr is None) or (rPr.highlight is None):
             return None
-        return rPr.highlight
+        return rPr.highlight.val
 
     @highlight.setter
     def highlight(self, value):
         rPr = self._element.get_or_add_rPr()
-        rPr.highlight = value
+        # Word only allows certain values.  These values seem to be case sensitive!
+        if not value in ['yellow', 'green', 'cyan', 'magenta', 'blue', 'red',
+                         'darkBlue', 'darkCyan', 'darkGreen', 'darkMagenta',
+                         'darkRed', 'darkYellow', 'darkGray', 'lightGray',
+                         'black']:
+            value = None
+        if value is None:
+            getattr(rPr, '_remove_highlight')()
+            return
+        element = getattr(rPr, 'get_or_add_highlight')()
+        element.val = value
 
     @property
     def italic(self):
