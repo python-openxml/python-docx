@@ -8,7 +8,7 @@ Text in a Word document can be "highlighted" with a number of colors, providing 
 Protocol
 --------
 
-The call protocol for highlight involves manipulating the font by assigning a string value from a fixed, case-sensitive list.
+The call protocol for highlight involves manipulating the font highlight (background color) by assigning a string value from a fixed, case-sensitive list.
 
     >>> run = paragraph.add_run()
     >>> font = run.font
@@ -70,7 +70,7 @@ Blue text, Green Highlight::
 Schema excerpt
 --------------
 
-Sorry, I have no idea how to proceed here.
+Sorry, I have no idea how to proceed here.  The Schema presented in font Analysis Document includes mention of the highlight property.
 
 .. highlight:: xml
 
