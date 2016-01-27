@@ -126,6 +126,22 @@ class Font(ElementProxy):
         self._set_bool_prop('vanish', value)
 
     @property
+    def highlight(self):
+        """
+        A text indicator providing a way to get and set the text background
+        color (which Word calls a highlignt) for this font.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.highlight
+
+    @highlight.setter
+    def highlight(self, value):
+        rPr = self._element.get_or_add_rPr()
+        rPr.highlight = value
+
+    @property
     def italic(self):
         """
         Read/write tri-state value. When |True|, causes the text of the run
