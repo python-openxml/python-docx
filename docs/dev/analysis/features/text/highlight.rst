@@ -37,25 +37,25 @@ Enumerations
 
 Text representation is rigid, but do not match the enumeration names.  From exhaustive selection in Word 2010, I have come up with the following list of usable values::
 
-wdAuto = ???  ('default')
-wdBlack = 'black'
-wdBlue = 'blue' 
-wdBrightGreen = 'green'
-wdByAuthor = ?? 
-wdDarkBlue = 'darkBlue'
-wdDarkRed = 'darkRed'
-wdDarkYellow = 'darkYellow'
-wdGray25 = 'lightGray'
-wdGray50 = 'darkGray'
-wdGreen = 'darkGreen'    
-wdNoHighlight = ??  ('noHighlight')
-wdPink = 'magenta' 
-wdRed = 'red'
-wdTeal = 'darkCyan'
-wdTurquoise = 'cyan'
-wdViolet = 'darkMagenta'    
-wdWhite = ??   ('white')
-wdYellow = 'yellow' 
+| wdAuto = ???  ('default')
+| wdBlack = 'black'
+| wdBlue = 'blue' 
+| wdBrightGreen = 'green'
+| wdByAuthor = ?? 
+| wdDarkBlue = 'darkBlue'
+| wdDarkRed = 'darkRed'
+| wdDarkYellow = 'darkYellow'
+| wdGray25 = 'lightGray'
+| wdGray50 = 'darkGray'
+| wdGreen = 'darkGreen'    
+| wdNoHighlight = ??  ('noHighlight')
+| wdPink = 'magenta' 
+| wdRed = 'red'
+| wdTeal = 'darkCyan'
+| wdTurquoise = 'cyan'
+| wdViolet = 'darkMagenta'    
+| wdWhite = ??   ('white')
+| wdYellow = 'yellow' 
            
 These values ARE case-sensitive.  Other variations cause an error when the resulting document is loaded in Word. 
 
