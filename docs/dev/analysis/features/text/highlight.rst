@@ -8,22 +8,19 @@ Text in a Word document can be "highlighted" with a number of colors, providing 
 Protocol
 --------
 
-The call protocol for highlight involves manipulating the font highlight (background color) by assigning a string value from a fixed, case-sensitive list.
+The call protocol for highlight involves manipulating the font highlight (background color) by assigning a color value from the WdColorIndex Enumeration.
 
     >>> run = paragraph.add_run()
     >>> font = run.font
     >>> font.highlight
     None
-    >>> font.highlight = 'yellow'
+    >>> font.highlight = WD_COLORINDEX.wdYellow
     >>> font.highlight
-    'yellow'
-    >>> font.highlight = 'cyan'
+    wdYellow
+    >>> font.highlight = WD_COLORINDEX.wdTurquiose
     >>> font.highlight
-    'cyan'
+    wdTurquiose
     >>> font.highlight = None
-    >>> font.highlight
-    None
-    >>> font.highlight = 'noHighlight'
     >>> font.highlight
     None
 
@@ -55,10 +52,11 @@ Text representation is rigid, but do not match the enumeration names.  From exha
 | wdWhite = 'white'
 | wdYellow = 'yellow' 
 
-Not implemented:
+Not implemented::
 
-| wdByAuthor = (This value causes Word to automatically assign a color based on the Author.  I cannot find teh appropriate string value for it.) 
+| wdByAuthor = (This value causes Word to automatically assign a color based on the Author.  I cannot find the appropriate string value for it.)
 | wdNoHighlight = (I cannot find the appropriate string value to match this setting.  'noHighlight' is NOT correct.)
+         
                                              
 These values ARE case-sensitive.  Other variations cause an error when the resulting document is loaded in Word. 
 
@@ -181,7 +179,6 @@ below when it writes the file.::
       <xsd:enumeration value="lightGray"/>
       <xsd:enumeration value="darkGray"/>
       <xsd:enumeration value="darkGreen"/>
-      <xsd:enumeration value="noHighlight"/>
       <xsd:enumeration value="magenta"/>
       <xsd:enumeration value="red"/>
       <xsd:enumeration value="darkCyan"/>
