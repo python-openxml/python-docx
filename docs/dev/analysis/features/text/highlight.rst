@@ -37,26 +37,29 @@ Enumerations
 
 Text representation is rigid, but do not match the enumeration names.  From exhaustive selection in Word 2010, I have come up with the following list of usable values::
 
-| wdAuto = ???  ('default')
+| wdAuto = 'default'
 | wdBlack = 'black'
 | wdBlue = 'blue' 
 | wdBrightGreen = 'green'
-| wdByAuthor = ?? 
 | wdDarkBlue = 'darkBlue'
 | wdDarkRed = 'darkRed'
 | wdDarkYellow = 'darkYellow'
 | wdGray25 = 'lightGray'
 | wdGray50 = 'darkGray'
 | wdGreen = 'darkGreen'    
-| wdNoHighlight = ??  ('noHighlight')
 | wdPink = 'magenta' 
 | wdRed = 'red'
 | wdTeal = 'darkCyan'
 | wdTurquoise = 'cyan'
 | wdViolet = 'darkMagenta'    
-| wdWhite = ??   ('white')
+| wdWhite = 'white'
 | wdYellow = 'yellow' 
-           
+
+Not implemented:
+
+| wdByAuthor = (This value causes Word to automatically assign a color based on the Author.  I cannot find teh appropriate string value for it.) 
+| wdNoHighlight = (I cannot find the appropriate string value to match this setting.  'noHighlight' is NOT correct.)
+                                             
 These values ARE case-sensitive.  Other variations cause an error when the resulting document is loaded in Word. 
 
 
@@ -161,7 +164,7 @@ below when it writes the file.::
   <!-- complex types -->
 
   <xsd:complexType name="CT_Highlight">
-    <xsd:attribute name="val"        type="ST_Highlight"/>
+    <xsd:attribute name="val" type="ST_Highlight"/>
   </xsd:complexType>
 
   <!-- simple types -->
