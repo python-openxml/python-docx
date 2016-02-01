@@ -162,7 +162,7 @@ below when it writes the file.::
   <!-- complex types -->
 
   <xsd:complexType name="CT_Highlight">
-    <xsd:attribute name="val" type="ST_Highlight"/>
+    <xsd:attribute name="val" type="ST_Highlight" use="required"/>
   </xsd:complexType>
 
   <!-- simple types -->
