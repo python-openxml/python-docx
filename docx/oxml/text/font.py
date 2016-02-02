@@ -6,7 +6,7 @@ Custom element classes related to run properties (font).
 
 from .. import parse_xml
 from ...enum.dml import MSO_THEME_COLOR
-from ...enum.text import WD_UNDERLINE
+from ...enum.text import WD_UNDERLINE, WD_COLORINDEX
 from ..ns import nsdecls, qn
 from ..simpletypes import (
     ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
@@ -37,7 +37,18 @@ class CT_Highlight(BaseOxmlElement):
     """
     ``<w:highlight>`` element, specifying font highlight / background color.
     """
-    val = RequiredAttribute('w:val', ST_String)
+    @property
+    def val(self):
+        val = self.get(qn('w:val'))
+        highlight = WD_COLORINDEX.from_xml(val)
+#        if highlight == WD_COLORINDEX.NOHIGHLIGHT:
+#            return False
+        return highlight
+
+    @val.setter
+    def val(self, value):
+        val = WD_COLORINDEX.to_xml(value)
+        self.set(qn('w:val'), val)
 
 class CT_HpsMeasure(BaseOxmlElement):
     """
@@ -88,6 +99,22 @@ class CT_RPr(BaseOxmlElement):
     oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
     highlight = ZeroOrOne('w:highlight', successors=_tag_seq[40:])
     del _tag_seq
+
+    @property
+    def highlight_val(self):
+        """
+        Value of `w:highliht/@val`, or None if not present.
+        """
+        h = self.highlight
+        if h is None:
+            return None
+        return h.val
+
+    @highlight_val.setter
+    def highlight_val(self, value):
+        self._remove_highlight()
+        if value is not None:
+            self._add_highlight().val = value
 
     def _new_color(self):
         """
