@@ -6,7 +6,7 @@ Custom element classes related to run properties (font).
 
 from .. import parse_xml
 from ...enum.dml import MSO_THEME_COLOR
-from ...enum.text import WD_UNDERLINE
+from ...enum.text import WD_UNDERLINE, WD_COLORINDEX
 from ..ns import nsdecls, qn
 from ..simpletypes import (
     ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
@@ -33,6 +33,22 @@ class CT_Fonts(BaseOxmlElement):
     ascii = OptionalAttribute('w:ascii', ST_String)
     hAnsi = OptionalAttribute('w:hAnsi', ST_String)
 
+class CT_Highlight(BaseOxmlElement):
+    """
+    ``<w:highlight>`` element, specifying font highlight / background color.
+    """
+    @property
+    def val(self):
+        val = self.get(qn('w:val'))
+        highlight = WD_COLORINDEX.from_xml(val)
+#        if highlight == WD_COLORINDEX.NOHIGHLIGHT:
+#            return False
+        return highlight
+
+    @val.setter
+    def val(self, value):
+        val = WD_COLORINDEX.to_xml(value)
+        self.set(qn('w:val'), val)
 
 class CT_HpsMeasure(BaseOxmlElement):
     """
@@ -53,7 +69,7 @@ class CT_RPr(BaseOxmlElement):
         'w:webHidden', 'w:color', 'w:spacing', 'w:w', 'w:kern', 'w:position',
         'w:sz', 'w:szCs', 'w:highlight', 'w:u', 'w:effect', 'w:bdr', 'w:shd',
         'w:fitText', 'w:vertAlign', 'w:rtl', 'w:cs', 'w:em', 'w:lang',
-        'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
+        'w:eastAsianLayout', 'w:specVanish', 'w:oMath', 'w:highlight'
     )
     rStyle = ZeroOrOne('w:rStyle', successors=_tag_seq[1:])
     rFonts = ZeroOrOne('w:rFonts', successors=_tag_seq[2:])
@@ -81,7 +97,24 @@ class CT_RPr(BaseOxmlElement):
     cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
     specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
     oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
+    highlight = ZeroOrOne('w:highlight', successors=_tag_seq[40:])
     del _tag_seq
+
+    @property
+    def highlight_val(self):
+        """
+        Value of `w:highliht/@val`, or None if not present.
+        """
+        h = self.highlight
+        if h is None:
+            return None
+        return h.val
+
+    @highlight_val.setter
+    def highlight_val(self, value):
+        self._remove_highlight()
+        if value is not None:
+            self._add_highlight().val = value
 
     def _new_color(self):
         """

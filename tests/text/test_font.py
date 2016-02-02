@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from docx.dml.color import ColorFormat
-from docx.enum.text import WD_UNDERLINE
+from docx.enum.text import WD_UNDERLINE, WD_COLORINDEX
 from docx.shared import Pt
 from docx.text.font import Font
 
@@ -79,6 +79,15 @@ class DescribeFont(object):
     def it_can_change_its_underline_type(self, underline_set_fixture):
         font, underline, expected_xml = underline_set_fixture
         font.underline = underline
+        assert font._element.xml == expected_xml
+
+    def it_knows_its_highlight_color(self, highlight_get_fixture):
+        font, expected_value = highlight_get_fixture
+        assert font.highlight is expected_value
+
+    def it_can_change_its_highlight_color(self, highlight_set_fixture):
+        font, highlight, expected_xml = highlight_set_fixture
+        font.highlight = highlight
         assert font._element.xml == expected_xml
 
     # fixtures -------------------------------------------------------
@@ -334,6 +343,61 @@ class DescribeFont(object):
          'w:r/w:rPr/w:u{w:val=dotted}'),
     ])
     def underline_set_fixture(self, request):
+        initial_r_cxml, value, expected_cxml = request.param
+        run = Font(element(initial_r_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return run, value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:r',                         None),
+        ('w:r/w:rPr/w:highlight',       None),
+        ('w:r/w:rPr/w:highlight{w:val=default}', WD_COLORINDEX.AUTO),
+        ('w:r/w:rPr/w:highlight{w:val=black}', WD_COLORINDEX.BLACK),
+        ('w:r/w:rPr/w:highlight{w:val=blue}', WD_COLORINDEX.BLUE),
+        ('w:r/w:rPr/w:highlight{w:val=green}', WD_COLORINDEX.BRIGHTGREEN),
+        ('w:r/w:rPr/w:highlight{w:val=darkBlue}', WD_COLORINDEX.DARKBLUE),
+        ('w:r/w:rPr/w:highlight{w:val=darkRed}', WD_COLORINDEX.DARKRED),
+        ('w:r/w:rPr/w:highlight{w:val=darkYellow}', WD_COLORINDEX.DARKYELLOW),
+        ('w:r/w:rPr/w:highlight{w:val=lightGray}', WD_COLORINDEX.GRAY25),
+        ('w:r/w:rPr/w:highlight{w:val=darkGray}', WD_COLORINDEX.GRAY50),
+        ('w:r/w:rPr/w:highlight{w:val=darkGreen}', WD_COLORINDEX.GREEN),
+        ('w:r/w:rPr/w:highlight{w:val=magenta}', WD_COLORINDEX.PINK),
+        ('w:r/w:rPr/w:highlight{w:val=red}',   WD_COLORINDEX.RED),
+        ('w:r/w:rPr/w:highlight{w:val=darkCyan}',   WD_COLORINDEX.TEAL),
+        ('w:r/w:rPr/w:highlight{w:val=cyan}',   WD_COLORINDEX.TURQUOISE),
+        ('w:r/w:rPr/w:highlight{w:val=darkMagenta}',   WD_COLORINDEX.VIOLET),
+        ('w:r/w:rPr/w:highlight{w:val=white}',   WD_COLORINDEX.WHITE),
+        ('w:r/w:rPr/w:highlight{w:val=yellow}',   WD_COLORINDEX.YELLOW),
+    ])
+    def highlight_get_fixture(self, request):
+        r_cxml, expected_value = request.param
+        run = Font(element(r_cxml), None)
+        return run, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r', WD_COLORINDEX.AUTO,                'w:r/w:rPr/w:highlight{w:val=default}'),
+        ('w:r', WD_COLORINDEX.BLACK,               'w:r/w:rPr/w:highlight{w:val=black}'),
+        ('w:r', WD_COLORINDEX.BLUE,                'w:r/w:rPr/w:highlight{w:val=blue}'),
+        ('w:r', WD_COLORINDEX.BRIGHTGREEN,         'w:r/w:rPr/w:highlight{w:val=green}'),
+        ('w:r', WD_COLORINDEX.DARKBLUE,            'w:r/w:rPr/w:highlight{w:val=darkBlue}'),
+        ('w:r', WD_COLORINDEX.DARKRED,             'w:r/w:rPr/w:highlight{w:val=darkRed}'),
+        ('w:r', WD_COLORINDEX.DARKYELLOW,          'w:r/w:rPr/w:highlight{w:val=darkYellow}'),
+        ('w:r', WD_COLORINDEX.GRAY25,              'w:r/w:rPr/w:highlight{w:val=lightGray}'),
+        ('w:r', WD_COLORINDEX.GRAY50,              'w:r/w:rPr/w:highlight{w:val=darkGray}'),
+        ('w:r', WD_COLORINDEX.GREEN,               'w:r/w:rPr/w:highlight{w:val=darkGreen}'),
+        ('w:r', WD_COLORINDEX.PINK,                'w:r/w:rPr/w:highlight{w:val=magenta}'),
+        ('w:r', WD_COLORINDEX.RED,                 'w:r/w:rPr/w:highlight{w:val=red}'),
+        ('w:r', WD_COLORINDEX.TEAL,                'w:r/w:rPr/w:highlight{w:val=darkCyan}'),
+        ('w:r', WD_COLORINDEX.TURQUOISE,           'w:r/w:rPr/w:highlight{w:val=cyan}'),
+        ('w:r', WD_COLORINDEX.VIOLET,              'w:r/w:rPr/w:highlight{w:val=darkMagenta}'),
+        ('w:r', WD_COLORINDEX.WHITE,               'w:r/w:rPr/w:highlight{w:val=white}'),
+        ('w:r', WD_COLORINDEX.YELLOW,              'w:r/w:rPr/w:highlight{w:val=yellow}'),
+        ('w:r', None,                              'w:r/w:rPr'),
+        ('w:r/w:rPr/w:highlight{w:val=green}', None, 'w:r/w:rPr'),
+        ('w:r/w:rPr/w:highlight{w:val=green}', WD_COLORINDEX.PINK, 'w:r/w:rPr/w:highlight{w:val=magenta}'),
+        ('w:r/w:rPr/w:highlight{w:val=green}', WD_COLORINDEX.GREEN, 'w:r/w:rPr/w:highlight{w:val=darkGreen}'),
+    ])
+    def highlight_set_fixture(self, request):
         initial_r_cxml, value, expected_cxml = request.param
         run = Font(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)

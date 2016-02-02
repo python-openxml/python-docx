@@ -206,3 +206,73 @@ class WD_UNDERLINE(XmlEnumeration):
             'DASH_LONG_HEAVY', 55, 'dashLongHeavy', 'Long heavy dashes.'
         ),
     )
+
+class WD_COLORINDEX(XmlEnumeration):
+    """
+    Specifies the Highlights (background colors) that can be applied to a run of characters.
+    """
+
+    __ms_name__ = 'WdColorIndex'
+
+    __url__ = 'https://msdn.microsoft.com/EN-US/library/office/ff195343.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            None, None, None, 'Inherit highlight setting from containing par'
+            'agraph.'
+        ),
+        XmlMappedEnumMember(
+            'AUTO', 0, 'default', 'Default highlight, usually white.'
+        ),
+        XmlMappedEnumMember(
+            'BLACK', 1, 'black', 'Set highlight color to Black.'
+        ),
+        XmlMappedEnumMember(
+            'BLUE', 2, 'blue', 'Set highlight color to Blue.'
+        ),
+        XmlMappedEnumMember(
+            'BRIGHTGREEN', 4, 'green', 'Set highlight color to Green.'
+        ),
+        XmlMappedEnumMember(
+            'DARKBLUE', 9, 'darkBlue', 'Set highlight color to Dark Blue.'
+        ),
+        XmlMappedEnumMember(
+            'DARKRED', 13, 'darkRed', 'Set highlight color to Dark Red.'
+        ),
+        XmlMappedEnumMember(
+            'DARKYELLOW', 14, 'darkYellow', 'Set highlight color to Dark Yellow.'
+        ),
+        XmlMappedEnumMember(
+            'GRAY25', 16, 'lightGray', 'Set highlight color to 25% Gray.'
+        ),
+        XmlMappedEnumMember(
+            'GRAY50', 15, 'darkGray', 'Set highlight color to 50% Gray.'
+        ),
+        XmlMappedEnumMember(
+            'GREEN', 11, 'darkGreen', 'Set highlight color to Dark Green.'
+        ),
+##        XmlMappedEnumMember(
+##            'NOHIGHLIGHT', 0, 'default', 'Default highlight, usually white used when wdNoHighlight is specified.'
+##        ),
+        XmlMappedEnumMember(
+            'PINK', 5, 'magenta', 'Set highlight color to Magenta.'
+        ),
+        XmlMappedEnumMember(
+            'RED', 6, 'red', 'Set highlight color to Red.'
+        ),
+        XmlMappedEnumMember(
+            'TEAL', 10, 'darkCyan', 'Set highlight color to Dark Cyan.'
+        ),
+        XmlMappedEnumMember(
+            'TURQUOISE', 3, 'cyan', 'Set highlight color to Cyan.'
+        ),
+        XmlMappedEnumMember(
+            'VIOLET', 12, 'darkMagenta', 'Set highlight color to Dark Magenta.'
+        ),
+        XmlMappedEnumMember(
+            'WHITE', 8, 'white', 'Set highlight color to Dark Blue.'
+        ),
+        XmlMappedEnumMember(
+            'YELLOW', 7, 'yellow', 'Set highlight color to Yellow.'
+        ),
+    )
