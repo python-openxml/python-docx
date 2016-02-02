@@ -146,7 +146,7 @@ register_element_cls('w:tr',         CT_Row)
 register_element_cls('w:vMerge',     CT_VMerge)
 
 from .text.font import (
-    CT_Color, CT_Fonts, CT_HpsMeasure, CT_RPr, CT_Underline,
+    CT_Color, CT_Fonts, CT_Highlight, CT_HpsMeasure, CT_RPr, CT_Underline,
     CT_VerticalAlignRun
 )
 register_element_cls('w:b',          CT_OnOff)
@@ -156,6 +156,7 @@ register_element_cls('w:color',      CT_Color)
 register_element_cls('w:cs',         CT_OnOff)
 register_element_cls('w:dstrike',    CT_OnOff)
 register_element_cls('w:emboss',     CT_OnOff)
+register_element_cls('w:highlight',  CT_Highlight)
 register_element_cls('w:i',          CT_OnOff)
 register_element_cls('w:iCs',        CT_OnOff)
 register_element_cls('w:imprint',    CT_OnOff)
