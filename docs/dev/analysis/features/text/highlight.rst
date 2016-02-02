@@ -12,16 +12,16 @@ The call protocol for highlight involves manipulating the font highlight (backgr
 
     >>> run = paragraph.add_run()
     >>> font = run.font
-    >>> font.highlight
+    >>> print font.highlight
     None
-    >>> font.highlight = WD_COLORINDEX.wdYellow
-    >>> font.highlight
-    wdYellow
-    >>> font.highlight = WD_COLORINDEX.wdTurquiose
-    >>> font.highlight
-    wdTurquiose
+    >>> font.highlight = docx.enum.text.WD_COLORINDEX.YELLOW
+    >>> print font.highlight
+    YELLOW (7)
+    >>> font.highlight = docx.enum.text.WD_COLORINDEX.TURQUOISE
+    >>> print font.highlight
+    TURQUOISE (3)
     >>> font.highlight = None
-    >>> font.highlight
+    >>> print font.highlight
     None
 
 
@@ -32,32 +32,26 @@ Enumerations
 
 .. _WdColorIndex Enumeration on MSDN: https://msdn.microsoft.com/EN-US/library/office/ff195343.aspx
 
-Text representation is rigid, but do not match the enumeration names.  From exhaustive selection in Word 2010, I have come up with the following list of usable values::
+Text representation of color is rigid, but do not match the enumeration names.  From exhaustive selection in Word 2010, I have come up with the following list of usable values::
 
-| wdAuto = 'default'
-| wdBlack = 'black'
-| wdBlue = 'blue' 
-| wdBrightGreen = 'green'
-| wdDarkBlue = 'darkBlue'
-| wdDarkRed = 'darkRed'
-| wdDarkYellow = 'darkYellow'
-| wdGray25 = 'lightGray'
-| wdGray50 = 'darkGray'
-| wdGreen = 'darkGreen'    
-| wdPink = 'magenta' 
-| wdRed = 'red'
-| wdTeal = 'darkCyan'
-| wdTurquoise = 'cyan'
-| wdViolet = 'darkMagenta'    
-| wdWhite = 'white'
-| wdYellow = 'yellow' 
+| AUTO = 'default'
+| BLACK = 'black'
+| BLUE = 'blue' 
+| BRIGHTGREEN = 'green'
+| DARKBLUE = 'darkBlue'
+| DARKRED = 'darkRed'
+| DARKYELLOW = 'darkYellow'
+| GRAY25 = 'lightGray'
+| GRAY50 = 'darkGray'
+| GREEN = 'darkGreen'    
+| PINK = 'magenta' 
+| RED = 'red'
+| TEAL = 'darkCyan'
+| TURQUOISE = 'cyan'
+| VOILET = 'darkMagenta'    
+| WHITE = 'white'
+| YELLOW = 'yellow' 
 
-Not implemented::
-
-| wdByAuthor = (This value causes Word to automatically assign a color based on the Author.  I cannot find the appropriate string value for it.)
-| wdNoHighlight = (I cannot find the appropriate string value to match this setting.  'noHighlight' is NOT correct.)
-         
-                                             
 These values ARE case-sensitive.  Other variations cause an error when the resulting document is loaded in Word. 
 
 
@@ -95,7 +89,7 @@ Red text, Green Highlight::
       <w:szCs w:val="24"/>
       <w:highlight w:val="darkGreen"/>
     </w:rPr>
-    <w:t xml:space="preserve">Blue text on Bright Green background </w:t>
+    <w:t xml:space="preserve">Red text on Green background </w:t>
   </w:r>
   
 NOTE the difference between the color enumeration name and the text that must be used.
