@@ -2,7 +2,7 @@
 Tab Stop Specification
 ====================
 
-WordprocessingML allows for custom specificatoin of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a python List of integer (twip) values.
+WordprocessingML allows for custom specification of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a python List of integer (twip) values.
 
 Tab character insertion is already properly handled as part of Runs.  This feature deals with the horizontal spacing of tabs within the document only.
 
@@ -30,7 +30,7 @@ Getting and setting tab stops::
 XML Semantics
 ~~~~~~~~~~~~~
 
-* Tab stops have a type (w:val), which allows the specification of left, center, right, decimal, list, and bar alignment.
+* Tab stops have a type (w:val), which allows the specification of left, center, right, decimal, bar, and list (implementation unknown) alignment.
 
 * Tab stop positions (w:pos) are stored in XML in units of 1,440ths of an inch, units called "twips."
 
@@ -58,7 +58,10 @@ One inch tab stops using left alignment::
 Enumerations
 ------------
 
-* `WdTabAlignment <https://msdn.microsoft.com/EN-US/library/office/ff195609.aspx>`
+* `WdTabAlignment Enumeration on MSDN`_
+ 
+.. _WdTabAlignment Enumeration on MSDN:
+   https://msdn.microsoft.com/EN-US/library/office/ff195609.aspx
 
 
 
@@ -129,7 +132,7 @@ Schema excerpt
       <xsd:enumeration value="center">     <!-- wdAlignTabCenter   1 -->
       <xsd:enumeration value="decimal">    <!-- wdAlignTabDecimal  3 -->
       <xsd:enumeration value="left">       <!-- wdAlignTabLeft     0 -->
-      <xsd:enumeration value="????">       <!-- wdAlignTabList     6 IMPLEMENTATION UNKNOWN -->
+      <xsd:enumeration value="list">       <!-- wdAlignTabList     6 IMPLEMENTATION NOT CONFIRMED -->
       <xsd:enumeration value="right">      <!-- wdAlignTabRight    2 -->
     </xsd:restriction>
   </xsd:simpleType>
