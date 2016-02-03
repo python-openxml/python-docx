@@ -2,7 +2,9 @@
 Tab Stop Specification
 ====================
 
-WordprocessingML allows for custom specification of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a python List of integer (twip) values.
+WordprocessingML allows for custom specification of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a List-like TabStops object made up of TabStop objects.
+
+A TabStop object has two properties, alignment and position.  Alignment is a WD_TAB_ALIGNMENT member adn position is Length() object.
 
 Tab character insertion is already properly handled as part of Runs.  This feature deals with the horizontal spacing of tabs within the document only.
 
@@ -14,17 +16,19 @@ Protocol
 
 Getting and setting tab stops::
 
-    >>> paragraph_format.tabs
+    >>> paragraph_format.tab_stops
     None
-    >>> paragraph_format.tabs = [1440, 2880, 4320, 5760, 7200, 8640, 10080, 11520]  # One inch tab stops
-    >>> paragraph_format.tabs
-    [1440, 2880, 4320, 5760, 7200, 8640, 10080, 11520]
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Inches(1)))
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Twips(2880)))
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Mm(76.2)))
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.DECIMAL, Inches(4.5)))
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.RIGHT, Inches(7)))
+    >>> paragraph_format.tab_stops = tabStops
+    >>> paragraph_format.tab_stops
+    [(LEFT (0), 1440), (LEFT (0), 2880), (LEFT (0), 4320), (DECIMAL (3), 6480), (RIGHT (2), 10080)]
     >>> paragraph_format.tabs = None  # default tabs
     >>> paragraph_format.tabs
     None
-    >>> paragraph_format.tabs = []   # no tabs  (as distinct from default tabs)
-    >>> paragraph_format.tabs
-    []
 
 
 XML Semantics
@@ -32,7 +36,7 @@ XML Semantics
 
 * Tab stops have a type (w:val), which allows the specification of left, center, right, decimal, bar, and list (implementation unknown) alignment.
 
-* Tab stop positions (w:pos) are stored in XML in units of 1,440ths of an inch, units called "twips."
+* Tab stop positions (w:pos) are stored in XML in twips.
 
 Specimen XML
 ~~~~~~~~~~~~
@@ -46,11 +50,8 @@ One inch tab stops using left alignment::
       <w:tab w:val="left" w:pos="1440"/>
       <w:tab w:val="left" w:pos="2880"/>
       <w:tab w:val="left" w:pos="4320"/>
-      <w:tab w:val="left" w:pos="5760"/>
-      <w:tab w:val="left" w:pos="7200"/>
-      <w:tab w:val="left" w:pos="8640"/>
-      <w:tab w:val="left" w:pos="10080"/>
-      <w:tab w:val="left" w:pos="11520"/>
+      <w:tab w:val="decimal" w:pos="6480"/>
+      <w:tab w:val="right" w:pos="10080"/>
     </w:tabs>
   </w:pPr>
   
@@ -64,6 +65,15 @@ Enumerations
    https://msdn.microsoft.com/EN-US/library/office/ff195609.aspx
 
 
+MS API Protocol
+~~~~~~~~~~~~~~~
+The MS API defines a `TabStops object`_ which is made up of `TabStop objects`_.
+
+.. _TabStops object:
+  https://msdn.microsoft.com/EN-US/library/office/ff192806.aspx
+  
+.. _TabStop objects:
+   https://msdn.microsoft.com/EN-US/library/office/ff195736.aspx
 
 Schema excerpt
 --------------
@@ -121,7 +131,7 @@ Schema excerpt
   <xsd:complexType name="CT_TabStop">
     <xsd:sequence>
       <xsd:element name="val" type="ST_TabType" use="required">
-      <xsd:element name="pos" type="ST_Integer" use="required">
+      <xsd:element name="pos" type="ST_SignedTwipsMeasure" use="required">
     </xsd:sequence>
   </xsd:complexType>
 
