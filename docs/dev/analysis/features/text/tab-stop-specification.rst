@@ -2,7 +2,7 @@
 Tab Stop Specification
 ====================
 
-WordprocessingML allows for custom specification of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a python List of integer (twip) values.
+WordprocessingML allows for custom specification of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a python List of tuples, containing the alignment and position integer (twip) values.
 
 Tab character insertion is already properly handled as part of Runs.  This feature deals with the horizontal spacing of tabs within the document only.
 
@@ -16,9 +16,17 @@ Getting and setting tab stops::
 
     >>> paragraph_format.tabs
     None
-    >>> paragraph_format.tabs = [1440, 2880, 4320, 5760, 7200, 8640, 10080, 11520]  # One inch tab stops
+    >>> paragraph_format.tabs = [(WD_TAB_ALIGNMENT.LEFT, 1440), 
+                                 (WD_TAB_ALIGNMENT.LEFT, 2880), 
+                                 (WD_TAB_ALIGNMENT.LEFT, 4320), 
+                                 (WD_TAB_ALIGNMENT.LEFT, 5760), 
+                                 (WD_TAB_ALIGNMENT.LEFT, 7200), 
+                                 (WD_TAB_ALIGNMENT.LEFT, 8640), 
+                                 (WD_TAB_ALIGNMENT.LEFT, 10080),
+                                 (WD_TAB_ALIGNMENT.LEFT, 11520)]  # One inch tab stops, all left aligned
     >>> paragraph_format.tabs
-    [1440, 2880, 4320, 5760, 7200, 8640, 10080, 11520]
+    [(LEFT (0), 1440), (LEFT (0), 2880), (LEFT (0), 4320), (LEFT (0), 5760), (LEFT (0), 7200), (LEFT (0), 8640), 
+     (LEFT (0), 10080), (LEFT (0), 11520)]
     >>> paragraph_format.tabs = None  # default tabs
     >>> paragraph_format.tabs
     None
