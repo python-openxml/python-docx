@@ -14,10 +14,10 @@ The call protocol for highlight_color involves manipulating the font highlight (
     >>> font = run.font
     >>> print font.highlight_color
     None
-    >>> font.highlight_color = docx.enum.text.WD_COLOR_INDEX.YELLOW
+    >>> font.highlight_color = WD_COLOR_INDEX.YELLOW
     >>> print font.highlight_color
     YELLOW (7)
-    >>> font.highlight_color = docx.enum.text.WD_COLOR_INDEX.TURQUOISE
+    >>> font.highlight_color = WD_COLOR_INDEX.TURQUOISE
     >>> print font.highlight_color
     TURQUOISE (3)
     >>> font.highlight_color = None
