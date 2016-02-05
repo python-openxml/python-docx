@@ -4,7 +4,7 @@ Tab Stop Specification
 
 WordprocessingML allows for custom specification of tab stops at the paragraph level.  Tab stop spacing is a subset of paragraph formatting in this system, so will be implemented within the docx.text.parfmt.ParagraphFormatting object.  Tab stops will be handled as a List-like TabStops object made up of TabStop objects.
 
-A TabStop object has two properties, alignment and position.  Alignment is a WD_TAB_ALIGNMENT member adn position is Length() object.
+A TabStop object has two properties, alignment and position.  Alignment is a WD_TAB_ALIGNMENT member and position is a Length() object.
 
 Tab character insertion is already properly handled as part of Runs.  This feature deals with the horizontal spacing of tabs within the document only.
 
@@ -18,11 +18,11 @@ Getting and setting tab stops::
 
     >>> paragraph_format.tab_stops
     None
-    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Inches(1)))
-    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Twips(2880)))
-    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Mm(76.2)))
-    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.DECIMAL, Inches(4.5)))
-    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.RIGHT, Inches(7)))
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Inches(1)))      # 1 inch
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Twips(2880)))    # 2 inches
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.LEFT, Mm(76.2)))       # 3 inches
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.DECIMAL, Inches(4.5))) # 4.5 inches
+    >>> tabStops.append(TabStop(WD_TAB_ALIGNMENT.RIGHT, Inches(7)))     # 7 inches
     >>> paragraph_format.tab_stops = tabStops
     >>> paragraph_format.tab_stops
     [(LEFT (0), 1440), (LEFT (0), 2880), (LEFT (0), 4320), (DECIMAL (3), 6480), (RIGHT (2), 10080)]
@@ -34,7 +34,9 @@ Getting and setting tab stops::
 XML Semantics
 ~~~~~~~~~~~~~
 
-* Tab stops have a type (w:val), which allows the specification of left, center, right, decimal, bar, and list (implementation unknown) alignment.
+* Tab stops have a type (w:val), which allows the specification of left, center, right, decimal, bar, and list alignment.
+
+* The details of the list alignment are elusive.  (I have not been able to create this type of tab stops in Word, even within lists.  Perhaps a later version of Word than I use is required.) 
 
 * Tab stop positions (w:pos) are stored in XML in twips.
 
@@ -75,6 +77,8 @@ The MS API defines a `TabStops object`_ which is made up of `TabStop objects`_.
 .. _TabStop objects:
    https://msdn.microsoft.com/EN-US/library/office/ff195736.aspx
 
+Leading character specification is possible within the MS API and within Word.  (I do not plan to implement leading character support at this time.)  
+      
 Schema excerpt
 --------------
 
@@ -142,7 +146,7 @@ Schema excerpt
       <xsd:enumeration value="center">     <!-- wdAlignTabCenter   1 -->
       <xsd:enumeration value="decimal">    <!-- wdAlignTabDecimal  3 -->
       <xsd:enumeration value="left">       <!-- wdAlignTabLeft     0 -->
-      <xsd:enumeration value="list">       <!-- wdAlignTabList     6 IMPLEMENTATION NOT CONFIRMED -->
+      <xsd:enumeration value="list">       <!-- wdAlignTabList     6 IMPLEMENTATION STRING NOT CONFIRMED -->
       <xsd:enumeration value="right">      <!-- wdAlignTabRight    2 -->
     </xsd:restriction>
   </xsd:simpleType>
