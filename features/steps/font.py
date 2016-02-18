@@ -13,7 +13,7 @@ from behave import given, then, when
 from docx import Document
 from docx.dml.color import ColorFormat
 from docx.enum.dml import MSO_COLOR_TYPE, MSO_THEME_COLOR
-from docx.enum.text import WD_UNDERLINE
+from docx.enum.text import WD_COLOR_INDEX, WD_UNDERLINE
 from docx.shared import RGBColor
 
 from helpers import test_docx
@@ -25,6 +25,17 @@ from helpers import test_docx
 def given_a_font(context):
     document = Document(test_docx('txt-font-props'))
     context.font = document.paragraphs[0].runs[0].font
+
+
+@given('a font having {color} highlighting')
+def given_a_font_having_color_highlighting(context, color):
+    paragraph_index = {
+        'no':           0,
+        'yellow':       1,
+        'bright green': 2,
+    }[color]
+    document = Document(test_docx('txt-font-highlight-color'))
+    context.font = document.paragraphs[paragraph_index].runs[0].font
 
 
 @given('a font having {type} color')
@@ -92,6 +103,15 @@ def when_I_assign_value_to_font_color_theme_color(context, value):
     font = context.font
     new_value = None if value == 'None' else getattr(MSO_THEME_COLOR, value)
     font.color.theme_color = new_value
+
+
+@when('I assign {value} to font.highlight_color')
+def when_I_assign_value_to_font_highlight_color(context, value):
+    font = context.font
+    expected_value = (
+        None if value == 'None' else getattr(WD_COLOR_INDEX, value)
+    )
+    font.highlight_color = expected_value
 
 
 @when('I assign {value} to font.name')
@@ -168,6 +188,15 @@ def then_font_color_type_is_value(context, value):
         None if value == 'None' else getattr(MSO_COLOR_TYPE, value)
     )
     assert font.color.type == expected_value
+
+
+@then('font.highlight_color is {value}')
+def then_font_highlight_color_is_value(context, value):
+    font = context.font
+    expected_value = (
+        None if value == 'None' else getattr(WD_COLOR_INDEX, value)
+    )
+    assert font.highlight_color == expected_value
 
 
 @then('font.name is {value}')

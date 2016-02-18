@@ -84,6 +84,74 @@ class WD_BREAK_TYPE(object):
 WD_BREAK = WD_BREAK_TYPE
 
 
+class WD_COLOR_INDEX(XmlEnumeration):
+    """
+    Specifies a standard preset color to apply. Used for font highlighting and
+    perhaps other applications.
+    """
+
+    __ms_name__ = 'WdColorIndex'
+
+    __url__ = 'https://msdn.microsoft.com/EN-US/library/office/ff195343.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            None, None, None, 'Color is inherited from the style hierarchy.'
+        ),
+        XmlMappedEnumMember(
+            'AUTO', 0, 'default', 'Automatic color. Default; usually black.'
+        ),
+        XmlMappedEnumMember(
+            'BLACK', 1, 'black', 'Black color.'
+        ),
+        XmlMappedEnumMember(
+            'BLUE', 2, 'blue', 'Blue color'
+        ),
+        XmlMappedEnumMember(
+            'BRIGHT_GREEN', 4, 'green', 'Bright green color.'
+        ),
+        XmlMappedEnumMember(
+            'DARK_BLUE', 9, 'darkBlue', 'Dark blue color.'
+        ),
+        XmlMappedEnumMember(
+            'DARK_RED', 13, 'darkRed', 'Dark red color.'
+        ),
+        XmlMappedEnumMember(
+            'DARK_YELLOW', 14, 'darkYellow', 'Dark yellow color.'
+        ),
+        XmlMappedEnumMember(
+            'GRAY_25', 16, 'lightGray', '25% shade of gray color.'
+        ),
+        XmlMappedEnumMember(
+            'GRAY_50', 15, 'darkGray', '50% shade of gray color.'
+        ),
+        XmlMappedEnumMember(
+            'GREEN', 11, 'darkGreen', 'Green color.'
+        ),
+        XmlMappedEnumMember(
+            'PINK', 5, 'magenta', 'Pink color.'
+        ),
+        XmlMappedEnumMember(
+            'RED', 6, 'red', 'Red color.'
+        ),
+        XmlMappedEnumMember(
+            'TEAL', 10, 'darkCyan', 'Teal color.'
+        ),
+        XmlMappedEnumMember(
+            'TURQUOISE', 3, 'cyan', 'Turquoise color.'
+        ),
+        XmlMappedEnumMember(
+            'VIOLET', 12, 'darkMagenta', 'Violet color.'
+        ),
+        XmlMappedEnumMember(
+            'WHITE', 8, 'white', 'White color.'
+        ),
+        XmlMappedEnumMember(
+            'YELLOW', 7, 'yellow', 'Yellow color.'
+        ),
+    )
+
+
 class WD_LINE_SPACING(XmlEnumeration):
     """
     Specifies a line spacing format to be applied to a paragraph.
