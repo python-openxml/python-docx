@@ -2,10 +2,6 @@
 Picture
 =======
 
-
-Overview
---------
-
 Word allows a picture to be placed in a graphical object container, either an
 inline shape or a floating shape.
 

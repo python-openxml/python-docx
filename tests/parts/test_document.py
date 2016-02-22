@@ -15,7 +15,9 @@ from docx.package import Package
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
+from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
+from docx.settings import Settings
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 from docx.text.paragraph import Paragraph
@@ -44,6 +46,11 @@ class DescribeDocumentPart(object):
         image_parts.get_or_add_image_part.assert_called_once_with(path)
         document_part.relate_to.assert_called_once_with(image_part_, RT.IMAGE)
         assert (rId, image) == (rId_, image_)
+
+    def it_provides_access_to_the_document_settings(self, settings_fixture):
+        document_part, settings_ = settings_fixture
+        settings = document_part.settings
+        assert settings is settings_
 
     def it_provides_access_to_the_document_styles(self, styles_fixture):
         document_part, styles_ = styles_fixture
@@ -109,6 +116,26 @@ class DescribeDocumentPart(object):
             style_or_name, style_type
         )
         assert style_id is style_id_
+
+    def it_provides_access_to_its_settings_part_to_help(
+            self, settings_part_get_fixture):
+        document_part, settings_part_ = settings_part_get_fixture
+        settings_part = document_part._settings_part
+        document_part.part_related_by.assert_called_once_with(RT.SETTINGS)
+        assert settings_part is settings_part_
+
+    def it_creates_default_settings_part_if_not_present_to_help(
+            self, settings_part_create_fixture):
+        document_part, SettingsPart_, settings_part_ = (
+            settings_part_create_fixture
+        )
+        settings_part = document_part._settings_part
+
+        SettingsPart_.default.assert_called_once_with(document_part.package)
+        document_part.relate_to.assert_called_once_with(
+            settings_part_, RT.SETTINGS
+        )
+        assert settings_part is settings_part_
 
     def it_provides_access_to_its_styles_part_to_help(
             self, styles_part_get_fixture):
@@ -218,6 +245,29 @@ class DescribeDocumentPart(object):
         return document_part, file_
 
     @pytest.fixture
+    def settings_fixture(self, _settings_part_prop_, settings_part_,
+                         settings_):
+        document_part = DocumentPart(None, None, None, None)
+        _settings_part_prop_.return_value = settings_part_
+        settings_part_.settings = settings_
+        return document_part, settings_
+
+    @pytest.fixture
+    def settings_part_create_fixture(
+            self, package_, part_related_by_, SettingsPart_, settings_part_,
+            relate_to_):
+        document_part = DocumentPart(None, None, None, package_)
+        part_related_by_.side_effect = KeyError
+        SettingsPart_.default.return_value = settings_part_
+        return document_part, SettingsPart_, settings_part_
+
+    @pytest.fixture
+    def settings_part_get_fixture(self, part_related_by_, settings_part_):
+        document_part = DocumentPart(None, None, None, None)
+        part_related_by_.return_value = settings_part_
+        return document_part, settings_part_
+
+    @pytest.fixture
     def styles_fixture(self, _styles_part_prop_, styles_part_, styles_):
         document_part = DocumentPart(None, None, None, None)
         _styles_part_prop_.return_value = styles_part_
@@ -288,6 +338,22 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def relate_to_(self, request):
         return method_mock(request, DocumentPart, 'relate_to')
+
+    @pytest.fixture
+    def SettingsPart_(self, request):
+        return class_mock(request, 'docx.parts.document.SettingsPart')
+
+    @pytest.fixture
+    def settings_(self, request):
+        return instance_mock(request, Settings)
+
+    @pytest.fixture
+    def settings_part_(self, request):
+        return instance_mock(request, SettingsPart)
+
+    @pytest.fixture
+    def _settings_part_prop_(self, request):
+        return property_mock(request, DocumentPart, '_settings_part')
 
     @pytest.fixture
     def style_(self, request):

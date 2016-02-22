@@ -2,10 +2,6 @@
 Inline shape
 ============
 
-
-Overview
---------
-
 Word allows a graphical object to be placed into a document as an inline
 object. An inline shape appears as a ``<w:drawing>`` element as a child of
 a ``<w:r>`` element.

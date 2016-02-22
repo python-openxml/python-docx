@@ -15,5 +15,3 @@ Feature: Access a document style
       | styles-state   | style-count |
       | a styles part  |      6      |
       | no styles part |      4      |
-
-

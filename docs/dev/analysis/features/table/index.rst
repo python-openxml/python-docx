@@ -8,6 +8,16 @@ correspond directly to the visual columns.
 
 All table content is contained in its cells.
 
+In addition to this overview, there are the following more specialized
+feature analyses:
+
+.. toctree::
+   :titlesonly:
+
+   table-props
+   table-cell
+   cell-merge
+
 
 Specimen XML
 ------------
@@ -199,19 +209,3 @@ Schema Definitions
       <xsd:pattern value="[0-9]+(\.[0-9]+)?(mm|cm|in|pt|pc|pi)"/>
     </xsd:restriction>
   </xsd:simpleType>
-
-
-Resources
----------
-
-* `Tables.Add Method on MSDN`_
-
-.. _Tables.Add Method on MSDN:
-   http://msdn.microsoft.com/en-us/library/office/microsoft.office.interop.wo
-   rd.tables.add(v=office.14).aspx
-
-* `Table Members on MSDN`_
-
-.. _`Table Members on MSDN`:
-   http://msdn.microsoft.com/en-us/library/office/microsoft.office.interop.wo
-   od.table_members(v=office.14).aspx

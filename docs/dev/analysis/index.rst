@@ -10,20 +10,16 @@ Feature Analysis
 .. toctree::
    :titlesonly:
 
+   features/header-footer
+   features/headerfooter
+   features/settings
    features/text/index
+   features/table/index
    features/styles/index
+   features/shapes/index
    features/coreprops
-   features/cell-merge
-   features/table
-   features/table-props
-   features/table-cell
    features/numbering
    features/sections
-   features/shapes
-   features/shapes-inline
-   features/shapes-inline-size
-   features/picture
-   features/header-footer
 
 
 Schema Analysis

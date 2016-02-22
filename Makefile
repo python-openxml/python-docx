@@ -24,11 +24,14 @@ clean:
 	find . -type f -name \*.pyc -exec rm {} \;
 	rm -rf dist *.egg-info .coverage .DS_Store
 
+cleandocs:
+	$(MAKE) -C docs clean
+
 coverage:
 	py.test --cov-report term-missing --cov=docx tests/
 
 docs:
-	$(MAKE) -C docs clean html
+	$(MAKE) -C docs html
 
 readme:
 	rst2html README.rst >README.html
