@@ -8,17 +8,21 @@ Many documents use headers in order to have a logo at the top of every page.
 
 Or use a footer to have company contact information at the bottom of every page.
 
+For brevity in the discussion below I will occasionally use the term *header* to refer to either a header and footer object, trusting the reader to understand its applicability to either type of object.
+
 Structure
 =========
 
-A header consists of five parts:
+For the sake of simplicity, we will assume we have a single header applied to all pages.
+
+This header consists of five parts:
 
 1. /word/header1.xml
 --------------------
 
 This file contains the header contents. It could be named anything but it is often named header1.
 
-A file can contain multiple headers and/or multiple footers. Each one should be stored in a different file:
+A file can contain multiple headers. Each one should be stored in a different file:
 ``/word/header1.xml``, ``/word/header2.xml``, etc.
 
 Here's a simple example:
@@ -45,7 +49,7 @@ Footers are identical to headers except they use the ``<w:ftr>`` tag instead of 
 
 This file contains unique relationship ids between all the different parts of a document: settings, styles, numbering, images, themes, fonts, etc.
 
-When a header or footer is present, it too will have a unique relationship id.
+When a header, it too will have a unique relationship id.
 
 Here's an example, with the header as defined above having ``rId3``:
 
@@ -62,10 +66,7 @@ Here's an example, with the header as defined above having ``rId3``:
 
 This file is the motherload: it contains the bulk of the document contents.
 
-With respect to the headers or footers though, this file contains very little:
-all it contains is a reference to the header or footer in the sentinel sectPr
-(the final and often only sectPr in a document just before the closing body tag)
-via the relationship id defined in ``/word/_rels/document.xml.rels``
+With respect to the headers though, this file contains very little: all it contains is a reference to the header in the sentinel sectPr (the final and often only sectPr in a document just before the closing body tag) via the relationship id defined in ``/word/_rels/document.xml.rels``
 
 Here's an example, again with the ``header1.xml`` as ``rId3``:
 
@@ -85,10 +86,7 @@ Here's an example, again with the ``header1.xml`` as ``rId3``:
 Footers are identical to headers except they use the ``<w:footerReference>``
 instead of the ``<w:headerReference>`` tag.
 
-The ``<w:headerReference>`` (if present) should be the first element of the sentinel sectPr,
-and the ``<w:footerReference>`` should be the next element.
-(The OpenXML SDK 2.5 docx validator gives a warning if the ``<w:headerReference>``
-is not the first element.)
+The ``<w:headerReference>`` (if present) should be the first element of the sentinel sectPr, and the ``<w:footerReference>`` should be the next element.  (The OpenXML SDK 2.5 docx validator gives a warning if the ``<w:headerReference>`` is not the first element.)
 
 4. /[Content Types].xml
 -----------------------
@@ -114,6 +112,9 @@ The footer if present also needs to be added. Its ``ContentType`` should be
 
     "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"
 
+All header and footer files referenced in document.xml.rels need to be added to ``[Content Types].xml.``
+
+
 5. /word/_rels/header1.xml.rels
 -------------------------------
 
@@ -135,6 +136,139 @@ The relationships file would be stored ``/word/_rels/header1.xml.rels``. It will
    </Relationships>
 
 Note the ``rIds`` of the header are completely independent of the relationships of the main ``document.xml``.
+
+
+All Pages, First Page, Even Pages, Odd Pages
+--------------------------------------------
+
+Each section can have three distinct header definitions and footer
+definitions. These apply to odd pages (the default), even pages, and the
+first page of the section. All three are optional.
+
+1. All Pages
+~~~~~~~~~~~~
+
+This most basic scenario was used above. When there is a single header of type ``default`` and ``settings.xml`` does not contain the ``w:evenAndOddHeaders`` element, then the header will appear on every page.
+
+.. code-block:: xml
+
+   <!-- document.xml -->
+   <w:body>
+       ...
+       <w:sectPr>
+           <w:headerReference w:type="default" r:id="rId3"/>
+           <w:pgSz w:w="12240" w:h="15840"/>
+           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
+           <w:cols w:space="720"/>
+           <w:docGrid w:linePitch="360"/>
+       </w:sectPr>
+   </w:body>
+
+2. Odd Pages
+~~~~~~~~~~~~
+
+The next scenario is just an odd header. In this scenario the ``document.xml`` is exactly the same as above, but the ``settings.xml`` contains the ``w:evenAndOddHeaders`` element.
+
+3. Even Pages
+~~~~~~~~~~~~~
+
+In this sceniario the ``settings.xml`` contains the ``w:evenAndOddHeaders`` element. And the ``document.xml`` looks exactly the same as the odd page scenario, except the ``w:type`` of the ``w:headerReference`` has changed from ``default`` to ``even``.
+
+.. code-block:: xml
+
+   <!-- document.xml -->
+   <w:body>
+       ...
+       <w:sectPr>
+           <w:headerReference w:type="default" r:id="rId3"/>
+           <w:pgSz w:w="12240" w:h="15840"/>
+           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
+           <w:cols w:space="720"/>
+           <w:docGrid w:linePitch="360"/>
+       </w:sectPr>
+   </w:body>
+
+4. Even and Odd Pages
+~~~~~~~~~~~~~~~~~~~~~
+
+In this scenario the document has two different headers: one for even pages, and another for odd pages. The ``settings.xml`` contains the ``w:evenAndOddHeaders`` element. And the ``document.xml`` has two ``w:headerReferences``:
+
+.. code-block:: xml
+
+   <!-- document.xml -->
+   <w:body>
+       ...
+       <w:sectPr>
+           <w:headerReference w:type="default" r:id="rId3"/>
+           <w:headerReference w:type="even" r:id="rId3"/>
+           <w:pgSz w:w="12240" w:h="15840"/>
+           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
+           <w:cols w:space="720"/>
+           <w:docGrid w:linePitch="360"/>
+       </w:sectPr>
+   </w:body>
+
+5. First Page
+~~~~~~~~~~~~~
+
+In this scenario a header appears on the first page and only the first page. The ``settings.xml`` may or may not contain the ``w:evenAndOddHeaders`` element. And the ``document.xml`` has a single ``w:headerReference`` of type ``first``:
+
+.. code-block:: xml
+
+   <!-- document.xml -->
+   <w:body>
+       ...
+       <w:sectPr>
+           <w:headerReference w:type="first" r:id="rId3"/>
+           <w:pgSz w:w="12240" w:h="15840"/>
+           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
+           <w:cols w:space="720"/>
+           <w:docGrid w:linePitch="360"/>
+       </w:sectPr>
+   </w:body>
+
+6. First Page Then All Pages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this scenario one header appears on the first page and a different header appears on all subsequent pages. The ``settings.xml`` does not contain the ``w:evenAndOddHeaders`` element. And the ``document.xml`` has two ``w:headerReferences``:
+
+.. code-block:: xml
+
+   <!-- document.xml -->
+   <w:body>
+       ...
+       <w:sectPr>
+           <w:headerReference w:type="default" r:id="rId3"/>
+           <w:headerReference w:type="first" r:id="rId4"/>
+           <w:pgSz w:w="12240" w:h="15840"/>
+           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
+           <w:cols w:space="720"/>
+           <w:docGrid w:linePitch="360"/>
+       </w:sectPr>
+   </w:body>
+
+
+6. First Page Then Even/Odd Pages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this scenario one header appears on the first page, and then alternating even/odd headers appear on all subsequent pages. The ``settings.xml`` contains the ``w:evenAndOddHeaders`` element. And the ``document.xml`` has two ``w:headerReferences``:
+
+.. code-block:: xml
+
+   <!-- document.xml -->
+   <w:body>
+       ...
+       <w:sectPr>
+           <w:headerReference w:type="default" r:id="rId3"/>
+           <w:headerReference w:type="first" r:id="rId4"/>
+           <w:headerReference w:type="even" r:id="rId5"/>
+           <w:pgSz w:w="12240" w:h="15840"/>
+           <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
+           <w:cols w:space="720"/>
+           <w:docGrid w:linePitch="360"/>
+       </w:sectPr>
+   </w:body>
+
 
 Note on Styles:
 ---------------
