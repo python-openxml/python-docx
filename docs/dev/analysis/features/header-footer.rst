@@ -138,12 +138,10 @@ The relationships file would be stored ``/word/_rels/header1.xml.rels``. It will
 Note the ``rIds`` of the header are completely independent of the relationships of the main ``document.xml``.
 
 
-All Pages, First Page, Even Pages, Odd Pages
+All Pages, Even Pages, Odd Pages, First Page
 --------------------------------------------
 
-Each section can have three distinct header definitions and footer
-definitions. These apply to odd pages (the default), even pages, and the
-first page of the section. All three are optional.
+There are seven different permutations of headers:
 
 1. All Pages
 ~~~~~~~~~~~~
@@ -248,7 +246,7 @@ In this scenario one header appears on the first page and a different header app
    </w:body>
 
 
-6. First Page Then Even/Odd Pages
+7. First Page Then Even/Odd Pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this scenario one header appears on the first page, and then alternating even/odd headers appear on all subsequent pages. The ``settings.xml`` contains the ``w:evenAndOddHeaders`` element. And the ``document.xml`` has two ``w:headerReferences``:
@@ -269,6 +267,8 @@ In this scenario one header appears on the first page, and then alternating even
        </w:sectPr>
    </w:body>
 
+It's also theoretically possible to have a first page header then just an even page header, or a first page then just an odd page header.
+
 
 Note on Styles:
 ---------------
@@ -279,42 +279,72 @@ The header and footer has access to all the normal styles defined in ``/word/sty
 Candidate Protocol
 ==================
 
+Section
+=======
+
 headers
 -------
 
-:class:`docx.document.Document` has a ``headers`` property which is a list of headers
-in the document of type :class:`docx.header.Header`:
+:class:`docx.section.Section` has a read_only ``headers`` property which is a list of headers
+in the section of type :class:`docx.header.Header`:
 
 .. code-block:: python
 
    >>> from docx import Document
    >>> document = Document('document_with_single_header.docx')
-   >>> isinstance(document.headers, list)
+   >>> section = document.sections[-1]
+   >>> isinstance(section.headers, list)
    True
-   >>> len(document.headers)
+   >>> len(section.headers)
    1
-   >>> header = document.headers[0]
-   >>> isinstance(header, Header)
-   True
+   >>> section.headers[0]
+   <docx.Header object at 0xdeadbeef0>
+
+This property is present in the MS API: https://msdn.microsoft.com/en-us/library/office/ff820779.aspx
+
+header
+----------------
+
+read-only property, returns the default type header if present, else ``None``
+
+even_page_header
+----------------
+
+read-only property, returns the even page header if present, else ``None``
+
+In theory an odd_page_header property could also be used. But for v1 we can just leave that to the user to figure out where their default header is an odd / even header.
+
+first_page_header
+-----------------
+
+read-only property, returns the first page header if present, else ``None``
 
 clear_headers
 -------------
 
-:class:`docx.document.Document` has a ``clear_headers`` method which removes all headers
-from the document
+:class:`docx.section.Section` has a ``clear_headers`` method which removes all headers
+from the section
 
 .. code-block:: python
 
    >>> from docx import Document
    >>> document = Document('document_with_single_header.docx')
-   >>> document.clear_headers()
-   >>> len(document.headers)
+   >>> section = document.sections[-1]
+   >>> section.clear_headers()
+   >>> len(section.headers)
    0
+
+If you wanted to clear all headers from every section you could iterate over every section and call ``clear_headers`` on each.
+
+By default the sections will then inherit the headers you define on the ``w:sectPr`` of ``w:body``. (TODO: IS THIS TRUE? CONFIRM!)
+
+This method also removes the ``<w:evenAndOddHeaders>`` element from ``settings.xml`` so that any subsequent headers added are added to all pages.
+
 
 add_header
 -------------
 
-:class:`docx.document.Document` has an ``add_header`` method which adds an instance
+:class:`docx.section.Section` has an ``add_header`` method which adds an instance
 of type :class:`docx.header.Header` with no text to the document and returns the new
 header instance.
 
@@ -322,38 +352,98 @@ header instance.
 
    >>> from docx import Document
    >>> document = Document('document_without_header.docx')
-   >>> header = document.add_header()
+   >>> section = document.sections[-1]
+   >>> header = section.add_header()
    >>> isinstance(header, Header)
    True
+   >>> header.type
+   'default'
 
-:class:`docx.document.Document`'s ``add_header`` method will raise an ``Exception`` (of type ?)
-if a header already exists on the document.
+:class:`docx.section.Section`'s ``add_header`` method will raise an ``Exception`` (of type ?)
+if a header of type default already exists on the document.
 
 .. code-block:: python
 
    >>> from docx import Document
-   >>> document = Document('document_with_single_header.docx')
-   >>> document.add_header()
-   *** Exception: Document has one or more headers. Remove those headers first!
+   >>> document = Document('document_with_default_header.docx')
+   >>> section = document.sections[-1]
+   >>> section.add_header()
+   *** Exception: Document already has a default header!
 
-The user should remove the existing headers explicitly and then they can add a header.
+The user should remove the existing header explicitly with clear_headers and then they can add a header.
+
+add_even_page_header
+--------------------
+
+:class:`docx.section.Section` has an ``add_even_page_header`` method which adds the
+``<w:evenAndOddHeaders>`` element to ``settings.xml`` (if not already present)
+and adds a header of type :class:`docx.header.Header` with no text to the document, and returns the new
+header instance.
 
 .. code-block:: python
 
-   >>> document.clear_headers()
-   >>> header = document.add_header()
+   >>> from docx import Document
+   >>> document = Document('document_without_header.docx')
+   >>> section = document.sections[-1]
+   >>> header = section.add_even_page_header()
    >>> isinstance(header, Header)
    True
 
-In the future I hope to add support for adding multiple headers,
-but for simplicity's sake, I'd like to leave it out for now.
+:class:`docx.section.Section`'s ``add_even_page_header`` method will raise an ``Exception`` (of type ?)
+if a header of type even already exists on the document.
 
-header.add_paragraph
---------------------
+.. code-block:: python
+
+   >>> from docx import Document
+   >>> document = Document('document_with_even_header.docx')
+   >>> section = document.sections[-1]
+   >>> section.add_even_page_header()
+   *** Exception: Document already has an even header!
+
+NOTE:
+
+Because ``add_even_page_header`` implicitly sets the ``<w:evenAndOddHeaders>`` property of ``settings.xml``, this could confuse people.
+
+They need to remove all headers with ``clear_headers`` and then ``add_header``.
+
+Still, that seems like the simplest way to expose this functionality so that users of the API don't have to understand all the internal implementation details of headers. Especially if in the docs it is specified that for even/odd page headers you first call ``add_header`` then call ``add_even_page_header``.
+
+add_first_page_header
+---------------------
+
+:class:`docx.section.Section` has an ``add_first_page_header`` method adds a header of type :class:`docx.header.Header` with no text to the document, and returns the new
+header instance.
+
+.. code-block:: python
+
+   >>> from docx import Document
+   >>> document = Document('document_without_header.docx')
+   >>> section = document.sections[-1]
+   >>> header = section.add_first_page_header()
+   >>> isinstance(header, Header)
+   True
+
+:class:`docx.section.Section`'s ``add_first_page_header`` method will raise an ``Exception`` (of type ?)
+if a header of type even already exists on the document.
+
+.. code-block:: python
+
+   >>> from docx import Document
+   >>> document = Document('document_with_first_header.docx')
+   >>> section = document.sections[-1]
+   >>> section.add_first_page_header()
+   *** Exception: Document already has a first header!
+
+
+Header
+======
 
 A :class:`docx.header.Header` instance behaves just like any other BlockItemContainer subclass
 (e.g. ``_Body``).
-It possesses methods for adding and removing child paragraphs, which in turn
+
+header.add_paragraph
+--------------------
+Headers possesses methods for adding and removing child paragraphs, which in turn
 have methods for adding and removing runs.
 
 .. code-block:: python
@@ -387,5 +477,4 @@ Styles work in the normal way on both paragraphs and runs.
 footer stuff
 ------------
 
-:class:`docx.document.Document` has all the same methods for footers
-(``footers``, ``clear_footers``, ``add_footers``)
+:class:`docx.document.Document` has all the same methods for footers.
