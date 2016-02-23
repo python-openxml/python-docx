@@ -88,7 +88,7 @@ instead of the ``<w:headerReference>`` tag.
 
 The ``<w:headerReference>`` (if present) should be the first element of the sentinel sectPr, and the ``<w:footerReference>`` should be the next element.  (The OpenXML SDK 2.5 docx validator gives a warning if the ``<w:headerReference>`` is not the first element.)
 
-4. /[Content Types].xml
+4. [Content Types].xml
 -----------------------
 
 If the header is present, it needs to be added to the ``[Content Types].xml`` file. Like so:
@@ -162,15 +162,17 @@ This most basic scenario was used above. When there is a single header of type `
        </w:sectPr>
    </w:body>
 
+
 2. Odd Pages
 ~~~~~~~~~~~~
 
 The next scenario is just an odd header. In this scenario the ``document.xml`` is exactly the same as above, but the ``settings.xml`` contains the ``w:evenAndOddHeaders`` element.
 
+
 3. Even Pages
 ~~~~~~~~~~~~~
 
-In this sceniario the ``settings.xml`` contains the ``w:evenAndOddHeaders`` element. And the ``document.xml`` looks exactly the same as the odd page scenario, except the ``w:type`` of the ``w:headerReference`` has changed from ``default`` to ``even``.
+In this scenario the ``settings.xml`` contains the ``w:evenAndOddHeaders`` element. And the ``document.xml`` looks exactly the same as the odd page scenario, except the ``w:type`` of the ``w:headerReference`` has changed from ``default`` to ``even``.
 
 .. code-block:: xml
 
@@ -178,13 +180,14 @@ In this sceniario the ``settings.xml`` contains the ``w:evenAndOddHeaders`` elem
    <w:body>
        ...
        <w:sectPr>
-           <w:headerReference w:type="default" r:id="rId3"/>
+           <w:headerReference w:type="even" r:id="rId3"/>
            <w:pgSz w:w="12240" w:h="15840"/>
            <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
            <w:cols w:space="720"/>
            <w:docGrid w:linePitch="360"/>
        </w:sectPr>
    </w:body>
+
 
 4. Even and Odd Pages
 ~~~~~~~~~~~~~~~~~~~~~
@@ -198,13 +201,14 @@ In this scenario the document has two different headers: one for even pages, and
        ...
        <w:sectPr>
            <w:headerReference w:type="default" r:id="rId3"/>
-           <w:headerReference w:type="even" r:id="rId3"/>
+           <w:headerReference w:type="even" r:id="rId4"/>
            <w:pgSz w:w="12240" w:h="15840"/>
            <w:pgMar w:top="1440" w:right="1800" w:bottom="1440" w:left="1800" w:header="720" w:footer="720" w:gutter="0"/>
            <w:cols w:space="720"/>
            <w:docGrid w:linePitch="360"/>
        </w:sectPr>
    </w:body>
+
 
 5. First Page
 ~~~~~~~~~~~~~
@@ -224,6 +228,7 @@ In this scenario a header appears on the first page and only the first page. The
            <w:docGrid w:linePitch="360"/>
        </w:sectPr>
    </w:body>
+
 
 6. First Page Then All Pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -280,7 +285,7 @@ Candidate Protocol
 ==================
 
 Section
-=======
+-------
 
 headers
 -------
@@ -312,7 +317,7 @@ even_page_header
 
 read-only property, returns the even page header if present, else ``None``
 
-In theory an odd_page_header property could also be used. But for v1 we can just leave that to the user to figure out where their default header is an odd / even header.
+In theory an odd_page_header property could also be added. But for v1 we can just leave that to the user to figure out where their ``default`` header represents an all-pages header and when it represents an odd-page header.
 
 first_page_header
 -----------------
@@ -338,7 +343,7 @@ If you wanted to clear all headers from every section you could iterate over eve
 
 By default the sections will then inherit the headers you define on the ``w:sectPr`` of ``w:body``. (TODO: IS THIS TRUE? CONFIRM!)
 
-This method also removes the ``<w:evenAndOddHeaders>`` element from ``settings.xml`` so that any subsequent headers added are added to all pages.
+This method also removes the ``<w:evenAndOddHeaders/>`` element from ``settings.xml`` so that any subsequent headers added are added to all pages.
 
 
 add_header
@@ -376,7 +381,7 @@ add_even_page_header
 --------------------
 
 :class:`docx.section.Section` has an ``add_even_page_header`` method which adds the
-``<w:evenAndOddHeaders>`` element to ``settings.xml`` (if not already present)
+``<w:evenAndOddHeaders/>`` element to ``settings.xml`` (if not already present)
 and adds a header of type :class:`docx.header.Header` with no text to the document, and returns the new
 header instance.
 
@@ -402,17 +407,20 @@ if a header of type even already exists on the document.
 
 NOTE:
 
-Because ``add_even_page_header`` implicitly sets the ``<w:evenAndOddHeaders>`` property of ``settings.xml``, this could confuse people.
+Because ``add_even_page_header`` implicitly sets the ``<w:evenAndOddHeaders/>`` property of ``settings.xml``, this could confuse people.
 
-They need to remove all headers with ``clear_headers`` and then ``add_header``.
+If they want to add a header to every page, they may need to remove all headers with ``clear_headers`` and then call ``add_header`` if a document already has ``<w:evenAndOddHeaders/>``.
 
-Still, that seems like the simplest way to expose this functionality so that users of the API don't have to understand all the internal implementation details of headers. Especially if in the docs it is specified that for even/odd page headers you first call ``add_header`` then call ``add_even_page_header``.
+Still, that seems like the simplest way to expose this functionality so that users of the API don't have to understand all the internal implementation details of headers.
+
+Especially if in the docs it is specified that for even/odd page headers you first call ``add_header`` then call ``add_even_page_header``.
+
+And the docs should also point out, if you want to add headers to a document that might already have them, it is generally a good idea to call ``clear_headers`` first then add your headers.
 
 add_first_page_header
 ---------------------
 
-:class:`docx.section.Section` has an ``add_first_page_header`` method adds a header of type :class:`docx.header.Header` with no text to the document, and returns the new
-header instance.
+:class:`docx.section.Section` has an ``add_first_page_header`` method adds a header of type :class:`docx.header.Header` with no text to the document, and returns the new header instance.
 
 .. code-block:: python
 
@@ -424,7 +432,7 @@ header instance.
    True
 
 :class:`docx.section.Section`'s ``add_first_page_header`` method will raise an ``Exception`` (of type ?)
-if a header of type even already exists on the document.
+if a header of type first already exists on the document.
 
 .. code-block:: python
 
