@@ -231,13 +231,6 @@ the one above::
     paragraph = document.add_paragraph('Lorem ipsum dolor sit amet.')
     paragraph.style = 'ListBullet'
 
-The style is specified using its style ID, 'ListBullet' in this example.
-Generally, the style ID is formed by removing the spaces in the style name as
-it appears in the Word user interface (UI). So the style 'List Number 3'
-would be specified as ``'ListNumber3'``. However, note that if you are using
-a localized version of Word, the style ID may be derived from the English
-style name and may not correspond so neatly to its style name in the Word UI.
-
 
 Applying bold and italic
 ------------------------
@@ -324,8 +317,17 @@ the same result as the lines above::
     run = paragraph.add_run('text with emphasis.')
     run.style = 'Emphasis'
 
-As with a paragraph style, the style ID is formed by removing the spaces in
-the name as it appears in the Word UI. So the style 'Subtle Emphasis' would
-be specified as ``'SubtleEmphasis'``. Note that if you are using
-a localized version of Word, the style ID may be derived from the English
-style name and may not correspond to its style name in the Word UI.
+Style Names and IDs
+-------------------
+
+Styles can be specified either using the name or the style ID. The style
+name is the full name, with spaces, that appears in the Word UI. The
+style ID is formed by removing the spaces in the name as it appears in
+the Word UI. So the style named ``'Subtle Emphasis'`` would have the ID
+``'SubtleEmphasis'``. Note that if you are using a localized version of
+Word, the style ID may be derived from the English style name and may
+not correspond to its style name in the Word UI. The style name is
+preferred since version 0.8.0.
+
+.. seealso:: `Identifying a style`_
+

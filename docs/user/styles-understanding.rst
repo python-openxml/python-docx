@@ -129,7 +129,9 @@ id is formed simply by removing spaces from the *localized* style name,
 however there are exceptions. Users of |docx| should generally avoid using
 the style id unless they are confident with the internals involved.
 
-A style's :attr:`type` is set at creation time and cannot be changed.
+A style's :attr:`type` is set at creation time and cannot be changed. The type
+refers to what elements a style can be applied to in the document. The types
+are character, paragraph, list and table.
 
 
 .. _builtin_styles:
