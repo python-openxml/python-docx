@@ -126,6 +126,17 @@ class Font(ElementProxy):
         self._set_bool_prop('vanish', value)
 
     @property
+    def highlight_color(self):
+        """
+        A member of :ref:`WdColorIndex` indicating the color of highlighting
+        applied, or `None` if no highlighting is applied.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.highlight_val
+
+    @property
     def italic(self):
         """
         Read/write tri-state value. When |True|, causes the text of the run
