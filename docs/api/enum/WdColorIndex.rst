@@ -3,6 +3,8 @@
 ``WD_COLOR_INDEX``
 ==================
 
+alias: **WD_COLOR**
+
 Specifies a standard preset color to apply. Used for font highlighting and
 perhaps other applications.
 

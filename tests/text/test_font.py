@@ -9,7 +9,7 @@ from __future__ import (
 )
 
 from docx.dml.color import ColorFormat
-from docx.enum.text import WD_UNDERLINE
+from docx.enum.text import WD_COLOR, WD_UNDERLINE
 from docx.shared import Pt
 from docx.text.font import Font
 
@@ -80,6 +80,10 @@ class DescribeFont(object):
         font, underline, expected_xml = underline_set_fixture
         font.underline = underline
         assert font._element.xml == expected_xml
+
+    def it_knows_its_highlight_color(self, highlight_get_fixture):
+        font, expected_value = highlight_get_fixture
+        assert font.highlight_color is expected_value
 
     # fixtures -------------------------------------------------------
 
@@ -173,6 +177,17 @@ class DescribeFont(object):
     def color_fixture(self, ColorFormat_, color_):
         font = Font(element('w:r'))
         return font, color_, ColorFormat_
+
+    @pytest.fixture(params=[
+        ('w:r',                                  None),
+        ('w:r/w:rPr',                            None),
+        ('w:r/w:rPr/w:highlight{w:val=default}', WD_COLOR.AUTO),
+        ('w:r/w:rPr/w:highlight{w:val=blue}',    WD_COLOR.BLUE),
+    ])
+    def highlight_get_fixture(self, request):
+        r_cxml, expected_value = request.param
+        font = Font(element(r_cxml), None)
+        return font, expected_value
 
     @pytest.fixture(params=[
         ('w:r',                               None),

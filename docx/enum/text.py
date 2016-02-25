@@ -84,6 +84,7 @@ class WD_BREAK_TYPE(object):
 WD_BREAK = WD_BREAK_TYPE
 
 
+@alias('WD_COLOR')
 class WD_COLOR_INDEX(XmlEnumeration):
     """
     Specifies a standard preset color to apply. Used for font highlighting and

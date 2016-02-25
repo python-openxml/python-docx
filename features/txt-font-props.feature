@@ -4,7 +4,6 @@ Feature: Get or set font properties
   I need a set of read/write properties on the Font object
 
 
-  @wip
   Scenario Outline: Get highlight color
     Given a font having <color> highlighting 
      Then font.highlight_color is <value>
