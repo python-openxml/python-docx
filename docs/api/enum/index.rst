@@ -12,6 +12,7 @@ can be found here:
    MsoThemeColorIndex
    WdAlignParagraph
    WdBuiltinStyle
+   WdColorIndex
    WdLineSpacing
    WdOrientation
    WdSectionStart

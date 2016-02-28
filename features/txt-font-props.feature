@@ -4,6 +4,29 @@ Feature: Get or set font properties
   I need a set of read/write properties on the Font object
 
 
+  Scenario Outline: Get highlight color
+    Given a font having <color> highlighting 
+     Then font.highlight_color is <value>
+
+    Examples: font.highlight_color values
+      | color           | value        |
+      | no              | None         |
+      | yellow          | YELLOW       |
+      | bright green    | BRIGHT_GREEN |
+
+
+  Scenario Outline: Set highlight color
+    Given a font having <color> highlighting
+     When I assign <value> to font.highlight_color
+     Then font.highlight_color is <value>
+
+    Examples: font.highlight_color values
+      | color           | value        |
+      | no              | YELLOW       |
+      | yellow          | None         |
+      | bright green    | BRIGHT_GREEN |
+      
+      
   Scenario Outline: Get typeface name
     Given a font having typeface name <name>
      Then font.name is <value>
