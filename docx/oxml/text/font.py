@@ -109,6 +109,14 @@ class CT_RPr(BaseOxmlElement):
             return None
         return highlight.val
 
+    @highlight_val.setter
+    def highlight_val(self, value):
+        if value is None:
+            self._remove_highlight()
+            return
+        highlight = self.get_or_add_highlight()
+        highlight.val = value
+
     @property
     def rFonts_ascii(self):
         """
