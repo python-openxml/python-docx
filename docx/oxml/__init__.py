@@ -14,7 +14,7 @@ from .ns import NamespacePrefixedTag, nsmap
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()
-oxml_parser = etree.XMLParser(remove_blank_text=True)
+oxml_parser = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
 oxml_parser.set_element_class_lookup(element_class_lookup)
 
 
@@ -73,6 +73,11 @@ register_element_cls('cp:coreProperties', CT_CoreProperties)
 from .document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
+
+from .header import CT_Hdr
+from .footer import CT_Ftr
+register_element_cls('w:hdr',      CT_Hdr)
+register_element_cls('w:ftr',      CT_Ftr)
 
 from .numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr

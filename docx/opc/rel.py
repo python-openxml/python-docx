@@ -30,6 +30,16 @@ class Relationships(dict):
             self._target_parts_by_rId[rId] = target
         return rel
 
+    def remove_relationship(self, rId, is_external=False):
+        """
+        Removes a relationship rId (only works with internal)
+        """
+        if is_external:
+            raise NotImplementedError('Cannot remove external relationships currently!')
+
+        del self._target_parts_by_rId[rId]
+        del self[rId]
+
     def get_or_add(self, reltype, target_part):
         """
         Return relationship of *reltype* to *target_part*, newly added if not

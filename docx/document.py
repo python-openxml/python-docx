@@ -8,6 +8,13 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from .oxml import OxmlElement
+from .oxml.header import CT_Hdr, CT_Ftr
+from .oxml.ns import qn, nsmap
+from .opc.constants import RELATIONSHIP_TYPE as RT, CONTENT_TYPE as CT
+from .opc.packuri import PackURI
+from .parts.header import HeaderPart, FooterPart
+from .header import Header, Footer
 from .blkcntnr import BlockItemContainer
 from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
@@ -99,6 +106,40 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+
+    @property
+    def headers(self):
+        raise NotImplementedError('todo')
+
+    def add_header(self):
+        """
+        removes all headers from doc then adds a new one
+        """
+        # TODO raise exception if header present, telling user to remove them first!
+        # dont clear headers invisibly
+        self.remove_headers()
+        return self._body.add_header()
+
+    def add_footer(self):
+        """
+        removes all footers from doc then adds a new one
+        """
+        # TODO raise exception if footer present, telling user to remove them first!
+        # dont clear footers invisibly
+        self.remove_footers()
+        return self._body.add_footer()
+
+    def remove_headers(self):
+        """
+        clears existing header elements and references from document
+        """
+        self._body.remove_headers()
+
+    def remove_footers(self):
+        """
+        clears existing footer elements and references from document
+        """
+        self._body.remove_footers()
 
     @property
     def core_properties(self):
@@ -204,6 +245,89 @@ class _Body(BlockItemContainer):
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
+
+    def add_header(self):
+        rel_id = self._parent.part.rels._next_rId
+
+        # make header_ref_elm
+        header_ref_elm_tag = 'w:headerReference'
+        header_attrs = {
+            qn('r:id'): rel_id,
+            qn('w:type'): "default"
+        }
+        header_ref_elm = OxmlElement(header_ref_elm_tag, attrs=header_attrs)
+
+        # make header_elm
+        header_elm = CT_Hdr.new()
+
+        # make target part
+        partname = PackURI('/word/header1.xml')
+        content_type = CT.WML_HEADER
+        header_part = HeaderPart(partname, content_type, header_elm, self._parent._part.package)
+
+        # make header instance (wrapper around elm)
+        header = Header(header_elm, self._parent, header_part)
+
+        reltype = nsmap['r'] + '/header'
+        self._parent.part.rels.add_relationship(reltype, header_part, rel_id)
+
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.insert(0, header_ref_elm)
+        return header
+
+    def add_footer(self):
+        rel_id = self._parent.part.rels._next_rId
+
+        # make footer_ref_elm
+        footer_ref_elm_tag = 'w:footerReference'
+        footer_attrs = {
+            qn('r:id'): rel_id,
+            qn('w:type'): "default"
+        }
+        footer_ref_elm = OxmlElement(footer_ref_elm_tag, attrs=footer_attrs)
+
+        # make footer_elm
+        footer_elm = CT_Ftr.new()
+
+        # make target part
+        partname = PackURI('/word/footer1.xml')
+        content_type = CT.WML_FOOTER
+        footer_part = FooterPart(partname, content_type, footer_elm, self._parent._part.package)
+
+        # make footer instance (wrapper around elm)
+        footer = Footer(footer_elm, self, footer_part)
+
+        reltype = nsmap['r'] + '/footer'
+        self._parent.part.rels.add_relationship(reltype, footer_part, rel_id)
+
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        # TODO check whether there is headerRef and decide 0 or 1
+        sentinel_sectPr.insert(1, footer_ref_elm)
+        return footer
+
+    def remove_headers(self):
+        """
+        clears existing header elements and references from sentinel sect pr
+        """
+        header_elm_tag = 'w:headerReference'
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.remove_all(header_elm_tag)
+
+        header_rel_ids = [rel_id for rel_id, rel in self._parent.part.rels.items() if rel.reltype == RT.HEADER]
+        for rel_id in header_rel_ids:
+            self.part.rels.remove_relationship(rel_id)
+
+    def remove_footers(self):
+        """
+        clears existing footer elements and references from sentinel sect pr
+        """
+        footer_elm_tag = 'w:footerReference'
+        sentinel_sectPr = self._body.get_or_add_sectPr()
+        sentinel_sectPr.remove_all(footer_elm_tag)
+
+        footer_rel_ids = [rel_id for rel_id, rel in self._parent.part.rels.items() if rel.reltype == RT.FOOTER]
+        for rel_id in footer_rel_ids:
+            self.part.rels.remove_relationship(rel_id)
 
     def clear_content(self):
         """
