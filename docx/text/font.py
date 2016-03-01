@@ -136,6 +136,11 @@ class Font(ElementProxy):
             return None
         return rPr.highlight_val
 
+    @highlight_color.setter
+    def highlight_color(self, value):
+        rPr = self._element.get_or_add_rPr()
+        rPr.highlight_val = value
+
     @property
     def italic(self):
         """

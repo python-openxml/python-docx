@@ -85,6 +85,11 @@ class DescribeFont(object):
         font, expected_value = highlight_get_fixture
         assert font.highlight_color is expected_value
 
+    def it_can_change_its_highlight_color(self, highlight_set_fixture):
+        font, highlight_color, expected_xml = highlight_set_fixture
+        font.highlight_color = highlight_color
+        assert font._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -188,6 +193,26 @@ class DescribeFont(object):
         r_cxml, expected_value = request.param
         font = Font(element(r_cxml), None)
         return font, expected_value
+
+    @pytest.fixture(params=[
+        ('w:r',                                 WD_COLOR.AUTO,
+         'w:r/w:rPr/w:highlight{w:val=default}'),
+        ('w:r/w:rPr',                           WD_COLOR.BRIGHT_GREEN,
+         'w:r/w:rPr/w:highlight{w:val=green}'),
+        ('w:r/w:rPr/w:highlight{w:val=green}',  WD_COLOR.YELLOW,
+         'w:r/w:rPr/w:highlight{w:val=yellow}'),
+        ('w:r/w:rPr/w:highlight{w:val=yellow}', None,
+         'w:r/w:rPr'),
+        ('w:r/w:rPr',                           None,
+         'w:r/w:rPr'),
+        ('w:r',                                 None,
+         'w:r/w:rPr'),
+    ])
+    def highlight_set_fixture(self, request):
+        r_cxml, value, expected_cxml = request.param
+        font = Font(element(r_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return font, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:r',                               None),

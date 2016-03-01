@@ -15,7 +15,6 @@ Feature: Get or set font properties
       | bright green    | BRIGHT_GREEN |
 
 
-  @wip
   Scenario Outline: Set highlight color
     Given a font having <color> highlighting
      When I assign <value> to font.highlight_color
