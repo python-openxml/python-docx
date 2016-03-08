@@ -9,6 +9,8 @@ ones like structured document tags.
 from __future__ import absolute_import, print_function
 
 from .oxml.table import CT_Tbl
+from .oxml.text.paragraph import CT_P
+from .oxml.section import CT_SectPr
 from .shared import Parented
 from .text.paragraph import Paragraph
 
@@ -65,6 +67,21 @@ class BlockItemContainer(Parented):
         """
         from .table import Table
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
+
+    @property
+    def content(self):
+        """
+        A list containing the supported visible content (paragraphs and tables)
+        in this container, in document order. Read-only.
+        """
+        from .table import Table
+        ret = []
+        for element in self._element:
+            if isinstance(element, CT_P):
+                ret.append(Paragraph(element, self))
+            elif isinstance(element, CT_Tbl):
+                ret.append(Table(element, self))
+        return ret
 
     def _add_paragraph(self):
         """
