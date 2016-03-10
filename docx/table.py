@@ -72,6 +72,13 @@ class Table(Parented):
     def autofit(self, value):
         self._tblPr.autofit = value
 
+    @property
+    def caption(self):
+        """
+        :return: he caption of the table
+        """
+        return self._tblPr.caption
+
     def cell(self, row_idx, col_idx):
         """
         Return |_Cell| instance correponding to table cell at *row_idx*,
