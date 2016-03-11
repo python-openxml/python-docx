@@ -13,6 +13,8 @@ from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
 
+import copy
+
 
 class Paragraph(Parented):
     """
@@ -21,6 +23,12 @@ class Paragraph(Parented):
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+
+    def copy(self):
+        """
+        Returns a copy of this paragraph
+        """
+        return Paragraph(copy.deepcopy(self._element), None)
 
     def add_run(self, text=None, style=None):
         """

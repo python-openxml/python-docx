@@ -16,6 +16,7 @@ from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
+from docx.shared import ElementProxy
 
 import pytest
 
@@ -26,6 +27,18 @@ from ..unitutil.mock import (
 
 
 class DescribeParagraph(object):
+
+    def it_can_copy_and_paste_itself(self, copy_paste_fixture):
+        paragraph = copy_paste_fixture
+        assert isinstance(paragraph, Paragraph)
+
+        copy = paragraph.copy()
+        assert isinstance(copy, Paragraph)
+        assert copy is not paragraph
+        assert copy._parent is None
+
+        paragraph.paste(copy)
+        assert copy._parent is paragraph._parent
 
     def it_knows_its_paragraph_style(self, style_get_fixture):
         paragraph, style_id_, style_ = style_get_fixture
@@ -248,6 +261,14 @@ class DescribeParagraph(object):
         new_text_value = 'foo\tbar\rbaz\n'
         expected_text_value = 'foo\tbar\nbaz\n'
         return paragraph, new_text_value, expected_text_value
+
+    @pytest.fixture
+    def copy_paste_fixture(self):
+        bodyel = element('w:body')
+        parel = element('w:p')
+        bodyel.append(parel)
+        paragraph = Paragraph(parel, ElementProxy(bodyel))
+        return paragraph
 
     # fixture components ---------------------------------------------
 
