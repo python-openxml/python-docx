@@ -10,4 +10,5 @@ Text
    font-color
    underline
    run-content
+   hyperlink
    breaks

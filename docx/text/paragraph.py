@@ -11,6 +11,7 @@ from __future__ import (
 from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
+from .hyperlink import Hyperlink
 from ..shared import Parented
 
 
@@ -38,6 +39,31 @@ class Paragraph(Parented):
         if style:
             run.style = style
         return run
+
+    def add_hyperlink(self, text=None, url=None, style=None):
+        """
+        Append a run to this paragraph containing *text* and having character
+        style identified by style ID *style*. *text* can contain tab
+        (``\\t``) characters, which are converted to the appropriate XML form
+        for a tab. *text* can also include newline (``\\n``) or carriage
+        return (``\\r``) characters, each of which is converted to a line
+        break.
+        """
+
+        h = self._p.add_hyperlink()
+        hyperlink = Hyperlink(h, self)
+
+        r = h.add_r()
+        run = Run(r, hyperlink)
+        
+        if text:
+            run.text = text
+        if style:
+            run.style = style
+
+        if url:
+            hyperlink.url = url
+        return hyperlink
 
     @property
     def alignment(self):
