@@ -40,6 +40,20 @@ class DescribeParagraph(object):
         paragraph.paste(copy)
         assert copy._parent is paragraph._parent
 
+    def it_can_replace_text(self, replace_fixture):
+        paragraph = replace_fixture
+        assert isinstance(paragraph, Paragraph)
+
+        oldtext = paragraph.text
+        oldruns = paragraph.runs
+        ret = paragraph.replace('foo', 'bar')
+        assert ret is paragraph
+
+        newtext = paragraph.text
+        newruns = paragraph.runs
+        assert newtext == oldtext.replace('foo', 'bar')
+        assert len(oldruns) == len(newruns)
+
     def it_knows_its_paragraph_style(self, style_get_fixture):
         paragraph, style_id_, style_ = style_get_fixture
         style = paragraph.style
@@ -268,6 +282,22 @@ class DescribeParagraph(object):
         parel = element('w:p')
         bodyel.append(parel)
         paragraph = Paragraph(parel, ElementProxy(bodyel))
+        return paragraph
+
+    @pytest.fixture(params=[
+        ('w:p', ''),
+        ('w:p/w:r', ''),
+        ('w:p/w:r/w:t', ''),
+        ('w:p/w:r/w:t"foo"', 'foo'),
+        ('w:p/w:r/(w:t"foo", w:t"bar")', 'foobar'),
+        ('w:p/w:r/(w:t"fo ", w:t"bar")', 'fo bar'),
+        ('w:p/w:r/(w:t"foo", w:tab, w:t"bar")', 'foo\tbar'),
+        ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', 'foo\nbar'),
+        ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', 'foo\nbar'),
+    ])
+    def replace_fixture(self, request):
+        p_cxml, expected_text_value = request.param
+        paragraph = Paragraph(element(p_cxml), None)
         return paragraph
 
     # fixture components ---------------------------------------------
