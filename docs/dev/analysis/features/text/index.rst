@@ -5,6 +5,7 @@ Text
 .. toctree::
    :titlesonly:
 
+   hyperlink
    tab-stops
    font-highlight-color
    paragraph-format
