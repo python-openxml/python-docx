@@ -58,6 +58,12 @@ class Table(Parented):
                 tc.width = gridCol.w
         return _Row(tr, self)
 
+    def remove_row_at(self, n):
+        """
+        Remove row n with n base 1
+        """
+        self._tbl._remove_at_tr(n-1)
+
     @property
     def alignment(self):
         """

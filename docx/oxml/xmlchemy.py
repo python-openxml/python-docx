@@ -325,10 +325,11 @@ class _BaseChildElement(object):
         the child element MUST has a _element attribute
         """
         def _insert_child(obj, n, elm):
-            child = elm._element
             if elm is None:
                 new_method = getattr(obj, self._new_method_name)
                 child = new_method()
+            else:
+                child = elm._element
             return obj.insert_element_at(child, self._nsptagname, n)
 
         _insert_child.__doc__ = (
@@ -365,6 +366,21 @@ class _BaseChildElement(object):
             'he correct sequence.' % self._nsptagname
         )
         self._add_to_class(self._public_add_method_name, add_child)
+
+    def _add_remove_at(self):
+        """
+        Add an ``_remove_at()`` method to the element class for this child element.
+        the child element MUST has a _element attribute
+        """
+
+        def _remove_child(obj, n):
+            return obj.remove_element_at(self._nsptagname, n)
+
+        _remove_child.__doc__ = (
+            'Remove ``<%s>`` element in the required position. If position exceed max available position None is removed' % self._nsptagname
+        )
+        self._add_to_class(self._remove_at_method_name, _remove_child)
+
 
     def _add_to_class(self, name, method):
         """
@@ -431,6 +447,10 @@ class _BaseChildElement(object):
         parameter names for required attributes.
         """
         return 'add_%s' % self._prop_name
+
+    @lazyproperty
+    def _remove_at_method_name(self):
+        return '_remove_at_%s' % self._prop_name
 
     @lazyproperty
     def _remove_method_name(self):
@@ -582,6 +602,7 @@ class ZeroOrMore(_BaseChildElement):
         self._add_creator()
         self._add_inserter()
         self._add_inserter_at()
+        self._add_remove_at()
         self._add_adder()
         self._add_public_adder()
         delattr(element_cls, prop_name)
@@ -774,6 +795,15 @@ class _OxmlElementBase(etree.ElementBase):
             matching = self.findall(qn(tagname))
             for child in matching:
                 self.remove(child)
+
+    def remove_element_at(self, tagname, n):
+        """
+	    Remove the n-th element (if present)
+	    """
+        matching = self.findall(qn(tagname))
+        if (n < len(matching)):
+            child = matching[n]
+            self.remove(child)
 
     @property
     def xml(self):
