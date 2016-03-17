@@ -8,7 +8,4 @@
 
 More functionalities will be added.
 
-More information is available for the `python-docx`_.
-
-.. _`python-docx documentation`:
-   https://python-docx.readthedocs.org/en/latest/
+More information is available for the `python-docx` at https://python-docx.readthedocs.org/en/latest/
