@@ -13,11 +13,18 @@ from behave import given, then, when
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.shared import Pt
+from docx.text.tabstops import TabStops
 
 from helpers import test_docx
 
 
 # given ===================================================
+
+@given('a paragraph format')
+def given_a_paragraph_format(context):
+    document = Document(test_docx('tab-stops'))
+    context.paragraph_format = document.paragraphs[0].paragraph_format
+
 
 @given('a paragraph format having {prop_name} set {setting}')
 def given_a_paragraph_format_having_prop_set(context, prop_name, setting):
@@ -138,6 +145,12 @@ def when_I_assign_value_to_paragraph_format_prop(context, value, prop_name):
 
 
 # then =====================================================
+
+@then('paragraph_format.tab_stops is a TabStops object')
+def then_paragraph_format_tab_stops_is_a_tabstops_object(context):
+    tab_stops = context.paragraph_format.tab_stops
+    assert isinstance(tab_stops, TabStops)
+
 
 @then('paragraph_format.alignment is {value}')
 def then_paragraph_format_alignment_is_value(context, value):
