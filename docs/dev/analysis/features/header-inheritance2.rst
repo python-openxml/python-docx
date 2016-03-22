@@ -148,11 +148,21 @@ If any non-last section has "Link to Previous" set to False, the header used by 
 Steps:
 ------
 
+Scenario 1:
+
 > Set Section 3's Odd Header "Link to Previous" to False.
 
 XML:  Header is in sentinel sectPr
 
-> Set Section 3's Odd Header "Link to Previous" to True.
+Scenario 2:
+
 > Set Section 2's Odd Header "Link to Previous" to False.
 
 XML: Header is in sectPr of last paragraph of section 2, not in sentinel sectPr.
+
+Scenario 3:
+
+> Set Section 3's Odd Header "Link to Previous" to False.
+> Add Section 4
+
+XML: Header is in sectPr of last paragraph of section 3, not in sentinel sectPr.
