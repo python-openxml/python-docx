@@ -9,9 +9,10 @@ from __future__ import (
 )
 
 from ..enum.style import WD_STYLE_TYPE
+from ..shared import Parented
+from .hyperlink import Hyperlink
 from .parfmt import ParagraphFormat
 from .run import Run
-from ..shared import Parented
 
 
 class Paragraph(Parented):
@@ -21,6 +22,24 @@ class Paragraph(Parented):
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+
+    def add_hyperlink(self, text, address=None, anchor=None, style=None):
+
+        _h = self._p.add_hyperlink()
+        _r = _h.add_r()
+        hyperlink = Hyperlink(_h, self)
+        run = Run(_r, hyperlink)
+
+        run.text = text
+        if style:
+            run.style = style
+
+        if address:
+            hyperlink.address = address
+        if anchor:
+            hyperlink.anchor = anchor
+
+        return hyperlink
 
     def add_run(self, text=None, style=None):
         """
