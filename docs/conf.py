@@ -73,6 +73,8 @@ rst_epilog = """
 
 .. |BaseStyle| replace:: :class:`.BaseStyle`
 
+.. |BlockItemContainer| replace:: :class:`.BlockItemContainer`
+
 .. |_Body| replace:: :class:`._Body`
 
 .. |_Cell| replace:: :class:`._Cell`
