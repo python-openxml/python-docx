@@ -651,7 +651,7 @@ class CT_Tc(BaseOxmlElement):
         """
         The tbl element this tc element appears in.
         """
-        return self.xpath('./ancestor::w:tbl')[0]
+        return self.xpath('./ancestor::w:tbl[position()=1]')[0]
 
     @property
     def _tc_above(self):
@@ -675,7 +675,7 @@ class CT_Tc(BaseOxmlElement):
         """
         The tr element this tc element appears in.
         """
-        return self.xpath('./ancestor::w:tr')[0]
+        return self.xpath('./ancestor::w:tr[position()=1]')[0]
 
     @property
     def _tr_above(self):
