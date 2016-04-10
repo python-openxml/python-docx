@@ -14,7 +14,7 @@ from .ns import NamespacePrefixedTag, nsmap
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()
-oxml_parser = etree.XMLParser(remove_blank_text=True)
+oxml_parser = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
 oxml_parser.set_element_class_lookup(element_class_lookup)
 
 
