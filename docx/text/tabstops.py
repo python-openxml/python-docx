@@ -18,3 +18,9 @@ class TabStops(ElementProxy):
     using the `tab_stops` property of ParagraphFormat; it is not intended to
     be constructed directly.
     """
+
+    __slots__ = ('_pPr')
+
+    def __init__(self, element):
+        super(TabStops, self).__init__(element, None)
+        self._pPr = element
