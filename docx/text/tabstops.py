@@ -25,6 +25,12 @@ class TabStops(ElementProxy):
         super(TabStops, self).__init__(element, None)
         self._pPr = element
 
+    def __len__(self):
+        tabs = self._pPr.tabs
+        if tabs is None:
+            return 0
+        return len(tabs.tab_lst)
+
 
 class TabStop(ElementProxy):
     """

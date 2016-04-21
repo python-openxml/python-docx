@@ -4,7 +4,6 @@ Feature: Access TabStop objects
   I need methods to create, access, and remove a tab stop
 
 
-  @wip
   Scenario Outline: TabStops.__len__
     Given a tab_stops having <count> tab stops
      Then len(tab_stops) is <count>

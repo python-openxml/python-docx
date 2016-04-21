@@ -8,7 +8,8 @@ from ...enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from ...shared import Length
 from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
+    BaseOxmlElement, OneOrMore, OptionalAttribute, RequiredAttribute,
+    ZeroOrOne
 )
 
 
@@ -50,6 +51,7 @@ class CT_PPr(BaseOxmlElement):
     pageBreakBefore = ZeroOrOne('w:pageBreakBefore', successors=_tag_seq[4:])
     widowControl = ZeroOrOne('w:widowControl', successors=_tag_seq[6:])
     numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
+    tabs = ZeroOrOne('w:tabs', successors=_tag_seq[11:])
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
@@ -311,3 +313,10 @@ class CT_Spacing(BaseOxmlElement):
     before = OptionalAttribute('w:before', ST_TwipsMeasure)
     line = OptionalAttribute('w:line', ST_SignedTwipsMeasure)
     lineRule = OptionalAttribute('w:lineRule', WD_LINE_SPACING)
+
+
+class CT_TabStops(BaseOxmlElement):
+    """
+    ``<w:tabs>`` element, container for a sorted sequence of tab stops.
+    """
+    tab = OneOrMore('w:tab', successors=())
