@@ -169,6 +169,10 @@ rst_epilog = """
 
 .. |_TableStyle| replace:: :class:`._TableStyle`
 
+.. |TabStop| replace:: :class:`.TabStop`
+
+.. |TabStops| replace:: :class:`.TabStops`
+
 .. |_Text| replace:: :class:`._Text`
 
 .. |True| replace:: :class:`True`

@@ -24,3 +24,16 @@ class TabStops(ElementProxy):
     def __init__(self, element):
         super(TabStops, self).__init__(element, None)
         self._pPr = element
+
+
+class TabStop(ElementProxy):
+    """
+    An individual tab stop applying to a paragraph or style. Each of these is
+    a member of a set held in a |TabStops| object.
+    """
+
+    __slots__ = ('_tab')
+
+    def __init__(self, element):
+        super(TabStop, self).__init__(element, None)
+        self._tab = element
