@@ -10,6 +10,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.header import Header
 from docx.section import Section
 from docx.shared import Inches
 
@@ -17,6 +18,12 @@ from helpers import test_docx
 
 
 # given ====================================================
+
+@given('a section')
+def given_a_section(context):
+    document = Document(test_docx('sct-section-props'))
+    context.section = document.sections[0]
+
 
 @given('a section collection containing 3 sections')
 def given_a_section_collection_containing_3_sections(context):
@@ -135,6 +142,12 @@ def then_len_sections_is_3(context):
     assert len(sections) == 3, (
         'expected len(sections) of 3, got %s' % len(sections)
     )
+
+
+@then('section.header is a Header object')
+def then_section_header_is_a_Header_object(context):
+    section = context.section
+    assert isinstance(section.header, Header)
 
 
 @then('the reported {margin_side} margin is {inches} inches')
