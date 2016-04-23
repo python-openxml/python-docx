@@ -25,6 +25,16 @@ class TabStops(ElementProxy):
         super(TabStops, self).__init__(element, None)
         self._pPr = element
 
+    def __iter__(self):
+        """
+        Generate a TabStop object for each of the w:tab elements, in XML
+        document order.
+        """
+        tabs = self._pPr.tabs
+        if tabs is not None:
+            for tab in tabs.tab_lst:
+                yield TabStop(tab)
+
     def __len__(self):
         tabs = self._pPr.tabs
         if tabs is None:
