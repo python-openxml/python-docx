@@ -1,3 +1,4 @@
+.. _documents:
 
 Working with Documents
 ==========================
@@ -70,13 +71,13 @@ to (or aren't allowed to) interact with the file system. In practice this means
 you can pass an open file or StringIO/BytesIO stream object to open or save
 a document like so::
 
-    f = open('foobar.docx')
+    f = open('foobar.docx', 'rb')
     document = Document(f)
     f.close()
 
     # or
 
-    with open('foobar.docx') as f:
+    with open('foobar.docx', 'rb') as f:
         source_stream = StringIO(f.read())
     document = Document(source_stream)
     source_stream.close()
@@ -84,6 +85,10 @@ a document like so::
     target_stream = StringIO()
     document.save(target_stream)
 
+The ``'rb'`` file open mode parameter isn't required on all operating
+systems. It defaults to ``'r'`` which is enough sometimes, but the 'b'
+(selecting binary mode) is required on Windows and at least some versions of
+Linux to allow Zipfile to open the file.
 
 Okay, so you've got a document open and are pretty sure you can save it
 somewhere later. Next step is to get some content in there ...
