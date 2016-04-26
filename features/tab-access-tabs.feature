@@ -14,7 +14,6 @@ Feature: Access TabStop objects
       |   3   |
 
 
-  @wip
   Scenario: Access an existing TabStop object
     Given a tab_stops having 3 tab stops
      Then I can iterate the TabStops object

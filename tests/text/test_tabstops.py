@@ -34,7 +34,30 @@ class DescribeTabStops(object):
         assert count == expected_count
         assert TabStop_.call_args_list == expected_calls
 
+    def it_can_get_a_tab_stop_by_index(self, index_fixture):
+        tab_stops, idx, TabStop_, tab, tab_stop_ = index_fixture
+        tab_stop = tab_stops[idx]
+        TabStop_.assert_called_once_with(tab)
+        assert tab_stop is tab_stop_
+
+    def it_raises_on_indexed_access_when_empty(self):
+        tab_stops = TabStops(element('w:pPr'))
+        with pytest.raises(IndexError):
+            tab_stops[0]
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:pPr/w:tabs/w:tab{w:pos=0}',                                 0),
+        ('w:pPr/w:tabs/(w:tab{w:pos=1},w:tab{w:pos=2},w:tab{w:pos=3})', 1),
+        ('w:pPr/w:tabs/(w:tab{w:pos=4},w:tab{w:pos=5},w:tab{w:pos=6})', 2),
+    ])
+    def index_fixture(self, request, TabStop_, tab_stop_):
+        pPr_cxml, idx = request.param
+        pPr = element(pPr_cxml)
+        tab = pPr.xpath('./w:tabs/w:tab')[idx]
+        tab_stops = TabStops(pPr)
+        return tab_stops, idx, TabStop_, tab, tab_stop_
 
     @pytest.fixture(params=[
         ('w:pPr',                                              0),

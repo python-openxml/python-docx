@@ -25,6 +25,16 @@ class TabStops(ElementProxy):
         super(TabStops, self).__init__(element, None)
         self._pPr = element
 
+    def __getitem__(self, idx):
+        """
+        Enables list-style access by index.
+        """
+        tabs = self._pPr.tabs
+        if tabs is None:
+            raise IndexError('TabStops object is empty')
+        tab = tabs.tab_lst[idx]
+        return TabStop(tab)
+
     def __iter__(self):
         """
         Generate a TabStop object for each of the w:tab elements, in XML
