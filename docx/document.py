@@ -13,8 +13,8 @@ from .enum.section import WD_SECTION
 from .enum.text import WD_BREAK
 from .section import Section, Sections
 from .shared import ElementProxy, Emu
-
-
+from .oxml.shared import qn
+from .oxml import CT_P
 class Document(ElementProxy):
     """
     WordprocessingML (WML) document. Not intended to be constructed directly.
@@ -99,7 +99,37 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
-
+        doc_element = self._part._element
+        bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
+        for bookmark in bookmarks_list:
+            name = bookmark.get(qn('w:name'))
+            if name == bookmark_name:
+                par = bookmark.getparent()
+                if not isinstance(par, CT_P):
+                    return False
+                else:
+                    i = par.index(bookmark) + 1
+                    run = self.add_paragraph().add_run(text, style)
+                    run.underline = underline
+                    run.italic = italic
+                    run.bold = bold
+                    par.insert(i,run._element)
+                    return True
+        return False
+        tb = self.add_table(rows=rows, cols=cols, style=style)
+        doc_element = self._part._element
+        bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
+        for bookmark in bookmarks_list:
+            name = bookmark.get(qn('w:name'))
+            if name == bookmark_name:
+                par = bookmark.getparent()
+                if not isinstance(par, CT_P):
+                    return False
+                else:
+                    i = par.index(bookmark) + 1
+                    par.addnext(tb._element)
+                    return tb
+        return tb
     @property
     def core_properties(self):
         """
