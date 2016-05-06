@@ -195,6 +195,80 @@ class WD_LINE_SPACING(XmlEnumeration):
     )
 
 
+class WD_TAB_ALIGNMENT(XmlEnumeration):
+    """
+    Specifies the tab stop alignment to apply.
+    """
+
+    __ms_name__ = 'WdTabAlignment'
+
+    __url__ = 'https://msdn.microsoft.com/EN-US/library/office/ff195609.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'LEFT', 0, 'left', 'Left-aligned.'
+        ),
+        XmlMappedEnumMember(
+            'CENTER', 1, 'center', 'Center-aligned.'
+        ),
+        XmlMappedEnumMember(
+            'RIGHT', 2, 'right', 'Right-aligned.'
+        ),
+        XmlMappedEnumMember(
+            'DECIMAL', 3, 'decimal', 'Decimal-aligned.'
+        ),
+        XmlMappedEnumMember(
+            'BAR', 4, 'bar', 'Bar-aligned.'
+        ),
+        XmlMappedEnumMember(
+            'LIST', 6, 'list', 'List-aligned. (deprecated)'
+        ),
+        XmlMappedEnumMember(
+            'CLEAR', 101, 'clear', 'Clear an inherited tab stop.'
+        ),
+        XmlMappedEnumMember(
+            'END', 102, 'end', 'Right-aligned.  (deprecated)'
+        ),
+        XmlMappedEnumMember(
+            'NUM', 103, 'num', 'Left-aligned.  (deprecated)'
+        ),
+        XmlMappedEnumMember(
+            'START', 104, 'start', 'Left-aligned.  (deprecated)'
+        ),
+    )
+
+
+class WD_TAB_LEADER(XmlEnumeration):
+    """
+    Specifies the character to use as the leader with formatted tabs.
+    """
+
+    __ms_name__ = 'WdTabLeader'
+
+    __url__ = 'https://msdn.microsoft.com/en-us/library/office/ff845050.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'SPACES', 0, 'none', 'Spaces. Default.'
+        ),
+        XmlMappedEnumMember(
+            'DOTS', 1, 'dot', 'Dots.'
+        ),
+        XmlMappedEnumMember(
+            'DASHES', 2, 'hyphen', 'Dashes.'
+        ),
+        XmlMappedEnumMember(
+            'LINES', 3, 'underscore', 'Double lines.'
+        ),
+        XmlMappedEnumMember(
+            'HEAVY', 4, 'heavy', 'A heavy line.'
+        ),
+        XmlMappedEnumMember(
+            'MIDDLE_DOT', 5, 'middleDot', 'A vertically-centered dot.'
+        ),
+    )
+
+
 class WD_UNDERLINE(XmlEnumeration):
     """
     Specifies the style of underline applied to a run of characters.
