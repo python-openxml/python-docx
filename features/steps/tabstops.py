@@ -7,6 +7,7 @@ Step implementations for paragraph-related features
 from behave import given, then
 
 from docx import Document
+from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.text.tabstops import TabStop
 
 from helpers import test_docx
@@ -20,6 +21,30 @@ def given_a_tab_stops_having_count_tab_stops(context, count):
     document = Document(test_docx('tab-stops'))
     paragraph_format = document.paragraphs[paragraph_idx].paragraph_format
     context.tab_stops = paragraph_format.tab_stops
+
+
+@given('a tab stop 0.5 inches {in_or_out} from the paragraph left edge')
+def given_a_tab_stop_inches_from_paragraph_left_edge(context, in_or_out):
+    tab_idx = {'out': 0, 'in': 1}[in_or_out]
+    document = Document(test_docx('tab-stops'))
+    paragraph_format = document.paragraphs[2].paragraph_format
+    context.tab_stop = paragraph_format.tab_stops[tab_idx]
+
+
+@given('a tab stop having {alignment} alignment')
+def given_a_tab_stop_having_alignment_alignment(context, alignment):
+    tab_idx = {'LEFT': 0, 'CENTER': 1, 'RIGHT': 2}[alignment]
+    document = Document(test_docx('tab-stops'))
+    paragraph_format = document.paragraphs[1].paragraph_format
+    context.tab_stop = paragraph_format.tab_stops[tab_idx]
+
+
+@given('a tab stop having {leader} leader')
+def given_a_tab_stop_having_leader_leader(context, leader):
+    tab_idx = {'no specified': 0, 'a dotted': 2}[leader]
+    document = Document(test_docx('tab-stops'))
+    paragraph_format = document.paragraphs[1].paragraph_format
+    context.tab_stop = paragraph_format.tab_stops[tab_idx]
 
 
 # then =====================================================
@@ -43,3 +68,23 @@ def then_I_can_iterate_the_TabStops_object(context):
 def then_len_tab_stops_is_count(context, count):
     tab_stops = context.tab_stops
     assert len(tab_stops) == int(count)
+
+
+@then('tab_stop.alignment is {alignment}')
+def then_tab_stop_alignment_is_alignment(context, alignment):
+    expected_value = getattr(WD_TAB_ALIGNMENT, alignment)
+    tab_stop = context.tab_stop
+    assert tab_stop.alignment == expected_value
+
+
+@then('tab_stop.leader is {leader}')
+def then_tab_stop_leader_is_leader(context, leader):
+    expected_value = getattr(WD_TAB_LEADER, leader)
+    tab_stop = context.tab_stop
+    assert tab_stop.leader == expected_value
+
+
+@then('tab_stop.position is {position}')
+def then_tab_stop_position_is_position(context, position):
+    tab_stop = context.tab_stop
+    assert tab_stop.position == int(position)
