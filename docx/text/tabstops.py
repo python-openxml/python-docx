@@ -63,3 +63,11 @@ class TabStop(ElementProxy):
     def __init__(self, element):
         super(TabStop, self).__init__(element, None)
         self._tab = element
+
+    @property
+    def position(self):
+        """
+        The distance (in EMU) of this tab stop from the inside edge of the
+        paragraph. May be positive or negative.
+        """
+        return self._tab.pos

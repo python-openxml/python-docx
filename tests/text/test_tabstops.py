@@ -9,12 +9,27 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from docx.shared import Twips
 from docx.text.tabstops import TabStop, TabStops
 
 import pytest
 
 from ..unitutil.cxml import element
 from ..unitutil.mock import call, class_mock, instance_mock
+
+
+class DescribeTabStop(object):
+
+    def it_knows_its_position(self, position_get_fixture):
+        tab_stop, expected_value = position_get_fixture
+        assert tab_stop.position == expected_value
+
+    # fixture --------------------------------------------------------
+
+    @pytest.fixture
+    def position_get_fixture(self, request):
+        tab_stop = TabStop(element('w:tab{w:pos=720}'))
+        return tab_stop, Twips(720)
 
 
 class DescribeTabStops(object):
