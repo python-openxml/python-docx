@@ -4,7 +4,9 @@
 Custom element classes related to paragraph properties (CT_PPr).
 """
 
-from ...enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from ...enum.text import (
+    WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT
+)
 from ...shared import Length
 from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from ..xmlchemy import (
@@ -319,6 +321,7 @@ class CT_TabStop(BaseOxmlElement):
     """
     ``<w:tab>`` element, representing an individual tab stop.
     """
+    val = RequiredAttribute('w:val', WD_TAB_ALIGNMENT)
     pos = RequiredAttribute('w:pos', ST_SignedTwipsMeasure)
 
 

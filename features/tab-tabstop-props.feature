@@ -14,7 +14,6 @@ Feature: Tab stop properties
       |    out    | -457200  |
 
 
-  @wip
   Scenario Outline: Get TabStop.alignment
     Given a tab stop having <alignment> alignment
      Then tab_stop.alignment is <alignment>

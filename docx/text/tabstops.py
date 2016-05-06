@@ -65,6 +65,14 @@ class TabStop(ElementProxy):
         self._tab = element
 
     @property
+    def alignment(self):
+        """
+        A member of :ref:`WdTabAlignment` specifying the alignment setting
+        for this tab stop.
+        """
+        return self._tab.val
+
+    @property
     def position(self):
         """
         The distance (in EMU) of this tab stop from the inside edge of the
