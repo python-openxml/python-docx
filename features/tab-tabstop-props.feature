@@ -4,7 +4,6 @@ Feature: Tab stop properties
   I need a set of read/write properties on TabStop
 
 
-  @wip
   Scenario Outline: Get tab stop position
     Given a tab stop 0.5 inches <in-or-out> from the paragraph left edge
      Then tab_stop.position is <position>

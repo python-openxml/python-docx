@@ -315,6 +315,13 @@ class CT_Spacing(BaseOxmlElement):
     lineRule = OptionalAttribute('w:lineRule', WD_LINE_SPACING)
 
 
+class CT_TabStop(BaseOxmlElement):
+    """
+    ``<w:tab>`` element, representing an individual tab stop.
+    """
+    pos = RequiredAttribute('w:pos', ST_SignedTwipsMeasure)
+
+
 class CT_TabStops(BaseOxmlElement):
     """
     ``<w:tabs>`` element, container for a sorted sequence of tab stops.
