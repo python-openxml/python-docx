@@ -9,7 +9,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from docx.enum.text import WD_TAB_ALIGNMENT
+from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.shared import Twips
 from docx.text.tabstops import TabStop, TabStops
 
@@ -29,6 +29,10 @@ class DescribeTabStop(object):
         tab_stop, expected_value = alignment_get_fixture
         assert tab_stop.alignment == expected_value
 
+    def it_knows_its_leader(self, leader_get_fixture):
+        tab_stop, expected_value = leader_get_fixture
+        assert tab_stop.leader == expected_value
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -39,6 +43,17 @@ class DescribeTabStop(object):
         tab_stop_cxml, member = request.param
         tab_stop = TabStop(element(tab_stop_cxml))
         expected_value = getattr(WD_TAB_ALIGNMENT, member)
+        return tab_stop, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tab',                'SPACES'),
+        ('w:tab{w:leader=none}', 'SPACES'),
+        ('w:tab{w:leader=dot}',  'DOTS'),
+    ])
+    def leader_get_fixture(self, request):
+        tab_stop_cxml, member = request.param
+        tab_stop = TabStop(element(tab_stop_cxml))
+        expected_value = getattr(WD_TAB_LEADER, member)
         return tab_stop, expected_value
 
     @pytest.fixture

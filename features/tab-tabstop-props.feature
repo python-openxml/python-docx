@@ -24,7 +24,6 @@ Feature: Tab stop properties
       | RIGHT     |
 
 
-  @wip
   Scenario Outline: Get TabStop.leader
     Given a tab stop having <leader> leader
      Then tab_stop.leader is <value>
