@@ -56,7 +56,6 @@ Feature: Tab stop properties
       | a dotted     | DOTS   |
 
 
-  @wip
   Scenario Outline: Set tab stop leader
    Given a tab stop having <leader> leader
     When I assign <member> to tab_stop.leader
