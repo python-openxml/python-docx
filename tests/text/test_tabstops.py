@@ -44,6 +44,11 @@ class DescribeTabStop(object):
         tab_stop, expected_value = leader_get_fixture
         assert tab_stop.leader == expected_value
 
+    def it_can_change_its_leader(self, leader_set_fixture):
+        tab_stop, value, expected_xml = leader_set_fixture
+        tab_stop.leader = value
+        assert tab_stop._element.xml == expected_xml
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -77,6 +82,23 @@ class DescribeTabStop(object):
         tab_stop = TabStop(element(tab_stop_cxml))
         expected_value = getattr(WD_TAB_LEADER, member)
         return tab_stop, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tab',                  'DOTS',   'w:tab{w:leader=dot}'),
+        ('w:tab{w:leader=dot}',    'DASHES', 'w:tab{w:leader=hyphen}'),
+        ('w:tab{w:leader=hyphen}', 'SPACES', 'w:tab'),
+        ('w:tab{w:leader=hyphen}', None,     'w:tab'),
+        ('w:tab',                  'SPACES', 'w:tab'),
+        ('w:tab',                  None,     'w:tab'),
+    ])
+    def leader_set_fixture(self, request):
+        tab_stop_cxml, new_value, expected_cxml = request.param
+        tab_stop = TabStop(element(tab_stop_cxml))
+        value = (
+            None if new_value is None else getattr(WD_TAB_LEADER, new_value)
+        )
+        expected_xml = xml(expected_cxml)
+        return tab_stop, value, expected_xml
 
     @pytest.fixture
     def position_get_fixture(self, request):
