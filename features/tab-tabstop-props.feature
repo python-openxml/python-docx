@@ -35,7 +35,6 @@ Feature: Tab stop properties
       | RIGHT     |
 
 
-  @wip
   Scenario Outline: Set tab stop alignment
    Given a tab stop having <alignment> alignment
     When I assign <member> to tab_stop.alignment

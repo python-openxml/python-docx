@@ -72,6 +72,10 @@ class TabStop(ElementProxy):
         """
         return self._tab.val
 
+    @alignment.setter
+    def alignment(self, value):
+        self._tab.val = value
+
     @property
     def leader(self):
         """
