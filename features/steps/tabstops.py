@@ -4,7 +4,7 @@
 Step implementations for paragraph-related features
 """
 
-from behave import given, then
+from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
@@ -45,6 +45,25 @@ def given_a_tab_stop_having_leader_leader(context, leader):
     document = Document(test_docx('tab-stops'))
     paragraph_format = document.paragraphs[1].paragraph_format
     context.tab_stop = paragraph_format.tab_stops[tab_idx]
+
+
+# when ====================================================
+
+@when('I assign {member} to tab_stop.alignment')
+def when_I_assign_member_to_tab_stop_alignment(context, member):
+    value = getattr(WD_TAB_ALIGNMENT, member)
+    context.tab_stop.alignment = value
+
+
+@when('I assign {member} to tab_stop.leader')
+def when_I_assign_member_to_tab_stop_leader(context, member):
+    value = getattr(WD_TAB_LEADER, member)
+    context.tab_stop.leader = value
+
+
+@when('I assign {value} to tab_stop.position')
+def when_I_assign_value_to_tab_stop_value(context, value):
+    context.tab_stop.position = int(value)
 
 
 # then =====================================================
