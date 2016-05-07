@@ -15,7 +15,7 @@ from docx.text.tabstops import TabStop, TabStops
 
 import pytest
 
-from ..unitutil.cxml import element
+from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock
 
 
@@ -24,6 +24,12 @@ class DescribeTabStop(object):
     def it_knows_its_position(self, position_get_fixture):
         tab_stop, expected_value = position_get_fixture
         assert tab_stop.position == expected_value
+
+    def it_can_change_its_position(self, position_set_fixture):
+        tab_stop, value, tabs, new_idx, expected_xml = position_set_fixture
+        tab_stop.position = value
+        assert tab_stop._tab is tabs[new_idx]
+        assert tabs.xml == expected_xml
 
     def it_knows_its_alignment(self, alignment_get_fixture):
         tab_stop, expected_value = alignment_get_fixture
@@ -60,6 +66,31 @@ class DescribeTabStop(object):
     def position_get_fixture(self, request):
         tab_stop = TabStop(element('w:tab{w:pos=720}'))
         return tab_stop, Twips(720)
+
+    @pytest.fixture(params=[
+        ('w:tabs/w:tab{w:pos=360,w:val=left}',
+         Twips(720), 0,
+         'w:tabs/w:tab{w:pos=720,w:val=left}'),
+        ('w:tabs/(w:tab{w:pos=360,w:val=left},w:tab{w:pos=720,w:val=left})',
+         Twips(180), 0,
+         'w:tabs/(w:tab{w:pos=180,w:val=left},w:tab{w:pos=720,w:val=left})'),
+        ('w:tabs/(w:tab{w:pos=360,w:val=left},w:tab{w:pos=720,w:val=left})',
+         Twips(960), 1,
+         'w:tabs/(w:tab{w:pos=720,w:val=left},w:tab{w:pos=960,w:val=left})'),
+        ('w:tabs/(w:tab{w:pos=-72,w:val=left},w:tab{w:pos=-36,w:val=left})',
+         Twips(-48), 0,
+         'w:tabs/(w:tab{w:pos=-48,w:val=left},w:tab{w:pos=-36,w:val=left})'),
+        ('w:tabs/(w:tab{w:pos=-72,w:val=left},w:tab{w:pos=-36,w:val=left})',
+         Twips(-16), 1,
+         'w:tabs/(w:tab{w:pos=-36,w:val=left},w:tab{w:pos=-16,w:val=left})'),
+    ])
+    def position_set_fixture(self, request):
+        tabs_cxml, value, new_idx, expected_cxml = request.param
+        tabs = element(tabs_cxml)
+        tab = tabs.tab_lst[0]
+        tab_stop = TabStop(tab)
+        expected_xml = xml(expected_cxml)
+        return tab_stop, value, tabs, new_idx, expected_xml
 
 
 class DescribeTabStops(object):

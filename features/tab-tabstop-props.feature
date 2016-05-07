@@ -14,7 +14,6 @@ Feature: Tab stop properties
       |    out    | -457200  |
 
 
-  @wip
   Scenario Outline: Set TabStop.position
     Given a tab stop 0.5 inches in from the paragraph left edge
      When I assign <value> to tab_stop.position
