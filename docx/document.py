@@ -99,6 +99,7 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+    def bookmark_text(self, bookmark_name, text, underline = False, italic = False, bold = False, style = None):
         doc_element = self._part._element
         bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
         for bookmark in bookmarks_list:
@@ -116,6 +117,7 @@ class Document(ElementProxy):
                     par.insert(i,run._element)
                     return True
         return False
+    def bookmark_table(self, bookmark_name, rows, cols, style=None):
         tb = self.add_table(rows=rows, cols=cols, style=style)
         doc_element = self._part._element
         bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
