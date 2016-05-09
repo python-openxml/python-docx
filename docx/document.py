@@ -110,11 +110,15 @@ class Document(ElementProxy):
                     return False
                 else:
                     i = par.index(bookmark) + 1
-                    run = self.add_paragraph().add_run(text, style)
+                    p = self.add_paragraph()
+                    run = p.add_run(text, style)
                     run.underline = underline
                     run.italic = italic
                     run.bold = bold
                     par.insert(i,run._element)
+                    p = p._element
+                    p.getparent().remove(p)
+                    p._p = p._element = None
                     return True
         return False
     def bookmark_table(self, bookmark_name, rows, cols, style=None):
