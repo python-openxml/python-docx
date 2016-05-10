@@ -9,10 +9,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.header import Header
 from docx.section import Section, Sections
 from docx.shared import Inches
 
 from .unitutil.cxml import element, xml
+from .unitutil.mock import class_mock, instance_mock
 
 
 class DescribeSections(object):
@@ -109,7 +111,19 @@ class DescribeSection(object):
         setattr(section, margin_prop_name, new_value)
         assert section._sectPr.xml == expected_xml
 
+    def it_provides_access_to_its_header(self, header_fixture):
+        section, Header_, sectPr, header_ = header_fixture
+        header = section.header
+        Header_.assert_called_once_with(sectPr)
+        assert header is header_
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def header_fixture(self, Header_, header_):
+        sectPr = element('w:sectPr')
+        section = Section(sectPr)
+        return section, Header_, sectPr, header_
 
     @pytest.fixture(params=[
         ('w:sectPr/w:pgMar{w:left=120}',   'left_margin',      76200),
@@ -247,3 +261,15 @@ class DescribeSection(object):
         section = Section(element(initial_cxml))
         expected_xml = xml(expected_cxml)
         return section, new_start_type, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Header_(self, request, header_):
+        return class_mock(
+            request, 'docx.section.Header', return_value=header_
+        )
+
+    @pytest.fixture
+    def header_(self, request):
+        return instance_mock(request, Header)

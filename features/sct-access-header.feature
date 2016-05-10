@@ -3,7 +3,7 @@ Feature: Access section headers and footers
   As a developer using python-docx
   I need access to the section headers and footers
 
-  @wip
+
   Scenario: Access default header of section
     Given a section
      Then section.header is a Header object

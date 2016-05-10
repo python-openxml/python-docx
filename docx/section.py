@@ -8,6 +8,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import Sequence
 
+from .header import Header
+from .shared import lazyproperty
+
 
 class Sections(Sequence):
     """
@@ -79,6 +82,16 @@ class Section(object):
     @gutter.setter
     def gutter(self, value):
         self._sectPr.gutter = value
+
+    @lazyproperty
+    def header(self):
+        """
+        Return the |Header| object representing the default header for this
+        section. A |Header| object is always returned, whether such a header
+        is present or not. The header itself is added, updated, or removed
+        using the returned object.
+        """
+        return Header(self._sectPr)
 
     @property
     def header_distance(self):
