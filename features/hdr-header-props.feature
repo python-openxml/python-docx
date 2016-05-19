@@ -4,7 +4,6 @@ Feature: Header properties
   I need read/write properties on the Header object
 
 
-  @wip
   Scenario Outline: Get Header.is_linked_to_previous
     Given a header <having-or-no> definition
      Then header.is_linked_to_previous is <value>

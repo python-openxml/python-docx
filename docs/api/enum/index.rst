@@ -13,6 +13,7 @@ can be found here:
    WdAlignParagraph
    WdBuiltinStyle
    WdColorIndex
+   WdHeaderFooterIndex
    WdLineSpacing
    WdOrientation
    WdSectionStart

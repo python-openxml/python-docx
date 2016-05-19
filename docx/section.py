@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import Sequence
 
+from .enum.header import WD_HEADER_FOOTER
 from .header import Header
 from .shared import lazyproperty
 
@@ -91,7 +92,7 @@ class Section(object):
         is present or not. The header itself is added, updated, or removed
         using the returned object.
         """
-        return Header(self._sectPr)
+        return Header(self._sectPr, self, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def header_distance(self):

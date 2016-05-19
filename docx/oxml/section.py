@@ -8,9 +8,12 @@ from __future__ import absolute_import, print_function
 
 from copy import deepcopy
 
+from ..enum.header import WD_HEADER_FOOTER
 from ..enum.section import WD_ORIENTATION, WD_SECTION_START
 from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+from .xmlchemy import (
+    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+)
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -41,22 +44,18 @@ class CT_SectPr(BaseOxmlElement):
     """
     ``<w:sectPr>`` element, the container element for section properties.
     """
-    __child_sequence__ = (
-        'w:footnotePr', 'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar',
-        'w:paperSrc', 'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols',
-        'w:formProt', 'w:vAlign', 'w:noEndnote', 'w:titlePg',
-        'w:textDirection', 'w:bidi', 'w:rtlGutter', 'w:docGrid',
-        'w:printerSettings', 'w:sectPrChange',
+    _tag_seq = (
+        'w:headerReference', 'w:footerReference', 'w:footnotePr',
+        'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar', 'w:paperSrc',
+        'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols', 'w:formProt',
+        'w:vAlign', 'w:noEndnote', 'w:titlePg', 'w:textDirection', 'w:bidi',
+        'w:rtlGutter', 'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
     )
-    type = ZeroOrOne('w:type', successors=(
-        __child_sequence__[__child_sequence__.index('w:type')+1:]
-    ))
-    pgSz = ZeroOrOne('w:pgSz', successors=(
-        __child_sequence__[__child_sequence__.index('w:pgSz')+1:]
-    ))
-    pgMar = ZeroOrOne('w:pgMar', successors=(
-        __child_sequence__[__child_sequence__.index('w:pgMar')+1:]
-    ))
+    headerReference = ZeroOrMore('w:headerReference', successors=_tag_seq[1:])
+    type = ZeroOrOne('w:type', successors=_tag_seq[5:])
+    pgSz = ZeroOrOne('w:pgSz', successors=_tag_seq[6:])
+    pgMar = ZeroOrOne('w:pgMar', successors=_tag_seq[7:])
+    del _tag_seq
 
     @property
     def bottom_margin(self):
@@ -101,6 +100,17 @@ class CT_SectPr(BaseOxmlElement):
     def footer(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.footer = value
+
+    def get_headerReference_of_type(self, type_member):
+        """
+        Return the `w:headerReference` child having type attribute value
+        associated with *type_member*, or |None| if not present.
+        """
+        type_str = WD_HEADER_FOOTER.to_xml(type_member)
+        matches = self.xpath('w:headerReference[@w:type="%s"]' % type_str)
+        if matches:
+            return matches[0]
+        return None
 
     @property
     def gutter(self):

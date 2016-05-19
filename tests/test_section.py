@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
+from docx.enum.header import WD_HEADER_FOOTER
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.header import Header
 from docx.section import Section, Sections
@@ -114,7 +115,9 @@ class DescribeSection(object):
     def it_provides_access_to_its_header(self, header_fixture):
         section, Header_, sectPr, header_ = header_fixture
         header = section.header
-        Header_.assert_called_once_with(sectPr)
+        Header_.assert_called_once_with(
+            sectPr, section, WD_HEADER_FOOTER.PRIMARY
+        )
         assert header is header_
 
     # fixtures -------------------------------------------------------
