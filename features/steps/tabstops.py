@@ -8,6 +8,7 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
+from docx.shared import Inches
 from docx.text.tabstops import TabStop
 
 from helpers import test_docx
@@ -50,6 +51,12 @@ def given_a_tab_stop_having_leader_leader(context, leader):
 
 # when ====================================================
 
+@when('I add a tab stop')
+def when_I_add_a_tab_stop(context):
+    tab_stops = context.tab_stops
+    tab_stops.add_tab_stop(Inches(1.75))
+
+
 @when('I assign {member} to tab_stop.alignment')
 def when_I_assign_member_to_tab_stop_alignment(context, member):
     value = getattr(WD_TAB_ALIGNMENT, member)
@@ -65,6 +72,18 @@ def when_I_assign_member_to_tab_stop_leader(context, member):
 @when('I assign {value} to tab_stop.position')
 def when_I_assign_value_to_tab_stop_value(context, value):
     context.tab_stop.position = int(value)
+
+
+@when('I call tab_stops.clear_all()')
+def when_I_call_tab_stops_clear_all(context):
+    tab_stops = context.tab_stops
+    tab_stops.clear_all()
+
+
+@when('I remove a tab stop')
+def when_I_remove_a_tab_stop(context):
+    tab_stops = context.tab_stops
+    del tab_stops[1]
 
 
 # then =====================================================
@@ -108,6 +127,13 @@ def then_tab_stop_leader_is_leader(context, leader):
 def then_tab_stop_position_is_position(context, position):
     tab_stop = context.tab_stop
     assert tab_stop.position == int(position)
+
+
+@then('the removed tab stop is no longer present in tab_stops')
+def then_the_removed_tab_stop_is_no_longer_present_in_tab_stops(context):
+    tab_stops = context.tab_stops
+    assert tab_stops[0].position == Inches(1)
+    assert tab_stops[1].position == Inches(3)
 
 
 @then('the tab stops are sequenced in position order')
