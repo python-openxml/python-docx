@@ -12,3 +12,9 @@ Feature: Header properties
       | having-or-no | value |
       | having a     | False |
       | having no    | True  |
+
+  @wip
+  Scenario: Get Header.body
+    Given a header having a definition
+     Then header.body is a BlockItemContainer object
+      And header.body contains the text of the header

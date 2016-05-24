@@ -29,7 +29,20 @@ def given_a_header_having_or_no_definition(context, having_or_no):
 
 # then =====================================================
 
-@then(u'header.is_linked_to_previous is {value}')
+@then('header.body contains the text of the header')
+def then_header_body_contains_the_text_of_the_header(context):
+    header = context.header
+    text = header.body.paragraphs[0].text
+    assert text == 'S1HP1'
+
+
+@then('header.body is a BlockItemContainer object')
+def then_header_body_is_a_BlockItemContainer_object(context):
+    header = context.header
+    assert type(header.body).__name__ == 'BlockItemContainer'
+
+
+@then('header.is_linked_to_previous is {value}')
 def then_header_is_linked_to_previous_is_value(context, value):
     expected_value = {'True': True, 'False': False}[value]
     header = context.header
