@@ -333,3 +333,16 @@ class CT_TabStops(BaseOxmlElement):
     ``<w:tabs>`` element, container for a sorted sequence of tab stops.
     """
     tab = OneOrMore('w:tab', successors=())
+
+    def insert_tab_in_order(self, pos, align, leader):
+        """
+        Insert a newly created `w:tab` child element in *pos* order.
+        """
+        new_tab = self._new_tab()
+        new_tab.pos, new_tab.val, new_tab.leader = pos, align, leader
+        for tab in self.tab_lst:
+            if new_tab.pos < tab.pos:
+                tab.addprevious(new_tab)
+                return new_tab
+        self.append(new_tab)
+        return new_tab

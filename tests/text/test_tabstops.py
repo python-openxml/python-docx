@@ -143,7 +143,34 @@ class DescribeTabStops(object):
         with pytest.raises(IndexError):
             tab_stops[0]
 
+    def it_can_add_a_tab_stop(self, add_tab_fixture):
+        tab_stops, position, kwargs, expected_xml = add_tab_fixture
+        tab_stops.add_tab_stop(position, **kwargs)
+        assert tab_stops._element.xml == expected_xml
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:pPr', Twips(42), {},
+         'w:pPr/w:tabs/w:tab{w:pos=42,w:val=left}'),
+        ('w:pPr', Twips(72), {'alignment': WD_TAB_ALIGNMENT.RIGHT},
+         'w:pPr/w:tabs/w:tab{w:pos=72,w:val=right}'),
+        ('w:pPr', Twips(24),
+         {'alignment': WD_TAB_ALIGNMENT.CENTER,
+          'leader': WD_TAB_LEADER.DOTS},
+         'w:pPr/w:tabs/w:tab{w:pos=24,w:val=center,w:leader=dot}'),
+        ('w:pPr/w:tabs/w:tab{w:pos=42}', Twips(72), {},
+         'w:pPr/w:tabs/(w:tab{w:pos=42},w:tab{w:pos=72,w:val=left})'),
+        ('w:pPr/w:tabs/w:tab{w:pos=42}', Twips(24), {},
+         'w:pPr/w:tabs/(w:tab{w:pos=24,w:val=left},w:tab{w:pos=42})'),
+        ('w:pPr/w:tabs/w:tab{w:pos=42}', Twips(42), {},
+         'w:pPr/w:tabs/(w:tab{w:pos=42},w:tab{w:pos=42,w:val=left})'),
+    ])
+    def add_tab_fixture(self, request):
+        pPr_cxml, position, kwargs, expected_cxml = request.param
+        tab_stops = TabStops(element(pPr_cxml))
+        expected_xml = xml(expected_cxml)
+        return tab_stops, position, kwargs, expected_xml
 
     @pytest.fixture(params=[
         ('w:pPr/w:tabs/w:tab{w:pos=0}',                                 0),

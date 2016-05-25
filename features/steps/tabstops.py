@@ -53,7 +53,7 @@ def given_a_tab_stop_having_leader_leader(context, leader):
 @when('I add a tab stop')
 def when_I_add_a_tab_stop(context):
     tab_stops = context.tab_stops
-    tab_stops.add_tab(Inches(1.75))
+    tab_stops.add_tab_stop(Inches(1.75))
 
 
 @when('I assign {member} to tab_stop.alignment')
