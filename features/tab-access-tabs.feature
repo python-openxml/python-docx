@@ -32,7 +32,6 @@ Feature: Access TabStop objects
       |   3   |     4     |
 
 
-  @wip
   Scenario: TabStops.__delitem__()
     Given a tab_stops having 3 tab stops
      When I remove a tab stop

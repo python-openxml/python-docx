@@ -26,6 +26,19 @@ class TabStops(ElementProxy):
         super(TabStops, self).__init__(element, None)
         self._pPr = element
 
+    def __delitem__(self, idx):
+        """
+        Remove the tab at offset *idx* in this sequence.
+        """
+        tabs = self._pPr.tabs
+        try:
+            tabs.remove(tabs[idx])
+        except (AttributeError, IndexError):
+            raise IndexError('tab index out of range')
+
+        if len(tabs) == 0:
+            self._pPr.remove(tabs)
+
     def __getitem__(self, idx):
         """
         Enables list-style access by index.
