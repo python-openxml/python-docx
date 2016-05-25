@@ -148,7 +148,41 @@ class DescribeTabStops(object):
         tab_stops.add_tab_stop(position, **kwargs)
         assert tab_stops._element.xml == expected_xml
 
+    def it_can_delete_a_tab_stop(self, del_fixture):
+        tab_stops, idx, expected_xml = del_fixture
+        del tab_stops[idx]
+        assert tab_stops._element.xml == expected_xml
+
+    def it_raises_on_del_idx_invalid(self, del_raises_fixture):
+        tab_stops, idx = del_raises_fixture
+        with pytest.raises(IndexError) as exc:
+            del tab_stops[idx]
+        assert exc.value.args[0] == 'tab index out of range'
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:pPr/w:tabs/w:tab{w:pos=42}',                   0,
+         'w:pPr'),
+        ('w:pPr/w:tabs/(w:tab{w:pos=24},w:tab{w:pos=42})', 0,
+         'w:pPr/w:tabs/w:tab{w:pos=42}'),
+        ('w:pPr/w:tabs/(w:tab{w:pos=24},w:tab{w:pos=42})', 1,
+         'w:pPr/w:tabs/w:tab{w:pos=24}'),
+    ])
+    def del_fixture(self, request):
+        pPr_cxml, idx, expected_cxml = request.param
+        tab_stops = TabStops(element(pPr_cxml))
+        expected_xml = xml(expected_cxml)
+        return tab_stops, idx, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:pPr',                        0),
+        ('w:pPr/w:tabs/w:tab{w:pos=42}', 1),
+    ])
+    def del_raises_fixture(self, request):
+        tab_stops_cxml, idx = request.param
+        tab_stops = TabStops(element(tab_stops_cxml))
+        return tab_stops, idx
 
     @pytest.fixture(params=[
         ('w:pPr', Twips(42), {},
