@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from ..shared import ElementProxy
+from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
 
 
 class TabStops(ElementProxy):
@@ -50,6 +51,19 @@ class TabStops(ElementProxy):
         if tabs is None:
             return 0
         return len(tabs.tab_lst)
+
+    def add_tab_stop(self, position, alignment=WD_TAB_ALIGNMENT.LEFT,
+                     leader=WD_TAB_LEADER.SPACES):
+        """
+        Add a new tab stop at *position*. Tab alignment defaults to left, but
+        may be specified by passing a member of the :ref:`WdTabAlignment`
+        enumeration as *alignment*. An optional leader character can be
+        specified by passing a member of the :ref:`WdTabLeader` enumeration
+        as *leader*.
+        """
+        tabs = self._pPr.get_or_add_tabs()
+        tab = tabs.insert_tab_in_order(position, alignment, leader)
+        return TabStop(tab)
 
 
 class TabStop(ElementProxy):

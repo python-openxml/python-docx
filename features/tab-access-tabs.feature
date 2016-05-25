@@ -20,7 +20,6 @@ Feature: Access TabStop objects
       And I can access a tab stop by index
 
 
-  @wip
   Scenario Outline: TabStops.add_tab_stop()
     Given a tab_stops having <count> tab stops
      When I add a tab stop
