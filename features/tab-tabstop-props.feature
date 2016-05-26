@@ -25,7 +25,6 @@ Feature: Tab stop properties
       | -228600 |
       
       
-  @wip
   Scenario Outline: Maintain tab stop position order when changing position
     Given a tab_stops having 3 tab stops
       When I change the tab at <index> position to <value>

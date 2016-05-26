@@ -25,10 +25,8 @@ class DescribeTabStop(object):
         tab_stop, expected_value = position_get_fixture
         assert tab_stop.position == expected_value
 
-    def it_can_change_its_position(self, position_set_fixture):
-        tab_stop, value, expected_xml = position_set_fixture
-        tab_stop.position = value
-        assert tab_stop._element.xml == expected_xml
+    # NOTE:  Changing a tab's position invalidates an individual tab,
+    #        so is tested at the TabStops level rather than here.
 
     def it_knows_its_alignment(self, alignment_get_fixture):
         tab_stop, expected_value = alignment_get_fixture
@@ -104,16 +102,6 @@ class DescribeTabStop(object):
         tab_stop = TabStop(element('w:tab{w:pos=720}'))
         return tab_stop, Twips(720)
 
-    @pytest.fixture(params=[
-        ('w:tab{w:pos=360}', Twips(720),  'w:tab{w:pos=720}'),
-        ('w:tab{w:pos=360}', Twips(-720), 'w:tab{w:pos=-720}')
-    ])
-    def position_set_fixture(self, request):
-        tab_stop_cxml, value, expected_cxml = request.param
-        tab_stop = TabStop(element(tab_stop_cxml))
-        expected_xml = xml(expected_cxml)
-        return tab_stop, value, expected_xml
-
 
 class DescribeTabStops(object):
 
@@ -164,7 +152,34 @@ class DescribeTabStops(object):
         tab_stops.clear_all()
         assert tab_stops._element.xml == expected_xml
 
+    def it_can_change_tab_positions(self, position_set_fixture):
+        tab_stops, index, value, expected_xml = position_set_fixture
+        tab_stops[index].position = value
+        assert tab_stops._element.xml == expected_xml
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:pPr/w:tabs/w:tab{w:pos=360,w:val=left}', 0, Twips(720),
+         'w:pPr/w:tabs/w:tab{w:pos=720,w:val=left}'),
+        ('w:pPr/w:tabs/w:tab{w:pos=360,w:val=left}', 0, Twips(-720),
+         'w:pPr/w:tabs/w:tab{w:pos=-720,w:val=left}'),
+        ('w:pPr/w:tabs/(w:tab{w:pos=360,w:val=left},w:tab{w:pos=720,'
+         'w:val=center})', 0, Twips(900), 'w:pPr/w:tabs/(w:tab{w:pos=720,'
+         'w:val=center},w:tab{w:pos=900,w:val=left})'),
+        ('w:pPr/w:tabs/(w:tab{w:pos=360,w:val=left},w:tab{w:pos=720,'
+         'w:val=center})', 1, Twips(180), 'w:pPr/w:tabs/(w:tab{w:pos=180,'
+         'w:val=center},w:tab{w:pos=360,w:val=left})'),
+        ('w:pPr/w:tabs/(w:tab{w:pos=360,w:val=left},w:tab{w:pos=720,'
+         'w:val=center},w:tab{w:pos=900,w:val=left})', 0, Twips(800),
+         'w:pPr/w:tabs/(w:tab{w:pos=720,w:val=center},w:tab{w:pos=800,'
+         'w:val=left},w:tab{w:pos=900,w:val=left})'),
+    ])
+    def position_set_fixture(self, request):
+        pPr_cxml, index, value, expected_cxml = request.param
+        tab_stops = TabStops(element(pPr_cxml))
+        expected_xml = xml(expected_cxml)
+        return tab_stops, index, value, expected_xml
 
     @pytest.fixture(params=[
         'w:pPr',
