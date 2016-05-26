@@ -39,7 +39,6 @@ Feature: Access TabStop objects
       And the removed tab stop is no longer present in tab_stops
 
 
-  @wip
   Scenario: TabStops.clear_all()
     Given a tab_stops having 3 tab stops
      When I call tab_stops.clear_all()

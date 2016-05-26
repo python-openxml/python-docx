@@ -78,6 +78,12 @@ class TabStops(ElementProxy):
         tab = tabs.insert_tab_in_order(position, alignment, leader)
         return TabStop(tab)
 
+    def clear_all(self):
+        """
+        Remove all custom tab stops.
+        """
+        self._pPr._remove_tabs()
+
 
 class TabStop(ElementProxy):
     """
