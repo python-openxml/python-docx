@@ -175,7 +175,23 @@ class DescribeTabStops(object):
             del tab_stops[idx]
         assert exc.value.args[0] == 'tab index out of range'
 
+    def it_can_clear_all_its_tab_stops(self, clear_all_fixture):
+        tab_stops, expected_xml = clear_all_fixture
+        tab_stops.clear_all()
+        assert tab_stops._element.xml == expected_xml
+
     # fixture --------------------------------------------------------
+
+    @pytest.fixture(params=[
+        'w:pPr',
+        'w:pPr/w:tabs/w:tab{w:pos=42}',
+        'w:pPr/w:tabs/(w:tab{w:pos=24},w:tab{w:pos=42})',
+    ])
+    def clear_all_fixture(self, request):
+        pPr_cxml = request.param
+        tab_stops = TabStops(element(pPr_cxml))
+        expected_xml = xml('w:pPr')
+        return tab_stops, expected_xml
 
     @pytest.fixture(params=[
         ('w:pPr/w:tabs/w:tab{w:pos=42}',                   0,
