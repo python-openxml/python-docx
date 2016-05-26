@@ -17,13 +17,24 @@ Feature: Tab stop properties
   Scenario Outline: Set tab stop position
     Given a tab stop 0.5 inches in from the paragraph left edge
      When I assign <value> to tab_stop.position
-      Then tab_stop.position is <value>
+      Then tab_stops at position 1 is <value>
 
     Examples: tab stop positions
       |  value  |
       |  228600 |
       | -228600 |
-
+      
+      
+  @wip
+  Scenario Outline: Maintain tab stop position order when changing position
+    Given a tab_stops having 3 tab stops
+      When I change the tab at <index> position to <value>
+        Then the tab stops are sequenced in position order
+        
+      Examples: tab stop positions
+      | index | value   |
+      | 0     | 2285000 |
+      | 2     | 1371600 | 
 
   Scenario Outline: Get tab stop alignment
     Given a tab stop having <alignment> alignment

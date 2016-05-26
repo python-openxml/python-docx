@@ -29,6 +29,7 @@ def given_a_tab_stop_inches_from_paragraph_left_edge(context, in_or_out):
     tab_idx = {'out': 0, 'in': 1}[in_or_out]
     document = Document(test_docx('tab-stops'))
     paragraph_format = document.paragraphs[2].paragraph_format
+    context.tab_stops = paragraph_format.tab_stops
     context.tab_stop = paragraph_format.tab_stops[tab_idx]
 
 
@@ -69,8 +70,13 @@ def when_I_assign_member_to_tab_stop_leader(context, member):
 
 
 @when('I assign {value} to tab_stop.position')
-def when_I_assign_value_to_tab_stop_value(context, value):
+def when_I_assign_value_to_tab_stop_position(context, value):
     context.tab_stop.position = int(value)
+
+
+@when('I change the tab at {index} position to {value}')
+def when_I_change_the_tab_at_index_position_to_value(context, index, value):
+    context.tab_stops[int(index)].position = int(value)
 
 
 @when('I call tab_stops.clear_all()')
@@ -126,6 +132,14 @@ def then_tab_stop_leader_is_leader(context, leader):
 def then_tab_stop_position_is_position(context, position):
     tab_stop = context.tab_stop
     assert tab_stop.position == int(position)
+
+
+# Use this rather than the above method when you change the position,
+# as setting position invalidates context.tab_stop
+@then('tab_stops at position {index} is {value}')
+def then_tab_stops_at_position_index_is_value(context, index, value):
+    tab_stops = context.tab_stops
+    assert tab_stops[int(index)].position == int(value)
 
 
 @then('the removed tab stop is no longer present in tab_stops')
