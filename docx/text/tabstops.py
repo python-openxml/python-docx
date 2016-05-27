@@ -14,10 +14,11 @@ from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
 
 class TabStops(ElementProxy):
     """
-    A sequence providing access to the tab stops of a paragraph or paragraph
-    style. Supports iteration, indexed access, del, and len(). It is accesed
-    using the `tab_stops` property of ParagraphFormat; it is not intended to
-    be constructed directly.
+    A sequence of |TabStop| objects providing access to the tab stops of
+    a paragraph or paragraph style. Supports iteration, indexed access, del,
+    and len(). It is accesed using the :attr:`~.ParagraphFormat.tab_stops`
+    property of ParagraphFormat; it is not intended to be constructed
+    directly.
     """
 
     __slots__ = ('_pPr')
@@ -68,11 +69,13 @@ class TabStops(ElementProxy):
     def add_tab_stop(self, position, alignment=WD_TAB_ALIGNMENT.LEFT,
                      leader=WD_TAB_LEADER.SPACES):
         """
-        Add a new tab stop at *position*. Tab alignment defaults to left, but
-        may be specified by passing a member of the :ref:`WdTabAlignment`
-        enumeration as *alignment*. An optional leader character can be
-        specified by passing a member of the :ref:`WdTabLeader` enumeration
-        as *leader*.
+        Add a new tab stop at *position*, a |Length| object specifying the
+        location of the tab stop relative to the paragraph edge. A negative
+        *position* value is valid and appears in hanging indentation. Tab
+        alignment defaults to left, but may be specified by passing a member
+        of the :ref:`WdTabAlignment` enumeration as *alignment*. An optional
+        leader character can be specified by passing a member of the
+        :ref:`WdTabLeader` enumeration as *leader*.
         """
         tabs = self._pPr.get_or_add_tabs()
         tab = tabs.insert_tab_in_order(position, alignment, leader)
@@ -87,8 +90,8 @@ class TabStops(ElementProxy):
 
 class TabStop(ElementProxy):
     """
-    An individual tab stop applying to a paragraph or style. Each of these is
-    a member of a set held in a |TabStops| object.
+    An individual tab stop applying to a paragraph or style. Accessed using
+    list semantics on its containing |TabStops| object.
     """
 
     __slots__ = ('_tab')
@@ -101,7 +104,7 @@ class TabStop(ElementProxy):
     def alignment(self):
         """
         A member of :ref:`WdTabAlignment` specifying the alignment setting
-        for this tab stop.
+        for this tab stop. Read/write.
         """
         return self._tab.val
 
@@ -115,6 +118,7 @@ class TabStop(ElementProxy):
         A member of :ref:`WdTabLeader` specifying a repeating character used
         as a "leader", filling in the space spanned by this tab. Assigning
         |None| produces the same result as assigning `WD_TAB_LEADER.SPACES`.
+        Read/write.
         """
         return self._tab.leader
 
@@ -125,8 +129,9 @@ class TabStop(ElementProxy):
     @property
     def position(self):
         """
-        The distance (in EMU) of this tab stop from the inside edge of the
-        paragraph. May be positive or negative.
+        A |Length| object representing the distance of this tab stop from the
+        inside edge of the paragraph. May be positive or negative.
+        Read/write.
         """
         return self._tab.pos
 
