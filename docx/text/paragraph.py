@@ -10,7 +10,7 @@ from __future__ import (
 
 from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
-from .run import Run
+from .run import Run, Font
 from ..shared import Parented
 
 
@@ -83,7 +83,18 @@ class Paragraph(Parented):
         properties for this paragraph, such as line spacing and indentation.
         """
         return ParagraphFormat(self._element)
-
+    
+    @property
+    def font(self):
+        """
+        The |Font| object providing access to the character formatting
+        properties for this paragraph, such as font name and size.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return Font(pPr)
+        
     @property
     def runs(self):
         """
