@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from . import parse_xml
+from ..enum.table import WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
@@ -51,6 +52,38 @@ class CT_Row(BaseOxmlElement):
         """
         return self.getparent().tr_lst.index(self)
 
+    @property
+    def height(self):
+        """
+        Return the EMU height value represented in the ``./w:trPr/w:trHeight``
+        child element or |None| if not present.
+        """
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.height
+
+    @height.setter
+    def height(self, value):
+        trPr = self.get_or_add_trPr()
+        trPr.height = value
+
+    @property
+    def height_rule(self):
+        """
+        Return the height rule represented in the ``./w:trPr/w:trHeight``
+        child element or |None| if not present.
+        """
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.height_rule
+
+    @height_rule.setter
+    def height_rule(self, value):
+        trPr = self.get_or_add_trPr()
+        trPr.height_rule = value
+
     def _insert_tblPrEx(self, tblPrEx):
         self.insert(0, tblPrEx)
 
@@ -63,6 +96,45 @@ class CT_Row(BaseOxmlElement):
 
     def _new_tc(self):
         return CT_Tc.new()
+
+
+class CT_TrPr(BaseOxmlElement):
+    """
+    ``<w:trPr>`` element, defining table row properties
+    """
+    trHeight = ZeroOrOne('w:trHeight')
+
+    @property
+    def height(self):
+        """
+        Return the EMU height value represented in the ``<w:trHeight>`` child
+        element or |None| if not present.
+        """
+        trHeight = self.trHeight
+        if trHeight is None:
+            return None
+        return trHeight.height
+
+    @height.setter
+    def height(self, value):
+        trHeight = self.get_or_add_trHeight()
+        trHeight.height = value
+
+    @property
+    def height_rule(self):
+        """
+        Return the height rules represented in the ``<w:trHeight>`` child
+        element or |None| if not present.
+        """
+        trHeight = self.trHeight
+        if trHeight is None:
+            return None
+        return trHeight.height_rule
+
+    @height_rule.setter
+    def height_rule(self, value):
+        trHeight = self.get_or_add_trHeight()
+        trHeight.height_rule = value
 
 
 class CT_Tbl(BaseOxmlElement):
@@ -326,6 +398,27 @@ class CT_TblWidth(BaseOxmlElement):
         self.type = 'dxa'
         self.w = Emu(value).twips
 
+
+class CT_TblHeight(BaseOxmlElement):
+    """
+    Used for ``<w:trHeight>`` elements and many others, to
+    specify a table-related height.
+    """
+    _val = OptionalAttribute('w:val', XsdInt)
+    height_rule = OptionalAttribute('w:hRule', WD_ROW_HEIGHT_RULE)
+
+    @property
+    def height(self):
+        """
+        Return the EMU height value represented by the ``w:val`` attribute.
+        """
+        if self._val is None:
+            return None
+        return Twips(self._val)
+
+    @height.setter
+    def height(self, value):
+        self._val = Emu(value).twips if value is not None else None
 
 class CT_Tc(BaseOxmlElement):
     """

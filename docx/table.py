@@ -397,6 +397,28 @@ class _Row(Parented):
         """
         return self._tr.tr_idx
 
+    @property
+    def height(self):
+        """
+        The height of this cell in EMU, or |None| if no explicit height is set.
+        """
+        return self._tr.height
+
+    @height.setter
+    def height(self, value):
+        self._tr.height = value
+
+    @property
+    def height_rule(self):
+        """
+        The height rule of this cell, or |None| if no explicit height_rule is set.
+        """
+        return self._tr.height_rule
+
+    @height_rule.setter
+    def height_rule(self, value):
+        self._tr.height_rule = value
+
 
 class _Rows(Parented):
     """
