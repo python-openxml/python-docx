@@ -14,6 +14,7 @@ Feature: Get and set table row properties
       | no explicit setting | None     |
       | automatic           | AUTO     |
       | at least            | AT_LEAST |
+      | exactly             | EXACTLY  |
 
 
   @wip
@@ -26,7 +27,8 @@ Feature: Get and set table row properties
       | state               | value    |
       | no explicit setting | AUTO     |
       | automatic           | AT_LEAST |
-      | at least            | None     |
+      | at least            | EXACTLY  |
+      | exactly             | None     |
       | no explicit setting | None     |
 
 
