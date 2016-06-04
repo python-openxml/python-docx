@@ -22,3 +22,4 @@ can be found here:
    WdTabLeader
    WdTableDirection
    WdUnderline
+   WdVerticalAlignment
