@@ -42,17 +42,17 @@ class DescribeSections(object):
 
     @pytest.fixture
     def index_fixture(self, document_elm):
-        sections = Sections(document_elm)
+        sections = Sections(document_elm, None)
         return sections, [0, 1]
 
     @pytest.fixture
     def iter_fixture(self, document_elm):
-        sections = Sections(document_elm)
+        sections = Sections(document_elm, None)
         return sections, 2
 
     @pytest.fixture
     def len_fixture(self, document_elm):
-        sections = Sections(document_elm)
+        sections = Sections(document_elm, None)
         return sections, 2
 
     # fixture components ---------------------------------------------
@@ -125,7 +125,7 @@ class DescribeSection(object):
     @pytest.fixture
     def header_fixture(self, Header_, header_):
         sectPr = element('w:sectPr')
-        section = Section(sectPr)
+        section = Section(sectPr, None)
         return section, Header_, sectPr, header_
 
     @pytest.fixture(params=[
@@ -141,7 +141,7 @@ class DescribeSection(object):
     ])
     def margins_get_fixture(self, request):
         sectPr_cxml, margin_prop_name, expected_value = request.param
-        section = Section(element(sectPr_cxml))
+        section = Section(element(sectPr_cxml), None)
         return section, margin_prop_name, expected_value
 
     @pytest.fixture(params=[
@@ -165,7 +165,7 @@ class DescribeSection(object):
     ])
     def margins_set_fixture(self, request):
         sectPr_cxml, property_name, new_value, expected_cxml = request.param
-        section = Section(element(sectPr_cxml))
+        section = Section(element(sectPr_cxml), None)
         expected_xml = xml(expected_cxml)
         return section, property_name, new_value, expected_xml
 
@@ -177,7 +177,7 @@ class DescribeSection(object):
     ])
     def orientation_get_fixture(self, request):
         sectPr_cxml, expected_orientation = request.param
-        section = Section(element(sectPr_cxml))
+        section = Section(element(sectPr_cxml), None)
         return section, expected_orientation
 
     @pytest.fixture(params=[
@@ -187,7 +187,7 @@ class DescribeSection(object):
     ])
     def orientation_set_fixture(self, request):
         new_orientation, expected_cxml = request.param
-        section = Section(element('w:sectPr'))
+        section = Section(element('w:sectPr'), None)
         expected_xml = xml(expected_cxml)
         return section, new_orientation, expected_xml
 
@@ -198,7 +198,7 @@ class DescribeSection(object):
     ])
     def page_height_get_fixture(self, request):
         sectPr_cxml, expected_page_height = request.param
-        section = Section(element(sectPr_cxml))
+        section = Section(element(sectPr_cxml), None)
         return section, expected_page_height
 
     @pytest.fixture(params=[
@@ -207,7 +207,7 @@ class DescribeSection(object):
     ])
     def page_height_set_fixture(self, request):
         new_page_height, expected_cxml = request.param
-        section = Section(element('w:sectPr'))
+        section = Section(element('w:sectPr'), None)
         expected_xml = xml(expected_cxml)
         return section, new_page_height, expected_xml
 
@@ -218,7 +218,7 @@ class DescribeSection(object):
     ])
     def page_width_get_fixture(self, request):
         sectPr_cxml, expected_page_width = request.param
-        section = Section(element(sectPr_cxml))
+        section = Section(element(sectPr_cxml), None)
         return section, expected_page_width
 
     @pytest.fixture(params=[
@@ -227,7 +227,7 @@ class DescribeSection(object):
     ])
     def page_width_set_fixture(self, request):
         new_page_width, expected_cxml = request.param
-        section = Section(element('w:sectPr'))
+        section = Section(element('w:sectPr'), None)
         expected_xml = xml(expected_cxml)
         return section, new_page_width, expected_xml
 
@@ -242,7 +242,7 @@ class DescribeSection(object):
     ])
     def start_type_get_fixture(self, request):
         sectPr_cxml, expected_start_type = request.param
-        section = Section(element(sectPr_cxml))
+        section = Section(element(sectPr_cxml), None)
         return section, expected_start_type
 
     @pytest.fixture(params=[
@@ -261,7 +261,7 @@ class DescribeSection(object):
     ])
     def start_type_set_fixture(self, request):
         initial_cxml, new_start_type, expected_cxml = request.param
-        section = Section(element(initial_cxml))
+        section = Section(element(initial_cxml), None)
         expected_xml = xml(expected_cxml)
         return section, new_start_type, expected_xml
 

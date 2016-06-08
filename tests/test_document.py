@@ -73,7 +73,7 @@ class DescribeDocument(object):
 
         assert document.element.xml == expected_xml
         sectPr = document.element.xpath('w:body/w:sectPr')[0]
-        Section_.assert_called_once_with(sectPr)
+        Section_.assert_called_once_with(sectPr, document)
         assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
@@ -105,7 +105,7 @@ class DescribeDocument(object):
     def it_provides_access_to_its_sections(self, sections_fixture):
         document, Sections_, sections_ = sections_fixture
         sections = document.sections
-        Sections_.assert_called_once_with(document._element)
+        Sections_.assert_called_once_with(document._element, document)
         assert sections is sections_
 
     def it_provides_access_to_its_settings(self, settings_fixture):
