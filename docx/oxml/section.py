@@ -10,10 +10,21 @@ from copy import deepcopy
 
 from ..enum.header import WD_HEADER_FOOTER
 from ..enum.section import WD_ORIENTATION, WD_SECTION_START
-from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from .xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+from .simpletypes import (
+    ST_RelationshipId, ST_SignedTwipsMeasure, ST_TwipsMeasure
 )
+from .xmlchemy import (
+    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
+    ZeroOrOne
+)
+
+
+class CT_HdrFtrRef(BaseOxmlElement):
+    """
+    `w:headerReference` and `w:footerReference` elements, specifying the
+    various headers and footers for a section.
+    """
+    rId = RequiredAttribute('r:id', ST_RelationshipId)
 
 
 class CT_PageMar(BaseOxmlElement):
