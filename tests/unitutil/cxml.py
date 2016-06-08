@@ -50,6 +50,8 @@ def nsdecls(*nspfxs):
     """
     nsdecls = ''
     for nspfx in nspfxs:
+        if nspfx == 'xml':
+            continue
         nsdecls += ' xmlns:%s="%s"' % (nspfx, nsmap[nspfx])
     return nsdecls
 
@@ -105,16 +107,25 @@ class Element(object):
         self._is_root = bool(value)
 
     @property
-    def nspfx(self):
+    def local_nspfxs(self):
         """
-        The namespace prefix of this element, the empty string (``''``) if
-        the tag is in the default namespace.
+        The namespace prefixes local to this element, both on the tagname and
+        all of its attributes. An empty string (``''``) is used to represent
+        the default namespace for an element tag having no prefix.
         """
-        tagname = self._tagname
-        idx = tagname.find(':')
-        if idx == -1:
-            return ''
-        return tagname[:idx]
+        def nspfx(name, is_element=False):
+            idx = name.find(':')
+            if idx == -1:
+                return '' if is_element else None
+            return name[:idx]
+
+        nspfxs = [nspfx(self._tagname, True)]
+        for name, val in self._attrs:
+            pfx = nspfx(name)
+            if pfx is None or pfx in nspfxs:
+                continue
+            nspfxs.append(pfx)
+        return nspfxs
 
     @property
     def nspfxs(self):
@@ -129,7 +140,7 @@ class Element(object):
                     continue
                 seq.append(item)
 
-        nspfxs = [self.nspfx]
+        nspfxs = self.local_nspfxs
         for child in self._children:
             merge(nspfxs, child.nspfxs)
         return nspfxs
