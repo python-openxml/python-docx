@@ -96,6 +96,16 @@ Conversely, an existing header is deleted from a section by assigning True to
     >>> header.is_linked_to_previous
     True
 
+The methods `add_paragraph` and `paragraphs` allow you to add or change the
+contents of a header, just like on a document instance::
+
+    >>> p1 = header.add_paragraph('foo')
+    >>> p2 = header.add_paragraph('bar')
+    >>> len(header.paragraphs)
+    2
+    >>> header.paragraphs[0].text
+    'foo'
+
 The document settings object has a read/write
 `.odd_and_even_pages_header_footer` property that indicates verso and recto
 pages will have a different header. An existing even page header definition is
@@ -126,9 +136,15 @@ automatically create a new first page header definition::
 Specimen XML
 ------------
 
+headerReference
+~~~~~~~~~~~~~~~
+
 .. highlight:: xml
 
-There are seven different permutations of headers:
+The `headerReference` controls where and how the header content displays in the
+document.
+
+There are seven different ways the same header content could appear:
 
 The same header on all pages of the document::
 
@@ -174,6 +190,23 @@ Distinct first, even, and odd page headers::
        ...
    </w:sectPr>
 
+hdr
+~~~
+
+All the actual header content is contained in an xml file separate from the
+main `document.xml`. The header file name is arbitrary but it's usually
+something like `header1.xml`::
+
+    <w:hdr>
+      <w:p>
+        <w:pPr>
+          <w:pStyle w:val="Header"/>
+        </w:pPr>
+        <w:r>
+          <w:t>Foobar</w:t>
+        </w:r>
+      </w:p>
+    </w:hdr>
 
 Word Behavior
 -------------
