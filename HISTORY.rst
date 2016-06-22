@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+0.8.6 (2016-06-22)
+++++++++++++++++++
+
+- Add #257: add Font.highlight_color
+- Add #261: add ParagraphFormat.tab_stops
+- Add #303: disallow XML entity expansion
+
+
 0.8.5 (2015-02-21)
 ++++++++++++++++++
 
