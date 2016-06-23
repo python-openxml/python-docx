@@ -51,6 +51,12 @@ class Document(ElementProxy):
         paragraph.add_run().add_break(WD_BREAK.PAGE)
         return paragraph
 
+    def get_new_list(self, abstractNumId):
+        """
+        Returns a new numId that references given abstractNumId
+        """
+        return self.numbering.numbering_definitions.add_num(abstractNumId, True)
+
     def add_paragraph(self, text='', style=None):
         """
         Return a paragraph newly added to the end of the document, populated
@@ -163,6 +169,14 @@ class Document(ElementProxy):
         A |Styles| object providing access to the styles in this document.
         """
         return self._part.styles
+
+    @property
+    def numbering(self):
+        """
+        A "Provides access to numbering part
+        """
+        x=self._part.numbering_part
+        return self._part.numbering_part
 
     @property
     def tables(self):

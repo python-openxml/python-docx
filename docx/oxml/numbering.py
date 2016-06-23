@@ -96,13 +96,15 @@ class CT_Numbering(BaseOxmlElement):
     """
     num = ZeroOrMore('w:num', successors=('w:numIdMacAtCleanup',))
 
-    def add_num(self, abstractNum_id):
+    def add_num(self, abstractNum_id, restart=False):
         """
         Return a newly added CT_Num (<w:num>) element referencing the
         abstract numbering definition identified by *abstractNum_id*.
         """
         next_num_id = self._next_numId
         num = CT_Num.new(next_num_id, abstractNum_id)
+        if restart:
+            num.add_lvlOverride(ilvl=0).add_startOverride(1)
         return self._insert_num(num)
 
     def num_having_numId(self, numId):

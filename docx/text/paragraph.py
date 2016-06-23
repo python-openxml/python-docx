@@ -136,6 +136,64 @@ class Paragraph(Parented):
         self.clear()
         self.add_run(text)
 
+    @property
+    def num_id(self):
+        """
+        Return the numId of the parent list.
+        """
+        if self._p.pPr is None:
+            return None
+        if self._p.pPr.numPr is None:
+            return None
+        if self._p.pPr.numPr.numId is None:
+            return None
+        return self._p.pPr.numPr.numId.val
+
+    @num_id.setter
+    def num_id(self, num_id):
+        """
+        Set the numId of the parent list.
+        """
+        self._p.get_or_add_pPr().get_or_add_numPr().get_or_add_numId().val = num_id
+
+    @property
+    def level(self):
+        """
+        Return the indentation level of the parent list.
+        """
+        if self._p.pPr is None:
+            return None
+        if self._p.pPr.numPr is None:
+            return None
+        if self._p.pPr.numPr.ilvl is None:
+            return None
+        return self._p.pPr.numPr.ilvl.val
+
+    @level.setter
+    def level(self, lvl):
+        """
+        Set the indentation level of the parent list.
+        """
+        self._p.get_or_add_pPr().get_or_add_numPr().get_or_add_ilvl().val = lvl
+
+    @property
+    def ind_left(self):
+        """
+        Return the indentation level of the parent list.
+        """
+        if self._p.pPr is None:
+            return None
+        if self._p.pPr.ind is None:
+            return None
+        return self._p.pPr.ind_left
+
+    @level.setter
+    def ind_left(self, left):
+        """
+        Set the indentation level of the parent list.
+        """
+        self._p.get_or_add_pPr().ind_left=left
+
     def _insert_paragraph_before(self):
         """
         Return a newly created paragraph, inserted directly before this
