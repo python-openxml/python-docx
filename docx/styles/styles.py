@@ -37,9 +37,9 @@ class Styles(ElementProxy):
 
     def __getitem__(self, key):
         """
-        Enables dictionary-style access by UI name. Lookup by style id is
-        deprecated, triggers a warning, and will be removed in a near-future
-        release.
+        Enables dictionary-style access by UI name. Lookup by style id
+        is deprecated, triggers a warning, and will be removed in a
+        near-future release.
         """
         style_elm = self._element.get_by_name(BabelFish.ui2internal(key))
         if style_elm is not None:
@@ -51,7 +51,7 @@ class Styles(ElementProxy):
                 'style lookup by style_id is deprecated. Use style name as '
                 'key instead.'
             )
-            warn(msg, UserWarning)
+            warn(msg, UserWarning, stacklevel=2)
             return StyleFactory(style_elm)
 
         raise KeyError("no style with name '%s'" % key)
