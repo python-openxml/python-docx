@@ -8,6 +8,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from .blkcntnr import BlockItemContainer
 from .shared import ElementProxy, lazyproperty
 
 
@@ -51,7 +52,7 @@ class Header(_BaseHeaderFooter):
     """
 
 
-class HeaderFooterBody(object):
+class HeaderFooterBody(BlockItemContainer):
     """
     The rich-text body of a header or footer. Supports the same rich text
     operations as a document, such as paragraphs and tables.

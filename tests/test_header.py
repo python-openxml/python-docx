@@ -13,9 +13,10 @@ import pytest
 from docx.enum.header import WD_HEADER_FOOTER
 from docx.header import _BaseHeaderFooter, Header, HeaderFooterBody
 from docx.parts.document import DocumentPart
+from docx.parts.header import HeaderPart
 
 from .unitutil.cxml import element
-from .unitutil.mock import call, instance_mock, property_mock
+from .unitutil.mock import call, instance_mock, method_mock, property_mock
 
 
 class Describe_BaseHeaderFooter(object):
@@ -30,7 +31,27 @@ class Describe_BaseHeaderFooter(object):
         assert header.part.related_hdrftr_body.call_args_list == calls
         assert body == expected_value
 
+    def it_provides_access_to_the_related_hdrftr_body(self, hdrftr_fixture):
+        document_part, get_related_parts, header_part_ = hdrftr_fixture
+        rId = 'rId1'
+        body = document_part.related_hdrftr_body(rId)
+        get_related_parts.assert_called_once_with(rId)
+        assert body == header_part_.body
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def hdrftr_fixture(self, request, header_part_, body_):
+        header_part_.body = body_
+        document_part = DocumentPart(None, None, None, None)
+
+        get_related_part = method_mock(
+            request,
+            DocumentPart,
+            'get_related_part')
+        get_related_part.return_value = header_part_
+
+        return document_part, get_related_part, header_part_
 
     @pytest.fixture(params=[
         ('w:sectPr',                                             None),
@@ -63,6 +84,10 @@ class Describe_BaseHeaderFooter(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def header_part_(self, request):
+        return instance_mock(request, HeaderPart)
 
     @pytest.fixture
     def part_prop_(self, request, document_part_):

@@ -39,7 +39,7 @@ def then_header_body_contains_the_text_of_the_header(context):
 @then('header.body is a BlockItemContainer object')
 def then_header_body_is_a_BlockItemContainer_object(context):
     header = context.header
-    assert type(header.body).__name__ == 'BlockItemContainer'
+    assert type(header.body).__name__ == 'HeaderFooterBody'
 
 
 @then('header.is_linked_to_previous is {value}')
