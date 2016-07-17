@@ -326,6 +326,56 @@ class ST_RelationshipId(XsdString):
     pass
 
 
+class ST_Shd(XsdStringEnumeration):
+    """
+    Valid values for <w:shd val=""> attribute
+    """
+    CLEAR = 'clear'
+    DIAG_CROSS = 'diagCross'
+    DIAG_STRIPE = 'diagStripe'
+    HORZ_CROSS = 'horzCross'
+    HORZ_STRIPE = 'horzStripe'
+    NIL = 'nil'
+    PCT10 = 'pct10'
+    PCT12 = 'pct12'
+    PCT15 = 'pct15'
+    PCT20 = 'pct20'
+    PCT25 = 'pct25'
+    PCT30 = 'pct30'
+    PCT35 = 'pct37'
+    PCT40 = 'pct40'
+    PCT45 = 'pct45'
+    PCT5  = 'pct5'
+    PCT50 = 'pct50'
+    PCT55 = 'pct55'
+    PCT60 = 'pct60'
+    PCT62 = 'pct62'
+    PCT65 = 'pct65'
+    PCT70 = 'pct70'
+    PCT75 = 'pct75'
+    PCT80 = 'pct80'
+    PCT85 = 'pct85'
+    PCT87 = 'pct87'
+    PCT90 = 'pct90'
+    PCT95 = 'pct95'
+    REV_DIAG_STRIPE = 'reverseDiagStripe'
+    SOLID = 'solid'
+    THIN_DIAG_CROSS = 'thinDiagCross'
+    THIN_DIAG_STRIPE = 'thinDiagStripe'
+    THIN_HORZ_CROSS = 'thinHorzCross'
+    THIN_HORZ_STRIPE = 'thinHorzStripe'
+    THIN_REV_DIAG_STRIPE = 'thinReverseDiagStripe'
+    THIN_VERT_STRIPE = 'thinVertStripe'
+    VERT_STRIPE = 'vertStripe'
+
+    _members = (CLEAR, DIAG_CROSS, DIAG_STRIPE, HORZ_CROSS, HORZ_STRIPE,
+            NIL, PCT10, PCT12, PCT15, PCT20, PCT25, PCT30, PCT35, PCT40,
+            PCT45, PCT5 , PCT50, PCT55, PCT60, PCT62, PCT65, PCT70,
+            PCT75, PCT80, PCT85, PCT87, PCT90, PCT95, REV_DIAG_STRIPE,
+            SOLID, THIN_DIAG_CROSS, THIN_DIAG_STRIPE, THIN_HORZ_CROSS,
+            THIN_HORZ_STRIPE, THIN_REV_DIAG_STRIPE, THIN_VERT_STRIPE,
+            VERT_STRIPE)
+
 class ST_SignedTwipsMeasure(XsdInt):
 
     @classmethod
