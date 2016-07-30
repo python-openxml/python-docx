@@ -397,6 +397,27 @@ class _Row(Parented):
         """
         return self._tr.tr_idx
 
+    @property
+    def _trPr(self):
+        return self._tr.trPr
+
+    @property
+    def header(self):
+        """
+        |True| if the row is marked as header row. Header rows are repeated
+        at the top of each page if the table spans multiple pages.
+        """
+        trPr = self._trPr
+        if trPr is None:
+            return False
+        return trPr.header
+
+    @header.setter
+    def header(self, value):
+        tr = self._tr
+        trPr = tr.get_or_add_trPr()
+        trPr.header = value
+
 
 class _Rows(Parented):
     """

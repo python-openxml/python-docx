@@ -65,6 +65,25 @@ class CT_Row(BaseOxmlElement):
         return CT_Tc.new()
 
 
+class CT_TrPr(BaseOxmlElement):
+    """
+    ``<w:trPr>`` element, defining table row properties
+    """
+    tblHeader = ZeroOrOne('w:tblHeader')
+
+    @property
+    def header(self):
+        tblHeader = self.tblHeader
+        return tblHeader is None
+
+    @header.setter
+    def header(self, value):
+        if not value:
+            self._remove_tblHeader()
+        else:
+            self._add_tblHeader()
+
+
 class CT_Tbl(BaseOxmlElement):
     """
     ``<w:tbl>`` element
