@@ -11,7 +11,9 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+from docx.enum.table import (
+    WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+)
 from docx.shared import Inches
 from docx.table import _Column, _Columns, _Row, _Rows
 
@@ -139,6 +141,31 @@ def given_a_table_having_two_rows(context):
     context.table_ = document.tables[0]
 
 
+@given('a table row having height of {state}')
+def given_a_table_row_having_height_of_state(context, state):
+    table_idx = {
+        'no explicit setting': 0,
+        '2 inches':            2,
+        '3 inches':            3
+    }[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.row = table.rows[0]
+
+
+@given('a table row having height rule {state}')
+def given_a_table_row_having_height_rule_state(context, state):
+    table_idx = {
+        'no explicit setting': 0,
+        'automatic':           1,
+        'at least':            2,
+        'exactly':             3
+    }[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.row = table.rows[0]
+
+
 # when =====================================================
 
 @when('I add a 1.0 inch column to the table')
@@ -150,6 +177,20 @@ def when_I_add_a_1_inch_column_to_table(context):
 def when_add_row_to_table(context):
     table = context.table_
     context.row = table.add_row()
+
+
+@when('I assign {value} to row.height')
+def when_I_assign_value_to_row_height(context, value):
+    new_value = None if value == 'None' else int(value)
+    context.row.height = new_value
+
+
+@when('I assign {value} to row.height_rule')
+def when_I_assign_value_to_row_height_rule(context, value):
+    new_value = (
+        None if value == 'None' else getattr(WD_ROW_HEIGHT_RULE, value)
+    )
+    context.row.height_rule = new_value
 
 
 @when('I assign {value_str} to table.alignment')
@@ -264,6 +305,26 @@ def then_can_iterate_over_row_collection(context):
         actual_count += 1
         assert isinstance(row, _Row)
     assert actual_count == 2
+
+
+@then('row.height is {value}')
+def then_row_height_is_value(context, value):
+    expected_height = None if value == 'None' else int(value)
+    actual_height = context.row.height
+    assert actual_height == expected_height, (
+        'expected %s, got %s' % (expected_height, actual_height)
+    )
+
+
+@then('row.height_rule is {value}')
+def then_row_height_rule_is_value(context, value):
+    expected_rule = (
+        None if value == 'None' else getattr(WD_ROW_HEIGHT_RULE, value)
+    )
+    actual_rule = context.row.height_rule
+    assert actual_rule == expected_rule, (
+        'expected %s, got %s' % (expected_rule, actual_rule)
+    )
 
 
 @then('table.alignment is {value_str}')

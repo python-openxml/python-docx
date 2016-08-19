@@ -9,8 +9,40 @@ from __future__ import (
 )
 
 from .base import (
-    Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember
+    alias, Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember
 )
+
+
+@alias('WD_ROW_HEIGHT')
+class WD_ROW_HEIGHT_RULE(XmlEnumeration):
+    """
+    Specifies the rule for determining the height or a table row
+
+    Example::
+
+        from docx.enum.table import WD_ROW_HEIGHT_RULE
+
+        table = document.add_table(3, 3)
+        table.rows[0].height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
+    """
+
+    __ms_name__ = "WdRowHeightRule"
+
+    __url__ = 'https://msdn.microsoft.com/en-us/library/office/ff193620.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'AUTO', 0, 'auto', 'The row height is adjusted to accommodate th'
+            'e tallest value in the row.'
+        ),
+        XmlMappedEnumMember(
+            'AT_LEAST', 1, 'atLeast', 'The row height is at least a minimum '
+            'specified value.'
+        ),
+        XmlMappedEnumMember(
+            'EXACTLY', 2, 'exact', 'The row height is an exact value.'
+        ),
+    )
 
 
 class WD_TABLE_ALIGNMENT(XmlEnumeration):
