@@ -101,3 +101,14 @@ class InlineShape(object):
     def width(self, cx):
         self._inline.extent.cx = cx
         self._inline.graphic.graphicData.pic.spPr.cx = cx
+
+    @property
+    def alt_text(self):
+        """
+        Read/write. The alt-text associated with this shape.
+        """
+        return self._inline.docPr.attr.descr
+
+    @alt_text.setter
+    def alt_text(self, text):
+        self._inline.docPr.attr.descr = text

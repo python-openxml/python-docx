@@ -91,7 +91,7 @@ class CT_Inline(BaseOxmlElement):
         return (
             '<wp:inline %s>\n'
             '  <wp:extent cx="914400" cy="914400"/>\n'
-            '  <wp:docPr id="666" name="unnamed"/>\n'
+            '  <wp:docPr id="666" name="unnamed" descr=""/>\n'
             '  <wp:cNvGraphicFramePr>\n'
             '    <a:graphicFrameLocks noChangeAspect="1"/>\n'
             '  </wp:cNvGraphicFramePr>\n'
