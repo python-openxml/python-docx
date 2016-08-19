@@ -11,6 +11,7 @@ import pytest
 from docx.enum.shape import WD_INLINE_SHAPE
 from docx.oxml.ns import nsmap
 from docx.shape import InlineShape, InlineShapes
+from docx.oxml.shape import CT_Inline
 from docx.shared import Length
 
 from .oxml.unitdata.dml import (
@@ -18,6 +19,7 @@ from .oxml.unitdata.dml import (
 )
 from .unitutil.cxml import element, xml
 from .unitutil.mock import loose_mock
+import pdb
 
 
 class DescribeInlineShapes(object):
@@ -99,6 +101,17 @@ class DescribeInlineShape(object):
         inline_shape.height = cy
         assert inline_shape._inline.xml == expected_xml
 
+    def it_has_blank_alt_text(self, alt_text_blank_get_fixture):
+        inline_shape, expected_alt_text = alt_text_blank_get_fixture
+        alt_text = inline_shape.alt_text
+        assert alt_text == expected_alt_text
+
+    def it_can_change_its_alt_text(self, alt_text_set_fixture):
+        inline_shape, expected_alt_text = alt_text_set_fixture
+        inline_shape.alt_text = "new alt text"
+        alt_text = inline_shape._inline.docPr.attrib["descr"]
+        assert alt_text == expected_alt_text
+        
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -106,6 +119,7 @@ class DescribeInlineShape(object):
         inline_cxml, expected_cx, expected_cy = (
             'wp:inline/wp:extent{cx=333, cy=666}', 333, 666
         )
+        
         inline_shape = InlineShape(element(inline_cxml))
         return inline_shape, expected_cx, expected_cy
 
@@ -121,6 +135,22 @@ class DescribeInlineShape(object):
         inline_shape = InlineShape(element(inline_cxml))
         expected_xml = xml(expected_cxml)
         return inline_shape, new_cx, new_cy, expected_xml
+
+    @pytest.fixture
+    def alt_text_blank_get_fixture(self):
+        expected_alt_text = ""
+        image = "tests/test_files/monty-truth.png"
+        inline_shape = CT_Inline.new_pic_inline(0, "", image, 333, 666)
+        inline_shape = InlineShape(inline_shape)
+        return inline_shape, expected_alt_text
+
+    @pytest.fixture
+    def alt_text_set_fixture(self):
+        expected_alt_text = "new alt text"
+        image = "tests/test_files/monty-truth.png"
+        inline_shape = CT_Inline.new_pic_inline(0, "", image, 333, 666)
+        inline_shape = InlineShape(inline_shape)
+        return inline_shape, expected_alt_text
 
     @pytest.fixture(params=[
         'embed pic', 'link pic', 'link+embed pic', 'chart', 'smart art',
