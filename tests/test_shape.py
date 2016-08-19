@@ -19,7 +19,6 @@ from .oxml.unitdata.dml import (
 )
 from .unitutil.cxml import element, xml
 from .unitutil.mock import loose_mock
-import pdb
 
 
 class DescribeInlineShapes(object):
@@ -119,7 +118,6 @@ class DescribeInlineShape(object):
         inline_cxml, expected_cx, expected_cy = (
             'wp:inline/wp:extent{cx=333, cy=666}', 333, 666
         )
-        
         inline_shape = InlineShape(element(inline_cxml))
         return inline_shape, expected_cx, expected_cy
 
