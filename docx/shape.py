@@ -107,8 +107,8 @@ class InlineShape(object):
         """
         Read/write. The alt-text associated with this shape.
         """
-        return self._inline.docPr.attr.descr
+        return self._inline.docPr.attrib["descr"]
 
     @alt_text.setter
     def alt_text(self, text):
-        self._inline.docPr.attr.descr = text
+        self._inline.docPr.attrib["descr"] = text
