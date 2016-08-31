@@ -136,6 +136,25 @@ class Document(ElementProxy):
                     par.addnext(tb._element)
                     return tb
         return tb
+    def bookmark_picture(self, bookmark_name, picture):
+        doc_element = self._part._element
+        bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
+        for bookmark in bookmarks_list:
+            name = bookmark.get(qn('w:name'))
+            if name == bookmark_name:
+                par = bookmark.getparent()
+                if not isinstance(par, CT_P):
+                    return False
+                else:
+                    i = par.index(bookmark) + 1
+                    p = self.add_paragraph()
+                    run = p.add_run()
+                    run.add_picture(picture) 
+                    par.insert(i,run._element)
+                    p = p._element
+                    p.getparent().remove(p)
+                    p._p = p._element = None
+                    return True
     @property
     def core_properties(self):
         """
