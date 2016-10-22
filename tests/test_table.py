@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+from docx.enum.table import WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.parts.document import DocumentPart
@@ -665,6 +665,26 @@ class Describe_Row(object):
         row, expected_idx = idx_fixture
         assert row._index == expected_idx
 
+    def it_knows_its_height_in_EMU(self, height_get_fixture):
+        row, expected_height = height_get_fixture
+        assert row.height == expected_height
+
+    def it_knows_its_height_rule(self, height_rule_get_fixture):
+        row, expected_rule = height_rule_get_fixture
+        assert row.height_rule == expected_rule
+
+    def it_can_change_its_height(self, height_set_fixture):
+        row, value, expected_xml = height_set_fixture
+        row.height = value
+        assert row.height == value
+        assert row._tr.xml == expected_xml
+
+    def it_can_change_its_height_rule(self, height_rule_set_fixture):
+        row, rule, expected_xml = height_rule_set_fixture
+        row.height_rule = rule
+        assert row.height_rule == rule
+        assert row._tr.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -674,6 +694,62 @@ class Describe_Row(object):
         expected_cells = (1, 2, 3)
         table_.row_cells.return_value = list(expected_cells)
         return row, row_idx, expected_cells
+
+    @pytest.fixture(params=[
+        ('w:tr',                                                None),
+        ('w:tr/w:trPr',                                         None),
+        ('w:tr/w:trPr/w:trHeight{w:val=0, w:hRule=auto}',       0),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}', 914400),
+        ('w:tr/w:trPr/w:trHeight{w:val=2880, w:hRule=exact}',   1828800),
+    ])
+    def height_get_fixture(self, request):
+        tr_cxml, expected_height = request.param
+        row = _Row(element(tr_cxml), None)
+        return row, expected_height
+
+    @pytest.fixture(params=[
+        ('w:tr', Inches(1),
+         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=0, w:hRule=auto}', Inches(2),
+         'w:tr/w:trPr/w:trHeight{w:val=2880, w:hRule=auto}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}', Inches(3),
+         'w:tr/w:trPr/w:trHeight{w:val=4320, w:hRule=atLeast}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=exact}', Inches(4),
+         'w:tr/w:trPr/w:trHeight{w:val=5760, w:hRule=exact}'),
+    ])
+    def height_set_fixture(self, request):
+        tr_cxml, new_value, expected_cxml = request.param
+        row = _Row(element(tr_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return row, new_value, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:tr',                                                None),
+        ('w:tr/w:trPr',                                         None),
+        ('w:tr/w:trPr/w:trHeight{w:val=0, w:hRule=auto}',       WD_ROW_HEIGHT_RULE.AUTO),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}', WD_ROW_HEIGHT_RULE.AT_LEAST),
+        ('w:tr/w:trPr/w:trHeight{w:val=2880, w:hRule=exact}',   WD_ROW_HEIGHT_RULE.EXACTLY),
+    ])
+    def height_rule_get_fixture(self, request):
+        tr_cxml, expected_rule = request.param
+        row = _Row(element(tr_cxml), None)
+        return row, expected_rule
+
+    @pytest.fixture(params=[
+        ('w:tr', WD_ROW_HEIGHT_RULE.AUTO,
+         'w:tr/w:trPr/w:trHeight{w:hRule=auto}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=exact}', WD_ROW_HEIGHT_RULE.AUTO,
+         'w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}', WD_ROW_HEIGHT_RULE.AT_LEAST,
+         'w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}', WD_ROW_HEIGHT_RULE.EXACTLY,
+         'w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=exact}'),
+    ])
+    def height_rule_set_fixture(self, request):
+        tr_cxml, new_rule, expected_cxml = request.param
+        row = _Row(element(tr_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return row, new_rule, expected_xml
 
     @pytest.fixture
     def idx_fixture(self):
