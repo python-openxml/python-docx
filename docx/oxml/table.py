@@ -13,13 +13,15 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt, BaseStringType, ST_HexColor,
+    ST_BorderWidth,ST_Border,ST_PointMeasure
 )
+
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
     RequiredAttribute, ZeroOrOne, ZeroOrMore
 )
-
+import functools
 
 class CT_Row(BaseOxmlElement):
     """
@@ -63,6 +65,8 @@ class CT_Row(BaseOxmlElement):
 
     def _new_tc(self):
         return CT_Tc.new()
+
+
 
 
 class CT_Tbl(BaseOxmlElement):
@@ -300,6 +304,51 @@ class CT_TblPr(BaseOxmlElement):
         self._add_tblStyle(val=value)
 
 
+
+class CT_TcBorders(BaseOxmlElement):
+    """
+    Used for``<w:tcBorders`` elements to specify a cell border.
+    """
+    _bordors=('w:top','w:left','w:bottom','w:right')
+    top=ZeroOrOne('w:top',successors=_bordors[1:])
+    left=ZeroOrOne('w:left',successors=_bordors[2:])
+    bottom=ZeroOrOne('w:bottom',successors=_bordors[3:])
+    right=ZeroOrOne('w:right',successors=_bordors[4:])
+
+
+    def __new_border(position,**attrs):
+        """
+        Offer default attrs for new border.
+        """
+        if 'w:'+position not in CT_TcBorders._bordors:
+            raise ValueError('position should be one of %s' % str(CT_TcBorders._bordors))
+        kwargs={
+            'position':position,
+            'val':'single',
+            'color':'auto',
+            'space':'0',
+            'sz':'4',
+            'nsdecls':nsdecls('w')
+        }
+        
+        kwargs.update(attrs)
+
+        s='<w:{position} w:val="{val}" w:color="{color}" w:space="{space}" w:sz="{sz}" {nsdecls}/>'.format(**kwargs)
+        return parse_xml(s)
+
+    _new_top=functools.partial(__new_border,'top')
+    _new_left=functools.partial(__new_border,'left')
+    _new_bottom=functools.partial(__new_border,'bottom')
+    _new_right=functools.partial(__new_border,'right')
+
+class CT_Border(BaseOxmlElement):
+    val=RequiredAttribute('w:val', ST_Border)
+    color=RequiredAttribute('w:color', ST_HexColor)
+    space=RequiredAttribute('w:space', ST_PointMeasure)
+    sz=RequiredAttribute('w:sz', ST_BorderWidth)
+
+
+
 class CT_TblWidth(BaseOxmlElement):
     """
     Used for ``<w:tblW>`` and ``<w:tcW>`` elements and many others, to
@@ -325,6 +374,8 @@ class CT_TblWidth(BaseOxmlElement):
     def width(self, value):
         self.type = 'dxa'
         self.w = Emu(value).twips
+
+
 
 
 class CT_Tc(BaseOxmlElement):
@@ -723,6 +774,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    tcBorders=ZeroOrOne('w:tcBorders',successors=_tag_seq[11:])
     del _tag_seq
 
     @property
