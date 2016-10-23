@@ -12,7 +12,7 @@ from __future__ import (
 
 from ..exceptions import InvalidXmlError
 from ..shared import Emu, Pt, RGBColor, Twips
-
+from ..enum.text import WD_COLOR
 
 class BaseSimpleType(object):
 
@@ -22,7 +22,8 @@ class BaseSimpleType(object):
 
     @classmethod
     def to_xml(cls, value):
-        cls.validate(value)
+        _v=cls.validate(value)
+        if not _v is None:value=_v
         str_value = cls.convert_to_xml(value)
         return str_value
 
@@ -250,17 +251,30 @@ class ST_HexColor(BaseStringType):
         """
         Keep alpha hex numerals all uppercase just for consistency.
         """
+        if isinstance(value, RGBColor):
         # expecting 3-tuple of ints in range 0-255
-        return '%02X%02X%02X' % value
+            return '%02X%02X%02X' % value
+        elif value==ST_HexColorAuto.AUTO:
+            return value
+        else:
+            raise ValueError("value must be RGBColor object or ST_HexColorAuto.AUTO ")
 
     @classmethod
     def validate(cls, value):
-        # must be an RGBColor object ---
-        if not isinstance(value, RGBColor):
-            raise ValueError(
-                "rgb color value must be RGBColor object, got %s %s"
-                % (type(value), value)
-            )
+        # must be an RGBColor or ST_HexColorAuto object or string that can be transformed to ---
+        try:
+            cls.validate_string(value)
+            if value.lower()=='auto':
+                return ST_HexColorAuto.AUTO
+            else:
+                return RGBColor.from_string(value)
+        except TypeError:
+            if not isinstance(value, (RGBColor,ST_HexColorAuto)):
+                raise ValueError(
+                    "rgb color value must be RGBColor object or ST_HexColorAuto.AUTO or \
+                    string that can be transformed to , got %s %s"
+                    % (type(value), value)
+                )
 
 
 class ST_HexColorAuto(XsdStringEnumeration):
@@ -407,3 +421,80 @@ class ST_VerticalAlignRun(XsdStringEnumeration):
     SUBSCRIPT = 'subscript'
 
     _members = (BASELINE, SUPERSCRIPT, SUBSCRIPT)
+
+class ST_Border(XsdStringEnumeration):
+    """
+    Commonly used valid values for `w:left/@val` `w:bottom/@val` `w:right/@val` `w:top/@val` .
+    Not inclued art borders.
+    More valid values are to be listed ...
+    For reference: http://www.datypic.com/sc/ooxml/t-w_ST_Border.html
+    """
+
+    NONE    ='none'
+    SINGLE  ='single'
+    THICK   ='thick'
+    DOUBLE  ='double'
+    DOTTED  ='dotted'
+    DASHED  ='dashed'
+    DOTDASH ='dotDash'
+    DOTDOTDASH  ='dotDotDash'
+    TRIPLE  ='triple'
+    THINTHICKSMALLGAP   ='thinThickSmallGap'
+    THICKTHINSMALLGAP   ='thickThinSmallGap'
+    THINTHICKTHINSMALLGAP   ='thinThickThinSmallGap'
+    THINTHICKMEDIUMGAP  ='thinThickMediumGap'
+    THICKTHINMEDIUMGAP  ='thickThinMediumGap'
+    THINTHICKTHINMEDIUMGAP  ='thinThickThinMediumGap'
+    THINTHICKLARGEGAP   ='thinThickLargeGap'
+    THICKTHINLARGEGAP   ='thickThinLargeGap'
+    THINTHICKTHINLARGEGAP   ='thinThickThinLargeGap'
+    WAVE    ='wave'
+    DOUBLEWAVE  ='doubleWave'
+    DASHSMALLGAP    ='dashSmallGap'
+    DASHDOTSTROKED  ='dashDotStroked'
+    THREEDEMBOSS    ='threeDEmboss'
+    THREEDENGRAVE   ='threeDEngrave'
+    OUTSET  ='outset'
+    INSET   ='inset'
+
+    _members= (NONE,
+                SINGLE,
+                THICK,
+                DOUBLE,
+                DOTTED,
+                DASHED,
+                DOTDASH,
+                DOTDOTDASH,
+                TRIPLE,
+                THINTHICKSMALLGAP,
+                THICKTHINSMALLGAP,
+                THINTHICKTHINSMALLGAP,
+                THINTHICKMEDIUMGAP,
+                THICKTHINMEDIUMGAP,
+                THINTHICKTHINMEDIUMGAP,
+                THINTHICKLARGEGAP,
+                THICKTHINLARGEGAP,
+                THINTHICKTHINLARGEGAP,
+                WAVE,
+                DOUBLEWAVE,
+                DASHSMALLGAP,
+                DASHDOTSTROKED,
+                THREEDEMBOSS,
+                THREEDENGRAVE,
+                OUTSET,
+                INSET,
+                )
+
+
+class ST_EighthPointMeasure(XsdUnsignedLong):
+    pass
+
+
+class ST_BorderWidth(ST_EighthPointMeasure):
+    @classmethod
+    def validate(cls,value):
+        cls.validate_int_in_range(value, 0, 96)
+
+
+class ST_PointMeasure(XsdUnsignedInt):
+    pass

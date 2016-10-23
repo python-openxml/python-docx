@@ -129,7 +129,7 @@ register_element_cls('w:unhideWhenUsed', CT_OnOff)
 
 from .table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
-    CT_TblWidth, CT_Tc, CT_TcPr, CT_VMerge
+    CT_TblWidth, CT_Tc, CT_TcPr, CT_VMerge, CT_TcBorders,CT_Border
 )
 register_element_cls('w:bidiVisual', CT_OnOff)
 register_element_cls('w:gridCol',    CT_TblGridCol)
@@ -144,6 +144,12 @@ register_element_cls('w:tcPr',       CT_TcPr)
 register_element_cls('w:tcW',        CT_TblWidth)
 register_element_cls('w:tr',         CT_Row)
 register_element_cls('w:vMerge',     CT_VMerge)
+register_element_cls('w:tcBorders', CT_TcBorders)
+register_element_cls('w:top', CT_Border)
+register_element_cls('w:left', CT_Border)
+register_element_cls('w:bottom', CT_Border)
+register_element_cls('w:right', CT_Border)
+
 
 from .text.font import (
     CT_Color, CT_Fonts, CT_Highlight, CT_HpsMeasure, CT_RPr, CT_Underline,
