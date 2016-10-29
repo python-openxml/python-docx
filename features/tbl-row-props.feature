@@ -4,7 +4,6 @@ Feature: Get and set table row properties
   I need a way to get and set the properties of a table row
 
 
-  @wip
   Scenario Outline: Get Row.height_rule
     Given a table row having height rule <state>
      Then row.height_rule is <value>

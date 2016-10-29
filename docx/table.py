@@ -384,6 +384,15 @@ class _Row(Parented):
         return tuple(self.table.row_cells(self._index))
 
     @property
+    def height_rule(self):
+        """
+        Return the height rule of this cell as a member of the
+        :ref:`WdRowHeightRule` enumeration, or |None| if no explicit
+        height_rule is set.
+        """
+        return self._tr.trHeight_hRule
+
+    @property
     def table(self):
         """
         Reference to the |Table| object this row belongs to.

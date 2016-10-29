@@ -9,7 +9,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+from docx.enum.table import (
+    WD_ROW_HEIGHT, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+)
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.parts.document import DocumentPart
@@ -651,6 +653,10 @@ class Describe_Columns(object):
 
 class Describe_Row(object):
 
+    def it_knows_its_height_rule(self, height_rule_get_fixture):
+        row, expected_rule = height_rule_get_fixture
+        assert row.height_rule == expected_rule
+
     def it_provides_access_to_its_cells(self, cells_fixture):
         row, row_idx, expected_cells = cells_fixture
         cells = row.cells
@@ -674,6 +680,21 @@ class Describe_Row(object):
         expected_cells = (1, 2, 3)
         table_.row_cells.return_value = list(expected_cells)
         return row, row_idx, expected_cells
+
+    @pytest.fixture(params=[
+        ('w:tr',        None),
+        ('w:tr/w:trPr', None),
+        ('w:tr/w:trPr/w:trHeight{w:val=0, w:hRule=auto}',
+         WD_ROW_HEIGHT.AUTO),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}',
+         WD_ROW_HEIGHT.AT_LEAST),
+        ('w:tr/w:trPr/w:trHeight{w:val=2880, w:hRule=exact}',
+         WD_ROW_HEIGHT.EXACTLY),
+    ])
+    def height_rule_get_fixture(self, request):
+        tr_cxml, expected_rule = request.param
+        row = _Row(element(tr_cxml), None)
+        return row, expected_rule
 
     @pytest.fixture
     def idx_fixture(self):

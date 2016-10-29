@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from . import parse_xml
+from ..enum.table import WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
@@ -19,6 +20,14 @@ from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
     RequiredAttribute, ZeroOrOne, ZeroOrMore
 )
+
+
+class CT_Height(BaseOxmlElement):
+    """
+    Used for ``<w:trHeight>`` to specify a row height and row height rule.
+    """
+    val = OptionalAttribute('w:val', ST_TwipsMeasure)
+    hRule = OptionalAttribute('w:hRule', WD_ROW_HEIGHT_RULE)
 
 
 class CT_Row(BaseOxmlElement):
@@ -50,6 +59,17 @@ class CT_Row(BaseOxmlElement):
         element.
         """
         return self.getparent().tr_lst.index(self)
+
+    @property
+    def trHeight_hRule(self):
+        """
+        Return the value of `w:trPr/w:trHeight@w:hRule`, or |None| if not
+        present.
+        """
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.trHeight_hRule
 
     def _insert_tblPrEx(self, tblPrEx):
         self.insert(0, tblPrEx)
@@ -774,6 +794,30 @@ class CT_TcPr(BaseOxmlElement):
     def width(self, value):
         tcW = self.get_or_add_tcW()
         tcW.width = value
+
+
+class CT_TrPr(BaseOxmlElement):
+    """
+    ``<w:trPr>`` element, defining table row properties
+    """
+    _tag_seq = (
+        'w:cnfStyle', 'w:divId', 'w:gridBefore', 'w:gridAfter', 'w:wBefore',
+        'w:wAfter', 'w:cantSplit', 'w:trHeight', 'w:tblHeader',
+        'w:tblCellSpacing', 'w:jc', 'w:hidden', 'w:ins', 'w:del',
+        'w:trPrChange'
+    )
+    trHeight = ZeroOrOne('w:trHeight', successors=_tag_seq[8:])
+    del _tag_seq
+
+    @property
+    def trHeight_hRule(self):
+        """
+        Return the value of `w:trHeight@w:hRule`, or |None| if not present.
+        """
+        trHeight = self.trHeight
+        if trHeight is None:
+            return None
+        return trHeight.hRule
 
 
 class CT_VMerge(BaseOxmlElement):
