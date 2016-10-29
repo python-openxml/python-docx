@@ -28,7 +28,6 @@ Feature: Get and set table row properties
       | no explicit setting | None     |
 
 
-  @wip
   Scenario Outline: Get Row.height
     Given a table row having height of <state>
      Then row.height is <value>

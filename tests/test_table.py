@@ -653,6 +653,10 @@ class Describe_Columns(object):
 
 class Describe_Row(object):
 
+    def it_knows_its_height(self, height_get_fixture):
+        row, expected_height = height_get_fixture
+        assert row.height == expected_height
+
     def it_knows_its_height_rule(self, height_rule_get_fixture):
         row, expected_rule = height_rule_get_fixture
         assert row.height_rule == expected_rule
@@ -685,6 +689,18 @@ class Describe_Row(object):
         expected_cells = (1, 2, 3)
         table_.row_cells.return_value = list(expected_cells)
         return row, row_idx, expected_cells
+
+    @pytest.fixture(params=[
+        ('w:tr',                               None),
+        ('w:tr/w:trPr',                        None),
+        ('w:tr/w:trPr/w:trHeight',             None),
+        ('w:tr/w:trPr/w:trHeight{w:val=0}',    0),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440}', 914400),
+    ])
+    def height_get_fixture(self, request):
+        tr_cxml, expected_height = request.param
+        row = _Row(element(tr_cxml), None)
+        return row, expected_height
 
     @pytest.fixture(params=[
         ('w:tr',        None),

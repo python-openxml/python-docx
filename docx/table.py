@@ -374,7 +374,7 @@ class _Row(Parented):
     """
     def __init__(self, tr, parent):
         super(_Row, self).__init__(parent)
-        self._tr = tr
+        self._tr = self._element = tr
 
     @property
     def cells(self):
@@ -382,6 +382,14 @@ class _Row(Parented):
         Sequence of |_Cell| instances corresponding to cells in this row.
         """
         return tuple(self.table.row_cells(self._index))
+
+    @property
+    def height(self):
+        """
+        Return a |Length| object representing the height of this cell, or
+        |None| if no explicit height is set.
+        """
+        return self._tr.trHeight_val
 
     @property
     def height_rule(self):
