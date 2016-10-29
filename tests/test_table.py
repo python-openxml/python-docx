@@ -657,6 +657,11 @@ class Describe_Row(object):
         row, expected_rule = height_rule_get_fixture
         assert row.height_rule == expected_rule
 
+    def it_can_change_its_height_rule(self, height_rule_set_fixture):
+        row, rule, expected_xml = height_rule_set_fixture
+        row.height_rule = rule
+        assert row._tr.xml == expected_xml
+
     def it_provides_access_to_its_cells(self, cells_fixture):
         row, row_idx, expected_cells = cells_fixture
         cells = row.cells
@@ -695,6 +700,32 @@ class Describe_Row(object):
         tr_cxml, expected_rule = request.param
         row = _Row(element(tr_cxml), None)
         return row, expected_rule
+
+    @pytest.fixture(params=[
+        ('w:tr',
+         WD_ROW_HEIGHT.AUTO,
+         'w:tr/w:trPr/w:trHeight{w:hRule=auto}'),
+        ('w:tr/w:trPr',
+         WD_ROW_HEIGHT.AT_LEAST,
+         'w:tr/w:trPr/w:trHeight{w:hRule=atLeast}'),
+        ('w:tr/w:trPr/w:trHeight',
+         WD_ROW_HEIGHT.EXACTLY,
+         'w:tr/w:trPr/w:trHeight{w:hRule=exact}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=exact}',
+         WD_ROW_HEIGHT.AUTO,
+         'w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}',
+         None,
+         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
+        ('w:tr',                   None, 'w:tr/w:trPr'),
+        ('w:tr/w:trPr',            None, 'w:tr/w:trPr'),
+        ('w:tr/w:trPr/w:trHeight', None, 'w:tr/w:trPr/w:trHeight'),
+    ])
+    def height_rule_set_fixture(self, request):
+        tr_cxml, new_rule, expected_cxml = request.param
+        row = _Row(element(tr_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return row, new_rule, expected_xml
 
     @pytest.fixture
     def idx_fixture(self):

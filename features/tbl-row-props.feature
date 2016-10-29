@@ -15,7 +15,6 @@ Feature: Get and set table row properties
       | at least            | AT_LEAST |
 
 
-  @wip
   Scenario Outline: Set Row.height_rule
     Given a table row having height rule <state>
      When I assign <value> to row.height_rule

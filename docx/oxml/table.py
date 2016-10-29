@@ -71,6 +71,11 @@ class CT_Row(BaseOxmlElement):
             return None
         return trPr.trHeight_hRule
 
+    @trHeight_hRule.setter
+    def trHeight_hRule(self, value):
+        trPr = self.get_or_add_trPr()
+        trPr.trHeight_hRule = value
+
     def _insert_tblPrEx(self, tblPrEx):
         self.insert(0, tblPrEx)
 
@@ -818,6 +823,13 @@ class CT_TrPr(BaseOxmlElement):
         if trHeight is None:
             return None
         return trHeight.hRule
+
+    @trHeight_hRule.setter
+    def trHeight_hRule(self, value):
+        if value is None and self.trHeight is None:
+            return
+        trHeight = self.get_or_add_trHeight()
+        trHeight.hRule = value
 
 
 class CT_VMerge(BaseOxmlElement):
