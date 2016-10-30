@@ -39,7 +39,6 @@ Feature: Get and set table row properties
       | 3 inches            | 2743200 |
 
 
-  @wip
   Scenario Outline: Set row height
     Given a table row having height of <state>
      When I assign <value> to row.height

@@ -391,6 +391,10 @@ class _Row(Parented):
         """
         return self._tr.trHeight_val
 
+    @height.setter
+    def height(self, value):
+        self._tr.trHeight_val = value
+
     @property
     def height_rule(self):
         """

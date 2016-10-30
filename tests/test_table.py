@@ -657,6 +657,11 @@ class Describe_Row(object):
         row, expected_height = height_get_fixture
         assert row.height == expected_height
 
+    def it_can_change_its_height(self, height_set_fixture):
+        row, value, expected_xml = height_set_fixture
+        row.height = value
+        assert row._tr.xml == expected_xml
+
     def it_knows_its_height_rule(self, height_rule_get_fixture):
         row, expected_rule = height_rule_get_fixture
         assert row.height_rule == expected_rule
@@ -701,6 +706,27 @@ class Describe_Row(object):
         tr_cxml, expected_height = request.param
         row = _Row(element(tr_cxml), None)
         return row, expected_height
+
+    @pytest.fixture(params=[
+        ('w:tr',                               Inches(1),
+         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
+        ('w:tr/w:trPr',                        Inches(1),
+         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
+        ('w:tr/w:trPr/w:trHeight',             Inches(1),
+         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=1440}', Inches(2),
+         'w:tr/w:trPr/w:trHeight{w:val=2880}'),
+        ('w:tr/w:trPr/w:trHeight{w:val=2880}', None,
+         'w:tr/w:trPr/w:trHeight'),
+        ('w:tr',                   None, 'w:tr/w:trPr'),
+        ('w:tr/w:trPr',            None, 'w:tr/w:trPr'),
+        ('w:tr/w:trPr/w:trHeight', None, 'w:tr/w:trPr/w:trHeight'),
+    ])
+    def height_set_fixture(self, request):
+        tr_cxml, new_value, expected_cxml = request.param
+        row = _Row(element(tr_cxml), None)
+        expected_xml = xml(expected_cxml)
+        return row, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:tr',        None),
