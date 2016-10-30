@@ -7,6 +7,20 @@ properties affecting its size, appearance, and how the content it contains is
 formatted.
 
 
+Cell.vertical_alignment
+-----------
+
+Candidate protocol::
+
+    >>> from docx.enum.table import WD_ALIGN_VERTICAL
+    >>> row = table.add_row()
+    >>> row.cells[0]
+    <docx.table._Cell object at 0x...>
+    >>> row.cells[0].vertical_alignment
+    None
+    >>> row.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+
 MS API - Partial Summary
 ------------------------
 
@@ -29,6 +43,15 @@ MS API - Partial Summary
 * WordWrap
 
 
+WD_ALIGN_VERTICAL Enumeration
+---------------------------------
+
+* wdAlignVerticalTop (0) Top vertical alignment.
+* wdAlignVerticalCenter (1) Center vertical alignment.
+* wdAlignVerticalJustify (2) Justified vertical alignment.
+* wdAlignVerticalBottom (3) Bottom vertical alignment.
+
+
 Specimen XML
 ------------
 
@@ -39,6 +62,7 @@ Specimen XML
   <w:tc>
     <w:tcPr>
       <w:tcW w:w="7038" w:type="dxa"/>
+      <w:vAlign w:val="bottom"/>
     </w:tcPr>
     <w:p>
       <w:pPr>
@@ -157,6 +181,19 @@ Schema Definitions
       <xsd:enumeration value="pct"/>
       <xsd:enumeration value="dxa"/>
       <xsd:enumeration value="auto"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CT_VerticalJc">
+    <xsd:attribute name="val" type="ST_VerticalJc" use="required"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ST_VerticalJc">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="top"/>
+      <xsd:enumeration value="center"/>
+      <xsd:enumeration value="both"/>
+      <xsd:enumeration value="bottom"/>
     </xsd:restriction>
   </xsd:simpleType>
 

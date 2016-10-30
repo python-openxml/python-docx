@@ -11,6 +11,7 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
+from docx.enum.shared import WD_ALIGN_VERTICAL
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
 from docx.shared import Inches
 from docx.table import _Column, _Columns, _Row, _Rows
@@ -54,6 +55,17 @@ def given_a_row_collection_having_two_rows(context):
 @given('a table')
 def given_a_table(context):
     context.table_ = Document().add_table(rows=2, cols=2)
+
+
+@given('a table cell having vertical alignment of {state}')
+def given_a_table_cell_having_vertical_alignment_of_state(context, state):
+    table_idx = {'no explicit setting': 0,
+                 'bottom': 1,
+                 'center': 2,
+                 'top': 3}[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.cell = table.cell(0, 0)
 
 
 @given('a table cell having a width of {width}')
@@ -193,6 +205,14 @@ def when_I_merge_from_cell_origin_to_cell_other(context, origin, other):
     table = context.table_
     a, b = cell(table, a_idx), cell(table, b_idx)
     a.merge(b)
+
+
+@when('I assign {value} to cell.vertical_alignment')
+def when_I_assign_value_to_cell_vertical_alignment(context, value):
+    new_value = (
+        None if value == 'None' else getattr(WD_ALIGN_VERTICAL, value)
+    )
+    context.cell.vertical_alignment = new_value
 
 
 @when('I set the cell width to {width}')
@@ -348,6 +368,15 @@ def then_the_reported_column_width_is_width_emu(context, width_emu):
     expected_value = None if width_emu == 'None' else int(width_emu)
     assert context.column.width == expected_value, (
         'got %s' % context.column.width
+    )
+
+
+@then('cell.vertical_alignment is {value}')
+def then_cell_vertical_alignment_is_value(context, value):
+    expected_value = None if value == 'None' else getattr(WD_ALIGN_VERTICAL, value)
+    actual_value = context.cell.vertical_alignment
+    assert actual_value == expected_value, (
+        'expected %s, got %s' % (expected_value, actual_value)
     )
 
 
