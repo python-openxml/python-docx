@@ -16,6 +16,7 @@ can be found here:
    WdLineSpacing
    WdOrientation
    WdRowAlignment
+   WdRowHeightRule
    WdSectionStart
    WdStyleType
    WdTabAlignment

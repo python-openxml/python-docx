@@ -16,7 +16,9 @@ from .base import (
 @alias('WD_ROW_HEIGHT')
 class WD_ROW_HEIGHT_RULE(XmlEnumeration):
     """
-    Specifies the rule for determining the height or a table row
+    alias: **WD_ROW_HEIGHT**
+
+    Specifies the rule for determining the height of a table row
 
     Example::
 
