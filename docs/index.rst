@@ -18,6 +18,7 @@ Here's an example of what |docx| can do:
 |img|   ::
 
           from docx import Document
+          from docx.shared import Inches
 
           document = Document()
           document.add_heading('Document Title', 0)
