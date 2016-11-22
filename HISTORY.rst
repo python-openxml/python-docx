@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-0.8.5 (2015-02-21)
+0.8.6 (2015-02-21)
 ++++++++++++++++++
 
 - Fix #149: KeyError on Document.add_table()
