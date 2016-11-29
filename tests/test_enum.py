@@ -77,6 +77,9 @@ class DescribeEnumeration(object):
     def it_can_be_referred_to_by_a_convenience_alias_if_defined(self):
         assert BARFOO is FOOBAR  # noqa
 
+    def it_provides_doc(self):
+        assert(FOOBAR.__docs_rst__)
+
 
 class DescribeEnumValue(object):
 
