@@ -1,5 +1,6 @@
 language: python
 python:
+  - "3.5"
   - "3.4"
   - "3.3"
   - "2.7"
@@ -7,4 +8,14 @@ python:
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -r requirements.txt
 # command to run tests, e.g. python setup.py test
-script:  py.test
+script: py.test
+
+# run python -OO on certain versions only, 3.3 and 3.5 cannot handle this
+matrix:
+  include:
+  - python: "2.6"
+    script: python -OO -m py.test tests/test_enum.py
+  - python: "2.7"
+    script: python -OO -m py.test tests/test_enum.py
+  - python: "3.4"
+    script: python -OO -m py.test tests/test_enum.py
