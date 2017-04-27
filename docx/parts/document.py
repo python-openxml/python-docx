@@ -17,7 +17,7 @@ from ..shape import InlineShapes
 from ..shared import lazyproperty
 from .settings import SettingsPart
 from .styles import StylesPart
-
+from pptx.parts.chart import ChartPart
 
 class DocumentPart(XmlPart):
     """
@@ -57,6 +57,15 @@ class DocumentPart(XmlPart):
         rId = self.relate_to(image_part, RT.IMAGE)
         return rId, image_part.image
 
+    def get_or_add_chart(self, chart_type, x, y, cx, cy, chart_data):
+        """
+        Return an (rId, chart) 2-tuple for the chart.
+        Access the chart properties like description in python-pptx documents.
+        """
+        chart_part = ChartPart.new(chart_type, chart_data, self.package)
+        rId = self.relate_to(chart_part, RT.CHART)
+        return rId, chart_part.chart
+
     def get_style(self, style_id, style_type):
         """
         Return the style in this document matching *style_id*. Returns the
@@ -93,6 +102,15 @@ class DocumentPart(XmlPart):
         cx, cy = image.scaled_dimensions(width, height)
         shape_id, filename = self.next_id, image.filename
         return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+
+    def new_chart_inline(self, chart_type, x, y, cx, cy, chart_data):
+        """
+        Return a newly-created `w:inline` element containing the chart
+        with position *x* and *y* and width *cx* and height *y*
+        """
+        rId, chart = self.get_or_add_chart(chart_type, x, y, cx, cy, chart_data)
+        shape_id = self.next_id
+        return CT_Inline.new_chart_inline(shape_id, rId, x, y, cx, cy), chart
 
     @property
     def next_id(self):

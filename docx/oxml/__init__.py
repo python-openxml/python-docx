@@ -96,7 +96,7 @@ from .shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
     CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
     CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
-    CT_Transform2D
+    CT_Transform2D, CT_Chart
 )
 register_element_cls('a:blip',        CT_Blip)
 register_element_cls('a:ext',         CT_PositiveSize2D)
@@ -112,6 +112,7 @@ register_element_cls('pic:spPr',      CT_ShapeProperties)
 register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
+register_element_cls('c:chart',     CT_Chart)
 
 from .styles import CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles
 register_element_cls('w:basedOn',        CT_String)

@@ -46,6 +46,7 @@ class CT_GraphicalObjectData(BaseOxmlElement):
     ``<a:graphicData>`` element, container for the XML of a DrawingML object
     """
     pic = ZeroOrOne('pic:pic')
+    cChart = ZeroOrOne('c:chart')
     uri = RequiredAttribute('uri', XsdToken)
 
 
@@ -101,6 +102,33 @@ class CT_Inline(BaseOxmlElement):
             '</wp:inline>' % nsdecls('wp', 'a', 'pic', 'r')
         )
 
+    @classmethod
+    def new_chart_inline(cls, shape_id, rId, x, y, cx, cy):
+        """
+        Return a new ``<wp:inline>`` element populated with the values passed
+        as parameters.
+        """
+        inline = parse_xml(cls._chart_xml())
+        inline.extent.cx = cx
+        inline.extent.cy = cy
+        chart = CT_Chart.new(rId)
+        inline.graphic.graphicData._insert_cChart(chart)
+        return inline
+
+    @classmethod
+    def _chart_xml(cls):
+        return (
+            '<wp:inline %s>\n'
+            '  <wp:extent/>\n'
+            '  <wp:effectExtent l="0" t="0" r="0" b="0"/>\n'
+            '  <wp:docPr id="1" name="Chart 1"/>\n'
+            '  <wp:cNvGraphicFramePr/>\n'
+            '  <a:graphic %s>\n'
+            '    <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart"/>\n'
+            '  </a:graphic>\n'
+            '</wp:inline>' % (nsdecls('wp', 'a'), nsdecls('a'))
+        )
+
 
 class CT_NonVisualDrawingProps(BaseOxmlElement):
     """
@@ -116,6 +144,28 @@ class CT_NonVisualPictureProperties(BaseOxmlElement):
     ``<pic:cNvPicPr>`` element, specifies picture locking and resize
     behaviors.
     """
+
+class CT_Chart(BaseOxmlElement):
+    """
+    ``<c:chart>`` element, a DrawingML picture
+    """
+
+    @classmethod
+    def new(cls, rId):
+        """
+        Return a new ``<c:chart>`` element populated with the minimal
+        contents required to define a viable chart element, based on the
+        values passed as parameters.
+        """
+        chart = parse_xml(cls._chart_xml(rId))
+        chart.id = rId
+        return chart
+
+    @classmethod
+    def _chart_xml(cls, rId):
+        return (
+            '<c:chart %s r:id="%s"/>\n'% (nsdecls('c', 'r'), rId)
+        )
 
 
 class CT_Picture(BaseOxmlElement):
