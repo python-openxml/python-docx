@@ -14,7 +14,6 @@ from .enum.text import WD_BREAK
 from .section import Section, Sections
 from .shared import ElementProxy, Emu
 
-
 class Document(ElementProxy):
     """
     WordprocessingML (WML) document. Not intended to be constructed directly.
@@ -126,6 +125,23 @@ class Document(ElementProxy):
         marks such as ``<w:ins>`` or ``<w:del>`` do not appear in this list.
         """
         return self._body.paragraphs
+
+    @property
+    def paragraphs_tables(self):
+        """
+        merge tables and paragraphs together
+        """
+        p_t_list = []
+        for content in self._body._body.getchildren():
+          if (content.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p'):
+            from .text.paragraph import Paragraph
+            p_t_list.append(Paragraph(content, self._body));
+          elif (content.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tbl'):
+            from .table import Table
+            p_t_list.append(Table(content, self._body));
+          else:
+            print(content.tag);
+        return p_t_list
 
     @property
     def part(self):
