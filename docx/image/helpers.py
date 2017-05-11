@@ -4,6 +4,8 @@ from __future__ import absolute_import, division, print_function
 
 from struct import Struct
 
+import logging
+
 from .exceptions import UnexpectedEndOfFileError
 
 
@@ -93,5 +95,10 @@ class StreamReader(object):
         return self._unpack_item(struct, base, offset)
 
     def _unpack_item(self, struct, base, offset):
-        bytes_ = self._read_bytes(struct.size, base, offset)
+        try:
+            bytes_ = self._read_bytes(struct.size, base, offset)
+        except UnexpectedEndOfFileError:
+            logging.error('Error while reading bytes with struct size - {}, base - {}, offset - {}. '
+                          'This bytes are replaced by an empty string.'.format(struct.size, base, offset))
+            return ''
         return struct.unpack(bytes_)[0]
