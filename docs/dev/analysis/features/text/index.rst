@@ -13,3 +13,5 @@ Text
    underline
    run-content
    breaks
+   hyperlink
+
