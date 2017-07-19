@@ -123,6 +123,17 @@ class Twips(Length):
         emu = int(twips * Length._EMUS_PER_TWIP)
         return Length.__new__(cls, emu)
 
+class IntOrPercent(object):
+    """
+    Integer or a percentage value
+    """
+    def __init__(self, str):
+        if str[-1] == "%":
+            self.is_percent = True
+            self.value = int(str[:-1])
+        else:
+            self.is_percent = False
+            self.value = int(str)
 
 class RGBColor(tuple):
     """
