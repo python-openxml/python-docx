@@ -26,4 +26,5 @@ SIGNATURES = (
     (Tiff, 0, b'MM\x00*'),  # big-endian (Motorola) TIFF
     (Tiff, 0, b'II*\x00'),  # little-endian (Intel) TIFF
     (Bmp,  0, b'BM'),
+    (Jfif, 0, b'\xFF\xD8\xFF\xE2'),  # CANNON EOS JPEG FILE
 )
