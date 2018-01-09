@@ -11,6 +11,7 @@ from __future__ import (
 from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
+from .delrun import Del
 from ..shared import Parented
 
 
@@ -21,7 +22,15 @@ class Paragraph(Parented):
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+    def add_del(self, text=None):
 
+        d = self._p.add_d()
+
+        drun = Del(d,self)
+        if text:
+            drun.add_text(text)
+
+        return drun
     def add_run(self, text=None, style=None):
         """
         Append a run to this paragraph containing *text* and having character

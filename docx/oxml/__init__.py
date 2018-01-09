@@ -196,7 +196,12 @@ register_element_cls('w:tab',             CT_TabStop)
 register_element_cls('w:tabs',            CT_TabStops)
 register_element_cls('w:widowControl',    CT_OnOff)
 
-from .text.run import CT_Br, CT_R, CT_Text
+from .text.run import CT_Br, CT_R, CT_Text, CT_DelText
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+register_element_cls('w:delText', CT_DelText)
+
+from .text.delrun import CT_DR
+register_element_cls('w:del', CT_DR)
+
