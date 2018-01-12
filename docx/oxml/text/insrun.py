@@ -1,33 +1,33 @@
-# encoding: utf-8
-
 """
-Custom element classes related to delete runs (CT_DR).
-<w:del w:id="0" w:author="Unknown Author" w:date="2018-01-08T17:55:00Z">
-<w:r>
-<w:rPr/>
-<w:delText>Blah</w:delText>
-</w:r>
-</w:del>
+We want to construct these
+ <w:ins w:id="0" w:author="Jonathan Herr" w:date="2017-07-23T17:10:09Z" oouserid="638b80f8-8add-48ff-8ca8-d0c2d566e795">
+            <w:r>
+                <w:rPr>
+                    <w:szCs w:val="24"/>
+                </w:rPr>
+                <w:t xml:space="preserve">This is a new sentence.</w:t>
+            </w:r>
+			</w:ins >
 """
 
 from ..ns import qn
 from ..simpletypes import ST_BrClear, ST_BrType
 from ..xmlchemy import (BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne)
 
-class CT_DR(BaseOxmlElement):
+class CT_IR(BaseOxmlElement):
     """
     ``<w:del>`` element, containing the properties and text for a delete run.
     """
     r = ZeroOrOne('w:r')
     rPr = ZeroOrOne('w:rPr')
-    def add_dt(self,text):
+    def add_t(self,text):
         """
-        Return a newly added ''<w:delText>'' element containing *text*.
+        Return a newly added ''<w:t>'' element containing *text*.
         """
-        dt=self._add_r(deltext=text)
+        r=self._add_r(text=text)
         if len(text.strip()) < len(text):
-            dt.set(qn('xml:space'), 'preserve')
-        return dt
+            r.set(qn('xml:space'), 'preserve')
+        return r
 
     @property
     def text(self):
@@ -38,7 +38,7 @@ class CT_DR(BaseOxmlElement):
         """
         text = ''
         for child in self:
-            if child.tag == qn('w:delText'):
+            if child.tag == qn('w:t'):
                 t_text = child.text
                 text += t_text if t_text is not None else ''
             elif child.tag == qn('w:tab'):
@@ -51,6 +51,26 @@ class CT_DR(BaseOxmlElement):
     def text(self, text):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
+
+    @property
+    def style(self):
+        """
+        String contained in w:val attribute of <w:rStyle> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self.rPr
+        if rPr is None:
+            return None
+        return rPr.style
+
+    @style.setter
+    def style(self, style):
+        """
+        Set the character style of this <w:r> element to *style*. If *style*
+        is None, remove the style element.
+        """
+        rPr = self.get_or_add_rPr()
+        rPr.style = style
 
     def clear_content(self):
         """
@@ -115,5 +135,5 @@ class _RunContentAppender(object):
     def flush(self):
         text = ''.join(self._bfr)
         if text:
-            self._r.add_dt(text)
+            self._r.add_t(text)
         del self._bfr[:]

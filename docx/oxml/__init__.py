@@ -205,3 +205,5 @@ register_element_cls('w:delText', CT_DelText)
 from .text.delrun import CT_DR
 register_element_cls('w:del', CT_DR)
 
+from .text.insrun import CT_IR
+register_element_cls('w:ins', CT_IR)

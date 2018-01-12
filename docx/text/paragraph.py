@@ -12,6 +12,7 @@ from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
 from .delrun import Del
+from .insrun import Ins
 from ..shared import Parented
 
 
@@ -22,13 +23,22 @@ class Paragraph(Parented):
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
-    def add_del(self, text=None):
+
+    def add_ins(self, text=None, style=None):
+        i = self._p.add_i()
+
+        irun = Ins(i,self)
+        if text:
+            irun.add_text(text)
+
+        return irun
+    def add_del(self, deltext=None):
 
         d = self._p.add_d()
 
         drun = Del(d,self)
-        if text:
-            drun.add_text(text)
+        if deltext:
+            drun.add_text(deltext)
 
         return drun
     def add_run(self, text=None, style=None):
@@ -46,6 +56,7 @@ class Paragraph(Parented):
             run.text = text
         if style:
             run.style = style
+
         return run
 
     @property
@@ -93,6 +104,19 @@ class Paragraph(Parented):
         """
         return ParagraphFormat(self._element)
 
+    @property
+    def ins(self):
+        """
+        Sequence of |Ins| instances corresponding to the <w:ins> elements in this paragraph
+        """
+        return [Ins(i,self) for i in self._p.i_lst]
+
+    @property
+    def dels(self):
+        """
+        Sequence of |Del| instances corresponding to the <w:del> elements in this paragraph
+        """
+        return [Del(d, self) for d in self._p.d_lst]
     @property
     def runs(self):
         """

@@ -130,7 +130,7 @@ class CT_R(BaseOxmlElement):
                 text += '\n'
         return text
 
-    @text.setter
+    @deltext.setter
     def deltext(self, text):
         self.clear_content()
         _DelRunContentAppender.append_to_run_from_text(self, text)
