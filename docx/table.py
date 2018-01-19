@@ -159,6 +159,18 @@ class Table(Parented):
         self._element.bidiVisual_val = value
 
     @property
+    def total_row(self):
+        """
+        |True| is the table should display the last row as
+        the Total Row.
+        """
+        return self._tblPr.total_row
+
+    @total_row.setter
+    def total_row(self, value):
+        self._tblPr.total_row = value
+
+    @property
     def _cells(self):
         """
         A sequence of |_Cell| objects, one for each cell of the layout grid.
