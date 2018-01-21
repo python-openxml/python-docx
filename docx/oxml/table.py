@@ -13,7 +13,8 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt,
+    ST_OnOff
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -141,6 +142,21 @@ class CT_Tbl(BaseOxmlElement):
             return
         tblPr._add_tblStyle().val = styleId
 
+    @property
+    def show_total_row_val(self):
+        show_total_row = self.tblPr.show_total_row
+        if show_total_row is None:
+            return None
+        return show_total_row.val
+
+    @show_total_row_val.setter
+    def show_total_row_val(self, value):
+        tblPr = self.tblPr
+        if val is None:
+            tblPr._remove_show_total_row()
+        else:
+            tblPr.get_or_add_show_total_row().val = value
+
     @classmethod
     def _tbl_xml(cls, rows, cols, width):
         col_width = Emu(width/cols) if cols > 0 else Emu(0)
@@ -148,9 +164,14 @@ class CT_Tbl(BaseOxmlElement):
             '<w:tbl %s>\n'
             '  <w:tblPr>\n'
             '    <w:tblW w:type="auto" w:w="0"/>\n'
-            '    <w:tblLook w:firstColumn="1" w:firstRow="1"\n'
-            '               w:lastColumn="0" w:lastRow="0" w:noHBand="0"\n'
-            '               w:noVBand="1" w:val="04A0"/>\n'
+            '    <w:tblLook'
+            '      w:first_column="true"'
+            '      w:firstRow="true"'
+            '      w:lastColumn="true"'
+            '      w:lastRow="true"'
+            '      w:noHBand="true"'
+            '      w:noVBand="true"'
+            '    />'
             '  </w:tblPr>\n'
             '%s'  # tblGrid
             '%s'  # trs
@@ -243,6 +264,7 @@ class CT_TblPr(BaseOxmlElement):
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    tblLook = OneAndOnlyOne('w:tblLook')
     del _tag_seq
 
     @property
@@ -299,6 +321,14 @@ class CT_TblPr(BaseOxmlElement):
             return
         self._add_tblStyle(val=value)
 
+    @property
+    def show_total_row(self):
+        return self.tblLook.show_total_row
+
+    @show_total_row.setter
+    def show_total_row(self, value):
+        tblLook = self.tblLook
+        tblLook.show_total_row = True if value else False
 
 class CT_TblWidth(BaseOxmlElement):
     """
@@ -781,3 +811,7 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
     val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+
+class CT_TblLook(BaseOxmlElement):
+    show_total_row = RequiredAttribute('w:lastRow', ST_OnOff)
