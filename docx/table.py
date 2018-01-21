@@ -171,6 +171,18 @@ class Table(Parented):
         self._tblPr.show_total_row = value
 
     @property
+    def show_header_row(self):
+        """
+        |True| is the table should display the first row as
+        the Header Row.
+        """
+        return self._tbl.show_header_row
+
+    @show_header_row.setter
+    def show_header_row(self, value):
+        self._tblPr.show_header_row = value
+
+    @property
     def _cells(self):
         """
         A sequence of |_Cell| objects, one for each cell of the layout grid.

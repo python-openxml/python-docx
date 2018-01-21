@@ -143,19 +143,28 @@ class CT_Tbl(BaseOxmlElement):
         tblPr._add_tblStyle().val = styleId
 
     @property
-    def show_total_row_val(self):
-        show_total_row = self.tblPr.show_total_row
-        if show_total_row is None:
-            return None
-        return show_total_row.val
+    def show_total_row(self):
+        return self.tblPr.show_total_row
 
-    @show_total_row_val.setter
-    def show_total_row_val(self, value):
+    @show_total_row.setter
+    def show_total_row(self, value):
         tblPr = self.tblPr
         if val is None:
             tblPr._remove_show_total_row()
         else:
             tblPr.get_or_add_show_total_row().val = value
+
+    @property
+    def show_header_row(self):
+        return self.tblPr.show_header_row
+
+    @show_header_row.setter
+    def show_header_row(self, value):
+        tblPr = self.tblPr
+        if val is None:
+            tblPr._remove_show_header_row()
+        else:
+            tblPr.get_or_add_show_header_row().val = value
 
     @classmethod
     def _tbl_xml(cls, rows, cols, width):
@@ -165,7 +174,7 @@ class CT_Tbl(BaseOxmlElement):
             '  <w:tblPr>\n'
             '    <w:tblW w:type="auto" w:w="0"/>\n'
             '    <w:tblLook'
-            '      w:first_column="true"'
+            '      w:firstColumn="true"'
             '      w:firstRow="true"'
             '      w:lastColumn="true"'
             '      w:lastRow="true"'
@@ -329,6 +338,16 @@ class CT_TblPr(BaseOxmlElement):
     def show_total_row(self, value):
         tblLook = self.tblLook
         tblLook.show_total_row = True if value else False
+
+    @property
+    def show_header_row(self):
+        return self.tblLook.show_header_row
+
+    @show_header_row.setter
+    def show_header_row(self, value):
+        tblLook = self.tblLook
+        tblLook.show_header_row = True if value else False
+
 
 class CT_TblWidth(BaseOxmlElement):
     """
@@ -815,3 +834,4 @@ class CT_VMerge(BaseOxmlElement):
 
 class CT_TblLook(BaseOxmlElement):
     show_total_row = RequiredAttribute('w:lastRow', ST_OnOff)
+    show_header_row = RequiredAttribute('w:firstRow', ST_OnOff)
