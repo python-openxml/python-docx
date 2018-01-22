@@ -142,30 +142,6 @@ class CT_Tbl(BaseOxmlElement):
             return
         tblPr._add_tblStyle().val = styleId
 
-    @property
-    def show_total_row(self):
-        return self.tblPr.show_total_row
-
-    @show_total_row.setter
-    def show_total_row(self, value):
-        tblPr = self.tblPr
-        if val is None:
-            tblPr._remove_show_total_row()
-        else:
-            tblPr.get_or_add_show_total_row().val = value
-
-    @property
-    def show_header_row(self):
-        return self.tblPr.show_header_row
-
-    @show_header_row.setter
-    def show_header_row(self, value):
-        tblPr = self.tblPr
-        if val is None:
-            tblPr._remove_show_header_row()
-        else:
-            tblPr.get_or_add_show_header_row().val = value
-
     @classmethod
     def _tbl_xml(cls, rows, cols, width):
         col_width = Emu(width/cols) if cols > 0 else Emu(0)
@@ -347,6 +323,42 @@ class CT_TblPr(BaseOxmlElement):
     def show_header_row(self, value):
         tblLook = self.tblLook
         tblLook.show_header_row = True if value else False
+
+    @property
+    def show_header_column(self):
+        return self.tblLook.show_header_column
+
+    @show_header_column.setter
+    def show_header_column(self, value):
+        tblLook = self.tblLook
+        tblLook.show_header_column = True if value else False
+
+    @property
+    def show_last_column(self):
+        return self.tblLook.show_last_column
+
+    @show_last_column.setter
+    def show_last_column(self, value):
+        tblLook = self.tblLook
+        tblLook.show_last_column = True if value else False
+
+    @property
+    def show_banded_rows(self):
+        return self.tblLook.show_banded_rows
+
+    @show_banded_rows.setter
+    def show_banded_rows(self, value):
+        tblLook = self.tblLook
+        tblLook.show_banded_rows = False if value else True
+
+    @property
+    def show_banded_columns(self):
+        return self.tblLook.show_banded_columns
+
+    @show_banded_columns.setter
+    def show_banded_columns(self, value):
+        tblLook = self.tblLook
+        tblLook.show_banded_columns = False if value else True
 
 
 class CT_TblWidth(BaseOxmlElement):
@@ -835,3 +847,7 @@ class CT_VMerge(BaseOxmlElement):
 class CT_TblLook(BaseOxmlElement):
     show_total_row = RequiredAttribute('w:lastRow', ST_OnOff)
     show_header_row = RequiredAttribute('w:firstRow', ST_OnOff)
+    show_header_column = RequiredAttribute('w:firstColumn', ST_OnOff)
+    show_last_column = RequiredAttribute('w:lastColumn', ST_OnOff)
+    show_banded_rows = RequiredAttribute('w:noHBand', ST_OnOff)
+    show_banded_columns = RequiredAttribute('w:noVBand', ST_OnOff)
