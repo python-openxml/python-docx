@@ -175,6 +175,24 @@ def given_a_table(context, last_column):
     context.table_.show_last_column = last_column_value
 
 
+@given('a table having a Banded Rows setting of {banded_rows}')
+def given_a_table(context, banded_rows):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    banded_rows_value = True if banded_rows == 'True' else False
+    context.table_.show_banded_rows = banded_rows_value
+
+
+@given('a table having a Banded Columns setting of {banded_columns}')
+def given_a_table(context, banded_columns):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    banded_columns_value = True if banded_columns == 'True' else False
+    context.table_.show_banded_columns = banded_columns_value
+
+
 # when =====================================================
 
 @when('I add a 1.0 inch column to the table')
@@ -464,8 +482,23 @@ def then_the_show_header_column_table_style_option_is(context, value):
     expected_value = True if value == 'True' else False
     assert table_.show_header_column == expected_value
 
+
 @then('table.show_last_column is {value}')
 def then_the_show_last_column_table_style_option_is(context, value):
     table_ = context.table_
     expected_value = True if value == 'True' else False
     assert table_.show_last_column == expected_value
+
+
+@then('table.show_banded_rows is {value}')
+def then_the_show_banded_rows_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_banded_rows == expected_value
+
+
+@then('table.show_banded_columns is {value}')
+def then_the_show_banded_columns_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_banded_columns == expected_value

@@ -211,7 +211,7 @@ class Table(Parented):
         """
         |True| is the table should display banded rows
         """
-        return self._tbl.show_banded_rows
+        return self._tblPr.show_banded_rows
 
     @show_banded_rows.setter
     def show_banded_rows(self, value):
@@ -222,7 +222,7 @@ class Table(Parented):
         """
         |True| is the table should display banded columns
         """
-        return self._tbl.show_banded_columns
+        return self._tblPr.show_banded_columns
 
     @show_banded_columns.setter
     def show_banded_columns(self, value):

@@ -29,9 +29,9 @@ Feature: Query and apply table style options
       Then table.show_header_column is <setting>
 
     Examples: table First Column settings
-      | header_column  | setting |
-      | True       | True    |
-      | False      | False   |
+      | header_column | setting |
+      | True          | True    |
+      | False         | False   |
 
 
   Scenario Outline: Get the "Last Column" table style option value
@@ -39,29 +39,31 @@ Feature: Query and apply table style options
       Then table.show_last_column is <setting>
 
     Examples: table Last Column settings
-      | last_column  | setting |
-      | True       | True    |
-      | False      | False   |
+      | last_column | setting |
+      | True        | True    |
+      | False       | False   |
 
 
-      #   Scenario Outline: Get the "Last Column" table style option value
-      #     Given a table
-      #       Then table.show_last_column either True or False and reflects the
-      #            state of the "Last Column" checkox in the Table Style Options
-      # 
-      # 
-      #   Scenario Outline: Get the "Banded Rows" table style option value
-      #     Given a table
-      #       Then table.show_banded_rows either True or False and reflects the
-      #            state of the "Banded Rows" checkox in the Table Style Options
-      # 
-      # 
-      #   Scenario Outline: Get the "Banded Columns" table style option value
-      #     Given a table
-      #       Then table.show_banded_columns either True or False and reflects the
-      #            state of the "Banded Columns" checkox in the Table Style Options
-      # 
-      # 
+  Scenario Outline: Get the "Banded Rows" table style option value
+    Given a table having a Banded Rows setting of <banded_rows>
+      Then table.show_banded_rows is <setting>
+
+    Examples: table Banded Rows settings
+      | banded_rows | setting |
+      | True        | False   |
+      | False       | True    |
+
+
+  Scenario Outline: Get the "Banded Columns" table style option value
+    Given a table having a Banded Columns setting of <banded_columns>
+      Then table.show_banded_columns is <setting>
+
+    Examples: table Banded Columns settings
+      | banded_columns | setting |
+      | True        | False   |
+      | False       | True    |
+
+
       #   Scenario Outline: Apply a table style
       #     Given a table having <style> style
       #      When I assign <value> to table.style
