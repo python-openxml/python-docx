@@ -157,6 +157,15 @@ def given_a_table(context, total_row):
     context.table_.show_total_row = total_row_value
 
 
+@given('a table having a First Column setting of {header_column}')
+def given_a_table(context, header_column):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    header_column_value = True if header_column == 'True' else False
+    context.table_.show_header_column = header_column_value
+
+
 # when =====================================================
 
 @when('I add a 1.0 inch column to the table')
@@ -432,8 +441,16 @@ def then_the_show_header_row_table_style_option_is(context, value):
     expected_value = True if value == 'True' else False
     assert table_.show_header_row == expected_value
 
+
 @then('table.show_total_row is {value}')
 def then_the_show_total_row_table_style_option_is(context, value):
     table_ = context.table_
     expected_value = True if value == 'True' else False
     assert table_.show_total_row == expected_value
+
+
+@then('table.show_header_column is {value}')
+def then_the_show_header_column_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_header_column == expected_value

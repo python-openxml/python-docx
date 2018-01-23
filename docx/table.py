@@ -188,7 +188,7 @@ class Table(Parented):
         |True| is the table should display the first column as
         the Header Column.
         """
-        return self._tbl.show_header_column
+        return self._tblPr.show_header_column
 
     @show_header_column.setter
     def show_header_column(self, value):

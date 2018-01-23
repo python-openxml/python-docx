@@ -24,12 +24,16 @@ Feature: Query and apply table style options
       | False      | False   |
 
 
-      #   Scenario Outline: Get the "First Column" table style option value
-      #     Given a table
-      #       Then table.show_header_column either True or False and reflects the
-      #            state of the "First Column" checkox in the Table Style Options
-      # 
-      # 
+  Scenario Outline: Get the "First Column" table style option value
+    Given a table having a First Column setting of <header_column>
+      Then table.show_header_column is <setting>
+
+    Examples: table First Column settings
+      | header_column  | setting |
+      | True       | True    |
+      | False      | False   |
+
+
       #   Scenario Outline: Get the "Last Column" table style option value
       #     Given a table
       #       Then table.show_last_column either True or False and reflects the
