@@ -139,6 +139,15 @@ def given_a_table_having_two_rows(context):
     context.table_ = document.tables[0]
 
 
+@given('a table having {header_row} setting')
+def given_a_table(context, header_row):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    header_row_value = True if header_row == 'True' else False
+    context.table_.show_header_row = header_row_value
+    import pdb; pdb.set_trace()
+
 # when =====================================================
 
 @when('I add a 1.0 inch column to the table')
@@ -406,3 +415,11 @@ def then_the_width_of_each_column_is_inches(context, inches):
     expected_width = Inches(float(inches))
     for column in table.columns:
         assert column.width == expected_width, 'got %s' % column.width.inches
+
+
+@then('table.show_header_row is {value}')
+def then_the_show_header_row_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    import pdb; pdb.set_trace()
+    assert table_.show_header_row == expected_value

@@ -176,7 +176,7 @@ class Table(Parented):
         |True| is the table should display the first row as
         the Header Row.
         """
-        return self._tbl.show_header_row
+        return self._tblPr.show_header_row
 
     @show_header_row.setter
     def show_header_row(self, value):
