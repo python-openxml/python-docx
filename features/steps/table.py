@@ -289,6 +289,27 @@ def when_I_update_header_column_table_style_option(context, updated_value):
     table.show_header_column = new_value
 
 
+@when('I assign {updated_value} to table.show_last_column')
+def when_I_update_last_column_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_last_column = new_value
+
+
+@when('I assign {updated_value} to table.show_banded_rows')
+def when_I_update_banded_rows_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_banded_rows = new_value
+
+
+@when('I assign {updated_value} to table.show_banded_columns')
+def when_I_update_banded_columns_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_banded_columns = new_value
+
+
 # then =====================================================
 
 @then('I can access a collection column by index')

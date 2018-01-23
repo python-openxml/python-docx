@@ -101,3 +101,42 @@ Feature: Query and apply table style options
       | True          | False         | False  |
       | False         | True          | True   |
       | False         | False         | False  |
+
+
+  Scenario Outline: Control the "Last Column" table style option value
+    Given a table having a Last Column setting of <last_column>
+     When I assign <updated_value> to table.show_last_column
+     Then table.show_last_column is <value>
+
+    Examples: table Last Column settings
+      | last_column   | updated_value | value  |
+      | True          | True          | True   |
+      | True          | False         | False  |
+      | False         | True          | True   |
+      | False         | False         | False  |
+
+
+  Scenario Outline: Control the "Banded Rows" table style option value
+    Given a table having a Banded Rows setting of <banded_rows>
+     When I assign <updated_value> to table.show_banded_rows
+     Then table.show_banded_rows is <value>
+
+    Examples: table Banded Rows settings
+      | banded_rows   | updated_value | value  |
+      | True          | True          | False  |
+      | True          | False         | True   |
+      | False         | True          | False  |
+      | False         | False         | True   |
+
+
+  Scenario Outline: Control the "Banded Columns" table style option value
+    Given a table having a Banded Columns setting of <banded_columns>
+     When I assign <updated_value> to table.show_banded_columns
+     Then table.show_banded_columns is <value>
+
+    Examples: table Banded Columns settings
+      | banded_columns | updated_value | value  |
+      | True           | True          | False  |
+      | True           | False         | True   |
+      | False          | True          | False  |
+      | False          | False         | True   |
