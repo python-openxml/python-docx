@@ -200,7 +200,7 @@ class Table(Parented):
         |True| is the table should display the last column as
         with the Table Style formatting
         """
-        return self._tbl.show_last_column
+        return self._tblPr.show_last_column
 
     @show_last_column.setter
     def show_last_column(self, value):

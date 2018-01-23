@@ -34,6 +34,16 @@ Feature: Query and apply table style options
       | False      | False   |
 
 
+  Scenario Outline: Get the "Last Column" table style option value
+    Given a table having a Last Column setting of <last_column>
+      Then table.show_last_column is <setting>
+
+    Examples: table Last Column settings
+      | last_column  | setting |
+      | True       | True    |
+      | False      | False   |
+
+
       #   Scenario Outline: Get the "Last Column" table style option value
       #     Given a table
       #       Then table.show_last_column either True or False and reflects the
