@@ -164,7 +164,7 @@ class Table(Parented):
         |True| is the table should display the last row as
         the Total Row.
         """
-        return self._tbl.show_total_row
+        return self._tblPr.show_total_row
 
     @show_total_row.setter
     def show_total_row(self, value):

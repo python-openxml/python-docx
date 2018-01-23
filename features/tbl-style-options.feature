@@ -5,7 +5,7 @@ Feature: Query and apply table style options
 
 
   Scenario Outline: Get the "Header Row" table style option value
-    Given a table having <header_row> setting
+    Given a table having a Header Row setting of <header_row>
     Then table.show_header_row is <setting>
 
     Examples: table Header Row settings
@@ -14,13 +14,16 @@ Feature: Query and apply table style options
       | False      | False   |
 
 
+  Scenario Outline: Get the "Total Row" table style option value
+    Given a table having a Total Row setting of <total_row>
+      Then table.show_total_row is <setting>
 
-      #   Scenario Outline: Get the "Total Row" table style option value
-      #     Given a table
-      #       Then table.show_total_row either True or False and reflects the
-      #            state of the "Total Row" checkox in the Table Style Options
-      # 
-      # 
+    Examples: table Total Row settings
+      | total_row  | setting |
+      | True       | True    |
+      | False      | False   |
+
+
       #   Scenario Outline: Get the "First Column" table style option value
       #     Given a table
       #       Then table.show_header_column either True or False and reflects the

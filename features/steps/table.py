@@ -139,14 +139,23 @@ def given_a_table_having_two_rows(context):
     context.table_ = document.tables[0]
 
 
-@given('a table having {header_row} setting')
+@given('a table having a Header Row setting of {header_row}')
 def given_a_table(context, header_row):
     docx_path = test_docx('blk-containing-table')
     document = Document(docx_path)
     context.table_ = document.tables[0]
     header_row_value = True if header_row == 'True' else False
     context.table_.show_header_row = header_row_value
-    import pdb; pdb.set_trace()
+
+
+@given('a table having a Total Row setting of {total_row}')
+def given_a_table(context, total_row):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    total_row_value = True if total_row == 'True' else False
+    context.table_.show_total_row = total_row_value
+
 
 # when =====================================================
 
@@ -421,5 +430,10 @@ def then_the_width_of_each_column_is_inches(context, inches):
 def then_the_show_header_row_table_style_option_is(context, value):
     table_ = context.table_
     expected_value = True if value == 'True' else False
-    import pdb; pdb.set_trace()
     assert table_.show_header_row == expected_value
+
+@then('table.show_total_row is {value}')
+def then_the_show_total_row_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_total_row == expected_value
