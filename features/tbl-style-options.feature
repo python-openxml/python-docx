@@ -64,15 +64,40 @@ Feature: Query and apply table style options
       | False       | True    |
 
 
-      #   Scenario Outline: Apply a table style
-      #     Given a table having <style> style
-      #      When I assign <value> to table.style
-      #      Then table.style is styles['<style-name>']
-      # 
-      #     Examples: Character style transitions
-      #       | style       | value                  | style-name   |
-      #       | no explicit | Table Grid             | Table Grid   |
-      #       | no explicit | styles['Table Grid']   | Table Grid   |
-      #       | Table Grid  | Normal Table           | Normal Table |
-      #       | Table Grid  | styles['Normal Table'] | Normal Table |
-      #       | Table Grid  | None                   | Normal Table |
+  Scenario Outline: Control the "Header Row" table style option value
+    Given a table having a Header Row setting of <header_row>
+     When I assign <updated_value> to table.show_header_row
+     Then table.show_header_row is <value>
+
+    Examples: table Header Row settings
+      | header_row | updated_value | value  |
+      | True       | True          | True   |
+      | True       | False         | False  |
+      | False      | True          | True   |
+      | False      | False         | False  |
+
+
+  Scenario Outline: Control the "Total Row" table style option value
+    Given a table having a Total Row setting of <total_row>
+     When I assign <updated_value> to table.show_total_row
+     Then table.show_total_row is <value>
+
+    Examples: table Total Row settings
+      | total_row  | updated_value | value  |
+      | True       | True          | True   |
+      | True       | False         | False  |
+      | False      | True          | True   |
+      | False      | False         | False  |
+
+
+  Scenario Outline: Control the "First Column" table style option value
+    Given a table having a First Column setting of <header_column>
+     When I assign <updated_value> to table.show_header_column
+     Then table.show_header_column is <value>
+
+    Examples: table First Column settings
+      | first_column  | updated_value | value  |
+      | True          | True          | True   |
+      | True          | False         | False  |
+      | False         | True          | True   |
+      | False         | False         | False  |

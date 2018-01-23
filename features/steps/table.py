@@ -268,6 +268,27 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
     table.autofit = new_value
 
 
+@when('I assign {updated_value} to table.show_header_row')
+def when_I_update_header_row_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_header_row = new_value
+
+
+@when('I assign {updated_value} to table.show_total_row')
+def when_I_update_total_row_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_total_row = new_value
+
+
+@when('I assign {updated_value} to table.show_header_column')
+def when_I_update_header_column_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_header_column = new_value
+
+
 # then =====================================================
 
 @then('I can access a collection column by index')
