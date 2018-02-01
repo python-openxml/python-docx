@@ -70,6 +70,9 @@ from .shared import CT_DecimalNumber, CT_OnOff, CT_String
 from .coreprops import CT_CoreProperties
 register_element_cls('cp:coreProperties', CT_CoreProperties)
 
+from .customprops import CT_CustomProperties
+#register_element_cls('Properties', CT_CustomProperties)
+
 from .document import CT_Body, CT_Document
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
