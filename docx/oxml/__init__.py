@@ -29,6 +29,22 @@ def parse_xml(xml):
     return root_element
 
 
+# configure XML parser
+parser_lookup = etree.ElementDefaultClassLookup()#element=CT_CustomProperties)
+ct_parser = etree.XMLParser(remove_blank_text=True)
+ct_parser.set_element_class_lookup(parser_lookup)
+
+def ct_parse_xml(xml):
+    """
+    Return root lxml element obtained by parsing XML character string in
+    *xml*, which can be either a Python 2.x string or unicode. The custom
+    parser is used, so custom element classes are produced for elements in
+    *xml* that have them.
+    """
+    root_element = etree.fromstring(xml, ct_parser)
+    return root_element
+
+
 def register_element_cls(tag, cls):
     """
     Register *cls* to be constructed when the oxml parser encounters an

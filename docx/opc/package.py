@@ -187,7 +187,7 @@ class OpcPackage(object):
         |CustomPropertiesPart| object related to this package. Creates
         a default custom properties part if one is not present (not common).
         """
-       try:
+        try:
             return self.part_related_by(RT.CUSTOM_PROPERTIES)
         except KeyError:
             custom_properties_part = CustomPropertiesPart.default(self)

@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from lxml import etree
 from .ns import nsdecls, qn
 from .xmlchemy import BaseOxmlElement, ZeroOrOne
+from . import ct_parse_xml
 
 class CT_CustomProperties(BaseOxmlElement):
     """
