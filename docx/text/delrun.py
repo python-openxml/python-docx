@@ -30,8 +30,8 @@ class Del(Parented):
         return (``\\r``) characters, each of which is converted to a line
         break.
         """
-        r = self._p.add_r()
-        run = Run(r, self)
+        self.r = self._p.add_r()
+        run = Run(self.r, self)
         if text:
             run.deltext = text
         if style:
@@ -45,6 +45,12 @@ class Del(Parented):
     def text(self,text):
         self._d.text = text
 
+    @property
+    def rpr(self):
+        return self._d.r.rpr
+    @rpr.setter
+    def rpr(self,value):
+        self._d.r.rpr=value
 
 class _Text(object):
     """

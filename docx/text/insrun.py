@@ -30,8 +30,8 @@ class Ins(Parented):
         return (``\\r``) characters, each of which is converted to a line
         break.
         """
-        r = self._p.add_r()
-        run = Run(r, self)
+        self.r = self._p.add_r()
+        run = Run(self.r, self)
         if text:
             run.text = text
         if style:
@@ -44,7 +44,12 @@ class Ins(Parented):
 
     def text(self,text):
         self._i.text = text
-
+    @property
+    def rpr(self):
+        return self._i.r.rpr
+    @rpr.setter
+    def rpr(self,value):
+        self._i.r.rpr=value
 
 class _Text(object):
     """

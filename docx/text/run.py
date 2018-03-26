@@ -198,6 +198,13 @@ class Run(Parented):
     def underline(self, value):
         self.font.underline = value
 
+    @property
+    def rpr(self):
+        return self._r.rpr
+    @rpr.setter
+    def rpr(self,value):
+        self._r.rpr=value
+
 class _DelText(object):
     """
     Proxy object wrapping ``<w:delText>`` element.

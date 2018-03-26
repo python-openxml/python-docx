@@ -19,15 +19,14 @@ class CT_DR(BaseOxmlElement):
     ``<w:del>`` element, containing the properties and text for a delete run.
     """
     r = ZeroOrOne('w:r')
-    rPr = ZeroOrOne('w:rPr')
     def add_dt(self,text):
         """
         Return a newly added ''<w:delText>'' element containing *text*.
         """
-        dt=self._add_r(deltext=text)
+        self._r=self._add_r(deltext=text)
         if len(text.strip()) < len(text):
-            dt.set(qn('xml:space'), 'preserve')
-        return dt
+            self._r.set(qn('xml:space'), 'preserve')
+        return self._r
 
     @property
     def text(self):
@@ -60,8 +59,38 @@ class CT_DR(BaseOxmlElement):
         for child in content_child_elms:
             self.remove(child)
 
+    def copy_rpr(self,rprCopy):
+        rPr = self._r.get_or_add_rPr()
+        for p in rprCopy[:]:
+            rPr.append(p)
 
+    @property
+    def rpr(self):
+        return self._r.rPr
 
+    @rpr.setter
+    def rpr(self, value):
+        self.copy_rpr(value)
+
+    @property
+    def style(self):
+        """
+        String contained in w:val attribute of <w:rStyle> grandchild, or
+        |None| if that element is not present.
+        """
+        rPr = self._r.rPr
+        if rPr is None:
+            return None
+        return rPr.style
+
+    @style.setter
+    def style(self, style):
+        """
+        Set the character style of this <w:r> element to *style*. If *style*
+        is None, remove the style element.
+        """
+        rPr = self._r.get_or_add_rPr()
+        rPr.style = style
 
 class _RunContentAppender(object):
     """

@@ -14,20 +14,21 @@ from ..ns import qn
 from ..simpletypes import ST_BrClear, ST_BrType
 from ..xmlchemy import (BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne)
 
+
 class CT_IR(BaseOxmlElement):
     """
-    ``<w:del>`` element, containing the properties and text for a delete run.
+    ``<w:ins>`` element, containing the properties and text for a insert run.
     """
     r = ZeroOrOne('w:r')
-    rPr = ZeroOrOne('w:rPr')
     def add_t(self,text):
         """
         Return a newly added ''<w:t>'' element containing *text*.
         """
-        r=self._add_r(text=text)
+        self._r=self._add_r(text=text)
+
         if len(text.strip()) < len(text):
-            r.set(qn('xml:space'), 'preserve')
-        return r
+            self._r.set(qn('xml:space'), 'preserve')
+        return self._r
 
     @property
     def text(self):
@@ -52,13 +53,25 @@ class CT_IR(BaseOxmlElement):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
 
+    def copy_rpr(self,rprCopy):
+        rPr = self._r.get_or_add_rPr()
+        for p in rprCopy[:]:
+            rPr.append(p)
+
+    @property
+    def rpr(self):
+        return self._r.rPr
+
+    @rpr.setter
+    def rpr(self, value):
+        self.copy_rpr(value)
     @property
     def style(self):
         """
         String contained in w:val attribute of <w:rStyle> grandchild, or
         |None| if that element is not present.
         """
-        rPr = self.rPr
+        rPr = self._r.rPr
         if rPr is None:
             return None
         return rPr.style
@@ -69,7 +82,7 @@ class CT_IR(BaseOxmlElement):
         Set the character style of this <w:r> element to *style*. If *style*
         is None, remove the style element.
         """
-        rPr = self.get_or_add_rPr()
+        rPr = self._r.get_or_add_rPr()
         rPr.style = style
 
     def clear_content(self):
