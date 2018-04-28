@@ -231,12 +231,9 @@ the one above::
     paragraph = document.add_paragraph('Lorem ipsum dolor sit amet.')
     paragraph.style = 'ListBullet'
 
-The style is specified using its style ID, 'ListBullet' in this example.
-Generally, the style ID is formed by removing the spaces in the style name as
-it appears in the Word user interface (UI). So the style 'List Number 3'
-would be specified as ``'ListNumber3'``. However, note that if you are using
-a localized version of Word, the style ID may be derived from the English
-style name and may not correspond so neatly to its style name in the Word UI.
+The style is specified using its style name.
+
+PS: Style lookup by style_id is deprecated. Use style name as key instead.
 
 
 Applying bold and italic
