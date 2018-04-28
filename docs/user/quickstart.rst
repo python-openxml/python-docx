@@ -222,16 +222,16 @@ a paragraph at once. It's a lot like CSS styles if you know what those are.
 
 You can apply a paragraph style right when you create a paragraph::
 
-    document.add_paragraph('Lorem ipsum dolor sit amet.', style='ListBullet')
+    document.add_paragraph('Lorem ipsum dolor sit amet.', style='List Bullet')
 
 This particular style causes the paragraph to appear as a bullet, a very handy
 thing. You can also apply a style afterward. These two lines are equivalent to
 the one above::
 
     paragraph = document.add_paragraph('Lorem ipsum dolor sit amet.')
-    paragraph.style = 'ListBullet'
+    paragraph.style = 'List Bullet'
 
-The style is specified using its style name.
+The style is specified using its style name, 'List Bullet' in this case.
 
 PS: Style lookup by style_id is deprecated. Use style name as key instead.
 
