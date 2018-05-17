@@ -70,6 +70,16 @@ class Run(Parented):
         """
         self._r._add_tab()
 
+    def add_deltext(self, text):
+        """
+        Returns a newly appended |_DelText| object (corresponding to a new
+        ``<w:delText>`` child element) to the run, containing *text*. Compare with
+        the possibly more friendly approach of assigning text to the
+        :attr:`Run.deltext` property.
+        """
+        t = self._r.add_dt(text)
+        return _DelText(t)
+
     def add_text(self, text):
         """
         Returns a newly appended |_Text| object (corresponding to a new
@@ -137,6 +147,9 @@ class Run(Parented):
             style_or_name, WD_STYLE_TYPE.CHARACTER
         )
         self._r.style = style_id
+    @property
+    def deltext(self):
+        return self._r.deltext
 
     @property
     def text(self):
@@ -157,6 +170,10 @@ class Run(Parented):
         is replaced. Run formatting is preserved.
         """
         return self._r.text
+
+    @text.setter
+    def deltext(self, text):
+        self._r.deltext = text
 
     @text.setter
     def text(self, text):
@@ -181,6 +198,20 @@ class Run(Parented):
     def underline(self, value):
         self.font.underline = value
 
+    @property
+    def rpr(self):
+        return self._r.rpr
+    @rpr.setter
+    def rpr(self,value):
+        self._r.rpr=value
+
+class _DelText(object):
+    """
+    Proxy object wrapping ``<w:delText>`` element.
+    """
+    def __init__(self, t_elm):
+        super(_DelText,self).__init__()
+        self._dt = t_elm
 
 class _Text(object):
     """
