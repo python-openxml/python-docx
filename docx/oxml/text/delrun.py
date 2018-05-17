@@ -18,7 +18,7 @@ class CT_DR(BaseOxmlElement):
     """
     ``<w:del>`` element, containing the properties and text for a delete run.
     """
-    r = ZeroOrOne('w:r')
+    r = ZeroOrMore('w:r')
     def add_dt(self,text):
         """
         Return a newly added ''<w:delText>'' element containing *text*.

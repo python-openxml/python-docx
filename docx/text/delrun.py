@@ -47,10 +47,11 @@ class Del(Parented):
 
     @property
     def rpr(self):
-        return self._d.r.rpr
+        return self._d.r_lst[0].rpr
     @rpr.setter
     def rpr(self,value):
-        self._d.r.rpr=value
+        for r in self._d.r_lst:
+            r.rpr=value
 
 class _Text(object):
     """

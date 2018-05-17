@@ -19,7 +19,7 @@ class CT_IR(BaseOxmlElement):
     """
     ``<w:ins>`` element, containing the properties and text for a insert run.
     """
-    r = ZeroOrOne('w:r')
+    r = ZeroOrMore('w:r')
     def add_t(self,text):
         """
         Return a newly added ''<w:t>'' element containing *text*.

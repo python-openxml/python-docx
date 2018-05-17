@@ -46,10 +46,11 @@ class Ins(Parented):
         self._i.text = text
     @property
     def rpr(self):
-        return self._i.r.rpr
+        return self._i.r_lst[0].rpr
     @rpr.setter
     def rpr(self,value):
-        self._i.r.rpr=value
+        for r in self._i.r_lst:
+            r.rpr=value
 
 class _Text(object):
     """
