@@ -31,6 +31,11 @@ PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
 
+PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
+PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
+PartFactory.part_type_for['application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml'] = DocumentPart
+PartFactory.part_type_for['application/vnd.ms-word.document.macroEnabled.main+xml'] = DocumentPart
+
 del (
     CT, CorePropertiesPart, DocumentPart, NumberingPart, PartFactory,
     StylesPart, part_class_selector
