@@ -4,7 +4,6 @@ Feature: Get and set table cell properties
   I need a way to get and set the properties of a table cell
 
 
-  @wip
   Scenario Outline: Get _Cell.vertical_alignment
     Given a _Cell object with <state> vertical alignment as cell
      Then cell.vertical_alignment is <value>

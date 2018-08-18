@@ -1,15 +1,13 @@
 # encoding: utf-8
 
-"""
-Custom element classes for tables
-"""
+"""Custom element classes for tables"""
 
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
 from . import parse_xml
-from ..enum.table import WD_ROW_HEIGHT_RULE
+from ..enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
@@ -764,6 +762,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    vAlign = ZeroOrOne('w:vAlign', successors=_tag_seq[12:])
     del _tag_seq
 
     @property
@@ -782,6 +781,18 @@ class CT_TcPr(BaseOxmlElement):
         self._remove_gridSpan()
         if value > 1:
             self.get_or_add_gridSpan().val = value
+
+    @property
+    def vAlign_val(self):
+        """Value of `w:val` attribute on  `w:vAlign` child.
+
+        Value is |None| if `w:vAlign` child is not present. The `w:val`
+        attribute on `w:vAlign` is required.
+        """
+        vAlign = self.vAlign
+        if vAlign is None:
+            return None
+        return vAlign.val
 
     @property
     def vMerge_val(self):
@@ -863,6 +874,11 @@ class CT_TrPr(BaseOxmlElement):
             return
         trHeight = self.get_or_add_trHeight()
         trHeight.val = value
+
+
+class CT_VerticalJc(BaseOxmlElement):
+    """`w:vAlign` element, specifying vertical alignment of cell."""
+    val = RequiredAttribute('w:val', WD_CELL_VERTICAL_ALIGNMENT)
 
 
 class CT_VMerge(BaseOxmlElement):

@@ -10,7 +10,7 @@ import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import (
-    WD_ROW_HEIGHT, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+    WD_ALIGN_VERTICAL, WD_ROW_HEIGHT, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
 )
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
@@ -339,6 +339,11 @@ class Describe_Cell(object):
         cell.text = text
         assert cell._tc.xml == expected_xml
 
+    def it_knows_its_vertical_alignment(self, alignment_get_fixture):
+        cell, expected_value = alignment_get_fixture
+        vertical_alignment = cell.vertical_alignment
+        assert vertical_alignment == expected_value
+
     def it_knows_its_width_in_EMU(self, width_get_fixture):
         cell, expected_width = width_get_fixture
         assert cell.width == expected_width
@@ -411,6 +416,17 @@ class Describe_Cell(object):
         cell = _Cell(element('w:tc/w:p'), None)
         expected_xml = snippet_seq('new-tbl')[1]
         return cell, expected_xml
+
+    @pytest.fixture(params=[
+        ('w:tc', None),
+        ('w:tc/w:tcPr', None),
+        ('w:tc/w:tcPr/w:vAlign{w:val=bottom}', WD_ALIGN_VERTICAL.BOTTOM),
+        ('w:tc/w:tcPr/w:vAlign{w:val=top}', WD_ALIGN_VERTICAL.TOP),
+    ])
+    def alignment_get_fixture(self, request):
+        tc_cxml, expected_value = request.param
+        cell = _Cell(element(tc_cxml), None)
+        return cell, expected_value
 
     @pytest.fixture
     def merge_fixture(self, tc_, tc_2_, parent_, merged_tc_):

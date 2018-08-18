@@ -190,12 +190,11 @@ class Table(Parented):
 
 
 class _Cell(BlockItemContainer):
-    """
-    Table cell
-    """
+    """Table cell"""
+
     def __init__(self, tc, parent):
         super(_Cell, self).__init__(tc, parent)
-        self._tc = tc
+        self._tc = self._element = tc
 
     def add_paragraph(self, text='', style=None):
         """
@@ -278,7 +277,10 @@ class _Cell(BlockItemContainer):
         inherited. Assigning |None| causes any explicitly defined vertical
         alignment to be removed, restoring inheritance.
         """
-        raise NotImplementedError
+        tcPr = self._element.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.vAlign_val
 
     @property
     def width(self):
