@@ -28,11 +28,13 @@ def alias(*aliases):
 
 
 class _DocsPageFormatter(object):
-    """
+    """Generate an .rst doc page for an enumeration.
+
     Formats a RestructuredText documention page (string) for the enumeration
     class parts passed to the constructor. An immutable one-shot service
     object.
     """
+
     def __init__(self, clsname, clsdict):
         self._clsname = clsname
         self._clsdict = clsdict
@@ -52,14 +54,15 @@ class _DocsPageFormatter(object):
 
     @property
     def _intro_text(self):
-        """
-        The docstring of the enumeration, formatted for use at the top of the
-        documentation page
-        """
+        """Docstring of the enumeration, formatted for documentation page."""
         try:
             cls_docstring = self._clsdict['__doc__']
         except KeyError:
             cls_docstring = ''
+
+        if cls_docstring is None:
+            return ''
+
         return textwrap.dedent(cls_docstring).strip()
 
     def _member_def(self, member):
