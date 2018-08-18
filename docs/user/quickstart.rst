@@ -115,9 +115,9 @@ supports indexed access, like a list::
     row.cells[0].text = 'Foo bar to you.'
     row.cells[1].text = 'And a hearty foo bar to you too sir!'
 
-The ``.rows`` and ``.columns`` collections on a table are iterable, so you can
-use them directly in a ``for`` loop. Same with the ``.cells`` sequences on
-a row or column::
+The ``.rows`` and ``.columns`` collections on a table are iterable, so you
+can use them directly in a ``for`` loop. Same with the ``.cells`` sequences
+on a row or column::
 
     for row in table.rows:
         for cell in row.cells:
@@ -137,7 +137,11 @@ This can be very handy for the variable length table scenario we mentioned
 above::
 
     # get table data -------------
-    items = get_things_from_database_or_something()
+    items = (
+        (7, '1024', 'Plush kittens'),
+        (3, '2042', 'Furbees'),
+        (1, '1288', 'French Poodle Collars, Deluxe'),
+    )
 
     # add table ------------------
     table = document.add_table(1, 3)
@@ -229,14 +233,11 @@ thing. You can also apply a style afterward. These two lines are equivalent to
 the one above::
 
     paragraph = document.add_paragraph('Lorem ipsum dolor sit amet.')
-    paragraph.style = 'ListBullet'
+    paragraph.style = 'List Bullet'
 
-The style is specified using its style ID, 'ListBullet' in this example.
-Generally, the style ID is formed by removing the spaces in the style name as
-it appears in the Word user interface (UI). So the style 'List Number 3'
-would be specified as ``'ListNumber3'``. However, note that if you are using
-a localized version of Word, the style ID may be derived from the English
-style name and may not correspond so neatly to its style name in the Word UI.
+The style is specified using its style name, 'List Bullet' in this example.
+Generally, the style name is exactly as it appears in the Word user interface
+(UI).
 
 
 Applying bold and italic
@@ -324,8 +325,4 @@ the same result as the lines above::
     run = paragraph.add_run('text with emphasis.')
     run.style = 'Emphasis'
 
-As with a paragraph style, the style ID is formed by removing the spaces in
-the name as it appears in the Word UI. So the style 'Subtle Emphasis' would
-be specified as ``'SubtleEmphasis'``. Note that if you are using
-a localized version of Word, the style ID may be derived from the English
-style name and may not correspond to its style name in the Word UI.
+As with a paragraph style, the style name is as it appears in the Word UI.

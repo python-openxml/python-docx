@@ -51,7 +51,7 @@ class Styles(ElementProxy):
                 'style lookup by style_id is deprecated. Use style name as '
                 'key instead.'
             )
-            warn(msg, UserWarning)
+            warn(msg, UserWarning, stacklevel=2)
             return StyleFactory(style_elm)
 
         raise KeyError("no style with name '%s'" % key)
