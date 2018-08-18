@@ -271,6 +271,16 @@ class _Cell(BlockItemContainer):
         r.text = text
 
     @property
+    def vertical_alignment(self):
+        """Member of :ref:`WdCellVerticalAlignment` or None.
+
+        A value of |None| indicates vertical alignment for this cell is
+        inherited. Assigning |None| causes any explicitly defined vertical
+        alignment to be removed, restoring inheritance.
+        """
+        raise NotImplementedError
+
+    @property
     def width(self):
         """
         The width of this cell in EMU, or |None| if no explicit width is set.

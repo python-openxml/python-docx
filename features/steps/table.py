@@ -11,6 +11,7 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
+from docx.enum.table import WD_ALIGN_VERTICAL  # noqa
 from docx.enum.table import (
     WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
 )
@@ -37,6 +38,19 @@ def given_a_3x3_table_having_span_state(context, span_state):
     }[span_state]
     document = Document(test_docx('tbl-cell-access'))
     context.table_ = document.tables[table_idx]
+
+
+@given('a _Cell object with {state} vertical alignment as cell')
+def given_a_Cell_object_with_vertical_alignment_as_cell(context, state):
+    table_idx = {
+        'inherited': 0,
+        'bottom':    1,
+        'center':    2,
+        'top':       3,
+    }[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.cell = table.cell(0, 0)
 
 
 @given('a column collection having two columns')
@@ -179,6 +193,11 @@ def when_add_row_to_table(context):
     context.row = table.add_row()
 
 
+@when('I assign {value} to cell.vertical_alignment')
+def when_I_assign_value_to_cell_vertical_alignment(context, value):
+    context.cell.vertical_alignment = eval(value)
+
+
 @when('I assign {value} to row.height')
 def when_I_assign_value_to_row_height(context, value):
     new_value = None if value == 'None' else int(value)
@@ -256,6 +275,15 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 
 # then =====================================================
+
+@then('cell.vertical_alignment is {value}')
+def then_cell_vertical_alignment_is_value(context, value):
+    expected_value = eval(value)
+    actual_value = context.cell.vertical_alignment
+    assert actual_value is expected_value, (
+        'cell.vertical_alignment is %s' % actual_value
+    )
+
 
 @then('I can access a collection column by index')
 def then_can_access_collection_column_by_index(context):
