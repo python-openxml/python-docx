@@ -3,6 +3,20 @@
 Release History
 ---------------
 
+0.8.7 (2018-08-18)
+++++++++++++++++++
+
+- Add _Row.height_rule
+- Add _Row.height
+- Add _Cell.vertical_alignment
+- Fix #455: increment next_id, don't fill gaps
+- Add #375: import docx failure on --OO optimization
+- Add #254: remove default zoom percentage
+- Add #266: miscellaneous documentation fixes
+- Add #175: refine MANIFEST.ini
+- Add #168: Unicode error on core-props in Python 2
+
+
 0.8.6 (2016-06-22)
 ++++++++++++++++++
 
