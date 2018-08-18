@@ -15,7 +15,6 @@ Feature: Get and set table cell properties
       | center    | WD_ALIGN_VERTICAL.CENTER |
 
 
-  @wip
   Scenario Outline: Set Cell.vertical_alignment
     Given a _Cell object with <state> vertical alignment as cell
      When I assign <value> to cell.vertical_alignment

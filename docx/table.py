@@ -282,6 +282,11 @@ class _Cell(BlockItemContainer):
             return None
         return tcPr.vAlign_val
 
+    @vertical_alignment.setter
+    def vertical_alignment(self, value):
+        tcPr = self._element.get_or_add_tcPr()
+        tcPr.vAlign_val = value
+
     @property
     def width(self):
         """

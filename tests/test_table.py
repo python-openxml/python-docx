@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.table module
-"""
+"""Test suite for the docx.table module"""
 
 from __future__ import absolute_import, print_function, unicode_literals
 
@@ -344,6 +342,11 @@ class Describe_Cell(object):
         vertical_alignment = cell.vertical_alignment
         assert vertical_alignment == expected_value
 
+    def it_can_change_its_vertical_alignment(self, alignment_set_fixture):
+        cell, new_value, expected_xml = alignment_set_fixture
+        cell.vertical_alignment = new_value
+        assert cell._element.xml == expected_xml
+
     def it_knows_its_width_in_EMU(self, width_get_fixture):
         cell, expected_width = width_get_fixture
         assert cell.width == expected_width
@@ -427,6 +430,26 @@ class Describe_Cell(object):
         tc_cxml, expected_value = request.param
         cell = _Cell(element(tc_cxml), None)
         return cell, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tc', WD_ALIGN_VERTICAL.TOP,
+         'w:tc/w:tcPr/w:vAlign{w:val=top}'),
+        ('w:tc/w:tcPr', WD_ALIGN_VERTICAL.CENTER,
+         'w:tc/w:tcPr/w:vAlign{w:val=center}'),
+        ('w:tc/w:tcPr/w:vAlign{w:val=center}', WD_ALIGN_VERTICAL.BOTTOM,
+         'w:tc/w:tcPr/w:vAlign{w:val=bottom}'),
+        ('w:tc/w:tcPr/w:vAlign{w:val=center}', None,
+         'w:tc/w:tcPr'),
+        ('w:tc', None,
+         'w:tc/w:tcPr'),
+        ('w:tc/w:tcPr', None,
+         'w:tc/w:tcPr'),
+    ])
+    def alignment_set_fixture(self, request):
+        cxml, new_value, expected_cxml = request.param
+        cell = _Cell(element(cxml), None)
+        expected_xml = xml(expected_cxml)
+        return cell, new_value, expected_xml
 
     @pytest.fixture
     def merge_fixture(self, tc_, tc_2_, parent_, merged_tc_):

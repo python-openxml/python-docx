@@ -794,6 +794,13 @@ class CT_TcPr(BaseOxmlElement):
             return None
         return vAlign.val
 
+    @vAlign_val.setter
+    def vAlign_val(self, value):
+        if value is None:
+            self._remove_vAlign()
+            return
+        self.get_or_add_vAlign().val = value
+
     @property
     def vMerge_val(self):
         """
