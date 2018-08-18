@@ -96,16 +96,17 @@ class DocumentPart(XmlPart):
 
     @property
     def next_id(self):
-        """
-        The next available positive integer id value in this document. Gaps
-        in id sequence are filled. The id attribute value is unique in the
-        document, without regard to the element type it appears on.
+        """Next available positive integer id value in this document.
+
+        Calculated by incrementing maximum existing id value. Gaps in the
+        existing id sequence are not filled. The id attribute value is unique
+        in the document, without regard to the element type it appears on.
         """
         id_str_lst = self._element.xpath('//@id')
         used_ids = [int(id_str) for id_str in id_str_lst if id_str.isdigit()]
-        for n in range(1, len(used_ids)+2):
-            if n not in used_ids:
-                return n
+        if not used_ids:
+            return 1
+        return max(used_ids) + 1
 
     @lazyproperty
     def numbering_part(self):

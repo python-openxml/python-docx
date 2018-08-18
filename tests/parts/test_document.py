@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.parts.document module
-"""
+"""Test suite for the docx.parts.document module"""
 
 from __future__ import absolute_import, print_function, unicode_literals
 
@@ -198,8 +196,15 @@ class DescribeDocumentPart(object):
         return document, InlineShapes_, body_elm
 
     @pytest.fixture(params=[
-        ((), 1), ((1,), 2), ((2,), 1), ((1, 2, 3), 4), ((1, 2, 4), 3),
-        ((0, 0), 1), ((0, 0, 1, 3), 2), (('foo', 1, 2), 3), ((1, 'bar'), 2)
+        ((), 1),
+        ((1,), 2),
+        ((2,), 3),
+        ((1, 2, 3), 4),
+        ((1, 2, 4), 5),
+        ((0, 0), 1),
+        ((0, 0, 1, 3), 4),
+        (('foo', 1, 2), 3),
+        ((1, 'bar'), 2)
     ])
     def next_id_fixture(self, request):
         existing_ids, expected_id = request.param
