@@ -132,7 +132,7 @@ the sequence::
 You can also add rows to a table incrementally like so::
 
     row = table.add_row()
-    
+
 This can be very handy for the variable length table scenario we mentioned
 above::
 
@@ -282,14 +282,14 @@ Note that you can set bold or italic right on the result of ``.add_run()`` if
 you don't need it for anything else::
 
     paragraph.add_run('dolor').bold = True
-    
+
     # is equivalent to:
 
     run = paragraph.add_run('dolor')
     run.bold = True
 
     # except you don't have a reference to `run` afterward
-    
+
 
 It's not necessary to provide text to the ``.add_paragraph()`` method. This can
 make your code simpler if you're building the paragraph up from runs anyway::
@@ -298,7 +298,7 @@ make your code simpler if you're building the paragraph up from runs anyway::
     paragraph.add_run('Lorem ipsum ')
     paragraph.add_run('dolor').bold = True
     paragraph.add_run(' sit amet.')
- 
+
 
 Applying a character style
 --------------------------

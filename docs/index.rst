@@ -31,13 +31,13 @@ Here's an example of what |docx| can do:
                                                 p.add_run('italic.').italic = True
 
                                                 document.add_heading('Heading, level 1', level=1)
-                                                document.add_paragraph('Intense quote', style='IntenseQuote')
+                                                document.add_paragraph('Intense quote', style='Intense Quote')
 
                                                 document.add_paragraph(
-                                                    'first item in unordered list', style='ListBullet'
+                                                    'first item in unordered list', style='List Bullet'
                                                 )
                                                 document.add_paragraph(
-                                                    'first item in ordered list', style='ListNumber'
+                                                    'first item in ordered list', style='List Number'
                                                 )
 
                                                 document.add_picture('monty-truth.png', width=Inches(1.25))
