@@ -27,3 +27,9 @@ Feature: Access document collections
   Scenario: Access the tables collection of a document
     Given a document having three tables
      Then document.tables is a list containing three tables
+
+
+  @wip
+  Scenario: Document.bookmarks
+    Given a Document object as document
+     Then document.bookmarks is a Bookmarks object
