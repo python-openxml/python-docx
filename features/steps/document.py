@@ -27,6 +27,11 @@ def given_a_blank_document(context):
     context.document = Document(test_docx('doc-word-default-blank'))
 
 
+@given('a Document object as document')
+def given_a_Document_object_as_document(context):
+    context.document = Document(test_docx('doc-default'))
+
+
 @given('a document having built-in styles')
 def given_a_document_having_builtin_styles(context):
     context.document = Document()
@@ -171,6 +176,13 @@ def when_I_execute_section_eq_document_add_section(context):
 
 
 # then ====================================================
+
+@then('document.bookmarks is a Bookmarks object')
+def then_document_bookmarks_is_a_Bookmarks_object(context):
+    actual = context.document.bookmarks.__class__.__name__
+    expected = 'Bookmarks'
+    assert actual == expected, 'document.bookmarks is a %s object' % actual
+
 
 @then('document.inline_shapes is an InlineShapes object')
 def then_document_inline_shapes_is_an_InlineShapes_object(context):
