@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.bookmark import Bookmarks
 from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -92,6 +93,16 @@ class DescribeDocument(object):
         document, file_ = save_fixture
         document.save(file_)
         document._part.save.assert_called_once_with(file_)
+
+    def it_provides_access_to_its_bookmarks(
+            self, document_part_, Bookmarks_, bookmarks_):
+        Bookmarks_.return_value = bookmarks_
+        document = Document(None, document_part_)
+
+        bookmarks = document.bookmarks
+
+        Bookmarks_.assert_called_once_with(document_part_)
+        assert bookmarks is bookmarks_
 
     def it_provides_access_to_its_core_properties(self, core_props_fixture):
         document, core_properties_ = core_props_fixture
@@ -273,6 +284,10 @@ class DescribeDocument(object):
         return method_mock(request, Document, 'add_paragraph')
 
     @pytest.fixture
+    def _block_width_prop_(self, request):
+        return property_mock(request, Document, '_block_width')
+
+    @pytest.fixture
     def _Body_(self, request, body_):
         return class_mock(request, 'docx.document._Body', return_value=body_)
 
@@ -281,12 +296,16 @@ class DescribeDocument(object):
         return instance_mock(request, _Body)
 
     @pytest.fixture
-    def _block_width_prop_(self, request):
-        return property_mock(request, Document, '_block_width')
+    def body_prop_(self, request, body_):
+        return property_mock(request, Document, '_body')
 
     @pytest.fixture
-    def body_prop_(self, request, body_):
-        return property_mock(request, Document, '_body', return_value=body_)
+    def Bookmarks_(self, request):
+        return class_mock(request, 'docx.document.Bookmarks')
+
+    @pytest.fixture
+    def bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)
 
     @pytest.fixture
     def core_properties_(self, request):

@@ -77,6 +77,10 @@ rst_epilog = """
 
 .. |_Body| replace:: :class:`._Body`
 
+.. |Bookmark| replace:: :class:`.Bookmark`
+
+.. |Bookmarks| replace:: :class:`.Bookmarks`
+
 .. |_Cell| replace:: :class:`._Cell`
 
 .. |_CharacterStyle| replace:: :class:`._CharacterStyle`
