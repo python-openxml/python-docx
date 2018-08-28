@@ -46,6 +46,15 @@ class Run(Parented):
         if clear is not None:
             br.clear = clear
 
+    def add_chart(self, chart_type, x, y, cx, cy, chart_data):
+        """
+        Return an |InlineShape| instance containing the chart, added to the
+        end of this run.
+        """
+        inline, chart = self.part.new_chart_inline(chart_type, x, y, cx, cy, chart_data)
+        self._r.add_drawing(inline)
+        return chart
+
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """
         Return an |InlineShape| instance containing the image identified by

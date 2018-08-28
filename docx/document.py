@@ -100,6 +100,20 @@ class Document(ElementProxy):
         table.style = style
         return table
 
+    def add_chart(self, chart_type, x, y, cx, cy, chart_data):
+        """
+        Add a new chart of *chart_type* to the slide, positioned at (*x*,
+        *y*), having size (*cx*, *cy*), and depicting *chart_data*.
+        *chart_type* is one of the :ref:`XlChartType` enumeration values.
+        *chart_data* is a |ChartData| object populated with the categories
+        and series values for the chart. Note that a |GraphicFrame| shape
+        object is returned, not the |Chart| object contained in that graphic
+        frame shape. The chart object may be accessed using the :attr:`chart`
+        property of the returned |GraphicFrame| object.
+        """
+        run = self.add_paragraph().add_run()
+        return run.add_chart(chart_type, x, y, cx, cy, chart_data)
+
     @property
     def core_properties(self):
         """
