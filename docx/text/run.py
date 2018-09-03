@@ -46,7 +46,7 @@ class Run(Parented):
         if clear is not None:
             br.clear = clear
 
-    def add_picture(self, image_path_or_stream, width=None, height=None):
+    def add_picture(self, image_path_or_stream, width=None, height=None, title=None, descr=None):
         """
         Return an |InlineShape| instance containing the image identified by
         *image_path_or_stream*, added to the end of this run.
@@ -59,7 +59,7 @@ class Run(Parented):
         (dpi) value specified in the image file, defaulting to 72 dpi if no
         value is specified, as is often the case.
         """
-        inline = self.part.new_pic_inline(image_path_or_stream, width, height)
+        inline = self.part.new_pic_inline(image_path_or_stream, width, height, title=title, descr=descr)
         self._r.add_drawing(inline)
         return InlineShape(inline)
 

@@ -83,7 +83,7 @@ class DocumentPart(XmlPart):
         """
         return InlineShapes(self._element.body, self)
 
-    def new_pic_inline(self, image_descriptor, width, height):
+    def new_pic_inline(self, image_descriptor, width, height, title=None, descr=None):
         """
         Return a newly-created `w:inline` element containing the image
         specified by *image_descriptor* and scaled based on the values of
@@ -92,7 +92,7 @@ class DocumentPart(XmlPart):
         rId, image = self.get_or_add_image(image_descriptor)
         cx, cy = image.scaled_dimensions(width, height)
         shape_id, filename = self.next_id, image.filename
-        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy, title=title, descr=descr)
 
     @property
     def next_id(self):
