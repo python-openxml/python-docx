@@ -9,8 +9,9 @@ from __future__ import (
 import pytest
 
 from docx.bookmark import Bookmarks, _DocumentBookmarkFinder
+from docx.parts.document import DocumentPart
 
-from .unitutil.mock import instance_mock, property_mock
+from .unitutil.mock import class_mock, instance_mock, property_mock
 
 
 class DescribeBookmarks(object):
@@ -25,7 +26,25 @@ class DescribeBookmarks(object):
 
         assert count == 42
 
+    def it_provides_access_to_its_bookmark_finder_to_help(
+            self, document_part_, _DocumentBookmarkFinder_, finder_):
+        _DocumentBookmarkFinder_.return_value = finder_
+        bookmarks = Bookmarks(document_part_)
+
+        finder = bookmarks._finder
+
+        _DocumentBookmarkFinder_.assert_called_once_with(document_part_)
+        assert finder is finder_
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _DocumentBookmarkFinder_(self, request):
+        return class_mock(request, 'docx.bookmark._DocumentBookmarkFinder')
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
 
     @pytest.fixture
     def finder_(self, request):
