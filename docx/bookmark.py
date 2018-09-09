@@ -21,11 +21,14 @@ class Bookmarks(object):
     @lazyproperty
     def _finder(self):
         """_DocumentBookmarkFinder instance for this document."""
-        raise NotImplementedError
+        return _DocumentBookmarkFinder(self._document_part)
 
 
 class _DocumentBookmarkFinder(object):
     """Provides access to bookmark oxml elements in an overall document."""
+
+    def __init__(self, document_part):
+        self._document_part = document_part
 
     @property
     def bookmark_pairs(self):
