@@ -9,9 +9,10 @@ from __future__ import (
 import pytest
 
 from docx.bookmark import Bookmarks, _DocumentBookmarkFinder
+from docx.opc.part import Part
 from docx.parts.document import DocumentPart
 
-from .unitutil.mock import class_mock, instance_mock, property_mock
+from .unitutil.mock import call, class_mock, instance_mock, property_mock
 
 
 class DescribeBookmarks(object):
@@ -53,3 +54,54 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def _finder_prop_(self, request):
         return property_mock(request, Bookmarks, '_finder')
+
+
+class Describe_DocumentBookmarkFinder(object):
+
+    def it_finds_all_the_bookmark_pairs_in_the_document(
+            self, pairs_fixture, _PartBookmarkFinder_):
+        document_part_, calls, expected_value = pairs_fixture
+        document_bookmark_finder = _DocumentBookmarkFinder(document_part_)
+
+        bookmark_pairs = document_bookmark_finder.bookmark_pairs
+
+        document_part_.iter_story_parts.assert_called_once_with()
+        assert (
+            _PartBookmarkFinder_.iter_start_end_pairs.call_args_list == calls
+        )
+        assert bookmark_pairs == expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ([[(1, 2)]],
+         [(1, 2)]),
+        ([[(1, 2), (3, 4), (5, 6)]],
+         [(1, 2), (3, 4), (5, 6)]),
+        ([[(1, 2)], [(3, 4)], [(5, 6)]],
+         [(1, 2), (3, 4), (5, 6)]),
+        ([[(1, 2), (3, 4)], [(5, 6), (7, 8)], [(9, 10)]],
+         [(1, 2), (3, 4), (5, 6), (7, 8), (9, 10)]),
+    ])
+    def pairs_fixture(self, request, document_part_, _PartBookmarkFinder_):
+        parts_pairs, expected_value = request.param
+        mock_parts = [
+            instance_mock(request, Part, name='Part-%d' % idx)
+            for idx, part_pairs in enumerate(parts_pairs)
+        ]
+        calls = [call(part_) for part_ in mock_parts]
+
+        document_part_.iter_story_parts.return_value = (p for p in mock_parts)
+        _PartBookmarkFinder_.iter_start_end_pairs.side_effect = parts_pairs
+
+        return document_part_, calls, expected_value
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _PartBookmarkFinder_(self, request):
+        return class_mock(request, 'docx.bookmark._PartBookmarkFinder')
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)

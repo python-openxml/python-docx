@@ -6,6 +6,8 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from itertools import chain
+
 from docx.shared import lazyproperty
 
 
@@ -45,4 +47,18 @@ class _DocumentBookmarkFinder(object):
         start), or duplicate (name same as prior bookmark) bookmarks are
         ignored.
         """
+        return list(
+            chain(*(
+                _PartBookmarkFinder.iter_start_end_pairs(part)
+                for part in self._document_part.iter_story_parts()
+            ))
+        )
+
+
+class _PartBookmarkFinder(object):
+    """Provides access to bookmark oxml elements in a story part."""
+
+    @classmethod
+    def iter_start_end_pairs(cls, part):
+        """Generate each (bookmarkStart, bookmarkEnd) in *part*."""
         raise NotImplementedError
