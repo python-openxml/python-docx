@@ -11,6 +11,7 @@ from .constants import RELATIONSHIP_TYPE as RT
 from .packuri import PACKAGE_URI
 from .part import PartFactory
 from .parts.coreprops import CorePropertiesPart
+from .parts.customprops import CustomPropertiesPart
 from .pkgreader import PackageReader
 from .pkgwriter import PackageWriter
 from .rel import Relationships
@@ -42,6 +43,14 @@ class OpcPackage(object):
         Core properties for this document.
         """
         return self._core_properties_part.core_properties
+
+    @property
+    def custom_properties(self):
+        """
+        |CustomProperties| object providing read/write access to the Dublin
+        Core properties for this document.
+        """
+        return self._custom_properties_part.custom_properties
 
     def iter_rels(self):
         """
@@ -172,6 +181,18 @@ class OpcPackage(object):
             self.relate_to(core_properties_part, RT.CORE_PROPERTIES)
             return core_properties_part
 
+    @property
+    def _custom_properties_part(self):
+        """
+        |CustomPropertiesPart| object related to this package. Creates
+        a default custom properties part if one is not present (not common).
+        """
+        try:
+            return self.part_related_by(RT.CUSTOM_PROPERTIES)
+        except KeyError:
+            custom_properties_part = CustomPropertiesPart.default(self)
+            self.relate_to(custom_properties_part, RT.CUSTOM_PROPERTIES)
+            return custom_properties_part
 
 class Unmarshaller(object):
     """
