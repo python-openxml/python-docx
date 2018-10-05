@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import pytest
 
 from docx.blkcntnr import BlockItemContainer
-from docx.shared import Inches
+from docx.shared import Inches, Parented
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
@@ -60,6 +60,18 @@ class DescribeBlockItemContainer(object):
         for idx, table in enumerate(tables):
             assert isinstance(table, Table)
             assert tables[idx] is table
+            count += 1
+        assert count == expected_count
+
+    def it_provides_access_to_its_content(self, content_fixture):
+        # test len(), iterable, and indexed access
+        blkcntnr, expected_count = content_fixture
+        content = blkcntnr.content
+        assert len(content) == expected_count
+        count = 0
+        for idx, child in enumerate(content):
+            assert isinstance(child, Parented)
+            assert content[idx] is child
             count += 1
         assert count == expected_count
 
@@ -121,6 +133,16 @@ class DescribeBlockItemContainer(object):
         ('w:body/(w:tbl,w:tbl,w:p)', 2),
     ])
     def tables_fixture(self, request):
+        blkcntnr_cxml, expected_count = request.param
+        blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
+        return blkcntnr, expected_count
+
+    @pytest.fixture(params=[
+        ('w:body',                   0),
+        ('w:body/w:tbl',             1),
+        ('w:body/w:p',               1),
+    ])
+    def content_fixture(self, request):
         blkcntnr_cxml, expected_count = request.param
         blkcntnr = BlockItemContainer(element(blkcntnr_cxml), None)
         return blkcntnr, expected_count

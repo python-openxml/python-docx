@@ -40,6 +40,40 @@ class DescribeElementProxy(object):
         proxy, part_ = part_fixture
         assert proxy.part is part_
 
+    def it_can_copy(self, element_fixture):
+        proxy, element = element_fixture
+        copied = proxy.copy()
+
+        assert(copied._parent is None)
+
+        assert(type(copied) == type(proxy))
+        assert(copied is not proxy)
+
+        assert(type(copied.element) == type(proxy.element))
+        assert(copied.element is not proxy.element)
+
+    def it_can_paste(self, element_fixture):
+        proxy, element = element_fixture
+        copied = proxy.copy()
+        copied_2 = proxy.copy()
+
+        assert(copied._parent is None)
+        assert(copied_2._parent is None)
+
+        assert(len(proxy.element) == 0)
+
+        proxy.paste(copied)
+        assert(copied._parent is proxy)
+        assert(len(proxy.element) == 1)
+        assert(proxy.element[0] is copied.element)
+
+        proxy.paste(copied_2, copied)
+        assert(copied_2._parent is proxy)
+        assert(len(proxy.element) == 2)
+        assert(proxy.element[0] is copied.element)
+        assert(proxy.element[1] is copied_2.element)
+
+
     # fixture --------------------------------------------------------
 
     @pytest.fixture

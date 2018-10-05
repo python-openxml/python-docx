@@ -13,7 +13,7 @@ from docx.enum.table import (
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.parts.document import DocumentPart
-from docx.shared import Inches
+from docx.shared import Inches, ElementProxy
 from docx.table import _Cell, _Column, _Columns, _Row, _Rows, Table
 from docx.text.paragraph import Paragraph
 
@@ -25,6 +25,18 @@ from .unitutil.mock import instance_mock, property_mock
 
 
 class DescribeTable(object):
+
+    def it_can_copy_and_paste_itself(self, copy_paste_fixture):
+        table = copy_paste_fixture
+        assert isinstance(table, Table)
+
+        copy = table.copy()
+        assert isinstance(copy, Table)
+        assert copy is not table
+        assert copy._parent is None
+
+        table.paste(copy)
+        assert copy._parent is table._parent
 
     def it_can_add_a_row(self, add_row_fixture):
         table, expected_xml = add_row_fixture
@@ -295,6 +307,14 @@ class DescribeTable(object):
     @pytest.fixture
     def table_fixture(self):
         table = Table(None, None)
+        return table
+
+    @pytest.fixture
+    def copy_paste_fixture(self):
+        bodyel = element('w:body')
+        tableel = element('w:tbl')
+        bodyel.append(tableel)
+        table = Table(tableel, ElementProxy(bodyel))
         return table
 
     # fixture components ---------------------------------------------

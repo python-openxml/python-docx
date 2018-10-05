@@ -13,6 +13,9 @@ from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
 
+import copy
+import collections
+
 
 class Paragraph(Parented):
     """
@@ -21,6 +24,12 @@ class Paragraph(Parented):
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+
+    def copy(self):
+        """
+        Returns a copy of this paragraph
+        """
+        return Paragraph(copy.deepcopy(self._element), None)
 
     def add_run(self, text=None, style=None):
         """
@@ -135,6 +144,79 @@ class Paragraph(Parented):
     def text(self, text):
         self.clear()
         self.add_run(text)
+
+    def replace(self, old, new, count=None):
+        """
+        Searches the paragraph for all occurrences of string *old* replaced by
+        *new*. If the optional argument *count* is given, only the first *count*
+        occurrences are replaced. Return this same paragraph.
+
+        Try to keep the Run structure as unaltered as possible: text is replaced
+        inside the run where it has been found. If the found text spawns across
+        multiple runs, the whole new text is placed in the run where the old
+        text started.
+        """
+        # Loop counter
+        replaced = 0
+        # Search start index
+        start = 0
+        while count is None or replaced < count:
+            replaced += 1
+
+            # Phase 1: analyze the paragraph, build text with metadata.
+            #
+            # This will contain the full text contained in the paragraph,
+            # as string (just like self.text property)
+            text = ''
+            # This will contain the map of the sources for every letter,
+            # consisting of a list of tuples ( run_instance, index_inside_run )
+            origins = []
+            for run in self.runs:
+                for run_idx, letter in enumerate(run.text):
+                    text += letter
+                    origins.append( (run, run_idx) )
+            # Maybe this is paranoid, just to be sure
+            assert len(text) == len(origins)
+
+            # Phase 2: search for next occurrence of text to be replaced and,
+            #          if found, build a list of the affected runs.
+            match_idx = text.find(old, start)
+            if match_idx == -1:
+                # Nothing to replace, I'm done
+                break
+            # This will contain a dict of the affected runs, in the form
+            # run_instance: { 'start': start_index, 'end': end_index }
+            affected_runs = collections.OrderedDict()
+            for idx in range(match_idx, match_idx + len(old)):
+                run, run_idx = origins[idx]
+                if run not in affected_runs.keys():
+                    # This is the first character inside that run,
+                    # create a new entry
+                    affected_runs[run] = {
+                        'start': run_idx,
+                        'end': run_idx,
+                    }
+                else:
+                    # Yet one more character fot this run, move the end forward
+                    affected_runs[run]['end'] = run_idx
+            # Yet another paranoid assert?
+            assert len(affected_runs) > 0
+
+            # Phase 3: Finally replace the text inside the first run, just clear
+            # the text from subsequent runs
+            first = True
+            for run, rc in affected_runs.items():
+                if first:
+                    first = False
+                    repl = new
+                else:
+                    repl = ''
+                run.text = run.text[:rc['start']] + repl + run.text[rc['end']+1:]
+
+            # Phase 4: move search start forward
+            start = start + len(new)
+
+        return self
 
     def _insert_paragraph_before(self):
         """

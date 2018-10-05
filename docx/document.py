@@ -176,6 +176,14 @@ class Document(ElementProxy):
         return self._body.tables
 
     @property
+    def content(self):
+        """
+        A list of the visible top-level content in this document:
+        |Table| and |Paragraph| instances, in document order.
+        """
+        return self._body.content
+
+    @property
     def _block_width(self):
         """
         Return a |Length| object specifying the width of available "writing"

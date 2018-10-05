@@ -11,6 +11,8 @@ from .enum.style import WD_STYLE_TYPE
 from .oxml.simpletypes import ST_Merge
 from .shared import Inches, lazyproperty, Parented
 
+import copy
+
 
 class Table(Parented):
     """
@@ -19,6 +21,12 @@ class Table(Parented):
     def __init__(self, tbl, parent):
         super(Table, self).__init__(parent)
         self._element = self._tbl = tbl
+
+    def copy(self):
+        """
+        Returns a copy of this table
+        """
+        return Table(copy.deepcopy(self._element), None)
 
     def add_column(self, width):
         """

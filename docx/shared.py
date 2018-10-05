@@ -5,6 +5,7 @@ Objects shared by docx modules.
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
+import copy
 
 
 class Length(int):
@@ -216,6 +217,30 @@ class ElementProxy(object):
             return True
         return self._element is not other._element
 
+    def copy(self):
+        """
+        Returns a copy of this element and all its content.
+        Deep copy the lxml element, as suggested in lxml documentation, but keep
+        parent and other references.
+        """
+        new = copy.copy(self)
+        new._element = copy.deepcopy(self._element)
+        new._parent = None
+        return new
+
+    def paste(self, proxy, after=None):
+        """
+        Inserts proxy as a child of this proxy. Element is inserted after
+        the given proxy. After must be a child of this proxy. If after is
+        None, element is inserted at the beginning instead.
+        """
+        if after is None:
+            idx = 0
+        else:
+            idx = self._element.index(after._element) + 1
+        self._element.insert(idx, proxy._element)
+        proxy._parent = self
+
     @property
     def element(self):
         """
@@ -241,6 +266,22 @@ class Parented(object):
     def __init__(self, parent):
         super(Parented, self).__init__()
         self._parent = parent
+
+    def paste(self, other, after=True):
+        """
+        Inserts the other Parented into the same parent after this one (if after
+        is true) or before (if after is false)
+        """
+        if self._parent is None:
+            raise ValueError('can\'t paste in None parent')
+        if not isinstance(other, Parented):
+            raise ValueError('other element must be a parented one')
+        if other._parent is not None:
+            raise ValueError('other element must not already have a parent')
+        myidx = self._parent._element.index(self._element)
+        otheridx = myidx + 1 if after else myidx
+        self._parent._element.insert(otheridx, other._element)
+        other._parent = self._parent
 
     @property
     def part(self):
