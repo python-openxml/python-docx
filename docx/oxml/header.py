@@ -13,6 +13,7 @@ class CT_Header(BaseOxmlElement):
     """
     ``<w:hdr>``, the container element for the header part.
     """
+    p = ZeroOrMore('w:p', successors=())
 
     @classmethod
     def new(cls):

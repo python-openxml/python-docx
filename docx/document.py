@@ -132,6 +132,10 @@ class Document(ElementProxy):
         return self.part.headers
 
     @property
+    def footers(self):
+        return self.part.footers
+
+    @property
     def part(self):
         """
         The |DocumentPart| object of this document.
