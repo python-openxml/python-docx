@@ -23,6 +23,7 @@ class Package(OpcPackage):
         Called by loading code after all parts and relationships have been
         loaded, to afford the opportunity for any required post-processing.
         """
+        self._gather_header_parts()
         self._gather_image_parts()
 
     @lazyproperty
@@ -31,6 +32,13 @@ class Package(OpcPackage):
         Collection of all image parts in this package.
         """
         return ImageParts()
+
+    @lazyproperty
+    def header_parts(self):
+        """
+            Collection of all headers in this package.
+        """
+        return HeaderParts()
 
     def _gather_image_parts(self):
         """
@@ -44,6 +52,19 @@ class Package(OpcPackage):
             if rel.target_part in self.image_parts:
                 continue
             self.image_parts.append(rel.target_part)
+
+    def _gather_header_parts(self):
+        """
+            Load the image part collection with all the image parts in package.
+        """
+        for rel in self.iter_rels():
+            if rel.is_external:
+                continue
+            if rel.reltype != RT.HEADER:
+                continue
+            if rel.target_part in self.header_parts:
+                continue
+            self.header_parts.append(rel.target_part)
 
 
 class ImageParts(object):
@@ -113,3 +134,26 @@ class ImageParts(object):
             if n not in used_numbers:
                 return image_partname(n)
         return image_partname(len(self)+1)
+
+
+class HeaderParts(object):
+    """
+        Collection of |HeaderParts| instances corresponding to each header part in
+        the package.
+        """
+
+    def __init__(self):
+        super(HeaderParts, self).__init__()
+        self._header_parts = []
+
+    def __contains__(self, item):
+        return self._header_parts.__contains__(item)
+
+    def __iter__(self):
+        return self._header_parts.__iter__()
+
+    def __len__(self):
+        return self._header_parts.__len__()
+
+    def append(self, item):
+        self._header_parts.append(item)

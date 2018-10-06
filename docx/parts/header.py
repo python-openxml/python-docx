@@ -1,76 +1,35 @@
 # encoding: utf-8
 
 """
-|DocumentPart| and closely related objects
+|HeaderPart| and closely related objects
 """
 
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from ..document import Document
-from ..header import Header
-from .numbering import NumberingPart
-from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
-from ..oxml.shape import CT_Inline
 from ..shape import InlineShapes
 from ..shared import lazyproperty
+from .numbering import NumberingPart
+from ..opc.constants import RELATIONSHIP_TYPE as RT
 from .settings import SettingsPart
 from .styles import StylesPart
 
 
-class DocumentPart(XmlPart):
-    """
-    Main document part of a WordprocessingML (WML) package, aka a .docx file.
-    Acts as broker to other parts such as image, core properties, and style
-    parts. It also acts as a convenient delegate when a mid-document object
-    needs a service involving a remote ancestor. The `Parented.part` property
-    inherited by many content objects provides access to this part object for
-    that purpose.
-    """
+class HeaderPart(XmlPart):
+
     @property
     def core_properties(self):
         """
         A |CoreProperties| object providing read/write access to the core
-        properties of this document.
+        properties of this header.
         """
         return self.package.core_properties
 
-    @property
-    def document(self):
-        """
-        A |Document| object providing access to the content of this document.
-        """
-        return Document(self._element, self)
-
-    @property
-    def headers(self):
-        """
-        A |Headers| object providing access to the content of this header.
-        """
-        headers = []
-        for header in self.package.header_parts:
-            headers.append(Header(header._element, header))
-        return headers
-
-    def get_or_add_image(self, image_descriptor):
-        """
-        Return an (rId, image) 2-tuple for the image identified by
-        *image_descriptor*. *image* is an |Image| instance providing access
-        to the properties of the image, such as dimensions and image type.
-        *rId* is the key for the relationship between this document part and
-        the image part, reused if already present, newly created if not.
-        """
-        image_part = self._package.image_parts.get_or_add_image_part(
-            image_descriptor
-        )
-        rId = self.relate_to(image_part, RT.IMAGE)
-        return rId, image_part.image
-
     def get_style(self, style_id, style_type):
         """
-        Return the style in this document matching *style_id*. Returns the
+        Return the style in this header matching *style_id*. Returns the
         default style for *style_type* if *style_id* is |None| or does not
         match a defined style of *style_type*.
         """
@@ -90,24 +49,21 @@ class DocumentPart(XmlPart):
     def inline_shapes(self):
         """
         The |InlineShapes| instance containing the inline shapes in the
-        document.
+        header.
         """
         return InlineShapes(self._element.body, self)
 
-    def new_pic_inline(self, image_descriptor, width, height):
+    @property
+    def styles(self):
         """
-        Return a newly-created `w:inline` element containing the image
-        specified by *image_descriptor* and scaled based on the values of
-        *width* and *height*.
+        A |Styles| object providing access to the styles in the styles part
+        of this header.
         """
-        rId, image = self.get_or_add_image(image_descriptor)
-        cx, cy = image.scaled_dimensions(width, height)
-        shape_id, filename = self.next_id, image.filename
-        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+        return self._styles_part.styles
 
     @property
     def next_id(self):
-        """Next available positive integer id value in this document.
+        """Next available positive integer id value in this header.
 
         Calculated by incrementing maximum existing id value. Gaps in the
         existing id sequence are not filled. The id attribute value is unique
@@ -144,23 +100,15 @@ class DocumentPart(XmlPart):
     def settings(self):
         """
         A |Settings| object providing access to the settings in the settings
-        part of this document.
+        part of this header.
         """
         return self._settings_part.settings
-
-    @property
-    def styles(self):
-        """
-        A |Styles| object providing access to the styles in the styles part
-        of this document.
-        """
-        return self._styles_part.styles
 
     @property
     def _settings_part(self):
         """
         A |SettingsPart| object providing access to the document-level
-        settings for this document. Creates a default settings part if one is
+        settings for this header. Creates a default settings part if one is
         not present.
         """
         try:
@@ -173,7 +121,7 @@ class DocumentPart(XmlPart):
     @property
     def _styles_part(self):
         """
-        Instance of |StylesPart| for this document. Creates an empty styles
+        Instance of |StylesPart| for this header. Creates an empty styles
         part if one is not present.
         """
         try:

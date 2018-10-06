@@ -128,6 +128,10 @@ class Document(ElementProxy):
         return self._body.paragraphs
 
     @property
+    def headers(self):
+        return self.part.headers
+
+    @property
     def part(self):
         """
         The |DocumentPart| object of this document.
