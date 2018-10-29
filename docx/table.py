@@ -168,6 +168,11 @@ class Table(Parented):
         col_count = self._column_count
         cells = []
         for tc in self._tbl.iter_tcs():
+            previousRowIncomplete = (tc.left == 0) and (len(cells) % col_count > 0)
+            if previousRowIncomplete:
+                missingCellCount = col_count - (len(cells) % col_count)
+                for i in range(0, missingCellCount):
+                    cells.append(_Cell("w:tc", self))
             for grid_span_idx in range(tc.grid_span):
                 if tc.vMerge == ST_Merge.CONTINUE:
                     cells.append(cells[-col_count])
