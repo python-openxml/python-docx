@@ -15,6 +15,7 @@ class CT_Footer(BaseOxmlElement):
     """
 
     p = ZeroOrMore('w:p', successors=())
+    tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
 
     @classmethod
     def new(cls):

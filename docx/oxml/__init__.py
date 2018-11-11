@@ -91,11 +91,14 @@ register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
 
-from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
+from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType, CT_HeaderReference, CT_FooterReference
 register_element_cls('w:pgMar',  CT_PageMar)
 register_element_cls('w:pgSz',   CT_PageSz)
 register_element_cls('w:sectPr', CT_SectPr)
 register_element_cls('w:type',   CT_SectType)
+register_element_cls('w:titlePg', CT_OnOff)
+register_element_cls('w:headerReference', CT_HeaderReference)
+register_element_cls('w:footerReference', CT_FooterReference)
 
 from .shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
@@ -208,3 +211,7 @@ from .text.run import CT_Br, CT_R, CT_Text
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+
+from .settings import CT_Settings
+register_element_cls('w:settings', CT_Settings)
+register_element_cls('w:evenAndOddHeaders', CT_OnOff)

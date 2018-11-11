@@ -128,14 +128,6 @@ class Document(ElementProxy):
         return self._body.paragraphs
 
     @property
-    def headers(self):
-        return self.part.headers
-
-    @property
-    def footers(self):
-        return self.part.footers
-
-    @property
     def part(self):
         """
         The |DocumentPart| object of this document.
@@ -155,7 +147,7 @@ class Document(ElementProxy):
         A |Sections| object providing access to each section in this
         document.
         """
-        return Sections(self._element)
+        return Sections(self._element, self._part)
 
     @property
     def settings(self):

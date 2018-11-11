@@ -18,10 +18,11 @@ class Footer(BlockItemContainer):
 
     __slots__ = ('_part', '__body')
 
-    def __init__(self, element, part):
+    def __init__(self, element, part, is_linked_to_previous=False):
         super(Footer, self).__init__(element, part)
         self._part = part
         self.__body = None
+        self._is_linked_to_previous = is_linked_to_previous
 
     @property
     def core_properties(self):
@@ -47,3 +48,11 @@ class Footer(BlockItemContainer):
         glyph, being flowed like other text in a paragraph.
         """
         return self._part.inline_shapes
+
+    @property
+    def is_linked_to_previous(self):
+        return self._is_linked_to_previous
+
+    @is_linked_to_previous.setter
+    def is_linked_to_previous(self, value):
+        self._is_linked_to_previous = value

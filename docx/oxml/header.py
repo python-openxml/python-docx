@@ -14,6 +14,7 @@ class CT_Header(BaseOxmlElement):
     ``<w:hdr>``, the container element for the header part.
     """
     p = ZeroOrMore('w:p', successors=())
+    tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
 
     @classmethod
     def new(cls):

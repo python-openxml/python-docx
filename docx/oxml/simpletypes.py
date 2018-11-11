@@ -323,7 +323,18 @@ class ST_PositiveCoordinate(XsdLong):
 
 
 class ST_RelationshipId(XsdString):
-    pass
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return str_value
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        return value
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
 
 
 class ST_SignedTwipsMeasure(XsdInt):
@@ -342,7 +353,18 @@ class ST_SignedTwipsMeasure(XsdInt):
 
 
 class ST_String(XsdString):
-    pass
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return str_value
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        return value
+
+    @classmethod
+    def validate(cls, value):
+        cls.validate_string(value)
 
 
 class ST_TblLayoutType(XsdString):

@@ -9,8 +9,6 @@ from __future__ import (
 )
 
 from ..document import Document
-from ..header import Header
-from ..footer import Footer
 from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from ..opc.part import XmlPart
@@ -44,26 +42,6 @@ class DocumentPart(XmlPart):
         A |Document| object providing access to the content of this document.
         """
         return Document(self._element, self)
-
-    @property
-    def headers(self):
-        """
-        A |Headers| object providing access to the content of this header.
-        """
-        headers = []
-        for header in self.package.header_parts:
-            headers.append(Header(header._element, header))
-        return headers
-
-    @property
-    def footers(self):
-        """
-        A |Footers| object providing access to the content of this footer.
-        """
-        footers = []
-        for footer in self.package.footer_parts:
-            footers.append(Footer(footer._element, footer))
-        return footers
 
     def get_or_add_image(self, image_descriptor):
         """
@@ -193,3 +171,9 @@ class DocumentPart(XmlPart):
             styles_part = StylesPart.default(self.package)
             self.relate_to(styles_part, RT.STYLES)
             return styles_part
+
+    def get_parts_by_rids(self, rIds):
+        return self.parts_related_by_rids(rIds)
+
+    def get_part_by_rid(self, rId):
+        return self.parts_related_by_rids([rId])[0]

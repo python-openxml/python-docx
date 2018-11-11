@@ -15,9 +15,18 @@ from .numbering import NumberingPart
 from ..opc.constants import RELATIONSHIP_TYPE as RT
 from .settings import SettingsPart
 from .styles import StylesPart
+from ..header import Header
 
 
 class HeaderPart(XmlPart):
+    """
+    Main header part of a WordprocessingML (WML) package, aka a .docx file.
+    Acts as broker to other parts such as image, core properties, and style
+    parts. It also acts as a convenient delegate when a mid-document object
+    needs a service involving a remote ancestor. The `Parented.part` property
+    inherited by many content objects provides access to this part object for
+    that purpose.
+    """
 
     @property
     def core_properties(self):
@@ -26,6 +35,10 @@ class HeaderPart(XmlPart):
         properties of this header.
         """
         return self.package.core_properties
+
+    @property
+    def header(self):
+        return Header(self._element, self)
 
     def get_style(self, style_id, style_type):
         """
