@@ -81,17 +81,17 @@ class Section(object):
         self._sectPr.bottom_margin = value
 
     @property
-    def footer_distance(self):
+    def footer(self):
         """
         |Length| object representing the distance from the bottom edge of the
         page to the bottom edge of the footer. |None| if no setting is present
         in the XML.
         """
-        return self._sectPr.footer_distance
+        return self._sectPr.footer
 
-    @footer_distance.setter
-    def footer_distance(self, value):
-        self._sectPr.footer_distance = value
+    @footer.setter
+    def footer(self, value):
+        self._sectPr.footer = value
 
     @property
     def gutter(self):
@@ -108,17 +108,17 @@ class Section(object):
         self._sectPr.gutter = value
 
     @property
-    def header_distance(self):
+    def header(self):
         """
         |Length| object representing the distance from the top edge of the
         page to the top edge of the header. |None| if no setting is present
         in the XML.
         """
-        return self._sectPr.header_distance
+        return self._sectPr.header
 
-    @header_distance.setter
-    def header_distance(self, value):
-        self._sectPr.header_distance = value
+    @header.setter
+    def header(self, value):
+        self._sectPr.header = value
 
     @property
     def left_margin(self):
@@ -220,8 +220,8 @@ class Section(object):
         self._sectPr.titlePg_val = value
 
     @property
-    def header(self):
-        return self._header_types.header.header if self._header_types.header is not None else Header(None, None, True)
+    def default_header(self):
+        return self._header_types.default_header.header if self._header_types.default_header is not None else Header(None, None, True)
 
     @property
     def first_page_header(self):
@@ -232,8 +232,8 @@ class Section(object):
         return self._header_types.even_odd_header.header if self._header_types.even_odd_header is not None else Header(None, None, True)
 
     @property
-    def footer(self):
-        return self._footer_types.footer.footer if self._footer_types.footer is not None else Footer(None, None, True)
+    def default_footer(self):
+        return self._footer_types.default_footer.footer if self._footer_types.default_footer is not None else Footer(None, None, True)
 
     @property
     def first_page_footer(self):
@@ -250,7 +250,7 @@ class Header_Types(object):
 
     def __init__(self, header=None, first_page_header=None, even_odd_header=None):
         super(Header_Types, self).__init__()
-        self.header = header
+        self.default_header = header
         self.first_page_header = first_page_header
         self.even_odd_header = even_odd_header
 
@@ -259,6 +259,6 @@ class Footer_Types(object):
 
     def __init__(self, footer=None, first_page_footer=None, even_odd_footer=None):
         super(Footer_Types, self).__init__()
-        self.footer = footer
+        self.default_footer = footer
         self.first_page_footer = first_page_footer
         self.even_odd_footer = even_odd_footer

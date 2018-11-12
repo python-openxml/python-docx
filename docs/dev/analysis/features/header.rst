@@ -41,12 +41,12 @@ Candidate Protocol
 
 Every section has a header; it is never None::
 
-    >>> header = section.header
-    >>> header
-    <docx.hdrftr.Header object at 0x02468ACE>
+    >>> default_header = section.default_header
+    >>> default_header
+    <docx.Header object at 0x02468ACE>
 
 
-There are three header properties on |Section|: `.header`,
+There are three header properties on |Section|: `.default_header`,
 `.even_page_header`, and `.first_page_header`. All header objects share the
 same properties and methods. There are three corresponding properties for the
 footers.
@@ -63,7 +63,7 @@ a header for the first section can be "linked to previous", even though no
 previous section exists. The `.is_linked_to_previous` property is simply
 a test for the existence of a header definition in the current section::
 
-    >>> header.is_linked_to_previous
+    >>> default_header.is_linked_to_previous
     True
 
 Editing operations transparently operate on the source header, the one in the
@@ -71,29 +71,29 @@ first prior section having a header of that type (when one is not present in
 the current section). If no prior sections have a header, one is created in
 the first section of the document on the first constructive edit call::
 
-    >>> header = document.sections[0].header
-    >>> header.is_linked_to_previous
+    >>> default_header = document.sections[0].default_header
+    >>> default_header.is_linked_to_previous
     True
-    >>> header.text = 'foobar'
-    >>> header.is_linked_to_previous
+    >>> default_header.text = 'foobar'
+    >>> default_header.is_linked_to_previous
     False
 
 Assigning False to `.is_linked_to_previous` creates a blank header for that
 section when one does not already exist::
 
-    >>> header.is_linked_to_previous
+    >>> default_header.is_linked_to_previous
     True
-    >>> header.is_linked_to_previous = False
-    >>> header.is_linked_to_previous
+    >>> default_header.is_linked_to_previous = False
+    >>> default_header.is_linked_to_previous
     False
 
 Conversely, an existing header is deleted from a section by assigning True to
 `.is_linked_to_previous`::
 
-    >>> header.is_linked_to_previous
+    >>> default_header.is_linked_to_previous
     False
-    >>> header.is_linked_to_previous = True
-    >>> header.is_linked_to_previous
+    >>> default_header.is_linked_to_previous = True
+    >>> default_header.is_linked_to_previous
     True
 
 The document settings object has a read/write

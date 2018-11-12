@@ -94,7 +94,7 @@ class CT_SectPr(BaseOxmlElement):
         return clone_sectPr
 
     @property
-    def footer_distance(self):
+    def footer(self):
         """
         The value of the ``w:footer`` attribute in the ``<w:pgMar>`` child
         element, as a |Length| object, or |None| if either the element or the
@@ -105,8 +105,8 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return pgMar.footer
 
-    @footer_distance.setter
-    def footer_distance(self, value):
+    @footer.setter
+    def footer(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.footer = value
 
@@ -137,7 +137,7 @@ class CT_SectPr(BaseOxmlElement):
         pgMar.gutter = value
 
     @property
-    def header_distance(self):
+    def header(self):
         """
         The value of the ``w:header`` attribute in the ``<w:pgMar>`` child
         element, as a |Length| object, or |None| if either the element or the
@@ -148,8 +148,8 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return pgMar.header
 
-    @header_distance.setter
-    def header_distance(self, value):
+    @header.setter
+    def header(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.header = value
 
