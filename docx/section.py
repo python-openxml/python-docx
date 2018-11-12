@@ -24,49 +24,26 @@ class Sections(Sequence):
     def __getitem__(self, key):
         if isinstance(key, slice):
             sectPr_lst = self._document_elm.sectPr_lst[key]
-            return [Section(sectPr, *self._assign_headers_footers(sectPr)) for sectPr in sectPr_lst]
+            return [Section(sectPr, self._part) for sectPr in sectPr_lst]
         sectPr = self._document_elm.sectPr_lst[key]
-        return Section(sectPr, *self._assign_headers_footers(sectPr))
+        return Section(sectPr, self._part)
 
     def __iter__(self):
         for sectPr in self._document_elm.sectPr_lst:
-            yield Section(sectPr, *self._assign_headers_footers(sectPr))
+            yield Section(sectPr, self._part)
 
     def __len__(self):
         return len(self._document_elm.sectPr_lst)
-
-    def _assign_headers_footers(self, sectPr):
-        header_types = Header_Types()
-        footer_types = Footer_Types()
-
-        for header_reference in sectPr.header_reference_lst:
-            if header_reference.type == 'default':
-                header_types.default_header = self._part.get_part_by_rid(header_reference.rId)
-            elif header_reference.type == 'first':
-                header_types.first_page_header = self._part.get_part_by_rid(header_reference.rId)
-            elif header_reference.type == 'even':
-                header_types.even_odd_header = self._part.get_part_by_rid(header_reference.rId)
-
-        for footer_reference in sectPr.footer_reference_lst:
-            if footer_reference.type == 'default':
-                footer_types.default_footer = self._part.get_part_by_rid(footer_reference.rId)
-            elif footer_reference.type == 'first':
-                footer_types.first_page_footer = self._part.get_part_by_rid(footer_reference.rId)
-            elif footer_reference.type == 'even':
-                footer_types.even_odd_footer = self._part.get_part_by_rid(footer_reference.rId)
-
-        return header_types, footer_types
 
 
 class Section(object):
     """
     Document section, providing access to section and page setup settings.
     """
-    def __init__(self, sectPr, header_types, footer_types):
+    def __init__(self, sectPr, part):
         super(Section, self).__init__()
         self._sectPr = sectPr
-        self._header_types = header_types
-        self._footer_types = footer_types
+        self._header_types, self._footer_types = self._assign_headers_footers(self._sectPr, part)
 
     @property
     def bottom_margin(self):
@@ -81,7 +58,7 @@ class Section(object):
         self._sectPr.bottom_margin = value
 
     @property
-    def footer(self):
+    def footer_distance(self):
         """
         |Length| object representing the distance from the bottom edge of the
         page to the bottom edge of the footer. |None| if no setting is present
@@ -89,8 +66,8 @@ class Section(object):
         """
         return self._sectPr.footer
 
-    @footer.setter
-    def footer(self, value):
+    @footer_distance.setter
+    def footer_distance(self, value):
         self._sectPr.footer = value
 
     @property
@@ -108,7 +85,7 @@ class Section(object):
         self._sectPr.gutter = value
 
     @property
-    def header(self):
+    def header_distance(self):
         """
         |Length| object representing the distance from the top edge of the
         page to the top edge of the header. |None| if no setting is present
@@ -116,8 +93,8 @@ class Section(object):
         """
         return self._sectPr.header
 
-    @header.setter
-    def header(self, value):
+    @header_distance.setter
+    def header_distance(self, value):
         self._sectPr.header = value
 
     @property
@@ -220,8 +197,8 @@ class Section(object):
         self._sectPr.titlePg_val = value
 
     @property
-    def default_header(self):
-        return self._header_types.default_header.header if self._header_types.default_header is not None else Header(None, None, True)
+    def header(self):
+        return self._header_types.header.header if self._header_types.header is not None else Header(None, None, True)
 
     @property
     def first_page_header(self):
@@ -232,33 +209,54 @@ class Section(object):
         return self._header_types.even_odd_header.header if self._header_types.even_odd_header is not None else Header(None, None, True)
 
     @property
-    def default_footer(self):
-        return self._footer_types.default_footer.footer if self._footer_types.default_footer is not None else Footer(None, None, True)
+    def footer(self):
+        return self._footer_types.footer.footer if self._footer_types.footer is not None else Footer(None, None, True)
 
     @property
     def first_page_footer(self):
-        return self._footer_types.first_page_footer.footer if self._footer_types.first_page_footer is not None else Footer(
-            None, None, True)
+        return self._footer_types.first_page_footer.footer if self._footer_types.first_page_footer is not None else Footer(None, None, True)
 
     @property
     def even_odd_footer(self):
-        return self._footer_types.even_odd_footer.footer if self._footer_types.even_odd_footer is not None else Footer(
-            None, None, True)
+        return self._footer_types.even_odd_footer.footer if self._footer_types.even_odd_footer is not None else Footer(None, None, True)
+
+    @staticmethod
+    def _assign_headers_footers(sectPr, _part):
+        header_types = _Header_Types()
+        footer_types = _Footer_Types()
+
+        for header_reference in sectPr.header_reference_lst:
+            if header_reference.type == 'default':
+                header_types.header = _part.get_part_by_rid(header_reference.rId)
+            elif header_reference.type == 'first':
+                header_types.first_page_header = _part.get_part_by_rid(header_reference.rId)
+            elif header_reference.type == 'even':
+                header_types.even_odd_header = _part.get_part_by_rid(header_reference.rId)
+
+        for footer_reference in sectPr.footer_reference_lst:
+            if footer_reference.type == 'default':
+                footer_types.footer = _part.get_part_by_rid(footer_reference.rId)
+            elif footer_reference.type == 'first':
+                footer_types.first_page_footer = _part.get_part_by_rid(footer_reference.rId)
+            elif footer_reference.type == 'even':
+                footer_types.even_odd_footer = _part.get_part_by_rid(footer_reference.rId)
+
+        return header_types, footer_types
 
 
-class Header_Types(object):
+class _Header_Types(object):
 
     def __init__(self, header=None, first_page_header=None, even_odd_header=None):
-        super(Header_Types, self).__init__()
-        self.default_header = header
+        super(_Header_Types, self).__init__()
+        self.header = header
         self.first_page_header = first_page_header
         self.even_odd_header = even_odd_header
 
 
-class Footer_Types(object):
+class _Footer_Types(object):
 
     def __init__(self, footer=None, first_page_footer=None, even_odd_footer=None):
-        super(Footer_Types, self).__init__()
-        self.default_footer = footer
+        super(_Footer_Types, self).__init__()
+        self.footer = footer
         self.first_page_footer = first_page_footer
         self.even_odd_footer = even_odd_footer
