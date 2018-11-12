@@ -41,7 +41,7 @@ class Sections(Sequence):
 
         for header_reference in sectPr.header_reference_lst:
             if header_reference.type == 'default':
-                header_types.header = self._part.get_part_by_rid(header_reference.rId)
+                header_types.default_header = self._part.get_part_by_rid(header_reference.rId)
             elif header_reference.type == 'first':
                 header_types.first_page_header = self._part.get_part_by_rid(header_reference.rId)
             elif header_reference.type == 'even':
@@ -49,7 +49,7 @@ class Sections(Sequence):
 
         for footer_reference in sectPr.footer_reference_lst:
             if footer_reference.type == 'default':
-                footer_types.footer = self._part.get_part_by_rid(footer_reference.rId)
+                footer_types.default_footer = self._part.get_part_by_rid(footer_reference.rId)
             elif footer_reference.type == 'first':
                 footer_types.first_page_footer = self._part.get_part_by_rid(footer_reference.rId)
             elif footer_reference.type == 'even':
