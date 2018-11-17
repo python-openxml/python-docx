@@ -138,6 +138,23 @@ class DescribeRelationships(object):
         next_rId = rels._next_rId
         assert next_rId == expected_next_rId
 
+    def it_can_find_parts_by_rids(self, rels_with_target_known_by_rIds):
+        rels, rIds, known_target_part = rels_with_target_known_by_rIds
+        parts = rels.parts_with_rids(rIds)
+        assert len(parts) == len(rIds)
+        for part in parts:
+            assert part is known_target_part
+
+    def it_cannot_find_parts_by_rids(self, rels_with__not_known_target_by_rIds):
+        rels, rIds, known_target_part = rels_with__not_known_target_by_rIds
+        try:
+            rels.parts_with_rids(rIds)
+            assert False
+        except KeyError:
+            assert True
+        except:
+            assert False
+
     # fixtures ---------------------------------------------
 
     @pytest.fixture
@@ -167,6 +184,14 @@ class DescribeRelationships(object):
             self, _rId, reltype, _target_part, _baseURI):
         rel = _Relationship(_rId, reltype, _target_part, _baseURI)
         return rel, reltype, _target_part
+
+    @pytest.fixture
+    def _rel_with_target_known_by_rIds(
+        self, _rIds, reltype, _target_part, _Relationships):
+        rels = _Relationships
+        for rId in _rIds:
+            rels.add_relationship(reltype, _target_part, rId)
+        return rels, _target_part
 
     @pytest.fixture
     def rels(self):
@@ -267,6 +292,23 @@ class DescribeRelationships(object):
         rels[1] = rel
         return rels, reltype, target_part
 
+    @pytest.fixture(params=[
+        (['rId6', 'rId7']),
+        ([])
+        ])
+    def rels_with_target_known_by_rIds(
+        self, _rel_with_target_known_by_rIds, request):
+        rels, target_part = _rel_with_target_known_by_rIds
+        return rels, request.param, target_part
+
+    @pytest.fixture(params=[
+        (['rId15'])
+    ])
+    def rels_with__not_known_target_by_rIds(
+        self, _rel_with_target_known_by_rIds, request):
+        rels, target_part = _rel_with_target_known_by_rIds
+        return rels, request.param, target_part
+
     @pytest.fixture
     def reltype(self):
         return 'http://rel/type'
@@ -276,9 +318,17 @@ class DescribeRelationships(object):
         return 'rId6'
 
     @pytest.fixture
+    def _rIds(self):
+        return ['rId6', 'rId7', 'rId8']
+
+    @pytest.fixture
     def _target_part(self, request):
         return instance_mock(request, Part)
 
     @pytest.fixture
     def url(self):
         return 'https://github.com/scanny/python-docx'
+
+    @pytest.fixture
+    def _Relationships(self, _baseURI):
+        return Relationships(_baseURI)
