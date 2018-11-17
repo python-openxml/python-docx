@@ -69,8 +69,11 @@ class Relationships(dict):
         if not found and |ValueError| if more than one matching relationship
         is found.
         """
-        rels = self._get_rels_of_rids(rIds)
-        return [rel.target_part for rel in rels]
+        if isinstance(rIds, list):
+            rels = self._get_rels_of_rids(rIds)
+            return [rel.target_part for rel in rels]
+        else:
+            raise ValueError('No expected type of argument rIds. Parameter rIds must be of type \'list\'')
 
     @property
     def related_parts(self):
@@ -130,14 +133,19 @@ class Relationships(dict):
 
     def _get_rels_of_rids(self, rIds):
         """
-        Return single relationship of type *reltype* from the collection.
-        Raises |KeyError| if no matching relationship is found. Raises
-        |ValueError| if more than one matching relationship is found.
+        Return relationships of *rIds* from the collection.
+        Raises |KeyError| if no matching relationship is found.
         """
-        matching = [rel for rel in self.values() if rel.rId in rIds]
-        if len(matching) == 0:
-            tmpl = "no relationship of rids '%s' in collection"
-            raise KeyError(tmpl % str(rIds))
+        matching = []
+        for rId in rIds:
+            match = False
+            for rel in self.values():
+                if rel.rId == rId:
+                    match = True
+                    matching.append(rel)
+            if not match:
+                tmpl = "no relationship of rid '%s' in collection"
+                raise KeyError(tmpl % str(rId))
         return matching
 
     @property

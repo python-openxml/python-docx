@@ -226,25 +226,29 @@ class Section(object):
         footer_types = _Footer_Types()
 
         for header_reference in sectPr.header_reference_lst:
-            if header_reference.type == 'default':
+            if header_reference.type == _Header_Types.DEFAULT:
                 header_types.header = _part.get_part_by_rid(header_reference.rId)
-            elif header_reference.type == 'first':
+            elif header_reference.type == _Header_Types.FIRST:
                 header_types.first_page_header = _part.get_part_by_rid(header_reference.rId)
-            elif header_reference.type == 'even':
+            elif header_reference.type == _Header_Types.EVEN:
                 header_types.even_odd_header = _part.get_part_by_rid(header_reference.rId)
 
         for footer_reference in sectPr.footer_reference_lst:
-            if footer_reference.type == 'default':
+            if footer_reference.type == _Footer_Types.DEFAULT:
                 footer_types.footer = _part.get_part_by_rid(footer_reference.rId)
-            elif footer_reference.type == 'first':
+            elif footer_reference.type == _Footer_Types.FIRST:
                 footer_types.first_page_footer = _part.get_part_by_rid(footer_reference.rId)
-            elif footer_reference.type == 'even':
+            elif footer_reference.type == _Footer_Types.EVEN:
                 footer_types.even_odd_footer = _part.get_part_by_rid(footer_reference.rId)
 
         return header_types, footer_types
 
 
 class _Header_Types(object):
+
+    DEFAULT = 'default'
+    FIRST = 'first'
+    EVEN = 'even'
 
     def __init__(self, header=None, first_page_header=None, even_odd_header=None):
         super(_Header_Types, self).__init__()
@@ -254,6 +258,10 @@ class _Header_Types(object):
 
 
 class _Footer_Types(object):
+
+    DEFAULT = 'default'
+    FIRST = 'first'
+    EVEN = 'even'
 
     def __init__(self, footer=None, first_page_footer=None, even_odd_footer=None):
         super(_Footer_Types, self).__init__()
