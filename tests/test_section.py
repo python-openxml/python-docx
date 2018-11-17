@@ -15,6 +15,9 @@ from docx.shared import Inches
 from .unitutil.mock import (
     instance_mock
 )
+from docx.opc.packuri import PackURI
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.parts.header import HeaderPart
 
 from .unitutil.cxml import element, xml
 
@@ -116,6 +119,21 @@ class DescribeSection(object):
         )
         setattr(section, margin_prop_name, new_value)
         assert section._sectPr.xml == expected_xml
+
+    def it_knows_its_default_header(self, section_with_default_header_fixture):
+        assert section_with_default_header_fixture.header.is_linked_to_previous is False
+        assert section_with_default_header_fixture.first_page_header.is_linked_to_previous is True
+        assert section_with_default_header_fixture.even_odd_header.is_linked_to_previous is True
+
+    def it_knows_its_first_header(self, section_with_first_header_fixture):
+        assert section_with_first_header_fixture.header.is_linked_to_previous is True
+        assert section_with_first_header_fixture.first_page_header.is_linked_to_previous is False
+        assert section_with_first_header_fixture.even_odd_header.is_linked_to_previous is True
+
+    def it_knows_its_even_header(self, section_with_even_header_fixture):
+        assert section_with_even_header_fixture.header.is_linked_to_previous is True
+        assert section_with_even_header_fixture.first_page_header.is_linked_to_previous is True
+        assert section_with_even_header_fixture.even_odd_header.is_linked_to_previous is False
 
     # fixtures -------------------------------------------------------
 
@@ -256,6 +274,76 @@ class DescribeSection(object):
         expected_xml = xml(expected_cxml)
         return section, new_start_type, expected_xml
 
+    @pytest.fixture(params=[
+        'w:sectPr/w:headerReference{w:type=default, r:id=rId1}/r:id'
+    ])
+    def section_with_default_header_fixture(self, request, document_part_,
+                                     default_header_rel_):
+        header_reltype, target_part, rId = default_header_rel_
+        sectPr_cxml = request.param
+        document_part_.load_rel(header_reltype, target_part, rId)
+        section = Section(element(sectPr_cxml), document_part_)
+        return section
+
+    @pytest.fixture(params=[
+        'w:sectPr/w:headerReference{w:type=first, r:id=rId1}/r:id'
+    ])
+    def section_with_first_header_fixture(self, request, document_part_,
+                                            default_header_rel_):
+        header_reltype, target_part, rId = default_header_rel_
+        sectPr_cxml = request.param
+        document_part_.load_rel(header_reltype, target_part, rId)
+        section = Section(element(sectPr_cxml), document_part_)
+        return section
+
+    @pytest.fixture(params=[
+        'w:sectPr/w:headerReference{w:type=even, r:id=rId1}/r:id'
+    ])
+    def section_with_even_header_fixture(self, request, document_part_,
+                                            default_header_rel_):
+        header_reltype, target_part, rId = default_header_rel_
+        sectPr_cxml = request.param
+        document_part_.load_rel(header_reltype, target_part, rId)
+        section = Section(element(sectPr_cxml), document_part_)
+        return section
+
     @pytest.fixture
-    def document_part_(self, request):
-        return instance_mock(request, DocumentPart)
+    def default_header_rel_(self, header_rId_, header_reltype_, header_part_):
+        return header_reltype_, header_part_, header_rId_
+
+    @pytest.fixture
+    def first_header_rels_(self, header_rId_, header_reltype_, header_part_):
+        return header_reltype_, header_part_, header_rId_
+
+    @pytest.fixture
+    def even_header_rels_(self, header_rId_, header_reltype_, header_part_):
+        return header_reltype_, header_part_, header_rId_
+
+    @pytest.fixture
+    def header_rId_(self):
+        return 'rId1'
+
+    @pytest.fixture
+    def document_part_(self, document_partname_):
+        return DocumentPart(document_partname_, None, None, None)
+
+    @pytest.fixture
+    def header_part_(self):
+        return HeaderPart(None, None, None, None)
+
+    @pytest.fixture
+    def header_reltype_(self):
+        return RT.HEADER
+
+    @pytest.fixture
+    def footer_reltype_(self):
+        return RT.FOOTER
+
+    @pytest.fixture
+    def document_partname_(self, _baseURI):
+        return PackURI(_baseURI)
+
+    @pytest.fixture
+    def _baseURI(self):
+        return '/baseURI'
+
