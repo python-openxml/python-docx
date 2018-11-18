@@ -59,6 +59,17 @@ def given_a_section_having_known_orientation(context, orientation):
     context.section = document.sections[section_idx]
 
 
+@given('a section with all header types')
+def given_a_header_of_type(context):
+    document = Document(test_docx('a_header_of_all_types'))
+    context.section = document.sections[0]
+
+
+@given('a section with all footer types')
+def given_a_header_of_type(context):
+    document = Document(test_docx('a_footer_of_all_types'))
+    context.section = document.sections[0]
+
 # when =====================================================
 
 @when('I set the {margin_side} margin to {inches} inches')
@@ -182,3 +193,18 @@ def then_the_reported_section_start_type_is_type(context, start_type):
         'ODD_PAGE':   WD_SECTION.ODD_PAGE,
     }[start_type]
     assert context.section.start_type == expected_start_type
+
+
+@then('header, first_page_header, even_odd_header is present in document.section')
+def then_header_of_type_is_present_in_document_section(context):
+        assert context.section.header.is_linked_to_previous is False
+        assert  context.section.first_page_header.is_linked_to_previous is False
+        assert context.section.even_odd_header.is_linked_to_previous is False
+
+
+@then('footer, first_page_footer, even_odd_footer is present in document.section')
+def then_header_of_type_is_present_in_document_section(context):
+        assert context.section.footer.is_linked_to_previous is False
+        assert  context.section.first_page_footer.is_linked_to_previous is False
+        assert context.section.even_odd_footer.is_linked_to_previous is False
+
