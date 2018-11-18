@@ -8,9 +8,3 @@ python:
 install: pip install -r requirements.txt
 # command to run tests, e.g. python setup.py test
 script:  py.test
-notifications:
-  email:
-    recipients:
-      - ondrej.zoricak.2@student.tuke.sk
-    on_success: always
-    on_failure: always
