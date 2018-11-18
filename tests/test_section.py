@@ -275,48 +275,40 @@ class DescribeSection(object):
         return section, new_start_type, expected_xml
 
     @pytest.fixture(params=[
-        'w:sectPr/w:headerReference{w:type=default, r:id=rId1}/r:id'
+        'w:sectPr/w:headerReference{w:type=default,r:id=rId1}/r:id'
     ])
     def section_with_default_header_fixture(self, request, document_part_,
-                                     default_header_rel_):
-        header_reltype, target_part, rId = default_header_rel_
+                                     header_rel_):
+        header_reltype, header_part, rId = header_rel_
         sectPr_cxml = request.param
-        document_part_.load_rel(header_reltype, target_part, rId)
+        document_part_.load_rel(header_reltype, header_part, rId)
         section = Section(element(sectPr_cxml), document_part_)
         return section
 
     @pytest.fixture(params=[
-        'w:sectPr/w:headerReference{w:type=first, r:id=rId1}/r:id'
+        'w:sectPr/w:headerReference{w:type=first,r:id=rId1}/r:id'
     ])
     def section_with_first_header_fixture(self, request, document_part_,
-                                            default_header_rel_):
-        header_reltype, target_part, rId = default_header_rel_
+                                            header_rel_):
+        header_reltype, header_part, rId = header_rel_
         sectPr_cxml = request.param
-        document_part_.load_rel(header_reltype, target_part, rId)
+        document_part_.load_rel(header_reltype, header_part, rId)
         section = Section(element(sectPr_cxml), document_part_)
         return section
 
     @pytest.fixture(params=[
-        'w:sectPr/w:headerReference{w:type=even, r:id=rId1}/r:id'
+        'w:sectPr/w:headerReference{w:type=even,r:id=rId1}/r:id'
     ])
     def section_with_even_header_fixture(self, request, document_part_,
-                                            default_header_rel_):
-        header_reltype, target_part, rId = default_header_rel_
+                                            header_rel_):
+        header_reltype, header_part, rId = header_rel_
         sectPr_cxml = request.param
-        document_part_.load_rel(header_reltype, target_part, rId)
+        document_part_.load_rel(header_reltype, header_part, rId)
         section = Section(element(sectPr_cxml), document_part_)
         return section
 
     @pytest.fixture
-    def default_header_rel_(self, header_rId_, header_reltype_, header_part_):
-        return header_reltype_, header_part_, header_rId_
-
-    @pytest.fixture
-    def first_header_rels_(self, header_rId_, header_reltype_, header_part_):
-        return header_reltype_, header_part_, header_rId_
-
-    @pytest.fixture
-    def even_header_rels_(self, header_rId_, header_reltype_, header_part_):
+    def header_rel_(self, header_rId_, header_reltype_, header_part_):
         return header_reltype_, header_part_, header_rId_
 
     @pytest.fixture

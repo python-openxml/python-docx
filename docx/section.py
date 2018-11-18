@@ -40,10 +40,28 @@ class Section(object):
     """
     Document section, providing access to section and page setup settings.
     """
+
+    H_F_TYPE_DEFAULT = 'default'
+    H_F_TYPE_FIRST = 'first'
+    H_F_TYPE_EVEN = 'even'
+
     def __init__(self, sectPr, part):
         super(Section, self).__init__()
         self._sectPr = sectPr
-        self._header_types, self._footer_types = self._assign_headers_footers(self._sectPr, part)
+        self._part = part
+
+        self._default_header = None
+        self.__default_header_is_linked = True
+        self._first_page_header = None
+        self.__first_page_header_is_linked = True
+        self._even_odd_header = None
+        self.__even_odd_header_is_linked = True
+
+        self._default_footer = None
+        self._first_page_footer = None
+        self._even_odd_footer = None
+
+        self._init_headers_footers()
 
     @property
     def bottom_margin(self):
@@ -189,82 +207,94 @@ class Section(object):
         self._sectPr.top_margin = value
 
     @property
-    def _different_first_page_header_footer(self):
+    def different_first_page_header_footer(self):
         return self._sectPr.titlePg_val
 
-    @_different_first_page_header_footer.setter
-    def _different_first_page_header_footer(self, value):
+    @different_first_page_header_footer.setter
+    def different_first_page_header_footer(self, value):
         self._sectPr.titlePg_val = value
 
     @property
     def header(self):
-        return self._header_types.header.header if self._header_types.header is not None else Header(None, None, True)
+        return self._default_header if self._default_header is not None else Header(None, None, self._default_header_is_linked)
+
+    @property
+    def _default_header_is_linked(self):
+        return self.__default_header_is_linked
+
+    @_default_header_is_linked.setter
+    def _default_header_is_linked(self, value):
+        # create new rel + add ref to section
+        if self.__default_header_is_linked is True and value is False:
+            pass
+        #
+        elif self.__default_header_is_linked is False and value is True:
+            pass
+        self.__default_header_is_linked = value
 
     @property
     def first_page_header(self):
-        return self._header_types.first_page_header.header if self._header_types.first_page_header is not None else Header(None, None, True)
+        return self._first_page_header if self._first_page_header is not None else Header(None, None, self._first_page_header_is_linked)
+
+    @property
+    def _first_page_header_is_linked(self):
+        return self.__first_page_header_is_linked
+
+    @_first_page_header_is_linked.setter
+    def _first_page_header_is_linked(self, value):
+        self.__first_page_header_is_linked = value
 
     @property
     def even_odd_header(self):
-        return self._header_types.even_odd_header.header if self._header_types.even_odd_header is not None else Header(None, None, True)
+        return self._even_odd_header if self._even_odd_header is not None else Header(None, None, self._even_odd_header_is_linked)
+
+    @property
+    def _even_odd_header_is_linked(self):
+        return self.__even_odd_header_is_linked
+
+    @_even_odd_header_is_linked.setter
+    def _even_odd_header_is_linked(self, value):
+        self.__even_odd_header_is_linked = value
 
     @property
     def footer(self):
-        return self._footer_types.footer.footer if self._footer_types.footer is not None else Footer(None, None, True)
+        return self._default_footer
 
     @property
     def first_page_footer(self):
-        return self._footer_types.first_page_footer.footer if self._footer_types.first_page_footer is not None else Footer(None, None, True)
+        return self._first_page_footer
 
     @property
     def even_odd_footer(self):
-        return self._footer_types.even_odd_footer.footer if self._footer_types.even_odd_footer is not None else Footer(None, None, True)
+        return self._even_odd_footer
 
-    @staticmethod
-    def _assign_headers_footers(sectPr, _part):
-        header_types = _Header_Types()
-        footer_types = _Footer_Types()
+    def _init_headers_footers(self):
 
-        for header_reference in sectPr.header_reference_lst:
-            if header_reference.type == _Header_Types.DEFAULT:
-                header_types.header = _part.get_part_by_rid(header_reference.rId)
-            elif header_reference.type == _Header_Types.FIRST:
-                header_types.first_page_header = _part.get_part_by_rid(header_reference.rId)
-            elif header_reference.type == _Header_Types.EVEN:
-                header_types.even_odd_header = _part.get_part_by_rid(header_reference.rId)
+        for header_reference in self._sectPr.header_reference_lst:
+            if header_reference.type == Section.H_F_TYPE_DEFAULT:
+                self._default_header = self._part.get_part_by_rid(header_reference.rId).header
+                self.__default_header_is_linked = False
+                self._default_header.is_linked_to_previous = self._default_header_is_linked
 
-        for footer_reference in sectPr.footer_reference_lst:
-            if footer_reference.type == _Footer_Types.DEFAULT:
-                footer_types.footer = _part.get_part_by_rid(footer_reference.rId)
-            elif footer_reference.type == _Footer_Types.FIRST:
-                footer_types.first_page_footer = _part.get_part_by_rid(footer_reference.rId)
-            elif footer_reference.type == _Footer_Types.EVEN:
-                footer_types.even_odd_footer = _part.get_part_by_rid(footer_reference.rId)
+            elif header_reference.type == Section.H_F_TYPE_FIRST:
+                self._first_page_header = self._part.get_part_by_rid(header_reference.rId).header
+                self.__first_page_header_is_linked = False
+                self._first_page_header.is_linked_to_previous = self._first_page_header_is_linked
 
-        return header_types, footer_types
+            elif header_reference.type == Section.H_F_TYPE_EVEN:
+                self._even_odd_header = self._part.get_part_by_rid(header_reference.rId).header
+                self.__even_odd_header_is_linked = False
+                self._even_odd_header.is_linked_to_previous = self._even_odd_header_is_linked
 
+        for footer_reference in self._sectPr.footer_reference_lst:
+            if footer_reference.type == Section.H_F_TYPE_DEFAULT:
+                self._default_footer = self._part.get_part_by_rid(footer_reference.rId).footer
+                self._default_footer.is_linked_to_previous = False
 
-class _Header_Types(object):
+            elif footer_reference.type == Section.H_F_TYPE_FIRST:
+                self._first_page_footer = self._part.get_part_by_rid(footer_reference.rId).footer
+                self._first_page_footer.is_linked_to_previous = False
 
-    DEFAULT = 'default'
-    FIRST = 'first'
-    EVEN = 'even'
-
-    def __init__(self, header=None, first_page_header=None, even_odd_header=None):
-        super(_Header_Types, self).__init__()
-        self.header = header
-        self.first_page_header = first_page_header
-        self.even_odd_header = even_odd_header
-
-
-class _Footer_Types(object):
-
-    DEFAULT = 'default'
-    FIRST = 'first'
-    EVEN = 'even'
-
-    def __init__(self, footer=None, first_page_footer=None, even_odd_footer=None):
-        super(_Footer_Types, self).__init__()
-        self.footer = footer
-        self.first_page_footer = first_page_footer
-        self.even_odd_footer = even_odd_footer
+            elif footer_reference.type == Section.H_F_TYPE_EVEN:
+                self._even_odd_footer = self._part.get_part_by_rid(footer_reference.rId).footer
+                self._even_odd_footer.is_linked_to_previous = False
