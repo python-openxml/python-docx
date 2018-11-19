@@ -199,9 +199,9 @@ class Font(ElementProxy):
     def name(self, value):
         rPr = self._element.get_or_add_rPr()
         if isinstance(value,dict):
-            rPr.rFonts_ascii = value['ascii']
-            rPr.rFonts_hAnsi = value['hAnsi']
-            rPr.rFonts_eastAsia = value['eastAsia']
+            rPr.rFonts_ascii = value.get('ascii')
+            rPr.rFonts_hAnsi = value.get('hAnsi')
+            rPr.rFonts_eastAsia = value.get('eastAsia')
         else:
             rPr.rFonts_ascii = value
             rPr.rFonts_hAnsi = value
