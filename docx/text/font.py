@@ -189,19 +189,24 @@ class Font(ElementProxy):
         rPr = self._element.rPr
         if rPr is None:
             return None
-        rFonts_willReturn = rPr.rFonts_ascii
-        if rFonts_willReturn is None:
-            rFonts_willReturn = rPr.rFonts_hAnsi
-        if rFonts_willReturn is None:
-            rFonts_willReturn = rPr.rFonts_eastAsia
-        return rFonts_willReturn
+        return {
+            'ascii' : rPr.rFonts_ascii,
+            'hAnsi' : rPr.rFonts_hAnsi,
+            'eastAsia' : rPr.rFonts_eastAsia
+            }
 
     @name.setter
     def name(self, value):
         rPr = self._element.get_or_add_rPr()
-        rPr.rFonts_ascii = value
-        rPr.rFonts_hAnsi = value
-        rPr.rFonts_eastAsia = value
+        if isinstance(value,dict):
+            rPr.rFonts_ascii = value['ascii']
+            rPr.rFonts_hAnsi = value['hAnsi']
+            rPr.rFonts_eastAsia = value['eastAsia']
+        else:
+            rPr.rFonts_ascii = value
+            rPr.rFonts_hAnsi = value
+            rPr.rFonts_eastAsia = value
+                
 
     @property
     def no_proof(self):
