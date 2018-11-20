@@ -89,14 +89,14 @@ class Document(ElementProxy):
         new_sectPr.start_type = start_type
         return Section(new_sectPr)
 
-    def add_table(self, rows, cols, style=None):
+    def add_table(self, rows, cols, style=None, firstCol=1, firstRow=1, lastCol=0, lastRow=0, hBand=1, vBand=0):
         """
         Add a table having row and column counts of *rows* and *cols*
         respectively and table style of *style*. *style* may be a paragraph
         style object or a paragraph style name. If *style* is |None|, the
         table inherits the default table style of the document.
         """
-        table = self._body.add_table(rows, cols, self._block_width)
+        table = self._body.add_table(rows, cols, self._block_width, firstCol, firstRow, lastCol, lastRow, hBand, vBand)
         table.style = style
         return table
 
