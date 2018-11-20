@@ -129,7 +129,7 @@ register_element_cls('w:unhideWhenUsed', CT_OnOff)
 
 from .table import (
     CT_Height, CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType,
-    CT_TblPr, CT_TblWidth, CT_Tc, CT_TcPr, CT_TrPr, CT_VerticalJc, CT_VMerge
+    CT_TblPr, CT_TblWidth, CT_TblLook, CT_Tc, CT_TcPr, CT_TrPr, CT_VerticalJc, CT_VMerge
 )
 register_element_cls('w:bidiVisual', CT_OnOff)
 register_element_cls('w:gridCol',    CT_TblGridCol)
@@ -139,6 +139,7 @@ register_element_cls('w:tblGrid',    CT_TblGrid)
 register_element_cls('w:tblLayout',  CT_TblLayoutType)
 register_element_cls('w:tblPr',      CT_TblPr)
 register_element_cls('w:tblStyle',   CT_String)
+register_element_cls('w:tblLook',    CT_TblLook)
 register_element_cls('w:tc',         CT_Tc)
 register_element_cls('w:tcPr',       CT_TcPr)
 register_element_cls('w:tcW',        CT_TblWidth)
