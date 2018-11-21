@@ -14,6 +14,7 @@ class CT_P(BaseOxmlElement):
     """
     pPr = ZeroOrOne('w:pPr')
     r = ZeroOrMore('w:r')
+    hyperlink = ZeroOrMore('w:hyperlink')
 
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)

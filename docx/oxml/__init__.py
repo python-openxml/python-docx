@@ -188,6 +188,8 @@ register_element_cls('w:p', CT_P)
 from .text.parfmt import (
     CT_Ind, CT_Jc, CT_PPr, CT_Spacing, CT_TabStop, CT_TabStops
 )
+from .text.hyperlink import CT_Hyperlink
+register_element_cls('w:hyperlink',       CT_Hyperlink)
 register_element_cls('w:ind',             CT_Ind)
 register_element_cls('w:jc',              CT_Jc)
 register_element_cls('w:keepLines',       CT_OnOff)
