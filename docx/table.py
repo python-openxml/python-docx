@@ -159,6 +159,54 @@ class Table(Parented):
         self._element.bidiVisual_val = value
 
     @property
+    def first_col(self):
+        return self._tbl.tblPr.tblLook.firstCol
+
+    @first_col.setter
+    def first_col(self, value):
+        self._tbl.tblPr.tblLook.firstCol = value
+
+    @property
+    def first_row(self):
+        return self._tbl.tblPr.tblLook.firstRow
+
+    @first_row.setter
+    def first_row(self, value):
+        self._tbl.tblPr.tblLook.firstRow = value
+
+    @property
+    def last_col(self):
+        return self._tbl.tblPr.tblLook.lastCol
+
+    @last_col.setter
+    def last_col(self, value):
+        self._tbl.tblPr.tblLook.lastCol = value
+
+    @property
+    def last_row(self):
+        return self._tbl.tblPr.tblLook.lastRow
+
+    @last_row.setter
+    def last_row(self, value):
+        self._tbl.tblPr.tblLook.lastRow = value
+
+    @property
+    def h_band(self):
+        return self._tbl.tblPr.tblLook.hBand
+
+    @h_band.setter
+    def h_band(self, value):
+        self._tbl.tblPr.tblLook.hBand(value)
+
+    @property
+    def v_band(self):
+        return self._tbl.tblPr.tblLook.vBand
+
+    @v_band.setter
+    def v_band(self, value):
+        self._tbl.tblPr.tblLook.vBand(value)
+
+    @property
     def _cells(self):
         """
         A sequence of |_Cell| objects, one for each cell of the layout grid.

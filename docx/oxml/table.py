@@ -12,7 +12,7 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt, XsdBoolean
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -150,12 +150,12 @@ class CT_Tbl(BaseOxmlElement):
                 yield tc
 
     @classmethod
-    def new_tbl(cls, rows, cols, width):
+    def new_tbl(cls, rows, cols, width, firstCol=1, firstRow=1, lastCol=0, lastRow=0, hBand=1, vBand=0):
         """
         Return a new `w:tbl` element having *rows* rows and *cols* columns
         with *width* distributed evenly between the columns.
         """
-        return parse_xml(cls._tbl_xml(rows, cols, width))
+        return parse_xml(cls._tbl_xml(rows, cols, width, firstCol, firstRow, lastCol, lastRow, hBand, vBand))
 
     @property
     def tblStyle_val(self):
@@ -181,21 +181,27 @@ class CT_Tbl(BaseOxmlElement):
         tblPr._add_tblStyle().val = styleId
 
     @classmethod
-    def _tbl_xml(cls, rows, cols, width):
+    def _tbl_xml(cls, rows, cols, width, firstCol, firstRow, lastCol, lastRow, hBand, vBand):
         col_width = Emu(width/cols) if cols > 0 else Emu(0)
         return (
             '<w:tbl %s>\n'
             '  <w:tblPr>\n'
             '    <w:tblW w:type="auto" w:w="0"/>\n'
-            '    <w:tblLook w:firstColumn="1" w:firstRow="1"\n'
-            '               w:lastColumn="0" w:lastRow="0" w:noHBand="0"\n'
-            '               w:noVBand="1" w:val="04A0"/>\n'
+            '    <w:tblLook w:firstColumn="%d" w:firstRow="%d"\n'
+            '               w:lastColumn="%d" w:lastRow="%d" w:noHBand="%d"\n'
+            '               w:noVBand="%d" w:val="04A0"/>\n'
             '  </w:tblPr>\n'
             '%s'  # tblGrid
             '%s'  # trs
             '</w:tbl>\n'
         ) % (
             nsdecls('w'),
+            firstCol,
+            firstRow,
+            lastCol,
+            lastRow,
+            0 if hBand else 1,
+            0 if vBand else 1,
             cls._tblGrid_xml(cols, col_width),
             cls._trs_xml(rows, cols, col_width)
         )
@@ -282,6 +288,7 @@ class CT_TblPr(BaseOxmlElement):
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    tblLook = ZeroOrOne('w:tblLook', successors=_tag_seq[15:])
     del _tag_seq
 
     @property
@@ -364,6 +371,33 @@ class CT_TblWidth(BaseOxmlElement):
     def width(self, value):
         self.type = 'dxa'
         self.w = Emu(value).twips
+
+class CT_TblLook(BaseOxmlElement):
+    """
+    Used for ``<w:tblLook>`` elements and many others, to
+    specify table-related looks.
+    """
+    # the type for `w` attr is actually ST_MeasurementOrPercent, but using
+    # XsdInt for now because only dxa (twips) values are being used. It's not
+    # entirely clear what the semantics are for other values like -01.4mm
+    firstCol = RequiredAttribute('w:firstColumn', XsdBoolean)
+    firstRow = RequiredAttribute('w:firstRow', XsdBoolean)
+    lastCol = RequiredAttribute('w:lastColumn', XsdBoolean)
+    lastRow = RequiredAttribute('w:lastRow', XsdBoolean)
+    noHBand = RequiredAttribute('w:noHBand', XsdBoolean)
+    noVBand = RequiredAttribute('w:noVBand', XsdBoolean)
+
+    def hBand(self):
+        return 0 if self.noHBand else 1
+
+    def hBand(self, value):
+        self.noHBand = 0 if value else 1
+
+    def vBand(self):
+        return 0 if self.noVBand else 1
+
+    def vBand(self, value):
+        self.noVBand = 0 if value else 1
 
 
 class CT_Tc(BaseOxmlElement):

@@ -77,9 +77,9 @@ class DescribeDocument(object):
         assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
-        document, rows, cols, style, width, table_ = add_table_fixture
-        table = document.add_table(rows, cols, style)
-        document._body.add_table.assert_called_once_with(rows, cols, width)
+        document, rows, cols, style, width, firstCol, firstRow, lastCol, lastRow, hBand, vBand, table_ = add_table_fixture
+        table = document.add_table(rows, cols, style, firstCol, firstRow, lastCol, lastRow, hBand, vBand)
+        document._body.add_table.assert_called_once_with(rows, cols, width, firstCol, firstRow, lastCol, lastRow, hBand, vBand)
         assert table == table_
         assert table.style == style
 
@@ -201,9 +201,10 @@ class DescribeDocument(object):
     def add_table_fixture(self, _block_width_prop_, body_prop_, table_):
         document = Document(None, None)
         rows, cols, style = 4, 2, 'Light Shading Accent 1'
+        firstCol, firstRow, lastCol, lastRow, hBand, vBand = 1,0,1,0,1,0
         body_prop_.return_value.add_table.return_value = table_
         _block_width_prop_.return_value = width = 42
-        return document, rows, cols, style, width, table_
+        return document, rows, cols, style, width, firstCol, firstRow, lastCol, lastRow, hBand, vBand, table_
 
     @pytest.fixture
     def block_width_fixture(self, sections_prop_, section_):
