@@ -387,6 +387,18 @@ class CT_TblLook(BaseOxmlElement):
     noHBand = RequiredAttribute('w:noHBand', XsdBoolean)
     noVBand = RequiredAttribute('w:noVBand', XsdBoolean)
 
+    def hBand(self):
+        return 0 if self.noHBand else 1
+
+    def hBand(self, value):
+        self.noHBand = 0 if value else 1
+
+    def vBand(self):
+        return 0 if self.noVBand else 1
+
+    def vBand(self, value):
+        self.noVBand = 0 if value else 1
+
 
 class CT_Tc(BaseOxmlElement):
     """

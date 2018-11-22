@@ -196,7 +196,7 @@ class Table(Parented):
 
     @h_band.setter
     def h_band(self, value):
-        self._tbl.tblPr.tblLook.hBand = (0 if value else 1)
+        self._tbl.tblPr.tblLook.hBand(value)
 
     @property
     def v_band(self):
@@ -204,7 +204,7 @@ class Table(Parented):
 
     @v_band.setter
     def v_band(self, value):
-        self._tbl.tblPr.tblLook.vBand = (0 if value else 1)
+        self._tbl.tblPr.tblLook.vBand(value)
 
     @property
     def _cells(self):
