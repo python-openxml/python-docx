@@ -58,6 +58,17 @@ def given_a_section_having_known_orientation(context, orientation):
     document = Document(test_docx('sct-section-props'))
     context.section = document.sections[section_idx]
 
+@given('a section having a different first page header footer setting')
+def given_a_section_having_a_different_first_page_header_footer_setting(context):
+    document = Document(test_docx('section_having_a_different_first_page_header_footer'))
+    context.section = document.sections[0]
+
+
+@given('a section having no different first page header footer setting')
+def given_a_section_having_no_different_first_page_header_footer_setting(context):
+    document = Document(test_docx('section_having_no_different_first_page_header_footer'))
+    context.section = document.sections[0]
+
 
 @given('a section with all header types')
 def given_a_header_of_type(context):
@@ -194,6 +205,9 @@ def then_the_reported_section_start_type_is_type(context, start_type):
     }[start_type]
     assert context.section.start_type == expected_start_type
 
+@then('the section.different_first_page_header_footer is {value}')
+def then_section_different_first_page_header_footer_is_value(context, value):
+    assert context.section.different_first_page_header_footer is value
 
 @then('header, first_page_header, even_odd_header is present in document.section')
 def then_header_of_type_is_present_in_document_section(context):
