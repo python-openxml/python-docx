@@ -207,7 +207,7 @@ def then_the_reported_section_start_type_is_type(context, start_type):
 
 @then('the section.different_first_page_header_footer is {value}')
 def then_section_different_first_page_header_footer_is_value(context, value):
-    assert context.section.different_first_page_header_footer is value
+    assert context.section.different_first_page_header_footer is (value == 'True')
 
 @then('header, first_page_header, even_odd_header is present in document.section')
 def then_header_of_type_is_present_in_document_section(context):

@@ -135,6 +135,12 @@ class DescribeSection(object):
         assert section_with_even_header_fixture.first_page_header.is_linked_to_previous is True
         assert section_with_even_header_fixture.even_odd_header.is_linked_to_previous is False
 
+    def it_have_different_first_page_header_footer(self, section_with_different_first_page_header_footer_fixture):
+        assert section_with_different_first_page_header_footer_fixture.different_first_page_header_footer is True
+
+    def it_have_no_different_first_page_header_footer(self, section_without_different_first_page_header_footer_fixture):
+        assert section_without_different_first_page_header_footer_fixture.different_first_page_header_footer is False
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -306,6 +312,20 @@ class DescribeSection(object):
         document_part_.load_rel(header_reltype, header_part, rId)
         section = Section(element(sectPr_cxml), document_part_)
         return section
+
+    @pytest.fixture(params=[
+        'w:sectPr/w:titlePg'
+    ])
+    def section_with_different_first_page_header_footer_fixture(self, request, document_part_):
+        sectPr_cxml= request.param
+        return Section(element(sectPr_cxml), document_part_)
+
+    @pytest.fixture(params=[
+        'w:sectPr'
+    ])
+    def section_without_different_first_page_header_footer_fixture(self, request, document_part_):
+        sectPr_cxml = request.param
+        return Section(element(sectPr_cxml), document_part_)
 
     @pytest.fixture
     def header_rel_(self, header_rId_, header_reltype_, header_part_):

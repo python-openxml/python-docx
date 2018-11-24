@@ -58,6 +58,14 @@ class Section(object):
         self._sectPr.bottom_margin = value
 
     @property
+    def different_first_page_header_footer(self):
+        return self._sectPr.titlePg_val
+
+    @different_first_page_header_footer.setter
+    def different_first_page_header_footer(self, value):
+        self._sectPr.titlePg_val = value
+
+    @property
     def even_odd_header(self):
         return Header(self, WD_HEADER_FOOTER.EVEN_PAGE)
 

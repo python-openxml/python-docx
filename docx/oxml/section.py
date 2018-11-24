@@ -86,6 +86,7 @@ class CT_SectPr(BaseOxmlElement):
     ))
     headerReference = ZeroOrMore('w:headerReference')
     footerReference = ZeroOrMore('w:footerReference')
+    titlePg = ZeroOrOne('w:titlePg')
 
     @property
     def bottom_margin(self):
@@ -267,6 +268,23 @@ class CT_SectPr(BaseOxmlElement):
             return
         type = self.get_or_add_type()
         type.val = value
+
+    @property
+    def titlePg_val(self):
+        """
+        The value of `evenAndOddHeaders/@val` or |None| if not present.
+        """
+        titlePg = self.titlePg
+        if titlePg is None:
+            return False
+        return titlePg.val
+
+    @titlePg_val.setter
+    def titlePg_val(self, value):
+        if value in [None, False]:
+            self._remove_titlePg()
+        else:
+            self.get_or_add_titlePg().val = value
 
     @property
     def top_margin(self):
