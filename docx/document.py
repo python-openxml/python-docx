@@ -87,7 +87,7 @@ class Document(ElementProxy):
         """
         new_sectPr = self._element.body.add_section_break()
         new_sectPr.start_type = start_type
-        return Section(new_sectPr)
+        return Section(new_sectPr, self._part)
 
     def add_table(self, rows, cols, style=None):
         """
@@ -147,7 +147,7 @@ class Document(ElementProxy):
         A |Sections| object providing access to each section in this
         document.
         """
-        return Sections(self._element)
+        return Sections(self._element, self._part)
 
     @property
     def settings(self):

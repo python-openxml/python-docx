@@ -9,8 +9,35 @@ from __future__ import absolute_import, print_function
 from copy import deepcopy
 
 from ..enum.section import WD_ORIENTATION, WD_SECTION_START
+from ..enum.header_footer import WD_HEADER_FOOTER
 from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne, ZeroOrMore
+from .base_complex_types import CT_Rel
+
+
+class CT_HdrFtr(BaseOxmlElement):
+    """
+    ``<w:ftr>`` and ``<w:hdr>``, the container element for the header and footer part.
+    """
+
+    p = ZeroOrMore('w:p', successors=())
+    tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
+
+    def clear_content(self):
+        """
+        Remove all content child elements from this <w:hdr> element.
+        """
+
+        content_elms = self[:]
+        for content_elm in content_elms:
+            self.remove(content_elm)
+
+
+class CT_HdrFtrRef(CT_Rel):
+    """
+    ``<w:headerReference>`` and ``<w:footerReference>``, elements, defining section header and footer reference.
+    """
+    type = OptionalAttribute('w:type', WD_HEADER_FOOTER)
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -57,6 +84,8 @@ class CT_SectPr(BaseOxmlElement):
     pgMar = ZeroOrOne('w:pgMar', successors=(
         __child_sequence__[__child_sequence__.index('w:pgMar')+1:]
     ))
+    headerReference = ZeroOrMore('w:headerReference')
+    footerReference = ZeroOrMore('w:footerReference')
 
     @property
     def bottom_margin(self):
@@ -255,6 +284,28 @@ class CT_SectPr(BaseOxmlElement):
     def top_margin(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.top = value
+
+    def get_footer_reference_of_type(self, type):
+        """
+
+        :param type: of footer refence
+        :return: "w:footerReference" object if exist, None otherwise
+        """
+        for ref in self.footerReference_lst:
+            if ref.type == type:
+                return ref
+        return None
+
+    def get_header_reference_of_type(self, type):
+        """
+
+            :param type: of header refence
+            :return: "w:headerReference" object if exist, None otherwise
+        """
+        for ref in self.headerReference_lst:
+            if ref.type == type:
+                return ref
+        return None
 
 
 class CT_SectType(BaseOxmlElement):

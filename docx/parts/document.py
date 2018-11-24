@@ -57,6 +57,14 @@ class DocumentPart(XmlPart):
         rId = self.relate_to(image_part, RT.IMAGE)
         return rId, image_part.image
 
+    def get_related_part(self, rId):
+        """
+
+        :param rId: of relationship
+        :return: relationship of rId
+        """
+        return self.rels.related_parts[rId]
+
     def get_style(self, style_id, style_type):
         """
         Return the style in this document matching *style_id*. Returns the

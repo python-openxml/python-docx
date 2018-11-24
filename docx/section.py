@@ -7,6 +7,8 @@ The |Section| object and related proxy classes.
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import Sequence
+from .header_footer import Header, Footer
+from .enum.header_footer import WD_HEADER_FOOTER
 
 
 class Sections(Sequence):
@@ -14,20 +16,21 @@ class Sections(Sequence):
     Sequence of |Section| objects corresponding to the sections in the
     document. Supports ``len()``, iteration, and indexed access.
     """
-    def __init__(self, document_elm):
+    def __init__(self, document_elm, part):
         super(Sections, self).__init__()
         self._document_elm = document_elm
+        self._part = part
 
     def __getitem__(self, key):
         if isinstance(key, slice):
             sectPr_lst = self._document_elm.sectPr_lst[key]
-            return [Section(sectPr) for sectPr in sectPr_lst]
+            return [Section(sectPr, self._part) for sectPr in sectPr_lst]
         sectPr = self._document_elm.sectPr_lst[key]
-        return Section(sectPr)
+        return Section(sectPr, self._part)
 
     def __iter__(self):
         for sectPr in self._document_elm.sectPr_lst:
-            yield Section(sectPr)
+            yield Section(sectPr, self._part)
 
     def __len__(self):
         return len(self._document_elm.sectPr_lst)
@@ -37,9 +40,10 @@ class Section(object):
     """
     Document section, providing access to section and page setup settings.
     """
-    def __init__(self, sectPr):
+    def __init__(self, sectPr, part):
         super(Section, self).__init__()
         self._sectPr = sectPr
+        self._part = part
 
     @property
     def bottom_margin(self):
@@ -52,6 +56,26 @@ class Section(object):
     @bottom_margin.setter
     def bottom_margin(self, value):
         self._sectPr.bottom_margin = value
+
+    @property
+    def even_odd_header(self):
+        return Header(self, WD_HEADER_FOOTER.EVEN_PAGE)
+
+    @property
+    def even_odd_footer(self):
+        return Footer(self, WD_HEADER_FOOTER.EVEN_PAGE)
+
+    @property
+    def first_page_footer(self):
+        return Footer(self, WD_HEADER_FOOTER.FIRST_PAGE)
+
+    @property
+    def first_page_header(self):
+        return Header(self, WD_HEADER_FOOTER.FIRST_PAGE)
+
+    @property
+    def footer(self):
+        return Footer(self, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def footer_distance(self):
@@ -79,6 +103,10 @@ class Section(object):
     @gutter.setter
     def gutter(self, value):
         self._sectPr.gutter = value
+
+    @property
+    def header(self):
+        return Header(self, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def header_distance(self):
@@ -147,6 +175,10 @@ class Section(object):
         self._sectPr.page_width = value
 
     @property
+    def part(self):
+        return self._part
+
+    @property
     def right_margin(self):
         """
         |Length| object representing the right margin for all pages in this
@@ -171,6 +203,10 @@ class Section(object):
     @start_type.setter
     def start_type(self, value):
         self._sectPr.start_type = value
+
+    @property
+    def sectPr(self):
+        return self._sectPr
 
     @property
     def top_margin(self):
