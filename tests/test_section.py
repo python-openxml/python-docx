@@ -141,6 +141,15 @@ class DescribeSection(object):
     def it_have_no_different_first_page_header_footer(self, section_without_different_first_page_header_footer_fixture):
         assert section_without_different_first_page_header_footer_fixture.different_first_page_header_footer is False
 
+    def it_can_change_different_first_page_header_footer_option(self, section_can_change_different_first_page_header_footer_fixture):
+        section, expected_xml = section_can_change_different_first_page_header_footer_fixture
+        if section.different_first_page_header_footer is False:
+            section.different_first_page_header_footer = True
+            assert section._sectPr.xml == expected_xml
+        else:
+            section.different_first_page_header_footer = False
+            assert section._sectPr.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[
@@ -326,6 +335,15 @@ class DescribeSection(object):
     def section_without_different_first_page_header_footer_fixture(self, request, document_part_):
         sectPr_cxml = request.param
         return Section(element(sectPr_cxml), document_part_)
+
+    @pytest.fixture(params=[
+        ('w:sectPr/w:titlePg', 'w:sectPr'),
+        ('w:sectPr', 'w:sectPr/w:titlePg')
+    ])
+    def section_can_change_different_first_page_header_footer_fixture(self, request, document_part_):
+        sectPr_cxml, expected_cxml = request.param
+        return Section(element(sectPr_cxml), document_part_), xml(expected_cxml)
+
 
     @pytest.fixture
     def header_rel_(self, header_rId_, header_reltype_, header_part_):
