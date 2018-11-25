@@ -2,7 +2,7 @@
 Numbering Part
 ==============
 
-... having to do with numbering sequences for ordered lists, etc. ...
+The numbering part is documented in section 17.9 of ISO-29500-1.
 
 
 Schema excerpt
