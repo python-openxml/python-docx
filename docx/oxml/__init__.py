@@ -97,6 +97,11 @@ register_element_cls('w:hdr',   CT_HdrFtr)
 register_element_cls('w:ftr',   CT_HdrFtr)
 register_element_cls('w:titlePg', CT_OnOff)
 
+
+from .settings import CT_Settings
+register_element_cls('w:settings', CT_Settings)
+register_element_cls('w:evenAndOddHeaders', CT_OnOff)
+
 from .shape import (
     CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
     CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,

@@ -6,7 +6,7 @@ Feature: Access and change settings properties
 
   Scenario Outline: Get even and odd headers settings
     Given a settings having <a-or-no> even and odd headers settings
-    Then document.settings.even_and_odd_headers is <value>
+    Then document.settings.odd_and_even_pages_header_footer is <value>
 
     Examples: Even and odd headers settings values
       | a-or-no | value |

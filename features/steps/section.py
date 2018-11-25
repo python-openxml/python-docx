@@ -13,7 +13,7 @@ from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.section import Section
 from docx.shared import Inches
 
-from helpers import test_docx
+from helpers import test_docx, tri_state_vals
 
 
 # given ====================================================
@@ -207,7 +207,7 @@ def then_the_reported_section_start_type_is_type(context, start_type):
 
 @then('the section.different_first_page_header_footer is {value}')
 def then_section_different_first_page_header_footer_is_value(context, value):
-    assert context.section.different_first_page_header_footer is (value == 'True')
+    assert context.section.different_first_page_header_footer is tri_state_vals[value]
 
 @then('header, first_page_header, even_odd_header is present in document.section')
 def then_header_of_type_is_present_in_document_section(context):

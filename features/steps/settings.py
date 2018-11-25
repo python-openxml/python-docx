@@ -44,7 +44,7 @@ def then_document_settings_is_a_Settings_object(context):
     document = context.document
     assert type(document.settings) is Settings
 
-@then('document.settings.even_and_odd_headers is {value}')
+@then('document.settings.odd_and_even_pages_header_footer is {value}')
 def then_document_settings_even_and_odd_header_is_value(context, value):
     document, expected_value = context.document, tri_state_vals[value]
     assert document.settings.odd_and_even_pages_header_footer is expected_value
