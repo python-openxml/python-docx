@@ -11,6 +11,22 @@ from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
 )
 
+class CT_LevelSuffix(BaseOxmlElement):
+    """
+    ``<w:suff>`` element, which specifies the form of the space
+    between a list number and the list paragraph
+    """
+    val = RequiredAttribute('w:val', ST_LevelSuffix )
+
+    @classmethod
+    def new(cls, val):
+            """
+            Return a new ``<w:suff>`` element with ``val``
+            attribute set to ``val``
+            """
+            suff = OxmlElement('w:suff')
+            suff.val = val
+            return suff
 
 class CT_Num(BaseOxmlElement):
     """
