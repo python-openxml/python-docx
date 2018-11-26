@@ -135,7 +135,75 @@ The maintainer has commented that:
 The issue is also discussed on StackOverflow
 at https://stackoverflow.com/questions/23446268
 
+Currently, 
+looking to the hierarchy above,
+access to most parts of the structure relating
+to list styles and numbering definitions is only through
+a deserialized XML ("Level 3") representation.
+Full API support would imply access to a "Level 5"
+representation.
+Decisions about simplifying the implementation of
+numbered lists w/r/t the ISO standard are most
+likely to come up when developing "Level 5"
+support.
+However, it should be uncontroversial to adhere
+to the ISO standard very closely when developing
+"Level 4" support. This means that the level of
+*support* for advanced list operations can
+be increased through some straightforward 
+**xmlchemy**-based declarations,
+and high-level design questions need not come
+into play.
 
+This is done through two main programming tasks:
+
+1.  Declare relevant XML types following the ``wml.xsd`` schema
+    (ISO-29500-1 Appendix A.1).
+2.  Instruct ``xmlchemy`` to recognize a relevant tag 
+    as an instance of the appropriate type.
+
+If this is accomplished, various low-level methods will
+be exposed which abstract the necessary XML manipulations,
+allowing for improved access to desired functions for
+a user familiar with the semantics of the ISO standard.
+
+Pull Request #XX is concerned with updating the module
+to declare the following types and expose them to
+``xmlchemy``-based methods:
+
++-------------------+
+|XML Type           |
++===================+
+|CT_Numbering       |       
++-------------------+
+|CT_NumPicBullet    |          
++-------------------+
+|CT_AbstractNum     |         
++-------------------+
+|CT_LongHexNumber   |           
++-------------------+
+|ST_LongHexNumber   |           
++-------------------+
+|CT_MultiLevelType  |            
++-------------------+
+|ST_MultiLevelType  |            
++-------------------+
+|CT_Lvl             | 
++-------------------+
+|CT_NumFmt          |    
++-------------------+
+|ST_NumberFormat    |          
++-------------------+
+|CT_LevelSuffix     |         
++-------------------+
+|ST_LevelSuffix     |         
++-------------------+
+|CT_LevelText       |       
++-------------------+
+|CT_LvlLegacy       |       
++-------------------+
+|CT_Num             | 
++-------------------+
 
 Element Semantics
 -----------------
@@ -326,6 +394,7 @@ Schemata are given in the remainder of this
 section for the 
 unimplemented (as of version 0.8.7) types which are necessary to
 implement suport for numbering styles.
+
 
 **<w:numbering>** ``CT_Numbering``
 
@@ -547,5 +616,32 @@ implement suport for numbering styles.
     </xsd:sequence>
     <xsd:attribute name="numId" type="ST_DecimalNumber" use="required"/>
   </xsd:complexType>
+
+Implementation Notes
+--------------------
+
+The following simple types are defined in ``simpletypes.py``.
+
+ST_LongHexNumber
+    This is a string representation of a 4-byte hexadecimal
+    number. 
+    It inherits from ``XsdUnsignedInt`` (4-byte unsigned integer),
+    and uses the ``validate`` method from that class.
+    The ``convert_to_xml`` and ``convert_from_xml``
+    methods are straightforward.
+ST_MultiLevelType
+    This is a string with one of three possible values:
+    ``"singleLevel"``, ``"multiLevel"``, or ``"hybridMultiLevel"``.
+    It is defined similary to other ``XsdStringEnumeration``-based
+    simple types.
+ST_LevelSuffix
+    Similar to ``ST_MultiLevelType``. Possible values are
+    ``"tab"``, ``"space"``, or ``"nothing"``.
+ST_NumberFormat
+    Similar to ``ST_MultiLevelType``. 63 possible values,
+    the most common in US settings are ``"decimal"``,
+    ``"upperRoman"``, ``"lowerRoman"``, ``"upperLetter"``,
+    ``"lowerLetter"``, ``"ordinal"``, ``"cardinalText"``,
+    and ``"ordinalText"``.
 
 .. [#first] ISO/IEC 29500-1:2012(E) at 684.
