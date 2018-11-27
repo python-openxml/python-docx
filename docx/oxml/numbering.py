@@ -6,9 +6,11 @@ Custom element classes related to the numbering part
 
 from . import OxmlElement
 from .shared import CT_DecimalNumber
-from .simpletypes import ST_DecimalNumber
+from .simpletypes import (
+        ST_DecimalNumber, ST_LevelSuffix, ST_NumberFormat, ST_String, ST_MultiLevelType 
+)
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne, OptionalAttribute
 )
 
 class CT_LevelSuffix(BaseOxmlElement):
@@ -27,6 +29,42 @@ class CT_LevelSuffix(BaseOxmlElement):
             suff = OxmlElement('w:suff')
             suff.val = val
             return suff
+
+class CT_NumFmt(BaseOxmlElement):
+    """
+    ``<w:numFmt>`` element, which specifies the formatting
+    of the numeral in a numbered list
+    """
+    val = RequiredAttribute('w:val', ST_NumberFormat )
+    fmt = OptionalAttribute('w:format', ST_String )
+
+    @classmethod
+    def new(cls, val):
+        """
+        Return a new ``<w:numFmt>`` element with ``val``
+        attrribute set to ``val``
+        """
+        numFmt = OxmlElement('w:numFmt')
+        numFmt.val = val
+        return numFmt
+
+class CT_MultiLevelType(BaseOxmlElement):
+    """
+    ``<w:multiLevelType>`` element, which indicates
+    whether a numbering style is single-level,
+    multi-level, or hybrid.
+    """
+    val = RequiredAttribute('w:val', ST_MultiLevelType )
+
+    @classmethod
+    def new(cls, val):
+        """
+        Return a new ``<w:multiLevelType>`` element with ``val``
+        attribute set to ``val``
+        """
+        multiLevelType = OxmlElement('w:multiLevelType')
+        multiLevelType.val = val
+        return multiLevelType
 
 class CT_Num(BaseOxmlElement):
     """

@@ -75,7 +75,8 @@ register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
 from .numbering import (
-    CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
+    CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr,
+    CT_LevelSuffix, CT_NumFmt, CT_MultiLevelType
 )
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
@@ -85,6 +86,9 @@ register_element_cls('w:numId',         CT_DecimalNumber)
 register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
+register_element_cls('w:suff',          CT_LevelSuffix)
+register_element_cls('w:numFmt',        CT_NumFmt)
+register_element_cls('w:multiLevelType',CT_MultiLevelType)
 
 from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
 register_element_cls('w:pgMar',  CT_PageMar)

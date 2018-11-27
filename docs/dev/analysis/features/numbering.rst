@@ -644,4 +644,23 @@ ST_NumberFormat
     ``"lowerLetter"``, ``"ordinal"``, ``"cardinalText"``,
     and ``"ordinalText"``.
 
+The following complex types are defined in ``numbering.py``.
+
+CT_MultiLevelType
+    This is the simpletype of complex type: it has no children
+    and only a single attribute, ``val``. I'll call this
+    type an "atomic complex type."
+CT_LevelSuffix
+    Another atomic complex type.
+CT_NumFmt
+    This is a copmlex type with no children,
+    one required attribute, ``val``, and one
+    optional attribute, ``format``.
+
+The following complex types are defined in ``shared.py``
+because they are referred to by a type outside of
+the numbering part of the OPC package.
+
+CT_LongHexNumber
+    Another atomic complex type.
 .. [#first] ISO/IEC 29500-1:2012(E) at 684.
