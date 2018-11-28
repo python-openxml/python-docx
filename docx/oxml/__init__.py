@@ -64,7 +64,7 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # custom element class mappings
 # ===========================================================================
 
-from .shared import CT_DecimalNumber, CT_OnOff, CT_String
+from .shared import CT_DecimalNumber, CT_OnOff, CT_String, CT_LongHexNumber
 
 
 from .coreprops import CT_CoreProperties
@@ -76,7 +76,8 @@ register_element_cls('w:document', CT_Document)
 
 from .numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr,
-    CT_LevelSuffix, CT_NumFmt, CT_MultiLevelType
+    CT_LevelSuffix, CT_NumFmt, CT_MultiLevelType,
+    CT_LvlLegacy, CT_LevelText, CT_NumPicBullet
 )
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
@@ -89,6 +90,9 @@ register_element_cls('w:startOverride', CT_DecimalNumber)
 register_element_cls('w:suff',          CT_LevelSuffix)
 register_element_cls('w:numFmt',        CT_NumFmt)
 register_element_cls('w:multiLevelType',CT_MultiLevelType)
+register_element_cls('w:legacy',        CT_LvlLegacy)
+register_element_cls('w:lvlText',       CT_LevelText)
+register_element_cls('w:numPicBullet',  CT_NumPicBullet)
 
 from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
 register_element_cls('w:pgMar',  CT_PageMar)

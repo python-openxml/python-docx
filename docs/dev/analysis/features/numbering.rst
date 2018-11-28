@@ -653,9 +653,14 @@ CT_MultiLevelType
 CT_LevelSuffix
     Another atomic complex type.
 CT_NumFmt
-    This is a copmlex type with no children,
+    This is a complex type with no children,
     one required attribute, ``val``, and one
     optional attribute, ``format``.
+CT_LvlLegacy
+    This type has three optional attributes,
+    ``legacy``, ``legacySpace`` and ``legacyIndent``.
+    Clearly, its use is intended for parsing of documents
+    in a legacy format.
 
 The following complex types are defined in ``shared.py``
 because they are referred to by a type outside of

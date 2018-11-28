@@ -7,11 +7,31 @@ Custom element classes related to the numbering part
 from . import OxmlElement
 from .shared import CT_DecimalNumber
 from .simpletypes import (
-        ST_DecimalNumber, ST_LevelSuffix, ST_NumberFormat, ST_String, ST_MultiLevelType 
+        ST_DecimalNumber, ST_LevelSuffix, ST_NumberFormat, ST_String, ST_MultiLevelType,
+        ST_TwipsMeasure, ST_SignedTwipsMeasure, ST_OnOff
 )
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne, OptionalAttribute
+    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne, 
+    OptionalAttribute, Choice
 )
+
+class CT_LevelText(BaseOxmlElement):
+    """``<w:lvlText>`` element, which specifies
+    the formatting of the numeral in a numbered
+    list.
+    """
+    val = OptionalAttribute('w:val', ST_String )
+    null = OptionalAttribute('w:null', ST_OnOff )
+
+    @classmethod
+    def new(cls, val):
+        """
+        Return a new ``<w:lvlText>`` element with
+        ``val`` attribute set to ``val``
+        """
+        lvlText = OxmlElement('w:lvlText')
+        lvlText.val = val
+        return lvlText
 
 class CT_LevelSuffix(BaseOxmlElement):
     """
@@ -48,6 +68,16 @@ class CT_NumFmt(BaseOxmlElement):
         numFmt.val = val
         return numFmt
 
+class CT_LvlLegacy(BaseOxmlElement):
+    """
+    ``<w:legacy>`` element. Implemented here in
+    case the module eventually supports parsing
+    of documents in the target legacy format.
+    """
+    legacy = OptionalAttribute('w:legacy', ST_OnOff)
+    legacySpace = OptionalAttribute('w:legacySpace', ST_TwipsMeasure )
+    legacyIndent = OptionalAttribute('w:legacyIndent', ST_SignedTwipsMeasure )
+
 class CT_MultiLevelType(BaseOxmlElement):
     """
     ``<w:multiLevelType>`` element, which indicates
@@ -65,6 +95,25 @@ class CT_MultiLevelType(BaseOxmlElement):
         multiLevelType = OxmlElement('w:multiLevelType')
         multiLevelType.val = val
         return multiLevelType
+
+class CT_NumPicBullet(BaseOxmlElement):
+    """
+    ``<w:numPicBullet>``` for specifying
+    a picture or SVG drawing as the bullet
+    symbol in a bulleted list.
+    """
+    pict = Choice('w:pict')
+    drawing = Choice('w:drawing')
+    numPicBulletId = RequiredAttribute('w:numPicBulletId', ST_DecimalNumber )
+    @classmethod
+    def new(cls, Id):
+        """
+        Return a new ``<w:numPicBullet>`` element with ``numPicBulletId``
+        attribute set to ``numPicBulletId``
+        """
+        numPicBullet = OxmlElement('w:numPicBullet')
+        numPicBullet.numPicBulletId = Id
+        return numPicBullet
 
 class CT_Num(BaseOxmlElement):
     """
