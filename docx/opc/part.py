@@ -120,6 +120,14 @@ class Part(object):
         """
         return self.rels.part_with_reltype(reltype)
 
+    def parts_by_type(self, reltype):
+        """
+            Return parts to which this part has a relationship of *reltype*.
+            Raises |KeyError| if no such relationship is found and |ValueError|
+            Provides ability to resolve implicitly related part, such as Slide -> SlideLayout.
+        """
+        return self.rels.parts_with_reltype(reltype)
+
     def relate_to(self, target, reltype, is_external=False):
         """
         Return rId key of relationship of *reltype* to *target*, from an

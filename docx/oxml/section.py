@@ -325,6 +325,50 @@ class CT_SectPr(BaseOxmlElement):
                 return ref
         return None
 
+    def add_header_reference_of_type(self, rId, type):
+        """
+        Create new header reference with rId and type
+        :param type: of header reference
+        :param rId: relation id to related header file
+        :return:
+        """
+        headerRef = self._add_headerReference()
+        headerRef.rId = rId
+        headerRef.type = type
+
+    def remove_header_reference(self, type):
+        """
+        Remove header reference from this section by type
+        :param type: of header reference
+        :param rId: relation id to related header file
+        :return:
+        """
+        ref = self.get_header_reference_of_type(type)
+        if ref is not None:
+            self.remove(ref)
+
+    def add_footer_reference_of_type(self, rId, type):
+        """
+        Create new footer reference with rId and type
+        :param type: of footer reference
+        :param rId: relation id to related footer file
+        :return:
+        """
+        footerRef = self._add_footerReference()
+        footerRef.rId = rId
+        footerRef.type = type
+
+    def remove_footer_reference(self, type):
+        """
+        Remove footer reference from this section by type
+        :param type: of footer reference
+        :param rId: relation id to related footer file
+        :return:
+        """
+        ref = self.get_footer_reference_of_type(type)
+        if ref is not None:
+            self.remove(ref)
+
 
 class CT_SectType(BaseOxmlElement):
     """

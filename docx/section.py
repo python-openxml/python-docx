@@ -67,23 +67,23 @@ class Section(object):
 
     @property
     def even_odd_header(self):
-        return Header(self, WD_HEADER_FOOTER.EVEN_PAGE)
+        return Header(self._sectPr, self, WD_HEADER_FOOTER.EVEN_PAGE)
 
     @property
     def even_odd_footer(self):
-        return Footer(self, WD_HEADER_FOOTER.EVEN_PAGE)
+        return Footer(self._sectPr, self,  WD_HEADER_FOOTER.EVEN_PAGE)
 
     @property
     def first_page_footer(self):
-        return Footer(self, WD_HEADER_FOOTER.FIRST_PAGE)
+        return Footer(self._sectPr, self, WD_HEADER_FOOTER.FIRST_PAGE)
 
     @property
     def first_page_header(self):
-        return Header(self, WD_HEADER_FOOTER.FIRST_PAGE)
+        return Header(self._sectPr, self, WD_HEADER_FOOTER.FIRST_PAGE)
 
     @property
     def footer(self):
-        return Footer(self, WD_HEADER_FOOTER.PRIMARY)
+        return Footer(self._sectPr, self, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def footer_distance(self):
@@ -114,7 +114,7 @@ class Section(object):
 
     @property
     def header(self):
-        return Header(self, WD_HEADER_FOOTER.PRIMARY)
+        return Header(self._sectPr, self, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def header_distance(self):

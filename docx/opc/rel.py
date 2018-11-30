@@ -63,6 +63,14 @@ class Relationships(dict):
         rel = self._get_rel_of_type(reltype)
         return rel.target_part
 
+    def parts_with_reltype(self, reltype):
+        """
+            Return target parts of rel with matching *reltype*, raising |KeyError|
+            if not found
+        """
+        rels = self._get_rels_of_type(reltype)
+        return [rel.target_part for rel in rels]
+
     @property
     def related_parts(self):
         """
@@ -118,6 +126,13 @@ class Relationships(dict):
             tmpl = "multiple relationships of type '%s' in collection"
             raise ValueError(tmpl % reltype)
         return matching[0]
+
+    def _get_rels_of_type(self, reltype):
+        matching = [rel for rel in self.values() if rel.reltype == reltype]
+        if len(matching) == 0:
+            tmpl = "no relationship of type '%s' in collection"
+            raise KeyError(tmpl % reltype)
+        return matching
 
     @property
     def _next_rId(self):

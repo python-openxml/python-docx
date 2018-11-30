@@ -17,6 +17,7 @@ from ..shape import InlineShapes
 from ..shared import lazyproperty
 from .settings import SettingsPart
 from .styles import StylesPart
+from .header_footer import HeaderPart, FooterPart
 
 
 class DocumentPart(XmlPart):
@@ -28,6 +29,16 @@ class DocumentPart(XmlPart):
     inherited by many content objects provides access to this part object for
     that purpose.
     """
+
+    def add_relationship(self, part, relationship_type):
+        """
+        Add relation to this document part
+        :param part:
+        :param relationship_type:
+        :return: rId
+        """
+        return self.relate_to(part, relationship_type)
+
     @property
     def core_properties(self):
         """
@@ -179,3 +190,29 @@ class DocumentPart(XmlPart):
             styles_part = StylesPart.default(self.package)
             self.relate_to(styles_part, RT.STYLES)
             return styles_part
+
+    def add_header_part(self):
+        """
+            Creates an empty header part.
+        """
+        headers_parts = self.parts_by_type(RT.HEADER)
+        last_header_number = 0
+        for part in headers_parts:
+            header_num = int(part.partname.split('.')[-2][len('/word/header'):])
+            if header_num > last_header_number:
+                last_header_number = header_num
+        return self.add_relationship(HeaderPart.new(headers_parts[-1].part.blob, self.package, last_header_number + 1),
+                                     RT.HEADER)
+
+    def add_footer_part(self):
+        """
+            Creates an empty footer part.
+        """
+        footers_parts = self.parts_by_type(RT.FOOTER)
+        last_footer_number = 0
+        for part in footers_parts:
+            footer_num = int(part.partname.split('.')[-2][len('/word/footer'):])
+            if footer_num > last_footer_number:
+                last_footer_number = footer_num
+        return self.add_relationship(FooterPart.new(footers_parts[-1].part.blob, self.package, last_footer_number + 1),
+                                     RT.FOOTER)
