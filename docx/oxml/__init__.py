@@ -77,7 +77,8 @@ register_element_cls('w:document', CT_Document)
 from .numbering import (
     CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr,
     CT_LevelSuffix, CT_NumFmt, CT_MultiLevelType,
-    CT_LvlLegacy, CT_LevelText, CT_NumPicBullet
+    CT_LvlLegacy, CT_LevelText, CT_NumPicBullet,
+    CT_Lvl, CT_AbstractNum
 )
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
@@ -93,6 +94,8 @@ register_element_cls('w:multiLevelType',CT_MultiLevelType)
 register_element_cls('w:legacy',        CT_LvlLegacy)
 register_element_cls('w:lvlText',       CT_LevelText)
 register_element_cls('w:numPicBullet',  CT_NumPicBullet)
+register_element_cls('w:lvl',           CT_Lvl)
+register_element_cls('w:abstractNum',   CT_AbstractNum)
 
 from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType
 register_element_cls('w:pgMar',  CT_PageMar)

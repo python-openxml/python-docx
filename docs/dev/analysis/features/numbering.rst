@@ -174,8 +174,6 @@ to declare the following types and expose them to
 +-------------------+
 |XML Type           |
 +===================+
-|CT_Numbering       |       
-+-------------------+
 |CT_NumPicBullet    |          
 +-------------------+
 |CT_AbstractNum     |         
@@ -205,6 +203,13 @@ to declare the following types and expose them to
 |CT_Num             | 
 +-------------------+
 
+Having defined these types and trained the parser to
+associate them with elements in the namespace
+(this is done through calls to ``register_element_cls``
+in ``oxml.__init__``), it is possible to implement
+solutions to the documented issues noted above in
+a disciplined way.
+
 Element Semantics
 -----------------
 
@@ -224,7 +229,7 @@ descendants (section references are to parts of ISO-29500-1).
     numbering definition shall be used instead.
 ``ilvl`` (§17.9.3)
     This element specifies the numbering level of the numbering definition instance which shall be applied to the
-    parent paragraph.
+    parent paragraph. Its ``val`` attribute is a zero-based index.
 ``numId`` (§17.9.18)
     This element specifies the numbering definition instance which shall be used for the given parent numbered
     paragraph in the WordprocessingML document.
@@ -617,55 +622,5 @@ implement suport for numbering styles.
     <xsd:attribute name="numId" type="ST_DecimalNumber" use="required"/>
   </xsd:complexType>
 
-Implementation Notes
---------------------
 
-The following simple types are defined in ``simpletypes.py``.
-
-ST_LongHexNumber
-    This is a string representation of a 4-byte hexadecimal
-    number. 
-    It inherits from ``XsdUnsignedInt`` (4-byte unsigned integer),
-    and uses the ``validate`` method from that class.
-    The ``convert_to_xml`` and ``convert_from_xml``
-    methods are straightforward.
-ST_MultiLevelType
-    This is a string with one of three possible values:
-    ``"singleLevel"``, ``"multiLevel"``, or ``"hybridMultiLevel"``.
-    It is defined similary to other ``XsdStringEnumeration``-based
-    simple types.
-ST_LevelSuffix
-    Similar to ``ST_MultiLevelType``. Possible values are
-    ``"tab"``, ``"space"``, or ``"nothing"``.
-ST_NumberFormat
-    Similar to ``ST_MultiLevelType``. 63 possible values,
-    the most common in US settings are ``"decimal"``,
-    ``"upperRoman"``, ``"lowerRoman"``, ``"upperLetter"``,
-    ``"lowerLetter"``, ``"ordinal"``, ``"cardinalText"``,
-    and ``"ordinalText"``.
-
-The following complex types are defined in ``numbering.py``.
-
-CT_MultiLevelType
-    This is the simpletype of complex type: it has no children
-    and only a single attribute, ``val``. I'll call this
-    type an "atomic complex type."
-CT_LevelSuffix
-    Another atomic complex type.
-CT_NumFmt
-    This is a complex type with no children,
-    one required attribute, ``val``, and one
-    optional attribute, ``format``.
-CT_LvlLegacy
-    This type has three optional attributes,
-    ``legacy``, ``legacySpace`` and ``legacyIndent``.
-    Clearly, its use is intended for parsing of documents
-    in a legacy format.
-
-The following complex types are defined in ``shared.py``
-because they are referred to by a type outside of
-the numbering part of the OPC package.
-
-CT_LongHexNumber
-    Another atomic complex type.
 .. [#first] ISO/IEC 29500-1:2012(E) at 684.
