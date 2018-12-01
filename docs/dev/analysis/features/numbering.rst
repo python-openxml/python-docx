@@ -210,6 +210,84 @@ in ``oxml.__init__``), it is possible to implement
 solutions to the documented issues noted above in
 a disciplined way.
 
+Making use of low-level support
+-------------------------------
+Once the types listed above are defined and the **xmlchemy**
+submodule methods can be used, it becomes a little less
+painful to implement a solution to the StackOverflow
+question referred to above.
+
+
+.. code-block:: python
+
+
+    #!/usr/bin/python
+    
+    from docx import Document
+    from docx import oxml
+    
+    
+    d = Document()
+    
+    
+    """
+    1. Create an abstract numbering definition for a multi-level numbering style.
+    """
+    numXML = d.part.numbering_part.numbering_definitions._numbering
+    nextAbstractId = max([ J.abstractNumId for J in numXML.abstractNum_lst ] ) + 1
+    l = numXML.add_abstractNum()
+    l.abstractNumId = nextAbstractId
+    m = l.add_multiLevelType()
+    m.val = 'multiLevel'
+    
+    
+    """
+    2. Define numbering formats for each (zero-indexed)
+        level. N.B. The formatting text is one-indexed.
+        The user agent will accept up to nine levels.
+    """
+    formats = {0: "decimal", 1: "upperLetter" }
+    textFmts = {0: '%1.', 1: '%2.' }
+    for i in range(2):
+        lvl = l.add_lvl()
+        lvl.ilvl = i
+        n = lvl.add_numFmt()
+        n.val = formats[i]
+        lt = lvl.add_lvlText()
+        lt.val = textFmts[i]
+    
+    """
+    3. Link the abstract numbering definition to a numbering definition.
+    """
+    n = numXML.add_num(nextAbstractId)
+    
+    """
+    4. Define a function to set the (0-indexed) numbering level of a paragraph.
+    """
+    def set_ilvl(p,ilvl):
+        pr = p._element._add_pPr()
+        np = pr.get_or_add_numPr()
+        il = np.get_or_add_ilvl()
+        il.val = ilvl
+        ni = np.get_or_add_numId()
+        ni.val = n.numId
+        return(p)
+    
+    """
+    5. Create some content
+    """
+    for x in [1,2,3]:
+        p = d.add_paragraph()
+        set_ilvl(p,0)
+        p.add_run("Question %i" % x)
+        for y in [1,2,3,4]:
+            p2 = d.add_paragraph()
+            set_ilvl(p2,1)
+            p2.add_run("Choice %i" % y)
+    
+    
+    d.save('test.docx')
+
 Element Semantics
 -----------------
 
