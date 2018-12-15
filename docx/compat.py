@@ -10,6 +10,11 @@ from __future__ import (
 
 import sys
 
+try:  # Python 3.8+
+    from collections import abc
+except ImportError:
+    import collections as abc
+
 # ===========================================================================
 # Python 3 versions
 # ===========================================================================

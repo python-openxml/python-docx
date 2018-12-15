@@ -4,14 +4,14 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from collections import Sequence
+from .compat import abc
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_HEADER_FOOTER
 from docx.shared import lazyproperty
 
 
-class Sections(Sequence):
+class Sections(abc.Sequence):
     """Sequence of |Section| objects corresponding to the sections in the document.
 
     Supports ``len()``, iteration, and indexed access.
