@@ -3,37 +3,52 @@
 Header and Footer
 =================
 
-In a WordprocessingML document, a page header is text that is separated from
-the main body of text and appears at the top of a printed page. The page
-headers in a document are often the same from page to page, with only small
-differences in content, such as a section title or page number. Such a header
-is also known as a running head.
+In a WordprocessingML document, a page header is text that is separated from the main
+body of text and appears at the top of a printed page. The page headers in a document
+are often the same from page to page, with only small differences in content, such as
+a section title or page number. Such a header is also known as a running head.
 
-In book-printed documents, where pages are intended to be bound on the long
-edge and presented side-by-side, the header on a right-hand (recto) page is
-often different than that on a left-hand (verso) page. Supporting this
-difference gives rise to the option to have an even-page header that differs
-from the default odd-page header in a document.
+A page footer is analogous in every way to a page header except that it appears at the
+bottom of a page. It should not be confused with a footnote, which is not uniform
+between pages. For brevity's sake, the term *header* is often used here to refer to what
+may be either a header or footer object, trusting the reader to understand its
+applicability to both object types.
 
-A page footer is analogous in every way to a page header except that it
-appears at the bottom of a page. It should not be confused with a footnote,
-which is not uniform between pages. For brevity's sake, the term *header* is
-often used below to refer to what may be either a header or footer object,
-trusting the reader to understand its applicability to both object types.
+In book-printed documents, where pages are printed on both sides, when opened, the front
+or *recto* side of each page appears to the right of the bound edge and the back or
+*verso* side of each page appears on the left. The first printed page receives the
+page-number "1", and is always a recto page. Because pages are numbered consecutively,
+each recto page receives an *odd* page number and each verso page receives an *even*
+page number.
 
-In WordprocessingML, a header or footer appears within the margin area of
-a page. With a few exceptions, a header or footer may contain all the types
-of content that can appear in the main body, including text and images. Each
-header and footer has access to the styles defined in ``/word/styles.xml``.
+The header appearing on a recto page often differs from that on a verso page. Supporting
+this difference gives rise to the option to have an even-page header that differs from
+the default odd-page header in a document. This "both odd-and-even headers" option is
+applied at the document level and affects all sections of the document.
 
-Each section has its own set of headers and footers, although a section can
-be configured to "inherit" headers and footers from the prior section. Each
-section can have three header definitions, the default header, even header,
-and first page header. When different even/odd headers are not enabled, the
-default header appears on both even and odd numbered pages. If even/odd
-headers are enabled, the default header is used for odd pages.
-A corresponding set of three footer definitions are also possible. All
+The header appearing on the first page of a section (e.g. a chapter) may differ from
+that appearing on subsequent pages. Supporting this difference gives rise to the option
+to set a distinct first-page header. This "different first-page-header" option is
+applied at the section level and may differ from section-to-section in the document.
+
+In WordprocessingML, a header or footer appears within the margin area of a page. With
+a few exceptions, a header or footer may contain all the types of content that can
+appear in the main body, including text and images. Each header and footer has access to
+the styles defined in ``/word/styles.xml``.
+
+Each section has its own set of headers and footers, although a section can be
+configured to "inherit" headers and footers from the prior section. Each section can
+have three header definitions, the default header, even header, and first page header.
+When different even/odd headers are not enabled, the default header appears on both even
+and odd numbered pages. If even/odd headers are enabled, the default header is used for
+odd pages. A corresponding set of three footer definitions are also possible. All
 header/footer definitions are optional.
+
+
+Open Questions
+--------------
+
+* What about a continuous section break? What is the header/footer behavior there?
 
 
 Candidate Protocol
@@ -96,12 +111,12 @@ Conversely, an existing header is deleted from a section by assigning True to
     >>> header.is_linked_to_previous
     True
 
-The document settings object has a read/write
-`.odd_and_even_pages_header_footer` property that indicates verso and recto
-pages will have a different header. An existing even page header definition is
-preserved when `.odd_and_even_pages_header_footer` is False; it is simply not
-rendered by Word. Assigning `True` to `.odd_and_even_pages_header_footer`
-does not automatically create a new even header definition::
+The document settings object has a read/write `.odd_and_even_pages_header_footer`
+property that indicates verso and recto pages will have a different header. Any existing
+even page header definitions are preserved when `.odd_and_even_pages_header_footer` is
+False; they are simply not rendered by Word. Assigning `True` to
+`.odd_and_even_pages_header_footer` does not automatically create new even header
+definitions::
 
     >>> document.settings.odd_and_even_pages_header_footer
     False
@@ -173,6 +188,19 @@ Distinct first, even, and odd page headers::
        <w:titlePg/>
        ...
    </w:sectPr>
+
+A header part::
+
+   <w:hdr>
+     <w:p>
+       <w:pPr>
+         <w:pStyle w:val="Header"/>
+       </w:pPr>
+       <w:r>
+         <w:t>Header for section-1</w:t>
+       </w:r>
+     </w:p>
+   </w:hdr>
 
 
 Word Behavior
@@ -250,7 +278,7 @@ Schema Excerpt
     </xsd:complexType>
 
     <xsd:complexType name="CT_HdrFtrRef">
-      <xsd:attribute  ref="r:id"                  use="required"/>
+      <xsd:attribute ref="r:id" use="required"/>
       <xsd:attribute name="type" type="ST_HdrFtr" use="required"/>
     </xsd:complexType>
 
