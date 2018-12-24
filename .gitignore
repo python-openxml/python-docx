@@ -2,6 +2,7 @@
 /dist/
 /docs/.build/
 /*.egg-info
+.pytest_cache/
 *.pyc
 .pytest_cache/
 _scratch/

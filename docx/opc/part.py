@@ -74,6 +74,14 @@ class Part(object):
         if self._rel_ref_count(rId) < 2:
             del self.rels[rId]
 
+    def iter_parts_related_by(self, reltypes):
+        """Generate each part related to this by one of *reltypes*.
+
+        *reltypes* must be a container; `set` is convenient but list or other
+        sequence types work fine.
+        """
+        return NotImplementedError
+
     @classmethod
     def load(cls, partname, content_type, blob, package):
         return cls(partname, content_type, blob, package)
