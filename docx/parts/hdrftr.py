@@ -26,9 +26,9 @@ class FooterPart(BaseStoryPart):
     def _default_footer_xml(cls):
         """Return bytes containing XML for a default footer part."""
         path = os.path.join(
-            os.path.split(__file__)[0], '..', 'templates', 'default-footer.xml'
+            os.path.split(__file__)[0], "..", "templates", "default-footer.xml"
         )
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             xml_bytes = f.read()
         return xml_bytes
 
@@ -48,8 +48,8 @@ class HeaderPart(BaseStoryPart):
     def _default_header_xml(cls):
         """Return bytes containing XML for a default header part."""
         path = os.path.join(
-            os.path.split(__file__)[0], '..', 'templates', 'default-header.xml'
+            os.path.split(__file__)[0], "..", "templates", "default-header.xml"
         )
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             xml_bytes = f.read()
         return xml_bytes

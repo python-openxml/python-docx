@@ -24,6 +24,7 @@ from ..unitutil.mock import class_mock, instance_mock, method_mock, property_moc
 
 
 class DescribeDocumentPart(object):
+    """Unit-test suite for `docx.parts.document.DocumentPart`."""
 
     def it_can_add_a_footer_part(self, package_, FooterPart_, footer_part_, relate_to_):
         FooterPart_.new.return_value = footer_part_
@@ -80,6 +81,30 @@ class DescribeDocumentPart(object):
         related_parts_.__getitem__.assert_called_once_with("rId11")
         assert header_part is header_part_
 
+    def it_provides_access_to_the_inline_shapes_in_the_document(
+        self, inline_shapes_fixture
+    ):
+        document, InlineShapes_, body_elm = inline_shapes_fixture
+
+        inline_shapes = document.inline_shapes
+
+        InlineShapes_.assert_called_once_with(body_elm, document)
+        assert inline_shapes is InlineShapes_.return_value
+
+    def it_can_iterate_the_story_parts(
+        self, iter_parts_related_by_, header_part_, footer_part_
+    ):
+        iter_parts_related_by_.return_value = iter((header_part_, footer_part_))
+        document_part = DocumentPart(None, None, None, None)
+
+        story_parts = document_part.iter_story_parts()
+
+        iter_parts_related_by_.assert_called_once_with(
+            document_part,
+            {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER},
+        )
+        assert list(story_parts) == [document_part, header_part_, footer_part_]
+
     def it_can_save_the_package_to_a_file(self, save_fixture):
         document, file_ = save_fixture
         document.save(file_)
@@ -99,13 +124,6 @@ class DescribeDocumentPart(object):
         document_part, core_properties_ = core_props_fixture
         core_properties = document_part.core_properties
         assert core_properties is core_properties_
-
-    def it_provides_access_to_the_inline_shapes_in_the_document(
-            self, inline_shapes_fixture):
-        document, InlineShapes_, body_elm = inline_shapes_fixture
-        inline_shapes = document.inline_shapes
-        InlineShapes_.assert_called_once_with(body_elm, document)
-        assert inline_shapes is InlineShapes_.return_value
 
     def it_provides_access_to_the_numbering_part(
         self, part_related_by_, numbering_part_
@@ -209,10 +227,7 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
-        document_elm = (
-            a_document().with_nsdecls().with_child(
-                a_body())
-        ).element
+        document_elm = (a_document().with_nsdecls().with_child(a_body())).element
         body_elm = document_elm[0]
         document = DocumentPart(None, None, document_elm, None)
         return document, InlineShapes_, body_elm
@@ -220,12 +235,11 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def save_fixture(self, package_):
         document_part = DocumentPart(None, None, None, package_)
-        file_ = 'foobar.docx'
+        file_ = "foobar.docx"
         return document_part, file_
 
     @pytest.fixture
-    def settings_fixture(self, _settings_part_prop_, settings_part_,
-                         settings_):
+    def settings_fixture(self, _settings_part_prop_, settings_part_, settings_):
         document_part = DocumentPart(None, None, None, None)
         _settings_part_prop_.return_value = settings_part_
         settings_part_.settings = settings_
@@ -250,7 +264,7 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def FooterPart_(self, request):
-        return class_mock(request, 'docx.parts.document.FooterPart')
+        return class_mock(request, "docx.parts.document.FooterPart")
 
     @pytest.fixture
     def footer_part_(self, request):
@@ -258,7 +272,7 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def HeaderPart_(self, request):
-        return class_mock(request, 'docx.parts.document.HeaderPart')
+        return class_mock(request, "docx.parts.document.HeaderPart")
 
     @pytest.fixture
     def header_part_(self, request):
@@ -266,11 +280,15 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def InlineShapes_(self, request):
-        return class_mock(request, 'docx.parts.document.InlineShapes')
+        return class_mock(request, "docx.parts.document.InlineShapes")
+
+    @pytest.fixture
+    def iter_parts_related_by_(self, request):
+        return method_mock(request, DocumentPart, "iter_parts_related_by")
 
     @pytest.fixture
     def NumberingPart_(self, request):
-        return class_mock(request, 'docx.parts.document.NumberingPart')
+        return class_mock(request, "docx.parts.document.NumberingPart")
 
     @pytest.fixture
     def numbering_part_(self, request):
@@ -282,11 +300,11 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def part_related_by_(self, request):
-        return method_mock(request, DocumentPart, 'part_related_by')
+        return method_mock(request, DocumentPart, "part_related_by")
 
     @pytest.fixture
     def relate_to_(self, request):
-        return method_mock(request, DocumentPart, 'relate_to')
+        return method_mock(request, DocumentPart, "relate_to")
 
     @pytest.fixture
     def related_parts_(self, request):
@@ -294,11 +312,11 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def related_parts_prop_(self, request):
-        return property_mock(request, DocumentPart, 'related_parts')
+        return property_mock(request, DocumentPart, "related_parts")
 
     @pytest.fixture
     def SettingsPart_(self, request):
-        return class_mock(request, 'docx.parts.document.SettingsPart')
+        return class_mock(request, "docx.parts.document.SettingsPart")
 
     @pytest.fixture
     def settings_(self, request):
@@ -310,7 +328,7 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def _settings_part_prop_(self, request):
-        return property_mock(request, DocumentPart, '_settings_part')
+        return property_mock(request, DocumentPart, "_settings_part")
 
     @pytest.fixture
     def style_(self, request):
@@ -322,7 +340,7 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def StylesPart_(self, request):
-        return class_mock(request, 'docx.parts.document.StylesPart')
+        return class_mock(request, "docx.parts.document.StylesPart")
 
     @pytest.fixture
     def styles_part_(self, request):
@@ -330,8 +348,8 @@ class DescribeDocumentPart(object):
 
     @pytest.fixture
     def styles_prop_(self, request):
-        return property_mock(request, DocumentPart, 'styles')
+        return property_mock(request, DocumentPart, "styles")
 
     @pytest.fixture
     def _styles_part_prop_(self, request):
-        return property_mock(request, DocumentPart, '_styles_part')
+        return property_mock(request, DocumentPart, "_styles_part")

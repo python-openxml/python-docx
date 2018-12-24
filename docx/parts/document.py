@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from itertools import chain
+
 from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.shape import CT_Inline
@@ -97,7 +99,12 @@ class DocumentPart(BaseStoryPart):
         Story parts include this main document part, headers, footers,
         footnotes, and endnotes.
         """
-        raise NotImplementedError
+        return chain(
+            (self,),
+            self.iter_parts_related_by(
+                {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER}
+            ),
+        )
 
     def new_pic_inline(self, image_descriptor, width, height):
         """
