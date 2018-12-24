@@ -12,9 +12,8 @@ from .oxml import CT_Relationships
 
 
 class Relationships(dict):
-    """
-    Collection object for |_Relationship| instances, having list semantics.
-    """
+    """Collection object for |_Relationship| instances, having dict semantics"""
+
     def __init__(self, baseURI):
         super(Relationships, self).__init__()
         self._baseURI = baseURI
@@ -132,9 +131,8 @@ class Relationships(dict):
 
 
 class _Relationship(object):
-    """
-    Value object for relationship to part.
-    """
+    """Value object for relationship to part"""
+
     def __init__(self, rId, reltype, target, baseURI, external=False):
         super(_Relationship, self).__init__()
         self._rId = rId
@@ -157,9 +155,12 @@ class _Relationship(object):
 
     @property
     def target_part(self):
+        """|Part| or subclass this relationship links to."""
         if self._is_external:
-            raise ValueError("target_part property on _Relationship is undef"
-                             "ined when target mode is External")
+            raise ValueError(
+                "target_part property on _Relationship is undefined when target mode "
+                "is External"
+            )
         return self._target
 
     @property
