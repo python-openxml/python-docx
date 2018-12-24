@@ -80,7 +80,10 @@ class Part(object):
         *reltypes* must be a container; `set` is convenient but list or other
         sequence types work fine.
         """
-        return NotImplementedError
+        return (
+            rel.target_part for rel in self.rels.values()
+            if rel.reltype in reltypes
+        )
 
     @classmethod
     def load(cls, partname, content_type, blob, package):
