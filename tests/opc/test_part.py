@@ -482,6 +482,8 @@ class DescribePartFactory(object):
 
 
 class DescribeXmlPart(object):
+    """Unit-test suite for `docx.opc.part.XmlPart` object."""
+
     def it_can_be_constructed_by_PartFactory(
         self, partname_, content_type_, blob_, package_, element_, parse_xml_, __init_
     ):
