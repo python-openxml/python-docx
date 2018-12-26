@@ -124,7 +124,7 @@ class Relationships(dict):
         Next available rId in collection, starting from 'rId1' and making use
         of any gaps in numbering, e.g. 'rId2' for rIds ['rId1', 'rId3'].
         """
-        for n in range(1, len(self)+2):
+        for n in range(1, len(self) + 2):
             rId_candidate = 'rId%d' % n  # like 'rId19'
             if rId_candidate not in self:
                 return rId_candidate

@@ -208,12 +208,12 @@ class _MarkerFinder(object):
             # skip over any non-\xFF bytes
             position = self._offset_of_next_ff_byte(start=position)
             # skip over any \xFF padding bytes
-            position, byte_ = self._next_non_ff_byte(start=position+1)
+            position, byte_ = self._next_non_ff_byte(start=position + 1)
             # 'FF 00' sequence is not a marker, start over if found
             if byte_ == b'\x00':
                 continue
             # this is a marker, gather return values and break out of scan
-            marker_code, segment_offset = byte_, position+1
+            marker_code, segment_offset = byte_, position + 1
             break
         return marker_code, segment_offset
 
@@ -438,7 +438,7 @@ class _App1Marker(_Marker):
         Exif segment, as determined by the ``'Exif\x00\x00'`` signature at
         offset 2 in the segment.
         """
-        stream.seek(offset+2)
+        stream.seek(offset + 2)
         exif_signature = stream.read(6)
         return exif_signature != b'Exif\x00\x00'
 
@@ -449,8 +449,8 @@ class _App1Marker(_Marker):
         *segment_length* at *offset* in *stream*.
         """
         # wrap full segment in its own stream and feed to Tiff()
-        stream.seek(offset+8)
-        segment_bytes = stream.read(segment_length-8)
+        stream.seek(offset + 8)
+        segment_bytes = stream.read(segment_length - 8)
         substream = BytesIO(segment_bytes)
         return Tiff.from_stream(substream)
 

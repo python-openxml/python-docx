@@ -182,7 +182,7 @@ class CT_Tbl(BaseOxmlElement):
 
     @classmethod
     def _tbl_xml(cls, rows, cols, width):
-        col_width = Emu(width/cols) if cols > 0 else Emu(0)
+        col_width = Emu(width / cols) if cols > 0 else Emu(0)
         return (
             '<w:tbl %s>\n'
             '  <w:tblPr>\n'
@@ -542,7 +542,7 @@ class CT_Tc(BaseOxmlElement):
         top_tc = self if top_tc is None else top_tc
         self._span_to_width(width, top_tc, vMerge_val(top_tc))
         if height > 1:
-            self._tc_below._grow_to(width, height-1, top_tc)
+            self._tc_below._grow_to(width, height - 1, top_tc)
 
     def _insert_tcPr(self, tcPr):
         """
@@ -725,7 +725,7 @@ class CT_Tc(BaseOxmlElement):
         tr_idx = tr_lst.index(self._tr)
         if tr_idx == 0:
             raise ValueError('no tr above topmost tr')
-        return tr_lst[tr_idx-1]
+        return tr_lst[tr_idx - 1]
 
     @property
     def _tr_below(self):
@@ -736,7 +736,7 @@ class CT_Tc(BaseOxmlElement):
         tr_lst = self._tbl.tr_lst
         tr_idx = tr_lst.index(self._tr)
         try:
-            return tr_lst[tr_idx+1]
+            return tr_lst[tr_idx + 1]
         except IndexError:
             return None
 

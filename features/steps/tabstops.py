@@ -140,4 +140,4 @@ def then_the_removed_tab_stop_is_no_longer_present_in_tab_stops(context):
 def then_the_tab_stops_are_sequenced_in_position_order(context):
     tab_stops = context.tab_stops
     for idx in range(len(tab_stops) - 1):
-        assert tab_stops[idx].position < tab_stops[idx+1].position
+        assert tab_stops[idx].position < tab_stops[idx + 1].position
