@@ -2,23 +2,30 @@
 
 """Test suite for the docx.bookmark module."""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
-from docx.bookmark import Bookmarks, _DocumentBookmarkFinder
-from docx.opc.part import Part
+from docx.bookmark import Bookmarks, _DocumentBookmarkFinder, _PartBookmarkFinder
+from docx.opc.part import Part, XmlPart
 from docx.parts.document import DocumentPart
 
-from .unitutil.mock import call, class_mock, instance_mock, property_mock
+from .unitutil.mock import (
+    ANY,
+    call,
+    class_mock,
+    initializer_mock,
+    instance_mock,
+    method_mock,
+    property_mock,
+)
 
 
 class DescribeBookmarks(object):
 
     def it_knows_how_many_bookmarks_the_document_contains(
-            self, _finder_prop_, finder_):
+        self, _finder_prop_, finder_
+    ):
         _finder_prop_.return_value = finder_
         finder_.bookmark_pairs = tuple((1, 2) for _ in range(42))
         bookmarks = Bookmarks(None)
@@ -28,7 +35,8 @@ class DescribeBookmarks(object):
         assert count == 42
 
     def it_provides_access_to_its_bookmark_finder_to_help(
-            self, document_part_, _DocumentBookmarkFinder_, finder_):
+        self, document_part_, _DocumentBookmarkFinder_, finder_
+    ):
         _DocumentBookmarkFinder_.return_value = finder_
         bookmarks = Bookmarks(document_part_)
 
@@ -105,3 +113,29 @@ class Describe_DocumentBookmarkFinder(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+
+class Describe_PartBookmarkFinder(object):
+
+    def it_provides_an_iter_start_end_pairs_interface_method(
+        self, part_, _init_, _iter_start_end_pairs_
+    ):
+        pairs = _PartBookmarkFinder.iter_start_end_pairs(part_)
+
+        _init_.assert_called_once_with(ANY, part_)
+        _iter_start_end_pairs_.assert_called_once_with()
+        assert pairs == _iter_start_end_pairs_.return_value
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _init_(self, request):
+        return initializer_mock(request, _PartBookmarkFinder)
+
+    @pytest.fixture
+    def _iter_start_end_pairs_(self, request):
+        return method_mock(request, _PartBookmarkFinder, '_iter_start_end_pairs')
+
+    @pytest.fixture
+    def part_(self, request):
+        return instance_mock(request, XmlPart)

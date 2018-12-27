@@ -58,7 +58,14 @@ class _DocumentBookmarkFinder(object):
 class _PartBookmarkFinder(object):
     """Provides access to bookmark oxml elements in a story part."""
 
+    def __init__(self, part):
+        self._part = part
+
     @classmethod
     def iter_start_end_pairs(cls, part):
         """Generate each (bookmarkStart, bookmarkEnd) in *part*."""
+        return cls(part)._iter_start_end_pairs()
+
+    def _iter_start_end_pairs(self):
+        """Generate each (bookmarkStart, bookmarkEnd) in this part."""
         raise NotImplementedError
