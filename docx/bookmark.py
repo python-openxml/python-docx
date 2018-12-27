@@ -2,9 +2,7 @@
 
 """Objects related to bookmarks."""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from itertools import chain
 
@@ -48,10 +46,12 @@ class _DocumentBookmarkFinder(object):
         ignored.
         """
         return list(
-            chain(*(
-                _PartBookmarkFinder.iter_start_end_pairs(part)
-                for part in self._document_part.iter_story_parts()
-            ))
+            chain(
+                *(
+                    _PartBookmarkFinder.iter_start_end_pairs(part)
+                    for part in self._document_part.iter_story_parts()
+                )
+            )
         )
 
 
@@ -68,4 +68,33 @@ class _PartBookmarkFinder(object):
 
     def _iter_start_end_pairs(self):
         """Generate each (bookmarkStart, bookmarkEnd) in this part."""
+        for idx, bookmarkStart in self._iter_starts():
+            bookmarkEnd = self._matching_end(bookmarkStart, idx)
+            # ---skip open pairs---
+            if bookmarkEnd is None:
+                continue
+            # ---skip duplicate names---
+            if self._name_already_used(bookmarkStart.name):
+                continue
+            yield (bookmarkStart, bookmarkEnd)
+
+    def _iter_starts(self):
+        """Generate (idx, bookmarkStart) elements in story.
+
+        The *idx* value indicates the location of the bookmarkStart element
+        among all the bookmarkStart and bookmarkEnd elements in the story.
+        """
+        raise NotImplementedError
+
+    def _matching_end(self, bookmarkStart, idx):
+        """Return the `w:bookmarkEnd` element corresponding to *bookmarkStart*.
+
+        Returns None if no `w:bookmarkEnd` with matching id value is found. *idx* is the
+        offset of *bookmarkStart* in the sequence of start and end elements in this
+        story.
+        """
+        raise NotImplementedError
+
+    def _name_already_used(self, name):
+        """Return True if *name* was already encountered, False otherwise."""
         raise NotImplementedError
