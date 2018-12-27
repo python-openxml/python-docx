@@ -124,6 +124,17 @@ class Describe_PartBookmarkFinder(object):
         _iter_start_end_pairs_.assert_called_once_with(ANY)
         assert pairs == _iter_start_end_pairs_.return_value
 
+    def it_gathers_all_the_bookmark_start_and_end_elements_to_help(self, part_):
+        body = element(
+            "w:body/(w:bookmarkStart,w:p,w:bookmarkEnd,w:p,w:bookmarkStart)"
+        )
+        part_.element = body
+        finder = _PartBookmarkFinder(part_)
+
+        starts_and_ends = finder._all_starts_and_ends
+
+        assert starts_and_ends == [body[0], body[2], body[4]]
+
     def it_iterates_start_end_pairs_to_help(
         self, _iter_starts_, _matching_end_, _name_already_used_
     ):
