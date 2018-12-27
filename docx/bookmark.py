@@ -104,8 +104,24 @@ class _PartBookmarkFinder(object):
         offset of *bookmarkStart* in the sequence of start and end elements in this
         story.
         """
-        raise NotImplementedError
+        for element in self._all_starts_and_ends[idx + 1:]:
+            # ---skip bookmark starts---
+            if element.tag == qn('w:bookmarkStart'):
+                continue
+            bookmarkEnd = element
+            if bookmarkEnd.id == bookmarkStart.id:
+                return bookmarkEnd
+        return None
 
     def _name_already_used(self, name):
-        """Return True if *name* was already encountered, False otherwise."""
+        """Return True if bookmark *name* was already encountered, False otherwise."""
+        names_so_far = self._names_so_far
+        if name in names_so_far:
+            return True
+        names_so_far.add(name)
+        return False
+
+    @lazyproperty
+    def _names_so_far(self):
+        """set composed to track bookmark names encountered in document traversal."""
         raise NotImplementedError

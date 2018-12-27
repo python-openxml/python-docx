@@ -193,6 +193,83 @@ class Describe_PartBookmarkFinder(object):
             (0, starts_and_ends[0]), (2, starts_and_ends[2]), (4, starts_and_ends[4])
         ]
 
+    def it_finds_the_matching_end_for_a_start_to_help(
+        self, matching_end_fixture, _all_starts_and_ends_prop_
+    ):
+        starts_and_ends, start_idx, expected_value = matching_end_fixture
+        _all_starts_and_ends_prop_.return_value = starts_and_ends
+        bookmarkStart = starts_and_ends[start_idx]
+        finder = _PartBookmarkFinder(None)
+
+        bookmarkEnd = finder._matching_end(bookmarkStart, start_idx)
+
+        assert bookmarkEnd == expected_value
+
+    def it_knows_whether_a_bookmark_name_was_already_used(
+        self, name_used_fixture, _names_so_far_prop_, names_so_far_
+    ):
+        name, is_used, calls, expected_value = name_used_fixture
+        _names_so_far_prop_.return_value = names_so_far_
+        names_so_far_.__contains__.return_value = is_used
+        finder = _PartBookmarkFinder(None)
+
+        already_used = finder._name_already_used(name)
+
+        assert names_so_far_.add.call_args_list == calls
+        assert already_used is expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            # ---no subsequent end---
+            ([element("w:bookmarkStart{w:name=foo,w:id=0}")], 0, None),
+            # ---no matching end---
+            (
+                [element("w:bookmarkStart{w:id=0}"), element("w:bookmarkEnd{w:id=1}")],
+                0,
+                None,
+            ),
+            # ---end immediately follows start---
+            (
+                [element("w:bookmarkStart{w:id=0}"), element("w:bookmarkEnd{w:id=0}")],
+                0,
+                1,
+            ),
+            # ---end separated from start by other start---
+            (
+                [
+                    element("w:bookmarkStart{w:name=foo,w:id=0}"),
+                    element("w:bookmarkStart{w:name=bar,w:id=0}"),
+                    element("w:bookmarkEnd{w:id=0}"),
+                ],
+                0,
+                2,
+            ),
+            # ---end separated from start by other end---
+            (
+                [
+                    element("w:bookmarkStart{w:name=foo,w:id=1}"),
+                    element("w:bookmarkEnd{w:id=0}"),
+                    element("w:bookmarkEnd{w:id=1}"),
+                ],
+                0,
+                2,
+            ),
+        ]
+    )
+    def matching_end_fixture(self, request):
+        starts_and_ends, start_idx, end_idx = request.param
+        expected_value = None if end_idx is None else starts_and_ends[end_idx]
+        return starts_and_ends, start_idx, expected_value
+
+    @pytest.fixture(params=[(True, True), (False, False)])
+    def name_used_fixture(self, request):
+        is_used, expected_value = request.param
+        name = "George"
+        calls = [] if is_used else [call("George")]
+        return name, is_used, calls, expected_value
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -218,6 +295,14 @@ class Describe_PartBookmarkFinder(object):
     @pytest.fixture
     def _name_already_used_(self, request):
         return method_mock(request, _PartBookmarkFinder, "_name_already_used")
+
+    @pytest.fixture
+    def _names_so_far_prop_(self, request):
+        return property_mock(request, _PartBookmarkFinder, '_names_so_far')
+
+    @pytest.fixture
+    def names_so_far_(self, request):
+        return instance_mock(request, set)
 
     @pytest.fixture
     def part_(self, request):
