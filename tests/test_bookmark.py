@@ -164,7 +164,29 @@ class Describe_PartBookmarkFinder(object):
             (bookmarkStarts[2], bookmarkEnds[2]),
         ]
 
+    def it_iterates_bookmarkStart_elements_to_help(self, _all_starts_and_ends_prop_):
+        starts_and_ends = (
+            element("w:bookmarkStart"),
+            element("w:bookmarkEnd"),
+            element("w:bookmarkStart"),
+            element("w:bookmarkEnd"),
+            element("w:bookmarkStart"),
+            element("w:bookmarkEnd"),
+        )
+        _all_starts_and_ends_prop_.return_value = list(starts_and_ends)
+        finder = _PartBookmarkFinder(None)
+
+        starts = list(finder._iter_starts())
+
+        assert starts == [
+            (0, starts_and_ends[0]), (2, starts_and_ends[2]), (4, starts_and_ends[4])
+        ]
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _all_starts_and_ends_prop_(self, request):
+        return property_mock(request, _PartBookmarkFinder, '_all_starts_and_ends')
 
     @pytest.fixture
     def _init_(self, request):

@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from itertools import chain
 
+from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 
 
@@ -78,13 +79,23 @@ class _PartBookmarkFinder(object):
                 continue
             yield (bookmarkStart, bookmarkEnd)
 
+    @lazyproperty
+    def _all_starts_and_ends(self):
+        """list of all `w:bookmarkStart` and `w:bookmarkEnd` elements in part.
+
+        Elements appear in document order.
+        """
+        raise NotImplementedError
+
     def _iter_starts(self):
         """Generate (idx, bookmarkStart) elements in story.
 
         The *idx* value indicates the location of the bookmarkStart element
         among all the bookmarkStart and bookmarkEnd elements in the story.
         """
-        raise NotImplementedError
+        for idx, element in enumerate(self._all_starts_and_ends):
+            if element.tag == qn("w:bookmarkStart"):
+                yield idx, element
 
     def _matching_end(self, bookmarkStart, idx):
         """Return the `w:bookmarkEnd` element corresponding to *bookmarkStart*.
