@@ -12,6 +12,7 @@ from docx.opc.part import PartFactory
 from docx.opc.parts.coreprops import CorePropertiesPart
 
 from docx.parts.document import DocumentPart
+from docx.parts.endnotes import EndnotesPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
@@ -28,6 +29,7 @@ def part_class_selector(content_type, reltype):
 PartFactory.part_class_selector = part_class_selector
 PartFactory.part_type_for[CT.OPC_CORE_PROPERTIES] = CorePropertiesPart
 PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
+PartFactory.part_type_for[CT.WML_ENDNOTES] = EndnotesPart
 PartFactory.part_type_for[CT.WML_FOOTER] = FooterPart
 PartFactory.part_type_for[CT.WML_HEADER] = HeaderPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
@@ -38,6 +40,7 @@ del (
     CT,
     CorePropertiesPart,
     DocumentPart,
+    EndnotesPart,
     FooterPart,
     HeaderPart,
     NumberingPart,
