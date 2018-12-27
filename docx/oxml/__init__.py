@@ -62,22 +62,26 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # custom element class mappings
 # ===========================================================================
 
-from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
+from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
 
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 register_element_cls("w:titlePg", CT_OnOff)
 
+from docx.oxml.bookmark import CT_Bookmark, CT_MarkupRange  # noqa
 
-from .coreprops import CT_CoreProperties  # noqa
+register_element_cls("w:bookmarkEnd", CT_MarkupRange)
+register_element_cls("w:bookmarkStart", CT_Bookmark)
+
+from docx.oxml.coreprops import CT_CoreProperties  # noqa
 
 register_element_cls("cp:coreProperties", CT_CoreProperties)
 
-from .document import CT_Body, CT_Document  # noqa
+from docx.oxml.document import CT_Body, CT_Document  # noqa
 
 register_element_cls("w:body", CT_Body)
 register_element_cls("w:document", CT_Document)
 
-from .numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
+from docx.oxml.numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
 
 register_element_cls("w:abstractNumId", CT_DecimalNumber)
 register_element_cls("w:ilvl", CT_DecimalNumber)
@@ -88,7 +92,7 @@ register_element_cls("w:numPr", CT_NumPr)
 register_element_cls("w:numbering", CT_Numbering)
 register_element_cls("w:startOverride", CT_DecimalNumber)
 
-from .section import (  # noqa
+from docx.oxml.section import (  # noqa
     CT_HdrFtr,
     CT_HdrFtrRef,
     CT_PageMar,
@@ -110,7 +114,7 @@ from .settings import CT_Settings  # noqa
 
 register_element_cls("w:settings", CT_Settings)
 
-from .shape import (  # noqa
+from docx.oxml.shape import (  # noqa
     CT_Blip,
     CT_BlipFillProperties,
     CT_GraphicalObject,
@@ -140,7 +144,12 @@ register_element_cls("wp:docPr", CT_NonVisualDrawingProps)
 register_element_cls("wp:extent", CT_PositiveSize2D)
 register_element_cls("wp:inline", CT_Inline)
 
-from .styles import CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles  # noqa
+from docx.oxml.styles import (  # noqa
+    CT_LatentStyles,
+    CT_LsdException,
+    CT_Style,
+    CT_Styles,
+)
 
 register_element_cls("w:basedOn", CT_String)
 register_element_cls("w:latentStyles", CT_LatentStyles)
@@ -155,7 +164,7 @@ register_element_cls("w:styles", CT_Styles)
 register_element_cls("w:uiPriority", CT_DecimalNumber)
 register_element_cls("w:unhideWhenUsed", CT_OnOff)
 
-from .table import (  # noqa
+from docx.oxml.table import (  # noqa
     CT_Height,
     CT_Row,
     CT_Tbl,
@@ -188,7 +197,7 @@ register_element_cls("w:trPr", CT_TrPr)
 register_element_cls("w:vAlign", CT_VerticalJc)
 register_element_cls("w:vMerge", CT_VMerge)
 
-from .text.font import (  # noqa
+from docx.oxml.text.font import (  # noqa
     CT_Color,
     CT_Fonts,
     CT_Highlight,
@@ -227,11 +236,11 @@ register_element_cls("w:vanish", CT_OnOff)
 register_element_cls("w:vertAlign", CT_VerticalAlignRun)
 register_element_cls("w:webHidden", CT_OnOff)
 
-from .text.paragraph import CT_P  # noqa
+from docx.oxml.text.paragraph import CT_P  # noqa
 
 register_element_cls("w:p", CT_P)
 
-from .text.parfmt import (  # noqa
+from docx.oxml.text.parfmt import (  # noqa
     CT_Ind,
     CT_Jc,
     CT_PPr,
@@ -252,7 +261,7 @@ register_element_cls("w:tab", CT_TabStop)
 register_element_cls("w:tabs", CT_TabStops)
 register_element_cls("w:widowControl", CT_OnOff)
 
-from .text.run import CT_Br, CT_R, CT_Text  # noqa
+from docx.oxml.text.run import CT_Br, CT_R, CT_Text  # noqa
 
 register_element_cls("w:br", CT_Br)
 register_element_cls("w:r", CT_R)
