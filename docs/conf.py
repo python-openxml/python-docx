@@ -105,6 +105,8 @@ rst_epilog = """
 
 .. |Emu| replace:: :class:`.Emu`
 
+.. |EndnotesPart| replace:: :class:`.EndnotesPart`
+
 .. |False| replace:: :class:`False`
 
 .. |float| replace:: :class:`.float`
