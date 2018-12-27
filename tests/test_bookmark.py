@@ -218,6 +218,11 @@ class Describe_PartBookmarkFinder(object):
         assert names_so_far_.add.call_args_list == calls
         assert already_used is expected_value
 
+    def it_composes_a_set_in_which_to_track_used_bookmark_names(self):
+        finder = _PartBookmarkFinder(None)
+        names_so_far = finder._names_so_far
+        assert names_so_far == set()
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(
