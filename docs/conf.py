@@ -20,7 +20,7 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-from docx import __version__
+from docx import __version__  # noqa
 
 
 # -- General configuration ---------------------------------------------------
@@ -106,6 +106,8 @@ rst_epilog = """
 .. |float| replace:: :class:`.float`
 
 .. |Font| replace:: :class:`.Font`
+
+.. |_Header| replace:: :class:`._Header`
 
 .. |Inches| replace:: :class:`.Inches`
 
