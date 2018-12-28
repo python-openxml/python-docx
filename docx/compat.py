@@ -12,9 +12,13 @@ import sys
 # Python 3 versions
 # ===========================================================================
 
+if sys.version_info >= (3, 3):
+    from collections.abc import Sequence
+else:
+    from collections import Sequence  # noqa
+
 if sys.version_info >= (3, 0):
 
-    from collections.abc import Sequence
     from io import BytesIO
 
     def is_string(obj):
@@ -29,7 +33,6 @@ if sys.version_info >= (3, 0):
 
 else:
 
-    from collections import Sequence  # noqa
     from StringIO import StringIO as BytesIO  # noqa
 
     def is_string(obj):
