@@ -4,17 +4,33 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from collections import Sequence
 from itertools import chain
 
 from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 
 
-class Bookmarks(object):
-    """Sequence of |Bookmark| objects."""
+class Bookmarks(Sequence):
+    """Sequence of |Bookmark| objects.
+
+    Supports indexed access (including slices), `len()`, and iteration. Iteration will
+    perform significantly better than repeated indexed access.
+    """
 
     def __init__(self, document_part):
         self._document_part = document_part
+
+    def __getitem__(self, idx):
+        """Supports indexed and sliced access."""
+        bookmark_pairs = self._finder.bookmark_pairs
+        if isinstance(idx, slice):
+            return [_Bookmark(pair) for pair in bookmark_pairs[idx]]
+        return _Bookmark(bookmark_pairs[idx])
+
+    def __iter__(self):
+        """Supports iteration."""
+        return (_Bookmark(pair) for pair in self._finder.bookmark_pairs)
 
     def __len__(self):
         return len(self._finder.bookmark_pairs)
@@ -23,6 +39,13 @@ class Bookmarks(object):
     def _finder(self):
         """_DocumentBookmarkFinder instance for this document."""
         return _DocumentBookmarkFinder(self._document_part)
+
+
+class _Bookmark(object):
+    """Proxy for a (w:bookmarkStart, w:bookmarkEnd) element pair."""
+
+    def __init__(self, bookmark_pair):
+        self._bookmarkStart, self._bookmarkEnd = bookmark_pair
 
 
 class _DocumentBookmarkFinder(object):

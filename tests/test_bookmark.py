@@ -6,7 +6,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
-from docx.bookmark import Bookmarks, _DocumentBookmarkFinder, _PartBookmarkFinder
+from docx.bookmark import (
+    _Bookmark,
+    Bookmarks,
+    _DocumentBookmarkFinder,
+    _PartBookmarkFinder,
+)
 from docx.opc.part import Part, XmlPart
 from docx.parts.document import DocumentPart
 
@@ -23,6 +28,60 @@ from .unitutil.mock import (
 
 
 class DescribeBookmarks(object):
+    """Unit-test suite for `docx.bookmark.Bookmarks` object."""
+
+    def it_provides_access_to_bookmarks_by_index(
+        self, _finder_prop_, finder_, _Bookmark_, bookmark_
+    ):
+        bookmarkStarts = tuple(element("w:bookmarkStart") for _ in range(3))
+        bookmarkEnds = tuple(element("w:bookmarkEnd") for _ in range(3))
+        _finder_prop_.return_value = finder_
+        finder_.bookmark_pairs = zip(bookmarkStarts, bookmarkEnds)
+        _Bookmark_.return_value = bookmark_
+        bookmarks = Bookmarks(None)
+
+        bookmark = bookmarks[1]
+
+        _Bookmark_.assert_called_once_with((bookmarkStarts[1], bookmarkEnds[1]))
+        assert bookmark == bookmark_
+
+    def it_provides_access_to_bookmarks_by_slice(
+        self, _finder_prop_, finder_, _Bookmark_, bookmark_
+    ):
+        bookmarkStarts = tuple(element("w:bookmarkStart") for _ in range(4))
+        bookmarkEnds = tuple(element("w:bookmarkEnd") for _ in range(4))
+        _finder_prop_.return_value = finder_
+        finder_.bookmark_pairs = zip(bookmarkStarts, bookmarkEnds)
+        _Bookmark_.return_value = bookmark_
+        bookmarks = Bookmarks(None)
+
+        bookmarks_slice = bookmarks[1:3]
+
+        assert _Bookmark_.call_args_list == [
+            call((bookmarkStarts[1], bookmarkEnds[1])),
+            call((bookmarkStarts[2], bookmarkEnds[2])),
+        ]
+        assert bookmarks_slice == [bookmark_, bookmark_]
+
+    def it_can_iterate_its_bookmarks(
+        self, _finder_prop_, finder_, _Bookmark_, bookmark_
+    ):
+        bookmarkStarts = tuple(element("w:bookmarkStart") for _ in range(3))
+        bookmarkEnds = tuple(element("w:bookmarkEnd") for _ in range(3))
+        _finder_prop_.return_value = finder_
+        finder_.bookmark_pairs = zip(bookmarkStarts, bookmarkEnds)
+        _Bookmark_.return_value = bookmark_
+        bookmarks = Bookmarks(None)
+
+        _bookmarks = list(b for b in bookmarks)
+
+        assert _Bookmark_.call_args_list == [
+            call((bookmarkStarts[0], bookmarkEnds[0])),
+            call((bookmarkStarts[1], bookmarkEnds[1])),
+            call((bookmarkStarts[2], bookmarkEnds[2])),
+        ]
+        assert _bookmarks == [bookmark_, bookmark_, bookmark_]
+
     def it_knows_how_many_bookmarks_the_document_contains(self, _finder_prop_, finder_):
         _finder_prop_.return_value = finder_
         finder_.bookmark_pairs = tuple((1, 2) for _ in range(42))
@@ -44,6 +103,14 @@ class DescribeBookmarks(object):
         assert finder is finder_
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _Bookmark_(self, request):
+        return class_mock(request, "docx.bookmark._Bookmark")
+
+    @pytest.fixture
+    def bookmark_(self, request):
+        return instance_mock(request, _Bookmark)
 
     @pytest.fixture
     def _DocumentBookmarkFinder_(self, request):
@@ -125,9 +192,7 @@ class Describe_PartBookmarkFinder(object):
         assert pairs == _iter_start_end_pairs_.return_value
 
     def it_gathers_all_the_bookmark_start_and_end_elements_to_help(self, part_):
-        body = element(
-            "w:body/(w:bookmarkStart,w:p,w:bookmarkEnd,w:p,w:bookmarkStart)"
-        )
+        body = element("w:body/(w:bookmarkStart,w:p,w:bookmarkEnd,w:p,w:bookmarkStart)")
         part_.element = body
         finder = _PartBookmarkFinder(part_)
 
@@ -190,7 +255,9 @@ class Describe_PartBookmarkFinder(object):
         starts = list(finder._iter_starts())
 
         assert starts == [
-            (0, starts_and_ends[0]), (2, starts_and_ends[2]), (4, starts_and_ends[4])
+            (0, starts_and_ends[0]),
+            (2, starts_and_ends[2]),
+            (4, starts_and_ends[4]),
         ]
 
     def it_finds_the_matching_end_for_a_start_to_help(
@@ -279,7 +346,7 @@ class Describe_PartBookmarkFinder(object):
 
     @pytest.fixture
     def _all_starts_and_ends_prop_(self, request):
-        return property_mock(request, _PartBookmarkFinder, '_all_starts_and_ends')
+        return property_mock(request, _PartBookmarkFinder, "_all_starts_and_ends")
 
     @pytest.fixture
     def _init_(self, request):
@@ -303,7 +370,7 @@ class Describe_PartBookmarkFinder(object):
 
     @pytest.fixture
     def _names_so_far_prop_(self, request):
-        return property_mock(request, _PartBookmarkFinder, '_names_so_far')
+        return property_mock(request, _PartBookmarkFinder, "_names_so_far")
 
     @pytest.fixture
     def names_so_far_(self, request):
