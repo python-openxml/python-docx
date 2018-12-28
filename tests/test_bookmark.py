@@ -36,7 +36,7 @@ class DescribeBookmarks(object):
         bookmarkStarts = tuple(element("w:bookmarkStart") for _ in range(3))
         bookmarkEnds = tuple(element("w:bookmarkEnd") for _ in range(3))
         _finder_prop_.return_value = finder_
-        finder_.bookmark_pairs = zip(bookmarkStarts, bookmarkEnds)
+        finder_.bookmark_pairs = list(zip(bookmarkStarts, bookmarkEnds))
         _Bookmark_.return_value = bookmark_
         bookmarks = Bookmarks(None)
 
@@ -51,7 +51,7 @@ class DescribeBookmarks(object):
         bookmarkStarts = tuple(element("w:bookmarkStart") for _ in range(4))
         bookmarkEnds = tuple(element("w:bookmarkEnd") for _ in range(4))
         _finder_prop_.return_value = finder_
-        finder_.bookmark_pairs = zip(bookmarkStarts, bookmarkEnds)
+        finder_.bookmark_pairs = list(zip(bookmarkStarts, bookmarkEnds))
         _Bookmark_.return_value = bookmark_
         bookmarks = Bookmarks(None)
 
@@ -69,7 +69,7 @@ class DescribeBookmarks(object):
         bookmarkStarts = tuple(element("w:bookmarkStart") for _ in range(3))
         bookmarkEnds = tuple(element("w:bookmarkEnd") for _ in range(3))
         _finder_prop_.return_value = finder_
-        finder_.bookmark_pairs = zip(bookmarkStarts, bookmarkEnds)
+        finder_.bookmark_pairs = list(zip(bookmarkStarts, bookmarkEnds))
         _Bookmark_.return_value = bookmark_
         bookmarks = Bookmarks(None)
 

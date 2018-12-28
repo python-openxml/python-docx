@@ -4,9 +4,9 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from collections import Sequence
 from itertools import chain
 
+from docx.compat import Sequence
 from docx.oxml.ns import qn
 from docx.shared import lazyproperty
 

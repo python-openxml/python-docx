@@ -6,12 +6,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import sys
 
-if sys.version_info >= (3, 3):
-    from unittest import mock  # noqa
+if sys.version_info > (3, 0):
     from unittest.mock import ANY, call, MagicMock  # noqa
     from unittest.mock import create_autospec, Mock, mock_open, patch, PropertyMock
 else:
-    import mock  # noqa
     from mock import ANY, call, MagicMock  # noqa
     from mock import create_autospec, Mock, patch, PropertyMock
 
