@@ -18,6 +18,11 @@ from helpers import test_docx
 
 # given ====================================================
 
+@given("a Section object as section")
+def given_a_Section_object_as_section(context):
+    context.section = Document(test_docx("sct-section-props")).sections[-1]
+
+
 @given('a section collection containing 3 sections')
 def given_a_section_collection_containing_3_sections(context):
     document = Document(test_docx('doc-access-sections'))
@@ -135,6 +140,20 @@ def then_len_sections_is_3(context):
     assert len(sections) == 3, (
         'expected len(sections) of 3, got %s' % len(sections)
     )
+
+
+@then("section.footer is a _Footer object")
+def then_section_footer_is_a_Footer_object(context):
+    actual = type(context.section.footer).__name__
+    expected = "_Footer"
+    assert actual == expected, "section.footer is a %s object" % actual
+
+
+@then("section.header is a _Header object")
+def then_section_header_is_a_Header_object(context):
+    actual = type(context.section.header).__name__
+    expected = "_Header"
+    assert actual == expected, "section.header is a %s object" % actual
 
 
 @then('the reported {margin_side} margin is {inches} inches')

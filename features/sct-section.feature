@@ -4,6 +4,18 @@ Feature: Access and change section properties
   I need a way to get and set the properties of a section
 
 
+  @wip
+  Scenario: Section.footer
+    Given a Section object as section
+     Then section.footer is a _Footer object
+
+
+  @wip
+  Scenario: Section.header
+    Given a Section object as section
+     Then section.header is a _Header object
+
+
   Scenario Outline: Get section start type
     Given a section having start type <start-type>
      Then the reported section start type is <start-type>
