@@ -85,16 +85,24 @@ register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
 
 from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType  # noqa
-register_element_cls('w:pgMar',  CT_PageMar)
-register_element_cls('w:pgSz',   CT_PageSz)
+register_element_cls('w:pgMar', CT_PageMar)
+register_element_cls('w:pgSz', CT_PageSz)
 register_element_cls('w:sectPr', CT_SectPr)
-register_element_cls('w:type',   CT_SectType)
+register_element_cls('w:type', CT_SectType)
 
 from .shape import (  # noqa
-    CT_Blip, CT_BlipFillProperties, CT_GraphicalObject,
-    CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
-    CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
-    CT_Transform2D
+    CT_Blip,
+    CT_BlipFillProperties,
+    CT_GraphicalObject,
+    CT_GraphicalObjectData,
+    CT_Inline,
+    CT_NonVisualDrawingProps,
+    CT_Picture,
+    CT_PictureNonVisual,
+    CT_Point2D,
+    CT_PositiveSize2D,
+    CT_ShapeProperties,
+    CT_Transform2D,
 )
 register_element_cls('a:blip',        CT_Blip)
 register_element_cls('a:ext',         CT_PositiveSize2D)
@@ -126,8 +134,19 @@ register_element_cls('w:uiPriority',     CT_DecimalNumber)
 register_element_cls('w:unhideWhenUsed', CT_OnOff)
 
 from .table import (  # noqa
-    CT_Height, CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType,
-    CT_TblPr, CT_TblWidth, CT_Tc, CT_TcPr, CT_TrPr, CT_VerticalJc, CT_VMerge
+    CT_Height,
+    CT_Row,
+    CT_Tbl,
+    CT_TblGrid,
+    CT_TblGridCol,
+    CT_TblLayoutType,
+    CT_TblPr,
+    CT_TblWidth,
+    CT_Tc,
+    CT_TcPr,
+    CT_TrPr,
+    CT_VMerge,
+    CT_VerticalJc,
 )
 register_element_cls('w:bidiVisual', CT_OnOff)
 register_element_cls('w:gridCol',    CT_TblGridCol)
@@ -147,8 +166,13 @@ register_element_cls('w:vAlign',     CT_VerticalJc)
 register_element_cls('w:vMerge',     CT_VMerge)
 
 from .text.font import (  # noqa
-    CT_Color, CT_Fonts, CT_Highlight, CT_HpsMeasure, CT_RPr, CT_Underline,
-    CT_VerticalAlignRun
+    CT_Color,
+    CT_Fonts,
+    CT_Highlight,
+    CT_HpsMeasure,
+    CT_RPr,
+    CT_Underline,
+    CT_VerticalAlignRun,
 )
 register_element_cls('w:b',          CT_OnOff)
 register_element_cls('w:bCs',        CT_OnOff)
@@ -183,7 +207,12 @@ from .text.paragraph import CT_P  # noqa
 register_element_cls('w:p', CT_P)
 
 from .text.parfmt import (  # noqa
-    CT_Ind, CT_Jc, CT_PPr, CT_Spacing, CT_TabStop, CT_TabStops
+    CT_Ind,
+    CT_Jc,
+    CT_PPr,
+    CT_Spacing,
+    CT_TabStop,
+    CT_TabStops,
 )
 register_element_cls('w:ind',             CT_Ind)
 register_element_cls('w:jc',              CT_Jc)

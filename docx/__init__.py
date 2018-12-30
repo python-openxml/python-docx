@@ -32,6 +32,12 @@ PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
 
 del (
-    CT, CorePropertiesPart, DocumentPart, NumberingPart, PartFactory,
-    StylesPart, part_class_selector
+    CT,
+    CorePropertiesPart,
+    DocumentPart,
+    NumberingPart,
+    PartFactory,
+    SettingsPart,
+    StylesPart,
+    part_class_selector,
 )
