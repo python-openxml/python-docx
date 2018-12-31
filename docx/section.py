@@ -96,6 +96,15 @@ class Section(object):
     def gutter(self, value):
         self._sectPr.gutter = value
 
+    @lazyproperty
+    def header(self):
+        """|_Header| object representing default page header for this section.
+
+        The default header is used for odd-numbered pages when separate odd/even headers
+        are enabled. It is used for both odd and even-numbered pages otherwise.
+        """
+        return _Header(self._sectPr, self._document_part)
+
     @property
     def header_distance(self):
         """
@@ -203,6 +212,14 @@ class Section(object):
 
 class _Footer(BlockItemContainer):
     """Page footer."""
+
+    def __init__(self, sectPr, document_part):
+        self._sectPr = sectPr
+        self._document_part = document_part
+
+
+class _Header(BlockItemContainer):
+    """Page header."""
 
     def __init__(self, sectPr, document_part):
         self._sectPr = sectPr

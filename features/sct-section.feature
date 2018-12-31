@@ -9,7 +9,6 @@ Feature: Access and change section properties
      Then section.footer is a _Footer object
 
 
-  @wip
   Scenario: Section.header
     Given a Section object as section
      Then section.header is a _Header object
