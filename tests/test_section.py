@@ -12,7 +12,7 @@ from docx.section import _Footer, _Header, Section, Sections
 from docx.shared import Inches
 
 from .unitutil.cxml import element, xml
-from .unitutil.mock import call, class_mock, instance_mock, property_mock
+from .unitutil.mock import call, class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeSections(object):
@@ -360,15 +360,31 @@ class DescribeSection(object):
 class Describe_Header(object):
 
     def it_knows_when_its_linked_to_the_previous_header(
-        self, is_linked_fixture, _has_header_part_prop_
+        self, is_linked_get_fixture, _has_header_part_prop_
     ):
-        has_header_part, expected_value = is_linked_fixture
+        has_header_part, expected_value = is_linked_get_fixture
         _has_header_part_prop_.return_value = has_header_part
         header = _Header(None, None)
 
         is_linked = header.is_linked_to_previous
 
         assert is_linked is expected_value
+
+    def it_can_change_whether_it_is_linked_to_previous_header(
+        self,
+        is_linked_set_fixture,
+        _has_header_part_prop_,
+        _drop_header_part_,
+        _add_header_part_,
+    ):
+        has_header_part, new_value, drop_calls, add_calls = is_linked_set_fixture
+        _has_header_part_prop_.return_value = has_header_part
+        header = _Header(None, None)
+
+        header.is_linked_to_previous = new_value
+
+        assert _drop_header_part_.call_args_list == [call(header)] * drop_calls
+        assert _add_header_part_.call_args_list == [call(header)] * add_calls
 
     def it_knows_when_it_has_a_header_part_to_help(self, has_header_part_fixture):
         sectPr, expected_value = has_header_part_fixture
@@ -391,11 +407,31 @@ class Describe_Header(object):
         return sectPr, expected_value
 
     @pytest.fixture(params=[(False, True), (True, False)])
-    def is_linked_fixture(self, request):
+    def is_linked_get_fixture(self, request):
         has_header_part, expected_value = request.param
         return has_header_part, expected_value
 
+    @pytest.fixture(
+        params=[
+            (False, True, 0, 0),
+            (True, False, 0, 0),
+            (True, True, 1, 0),
+            (False, False, 0, 1),
+        ]
+    )
+    def is_linked_set_fixture(self, request):
+        has_header_part, new_value, drop_calls, add_calls = request.param
+        return has_header_part, new_value, drop_calls, add_calls
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _add_header_part_(self, request):
+        return method_mock(request, _Header, "_add_header_part", autospec=True)
+
+    @pytest.fixture
+    def _drop_header_part_(self, request):
+        return method_mock(request, _Header, "_drop_header_part", autospec=True)
 
     @pytest.fixture
     def _has_header_part_prop_(self, request):

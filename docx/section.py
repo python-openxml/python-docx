@@ -240,6 +240,25 @@ class _Header(BlockItemContainer):
         # ---absence of a header (definition) part indicates "linked" behavior---
         return not self._has_header_part
 
+    @is_linked_to_previous.setter
+    def is_linked_to_previous(self, value):
+        new_state = bool(value)
+        # ---do nothing when value is not being changed---
+        if new_state == self.is_linked_to_previous:
+            return
+        if new_state is True:
+            self._drop_header_part()
+        else:
+            self._add_header_part()
+
+    def _add_header_part(self):
+        """Return newly-added header part."""
+        raise NotImplementedError
+
+    def _drop_header_part(self):
+        """Remove header definition associated with this section."""
+        raise NotImplementedError
+
     @property
     def _has_header_part(self):
         """True if a header is explicitly defined for this section."""
