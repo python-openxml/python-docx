@@ -224,3 +224,22 @@ class _Header(BlockItemContainer):
     def __init__(self, sectPr, document_part):
         self._sectPr = sectPr
         self._document_part = document_part
+
+    @property
+    def is_linked_to_previous(self):
+        """True if this header uses the header definition of the preceding section.
+
+        False if this header has an explicit definition.
+
+        Assigning ``True`` to this property removes any header definition for this
+        section, causing it to "inherit" the header definition of the prior section.
+        Assigning ``False`` causes a new, empty header definition to be added for this
+        section, but only if no existing definition is present.
+        """
+        # ---absence of a header (definition) part indicates "linked" behavior---
+        return not self._has_header_part
+
+    @property
+    def _has_header_part(self):
+        """True if a header is explicitly defined for this section."""
+        raise NotImplementedError

@@ -12,7 +12,7 @@ from docx.section import _Footer, _Header, Section, Sections
 from docx.shared import Inches
 
 from .unitutil.cxml import element, xml
-from .unitutil.mock import call, class_mock, instance_mock
+from .unitutil.mock import call, class_mock, instance_mock, property_mock
 
 
 class DescribeSections(object):
@@ -355,3 +355,30 @@ class DescribeSection(object):
     @pytest.fixture
     def header_(self, request):
         return instance_mock(request, _Header)
+
+
+class Describe_Header(object):
+
+    def it_knows_when_its_linked_to_the_previous_header(
+        self, is_linked_fixture, _has_header_part_prop_
+    ):
+        has_header_part, expected_value = is_linked_fixture
+        _has_header_part_prop_.return_value = has_header_part
+        header = _Header(None, None)
+
+        is_linked = header.is_linked_to_previous
+
+        assert is_linked is expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[(False, True), (True, False)])
+    def is_linked_fixture(self, request):
+        has_header_part, expected_value = request.param
+        return has_header_part, expected_value
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _has_header_part_prop_(self, request):
+        return property_mock(request, _Header, "_has_header_part")
