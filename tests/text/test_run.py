@@ -69,9 +69,12 @@ class DescribeRun(object):
         Font_.assert_called_once_with(run._element)
         assert font is font_
 
-    def it_can_add_text(self, add_text_fixture):
-        run, text_str, expected_xml, Text_ = add_text_fixture
+    def it_can_add_text(self, add_text_fixture, Text_):
+        r, text_str, expected_xml = add_text_fixture
+        run = Run(r, None)
+
         _text = run.add_text(text_str)
+
         assert run._r.xml == expected_xml
         assert _text is Text_.return_value
 
@@ -159,11 +162,11 @@ class DescribeRun(object):
         ('w:r',          'fo ', 'w:r/w:t{xml:space=preserve}"fo "'),
         ('w:r',          'f o', 'w:r/w:t"f o"'),
     ])
-    def add_text_fixture(self, request, Text_):
+    def add_text_fixture(self, request):
         r_cxml, text, expected_cxml = request.param
-        run = Run(element(r_cxml), None)
+        r = element(r_cxml)
         expected_xml = xml(expected_cxml)
-        return run, text, expected_xml, Text_
+        return r, text, expected_xml
 
     @pytest.fixture(params=[
         ('w:r/w:rPr',                  'bold',   None),

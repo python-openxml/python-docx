@@ -84,7 +84,8 @@ register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
 
-from .section import CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType  # noqa
+from .section import CT_HdrFtrRef, CT_PageMar, CT_PageSz, CT_SectPr, CT_SectType  # noqa
+register_element_cls('w:headerReference', CT_HdrFtrRef)
 register_element_cls('w:pgMar', CT_PageMar)
 register_element_cls('w:pgSz', CT_PageSz)
 register_element_cls('w:sectPr', CT_SectPr)

@@ -257,7 +257,8 @@ class _Header(BlockItemContainer):
 
     def _drop_header_part(self):
         """Remove header definition associated with this section."""
-        raise NotImplementedError
+        rId = self._sectPr.remove_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        self._document_part.drop_header_part(rId)
 
     @property
     def _has_header_part(self):

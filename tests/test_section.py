@@ -386,6 +386,15 @@ class Describe_Header(object):
         assert _drop_header_part_.call_args_list == [call(header)] * drop_calls
         assert _add_header_part_.call_args_list == [call(header)] * add_calls
 
+    def it_can_drop_the_related_header_part_to_help(self, document_part_):
+        sectPr = element("w:sectPr{r:a=b}/w:headerReference{w:type=default,r:id=rId42}")
+        header = _Header(sectPr, document_part_)
+
+        header._drop_header_part()
+
+        assert sectPr.xml == xml("w:sectPr{r:a=b}")
+        document_part_.drop_header_part.assert_called_once_with("rId42")
+
     def it_knows_when_it_has_a_header_part_to_help(self, has_header_part_fixture):
         sectPr, expected_value = has_header_part_fixture
         header = _Header(sectPr, None)
@@ -428,6 +437,10 @@ class Describe_Header(object):
     @pytest.fixture
     def _add_header_part_(self, request):
         return method_mock(request, _Header, "_add_header_part", autospec=True)
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
 
     @pytest.fixture
     def _drop_header_part_(self, request):

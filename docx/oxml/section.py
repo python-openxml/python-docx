@@ -7,12 +7,20 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from copy import deepcopy
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
-from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
+from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
 from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OptionalAttribute,
+    RequiredAttribute,
     ZeroOrOne,
 )
+
+
+class CT_HdrFtrRef(BaseOxmlElement):
+    """`w:headerReference` and `w:footerReference` elements"""
+
+    type_ = RequiredAttribute('w:type', WD_HEADER_FOOTER)
+    rId = RequiredAttribute('r:id', XsdString)
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -156,6 +164,13 @@ class CT_SectPr(BaseOxmlElement):
     def left_margin(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.left = value
+
+    def remove_headerReference(self, type_):
+        """Return rId of w:headerReference child of *type_* after removing it."""
+        headerReference = self.get_headerReference(type_)
+        rId = headerReference.rId
+        self.remove(headerReference)
+        return rId
 
     @property
     def right_margin(self):
