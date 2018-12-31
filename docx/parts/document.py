@@ -41,7 +41,7 @@ class DocumentPart(XmlPart):
 
     def drop_header_part(self, rId):
         """Remove related header part identified by *rId*."""
-        raise NotImplementedError
+        self.drop_rel(rId)
 
     def get_or_add_image(self, image_descriptor):
         """

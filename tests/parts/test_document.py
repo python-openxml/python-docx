@@ -30,6 +30,13 @@ from ..unitutil.mock import (
 
 class DescribeDocumentPart(object):
 
+    def it_can_drop_a_specified_header_part(self, drop_rel_):
+        document_part = DocumentPart(None, None, None, None)
+
+        document_part.drop_header_part("rId42")
+
+        drop_rel_.assert_called_once_with(document_part, "rId42")
+
     def it_can_save_the_package_to_a_file(self, save_fixture):
         document, file_ = save_fixture
         document.save(file_)
@@ -261,6 +268,10 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def core_properties_(self, request):
         return instance_mock(request, CoreProperties)
+
+    @pytest.fixture
+    def drop_rel_(self, request):
+        return method_mock(request, DocumentPart, "drop_rel", autospec=True)
 
     @pytest.fixture
     def get_or_add_image_(self, request):
