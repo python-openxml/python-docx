@@ -67,15 +67,18 @@ class DescribeDocument(object):
         run_.add_picture.assert_called_once_with(path, width, height)
         assert picture is picture_
 
-    def it_can_add_a_section(self, add_section_fixture):
-        document, start_type, Section_ = add_section_fixture[:3]
-        section_, expected_xml = add_section_fixture[3:]
+    def it_can_add_a_section(
+        self, add_section_fixture, Section_, section_, document_part_
+    ):
+        document_elm, start_type, expected_xml = add_section_fixture
+        Section_.return_value = section_
+        document = Document(document_elm, document_part_)
 
         section = document.add_section(start_type)
 
         assert document.element.xml == expected_xml
         sectPr = document.element.xpath('w:body/w:sectPr')[0]
-        Section_.assert_called_once_with(sectPr)
+        Section_.assert_called_once_with(sectPr, document_part_)
         assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
@@ -182,16 +185,14 @@ class DescribeDocument(object):
         ('w:sectPr/w:type{w:val=oddPage}',  WD_SECTION.NEW_PAGE,
          'w:sectPr'),
     ])
-    def add_section_fixture(self, request, Section_):
+    def add_section_fixture(self, request):
         sentinel, start_type, new_sentinel = request.param
-        document_cxml = 'w:document/w:body/(w:p,%s)' % sentinel
-        document = Document(element(document_cxml), None)
+        document_elm = element('w:document/w:body/(w:p,%s)' % sentinel)
         expected_xml = xml(
             'w:document/w:body/(w:p,w:p/w:pPr/%s,%s)' %
             (sentinel, new_sentinel)
         )
-        section_ = Section_.return_value
-        return document, start_type, Section_, section_, expected_xml
+        return document_elm, start_type, expected_xml
 
     @pytest.fixture
     def add_table_fixture(self, _block_width_prop_, body_prop_, table_):

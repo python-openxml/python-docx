@@ -20,12 +20,15 @@ class Sections(Sequence):
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return [Section(sectPr) for sectPr in self._document_elm.sectPr_lst[key]]
-        return Section(self._document_elm.sectPr_lst[key])
+            return [
+                Section(sectPr, self._document_part)
+                for sectPr in self._document_elm.sectPr_lst[key]
+            ]
+        return Section(self._document_elm.sectPr_lst[key], self._document_part)
 
     def __iter__(self):
         for sectPr in self._document_elm.sectPr_lst:
-            yield Section(sectPr)
+            yield Section(sectPr, self._document_part)
 
     def __len__(self):
         return len(self._document_elm.sectPr_lst)
@@ -37,9 +40,10 @@ class Section(object):
     Also provides access to headers and footers.
     """
 
-    def __init__(self, sectPr):
+    def __init__(self, sectPr, document_part):
         super(Section, self).__init__()
         self._sectPr = sectPr
+        self._document_part = document_part
 
     @property
     def bottom_margin(self):

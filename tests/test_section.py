@@ -23,43 +23,55 @@ class DescribeSections(object):
         )
         assert len(sections) == 2
 
-    def it_can_iterate_over_its_Section_instances(self, Section_, section_):
+    def it_can_iterate_over_its_Section_instances(
+        self, Section_, section_, document_part_
+    ):
         document_elm = element("w:document/w:body/(w:p/w:pPr/w:sectPr, w:sectPr)")
         sectPrs = document_elm.xpath("//w:sectPr")
         Section_.return_value = section_
-        sections = Sections(document_elm, None)
+        sections = Sections(document_elm, document_part_)
 
         section_lst = [s for s in sections]
 
-        assert Section_.call_args_list == [call(sectPrs[0]), call(sectPrs[1])]
+        assert Section_.call_args_list == [
+            call(sectPrs[0], document_part_), call(sectPrs[1], document_part_)
+        ]
         assert section_lst == [section_, section_]
 
-    def it_can_access_its_Section_instances_by_index(self, Section_, section_):
+    def it_can_access_its_Section_instances_by_index(
+        self, Section_, section_, document_part_
+    ):
         document_elm = element(
             "w:document/w:body/(w:p/w:pPr/w:sectPr,w:p/w:pPr/w:sectPr,w:sectPr)"
         )
         sectPrs = document_elm.xpath("//w:sectPr")
         Section_.return_value = section_
-        sections = Sections(document_elm, None)
+        sections = Sections(document_elm, document_part_)
 
         section_lst = [sections[idx] for idx in range(3)]
 
         assert Section_.call_args_list == [
-            call(sectPrs[0]), call(sectPrs[1]), call(sectPrs[2])
+            call(sectPrs[0], document_part_),
+            call(sectPrs[1], document_part_),
+            call(sectPrs[2], document_part_),
         ]
         assert section_lst == [section_, section_, section_]
 
-    def it_can_access_its_Section_instances_by_slice(self, Section_, section_):
+    def it_can_access_its_Section_instances_by_slice(
+        self, Section_, section_, document_part_
+    ):
         document_elm = element(
             "w:document/w:body/(w:p/w:pPr/w:sectPr,w:p/w:pPr/w:sectPr,w:sectPr)"
         )
         sectPrs = document_elm.xpath("//w:sectPr")
         Section_.return_value = section_
-        sections = Sections(document_elm, None)
+        sections = Sections(document_elm, document_part_)
 
         section_lst = sections[1:9]
 
-        assert Section_.call_args_list == [call(sectPrs[1]), call(sectPrs[2])]
+        assert Section_.call_args_list == [
+            call(sectPrs[1], document_part_), call(sectPrs[2], document_part_)
+        ]
         assert section_lst == [section_, section_]
 
     # fixture components ---------------------------------------------
@@ -80,51 +92,83 @@ class DescribeSections(object):
 class DescribeSection(object):
 
     def it_knows_its_start_type(self, start_type_get_fixture):
-        section, expected_start_type = start_type_get_fixture
-        assert section.start_type is expected_start_type
+        sectPr, expected_start_type = start_type_get_fixture
+        section = Section(sectPr, None)
+
+        start_type = section.start_type
+
+        assert start_type is expected_start_type
 
     def it_can_change_its_start_type(self, start_type_set_fixture):
-        section, new_start_type, expected_xml = start_type_set_fixture
+        sectPr, new_start_type, expected_xml = start_type_set_fixture
+        section = Section(sectPr, None)
+
         section.start_type = new_start_type
+
         assert section._sectPr.xml == expected_xml
 
     def it_knows_its_page_width(self, page_width_get_fixture):
-        section, expected_page_width = page_width_get_fixture
-        assert section.page_width == expected_page_width
+        sectPr, expected_page_width = page_width_get_fixture
+        section = Section(sectPr, None)
+
+        page_width = section.page_width
+
+        assert page_width == expected_page_width
 
     def it_can_change_its_page_width(self, page_width_set_fixture):
-        section, new_page_width, expected_xml = page_width_set_fixture
+        sectPr, new_page_width, expected_xml = page_width_set_fixture
+        section = Section(sectPr, None)
+
         section.page_width = new_page_width
+
         assert section._sectPr.xml == expected_xml
 
     def it_knows_its_page_height(self, page_height_get_fixture):
-        section, expected_page_height = page_height_get_fixture
-        assert section.page_height == expected_page_height
+        sectPr, expected_page_height = page_height_get_fixture
+        section = Section(sectPr, None)
+
+        page_height = section.page_height
+
+        assert page_height == expected_page_height
 
     def it_can_change_its_page_height(self, page_height_set_fixture):
-        section, new_page_height, expected_xml = page_height_set_fixture
+        sectPr, new_page_height, expected_xml = page_height_set_fixture
+        section = Section(sectPr, None)
+
         section.page_height = new_page_height
+
         assert section._sectPr.xml == expected_xml
 
     def it_knows_its_page_orientation(self, orientation_get_fixture):
-        section, expected_orientation = orientation_get_fixture
-        assert section.orientation is expected_orientation
+        sectPr, expected_orientation = orientation_get_fixture
+        section = Section(sectPr, None)
+
+        orientation = section.orientation
+
+        assert orientation is expected_orientation
 
     def it_can_change_its_orientation(self, orientation_set_fixture):
-        section, new_orientation, expected_xml = orientation_set_fixture
+        sectPr, new_orientation, expected_xml = orientation_set_fixture
+        section = Section(sectPr, None)
+
         section.orientation = new_orientation
+
         assert section._sectPr.xml == expected_xml
 
     def it_knows_its_page_margins(self, margins_get_fixture):
-        section, margin_prop_name, expected_value = margins_get_fixture
+        sectPr, margin_prop_name, expected_value = margins_get_fixture
+        section = Section(sectPr, None)
+
         value = getattr(section, margin_prop_name)
+
         assert value == expected_value
 
     def it_can_change_its_page_margins(self, margins_set_fixture):
-        section, margin_prop_name, new_value, expected_xml = (
-            margins_set_fixture
-        )
+        sectPr, margin_prop_name, new_value, expected_xml = margins_set_fixture
+        section = Section(sectPr, None)
+
         setattr(section, margin_prop_name, new_value)
+
         assert section._sectPr.xml == expected_xml
 
     # fixtures -------------------------------------------------------
@@ -142,8 +186,8 @@ class DescribeSection(object):
     ])
     def margins_get_fixture(self, request):
         sectPr_cxml, margin_prop_name, expected_value = request.param
-        section = Section(element(sectPr_cxml))
-        return section, margin_prop_name, expected_value
+        sectPr = element(sectPr_cxml)
+        return sectPr, margin_prop_name, expected_value
 
     @pytest.fixture(params=[
         ('w:sectPr', 'left_margin',     Inches(1),
@@ -166,9 +210,9 @@ class DescribeSection(object):
     ])
     def margins_set_fixture(self, request):
         sectPr_cxml, property_name, new_value, expected_cxml = request.param
-        section = Section(element(sectPr_cxml))
+        sectPr = element(sectPr_cxml)
         expected_xml = xml(expected_cxml)
-        return section, property_name, new_value, expected_xml
+        return sectPr, property_name, new_value, expected_xml
 
     @pytest.fixture(params=[
         ('w:sectPr/w:pgSz{w:orient=landscape}', WD_ORIENT.LANDSCAPE),
@@ -178,8 +222,8 @@ class DescribeSection(object):
     ])
     def orientation_get_fixture(self, request):
         sectPr_cxml, expected_orientation = request.param
-        section = Section(element(sectPr_cxml))
-        return section, expected_orientation
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_orientation
 
     @pytest.fixture(params=[
         (WD_ORIENT.LANDSCAPE, 'w:sectPr/w:pgSz{w:orient=landscape}'),
@@ -188,9 +232,9 @@ class DescribeSection(object):
     ])
     def orientation_set_fixture(self, request):
         new_orientation, expected_cxml = request.param
-        section = Section(element('w:sectPr'))
+        sectPr = element('w:sectPr')
         expected_xml = xml(expected_cxml)
-        return section, new_orientation, expected_xml
+        return sectPr, new_orientation, expected_xml
 
     @pytest.fixture(params=[
         ('w:sectPr/w:pgSz{w:h=2880}', Inches(2)),
@@ -199,8 +243,8 @@ class DescribeSection(object):
     ])
     def page_height_get_fixture(self, request):
         sectPr_cxml, expected_page_height = request.param
-        section = Section(element(sectPr_cxml))
-        return section, expected_page_height
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_page_height
 
     @pytest.fixture(params=[
         (None,      'w:sectPr/w:pgSz'),
@@ -208,9 +252,9 @@ class DescribeSection(object):
     ])
     def page_height_set_fixture(self, request):
         new_page_height, expected_cxml = request.param
-        section = Section(element('w:sectPr'))
+        sectPr = element('w:sectPr')
         expected_xml = xml(expected_cxml)
-        return section, new_page_height, expected_xml
+        return sectPr, new_page_height, expected_xml
 
     @pytest.fixture(params=[
         ('w:sectPr/w:pgSz{w:w=1440}', Inches(1)),
@@ -219,8 +263,8 @@ class DescribeSection(object):
     ])
     def page_width_get_fixture(self, request):
         sectPr_cxml, expected_page_width = request.param
-        section = Section(element(sectPr_cxml))
-        return section, expected_page_width
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_page_width
 
     @pytest.fixture(params=[
         (None,      'w:sectPr/w:pgSz'),
@@ -228,9 +272,9 @@ class DescribeSection(object):
     ])
     def page_width_set_fixture(self, request):
         new_page_width, expected_cxml = request.param
-        section = Section(element('w:sectPr'))
+        sectPr = element('w:sectPr')
         expected_xml = xml(expected_cxml)
-        return section, new_page_width, expected_xml
+        return sectPr, new_page_width, expected_xml
 
     @pytest.fixture(params=[
         ('w:sectPr',                          WD_SECTION.NEW_PAGE),
@@ -243,8 +287,8 @@ class DescribeSection(object):
     ])
     def start_type_get_fixture(self, request):
         sectPr_cxml, expected_start_type = request.param
-        section = Section(element(sectPr_cxml))
-        return section, expected_start_type
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_start_type
 
     @pytest.fixture(params=[
         ('w:sectPr/w:type{w:val=oddPage}',    WD_SECTION.EVEN_PAGE,
@@ -262,6 +306,6 @@ class DescribeSection(object):
     ])
     def start_type_set_fixture(self, request):
         initial_cxml, new_start_type, expected_cxml = request.param
-        section = Section(element(initial_cxml))
+        sectPr = element(initial_cxml)
         expected_xml = xml(expected_cxml)
-        return section, new_start_type, expected_xml
+        return sectPr, new_start_type, expected_xml
