@@ -6,6 +6,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from collections import Sequence
 
+from docx.blkcntnr import BlockItemContainer
+from docx.shared import lazyproperty
+
 
 class Sections(Sequence):
     """Sequence of |Section| objects corresponding to the sections in the document.
@@ -56,6 +59,15 @@ class Section(object):
     @bottom_margin.setter
     def bottom_margin(self, value):
         self._sectPr.bottom_margin = value
+
+    @lazyproperty
+    def footer(self):
+        """|_Footer| object representing default page footer for this section.
+
+        The default footer is used for odd-numbered pages when separate odd/even footers
+        are enabled. It is used for both odd and even-numbered pages otherwise.
+        """
+        return _Footer(self._sectPr, self._document_part)
 
     @property
     def footer_distance(self):
@@ -187,3 +199,11 @@ class Section(object):
     @top_margin.setter
     def top_margin(self, value):
         self._sectPr.top_margin = value
+
+
+class _Footer(BlockItemContainer):
+    """Page footer."""
+
+    def __init__(self, sectPr, document_part):
+        self._sectPr = sectPr
+        self._document_part = document_part

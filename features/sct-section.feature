@@ -4,7 +4,6 @@ Feature: Access and change section properties
   I need a way to get and set the properties of a section
 
 
-  @wip
   Scenario: Section.footer
     Given a Section object as section
      Then section.footer is a _Footer object

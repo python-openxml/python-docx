@@ -8,7 +8,7 @@ import pytest
 
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import DocumentPart
-from docx.section import Section, Sections
+from docx.section import _Footer, Section, Sections
 from docx.shared import Inches
 
 from .unitutil.cxml import element, xml
@@ -90,6 +90,18 @@ class DescribeSections(object):
 
 
 class DescribeSection(object):
+
+    def it_provides_access_to_its_default_footer(
+        self, document_part_, _Footer_, footer_
+    ):
+        sectPr = element('w:sectPr')
+        _Footer_.return_value = footer_
+        section = Section(sectPr, document_part_)
+
+        footer = section.footer
+
+        _Footer_.assert_called_once_with(sectPr, document_part_)
+        assert footer is footer_
 
     def it_knows_its_start_type(self, start_type_get_fixture):
         sectPr, expected_start_type = start_type_get_fixture
@@ -309,3 +321,17 @@ class DescribeSection(object):
         sectPr = element(initial_cxml)
         expected_xml = xml(expected_cxml)
         return sectPr, new_start_type, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def _Footer_(self, request):
+        return class_mock(request, "docx.section._Footer")
+
+    @pytest.fixture
+    def footer_(self, request):
+        return instance_mock(request, _Footer)
