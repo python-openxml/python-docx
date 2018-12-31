@@ -137,7 +137,7 @@ class Document(ElementProxy):
     @property
     def sections(self):
         """|Sections| object providing access to each section in this document."""
-        return Sections(self._element)
+        return Sections(self._element, self._part)
 
     @property
     def settings(self):

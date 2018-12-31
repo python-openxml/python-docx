@@ -7,54 +7,74 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import pytest
 
 from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.parts.document import DocumentPart
 from docx.section import Section, Sections
 from docx.shared import Inches
 
 from .unitutil.cxml import element, xml
+from .unitutil.mock import call, class_mock, instance_mock
 
 
 class DescribeSections(object):
 
-    def it_knows_how_many_sections_it_contains(self, len_fixture):
-        sections, expected_len = len_fixture
-        assert len(sections) == expected_len
+    def it_knows_how_many_sections_it_contains(self):
+        sections = Sections(
+            element("w:document/w:body/(w:p/w:pPr/w:sectPr, w:sectPr)"), None
+        )
+        assert len(sections) == 2
 
-    def it_can_iterate_over_its_Section_instances(self, iter_fixture):
-        sections, expected_count = iter_fixture
-        section_count = 0
-        for section in sections:
-            section_count += 1
-            assert isinstance(section, Section)
-        assert section_count == expected_count
+    def it_can_iterate_over_its_Section_instances(self, Section_, section_):
+        document_elm = element("w:document/w:body/(w:p/w:pPr/w:sectPr, w:sectPr)")
+        sectPrs = document_elm.xpath("//w:sectPr")
+        Section_.return_value = section_
+        sections = Sections(document_elm, None)
 
-    def it_can_access_its_Section_instances_by_index(self, index_fixture):
-        sections, indicies = index_fixture
-        assert len(sections[0:2]) == 2
-        for index in indicies:
-            assert isinstance(sections[index], Section)
+        section_lst = [s for s in sections]
 
-    # fixtures -------------------------------------------------------
+        assert Section_.call_args_list == [call(sectPrs[0]), call(sectPrs[1])]
+        assert section_lst == [section_, section_]
 
-    @pytest.fixture
-    def index_fixture(self, document_elm):
-        sections = Sections(document_elm)
-        return sections, [0, 1]
+    def it_can_access_its_Section_instances_by_index(self, Section_, section_):
+        document_elm = element(
+            "w:document/w:body/(w:p/w:pPr/w:sectPr,w:p/w:pPr/w:sectPr,w:sectPr)"
+        )
+        sectPrs = document_elm.xpath("//w:sectPr")
+        Section_.return_value = section_
+        sections = Sections(document_elm, None)
 
-    @pytest.fixture
-    def iter_fixture(self, document_elm):
-        sections = Sections(document_elm)
-        return sections, 2
+        section_lst = [sections[idx] for idx in range(3)]
 
-    @pytest.fixture
-    def len_fixture(self, document_elm):
-        sections = Sections(document_elm)
-        return sections, 2
+        assert Section_.call_args_list == [
+            call(sectPrs[0]), call(sectPrs[1]), call(sectPrs[2])
+        ]
+        assert section_lst == [section_, section_, section_]
+
+    def it_can_access_its_Section_instances_by_slice(self, Section_, section_):
+        document_elm = element(
+            "w:document/w:body/(w:p/w:pPr/w:sectPr,w:p/w:pPr/w:sectPr,w:sectPr)"
+        )
+        sectPrs = document_elm.xpath("//w:sectPr")
+        Section_.return_value = section_
+        sections = Sections(document_elm, None)
+
+        section_lst = sections[1:9]
+
+        assert Section_.call_args_list == [call(sectPrs[1]), call(sectPrs[2])]
+        assert section_lst == [section_, section_]
 
     # fixture components ---------------------------------------------
 
     @pytest.fixture
-    def document_elm(self):
-        return element('w:document/w:body/(w:p/w:pPr/w:sectPr, w:sectPr)')
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def Section_(self, request):
+        return class_mock(request, "docx.section.Section")
+
+    @pytest.fixture
+    def section_(self, request):
+        return instance_mock(request, Section)
 
 
 class DescribeSection(object):

@@ -13,16 +13,15 @@ class Sections(Sequence):
     Supports ``len()``, iteration, and indexed access.
     """
 
-    def __init__(self, document_elm):
+    def __init__(self, document_elm, document_part):
         super(Sections, self).__init__()
         self._document_elm = document_elm
+        self._document_part = document_part
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            sectPr_lst = self._document_elm.sectPr_lst[key]
-            return [Section(sectPr) for sectPr in sectPr_lst]
-        sectPr = self._document_elm.sectPr_lst[key]
-        return Section(sectPr)
+            return [Section(sectPr) for sectPr in self._document_elm.sectPr_lst[key]]
+        return Section(self._document_elm.sectPr_lst[key])
 
     def __iter__(self):
         for sectPr in self._document_elm.sectPr_lst:
@@ -33,7 +32,10 @@ class Sections(Sequence):
 
 
 class Section(object):
-    """Document section, providing access to section and page-setup settings."""
+    """Document section, providing access to section and page setup settings.
+
+    Also provides access to headers and footers.
+    """
 
     def __init__(self, sectPr):
         super(Section, self).__init__()

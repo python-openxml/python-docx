@@ -21,9 +21,7 @@ from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 from .unitutil.cxml import element, xml
-from .unitutil.mock import (
-    class_mock, instance_mock, method_mock, property_mock
-)
+from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocument(object):
@@ -106,10 +104,14 @@ class DescribeDocument(object):
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
 
-    def it_provides_access_to_its_sections(self, sections_fixture):
-        document, Sections_, sections_ = sections_fixture
+    def it_provides_access_to_its_sections(self, document_part_, Sections_, sections_):
+        document_elm = element('w:document')
+        Sections_.return_value = sections_
+        document = Document(document_elm, document_part_)
+
         sections = document.sections
-        Sections_.assert_called_once_with(document._element)
+
+        Sections_.assert_called_once_with(document_elm, document_part_)
         assert sections is sections_
 
     def it_provides_access_to_its_settings(self, settings_fixture):
@@ -244,13 +246,6 @@ class DescribeDocument(object):
         document = Document(None, document_part_)
         file_ = 'foobar.docx'
         return document, file_
-
-    @pytest.fixture
-    def sections_fixture(self, Sections_, sections_):
-        document_elm = element('w:document')
-        document = Document(document_elm, None)
-        Sections_.return_value = sections_
-        return document, Sections_, sections_
 
     @pytest.fixture
     def settings_fixture(self, document_part_, settings_):
