@@ -370,7 +370,25 @@ class Describe_Header(object):
 
         assert is_linked is expected_value
 
+    def it_knows_when_it_has_a_header_part_to_help(self, has_header_part_fixture):
+        sectPr, expected_value = has_header_part_fixture
+        header = _Header(sectPr, None)
+
+        has_header_part = header._has_header_part
+
+        assert has_header_part is expected_value
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            ("w:sectPr", False), ("w:sectPr/w:headerReference{w:type=default}", True)
+        ]
+    )
+    def has_header_part_fixture(self, request):
+        sectPr_cxml, expected_value = request.param
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_value
 
     @pytest.fixture(params=[(False, True), (True, False)])
     def is_linked_fixture(self, request):

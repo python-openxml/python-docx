@@ -7,6 +7,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from collections import Sequence
 
 from docx.blkcntnr import BlockItemContainer
+from docx.enum.section import WD_HEADER_FOOTER
 from docx.shared import lazyproperty
 
 
@@ -242,4 +243,5 @@ class _Header(BlockItemContainer):
     @property
     def _has_header_part(self):
         """True if a header is explicitly defined for this section."""
-        raise NotImplementedError
+        headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        return False if headerReference is None else True

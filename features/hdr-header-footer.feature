@@ -4,7 +4,6 @@ Feature: Header and footer behaviors
   I need properties and methods on _Header and _Footer objects
 
 
-  @wip
   Scenario Outline: _Header.is_linked_to_previous getter
     Given a _Header object <with-or-no> header definition as header
      Then header.is_linked_to_previous is <value>

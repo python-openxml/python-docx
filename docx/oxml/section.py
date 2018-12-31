@@ -6,9 +6,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from copy import deepcopy
 
-from docx.enum.section import WD_ORIENTATION, WD_SECTION_START
+from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+from docx.oxml.xmlchemy import (
+    BaseOxmlElement,
+    OptionalAttribute,
+    ZeroOrOne,
+)
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -92,6 +96,15 @@ class CT_SectPr(BaseOxmlElement):
     def footer(self, value):
         pgMar = self.get_or_add_pgMar()
         pgMar.footer = value
+
+    def get_headerReference(self, type_):
+        """Return headerReference element of *type_* or None if not present."""
+        matching_headerReferences = self.xpath(
+            "./w:headerReference[@w:type='%s']" % WD_HEADER_FOOTER.to_xml(type_)
+        )
+        if len(matching_headerReferences) == 0:
+            return None
+        return matching_headerReferences[0]
 
     @property
     def gutter(self):
