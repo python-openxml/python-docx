@@ -33,6 +33,15 @@ class DescribeHeaderPart(object):
             header_part, "/word/header42.xml", CT.WML_HEADER, hdr, package_
         )
 
+    def it_loads_default_header_XML_from_a_template_to_help(self):
+        # ---tests integration with OS---
+        xml_bytes = HeaderPart._default_header_xml()
+
+        assert xml_bytes.startswith(
+            b"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n<w:hdr\n"
+        )
+        assert len(xml_bytes) == 1395
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture

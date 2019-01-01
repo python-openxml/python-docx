@@ -14,7 +14,6 @@ Feature: Header and footer behaviors
       | with no    | True  |
 
 
-  @wip
   Scenario Outline: _Header.is_linked_to_previous setter
     Given a _Header object <with-or-no> header definition as header
      When I assign <value> to header.is_linked_to_previous
