@@ -409,6 +409,19 @@ class Describe_Header(object):
         assert sectPr.xml == xml("w:sectPr{r:a=b}")
         document_part_.drop_header_part.assert_called_once_with("rId42")
 
+    def it_provides_access_to_the_hdr_element_to_help(
+        self, _get_or_add_header_part_, header_part_
+    ):
+        hdr = element("w:hdr")
+        _get_or_add_header_part_.return_value = header_part_
+        header_part_.element = hdr
+        header = _Header(None, None)
+
+        hdr_elm = header._element
+
+        _get_or_add_header_part_.assert_called_once_with(header)
+        assert hdr_elm is hdr
+
     def it_knows_when_it_has_a_header_part_to_help(self, has_header_part_fixture):
         sectPr, expected_value = has_header_part_fixture
         header = _Header(sectPr, None)
@@ -450,7 +463,7 @@ class Describe_Header(object):
 
     @pytest.fixture
     def _add_header_part_(self, request):
-        return method_mock(request, _Header, "_add_header_part", autospec=True)
+        return method_mock(request, _Header, "_add_header_part")
 
     @pytest.fixture
     def document_part_(self, request):
@@ -458,7 +471,11 @@ class Describe_Header(object):
 
     @pytest.fixture
     def _drop_header_part_(self, request):
-        return method_mock(request, _Header, "_drop_header_part", autospec=True)
+        return method_mock(request, _Header, "_drop_header_part")
+
+    @pytest.fixture
+    def _get_or_add_header_part_(self, request):
+        return method_mock(request, _Header, "_get_or_add_header_part")
 
     @pytest.fixture
     def _has_header_part_prop_(self, request):

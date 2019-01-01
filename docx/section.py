@@ -263,6 +263,22 @@ class _Header(BlockItemContainer):
         self._document_part.drop_header_part(rId)
 
     @property
+    def _element(self):
+        """`w:hdr` element, root of header part."""
+        return self._get_or_add_header_part().element
+
+    def _get_or_add_header_part(self):
+        """Return |HeaderPart| object for this header.
+
+        If this header inherits its content, the header part for the prior header is
+        returned; this process continue recursively until a header is found. If this
+        header cannot inherit (it belongs to the first section), a new header part is
+        created for the first section and returned.
+        """
+        # ---note this method is called recursively to access inherited headers---
+        raise NotImplementedError
+
+    @property
     def _has_header_part(self):
         """True if a header is explicitly defined for this section."""
         headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
