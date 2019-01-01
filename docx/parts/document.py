@@ -24,6 +24,10 @@ class DocumentPart(XmlPart):
     objects provides access to this part object for that purpose.
     """
 
+    def add_header_part(self):
+        """Return (header_part, rId) pair for newly-created header part."""
+        raise NotImplementedError
+
     @property
     def core_properties(self):
         """

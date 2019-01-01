@@ -12,6 +12,7 @@ from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OptionalAttribute,
     RequiredAttribute,
+    ZeroOrMore,
     ZeroOrOne,
 )
 
@@ -56,10 +57,21 @@ class CT_SectPr(BaseOxmlElement):
         'w:noEndnote', 'w:titlePg', 'w:textDirection', 'w:bidi', 'w:rtlGutter',
         'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
     )
+    headerReference = ZeroOrMore("w:headerReference", successors=_tag_seq)
     type = ZeroOrOne("w:type", successors=_tag_seq[3:])
     pgSz = ZeroOrOne("w:pgSz", successors=_tag_seq[4:])
     pgMar = ZeroOrOne("w:pgMar", successors=_tag_seq[5:])
     del _tag_seq
+
+    def add_headerReference(self, type_, rId):
+        """Return newly added CT_HdrFtrRef element of *type_* with *rId*.
+
+        The element tag is `w:headerReference`.
+        """
+        headerReference = self._add_headerReference()
+        headerReference.type_ = type_
+        headerReference.rId = rId
+        return headerReference
 
     @property
     def bottom_margin(self):

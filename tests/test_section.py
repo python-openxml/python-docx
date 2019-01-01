@@ -8,6 +8,7 @@ import pytest
 
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import HeaderPart
 from docx.section import _Footer, _Header, Section, Sections
 from docx.shared import Inches
 
@@ -386,6 +387,19 @@ class Describe_Header(object):
         assert _drop_header_part_.call_args_list == [call(header)] * drop_calls
         assert _add_header_part_.call_args_list == [call(header)] * add_calls
 
+    def it_can_add_a_header_part_to_help(self, document_part_, header_part_):
+        sectPr = element("w:sectPr{r:a=b}")
+        document_part_.add_header_part.return_value = header_part_, "rId3"
+        header = _Header(sectPr, document_part_)
+
+        header_part = header._add_header_part()
+
+        document_part_.add_header_part.assert_called_once_with()
+        assert sectPr.xml == xml(
+            "w:sectPr{r:a=b}/w:headerReference{w:type=default,r:id=rId3}"
+        )
+        assert header_part is header_part_
+
     def it_can_drop_the_related_header_part_to_help(self, document_part_):
         sectPr = element("w:sectPr{r:a=b}/w:headerReference{w:type=default,r:id=rId42}")
         header = _Header(sectPr, document_part_)
@@ -449,3 +463,7 @@ class Describe_Header(object):
     @pytest.fixture
     def _has_header_part_prop_(self, request):
         return property_mock(request, _Header, "_has_header_part")
+
+    @pytest.fixture
+    def header_part_(self, request):
+        return instance_mock(request, HeaderPart)

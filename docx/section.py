@@ -253,7 +253,9 @@ class _Header(BlockItemContainer):
 
     def _add_header_part(self):
         """Return newly-added header part."""
-        raise NotImplementedError
+        header_part, rId = self._document_part.add_header_part()
+        self._sectPr.add_headerReference(WD_HEADER_FOOTER.PRIMARY, rId)
+        return header_part
 
     def _drop_header_part(self):
         """Remove header definition associated with this section."""
