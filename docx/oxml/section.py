@@ -1,16 +1,14 @@
 # encoding: utf-8
 
-"""
-Section-related custom element classes.
-"""
+"""Section-related custom element classes"""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from copy import deepcopy
 
-from ..enum.section import WD_ORIENTATION, WD_SECTION_START
-from .simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from .xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
+from docx.enum.section import WD_ORIENTATION, WD_SECTION_START
+from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
+from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrOne
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -38,25 +36,18 @@ class CT_PageSz(BaseOxmlElement):
 
 
 class CT_SectPr(BaseOxmlElement):
-    """
-    ``<w:sectPr>`` element, the container element for section properties.
-    """
-    __child_sequence__ = (
-        'w:footnotePr', 'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar',
-        'w:paperSrc', 'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols',
-        'w:formProt', 'w:vAlign', 'w:noEndnote', 'w:titlePg',
-        'w:textDirection', 'w:bidi', 'w:rtlGutter', 'w:docGrid',
-        'w:printerSettings', 'w:sectPrChange',
+    """`w:sectPr` element, the container element for section properties"""
+
+    _tag_seq = (
+        'w:footnotePr', 'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar', 'w:paperSrc',
+        'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols', 'w:formProt', 'w:vAlign',
+        'w:noEndnote', 'w:titlePg', 'w:textDirection', 'w:bidi', 'w:rtlGutter',
+        'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
     )
-    type = ZeroOrOne('w:type', successors=(
-        __child_sequence__[__child_sequence__.index('w:type')+1:]
-    ))
-    pgSz = ZeroOrOne('w:pgSz', successors=(
-        __child_sequence__[__child_sequence__.index('w:pgSz')+1:]
-    ))
-    pgMar = ZeroOrOne('w:pgMar', successors=(
-        __child_sequence__[__child_sequence__.index('w:pgMar')+1:]
-    ))
+    type = ZeroOrOne("w:type", successors=_tag_seq[3:])
+    pgSz = ZeroOrOne("w:pgSz", successors=_tag_seq[4:])
+    pgMar = ZeroOrOne("w:pgMar", successors=_tag_seq[5:])
+    del _tag_seq
 
     @property
     def bottom_margin(self):

@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.section module
-"""
+"""Unit test suite for the docx.section module"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 

@@ -109,6 +109,8 @@ rst_epilog = """
 
 .. |_Header| replace:: :class:`._Header`
 
+.. |ImageParts| replace:: :class:`.ImageParts`
+
 .. |Inches| replace:: :class:`.Inches`
 
 .. |InlineShape| replace:: :class:`.InlineShape`

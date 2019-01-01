@@ -13,27 +13,22 @@ from docx.shared import lazyproperty
 
 
 class Package(OpcPackage):
-    """
-    Customizations specific to a WordprocessingML package.
-    """
+    """Customizations specific to a WordprocessingML package"""
+
     def after_unmarshal(self):
-        """
-        Called by loading code after all parts and relationships have been
-        loaded, to afford the opportunity for any required post-processing.
+        """Called by loading code after all parts and relationships have been loaded.
+
+        This method affords the opportunity for any required post-processing.
         """
         self._gather_image_parts()
 
     @lazyproperty
     def image_parts(self):
-        """
-        Collection of all image parts in this package.
-        """
+        """|ImageParts| collection object for this package."""
         return ImageParts()
 
     def _gather_image_parts(self):
-        """
-        Load the image part collection with all the image parts in package.
-        """
+        """Load the image part collection with all the image parts in package."""
         for rel in self.iter_rels():
             if rel.is_external:
                 continue
