@@ -11,11 +11,11 @@ from lxml import etree
 
 import re
 
-from . import OxmlElement
-from ..compat import Unicode
-from .exceptions import InvalidXmlError
-from .ns import NamespacePrefixedTag, nsmap, qn
-from ..shared import lazyproperty
+from docx.compat import Unicode
+from docx.oxml import OxmlElement
+from docx.oxml.exceptions import InvalidXmlError
+from docx.oxml.ns import NamespacePrefixedTag, nsmap, qn
+from docx.shared import lazyproperty
 
 
 def serialize_for_reading(element):
@@ -39,9 +39,7 @@ class XmlString(Unicode):
     #  front      attrs                                     | text
     #                                                     close
 
-    _xml_elm_line_patt = re.compile(
-        '( *</?[\w:]+)(.*?)(/?>)([^<]*</[\w:]+>)?$'
-    )
+    _xml_elm_line_patt = re.compile(r'( *</?[\w:]+)(.*?)(/?>)([^<]*</[\w:]+>)?$')
 
     def __eq__(self, other):
         lines = self.splitlines()
@@ -473,7 +471,7 @@ class Choice(_BaseChildElement):
         Calculate property name from tag name, e.g. a:schemeClr -> schemeClr.
         """
         if ':' in self._nsptagname:
-            start = self._nsptagname.index(':')+1
+            start = self._nsptagname.index(':') + 1
         else:
             start = 0
         return self._nsptagname[start:]

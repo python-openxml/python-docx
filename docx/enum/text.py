@@ -81,6 +81,7 @@ class WD_BREAK_TYPE(object):
     SECTION_ODD_PAGE = 5
     TEXT_WRAPPING = 11
 
+
 WD_BREAK = WD_BREAK_TYPE
 
 

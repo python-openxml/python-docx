@@ -43,6 +43,7 @@ class DescribeStyles(object):
         assert count == expected_count
         assert StyleFactory_.call_args_list == expected_calls
 
+    @pytest.mark.filterwarnings('ignore::UserWarning')
     def it_can_get_a_style_by_id(self, getitem_id_fixture):
         styles, key, expected_element = getitem_id_fixture
         style = styles[key]

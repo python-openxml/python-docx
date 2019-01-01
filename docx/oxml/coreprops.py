@@ -237,7 +237,7 @@ class CT_CoreProperties(BaseOxmlElement):
         td = timedelta(hours=hours, minutes=minutes)
         return dt + td
 
-    _offset_pattern = re.compile('([+-])(\d\d):(\d\d)')
+    _offset_pattern = re.compile(r'([+-])(\d\d):(\d\d)')
 
     @classmethod
     def _parse_W3CDTF_to_datetime(cls, w3cdtf_str):
