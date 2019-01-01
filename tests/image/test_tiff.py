@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-"""
-Test suite for docx.image.tiff module
-"""
+"""Unit test suite for docx.image.tiff module"""
 
 from __future__ import absolute_import, print_function
 
@@ -12,25 +10,47 @@ from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
-    _AsciiIfdEntry, _IfdEntries, _IfdEntry, _IfdEntryFactory, _IfdParser,
-    _LongIfdEntry, _RationalIfdEntry, _ShortIfdEntry, Tiff, _TiffParser
+    _AsciiIfdEntry,
+    _IfdEntries,
+    _IfdEntry,
+    _IfdEntryFactory,
+    _IfdParser,
+    _LongIfdEntry,
+    _RationalIfdEntry,
+    _ShortIfdEntry,
+    Tiff,
+    _TiffParser,
 )
 
 from ..unitutil.mock import (
-    call, class_mock, function_mock, initializer_mock, instance_mock,
-    loose_mock, method_mock
+    ANY,
+    call,
+    class_mock,
+    function_mock,
+    initializer_mock,
+    instance_mock,
+    loose_mock,
+    method_mock,
 )
 
 
 class DescribeTiff(object):
 
-    def it_can_construct_from_a_tiff_stream(self, from_stream_fixture):
-        (stream_, _TiffParser_, Tiff__init_, px_width, px_height, horz_dpi,
-         vert_dpi) = from_stream_fixture
+    def it_can_construct_from_a_tiff_stream(
+        self, stream_, _TiffParser_, tiff_parser_, Tiff__init_
+    ):
+        px_width, px_height = 111, 222
+        horz_dpi, vert_dpi = 333, 444
+        tiff_parser_.px_width = px_width
+        tiff_parser_.px_height = px_height
+        tiff_parser_.horz_dpi = horz_dpi
+        tiff_parser_.vert_dpi = vert_dpi
+
         tiff = Tiff.from_stream(stream_)
+
         _TiffParser_.parse.assert_called_once_with(stream_)
         Tiff__init_.assert_called_once_with(
-            px_width, px_height, horz_dpi, vert_dpi
+            ANY, px_width, px_height, horz_dpi, vert_dpi
         )
         assert isinstance(tiff, Tiff)
 
@@ -43,20 +63,6 @@ class DescribeTiff(object):
         assert tiff.default_ext == 'tiff'
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, _TiffParser_, tiff_parser_, Tiff__init_):
-        px_width, px_height = 111, 222
-        horz_dpi, vert_dpi = 333, 444
-        tiff_parser_.px_width = px_width
-        tiff_parser_.px_height = px_height
-        tiff_parser_.horz_dpi = horz_dpi
-        tiff_parser_.vert_dpi = vert_dpi
-        return (
-            stream_, _TiffParser_, Tiff__init_, px_width, px_height,
-            horz_dpi, vert_dpi
-        )
 
     @pytest.fixture
     def Tiff__init_(self, request):
@@ -80,15 +86,22 @@ class DescribeTiff(object):
 class Describe_TiffParser(object):
 
     def it_can_parse_the_properties_from_a_tiff_stream(
-            self, from_stream_fixture):
-        (stream_, _make_stream_reader_, _IfdEntries_, ifd0_offset_,
-         stream_rdr_, _TiffParser__init_, ifd_entries_) = from_stream_fixture
+        self,
+        stream_,
+        _make_stream_reader_,
+        _IfdEntries_,
+        ifd0_offset_,
+        stream_rdr_,
+        _TiffParser__init_,
+        ifd_entries_,
+    ):
         tiff_parser = _TiffParser.parse(stream_)
+
         _make_stream_reader_.assert_called_once_with(stream_)
         _IfdEntries_.from_stream.assert_called_once_with(
             stream_rdr_, ifd0_offset_
         )
-        _TiffParser__init_.assert_called_once_with(ifd_entries_)
+        _TiffParser__init_.assert_called_once_with(ANY, ifd_entries_)
         assert isinstance(tiff_parser, _TiffParser)
 
     def it_makes_a_stream_reader_to_help_parse(self, mk_stream_rdr_fixture):
@@ -138,15 +151,6 @@ class Describe_TiffParser(object):
         return tiff_parser, expected_horz_dpi, expected_vert_dpi
 
     @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, _make_stream_reader_, _IfdEntries_, ifd0_offset_,
-            stream_rdr_, _TiffParser__init_, ifd_entries_):
-        return (
-            stream_, _make_stream_reader_, _IfdEntries_, ifd0_offset_,
-            stream_rdr_, _TiffParser__init_, ifd_entries_
-        )
-
-    @pytest.fixture
     def _IfdEntries_(self, request, ifd_entries_):
         _IfdEntries_ = class_mock(request, 'docx.image.tiff._IfdEntries')
         _IfdEntries_.from_stream.return_value = ifd_entries_
@@ -163,7 +167,10 @@ class Describe_TiffParser(object):
     @pytest.fixture
     def _make_stream_reader_(self, request, stream_rdr_):
         return method_mock(
-            request, _TiffParser, '_make_stream_reader',
+            request,
+            _TiffParser,
+            '_make_stream_reader',
+            autospec=False,
             return_value=stream_rdr_
         )
 
@@ -199,13 +206,23 @@ class Describe_TiffParser(object):
 
 class Describe_IfdEntries(object):
 
-    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
-        stream_, offset_, _IfdParser_, _IfdEntries__init_, entries_ = (
-            from_stream_fixture
-        )
+    def it_can_construct_from_a_stream_and_offset(
+        self,
+        stream_,
+        offset_,
+        _IfdParser_,
+        ifd_parser_,
+        _IfdEntries__init_,
+        ifd_entry_,
+        ifd_entry_2_,
+    ):
+        ifd_parser_.iter_entries.return_value = [ifd_entry_, ifd_entry_2_]
+        entries_ = {1: 42, 2: 24}
+
         ifd_entries = _IfdEntries.from_stream(stream_, offset_)
+
         _IfdParser_.assert_called_once_with(stream_, offset_)
-        _IfdEntries__init_.assert_called_once_with(entries_)
+        _IfdEntries__init_.assert_called_once_with(ANY, entries_)
         assert isinstance(ifd_entries, _IfdEntries)
 
     def it_has_basic_mapping_semantics(self):
@@ -216,14 +233,6 @@ class Describe_IfdEntries(object):
         assert ifd_entries[key] == value
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, offset_, _IfdParser_, ifd_parser_,
-            _IfdEntries__init_, ifd_entry_, ifd_entry_2_):
-        ifd_parser_.iter_entries.return_value = [ifd_entry_, ifd_entry_2_]
-        entries_ = {1: 42, 2: 24}
-        return stream_, offset_, _IfdParser_, _IfdEntries__init_, entries_
 
     @pytest.fixture
     def ifd_entry_(self, request):
@@ -377,14 +386,20 @@ class Describe_IfdEntryFactory(object):
 
 class Describe_IfdEntry(object):
 
-    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
-        (stream_rdr, offset, _parse_value_, value_count, value_offset,
-         _IfdEntry__init_, tag_code, value_) = from_stream_fixture
+    def it_can_construct_from_a_stream_and_offset(
+        self, _parse_value_, _IfdEntry__init_, value_
+    ):
+        bytes_ = b'\x00\x01\x66\x66\x00\x00\x00\x02\x00\x00\x00\x03'
+        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        offset, tag_code, value_count, value_offset = 0, 1, 2, 3
+        _parse_value_.return_value = value_
+
         ifd_entry = _IfdEntry.from_stream(stream_rdr, offset)
+
         _parse_value_.assert_called_once_with(
             stream_rdr, offset, value_count, value_offset
         )
-        _IfdEntry__init_.assert_called_once_with(tag_code, value_)
+        _IfdEntry__init_.assert_called_once_with(ANY, tag_code, value_)
         assert isinstance(ifd_entry, _IfdEntry)
 
     def it_provides_read_only_access_to_the_directory_entry(self):
@@ -395,25 +410,12 @@ class Describe_IfdEntry(object):
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def from_stream_fixture(
-            self, _parse_value_, _IfdEntry__init_, value_):
-        bytes_ = b'\x00\x01\x66\x66\x00\x00\x00\x02\x00\x00\x00\x03'
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
-        offset, tag_code, value_count, value_offset = 0, 1, 2, 3
-        return (
-            stream_rdr, offset, _parse_value_, value_count, value_offset,
-            _IfdEntry__init_, tag_code, value_
-        )
-
-    @pytest.fixture
     def _IfdEntry__init_(self, request):
         return initializer_mock(request, _IfdEntry)
 
     @pytest.fixture
-    def _parse_value_(self, request, value_):
-        return method_mock(
-            request, _IfdEntry, '_parse_value', return_value=value_
-        )
+    def _parse_value_(self, request):
+        return method_mock(request, _IfdEntry, '_parse_value',  autospec=False)
 
     @pytest.fixture
     def value_(self, request):

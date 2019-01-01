@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-WordprocessingML Package class and related objects
-"""
+"""WordprocessingML Package class and related objects"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -47,12 +45,9 @@ class Package(OpcPackage):
 
 
 class ImageParts(object):
-    """
-    Collection of |ImagePart| instances corresponding to each image part in
-    the package.
-    """
+    """Collection of |ImagePart| objects corresponding to images in the package"""
+
     def __init__(self):
-        super(ImageParts, self).__init__()
         self._image_parts = []
 
     def __contains__(self, item):
@@ -68,10 +63,10 @@ class ImageParts(object):
         self._image_parts.append(item)
 
     def get_or_add_image_part(self, image_descriptor):
-        """
-        Return an |ImagePart| instance containing the image identified by
-        *image_descriptor*, newly created if a matching one is not present in
-        the collection.
+        """Return |ImagePart| object containing image identified by *image_descriptor*.
+
+        The image-part is newly created if a matching one is not present in the
+        collection.
         """
         image = Image.from_file(image_descriptor)
         matching_image_part = self._get_by_sha1(image.sha1)

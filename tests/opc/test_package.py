@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for docx.opc.package module
-"""
+"""Unit test suite for docx.opc.package module"""
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -18,8 +16,15 @@ from docx.opc.pkgreader import PackageReader
 from docx.opc.rel import _Relationship, Relationships
 
 from ..unitutil.mock import (
-    call, class_mock, instance_mock, loose_mock, method_mock, Mock, patch,
-    PropertyMock, property_mock
+    call,
+    class_mock,
+    instance_mock,
+    loose_mock,
+    method_mock,
+    Mock,
+    patch,
+    PropertyMock,
+    property_mock,
 )
 
 
@@ -124,16 +129,17 @@ class DescribeOpcPackage(object):
         assert core_properties_part is core_properties_part_
 
     def it_creates_a_default_core_props_part_if_none_present(
-            self, default_core_props_fixture):
-        opc_package, CorePropertiesPart_, core_properties_part_ = (
-            default_core_props_fixture
-        )
+        self, part_related_by_, CorePropertiesPart_, relate_to_, core_properties_part_
+    ):
+        part_related_by_.side_effect = KeyError
+        CorePropertiesPart_.default.return_value = core_properties_part_
+        opc_package = OpcPackage()
 
         core_properties_part = opc_package._core_properties_part
 
         CorePropertiesPart_.default.assert_called_once_with(opc_package)
-        opc_package.relate_to.assert_called_once_with(
-            core_properties_part_, RT.CORE_PROPERTIES
+        relate_to_.assert_called_once_with(
+            opc_package, core_properties_part_, RT.CORE_PROPERTIES
         )
         assert core_properties_part is core_properties_part_
 
@@ -154,15 +160,6 @@ class DescribeOpcPackage(object):
         opc_package = OpcPackage()
         part_related_by_.return_value = core_properties_part_
         return opc_package, core_properties_part_
-
-    @pytest.fixture
-    def default_core_props_fixture(
-            self, part_related_by_, CorePropertiesPart_, relate_to_,
-            core_properties_part_):
-        opc_package = OpcPackage()
-        part_related_by_.side_effect = KeyError
-        CorePropertiesPart_.default.return_value = core_properties_part_
-        return opc_package, CorePropertiesPart_, core_properties_part_
 
     @pytest.fixture
     def relate_to_part_fixture_(self, request, pkg, rels_, reltype):
@@ -279,15 +276,19 @@ class DescribeOpcPackage(object):
 class DescribeUnmarshaller(object):
 
     def it_can_unmarshal_from_a_pkg_reader(
-            self, pkg_reader_, pkg_, part_factory_, _unmarshal_parts,
-            _unmarshal_relationships, parts_dict_):
-        # exercise ---------------------
+        self,
+        pkg_reader_,
+        pkg_,
+        part_factory_,
+        _unmarshal_parts_,
+        _unmarshal_relationships_,
+        parts_dict_,
+    ):
+        _unmarshal_parts_.return_value = parts_dict_
         Unmarshaller.unmarshal(pkg_reader_, pkg_, part_factory_)
-        # verify -----------------------
-        _unmarshal_parts.assert_called_once_with(
-            pkg_reader_, pkg_, part_factory_
-        )
-        _unmarshal_relationships.assert_called_once_with(
+
+        _unmarshal_parts_.assert_called_once_with(pkg_reader_, pkg_, part_factory_)
+        _unmarshal_relationships_.assert_called_once_with(
             pkg_reader_, pkg_, parts_dict_
         )
         for part in parts_dict_.values():
@@ -412,12 +413,11 @@ class DescribeUnmarshaller(object):
         return reltype_, reltype_2_
 
     @pytest.fixture
-    def _unmarshal_parts(self, request, parts_dict_):
-        return method_mock(
-            request, Unmarshaller, '_unmarshal_parts',
-            return_value=parts_dict_
-        )
+    def _unmarshal_parts_(self, request):
+        return method_mock(request, Unmarshaller, '_unmarshal_parts', autospec=False)
 
     @pytest.fixture
-    def _unmarshal_relationships(self, request):
-        return method_mock(request, Unmarshaller, '_unmarshal_relationships')
+    def _unmarshal_relationships_(self, request):
+        return method_mock(
+            request, Unmarshaller, '_unmarshal_relationships', autospec=False
+        )

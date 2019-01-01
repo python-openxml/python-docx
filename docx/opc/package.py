@@ -23,6 +23,7 @@ class OpcPackage(object):
     the :meth:`open` class method with a path to a package file or file-like
     object containing one.
     """
+
     def __init__(self):
         super(OpcPackage, self).__init__()
 
@@ -174,10 +175,8 @@ class OpcPackage(object):
 
 
 class Unmarshaller(object):
-    """
-    Hosts static methods for unmarshalling a package from a |PackageReader|
-    instance.
-    """
+    """Hosts static methods for unmarshalling a package from a |PackageReader|."""
+
     @staticmethod
     def unmarshal(pkg_reader, package, part_factory):
         """

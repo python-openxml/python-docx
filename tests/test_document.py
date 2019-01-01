@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.document module
-"""
+"""Unit test suite for the docx.document module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -32,10 +28,14 @@ from .unitutil.mock import (
 
 class DescribeDocument(object):
 
-    def it_can_add_a_heading(self, add_heading_fixture):
-        document, text, level, style, paragraph_ = add_heading_fixture
-        paragraph = document.add_heading(text, level)
-        document.add_paragraph.assert_called_once_with(text, style)
+    def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
+        level, style = add_heading_fixture
+        add_paragraph_.return_value = paragraph_
+        document = Document(None, None)
+
+        paragraph = document.add_heading("Spam vs. Bacon", level)
+
+        add_paragraph_.assert_called_once_with(document, "Spam vs. Bacon", style)
         assert paragraph is paragraph_
 
     def it_raises_on_heading_level_out_of_range(self):
@@ -45,10 +45,14 @@ class DescribeDocument(object):
         with pytest.raises(ValueError):
             document.add_heading(level=10)
 
-    def it_can_add_a_page_break(self, add_page_break_fixture):
-        document, paragraph_, run_ = add_page_break_fixture
+    def it_can_add_a_page_break(self, add_paragraph_, paragraph_, run_):
+        add_paragraph_.return_value = paragraph_
+        paragraph_.add_run.return_value = run_
+        document = Document(None, None)
+
         paragraph = document.add_page_break()
-        document.add_paragraph.assert_called_once_with()
+
+        add_paragraph_.assert_called_once_with(document)
         paragraph_.add_run.assert_called_once_with()
         run_.add_break.assert_called_once_with(WD_BREAK.PAGE)
         assert paragraph is paragraph_
@@ -145,19 +149,9 @@ class DescribeDocument(object):
         (2, 'Heading 2'),
         (9, 'Heading 9'),
     ])
-    def add_heading_fixture(self, request, add_paragraph_, paragraph_):
+    def add_heading_fixture(self, request):
         level, style = request.param
-        document = Document(None, None)
-        text = 'Spam vs. Bacon'
-        add_paragraph_.return_value = paragraph_
-        return document, text, level, style, paragraph_
-
-    @pytest.fixture
-    def add_page_break_fixture(self, add_paragraph_, paragraph_, run_):
-        document = Document(None, None)
-        add_paragraph_.return_value = paragraph_
-        paragraph_.add_run.return_value = run_
-        return document, paragraph_, run_
+        return level, style
 
     @pytest.fixture(params=[
         ('',         None),
