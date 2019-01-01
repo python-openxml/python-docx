@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-"""Test suite for the docx.parts.document module"""
+"""Unit test suite for the docx.parts.document module"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -24,9 +24,7 @@ from docx.text.paragraph import Paragraph
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.text import a_p
 from ..unitutil.file import snippet_text
-from ..unitutil.mock import (
-    instance_mock, class_mock, method_mock, property_mock
-)
+from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocumentPart(object):

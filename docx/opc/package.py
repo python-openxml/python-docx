@@ -108,6 +108,16 @@ class OpcPackage(object):
         """
         return self.part_related_by(RT.OFFICE_DOCUMENT)
 
+    def next_partname(self, template):
+        """Return a |PackURI| instance representing partname matching *template*.
+
+        The returned part-name has the next available numeric suffix to distinguish it
+        from other parts of its type. *template* is a printf (%)-style template string
+        containing a single replacement item, a '%d' to be used to insert the integer
+        portion of the partname. Example: "/word/header%d.xml"
+        """
+        raise NotImplementedError
+
     @classmethod
     def open(cls, pkg_file):
         """
