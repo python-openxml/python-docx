@@ -9,7 +9,7 @@ import pytest
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.opc.package import OpcPackage, Unmarshaller
-from docx.opc.packuri import PACKAGE_URI
+from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.part import Part
 from docx.opc.parts.coreprops import CorePropertiesPart
 from docx.opc.pkgreader import PackageReader
@@ -101,6 +101,20 @@ class DescribeOpcPackage(object):
         assert part2 in pkg.iter_parts()
         assert len([p for p in pkg.iter_parts()]) == 2
 
+    def it_can_find_the_next_available_vector_partname(
+        self, next_partname_fixture, iter_parts_, PackURI_, packuri_
+    ):
+        """A vector partname is one with a numeric suffix, like header42.xml."""
+        parts_, expected_value = next_partname_fixture
+        iter_parts_.return_value = iter(parts_)
+        PackURI_.return_value = packuri_
+        package = OpcPackage()
+
+        partname = package.next_partname(template="/foo/bar/baz%d.xml")
+
+        PackURI_.assert_called_once_with(expected_value)
+        assert partname is packuri_
+
     def it_can_find_a_part_related_by_reltype(self, related_part_fixture_):
         pkg, reltype, related_part_ = related_part_fixture_
         related_part = pkg.part_related_by(reltype)
@@ -161,6 +175,20 @@ class DescribeOpcPackage(object):
         part_related_by_.return_value = core_properties_part_
         return opc_package, core_properties_part_
 
+    @pytest.fixture(
+        params=[((), 1), ((1,), 2), ((1, 2), 3), ((2, 3), 1), ((1, 3), 2)]
+    )
+    def next_partname_fixture(self, request, iter_parts_):
+        existing_partname_ns, next_partname_n = request.param
+        parts_ = [
+            instance_mock(
+                request, Part, name="part[%d]" % idx, partname="/foo/bar/baz%d.xml" % n
+            )
+            for idx, n in enumerate(existing_partname_ns)
+        ]
+        expected_value = "/foo/bar/baz%d.xml" % next_partname_n
+        return parts_, expected_value
+
     @pytest.fixture
     def relate_to_part_fixture_(self, request, pkg, rels_, reltype):
         rId = 'rId99'
@@ -197,8 +225,20 @@ class DescribeOpcPackage(object):
         return property_mock(request, OpcPackage, '_core_properties_part')
 
     @pytest.fixture
+    def iter_parts_(self, request):
+        return method_mock(request, OpcPackage, "iter_parts")
+
+    @pytest.fixture
     def PackageReader_(self, request):
         return class_mock(request, 'docx.opc.package.PackageReader')
+
+    @pytest.fixture
+    def PackURI_(self, request):
+        return class_mock(request, "docx.opc.package.PackURI")
+
+    @pytest.fixture
+    def packuri_(self, request):
+        return instance_mock(request, PackURI)
 
     @pytest.fixture
     def PackageWriter_(self, request):

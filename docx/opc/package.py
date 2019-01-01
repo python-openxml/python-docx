@@ -1,27 +1,24 @@
 # encoding: utf-8
 
-"""
-The :mod:`pptx.packaging` module coheres around the concerns of reading and
-writing presentations to and from a .pptx file.
-"""
+"""Objects that implement reading and writing OPC packages."""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-from .constants import RELATIONSHIP_TYPE as RT
-from .packuri import PACKAGE_URI
-from .part import PartFactory
-from .parts.coreprops import CorePropertiesPart
-from .pkgreader import PackageReader
-from .pkgwriter import PackageWriter
-from .rel import Relationships
-from .shared import lazyproperty
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.packuri import PACKAGE_URI, PackURI
+from docx.opc.part import PartFactory
+from docx.opc.parts.coreprops import CorePropertiesPart
+from docx.opc.pkgreader import PackageReader
+from docx.opc.pkgwriter import PackageWriter
+from docx.opc.rel import Relationships
+from docx.opc.shared import lazyproperty
 
 
 class OpcPackage(object):
-    """
-    Main API class for |python-opc|. A new instance is constructed by calling
-    the :meth:`open` class method with a path to a package file or file-like
-    object containing one.
+    """Main API class for |python-opc|.
+
+    A new instance is constructed by calling the :meth:`open` class method with a path
+    to a package file or file-like object containing one.
     """
 
     def __init__(self):
@@ -116,7 +113,11 @@ class OpcPackage(object):
         containing a single replacement item, a '%d' to be used to insert the integer
         portion of the partname. Example: "/word/header%d.xml"
         """
-        raise NotImplementedError
+        partnames = {part.partname for part in self.iter_parts()}
+        for n in range(1, len(partnames) + 2):
+            candidate_partname = template % n
+            if candidate_partname not in partnames:
+                return PackURI(candidate_partname)
 
     @classmethod
     def open(cls, pkg_file):
