@@ -9,3 +9,8 @@ from docx.opc.part import XmlPart
 
 class HeaderPart(XmlPart):
     """Definition of a section header."""
+
+    @classmethod
+    def new(cls, package):
+        """Return newly created header part."""
+        raise NotImplementedError

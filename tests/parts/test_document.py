@@ -11,6 +11,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.package import Package
 from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import HeaderPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
@@ -29,6 +30,18 @@ from ..unitutil.mock import (
 
 
 class DescribeDocumentPart(object):
+
+    def it_can_add_a_header_part(self, package_, HeaderPart_, header_part_, relate_to_):
+        HeaderPart_.new.return_value = header_part_
+        relate_to_.return_value = "rId7"
+        document_part = DocumentPart(None, None, None, package_)
+
+        header_part, rId = document_part.add_header_part()
+
+        HeaderPart_.new.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, header_part_, RT.HEADER)
+        assert header_part is header_part_
+        assert rId == "rId7"
 
     def it_can_drop_a_specified_header_part(self, drop_rel_):
         document_part = DocumentPart(None, None, None, None)
@@ -276,6 +289,14 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def get_or_add_image_(self, request):
         return method_mock(request, DocumentPart, 'get_or_add_image')
+
+    @pytest.fixture
+    def HeaderPart_(self, request):
+        return class_mock(request, 'docx.parts.document.HeaderPart')
+
+    @pytest.fixture
+    def header_part_(self, request):
+        return instance_mock(request, HeaderPart)
 
     @pytest.fixture
     def image_(self, request):

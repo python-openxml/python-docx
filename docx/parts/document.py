@@ -8,6 +8,7 @@ from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
+from docx.parts.hdrftr import HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
@@ -26,7 +27,9 @@ class DocumentPart(XmlPart):
 
     def add_header_part(self):
         """Return (header_part, rId) pair for newly-created header part."""
-        raise NotImplementedError
+        header_part = HeaderPart.new(self.package)
+        rId = self.relate_to(header_part, RT.HEADER)
+        return header_part, rId
 
     @property
     def core_properties(self):
