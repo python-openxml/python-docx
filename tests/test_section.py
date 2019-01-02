@@ -360,7 +360,7 @@ class DescribeSection(object):
 
 class Describe_BaseHeaderFooter(object):
 
-    def it_knows_when_its_linked_to_the_previous_header(
+    def it_knows_when_its_linked_to_the_previous_header_or_footer(
         self, is_linked_get_fixture, _has_definition_prop_
     ):
         has_definition, expected_value = is_linked_get_fixture
@@ -371,6 +371,22 @@ class Describe_BaseHeaderFooter(object):
 
         assert is_linked is expected_value
 
+    def it_can_change_whether_it_is_linked_to_previous_header_or_footer(
+        self,
+        is_linked_set_fixture,
+        _has_definition_prop_,
+        _drop_definition_,
+        _add_definition_,
+    ):
+        has_definition, new_value, drop_calls, add_calls = is_linked_set_fixture
+        _has_definition_prop_.return_value = has_definition
+        header = _BaseHeaderFooter(None, None)
+
+        header.is_linked_to_previous = new_value
+
+        assert _drop_definition_.call_args_list == [call(header)] * drop_calls
+        assert _add_definition_.call_args_list == [call(header)] * add_calls
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[(False, True), (True, False)])
@@ -378,7 +394,27 @@ class Describe_BaseHeaderFooter(object):
         has_definition, expected_value = request.param
         return has_definition, expected_value
 
+    @pytest.fixture(
+        params=[
+            (False, True, 0, 0),
+            (True, False, 0, 0),
+            (True, True, 1, 0),
+            (False, False, 0, 1),
+        ]
+    )
+    def is_linked_set_fixture(self, request):
+        has_definition, new_value, drop_calls, add_calls = request.param
+        return has_definition, new_value, drop_calls, add_calls
+
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _add_definition_(self, request):
+        return method_mock(request, _BaseHeaderFooter, "_add_definition")
+
+    @pytest.fixture
+    def _drop_definition_(self, request):
+        return method_mock(request, _BaseHeaderFooter, "_drop_definition")
 
     @pytest.fixture
     def _has_definition_prop_(self, request):

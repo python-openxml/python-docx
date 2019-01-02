@@ -232,6 +232,25 @@ class _BaseHeaderFooter(BlockItemContainer):
         # ---absence of a header/footer part indicates "linked" behavior---
         return not self._has_definition
 
+    @is_linked_to_previous.setter
+    def is_linked_to_previous(self, value):
+        new_state = bool(value)
+        # ---do nothing when value is not being changed---
+        if new_state == self.is_linked_to_previous:
+            return
+        if new_state is True:
+            self._drop_definition()
+        else:
+            self._add_definition()
+
+    def _add_definition(self):
+        """Return newly-added header/footer part."""
+        raise NotImplementedError("must be implemented by each subclass")
+
+    def _drop_definition(self):
+        """Remove header/footer part containing the definition of this header/footer."""
+        raise NotImplementedError("must be implemented by each subclass")
+
     @property
     def _has_definition(self):
         """True if this header/footer has a related part containing its definition."""
