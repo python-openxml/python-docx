@@ -422,6 +422,47 @@ class Describe_Header(object):
         _get_or_add_header_part_.assert_called_once_with(header)
         assert hdr_elm is hdr
 
+    def it_gets_the_header_part_when_it_has_one(
+        self, _has_header_part_prop_, _header_part_prop_, header_part_
+    ):
+        _has_header_part_prop_.return_value = True
+        _header_part_prop_.return_value = header_part_
+        header = _Header(None, None)
+
+        header_part = header._get_or_add_header_part()
+
+        assert header_part is header_part_
+
+    def but_it_gets_the_prior_header_part_when_it_is_linked(
+        self, _has_header_part_prop_, _prior_header_prop_, prior_header_, header_part_
+    ):
+        _has_header_part_prop_.return_value = False
+        _prior_header_prop_.return_value = prior_header_
+        prior_header_._get_or_add_header_part.return_value = header_part_
+        header = _Header(None, None)
+
+        header_part = header._get_or_add_header_part()
+
+        prior_header_._get_or_add_header_part.assert_called_once_with()
+        assert header_part is header_part_
+
+    def and_it_adds_the_header_part_when_it_is_linked_and_the_first_section(
+        self,
+        _has_header_part_prop_,
+        _prior_header_prop_,
+        _add_header_part_,
+        header_part_
+    ):
+        _has_header_part_prop_.return_value = False
+        _prior_header_prop_.return_value = None
+        _add_header_part_.return_value = header_part_
+        header = _Header(None, None)
+
+        header_part = header._get_or_add_header_part()
+
+        _add_header_part_.assert_called_once_with(header)
+        assert header_part is header_part_
+
     def it_knows_when_it_has_a_header_part_to_help(self, has_header_part_fixture):
         sectPr, expected_value = has_header_part_fixture
         header = _Header(sectPr, None)
@@ -484,3 +525,15 @@ class Describe_Header(object):
     @pytest.fixture
     def header_part_(self, request):
         return instance_mock(request, HeaderPart)
+
+    @pytest.fixture
+    def _header_part_prop_(self, request):
+        return property_mock(request, _Header, "_header_part")
+
+    @pytest.fixture
+    def prior_header_(self, request):
+        return instance_mock(request, _Header)
+
+    @pytest.fixture
+    def _prior_header_prop_(self, request):
+        return property_mock(request, _Header, "_prior_header")

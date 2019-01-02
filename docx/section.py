@@ -276,10 +276,28 @@ class _Header(BlockItemContainer):
         created for the first section and returned.
         """
         # ---note this method is called recursively to access inherited headers---
-        raise NotImplementedError
+        # ---case-1: header does not inherit---
+        if self._has_header_part:
+            return self._header_part
+        prior_header = self._prior_header
+        # ---case-2: header inherits and belongs to second-or-later section---
+        if prior_header is not None:
+            return prior_header._get_or_add_header_part()
+        # ---case-3: header inherits, but is first header---
+        return self._add_header_part()
 
     @property
     def _has_header_part(self):
         """True if a header is explicitly defined for this section."""
         headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
         return False if headerReference is None else True
+
+    @property
+    def _header_part(self):
+        """|HeaderPart| object containing content of this header."""
+        raise NotImplementedError
+
+    @property
+    def _prior_header(self):
+        """|_Header| proxy on prior sectPr element or None if this is first section."""
+        raise NotImplementedError
