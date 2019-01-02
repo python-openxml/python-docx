@@ -241,6 +241,12 @@ class _BaseHeaderFooter(BlockItemContainer):
 class _Footer(_BaseHeaderFooter):
     """Page footer."""
 
+    @property
+    def _has_definition(self):
+        """True if a footer is defined for this section."""
+        footerReference = self._sectPr.get_footerReference(WD_HEADER_FOOTER.PRIMARY)
+        return False if footerReference is None else True
+
 
 class _Header(_BaseHeaderFooter):
     """Page header."""

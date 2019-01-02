@@ -34,7 +34,6 @@ Feature: Header and footer behaviors
       And header_2.is_linked_to_previous is True
 
 
-  @wip
   Scenario Outline: _Footer.is_linked_to_previous getter
     Given a _Footer object <with-or-no> footer definition as footer
      Then footer.is_linked_to_previous is <value>

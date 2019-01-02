@@ -385,6 +385,29 @@ class Describe_BaseHeaderFooter(object):
         return property_mock(request, _BaseHeaderFooter, "_has_definition")
 
 
+class Describe_Footer(object):
+
+    def it_knows_when_it_has_a_definition_to_help(self, has_definition_fixture):
+        sectPr, expected_value = has_definition_fixture
+        footer = _Footer(sectPr, None)
+
+        has_definition = footer._has_definition
+
+        assert has_definition is expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            ("w:sectPr", False), ("w:sectPr/w:footerReference{w:type=default}", True)
+        ]
+    )
+    def has_definition_fixture(self, request):
+        sectPr_cxml, expected_value = request.param
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_value
+
+
 class Describe_Header(object):
 
     def it_knows_when_its_linked_to_the_previous_header(
