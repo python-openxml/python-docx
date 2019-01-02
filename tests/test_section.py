@@ -471,6 +471,18 @@ class Describe_Header(object):
 
         assert has_header_part is expected_value
 
+    def it_provides_access_to_its_header_part_to_help(
+        self, document_part_, header_part_
+    ):
+        sectPr = element("w:sectPr/w:headerReference{w:type=default,r:id=rId8}")
+        document_part_.header_part.return_value = header_part_
+        header = _Header(sectPr, document_part_)
+
+        header_part = header._header_part
+
+        document_part_.header_part.assert_called_once_with("rId8")
+        assert header_part is header_part_
+
     def it_provides_access_to_the_prior_Header_to_help(
         self, request, document_part_, header_
     ):

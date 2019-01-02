@@ -82,6 +82,10 @@ class DocumentPart(XmlPart):
         """
         return self.styles.get_style_id(style_or_name, style_type)
 
+    def header_part(self, rId):
+        """Return |HeaderPart| related by *rId*."""
+        raise NotImplementedError
+
     @lazyproperty
     def inline_shapes(self):
         """

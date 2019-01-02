@@ -295,7 +295,8 @@ class _Header(BlockItemContainer):
     @property
     def _header_part(self):
         """|HeaderPart| object containing content of this header."""
-        raise NotImplementedError
+        headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        return self._document_part.header_part(headerReference.rId)
 
     @property
     def _prior_header(self):
