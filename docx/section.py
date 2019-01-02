@@ -218,6 +218,25 @@ class _BaseHeaderFooter(BlockItemContainer):
         self._sectPr = sectPr
         self._document_part = document_part
 
+    @property
+    def is_linked_to_previous(self):
+        """True if this header/footer uses the definition from the preceding section.
+
+        False if this header/footer has an explicit definition.
+
+        Assigning ``True`` to this property removes the header/footer definition for
+        this section, causing it to "inherit" the corresponding definition of the prior
+        section. Assigning ``False`` causes a new, empty definition to be added for this
+        section, but only if no definition is already present.
+        """
+        # ---absence of a header/footer part indicates "linked" behavior---
+        return not self._has_definition
+
+    @property
+    def _has_definition(self):
+        """True if this header/footer has a related part containing its definition."""
+        raise NotImplementedError("must be implemented by each subclass")
+
 
 class _Footer(_BaseHeaderFooter):
     """Page footer."""

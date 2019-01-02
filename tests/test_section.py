@@ -9,7 +9,7 @@ import pytest
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import DocumentPart
 from docx.parts.hdrftr import HeaderPart
-from docx.section import _Footer, _Header, Section, Sections
+from docx.section import _BaseHeaderFooter, _Footer, _Header, Section, Sections
 from docx.shared import Inches
 
 from .unitutil.cxml import element, xml
@@ -356,6 +356,33 @@ class DescribeSection(object):
     @pytest.fixture
     def header_(self, request):
         return instance_mock(request, _Header)
+
+
+class Describe_BaseHeaderFooter(object):
+
+    def it_knows_when_its_linked_to_the_previous_header(
+        self, is_linked_get_fixture, _has_definition_prop_
+    ):
+        has_definition, expected_value = is_linked_get_fixture
+        _has_definition_prop_.return_value = has_definition
+        header = _BaseHeaderFooter(None, None)
+
+        is_linked = header.is_linked_to_previous
+
+        assert is_linked is expected_value
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[(False, True), (True, False)])
+    def is_linked_get_fixture(self, request):
+        has_definition, expected_value = request.param
+        return has_definition, expected_value
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _has_definition_prop_(self, request):
+        return property_mock(request, _BaseHeaderFooter, "_has_definition")
 
 
 class Describe_Header(object):
