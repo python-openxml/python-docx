@@ -251,6 +251,13 @@ class CT_SectPr(BaseOxmlElement):
         pgSz.w = value
 
     @property
+    def preceding_sectPr(self):
+        """sectPr immediately preceding this one or None if this is the first."""
+        # ---[1] predicate returns list of zero or one value---
+        preceding_sectPrs = self.xpath("./preceding::w:sectPr[1]")
+        return preceding_sectPrs[0] if len(preceding_sectPrs) > 0 else None
+
+    @property
     def start_type(self):
         """
         The member of the ``WD_SECTION_START`` enumeration corresponding to

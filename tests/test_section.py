@@ -471,6 +471,29 @@ class Describe_Header(object):
 
         assert has_header_part is expected_value
 
+    def it_provides_access_to_the_prior_Header_to_help(
+        self, request, document_part_, header_
+    ):
+        doc_elm = element("w:document/(w:sectPr,w:sectPr)")
+        prior_sectPr, sectPr = doc_elm[0], doc_elm[1]
+        header = _Header(sectPr, document_part_)
+        # ---mock must occur after construction of "real" header---
+        _Header_ = class_mock(request, "docx.section._Header", return_value=header_)
+
+        prior_header = header._prior_header
+
+        _Header_.assert_called_once_with(prior_sectPr, document_part_)
+        assert prior_header is header_
+
+    def but_it_returns_None_when_its_the_first_header(self):
+        doc_elm = element("w:document/w:sectPr")
+        sectPr = doc_elm[0]
+        header = _Header(sectPr, None)
+
+        prior_header = header._prior_header
+
+        assert prior_header is None
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(
@@ -521,6 +544,10 @@ class Describe_Header(object):
     @pytest.fixture
     def _has_header_part_prop_(self, request):
         return property_mock(request, _Header, "_has_header_part")
+
+    @pytest.fixture
+    def header_(self, request):
+        return instance_mock(request, _Header)
 
     @pytest.fixture
     def header_part_(self, request):

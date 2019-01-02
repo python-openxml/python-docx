@@ -300,4 +300,8 @@ class _Header(BlockItemContainer):
     @property
     def _prior_header(self):
         """|_Header| proxy on prior sectPr element or None if this is first section."""
-        raise NotImplementedError
+        preceding_sectPr = self._sectPr.preceding_sectPr
+        return (
+            None if preceding_sectPr is None
+            else _Header(preceding_sectPr, self._document_part)
+        )
