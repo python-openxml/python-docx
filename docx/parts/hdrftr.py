@@ -17,6 +17,14 @@ class FooterPart(XmlPart):
     @classmethod
     def new(cls, package):
         """Return newly created footer part."""
+        partname = package.next_partname("/word/footer%d.xml")
+        content_type = CT.WML_FOOTER
+        element = parse_xml(cls._default_footer_xml())
+        return cls(partname, content_type, element, package)
+
+    @classmethod
+    def _default_footer_xml(cls):
+        """Return bytes containing XML for a default footer part."""
         raise NotImplementedError
 
 

@@ -9,10 +9,48 @@ import pytest
 from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TYPE as RT
 from docx.opc.part import PartFactory
 from docx.package import Package
-from docx.parts.hdrftr import HeaderPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 
 from ..unitutil.cxml import element
 from ..unitutil.mock import function_mock, initializer_mock, instance_mock, method_mock
+
+
+class DescribeFooterPart(object):
+
+    def it_can_create_a_new_footer_part(
+        self, package_, _default_footer_xml_, parse_xml_, _init_
+    ):
+        ftr = element("w:ftr")
+        package_.next_partname.return_value = "/word/footer24.xml"
+        _default_footer_xml_.return_value = "<w:ftr>"
+        parse_xml_.return_value = ftr
+
+        footer_part = FooterPart.new(package_)
+
+        package_.next_partname.assert_called_once_with("/word/footer%d.xml")
+        _default_footer_xml_.assert_called_once_with()
+        parse_xml_.assert_called_once_with("<w:ftr>")
+        _init_.assert_called_once_with(
+            footer_part, "/word/footer24.xml", CT.WML_FOOTER, ftr, package_
+        )
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def _default_footer_xml_(self, request):
+        return method_mock(request, FooterPart, "_default_footer_xml", autospec=False)
+
+    @pytest.fixture
+    def _init_(self, request):
+        return initializer_mock(request, FooterPart)
+
+    @pytest.fixture
+    def package_(self, request):
+        return instance_mock(request, Package)
+
+    @pytest.fixture
+    def parse_xml_(self, request):
+        return function_mock(request, "docx.parts.hdrftr.parse_xml")
 
 
 class DescribeHeaderPart(object):
@@ -73,7 +111,7 @@ class DescribeHeaderPart(object):
 
     @pytest.fixture
     def _init_(self, request):
-        return initializer_mock(request, HeaderPart, autospec=True)
+        return initializer_mock(request, HeaderPart)
 
     @pytest.fixture
     def package_(self, request):
