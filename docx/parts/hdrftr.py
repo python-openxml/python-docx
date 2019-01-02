@@ -25,7 +25,12 @@ class FooterPart(XmlPart):
     @classmethod
     def _default_footer_xml(cls):
         """Return bytes containing XML for a default footer part."""
-        raise NotImplementedError
+        path = os.path.join(
+            os.path.split(__file__)[0], '..', 'templates', 'default-footer.xml'
+        )
+        with open(path, 'rb') as f:
+            xml_bytes = f.read()
+        return xml_bytes
 
 
 class HeaderPart(XmlPart):

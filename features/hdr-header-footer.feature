@@ -44,7 +44,6 @@ Feature: Header and footer behaviors
       | with no    | True  |
 
 
-  @wip
   Scenario Outline: _Footer.is_linked_to_previous setter
     Given a _Footer object <with-or-no> footer definition as footer
      When I assign <value> to footer.is_linked_to_previous
