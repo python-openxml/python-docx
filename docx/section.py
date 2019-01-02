@@ -211,20 +211,20 @@ class Section(object):
         self._sectPr.top_margin = value
 
 
-class _Footer(BlockItemContainer):
+class _BaseHeaderFooter(BlockItemContainer):
+    """Base class for header and footer classes"""
+
+    def __init__(self, sectPr, document_part):
+        self._sectPr = sectPr
+        self._document_part = document_part
+
+
+class _Footer(_BaseHeaderFooter):
     """Page footer."""
 
-    def __init__(self, sectPr, document_part):
-        self._sectPr = sectPr
-        self._document_part = document_part
 
-
-class _Header(BlockItemContainer):
+class _Header(_BaseHeaderFooter):
     """Page header."""
-
-    def __init__(self, sectPr, document_part):
-        self._sectPr = sectPr
-        self._document_part = document_part
 
     @property
     def is_linked_to_previous(self):
