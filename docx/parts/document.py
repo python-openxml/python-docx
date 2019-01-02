@@ -84,7 +84,7 @@ class DocumentPart(XmlPart):
 
     def header_part(self, rId):
         """Return |HeaderPart| related by *rId*."""
-        raise NotImplementedError
+        return self.related_parts[rId]
 
     @lazyproperty
     def inline_shapes(self):

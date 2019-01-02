@@ -48,6 +48,18 @@ class DescribeDocumentPart(object):
 
         drop_rel_.assert_called_once_with(document_part, "rId42")
 
+    def it_provides_access_to_a_header_part_by_rId(
+        self, related_parts_prop_, related_parts_, header_part_
+    ):
+        related_parts_prop_.return_value = related_parts_
+        related_parts_.__getitem__.return_value = header_part_
+        document_part = DocumentPart(None, None, None, None)
+
+        header_part = document_part.header_part("rId11")
+
+        related_parts_.__getitem__.assert_called_once_with("rId11")
+        assert header_part is header_part_
+
     def it_can_save_the_package_to_a_file(self, save_fixture):
         document, file_ = save_fixture
         document.save(file_)
@@ -335,6 +347,14 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def relate_to_(self, request):
         return method_mock(request, DocumentPart, 'relate_to')
+
+    @pytest.fixture
+    def related_parts_(self, request):
+        return instance_mock(request, dict)
+
+    @pytest.fixture
+    def related_parts_prop_(self, request):
+        return property_mock(request, DocumentPart, 'related_parts')
 
     @pytest.fixture
     def SettingsPart_(self, request):
