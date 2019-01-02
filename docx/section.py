@@ -270,38 +270,13 @@ class _Footer(_BaseHeaderFooter):
 class _Header(_BaseHeaderFooter):
     """Page header."""
 
-    @property
-    def is_linked_to_previous(self):
-        """True if this header uses the header definition of the preceding section.
-
-        False if this header has an explicit definition.
-
-        Assigning ``True`` to this property removes any header definition for this
-        section, causing it to "inherit" the header definition of the prior section.
-        Assigning ``False`` causes a new, empty header definition to be added for this
-        section, but only if no existing definition is present.
-        """
-        # ---absence of a header (definition) part indicates "linked" behavior---
-        return not self._has_header_part
-
-    @is_linked_to_previous.setter
-    def is_linked_to_previous(self, value):
-        new_state = bool(value)
-        # ---do nothing when value is not being changed---
-        if new_state == self.is_linked_to_previous:
-            return
-        if new_state is True:
-            self._drop_header_part()
-        else:
-            self._add_header_part()
-
-    def _add_header_part(self):
+    def _add_definition(self):
         """Return newly-added header part."""
         header_part, rId = self._document_part.add_header_part()
         self._sectPr.add_headerReference(WD_HEADER_FOOTER.PRIMARY, rId)
         return header_part
 
-    def _drop_header_part(self):
+    def _drop_definition(self):
         """Remove header definition associated with this section."""
         rId = self._sectPr.remove_headerReference(WD_HEADER_FOOTER.PRIMARY)
         self._document_part.drop_header_part(rId)
@@ -321,17 +296,17 @@ class _Header(_BaseHeaderFooter):
         """
         # ---note this method is called recursively to access inherited headers---
         # ---case-1: header does not inherit---
-        if self._has_header_part:
+        if self._has_definition:
             return self._header_part
         prior_header = self._prior_header
         # ---case-2: header inherits and belongs to second-or-later section---
         if prior_header is not None:
             return prior_header._get_or_add_header_part()
         # ---case-3: header inherits, but is first header---
-        return self._add_header_part()
+        return self._add_definition()
 
     @property
-    def _has_header_part(self):
+    def _has_definition(self):
         """True if a header is explicitly defined for this section."""
         headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
         return False if headerReference is None else True
