@@ -423,6 +423,15 @@ class Describe_BaseHeaderFooter(object):
 
 class Describe_Footer(object):
 
+    def it_can_drop_the_related_footer_part_to_help(self, document_part_):
+        sectPr = element("w:sectPr{r:a=b}/w:footerReference{w:type=default,r:id=rId42}")
+        footer = _Footer(sectPr, document_part_)
+
+        footer._drop_definition()
+
+        assert sectPr.xml == xml("w:sectPr{r:a=b}")
+        document_part_.drop_rel.assert_called_once_with("rId42")
+
     def it_knows_when_it_has_a_definition_to_help(self, has_definition_fixture):
         sectPr, expected_value = has_definition_fixture
         footer = _Footer(sectPr, None)
@@ -442,6 +451,12 @@ class Describe_Footer(object):
         sectPr_cxml, expected_value = request.param
         sectPr = element(sectPr_cxml)
         return sectPr, expected_value
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def document_part_(self, request):
+        return instance_mock(request, DocumentPart)
 
 
 class Describe_Header(object):

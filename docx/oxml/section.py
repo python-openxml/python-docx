@@ -192,30 +192,6 @@ class CT_SectPr(BaseOxmlElement):
         pgMar = self.get_or_add_pgMar()
         pgMar.left = value
 
-    def remove_headerReference(self, type_):
-        """Return rId of w:headerReference child of *type_* after removing it."""
-        headerReference = self.get_headerReference(type_)
-        rId = headerReference.rId
-        self.remove(headerReference)
-        return rId
-
-    @property
-    def right_margin(self):
-        """
-        The value of the ``w:right`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
-        pgMar = self.pgMar
-        if pgMar is None:
-            return None
-        return pgMar.right
-
-    @right_margin.setter
-    def right_margin(self, value):
-        pgMar = self.get_or_add_pgMar()
-        pgMar.right = value
-
     @property
     def orientation(self):
         """
@@ -271,6 +247,37 @@ class CT_SectPr(BaseOxmlElement):
         # ---[1] predicate returns list of zero or one value---
         preceding_sectPrs = self.xpath("./preceding::w:sectPr[1]")
         return preceding_sectPrs[0] if len(preceding_sectPrs) > 0 else None
+
+    def remove_footerReference(self, type_):
+        """Return rId of w:footerReference child of *type_* after removing it."""
+        footerReference = self.get_footerReference(type_)
+        rId = footerReference.rId
+        self.remove(footerReference)
+        return rId
+
+    def remove_headerReference(self, type_):
+        """Return rId of w:headerReference child of *type_* after removing it."""
+        headerReference = self.get_headerReference(type_)
+        rId = headerReference.rId
+        self.remove(headerReference)
+        return rId
+
+    @property
+    def right_margin(self):
+        """
+        The value of the ``w:right`` attribute in the ``<w:pgMar>`` child
+        element, as a |Length| object, or |None| if either the element or the
+        attribute is not present.
+        """
+        pgMar = self.pgMar
+        if pgMar is None:
+            return None
+        return pgMar.right
+
+    @right_margin.setter
+    def right_margin(self, value):
+        pgMar = self.get_or_add_pgMar()
+        pgMar.right = value
 
     @property
     def start_type(self):

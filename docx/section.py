@@ -260,6 +260,11 @@ class _BaseHeaderFooter(BlockItemContainer):
 class _Footer(_BaseHeaderFooter):
     """Page footer."""
 
+    def _drop_definition(self):
+        """Remove footer definition (footer part) associated with this section."""
+        rId = self._sectPr.remove_footerReference(WD_HEADER_FOOTER.PRIMARY)
+        self._document_part.drop_rel(rId)
+
     @property
     def _has_definition(self):
         """True if a footer is defined for this section."""
