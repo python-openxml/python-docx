@@ -260,6 +260,12 @@ class _BaseHeaderFooter(BlockItemContainer):
 class _Footer(_BaseHeaderFooter):
     """Page footer."""
 
+    def _add_definition(self):
+        """Return newly-added footer part."""
+        footer_part, rId = self._document_part.add_footer_part()
+        self._sectPr.add_footerReference(WD_HEADER_FOOTER.PRIMARY, rId)
+        return footer_part
+
     def _drop_definition(self):
         """Remove footer definition (footer part) associated with this section."""
         rId = self._sectPr.remove_footerReference(WD_HEADER_FOOTER.PRIMARY)

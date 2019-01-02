@@ -25,6 +25,10 @@ class DocumentPart(XmlPart):
     objects provides access to this part object for that purpose.
     """
 
+    def add_footer_part(self):
+        """Return (footer_part, rId) pair for newly-created footer part."""
+        raise NotImplementedError
+
     def add_header_part(self):
         """Return (header_part, rId) pair for newly-created header part."""
         header_part = HeaderPart.new(self.package)

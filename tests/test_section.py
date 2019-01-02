@@ -8,7 +8,7 @@ import pytest
 
 from docx.enum.section import WD_ORIENT, WD_SECTION
 from docx.parts.document import DocumentPart
-from docx.parts.hdrftr import HeaderPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.section import _BaseHeaderFooter, _Footer, _Header, Section, Sections
 from docx.shared import Inches
 
@@ -423,6 +423,19 @@ class Describe_BaseHeaderFooter(object):
 
 class Describe_Footer(object):
 
+    def it_can_add_a_footer_part_to_help(self, document_part_, footer_part_):
+        sectPr = element("w:sectPr{r:a=b}")
+        document_part_.add_footer_part.return_value = footer_part_, "rId3"
+        footer = _Footer(sectPr, document_part_)
+
+        footer_part = footer._add_definition()
+
+        document_part_.add_footer_part.assert_called_once_with()
+        assert sectPr.xml == xml(
+            "w:sectPr{r:a=b}/w:footerReference{w:type=default,r:id=rId3}"
+        )
+        assert footer_part is footer_part_
+
     def it_can_drop_the_related_footer_part_to_help(self, document_part_):
         sectPr = element("w:sectPr{r:a=b}/w:footerReference{w:type=default,r:id=rId42}")
         footer = _Footer(sectPr, document_part_)
@@ -457,6 +470,10 @@ class Describe_Footer(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def footer_part_(self, request):
+        return instance_mock(request, FooterPart)
 
 
 class Describe_Header(object):

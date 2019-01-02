@@ -11,6 +11,10 @@ from docx.opc.part import XmlPart
 from docx.oxml import parse_xml
 
 
+class FooterPart(XmlPart):
+    """Definition of a section footer."""
+
+
 class HeaderPart(XmlPart):
     """Definition of a section header."""
 

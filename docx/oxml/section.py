@@ -65,10 +65,21 @@ class CT_SectPr(BaseOxmlElement):
         'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
     )
     headerReference = ZeroOrMore("w:headerReference", successors=_tag_seq)
+    footerReference = ZeroOrMore("w:footerReference", successors=_tag_seq)
     type = ZeroOrOne("w:type", successors=_tag_seq[3:])
     pgSz = ZeroOrOne("w:pgSz", successors=_tag_seq[4:])
     pgMar = ZeroOrOne("w:pgMar", successors=_tag_seq[5:])
     del _tag_seq
+
+    def add_footerReference(self, type_, rId):
+        """Return newly added CT_HdrFtrRef element of *type_* with *rId*.
+
+        The element tag is `w:footerReference`.
+        """
+        footerReference = self._add_footerReference()
+        footerReference.type_ = type_
+        footerReference.rId = rId
+        return footerReference
 
     def add_headerReference(self, type_, rId):
         """Return newly added CT_HdrFtrRef element of *type_* with *rId*.
