@@ -11,7 +11,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.package import Package
 from docx.parts.document import DocumentPart
-from docx.parts.hdrftr import HeaderPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
@@ -28,6 +28,18 @@ from ..unitutil.mock import class_mock, instance_mock, method_mock, property_moc
 
 
 class DescribeDocumentPart(object):
+
+    def it_can_add_a_footer_part(self, package_, FooterPart_, footer_part_, relate_to_):
+        FooterPart_.new.return_value = footer_part_
+        relate_to_.return_value = "rId12"
+        document_part = DocumentPart(None, None, None, package_)
+
+        footer_part, rId = document_part.add_footer_part()
+
+        FooterPart_.new.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, footer_part_, RT.FOOTER)
+        assert footer_part is footer_part_
+        assert rId == "rId12"
 
     def it_can_add_a_header_part(self, package_, HeaderPart_, header_part_, relate_to_):
         HeaderPart_.new.return_value = header_part_
@@ -295,6 +307,14 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def drop_rel_(self, request):
         return method_mock(request, DocumentPart, "drop_rel", autospec=True)
+
+    @pytest.fixture
+    def FooterPart_(self, request):
+        return class_mock(request, 'docx.parts.document.FooterPart')
+
+    @pytest.fixture
+    def footer_part_(self, request):
+        return instance_mock(request, FooterPart)
 
     @pytest.fixture
     def get_or_add_image_(self, request):

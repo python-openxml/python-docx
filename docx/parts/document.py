@@ -8,7 +8,7 @@ from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
-from docx.parts.hdrftr import HeaderPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
@@ -27,7 +27,9 @@ class DocumentPart(XmlPart):
 
     def add_footer_part(self):
         """Return (footer_part, rId) pair for newly-created footer part."""
-        raise NotImplementedError
+        footer_part = FooterPart.new(self.package)
+        rId = self.relate_to(footer_part, RT.FOOTER)
+        return footer_part, rId
 
     def add_header_part(self):
         """Return (header_part, rId) pair for newly-created header part."""

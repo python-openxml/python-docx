@@ -14,6 +14,11 @@ from docx.oxml import parse_xml
 class FooterPart(XmlPart):
     """Definition of a section footer."""
 
+    @classmethod
+    def new(cls, package):
+        """Return newly created footer part."""
+        raise NotImplementedError
+
 
 class HeaderPart(XmlPart):
     """Definition of a section header."""
