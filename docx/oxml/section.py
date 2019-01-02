@@ -17,6 +17,13 @@ from docx.oxml.xmlchemy import (
 )
 
 
+class CT_HdrFtr(BaseOxmlElement):
+    """`w:hdr` and `w:ftr`, the root element for header and footer part respectively"""
+
+    p = ZeroOrMore('w:p', successors=())
+    tbl = ZeroOrMore('w:tbl', successors=())
+
+
 class CT_HdrFtrRef(BaseOxmlElement):
     """`w:headerReference` and `w:footerReference` elements"""
 

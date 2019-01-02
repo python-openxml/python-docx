@@ -27,7 +27,6 @@ Feature: Header and footer behaviors
       | with no    | True  |
 
 
-  @wip
   Scenario: _Header inherits content
     Given a _Header object with a header definition as header
       And the next _Header object with no header definition as header_2
