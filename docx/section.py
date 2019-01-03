@@ -252,6 +252,20 @@ class _BaseHeaderFooter(BlockItemContainer):
         raise NotImplementedError("must be implemented by each subclass")
 
     @property
+    def _element(self):
+        """`w:hdr` or `w:ftr` element, root of header/footer part."""
+        return self._get_or_add_definition().element
+
+    def _get_or_add_definition(self):
+        """Return HeaderPart or FooterPart object for this section.
+
+        If this header/footer inherits its content, the part for the prior header/footer
+        is returned. If the definition cannot be inherited (it belongs to the first
+        section), a new definition is added and then returned.
+        """
+        raise NotImplementedError
+
+    @property
     def _has_definition(self):
         """True if this header/footer has a related part containing its definition."""
         raise NotImplementedError("must be implemented by each subclass")
@@ -292,12 +306,7 @@ class _Header(_BaseHeaderFooter):
         rId = self._sectPr.remove_headerReference(WD_HEADER_FOOTER.PRIMARY)
         self._document_part.drop_header_part(rId)
 
-    @property
-    def _element(self):
-        """`w:hdr` element, root of header part."""
-        return self._get_or_add_header_part().element
-
-    def _get_or_add_header_part(self):
+    def _get_or_add_definition(self):
         """Return |HeaderPart| object for this header.
 
         If this header inherits its content, the header part for the prior header is
@@ -312,7 +321,7 @@ class _Header(_BaseHeaderFooter):
         prior_header = self._prior_header
         # ---case-2: header inherits and belongs to second-or-later section---
         if prior_header is not None:
-            return prior_header._get_or_add_header_part()
+            return prior_header._get_or_add_definition()
         # ---case-3: header inherits, but is first header---
         return self._add_definition()
 
