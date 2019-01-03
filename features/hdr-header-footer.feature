@@ -57,7 +57,6 @@ Feature: Header and footer behaviors
       | with no    | True  |
 
 
-  @wip
   Scenario: _Footer inherits content
     Given a _Footer object with a footer definition as footer
       And the next _Footer object with no footer definition as footer_2

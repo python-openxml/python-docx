@@ -17,6 +17,20 @@ from ..unitutil.mock import function_mock, initializer_mock, instance_mock, meth
 
 class DescribeFooterPart(object):
 
+    def it_is_used_by_loader_to_construct_footer_part(
+        self, package_, FooterPart_load_, footer_part_
+    ):
+        partname = "footer1.xml"
+        content_type = CT.WML_FOOTER
+        reltype = RT.FOOTER
+        blob = "<w:ftr/>"
+        FooterPart_load_.return_value = footer_part_
+
+        part = PartFactory(partname, content_type, reltype, blob, package_)
+
+        FooterPart_load_.assert_called_once_with(partname, content_type, blob, package_)
+        assert part is footer_part_
+
     def it_can_create_a_new_footer_part(
         self, package_, _default_footer_xml_, parse_xml_, _init_
     ):
@@ -48,6 +62,14 @@ class DescribeFooterPart(object):
     @pytest.fixture
     def _default_footer_xml_(self, request):
         return method_mock(request, FooterPart, "_default_footer_xml", autospec=False)
+
+    @pytest.fixture
+    def footer_part_(self, request):
+        return instance_mock(request, FooterPart)
+
+    @pytest.fixture
+    def FooterPart_load_(self, request):
+        return method_mock(request, FooterPart, "load", autospec=False)
 
     @pytest.fixture
     def _init_(self, request):
