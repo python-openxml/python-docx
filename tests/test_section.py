@@ -514,6 +514,18 @@ class Describe_Footer(object):
         )
         assert footer_part is footer_part_
 
+    def it_provides_access_to_its_footer_part_to_help(
+        self, document_part_, footer_part_
+    ):
+        sectPr = element("w:sectPr/w:footerReference{w:type=default,r:id=rId3}")
+        document_part_.footer_part.return_value = footer_part_
+        footer = _Footer(sectPr, document_part_)
+
+        footer_part = footer._definition
+
+        document_part_.footer_part.assert_called_once_with("rId3")
+        assert footer_part is footer_part_
+
     def it_can_drop_the_related_footer_part_to_help(self, document_part_):
         sectPr = element("w:sectPr{r:a=b}/w:footerReference{w:type=default,r:id=rId42}")
         footer = _Footer(sectPr, document_part_)

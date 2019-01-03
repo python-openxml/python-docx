@@ -304,6 +304,12 @@ class _Footer(_BaseHeaderFooter):
         self._sectPr.add_footerReference(WD_HEADER_FOOTER.PRIMARY, rId)
         return footer_part
 
+    @property
+    def _definition(self):
+        """|FooterPart| object containing content of this footer."""
+        footerReference = self._sectPr.get_footerReference(WD_HEADER_FOOTER.PRIMARY)
+        return self._document_part.footer_part(footerReference.rId)
+
     def _drop_definition(self):
         """Remove footer definition (footer part) associated with this section."""
         rId = self._sectPr.remove_footerReference(WD_HEADER_FOOTER.PRIMARY)

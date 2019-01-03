@@ -56,6 +56,10 @@ class DocumentPart(XmlPart):
         """Remove related header part identified by *rId*."""
         self.drop_rel(rId)
 
+    def footer_part(self, rId):
+        """Return |FooterPart| related by *rId*."""
+        raise NotImplementedError
+
     def get_or_add_image(self, image_descriptor):
         """
         Return an (rId, image) 2-tuple for the image identified by
