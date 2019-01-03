@@ -315,6 +315,15 @@ class _Footer(_BaseHeaderFooter):
         footerReference = self._sectPr.get_footerReference(WD_HEADER_FOOTER.PRIMARY)
         return False if footerReference is None else True
 
+    @property
+    def _prior_headerfooter(self):
+        """|_Footer| proxy on prior sectPr element or None if this is first section."""
+        preceding_sectPr = self._sectPr.preceding_sectPr
+        return (
+            None if preceding_sectPr is None
+            else _Footer(preceding_sectPr, self._document_part)
+        )
+
 
 class _Header(_BaseHeaderFooter):
     """Page header."""

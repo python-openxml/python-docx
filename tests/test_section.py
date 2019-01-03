@@ -531,6 +531,29 @@ class Describe_Footer(object):
 
         assert has_definition is expected_value
 
+    def it_provides_access_to_the_prior_Footer_to_help(
+        self, request, document_part_, footer_
+    ):
+        doc_elm = element("w:document/(w:sectPr,w:sectPr)")
+        prior_sectPr, sectPr = doc_elm[0], doc_elm[1]
+        footer = _Footer(sectPr, document_part_)
+        # ---mock must occur after construction of "real" footer---
+        _Footer_ = class_mock(request, "docx.section._Footer", return_value=footer_)
+
+        prior_footer = footer._prior_headerfooter
+
+        _Footer_.assert_called_once_with(prior_sectPr, document_part_)
+        assert prior_footer is footer_
+
+    def but_it_returns_None_when_its_the_first_footer(self):
+        doc_elm = element("w:document/w:sectPr")
+        sectPr = doc_elm[0]
+        footer = _Footer(sectPr, None)
+
+        prior_footer = footer._prior_headerfooter
+
+        assert prior_footer is None
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(
@@ -548,6 +571,10 @@ class Describe_Footer(object):
     @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
+
+    @pytest.fixture
+    def footer_(self, request):
+        return instance_mock(request, _Footer)
 
     @pytest.fixture
     def footer_part_(self, request):
