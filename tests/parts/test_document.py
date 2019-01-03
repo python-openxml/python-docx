@@ -60,6 +60,18 @@ class DescribeDocumentPart(object):
 
         drop_rel_.assert_called_once_with(document_part, "rId42")
 
+    def it_provides_access_to_a_footer_part_by_rId(
+        self, related_parts_prop_, related_parts_, footer_part_
+    ):
+        related_parts_prop_.return_value = related_parts_
+        related_parts_.__getitem__.return_value = footer_part_
+        document_part = DocumentPart(None, None, None, None)
+
+        footer_part = document_part.footer_part("rId9")
+
+        related_parts_.__getitem__.assert_called_once_with("rId9")
+        assert footer_part is footer_part_
+
     def it_provides_access_to_a_header_part_by_rId(
         self, related_parts_prop_, related_parts_, header_part_
     ):

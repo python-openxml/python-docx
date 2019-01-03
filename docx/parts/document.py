@@ -58,7 +58,7 @@ class DocumentPart(XmlPart):
 
     def footer_part(self, rId):
         """Return |FooterPart| related by *rId*."""
-        raise NotImplementedError
+        return self.related_parts[rId]
 
     def get_or_add_image(self, image_descriptor):
         """
