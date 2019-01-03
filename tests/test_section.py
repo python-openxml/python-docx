@@ -400,6 +400,51 @@ class Describe_BaseHeaderFooter(object):
         _get_or_add_definition_.assert_called_once_with(header)
         assert hdr_elm is hdr
 
+    def it_gets_the_definition_when_it_has_one(
+        self, _has_definition_prop_, _definition_prop_, header_part_
+    ):
+        _has_definition_prop_.return_value = True
+        _definition_prop_.return_value = header_part_
+        header = _BaseHeaderFooter(None, None)
+
+        header_part = header._get_or_add_definition()
+
+        assert header_part is header_part_
+
+    def but_it_gets_the_prior_definition_when_it_is_linked(
+        self,
+        _has_definition_prop_,
+        _prior_headerfooter_prop_,
+        prior_headerfooter_,
+        header_part_,
+    ):
+        _has_definition_prop_.return_value = False
+        _prior_headerfooter_prop_.return_value = prior_headerfooter_
+        prior_headerfooter_._get_or_add_definition.return_value = header_part_
+        header = _BaseHeaderFooter(None, None)
+
+        header_part = header._get_or_add_definition()
+
+        prior_headerfooter_._get_or_add_definition.assert_called_once_with()
+        assert header_part is header_part_
+
+    def and_it_adds_a_definition_when_it_is_linked_and_the_first_section(
+        self,
+        _has_definition_prop_,
+        _prior_headerfooter_prop_,
+        _add_definition_,
+        header_part_
+    ):
+        _has_definition_prop_.return_value = False
+        _prior_headerfooter_prop_.return_value = None
+        _add_definition_.return_value = header_part_
+        header = _BaseHeaderFooter(None, None)
+
+        header_part = header._get_or_add_definition()
+
+        _add_definition_.assert_called_once_with(header)
+        assert header_part is header_part_
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(params=[(False, True), (True, False)])
@@ -426,6 +471,10 @@ class Describe_BaseHeaderFooter(object):
         return method_mock(request, _BaseHeaderFooter, "_add_definition")
 
     @pytest.fixture
+    def _definition_prop_(self, request):
+        return property_mock(request, _BaseHeaderFooter, "_definition")
+
+    @pytest.fixture
     def _drop_definition_(self, request):
         return method_mock(request, _BaseHeaderFooter, "_drop_definition")
 
@@ -440,6 +489,14 @@ class Describe_BaseHeaderFooter(object):
     @pytest.fixture
     def header_part_(self, request):
         return instance_mock(request, HeaderPart)
+
+    @pytest.fixture
+    def prior_headerfooter_(self, request):
+        return instance_mock(request, _BaseHeaderFooter)
+
+    @pytest.fixture
+    def _prior_headerfooter_prop_(self, request):
+        return property_mock(request, _BaseHeaderFooter, "_prior_headerfooter")
 
 
 class Describe_Footer(object):
@@ -512,6 +569,18 @@ class Describe_Header(object):
         )
         assert header_part is header_part_
 
+    def it_provides_access_to_its_header_part_to_help(
+        self, document_part_, header_part_
+    ):
+        sectPr = element("w:sectPr/w:headerReference{w:type=default,r:id=rId8}")
+        document_part_.header_part.return_value = header_part_
+        header = _Header(sectPr, document_part_)
+
+        header_part = header._definition
+
+        document_part_.header_part.assert_called_once_with("rId8")
+        assert header_part is header_part_
+
     def it_can_drop_the_related_header_part_to_help(self, document_part_):
         sectPr = element("w:sectPr{r:a=b}/w:headerReference{w:type=default,r:id=rId42}")
         header = _Header(sectPr, document_part_)
@@ -521,47 +590,6 @@ class Describe_Header(object):
         assert sectPr.xml == xml("w:sectPr{r:a=b}")
         document_part_.drop_header_part.assert_called_once_with("rId42")
 
-    def it_gets_the_header_part_when_it_has_one(
-        self, _has_definition_prop_, _header_part_prop_, header_part_
-    ):
-        _has_definition_prop_.return_value = True
-        _header_part_prop_.return_value = header_part_
-        header = _Header(None, None)
-
-        header_part = header._get_or_add_definition()
-
-        assert header_part is header_part_
-
-    def but_it_gets_the_prior_header_part_when_it_is_linked(
-        self, _has_definition_prop_, _prior_header_prop_, prior_header_, header_part_
-    ):
-        _has_definition_prop_.return_value = False
-        _prior_header_prop_.return_value = prior_header_
-        prior_header_._get_or_add_definition.return_value = header_part_
-        header = _Header(None, None)
-
-        header_part = header._get_or_add_definition()
-
-        prior_header_._get_or_add_definition.assert_called_once_with()
-        assert header_part is header_part_
-
-    def and_it_adds_the_header_part_when_it_is_linked_and_the_first_section(
-        self,
-        _has_definition_prop_,
-        _prior_header_prop_,
-        _add_definition_,
-        header_part_
-    ):
-        _has_definition_prop_.return_value = False
-        _prior_header_prop_.return_value = None
-        _add_definition_.return_value = header_part_
-        header = _Header(None, None)
-
-        header_part = header._get_or_add_definition()
-
-        _add_definition_.assert_called_once_with(header)
-        assert header_part is header_part_
-
     def it_knows_when_it_has_a_header_part_to_help(self, has_definition_fixture):
         sectPr, expected_value = has_definition_fixture
         header = _Header(sectPr, None)
@@ -569,18 +597,6 @@ class Describe_Header(object):
         has_definition = header._has_definition
 
         assert has_definition is expected_value
-
-    def it_provides_access_to_its_header_part_to_help(
-        self, document_part_, header_part_
-    ):
-        sectPr = element("w:sectPr/w:headerReference{w:type=default,r:id=rId8}")
-        document_part_.header_part.return_value = header_part_
-        header = _Header(sectPr, document_part_)
-
-        header_part = header._header_part
-
-        document_part_.header_part.assert_called_once_with("rId8")
-        assert header_part is header_part_
 
     def it_provides_access_to_the_prior_Header_to_help(
         self, request, document_part_, header_
@@ -591,7 +607,7 @@ class Describe_Header(object):
         # ---mock must occur after construction of "real" header---
         _Header_ = class_mock(request, "docx.section._Header", return_value=header_)
 
-        prior_header = header._prior_header
+        prior_header = header._prior_headerfooter
 
         _Header_.assert_called_once_with(prior_sectPr, document_part_)
         assert prior_header is header_
@@ -601,7 +617,7 @@ class Describe_Header(object):
         sectPr = doc_elm[0]
         header = _Header(sectPr, None)
 
-        prior_header = header._prior_header
+        prior_header = header._prior_headerfooter
 
         assert prior_header is None
 
@@ -620,20 +636,8 @@ class Describe_Header(object):
     # fixture components ---------------------------------------------
 
     @pytest.fixture
-    def _add_definition_(self, request):
-        return method_mock(request, _Header, "_add_definition")
-
-    @pytest.fixture
     def document_part_(self, request):
         return instance_mock(request, DocumentPart)
-
-    @pytest.fixture
-    def _get_or_add_definition_(self, request):
-        return method_mock(request, _Header, "_get_or_add_definition")
-
-    @pytest.fixture
-    def _has_definition_prop_(self, request):
-        return property_mock(request, _Header, "_has_definition")
 
     @pytest.fixture
     def header_(self, request):
@@ -642,15 +646,3 @@ class Describe_Header(object):
     @pytest.fixture
     def header_part_(self, request):
         return instance_mock(request, HeaderPart)
-
-    @pytest.fixture
-    def _header_part_prop_(self, request):
-        return property_mock(request, _Header, "_header_part")
-
-    @pytest.fixture
-    def prior_header_(self, request):
-        return instance_mock(request, _Header)
-
-    @pytest.fixture
-    def _prior_header_prop_(self, request):
-        return property_mock(request, _Header, "_prior_header")

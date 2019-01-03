@@ -247,6 +247,11 @@ class _BaseHeaderFooter(BlockItemContainer):
         """Return newly-added header/footer part."""
         raise NotImplementedError("must be implemented by each subclass")
 
+    @property
+    def _definition(self):
+        """|HeaderPart| or |FooterPart| object containing header/footer content."""
+        raise NotImplementedError("must be implemented by each subclass")
+
     def _drop_definition(self):
         """Remove header/footer part containing the definition of this header/footer."""
         raise NotImplementedError("must be implemented by each subclass")
@@ -260,14 +265,33 @@ class _BaseHeaderFooter(BlockItemContainer):
         """Return HeaderPart or FooterPart object for this section.
 
         If this header/footer inherits its content, the part for the prior header/footer
-        is returned. If the definition cannot be inherited (it belongs to the first
-        section), a new definition is added and then returned.
+        is returned; this process continue recursively until a definition is found. If
+        the definition cannot be inherited (because the header/footer belongs to the
+        first section), a new definition is added for that first section and then
+        returned.
         """
-        raise NotImplementedError
+        # ---note this method is called recursively to access inherited definitions---
+        # ---case-1: definition is not inherited---
+        if self._has_definition:
+            return self._definition
+        # ---case-2: definition is inherited and belongs to second-or-later section---
+        prior_headerfooter = self._prior_headerfooter
+        if prior_headerfooter:
+            return prior_headerfooter._get_or_add_definition()
+        # ---case-3: definition is inherited, but belongs to first section---
+        return self._add_definition()
 
     @property
     def _has_definition(self):
         """True if this header/footer has a related part containing its definition."""
+        raise NotImplementedError("must be implemented by each subclass")
+
+    @property
+    def _prior_headerfooter(self):
+        """|_Header| or |_Footer| proxy on prior sectPr element.
+
+        Returns None if this is first section.
+        """
         raise NotImplementedError("must be implemented by each subclass")
 
 
@@ -301,29 +325,16 @@ class _Header(_BaseHeaderFooter):
         self._sectPr.add_headerReference(WD_HEADER_FOOTER.PRIMARY, rId)
         return header_part
 
+    @property
+    def _definition(self):
+        """|HeaderPart| object containing content of this header."""
+        headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        return self._document_part.header_part(headerReference.rId)
+
     def _drop_definition(self):
         """Remove header definition associated with this section."""
         rId = self._sectPr.remove_headerReference(WD_HEADER_FOOTER.PRIMARY)
         self._document_part.drop_header_part(rId)
-
-    def _get_or_add_definition(self):
-        """Return |HeaderPart| object for this header.
-
-        If this header inherits its content, the header part for the prior header is
-        returned; this process continue recursively until a header is found. If this
-        header cannot inherit (it belongs to the first section), a new header part is
-        created for the first section and returned.
-        """
-        # ---note this method is called recursively to access inherited headers---
-        # ---case-1: header does not inherit---
-        if self._has_definition:
-            return self._header_part
-        prior_header = self._prior_header
-        # ---case-2: header inherits and belongs to second-or-later section---
-        if prior_header is not None:
-            return prior_header._get_or_add_definition()
-        # ---case-3: header inherits, but is first header---
-        return self._add_definition()
 
     @property
     def _has_definition(self):
@@ -332,13 +343,7 @@ class _Header(_BaseHeaderFooter):
         return False if headerReference is None else True
 
     @property
-    def _header_part(self):
-        """|HeaderPart| object containing content of this header."""
-        headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
-        return self._document_part.header_part(headerReference.rId)
-
-    @property
-    def _prior_header(self):
+    def _prior_headerfooter(self):
         """|_Header| proxy on prior sectPr element or None if this is first section."""
         preceding_sectPr = self._sectPr.preceding_sectPr
         return (
