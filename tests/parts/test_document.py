@@ -20,7 +20,6 @@ from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 
 from ..oxml.parts.unitdata.document import a_body, a_document
-from ..oxml.unitdata.text import a_p
 from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
@@ -132,10 +131,6 @@ class DescribeDocumentPart(object):
         relate_to_.assert_called_once_with(document_part, numbering_part_, RT.NUMBERING)
         assert numbering_part is numbering_part_
 
-    def it_knows_the_next_available_xml_id(self, next_id_fixture):
-        document, expected_id = next_id_fixture
-        assert document.next_id == expected_id
-
     def it_can_get_a_style_by_id(self, styles_prop_, styles_, style_):
         styles_prop_.return_value = styles_
         styles_.get_by_id.return_value = style_
@@ -221,27 +216,6 @@ class DescribeDocumentPart(object):
         body_elm = document_elm[0]
         document = DocumentPart(None, None, document_elm, None)
         return document, InlineShapes_, body_elm
-
-    @pytest.fixture(params=[
-        ((), 1),
-        ((1,), 2),
-        ((2,), 3),
-        ((1, 2, 3), 4),
-        ((1, 2, 4), 5),
-        ((0, 0), 1),
-        ((0, 0, 1, 3), 4),
-        (('foo', 1, 2), 3),
-        ((1, 'bar'), 2)
-    ])
-    def next_id_fixture(self, request):
-        existing_ids, expected_id = request.param
-        document_elm = a_document().with_nsdecls().element
-        for n in existing_ids:
-            p = a_p().with_nsdecls().element
-            p.set('id', str(n))
-            document_elm.append(p)
-        document = DocumentPart(None, None, document_elm, None)
-        return document, expected_id
 
     @pytest.fixture
     def save_fixture(self, package_):

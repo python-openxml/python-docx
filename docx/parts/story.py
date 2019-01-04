@@ -66,7 +66,11 @@ class BaseStoryPart(XmlPart):
         the existing id sequence are not filled. The id attribute value is unique in the
         document, without regard to the element type it appears on.
         """
-        raise NotImplementedError
+        id_str_lst = self._element.xpath('//@id')
+        used_ids = [int(id_str) for id_str in id_str_lst if id_str.isdigit()]
+        if not used_ids:
+            return 1
+        return max(used_ids) + 1
 
     @lazyproperty
     def _document_part(self):

@@ -40,7 +40,6 @@ Feature: Header and footer behaviors
      Then header.paragraphs[0].style.name == "Normal"
 
 
-  @wip
   Scenario: _Header allows image insertion
     Given a _Run object from a header as run
      When I call run.add_picture()
@@ -83,7 +82,6 @@ Feature: Header and footer behaviors
      Then footer.paragraphs[0].style.name == "Normal"
 
 
-  @wip
   Scenario: _Footer allows image insertion
     Given a _Run object from a footer as run
      When I call run.add_picture()

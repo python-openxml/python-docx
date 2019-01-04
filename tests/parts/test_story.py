@@ -15,6 +15,7 @@ from docx.parts.image import ImagePart
 from docx.parts.story import BaseStoryPart
 from docx.styles.style import BaseStyle
 
+from ..unitutil.cxml import element
 from ..unitutil.file import snippet_text
 from ..unitutil.mock import instance_mock, method_mock, property_mock
 
@@ -75,6 +76,14 @@ class DescribeBaseStoryPart(object):
         image_.scaled_dimensions.assert_called_once_with(100, 200)
         assert inline.xml == expected_xml
 
+    def it_knows_the_next_available_xml_id(self, next_id_fixture):
+        story_element, expected_value = next_id_fixture
+        story_part = BaseStoryPart(None, None, story_element, None)
+
+        next_id = story_part.next_id
+
+        assert next_id == expected_value
+
     def it_knows_the_main_document_part_to_help(self, package_, document_part_):
         package_.main_document_part = document_part_
         story_part = BaseStoryPart(None, None, None, package_)
@@ -82,6 +91,26 @@ class DescribeBaseStoryPart(object):
         document_part = story_part._document_part
 
         assert document_part is document_part_
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            (("w:document"), 1),
+            (("w:document/w:p{id=1}"), 2),
+            (("w:document/w:p{id=2}"), 3),
+            (("w:hdr/(w:p{id=1},w:p{id=2},w:p{id=3})"), 4),
+            (("w:hdr/(w:p{id=1},w:p{id=2},w:p{id=4})"), 5),
+            (("w:hdr/(w:p{id=0},w:p{id=0})"), 1),
+            (("w:ftr/(w:p{id=0},w:p{id=0},w:p{id=1},w:p{id=3})"), 4),
+            (("w:ftr/(w:p{id=foo},w:p{id=1},w:p{id=2})"), 3),
+            (("w:ftr/(w:p{id=1},w:p{id=bar})"), 2),
+        ]
+    )
+    def next_id_fixture(self, request):
+        story_cxml, expected_value = request.param
+        story_element = element(story_cxml)
+        return story_element, expected_value
 
     # fixture components ---------------------------------------------
 
