@@ -12,10 +12,22 @@ from docx.package import ImageParts, Package
 from docx.parts.image import ImagePart
 
 from .unitutil.file import docx_path
-from .unitutil.mock import class_mock, instance_mock, method_mock
+from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribePackage(object):
+
+    def it_can_get_or_add_an_image_part_containing_a_specified_image(
+        self, image_parts_prop_, image_parts_, image_part_
+    ):
+        image_parts_prop_.return_value = image_parts_
+        image_parts_.get_or_add_image_part.return_value = image_part_
+        package = Package()
+
+        image_part = package.get_or_add_image_part("image.png")
+
+        image_parts_.get_or_add_image_part.assert_called_once_with("image.png")
+        assert image_part is image_part_
 
     def it_gathers_package_image_parts_after_unmarshalling(self):
         package = Package.open(docx_path('having-images'))
@@ -23,6 +35,20 @@ class DescribePackage(object):
         assert len(image_parts) == 3
         for image_part in image_parts:
             assert isinstance(image_part, ImagePart)
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def image_part_(self, request):
+        return instance_mock(request, ImagePart)
+
+    @pytest.fixture
+    def image_parts_(self, request):
+        return instance_mock(request, ImageParts)
+
+    @pytest.fixture
+    def image_parts_prop_(self, request):
+        return property_mock(request, Package, "image_parts")
 
 
 class DescribeImageParts(object):

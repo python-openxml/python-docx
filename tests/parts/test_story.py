@@ -8,8 +8,10 @@ import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.image.image import Image
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.document import DocumentPart
+from docx.parts.image import ImagePart
 from docx.parts.story import BaseStoryPart
 from docx.styles.style import BaseStyle
 
@@ -18,6 +20,19 @@ from ..unitutil.mock import instance_mock, method_mock, property_mock
 
 
 class DescribeBaseStoryPart(object):
+
+    def it_can_get_or_add_an_image(self, package_, image_part_, image_, relate_to_):
+        package_.get_or_add_image_part.return_value = image_part_
+        relate_to_.return_value = "rId42"
+        image_part_.image = image_
+        story_part = BaseStoryPart(None, None, None, package_)
+
+        rId, image = story_part.get_or_add_image("image.png")
+
+        package_.get_or_add_image_part.assert_called_once_with("image.png")
+        relate_to_.assert_called_once_with(story_part, image_part_, RT.IMAGE)
+        assert rId == "rId42"
+        assert image is image_
 
     def it_can_get_a_style_by_id_and_type(
         self, _document_part_prop_, document_part_, style_
@@ -87,12 +102,20 @@ class DescribeBaseStoryPart(object):
         return instance_mock(request, Image)
 
     @pytest.fixture
+    def image_part_(self, request):
+        return instance_mock(request, ImagePart)
+
+    @pytest.fixture
     def next_id_prop_(self, request):
         return property_mock(request, BaseStoryPart, "next_id")
 
     @pytest.fixture
     def package_(self, request):
         return instance_mock(request, Package)
+
+    @pytest.fixture
+    def relate_to_(self, request):
+        return method_mock(request, BaseStoryPart, "relate_to")
 
     @pytest.fixture
     def style_(self, request):

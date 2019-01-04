@@ -7,13 +7,11 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
-from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.package import Package
 from docx.parts.document import DocumentPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
-from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
@@ -87,21 +85,6 @@ class DescribeDocumentPart(object):
         document, file_ = save_fixture
         document.save(file_)
         document._package.save.assert_called_once_with(file_)
-
-    def it_can_get_or_add_an_image(self, package_, image_part_, image_, relate_to_):
-        path = 'foobar.png'
-        package_.image_parts.get_or_add_image_part.return_value = image_part_
-        relate_to_.return_value = "rId42"
-        image_part_.image = image_
-        document_part = DocumentPart(None, None, None, package_)
-
-        rId, image = document_part.get_or_add_image(path)
-
-        image_parts = document_part._package.image_parts
-        image_parts.get_or_add_image_part.assert_called_once_with(path)
-        relate_to_.assert_called_once_with(document_part, image_part_, RT.IMAGE)
-        assert rId == "rId42"
-        assert image is image_
 
     def it_provides_access_to_the_document_settings(self, settings_fixture):
         document_part, settings_ = settings_fixture
@@ -306,14 +289,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def header_part_(self, request):
         return instance_mock(request, HeaderPart)
-
-    @pytest.fixture
-    def image_(self, request):
-        return instance_mock(request, Image)
-
-    @pytest.fixture
-    def image_part_(self, request):
-        return instance_mock(request, ImagePart)
 
     @pytest.fixture
     def InlineShapes_(self, request):

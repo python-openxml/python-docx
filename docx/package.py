@@ -22,6 +22,14 @@ class Package(OpcPackage):
         """
         self._gather_image_parts()
 
+    def get_or_add_image_part(self, image_descriptor):
+        """Return |ImagePart| containing image specified by *image_descriptor*.
+
+        The image-part is newly created if a matching one is not already present in the
+        collection.
+        """
+        return self.image_parts.get_or_add_image_part(image_descriptor)
+
     @lazyproperty
     def image_parts(self):
         """|ImageParts| collection object for this package."""

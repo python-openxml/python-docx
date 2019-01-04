@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
 from docx.shared import lazyproperty
@@ -25,7 +26,9 @@ class BaseStoryPart(XmlPart):
         *image* is an |Image| instance providing access to the properties of the image,
         such as dimensions and image type.
         """
-        raise NotImplementedError
+        image_part = self._package.get_or_add_image_part(image_descriptor)
+        rId = self.relate_to(image_part, RT.IMAGE)
+        return rId, image_part.image
 
     def get_style(self, style_id, style_type):
         """Return the style in this document matching *style_id*.

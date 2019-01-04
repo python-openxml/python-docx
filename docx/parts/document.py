@@ -59,20 +59,6 @@ class DocumentPart(BaseStoryPart):
         """Return |FooterPart| related by *rId*."""
         return self.related_parts[rId]
 
-    def get_or_add_image(self, image_descriptor):
-        """
-        Return an (rId, image) 2-tuple for the image identified by
-        *image_descriptor*. *image* is an |Image| instance providing access
-        to the properties of the image, such as dimensions and image type.
-        *rId* is the key for the relationship between this document part and
-        the image part, reused if already present, newly created if not.
-        """
-        image_part = self._package.image_parts.get_or_add_image_part(
-            image_descriptor
-        )
-        rId = self.relate_to(image_part, RT.IMAGE)
-        return rId, image_part.image
-
     def get_style(self, style_id, style_type):
         """
         Return the style in this document matching *style_id*. Returns the
