@@ -7,11 +7,11 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.opc.part import XmlPart
 from docx.oxml import parse_xml
+from docx.parts.story import BaseStoryPart
 
 
-class FooterPart(XmlPart):
+class FooterPart(BaseStoryPart):
     """Definition of a section footer."""
 
     @classmethod
@@ -33,7 +33,7 @@ class FooterPart(XmlPart):
         return xml_bytes
 
 
-class HeaderPart(XmlPart):
+class HeaderPart(BaseStoryPart):
     """Definition of a section header."""
 
     @classmethod

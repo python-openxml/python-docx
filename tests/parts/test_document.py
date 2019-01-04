@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.enum.style import WD_STYLE_TYPE
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
@@ -19,7 +20,6 @@ from docx.parts.styles import StylesPart
 from docx.settings import Settings
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
-from docx.text.paragraph import Paragraph
 
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.text import a_p
@@ -137,7 +137,7 @@ class DescribeDocumentPart(object):
         part_related_by_.assert_called_once_with(document_part, RT.NUMBERING)
         assert numbering_part is numbering_part_
 
-    def it_creates_numbering_part_if_not_present(
+    def and_it_creates_a_numbering_part_if_not_present(
         self, part_related_by_, relate_to_, NumberingPart_, numbering_part_
     ):
         part_related_by_.side_effect = KeyError
@@ -169,24 +169,25 @@ class DescribeDocumentPart(object):
         image_.scaled_dimensions.assert_called_once_with(width, height)
         assert inline.xml == expected_xml
 
-    def it_can_get_a_style_by_id(self, get_style_fixture):
-        document_part, style_id, style_type, style_ = get_style_fixture
-        style = document_part.get_style(style_id, style_type)
-        document_part.styles.get_by_id.assert_called_once_with(
-            style_id, style_type
-        )
+    def it_can_get_a_style_by_id(self, styles_prop_, styles_, style_):
+        styles_prop_.return_value = styles_
+        styles_.get_by_id.return_value = style_
+        document_part = DocumentPart(None, None, None, None)
+
+        style = document_part.get_style("BodyText", WD_STYLE_TYPE.PARAGRAPH)
+
+        styles_.get_by_id.assert_called_once_with("BodyText", WD_STYLE_TYPE.PARAGRAPH)
         assert style is style_
 
-    def it_can_get_the_id_of_a_style(self, get_style_id_fixture):
-        document_part, style_or_name, style_type, style_id_ = (
-            get_style_id_fixture
-        )
-        style_id = document_part.get_style_id(style_or_name, style_type)
+    def it_can_get_the_id_of_a_style(self, style_, styles_prop_, styles_):
+        styles_prop_.return_value = styles_
+        styles_.get_style_id.return_value = "BodyCharacter"
+        document_part = DocumentPart(None, None, None, None)
 
-        document_part.styles.get_style_id.assert_called_once_with(
-            style_or_name, style_type
-        )
-        assert style_id is style_id_
+        style_id = document_part.get_style_id(style_, WD_STYLE_TYPE.CHARACTER)
+
+        styles_.get_style_id.assert_called_once_with(style_, WD_STYLE_TYPE.CHARACTER)
+        assert style_id == "BodyCharacter"
 
     def it_provides_access_to_its_settings_part_to_help(
         self, part_related_by_, settings_part_
@@ -199,7 +200,7 @@ class DescribeDocumentPart(object):
         part_related_by_.assert_called_once_with(document_part, RT.SETTINGS)
         assert settings_part is settings_part_
 
-    def it_creates_default_settings_part_if_not_present_to_help(
+    def and_it_creates_a_default_settings_part_if_not_present(
         self, package_, part_related_by_, SettingsPart_, settings_part_, relate_to_
     ):
         part_related_by_.side_effect = KeyError
@@ -223,7 +224,7 @@ class DescribeDocumentPart(object):
         part_related_by_.assert_called_once_with(document_part, RT.STYLES)
         assert styles_part is styles_part_
 
-    def it_creates_default_styles_part_if_not_present_to_help(
+    def and_it_creates_a_default_styles_part_if_not_present(
         self, package_, part_related_by_, StylesPart_, styles_part_, relate_to_
     ):
         part_related_by_.side_effect = KeyError
@@ -243,20 +244,6 @@ class DescribeDocumentPart(object):
         document_part = DocumentPart(None, None, None, package_)
         package_.core_properties = core_properties_
         return document_part, core_properties_
-
-    @pytest.fixture
-    def get_style_fixture(self, styles_prop_, style_):
-        document_part = DocumentPart(None, None, None, None)
-        style_id, style_type = 'Foobar', 1
-        styles_prop_.return_value.get_by_id.return_value = style_
-        return document_part, style_id, style_type, style_
-
-    @pytest.fixture
-    def get_style_id_fixture(self, styles_prop_):
-        document_part = DocumentPart(None, None, None, None)
-        style_or_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
-        styles_prop_.return_value.get_style_id.return_value = style_id_
-        return document_part, style_or_name, style_type, style_id_
 
     @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
@@ -365,10 +352,6 @@ class DescribeDocumentPart(object):
         return instance_mock(request, NumberingPart)
 
     @pytest.fixture
-    def p_(self, request):
-        return instance_mock(request, Paragraph)
-
-    @pytest.fixture
     def package_(self, request):
         return instance_mock(request, Package)
 
@@ -421,10 +404,8 @@ class DescribeDocumentPart(object):
         return instance_mock(request, StylesPart)
 
     @pytest.fixture
-    def styles_prop_(self, request, styles_):
-        return property_mock(
-            request, DocumentPart, 'styles', return_value=styles_
-        )
+    def styles_prop_(self, request):
+        return property_mock(request, DocumentPart, 'styles')
 
     @pytest.fixture
     def _styles_part_prop_(self, request):
