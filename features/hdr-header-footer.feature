@@ -34,7 +34,6 @@ Feature: Header and footer behaviors
       And header_2.is_linked_to_previous is True
 
 
-  @wip
   Scenario: _Header text accepts style assignment
     Given a _Header object with a header definition as header
      When I assign "Normal" to header.paragraphs[0].style
@@ -78,7 +77,6 @@ Feature: Header and footer behaviors
       And footer_2.is_linked_to_previous is True
 
 
-  @wip
   Scenario: _Footer text accepts style assignment
     Given a _Footer object with a footer definition as footer
      When I assign "Normal" to footer.paragraphs[0].style

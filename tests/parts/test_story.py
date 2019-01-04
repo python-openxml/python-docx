@@ -17,6 +17,20 @@ from ..unitutil.mock import instance_mock, property_mock
 
 class DescribeBaseStoryPart(object):
 
+    def it_can_get_a_style_by_id_and_type(
+        self, _document_part_prop_, document_part_, style_
+    ):
+        style_id = "BodyText"
+        style_type = WD_STYLE_TYPE.PARAGRAPH
+        _document_part_prop_.return_value = document_part_
+        document_part_.get_style.return_value = style_
+        story_part = BaseStoryPart(None, None, None, None)
+
+        style = story_part.get_style(style_id, style_type)
+
+        document_part_.get_style.assert_called_once_with(style_id, style_type)
+        assert style is style_
+
     def it_can_get_a_style_id_by_style_or_name_and_type(
         self, _document_part_prop_, document_part_, style_
     ):
