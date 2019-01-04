@@ -387,6 +387,18 @@ class Describe_BaseHeaderFooter(object):
         assert _drop_definition_.call_args_list == [call(header)] * drop_calls
         assert _add_definition_.call_args_list == [call(header)] * add_calls
 
+    def it_provides_access_to_the_header_or_footer_part_for_BlockItemContainer(
+        self, _get_or_add_definition_, header_part_
+    ):
+        # ---this override fulfills part of the BlockItemContainer subclass interface---
+        _get_or_add_definition_.return_value = header_part_
+        header = _BaseHeaderFooter(None, None)
+
+        header_part = header.part
+
+        _get_or_add_definition_.assert_called_once_with(header)
+        assert header_part is header_part_
+
     def it_provides_access_to_the_hdr_or_ftr_element_to_help(
         self, _get_or_add_definition_, header_part_
     ):

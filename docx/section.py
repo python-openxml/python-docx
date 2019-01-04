@@ -243,6 +243,17 @@ class _BaseHeaderFooter(BlockItemContainer):
         else:
             self._add_definition()
 
+    @property
+    def part(self):
+        """The |HeaderPart| or |FooterPart| for this header/footer.
+
+        This overrides `BlockItemContainer.part` and is required to support image
+        insertion and perhaps other content like hyperlinks.
+        """
+        # ---should not appear in documentation;
+        # ---not an interface property, even though public
+        return self._get_or_add_definition()
+
     def _add_definition(self):
         """Return newly-added header/footer part."""
         raise NotImplementedError("must be implemented by each subclass")
