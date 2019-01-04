@@ -23,7 +23,6 @@ from docx.styles.styles import Styles
 
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..oxml.unitdata.text import a_p
-from ..unitutil.file import snippet_text
 from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
@@ -153,21 +152,6 @@ class DescribeDocumentPart(object):
     def it_knows_the_next_available_xml_id(self, next_id_fixture):
         document, expected_id = next_id_fixture
         assert document.next_id == expected_id
-
-    def it_can_create_a_new_pic_inline(self, image_, get_or_add_image_, next_id_prop_):
-        path, width, height, rId = 'foo/bar.png', 111, 222, 'rId42'
-        expected_xml = snippet_text('inline')
-        get_or_add_image_.return_value = rId, image_
-        image_.scaled_dimensions.return_value = 444, 888
-        image_.filename = 'bar.png'
-        next_id_prop_.return_value = 24
-        document_part = DocumentPart(None, None, None, None)
-
-        inline = document_part.new_pic_inline(path, width, height)
-
-        get_or_add_image_.assert_called_once_with(document_part, path)
-        image_.scaled_dimensions.assert_called_once_with(width, height)
-        assert inline.xml == expected_xml
 
     def it_can_get_a_style_by_id(self, styles_prop_, styles_, style_):
         styles_prop_.return_value = styles_
@@ -316,10 +300,6 @@ class DescribeDocumentPart(object):
         return instance_mock(request, FooterPart)
 
     @pytest.fixture
-    def get_or_add_image_(self, request):
-        return method_mock(request, DocumentPart, 'get_or_add_image')
-
-    @pytest.fixture
     def HeaderPart_(self, request):
         return class_mock(request, 'docx.parts.document.HeaderPart')
 
@@ -338,10 +318,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def InlineShapes_(self, request):
         return class_mock(request, 'docx.parts.document.InlineShapes')
-
-    @pytest.fixture
-    def next_id_prop_(self, request):
-        return property_mock(request, DocumentPart, 'next_id')
 
     @pytest.fixture
     def NumberingPart_(self, request):

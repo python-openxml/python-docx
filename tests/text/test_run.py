@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.text.run module
-"""
+"""Test suite for the docx.text.run module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE

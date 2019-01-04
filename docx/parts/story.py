@@ -5,6 +5,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.opc.part import XmlPart
+from docx.oxml.shape import CT_Inline
 from docx.shared import lazyproperty
 
 
@@ -15,6 +16,16 @@ class BaseStoryPart(XmlPart):
     header or footer parts. These all share content behaviors like `.paragraphs`,
     `.add_paragraph()`, `.add_table()` etc.
     """
+
+    def get_or_add_image(self, image_descriptor):
+        """Return (rId, image) pair for image identified by *image_descriptor*.
+
+        *rId* is the str key (often like "rId7") for the relationship between this story
+        part and the image part, reused if already present, newly created if not.
+        *image* is an |Image| instance providing access to the properties of the image,
+        such as dimensions and image type.
+        """
+        raise NotImplementedError
 
     def get_style(self, style_id, style_type):
         """Return the style in this document matching *style_id*.
@@ -32,6 +43,27 @@ class BaseStoryPart(XmlPart):
         wrong type or names a style not present in the document.
         """
         return self._document_part.get_style_id(style_or_name, style_type)
+
+    def new_pic_inline(self, image_descriptor, width, height):
+        """Return a newly-created `w:inline` element.
+
+        The element contains the image specified by *image_descriptor* and is scaled
+        based on the values of *width* and *height*.
+        """
+        rId, image = self.get_or_add_image(image_descriptor)
+        cx, cy = image.scaled_dimensions(width, height)
+        shape_id, filename = self.next_id, image.filename
+        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+
+    @property
+    def next_id(self):
+        """Next available positive integer id value in this story XML document.
+
+        The value is determined by incrementing the maximum existing id value. Gaps in
+        the existing id sequence are not filled. The id attribute value is unique in the
+        document, without regard to the element type it appears on.
+        """
+        raise NotImplementedError
 
     @lazyproperty
     def _document_part(self):
