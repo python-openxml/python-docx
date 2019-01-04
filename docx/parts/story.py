@@ -28,4 +28,4 @@ class BaseStoryPart(XmlPart):
     @lazyproperty
     def _document_part(self):
         """|DocumentPart| object for this package."""
-        raise NotImplementedError
+        return self.package.main_document_part

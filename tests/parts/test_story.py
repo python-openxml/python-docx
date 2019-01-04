@@ -7,6 +7,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
+from docx.package import Package
 from docx.parts.document import DocumentPart
 from docx.parts.story import BaseStoryPart
 from docx.styles.style import BaseStyle
@@ -29,6 +30,14 @@ class DescribeBaseStoryPart(object):
         document_part_.get_style_id.assert_called_once_with(style_, style_type)
         assert style_id == "BodyText"
 
+    def it_knows_the_main_document_part_to_help(self, package_, document_part_):
+        package_.main_document_part = document_part_
+        story_part = BaseStoryPart(None, None, None, package_)
+
+        document_part = story_part._document_part
+
+        assert document_part is document_part_
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
@@ -38,6 +47,10 @@ class DescribeBaseStoryPart(object):
     @pytest.fixture
     def _document_part_prop_(self, request):
         return property_mock(request, BaseStoryPart, "_document_part")
+
+    @pytest.fixture
+    def package_(self, request):
+        return instance_mock(request, Package)
 
     @pytest.fixture
     def style_(self, request):
