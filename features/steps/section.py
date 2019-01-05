@@ -23,6 +23,12 @@ def given_a_Section_object_as_section(context):
     context.section = Document(test_docx("sct-section-props")).sections[-1]
 
 
+@given("a Section object {with_or_without} a distinct first-page header as section")
+def given_a_Section_object_with_or_without_first_page_header(context, with_or_without):
+    section_idx = {"with": 1, "without": 0}[with_or_without]
+    context.section = Document(test_docx("sct-first-page-hdrftr")).sections[section_idx]
+
+
 @given('a section collection containing 3 sections')
 def given_a_section_collection_containing_3_sections(context):
     document = Document(test_docx('doc-access-sections'))
@@ -65,6 +71,11 @@ def given_a_section_having_known_orientation(context, orientation):
 
 
 # when =====================================================
+
+@when("I assign {bool_val} to section.different_first_page_header_footer")
+def when_I_assign_value_to_section_different_first_page_hdrftr(context, bool_val):
+    context.section.different_first_page_header_footer = eval(bool_val)
+
 
 @when('I set the {margin_side} margin to {inches} inches')
 def when_I_set_the_margin_side_length(context, margin_side, inches):
@@ -139,6 +150,15 @@ def then_len_sections_is_3(context):
     sections = context.sections
     assert len(sections) == 3, (
         'expected len(sections) of 3, got %s' % len(sections)
+    )
+
+
+@then("section.different_first_page_header_footer is {bool_val}")
+def then_section_different_first_page_header_footer_is(context, bool_val):
+    actual = context.section.different_first_page_header_footer
+    expected = eval(bool_val)
+    assert actual == expected, (
+        "section.different_first_page_header_footer is %s" % actual
     )
 
 
