@@ -4,7 +4,6 @@ Feature: Access and change section properties
   I need a way to get and set the properties of a section
 
 
-  @wip
   Scenario Outline: Section.different_first_page_header_footer getter
     Given a Section object <with-or-without> a distinct first-page header as section
      Then section.different_first_page_header_footer is <value>

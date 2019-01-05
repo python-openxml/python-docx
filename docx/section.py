@@ -61,6 +61,15 @@ class Section(object):
     def bottom_margin(self, value):
         self._sectPr.bottom_margin = value
 
+    @property
+    def different_first_page_header_footer(self):
+        """True if this section displays a distinct first-page header and footer.
+
+        Read/write. The definition of the first-page header and footer are accessed
+        using :attr:`.first_page_header` and :attr:`.first_page_footer` respectively.
+        """
+        return self._sectPr.titlePg_val
+
     @lazyproperty
     def footer(self):
         """|_Footer| object representing default page footer for this section.

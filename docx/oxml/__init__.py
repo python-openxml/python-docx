@@ -66,6 +66,7 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 
 from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
+register_element_cls("w:titlePg", CT_OnOff)
 
 
 from .coreprops import CT_CoreProperties  # noqa

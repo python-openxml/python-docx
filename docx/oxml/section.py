@@ -69,6 +69,7 @@ class CT_SectPr(BaseOxmlElement):
     type = ZeroOrOne("w:type", successors=_tag_seq[3:])
     pgSz = ZeroOrOne("w:pgSz", successors=_tag_seq[4:])
     pgMar = ZeroOrOne("w:pgMar", successors=_tag_seq[5:])
+    titlePg = ZeroOrOne("w:titlePg", successors=_tag_seq[14:])
     del _tag_seq
 
     def add_footerReference(self, type_, rId):
@@ -309,6 +310,14 @@ class CT_SectPr(BaseOxmlElement):
             return
         type = self.get_or_add_type()
         type.val = value
+
+    @property
+    def titlePg_val(self):
+        """Value of `w:titlePg/@val` or |None| if not present"""
+        titlePg = self.titlePg
+        if titlePg is None:
+            return False
+        return titlePg.val
 
     @property
     def top_margin(self):

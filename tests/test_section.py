@@ -92,6 +92,16 @@ class DescribeSections(object):
 
 class DescribeSection(object):
 
+    def it_knows_when_it_displays_a_distinct_first_page_header(
+        self, diff_first_header_get_fixture
+    ):
+        sectPr, expected_value = diff_first_header_get_fixture
+        section = Section(sectPr, None)
+
+        different_first_page_header_footer = section.different_first_page_header_footer
+
+        assert different_first_page_header_footer is expected_value
+
     def it_provides_access_to_its_default_footer(
         self, document_part_, _Footer_, footer_
     ):
@@ -197,6 +207,20 @@ class DescribeSection(object):
         assert section._sectPr.xml == expected_xml
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            ("w:sectPr", False),
+            ("w:sectPr/w:titlePg", True),
+            ("w:sectPr/w:titlePg{w:val=0}", False),
+            ("w:sectPr/w:titlePg{w:val=1}", True),
+            ("w:sectPr/w:titlePg{w:val=true}", True),
+        ]
+    )
+    def diff_first_header_get_fixture(self, request):
+        sectPr_cxml, expected_value = request.param
+        sectPr = element(sectPr_cxml)
+        return sectPr, expected_value
 
     @pytest.fixture(params=[
         ('w:sectPr/w:pgMar{w:left=120}',   'left_margin',      76200),
