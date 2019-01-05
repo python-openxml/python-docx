@@ -25,7 +25,6 @@ Feature: Document.settings
       | without         | False |
 
 
-  @wip
   Scenario Outline: Settings.odd_and_even_pages_header_footer setter
     Given a Settings object <with-or-without> odd and even page headers as settings
      When I assign <value> to settings.odd_and_even_pages_header_footer

@@ -55,3 +55,10 @@ class CT_Settings(BaseOxmlElement):
         if evenAndOddHeaders is None:
             return False
         return evenAndOddHeaders.val
+
+    @evenAndOddHeaders_val.setter
+    def evenAndOddHeaders_val(self, value):
+        if value in [None, False]:
+            self._remove_evenAndOddHeaders()
+        else:
+            self.get_or_add_evenAndOddHeaders().val = value
