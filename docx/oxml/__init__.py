@@ -65,6 +65,7 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # ===========================================================================
 
 from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
+register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 
 
 from .coreprops import CT_CoreProperties  # noqa
@@ -100,6 +101,9 @@ register_element_cls("w:pgMar", CT_PageMar)
 register_element_cls("w:pgSz", CT_PageSz)
 register_element_cls("w:sectPr", CT_SectPr)
 register_element_cls("w:type", CT_SectType)
+
+from .settings import CT_Settings  # noqa
+register_element_cls("w:settings", CT_Settings)
 
 from .shape import (  # noqa
     CT_Blip,

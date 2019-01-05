@@ -15,7 +15,6 @@ Feature: Document.settings
       | no        |
 
 
-  @wip
   Scenario Outline: Settings.odd_and_even_pages_header_footer getter
     Given a Settings object <with-or-without> odd and even page headers as settings
      Then settings.odd_and_even_pages_header_footer is <value>
