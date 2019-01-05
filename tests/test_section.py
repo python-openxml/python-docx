@@ -102,6 +102,16 @@ class DescribeSection(object):
 
         assert different_first_page_header_footer is expected_value
 
+    def it_can_change_whether_the_document_has_distinct_odd_and_even_headers(
+        self, diff_first_header_set_fixture
+    ):
+        sectPr, value, expected_xml = diff_first_header_set_fixture
+        section = Section(sectPr, None)
+
+        section.different_first_page_header_footer = value
+
+        assert sectPr.xml == expected_xml
+
     def it_provides_access_to_its_default_footer(
         self, document_part_, _Footer_, footer_
     ):
@@ -221,6 +231,20 @@ class DescribeSection(object):
         sectPr_cxml, expected_value = request.param
         sectPr = element(sectPr_cxml)
         return sectPr, expected_value
+
+    @pytest.fixture(
+        params=[
+            ("w:sectPr", True, "w:sectPr/w:titlePg"),
+            ("w:sectPr/w:titlePg", False, "w:sectPr"),
+            ("w:sectPr/w:titlePg{w:val=1}", True, "w:sectPr/w:titlePg"),
+            ("w:sectPr/w:titlePg{w:val=off}", False, "w:sectPr"),
+        ]
+    )
+    def diff_first_header_set_fixture(self, request):
+        sectPr_cxml, value, expected_cxml = request.param
+        sectPr = element(sectPr_cxml)
+        expected_xml = xml(expected_cxml)
+        return sectPr, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:sectPr/w:pgMar{w:left=120}',   'left_margin',      76200),

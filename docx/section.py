@@ -70,6 +70,10 @@ class Section(object):
         """
         return self._sectPr.titlePg_val
 
+    @different_first_page_header_footer.setter
+    def different_first_page_header_footer(self, value):
+        self._sectPr.titlePg_val = value
+
     @lazyproperty
     def footer(self):
         """|_Footer| object representing default page footer for this section.

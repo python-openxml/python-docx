@@ -14,7 +14,6 @@ Feature: Access and change section properties
       | without         | False |
 
 
-  @wip
   Scenario Outline: Section.different_first_page_header_footer setter
     Given a Section object <with-or-without> a distinct first-page header as section
      When I assign <value> to section.different_first_page_header_footer

@@ -319,6 +319,13 @@ class CT_SectPr(BaseOxmlElement):
             return False
         return titlePg.val
 
+    @titlePg_val.setter
+    def titlePg_val(self, value):
+        if value in [None, False]:
+            self._remove_titlePg()
+        else:
+            self.get_or_add_titlePg().val = value
+
     @property
     def top_margin(self):
         """
