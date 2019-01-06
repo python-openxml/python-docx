@@ -162,6 +162,34 @@ def then_section_different_first_page_header_footer_is(context, bool_val):
     )
 
 
+@then("section.even_page_footer is a _Footer object")
+def then_section_even_page_footer_is_a_Footer_object(context):
+    actual = type(context.section.even_page_footer).__name__
+    expected = "_Footer"
+    assert actual == expected, "section.even_page_footer is a %s object" % actual
+
+
+@then("section.even_page_header is a _Header object")
+def then_section_even_page_header_is_a_Header_object(context):
+    actual = type(context.section.even_page_header).__name__
+    expected = "_Header"
+    assert actual == expected, "section.even_page_header is a %s object" % actual
+
+
+@then("section.first_page_footer is a _Footer object")
+def then_section_first_page_footer_is_a_Footer_object(context):
+    actual = type(context.section.first_page_footer).__name__
+    expected = "_Footer"
+    assert actual == expected, "section.first_page_footer is a %s object" % actual
+
+
+@then("section.first_page_header is a _Header object")
+def then_section_first_page_header_is_a_Header_object(context):
+    actual = type(context.section.first_page_header).__name__
+    expected = "_Header"
+    assert actual == expected, "section.first_page_header is a %s object" % actual
+
+
 @then("section.footer is a _Footer object")
 def then_section_footer_is_a_Footer_object(context):
     actual = type(context.section.footer).__name__
