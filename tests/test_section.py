@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
-from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENT, WD_SECTION
 from docx.parts.document import DocumentPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.section import _BaseHeaderFooter, _Footer, _Header, Section, Sections
@@ -121,7 +121,9 @@ class DescribeSection(object):
 
         footer = section.footer
 
-        _Footer_.assert_called_once_with(sectPr, document_part_)
+        _Footer_.assert_called_once_with(
+            sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY
+        )
         assert footer is footer_
 
     def it_provides_access_to_its_default_header(
@@ -133,7 +135,9 @@ class DescribeSection(object):
 
         header = section.header
 
-        _Header_.assert_called_once_with(sectPr, document_part_)
+        _Header_.assert_called_once_with(
+            sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY
+        )
         assert header is header_
 
     def it_knows_its_start_type(self, start_type_get_fixture):
@@ -413,7 +417,7 @@ class Describe_BaseHeaderFooter(object):
     ):
         has_definition, expected_value = is_linked_get_fixture
         _has_definition_prop_.return_value = has_definition
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         is_linked = header.is_linked_to_previous
 
@@ -428,7 +432,7 @@ class Describe_BaseHeaderFooter(object):
     ):
         has_definition, new_value, drop_calls, add_calls = is_linked_set_fixture
         _has_definition_prop_.return_value = has_definition
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         header.is_linked_to_previous = new_value
 
@@ -440,7 +444,7 @@ class Describe_BaseHeaderFooter(object):
     ):
         # ---this override fulfills part of the BlockItemContainer subclass interface---
         _get_or_add_definition_.return_value = header_part_
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         header_part = header.part
 
@@ -453,7 +457,7 @@ class Describe_BaseHeaderFooter(object):
         hdr = element("w:hdr")
         _get_or_add_definition_.return_value = header_part_
         header_part_.element = hdr
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         hdr_elm = header._element
 
@@ -465,7 +469,7 @@ class Describe_BaseHeaderFooter(object):
     ):
         _has_definition_prop_.return_value = True
         _definition_prop_.return_value = header_part_
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         header_part = header._get_or_add_definition()
 
@@ -481,7 +485,7 @@ class Describe_BaseHeaderFooter(object):
         _has_definition_prop_.return_value = False
         _prior_headerfooter_prop_.return_value = prior_headerfooter_
         prior_headerfooter_._get_or_add_definition.return_value = header_part_
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         header_part = header._get_or_add_definition()
 
@@ -498,7 +502,7 @@ class Describe_BaseHeaderFooter(object):
         _has_definition_prop_.return_value = False
         _prior_headerfooter_prop_.return_value = None
         _add_definition_.return_value = header_part_
-        header = _BaseHeaderFooter(None, None)
+        header = _BaseHeaderFooter(None, None, None)
 
         header_part = header._get_or_add_definition()
 
@@ -564,7 +568,7 @@ class Describe_Footer(object):
     def it_can_add_a_footer_part_to_help(self, document_part_, footer_part_):
         sectPr = element("w:sectPr{r:a=b}")
         document_part_.add_footer_part.return_value = footer_part_, "rId3"
-        footer = _Footer(sectPr, document_part_)
+        footer = _Footer(sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY)
 
         footer_part = footer._add_definition()
 
@@ -577,9 +581,9 @@ class Describe_Footer(object):
     def it_provides_access_to_its_footer_part_to_help(
         self, document_part_, footer_part_
     ):
-        sectPr = element("w:sectPr/w:footerReference{w:type=default,r:id=rId3}")
+        sectPr = element("w:sectPr/w:footerReference{w:type=even,r:id=rId3}")
         document_part_.footer_part.return_value = footer_part_
-        footer = _Footer(sectPr, document_part_)
+        footer = _Footer(sectPr, document_part_, WD_HEADER_FOOTER.EVEN_PAGE)
 
         footer_part = footer._definition
 
@@ -587,8 +591,8 @@ class Describe_Footer(object):
         assert footer_part is footer_part_
 
     def it_can_drop_the_related_footer_part_to_help(self, document_part_):
-        sectPr = element("w:sectPr{r:a=b}/w:footerReference{w:type=default,r:id=rId42}")
-        footer = _Footer(sectPr, document_part_)
+        sectPr = element("w:sectPr{r:a=b}/w:footerReference{w:type=first,r:id=rId42}")
+        footer = _Footer(sectPr, document_part_, WD_HEADER_FOOTER.FIRST_PAGE)
 
         footer._drop_definition()
 
@@ -597,7 +601,7 @@ class Describe_Footer(object):
 
     def it_knows_when_it_has_a_definition_to_help(self, has_definition_fixture):
         sectPr, expected_value = has_definition_fixture
-        footer = _Footer(sectPr, None)
+        footer = _Footer(sectPr, None, WD_HEADER_FOOTER.PRIMARY)
 
         has_definition = footer._has_definition
 
@@ -608,19 +612,21 @@ class Describe_Footer(object):
     ):
         doc_elm = element("w:document/(w:sectPr,w:sectPr)")
         prior_sectPr, sectPr = doc_elm[0], doc_elm[1]
-        footer = _Footer(sectPr, document_part_)
+        footer = _Footer(sectPr, document_part_, WD_HEADER_FOOTER.EVEN_PAGE)
         # ---mock must occur after construction of "real" footer---
         _Footer_ = class_mock(request, "docx.section._Footer", return_value=footer_)
 
         prior_footer = footer._prior_headerfooter
 
-        _Footer_.assert_called_once_with(prior_sectPr, document_part_)
+        _Footer_.assert_called_once_with(
+            prior_sectPr, document_part_, WD_HEADER_FOOTER.EVEN_PAGE
+        )
         assert prior_footer is footer_
 
     def but_it_returns_None_when_its_the_first_footer(self):
         doc_elm = element("w:document/w:sectPr")
         sectPr = doc_elm[0]
-        footer = _Footer(sectPr, None)
+        footer = _Footer(sectPr, None, None)
 
         prior_footer = footer._prior_headerfooter
 
@@ -658,13 +664,13 @@ class Describe_Header(object):
     def it_can_add_a_header_part_to_help(self, document_part_, header_part_):
         sectPr = element("w:sectPr{r:a=b}")
         document_part_.add_header_part.return_value = header_part_, "rId3"
-        header = _Header(sectPr, document_part_)
+        header = _Header(sectPr, document_part_, WD_HEADER_FOOTER.FIRST_PAGE)
 
         header_part = header._add_definition()
 
         document_part_.add_header_part.assert_called_once_with()
         assert sectPr.xml == xml(
-            "w:sectPr{r:a=b}/w:headerReference{w:type=default,r:id=rId3}"
+            "w:sectPr{r:a=b}/w:headerReference{w:type=first,r:id=rId3}"
         )
         assert header_part is header_part_
 
@@ -673,7 +679,7 @@ class Describe_Header(object):
     ):
         sectPr = element("w:sectPr/w:headerReference{w:type=default,r:id=rId8}")
         document_part_.header_part.return_value = header_part_
-        header = _Header(sectPr, document_part_)
+        header = _Header(sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY)
 
         header_part = header._definition
 
@@ -681,8 +687,8 @@ class Describe_Header(object):
         assert header_part is header_part_
 
     def it_can_drop_the_related_header_part_to_help(self, document_part_):
-        sectPr = element("w:sectPr{r:a=b}/w:headerReference{w:type=default,r:id=rId42}")
-        header = _Header(sectPr, document_part_)
+        sectPr = element("w:sectPr{r:a=b}/w:headerReference{w:type=even,r:id=rId42}")
+        header = _Header(sectPr, document_part_, WD_HEADER_FOOTER.EVEN_PAGE)
 
         header._drop_definition()
 
@@ -691,7 +697,7 @@ class Describe_Header(object):
 
     def it_knows_when_it_has_a_header_part_to_help(self, has_definition_fixture):
         sectPr, expected_value = has_definition_fixture
-        header = _Header(sectPr, None)
+        header = _Header(sectPr, None, WD_HEADER_FOOTER.FIRST_PAGE)
 
         has_definition = header._has_definition
 
@@ -702,19 +708,21 @@ class Describe_Header(object):
     ):
         doc_elm = element("w:document/(w:sectPr,w:sectPr)")
         prior_sectPr, sectPr = doc_elm[0], doc_elm[1]
-        header = _Header(sectPr, document_part_)
+        header = _Header(sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY)
         # ---mock must occur after construction of "real" header---
         _Header_ = class_mock(request, "docx.section._Header", return_value=header_)
 
         prior_header = header._prior_headerfooter
 
-        _Header_.assert_called_once_with(prior_sectPr, document_part_)
+        _Header_.assert_called_once_with(
+            prior_sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY
+        )
         assert prior_header is header_
 
     def but_it_returns_None_when_its_the_first_header(self):
         doc_elm = element("w:document/w:sectPr")
         sectPr = doc_elm[0]
-        header = _Header(sectPr, None)
+        header = _Header(sectPr, None, None)
 
         prior_header = header._prior_headerfooter
 
@@ -724,7 +732,7 @@ class Describe_Header(object):
 
     @pytest.fixture(
         params=[
-            ("w:sectPr", False), ("w:sectPr/w:headerReference{w:type=default}", True)
+            ("w:sectPr", False), ("w:sectPr/w:headerReference{w:type=first}", True)
         ]
     )
     def has_definition_fixture(self, request):

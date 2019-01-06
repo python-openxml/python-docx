@@ -81,7 +81,7 @@ class Section(object):
         The default footer is used for odd-numbered pages when separate odd/even footers
         are enabled. It is used for both odd and even-numbered pages otherwise.
         """
-        return _Footer(self._sectPr, self._document_part)
+        return _Footer(self._sectPr, self._document_part, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def footer_distance(self):
@@ -117,7 +117,7 @@ class Section(object):
         The default header is used for odd-numbered pages when separate odd/even headers
         are enabled. It is used for both odd and even-numbered pages otherwise.
         """
-        return _Header(self._sectPr, self._document_part)
+        return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.PRIMARY)
 
     @property
     def header_distance(self):
@@ -227,9 +227,10 @@ class Section(object):
 class _BaseHeaderFooter(BlockItemContainer):
     """Base class for header and footer classes"""
 
-    def __init__(self, sectPr, document_part):
+    def __init__(self, sectPr, document_part, header_footer_index):
         self._sectPr = sectPr
         self._document_part = document_part
+        self._hdrftr_index = header_footer_index
 
     @property
     def is_linked_to_previous(self):
@@ -325,24 +326,24 @@ class _Footer(_BaseHeaderFooter):
     def _add_definition(self):
         """Return newly-added footer part."""
         footer_part, rId = self._document_part.add_footer_part()
-        self._sectPr.add_footerReference(WD_HEADER_FOOTER.PRIMARY, rId)
+        self._sectPr.add_footerReference(self._hdrftr_index, rId)
         return footer_part
 
     @property
     def _definition(self):
         """|FooterPart| object containing content of this footer."""
-        footerReference = self._sectPr.get_footerReference(WD_HEADER_FOOTER.PRIMARY)
+        footerReference = self._sectPr.get_footerReference(self._hdrftr_index)
         return self._document_part.footer_part(footerReference.rId)
 
     def _drop_definition(self):
         """Remove footer definition (footer part) associated with this section."""
-        rId = self._sectPr.remove_footerReference(WD_HEADER_FOOTER.PRIMARY)
+        rId = self._sectPr.remove_footerReference(self._hdrftr_index)
         self._document_part.drop_rel(rId)
 
     @property
     def _has_definition(self):
         """True if a footer is defined for this section."""
-        footerReference = self._sectPr.get_footerReference(WD_HEADER_FOOTER.PRIMARY)
+        footerReference = self._sectPr.get_footerReference(self._hdrftr_index)
         return False if footerReference is None else True
 
     @property
@@ -351,7 +352,7 @@ class _Footer(_BaseHeaderFooter):
         preceding_sectPr = self._sectPr.preceding_sectPr
         return (
             None if preceding_sectPr is None
-            else _Footer(preceding_sectPr, self._document_part)
+            else _Footer(preceding_sectPr, self._document_part, self._hdrftr_index)
         )
 
 
@@ -361,24 +362,24 @@ class _Header(_BaseHeaderFooter):
     def _add_definition(self):
         """Return newly-added header part."""
         header_part, rId = self._document_part.add_header_part()
-        self._sectPr.add_headerReference(WD_HEADER_FOOTER.PRIMARY, rId)
+        self._sectPr.add_headerReference(self._hdrftr_index, rId)
         return header_part
 
     @property
     def _definition(self):
         """|HeaderPart| object containing content of this header."""
-        headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        headerReference = self._sectPr.get_headerReference(self._hdrftr_index)
         return self._document_part.header_part(headerReference.rId)
 
     def _drop_definition(self):
         """Remove header definition associated with this section."""
-        rId = self._sectPr.remove_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        rId = self._sectPr.remove_headerReference(self._hdrftr_index)
         self._document_part.drop_header_part(rId)
 
     @property
     def _has_definition(self):
         """True if a header is explicitly defined for this section."""
-        headerReference = self._sectPr.get_headerReference(WD_HEADER_FOOTER.PRIMARY)
+        headerReference = self._sectPr.get_headerReference(self._hdrftr_index)
         return False if headerReference is None else True
 
     @property
@@ -387,5 +388,5 @@ class _Header(_BaseHeaderFooter):
         preceding_sectPr = self._sectPr.preceding_sectPr
         return (
             None if preceding_sectPr is None
-            else _Header(preceding_sectPr, self._document_part)
+            else _Header(preceding_sectPr, self._document_part, self._hdrftr_index)
         )
