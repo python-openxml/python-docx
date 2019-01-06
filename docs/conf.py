@@ -109,7 +109,11 @@ rst_epilog = """
 
 .. |_Footer| replace:: :class:`._Footer`
 
+.. |FooterPart| replace:: :class:`.FooterPart`
+
 .. |_Header| replace:: :class:`._Header`
+
+.. |HeaderPart| replace:: :class:`.HeaderPart`
 
 .. |ImageParts| replace:: :class:`.ImageParts`
 

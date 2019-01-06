@@ -79,7 +79,7 @@ class Section(object):
         """|_Footer| object defining footer content for even pages.
 
         The content of this footer definition is ignored unless the document setting
-        :attr:`~Settings.odd_and_even_pages_header_footer` is set True.
+        :attr:`~.Settings.odd_and_even_pages_header_footer` is set True.
         """
         return _Footer(self._sectPr, self._document_part,  WD_HEADER_FOOTER.EVEN_PAGE)
 
@@ -88,7 +88,7 @@ class Section(object):
         """|_Header| object defining header content for even pages.
 
         The content of this header definition is ignored unless the document setting
-        :attr:`~Settings.odd_and_even_pages_header_footer` is set True.
+        :attr:`~.Settings.odd_and_even_pages_header_footer` is set True.
         """
         return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.EVEN_PAGE)
 
@@ -106,7 +106,7 @@ class Section(object):
         """|_Header| object defining header content for the first page of this section.
 
         The content of this header definition is ignored unless the property
-        :attr:`.different_first_page_header_header` is set True.
+        :attr:`.different_first_page_header_footer` is set True.
         """
         return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.FIRST_PAGE)
 
@@ -270,9 +270,9 @@ class _BaseHeaderFooter(BlockItemContainer):
 
     @property
     def is_linked_to_previous(self):
-        """True if this header/footer uses the definition from the preceding section.
+        """``True`` if this header/footer uses the definition from the prior section.
 
-        False if this header/footer has an explicit definition.
+        ``False`` if this header/footer has an explicit definition.
 
         Assigning ``True`` to this property removes the header/footer definition for
         this section, causing it to "inherit" the corresponding definition of the prior
@@ -357,7 +357,14 @@ class _BaseHeaderFooter(BlockItemContainer):
 
 
 class _Footer(_BaseHeaderFooter):
-    """Page footer."""
+    """Page footer, used for all three types (default, even-page, and first-page).
+
+    Note that, like a document or table cell, a footer must contain a minimum of one
+    paragraph and a new or otherwise "empty" footer contains a single empty paragraph.
+    This first paragraph can be accessed as `footer.paragraphs[0]` for purposes of
+    adding content to it. Using :meth:`add_paragraph()` by itself to add content will
+    leave an empty paragraph above the newly added one.
+    """
 
     def _add_definition(self):
         """Return newly-added footer part."""
@@ -393,7 +400,14 @@ class _Footer(_BaseHeaderFooter):
 
 
 class _Header(_BaseHeaderFooter):
-    """Page header."""
+    """Page header, used for all three types (default, even-page, and first-page).
+
+    Note that, like a document or table cell, a header must contain a minimum of one
+    paragraph and a new or otherwise "empty" header contains a single empty paragraph.
+    This first paragraph can be accessed as `header.paragraphs[0]` for purposes of
+    adding content to it. Using :meth:`add_paragraph()` by itself to add content will
+    leave an empty paragraph above the newly added one.
+    """
 
     def _add_definition(self):
         """Return newly-added header part."""
