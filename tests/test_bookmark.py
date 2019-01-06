@@ -161,6 +161,14 @@ class DescribeBookmarks(object):
 class Describe_Bookmark(object):
     """Unit-test suite for `docx.bookmark._Bookmark` object."""
 
+    def it_knows_its_id(self):
+        bookmarkStart = element("w:bookmarkStart{w:id=42}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.id == 42
+
     def it_knows_its_name(self):
         bookmarkStart = element("w:bookmarkStart{w:name=bmk-0}")
         bookmarkEnd = element("w:bookmarkEnd")

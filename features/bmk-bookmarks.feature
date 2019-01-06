@@ -10,7 +10,6 @@ Feature: Access a bookmark
       And bookmarks[1] is a _Bookmark object
       And iterating bookmarks produces 5 _Bookmark objects
 
-  @wip
   Scenario Outline: Bookmarks.get(bookmark_name)
     Given a Bookmarks object of length 5 as bookmarks
      Then bookmarks.get(<name>) returns bookmark named "<name>" with id <id>
