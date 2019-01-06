@@ -140,6 +140,20 @@ class DescribeSection(object):
         )
         assert header is header_
 
+    def it_provides_access_to_its_first_page_footer(
+        self, document_part_, _Footer_, footer_
+    ):
+        sectPr = element("w:sectPr")
+        _Footer_.return_value = footer_
+        section = Section(sectPr, document_part_)
+
+        footer = section.first_page_footer
+
+        _Footer_.assert_called_once_with(
+            sectPr, document_part_, WD_HEADER_FOOTER.FIRST_PAGE
+        )
+        assert footer is footer_
+
     def it_provides_access_to_its_default_footer(
         self, document_part_, _Footer_, footer_
     ):

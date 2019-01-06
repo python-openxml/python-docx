@@ -37,7 +37,6 @@ Feature: Access and change section properties
      Then section.even_page_header is a _Header object
 
 
-  @wip
   Scenario: Section.first_page_footer
     Given a Section object as section
      Then section.first_page_footer is a _Footer object
