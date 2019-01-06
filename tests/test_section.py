@@ -112,6 +112,20 @@ class DescribeSection(object):
 
         assert sectPr.xml == expected_xml
 
+    def it_provides_access_to_its_even_page_footer(
+        self, document_part_, _Footer_, footer_
+    ):
+        sectPr = element('w:sectPr')
+        _Footer_.return_value = footer_
+        section = Section(sectPr, document_part_)
+
+        footer = section.even_page_footer
+
+        _Footer_.assert_called_once_with(
+            sectPr, document_part_, WD_HEADER_FOOTER.EVEN_PAGE
+        )
+        assert footer is footer_
+
     def it_provides_access_to_its_default_footer(
         self, document_part_, _Footer_, footer_
     ):

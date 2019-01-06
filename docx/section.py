@@ -74,6 +74,15 @@ class Section(object):
     def different_first_page_header_footer(self, value):
         self._sectPr.titlePg_val = value
 
+    @property
+    def even_page_footer(self):
+        """|_Footer| object defining footer content for even pages.
+
+        The content of this footer definition is ignored unless the document setting
+        :attr:`~Settings.odd_and_even_pages_header_footer` is set True.
+        """
+        return _Footer(self._sectPr, self._document_part,  WD_HEADER_FOOTER.EVEN_PAGE)
+
     @lazyproperty
     def footer(self):
         """|_Footer| object representing default page footer for this section.
