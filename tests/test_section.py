@@ -126,6 +126,20 @@ class DescribeSection(object):
         )
         assert footer is footer_
 
+    def it_provides_access_to_its_even_page_header(
+        self, document_part_, _Header_, header_
+    ):
+        sectPr = element("w:sectPr")
+        _Header_.return_value = header_
+        section = Section(sectPr, document_part_)
+
+        header = section.even_page_header
+
+        _Header_.assert_called_once_with(
+            sectPr, document_part_, WD_HEADER_FOOTER.EVEN_PAGE
+        )
+        assert header is header_
+
     def it_provides_access_to_its_default_footer(
         self, document_part_, _Footer_, footer_
     ):
