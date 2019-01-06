@@ -101,6 +101,15 @@ class Section(object):
         """
         return _Footer(self._sectPr, self._document_part, WD_HEADER_FOOTER.FIRST_PAGE)
 
+    @property
+    def first_page_header(self):
+        """|_Header| object defining header content for the first page of this section.
+
+        The content of this header definition is ignored unless the property
+        :attr:`.different_first_page_header_header` is set True.
+        """
+        return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.FIRST_PAGE)
+
     @lazyproperty
     def footer(self):
         """|_Footer| object representing default page footer for this section.
