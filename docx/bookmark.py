@@ -40,12 +40,24 @@ class Bookmarks(Sequence):
         """_DocumentBookmarkFinder instance for this document."""
         return _DocumentBookmarkFinder(self._document_part)
 
+    def get(self, name):
+        """Get bookmark based on its name."""
+        for bookmark in self:
+            if bookmark.name == name:
+                return bookmark
+        raise KeyError("Requested bookmark not found.")
+
 
 class _Bookmark(object):
     """Proxy for a (w:bookmarkStart, w:bookmarkEnd) element pair."""
 
     def __init__(self, bookmark_pair):
         self._bookmarkStart, self._bookmarkEnd = bookmark_pair
+
+    @property
+    def name(self):
+        """Provides access to the bookmark name."""
+        raise NotImplementedError
 
 
 class _DocumentBookmarkFinder(object):
@@ -127,9 +139,9 @@ class _PartBookmarkFinder(object):
         offset of *bookmarkStart* in the sequence of start and end elements in this
         story.
         """
-        for element in self._all_starts_and_ends[idx + 1:]:
+        for element in self._all_starts_and_ends[idx + 1 :]:
             # ---skip bookmark starts---
-            if element.tag == qn('w:bookmarkStart'):
+            if element.tag == qn("w:bookmarkStart"):
                 continue
             bookmarkEnd = element
             if bookmarkEnd.id == bookmarkStart.id:
