@@ -204,6 +204,15 @@ def then_section_header_is_a_Header_object(context):
     assert actual == expected, "section.header is a %s object" % actual
 
 
+@then("section.{propname}.is_linked_to_previous is True")
+def then_section_hdrftr_prop_is_linked_to_previous_is_True(context, propname):
+    actual = getattr(context.section, propname).is_linked_to_previous
+    expected = True
+    assert actual == expected, (
+        "section.%s.is_linked_to_previous is %s" % (propname, actual)
+    )
+
+
 @then('the reported {margin_side} margin is {inches} inches')
 def then_the_reported_margin_is_inches(context, margin_side, inches):
     prop_name = {
