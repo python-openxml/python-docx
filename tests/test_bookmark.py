@@ -91,6 +91,27 @@ class DescribeBookmarks(object):
 
         assert count == 42
 
+    def it_provides_access_to_its_bookmarks_by_name(
+        self, bookmark_, bookmark_2_, _iter_
+    ):
+        bookmark_.name = "foobar"
+        bookmark_2_.name = "barfoo"
+        _iter_.return_value = iter((bookmark_2_, bookmark_))
+        bookmarks = Bookmarks(None)
+
+        bookmark = bookmarks.get("foobar")
+
+        assert bookmark is bookmark_
+
+    def but_it_raises_KeyError_when_no_bookmark_by_that_name(self, bookmark_, _iter_):
+        bookmark_.name = "foobar"
+        _iter_.return_value = iter((bookmark_,))
+        bookmarks = Bookmarks(None)
+
+        with pytest.raises(KeyError) as e:
+            bookmarks.get("barfoo")
+        assert e.value.args[0] == "Requested bookmark not found."
+
     def it_provides_access_to_its_bookmark_finder_to_help(
         self, document_part_, _DocumentBookmarkFinder_, finder_
     ):
@@ -113,6 +134,10 @@ class DescribeBookmarks(object):
         return instance_mock(request, _Bookmark)
 
     @pytest.fixture
+    def bookmark_2_(self, request):
+        return instance_mock(request, _Bookmark)
+
+    @pytest.fixture
     def _DocumentBookmarkFinder_(self, request):
         return class_mock(request, "docx.bookmark._DocumentBookmarkFinder")
 
@@ -127,6 +152,10 @@ class DescribeBookmarks(object):
     @pytest.fixture
     def _finder_prop_(self, request):
         return property_mock(request, Bookmarks, "_finder")
+
+    @pytest.fixture
+    def _iter_(self, request):
+        return method_mock(request, Bookmarks, "__iter__")
 
 
 class Describe_DocumentBookmarkFinder(object):
