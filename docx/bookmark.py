@@ -57,7 +57,7 @@ class _Bookmark(object):
     @property
     def id(self):
         """Provides access to the bookmark id."""
-        raise NotImplementedError
+        return self._bookmarkStart.id
 
     @property
     def name(self):
