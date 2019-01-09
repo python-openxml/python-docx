@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+0.8.10 (2019-01-08)
++++++++++++++++++++
+
+- Revert use of expanded package directory for default.docx to work around setup.py
+  problem with filenames containing square brackets.
+
+
 0.8.9 (2019-01-08)
 ++++++++++++++++++
 
