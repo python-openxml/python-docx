@@ -82,7 +82,8 @@ a document like so::
     document = Document(source_stream)
     source_stream.close()
     ...
-    target_stream = StringIO()
+    target_stream = StringIO() # Python 2
+    target_stream = BytesIO()  # Python 3
     document.save(target_stream)
 
 The ``'rb'`` file open mode parameter isn't required on all operating
