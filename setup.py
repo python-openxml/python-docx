@@ -17,6 +17,7 @@ def text_of(relpath):
         text = f.read()
     return text
 
+
 # Read the version from docx.__version__ without importing the package
 # (and thus attempting to import packages it depends on that may not be
 # installed yet)

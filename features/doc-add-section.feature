@@ -11,3 +11,14 @@ Feature: Add a document section
       Then the document has two sections
        And the first section is portrait
        And the second section is landscape
+
+
+  Scenario: Document.add_section() adds a section that inherits headers and footers
+    Given a single-section Document object with headers and footers as document
+     When I execute section = document.add_section()
+     Then section.header.is_linked_to_previous is True
+      And section.even_page_header.is_linked_to_previous is True
+      And section.first_page_header.is_linked_to_previous is True
+      And section.footer.is_linked_to_previous is True
+      And section.even_page_footer.is_linked_to_previous is True
+      And section.first_page_footer.is_linked_to_previous is True

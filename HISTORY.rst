@@ -3,6 +3,18 @@
 Release History
 ---------------
 
+0.8.9 (2019-01-08)
+++++++++++++++++++
+
+- Fix gap in MANIFEST.in that excluded default document template directory
+
+
+0.8.8 (2019-01-07)
+++++++++++++++++++
+
+- Add support for headers and footers
+
+
 0.8.7 (2018-08-18)
 ++++++++++++++++++
 

@@ -9,6 +9,33 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .base import alias, XmlEnumeration, XmlMappedEnumMember
 
 
+@alias('WD_HEADER_FOOTER')
+class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
+    """
+    alias: **WD_HEADER_FOOTER**
+
+    Specifies one of the three possible header/footer definitions for a section.
+
+    For internal use only; not part of the python-docx API.
+    """
+
+    __ms_name__ = "WdHeaderFooterIndex"
+
+    __url__ = "https://docs.microsoft.com/en-us/office/vba/api/word.wdheaderfooterindex"
+
+    __members__ = (
+        XmlMappedEnumMember(
+            "PRIMARY", 1, "default", "Header for odd pages or all if no even header."
+        ),
+        XmlMappedEnumMember(
+            "FIRST_PAGE", 2, "first", "Header for first page of section."
+        ),
+        XmlMappedEnumMember(
+            "EVEN_PAGE", 3, "even", "Header for even pages of recto/verso section."
+        ),
+    )
+
+
 @alias('WD_ORIENT')
 class WD_ORIENTATION(XmlEnumeration):
     """

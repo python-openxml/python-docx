@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-"""
-Test suite for docx.image package
-"""
+"""Unit test suite for docx.image package"""
 
 from __future__ import absolute_import, print_function, unicode_literals
 
@@ -21,16 +19,23 @@ from docx.shared import Emu, Length
 
 from ..unitutil.file import test_file
 from ..unitutil.mock import (
-    function_mock, class_mock, initializer_mock, instance_mock, method_mock,
-    property_mock
+    ANY,
+    class_mock,
+    function_mock,
+    initializer_mock,
+    instance_mock,
+    method_mock,
+    property_mock,
 )
 
 
 class DescribeImage(object):
 
-    def it_can_construct_from_an_image_blob(self, from_blob_fixture):
-        blob_, BytesIO_, _from_stream_, stream_, image_ = from_blob_fixture
+    def it_can_construct_from_an_image_blob(
+        self, blob_, BytesIO_, _from_stream_, stream_, image_
+    ):
         image = Image.from_blob(blob_)
+
         BytesIO_.assert_called_once_with(blob_)
         _from_stream_.assert_called_once_with(stream_, blob_)
         assert image is image_
@@ -50,17 +55,14 @@ class DescribeImage(object):
         assert image is image_
 
     def it_can_construct_from_an_image_stream(self, from_stream_fixture):
-        # fixture ----------------------
         stream_, blob_, filename_in = from_stream_fixture[:3]
         _ImageHeaderFactory_, image_header_ = from_stream_fixture[3:5]
         Image__init_, filename_out = from_stream_fixture[5:]
-        # exercise ---------------------
+
         image = Image._from_stream(stream_, blob_, filename_in)
-        # verify -----------------------
+
         _ImageHeaderFactory_.assert_called_once_with(stream_)
-        Image__init_.assert_called_once_with(
-            blob_, filename_out, image_header_
-        )
+        Image__init_.assert_called_once_with(ANY, blob_, filename_out, image_header_)
         assert isinstance(image, Image)
 
     def it_provides_access_to_the_image_blob(self):
@@ -151,11 +153,6 @@ class DescribeImage(object):
         return image_header_, horz_dpi, vert_dpi
 
     @pytest.fixture
-    def from_blob_fixture(
-            self, blob_, BytesIO_, _from_stream_, stream_, image_):
-        return blob_, BytesIO_, _from_stream_, stream_, image_
-
-    @pytest.fixture
     def from_filelike_fixture(self, _from_stream_, image_):
         image_path = test_file('python-icon.png')
         with open(image_path, 'rb') as f:
@@ -238,7 +235,7 @@ class DescribeImage(object):
     @pytest.fixture
     def _from_stream_(self, request, image_):
         return method_mock(
-            request, Image, '_from_stream', return_value=image_
+            request, Image, '_from_stream', autospec=False, return_value=image_
         )
 
     @pytest.fixture

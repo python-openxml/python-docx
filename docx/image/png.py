@@ -132,7 +132,7 @@ class _Chunks(object):
         """
         IHDR chunk in PNG image
         """
-        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.IHDR
+        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.IHDR  # noqa
         IHDR = self._find_first(match)
         if IHDR is None:
             raise InvalidImageStreamError('no IHDR chunk in PNG image')
@@ -143,7 +143,7 @@ class _Chunks(object):
         """
         pHYs chunk in PNG image, or |None| if not present
         """
-        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.pHYs
+        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.pHYs  # noqa
         return self._find_first(match)
 
     def _find_first(self, match):

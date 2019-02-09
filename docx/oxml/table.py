@@ -367,9 +367,8 @@ class CT_TblWidth(BaseOxmlElement):
 
 
 class CT_Tc(BaseOxmlElement):
-    """
-    ``<w:tc>`` table cell element
-    """
+    """`w:tc` table cell element"""
+
     tcPr = ZeroOrOne('w:tcPr')  # bunches of successors, overriding insert
     p = OneOrMore('w:p')
     tbl = OneOrMore('w:tbl')
