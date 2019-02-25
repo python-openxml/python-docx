@@ -109,6 +109,14 @@ class Document(ElementProxy):
         return self._part.core_properties
 
     @property
+    def comments_part(self):
+        """
+        A |Comments| object providing read/write access to the
+        comments of this document.
+        """
+        return self._part.comments_part
+    
+    @property
     def inline_shapes(self):
         """
         An |InlineShapes| object providing access to the inline shapes in

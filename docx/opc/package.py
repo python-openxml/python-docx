@@ -11,6 +11,7 @@ from .constants import RELATIONSHIP_TYPE as RT
 from .packuri import PACKAGE_URI
 from .part import PartFactory
 from .parts.coreprops import CorePropertiesPart
+from docx.parts.comments import CommentsPart
 from .pkgreader import PackageReader
 from .pkgwriter import PackageWriter
 from .rel import Relationships
@@ -171,6 +172,19 @@ class OpcPackage(object):
             core_properties_part = CorePropertiesPart.default(self)
             self.relate_to(core_properties_part, RT.CORE_PROPERTIES)
             return core_properties_part
+    
+    @property
+    def _comments_part(self):
+        """
+        |CommentsPart| object related to this package. Creates
+        a default Comments part if one is not present.
+        """
+        try:
+            return self.part_related_by(RT.COMMENTS)
+        except KeyError:
+            comments_part = CommentsPart.new(self) 
+            self.relate_to(comments_part, RT.COMMENTS)
+            return comments_part
 
 
 class Unmarshaller(object):
