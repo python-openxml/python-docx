@@ -12,7 +12,7 @@ class CommentsPart(XmlPart):
     """Definition of Comments Part"""
 
     @classmethod
-    def new(cls, package):
+    def default(cls, package):
         partname = PackURI("/word/comments.xml")
         content_type = CT.WML_COMMENTS
         element = parse_xml(cls._default_comments_xml())

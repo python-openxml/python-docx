@@ -6,9 +6,12 @@ Custom element classes related to text runs (CT_R).
 
 from ..ns import qn
 from ..simpletypes import ST_BrClear, ST_BrType
+from .. import OxmlElement
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 )
+
+from .. import OxmlElement
 
 
 class CT_Br(BaseOxmlElement):
@@ -24,6 +27,8 @@ class CT_R(BaseOxmlElement):
     ``<w:r>`` element, containing the properties and text for a run.
     """
     rPr = ZeroOrOne('w:rPr')
+    ###wrong 
+    ref = ZeroOrOne('w:commentRangeStart', successors=('w:r',))
     t = ZeroOrMore('w:t')
     br = ZeroOrMore('w:br')
     cr = ZeroOrMore('w:cr')
@@ -52,6 +57,12 @@ class CT_R(BaseOxmlElement):
         drawing.append(inline_or_anchor)
         return drawing
 
+    def add_comment_reference(self, _id):
+        reference = OxmlElement('w:commentReference')
+        reference._id = _id
+        self.append(reference)
+        return reference
+    
     def clear_content(self):
         """
         Remove all child elements except the ``<w:rPr>`` element if present.
@@ -59,6 +70,12 @@ class CT_R(BaseOxmlElement):
         content_child_elms = self[1:] if self.rPr is not None else self[:]
         for child in content_child_elms:
             self.remove(child)
+
+    def add_comment_reference(self, _id):
+        reference = OxmlElement('w:commentReference')
+        reference._id = _id
+        self.append(reference)
+        return reference
 
     @property
     def style(self):

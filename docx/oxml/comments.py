@@ -4,6 +4,7 @@ Custom element classes related to the comments part
 
 from . import OxmlElement
 from .simpletypes import ST_DecimalNumber, ST_String
+from docx.text.run import Run
 from .xmlchemy import (
 	BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
 )
@@ -30,10 +31,13 @@ class CT_Com(BaseOxmlElement):
 		comment.date = date
 		comment._id = comm_id
 		comment.author = author
-
 		return comment
-	def _add_p(self):
+		
+	def _add_p(self, text):
 		_p = OxmlElement('w:p')
+		_r = _p.add_r()
+		run = Run(_r,self)
+		run.text = text
 		self._insert_paragraph(_p)
 		return _p
 
@@ -64,3 +68,43 @@ class CT_Comments(BaseOxmlElement):
 			return 0
 	
 
+class CT_CRS(BaseOxmlElement):
+	"""
+	A ``<w:commentRangeStart>`` element
+	"""
+	_id = RequiredAttribute('w:id', ST_DecimalNumber)
+
+	@classmethod
+	def new(cls, _id):
+		commentRangeStart = OxmlElement('w:commentRangeStart')
+		commentRangeStart._id =_id
+
+		return commentRangeStart
+
+	
+
+class CT_CRE(BaseOxmlElement):
+	"""
+	A ``w:commentRangeEnd`` element
+	"""
+	_id = RequiredAttribute('w:id', ST_DecimalNumber)
+
+
+	@classmethod
+	def new(cls, _id):
+		commentRangeEnd = OxmlElement('w:commentRangeEnd')
+		commentRangeEnd._id =_id
+		return commentRangeEnd
+	
+	
+class CT_CRef(BaseOxmlElement):
+	"""
+	w:commentReference 
+	"""
+	_id = RequiredAttribute('w:id', ST_DecimalNumber)
+
+	@classmethod
+	def new (cls, _id):
+		commentReference = OxmlElement('w:commentReference')
+		commentReference._id =_id
+		return commentReference

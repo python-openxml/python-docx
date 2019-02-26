@@ -111,11 +111,12 @@ class Document(ElementProxy):
     @property
     def comments_part(self):
         """
-        A |Comments| object providing read/write access to the
-        comments of this document.
+        A |Comments| object providing read/write access to the core
+        properties of this document.
         """
-        return self._part.comments_part
-    
+        return self._part._package._comments_part
+
+
     @property
     def inline_shapes(self):
         """

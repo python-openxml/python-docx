@@ -182,7 +182,7 @@ class OpcPackage(object):
         try:
             return self.part_related_by(RT.COMMENTS)
         except KeyError:
-            comments_part = CommentsPart.new(self) 
+            comments_part = CommentsPart.default(self) 
             self.relate_to(comments_part, RT.COMMENTS)
             return comments_part
 

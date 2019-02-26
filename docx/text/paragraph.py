@@ -13,6 +13,7 @@ from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
 
+from datetime import datetime
 
 class Paragraph(Parented):
     """
@@ -38,6 +39,25 @@ class Paragraph(Parented):
         if style:
             run.style = style
         return run
+
+    # def add_comment(self, author, initials, dt, comment_text, rangeStart=0, rangeEnd=0):
+    #     comment_part = self.part.comments_part.element
+    #     comment = comment_part.add_comment(author, initials, dt)
+    #     comment._add_p(comment_text)
+        
+    #     _r = self._p.add_r()
+    #     _r.add_comment_reference(comment._id)
+    #     self._p.link_comment(comment._id, rangeStart= rangeStart, rangeEnd=rangeEnd)
+
+    #     return comment
+
+    def add_comment(self, text, author='python-docx', initials='pd', dtime=None ,rangeStart=0, rangeEnd=0):
+        comment_part = self.part._comments_part.element
+        if dtime is None:
+            dtime = str( datetime.now )
+        comment =  self._p.add_comm(author, comment_part, initials, dtime, text, rangeStart, rangeEnd)
+
+        return comment
 
     @property
     def alignment(self):
