@@ -740,13 +740,17 @@ class _OxmlElementBase(etree.ElementBase):
         """
         return serialize_for_reading(self)
 
-    def xpath(self, xpath_str):
+    def xpath(self, xpath_str, namespaces=None):
         """
         Override of ``lxml`` _Element.xpath() method to provide standard Open
         XML namespace mapping (``nsmap``) in centralized location.
+        Optional namespaces can be provided to override default namespace mapping.
         """
+        nsmap_use = nsmap.copy()
+        if namespaces is not None:
+            nsmap_use.update(namespaces)
         return super(BaseOxmlElement, self).xpath(
-            xpath_str, namespaces=nsmap
+            xpath_str, namespaces=nsmap_use
         )
 
     @property
