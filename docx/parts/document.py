@@ -17,6 +17,7 @@ from ..shape import InlineShapes
 from ..shared import lazyproperty
 from .settings import SettingsPart
 from .styles import StylesPart
+from .comments import CommentsPart
 
 
 class DocumentPart(XmlPart):
@@ -121,6 +122,8 @@ class DocumentPart(XmlPart):
             numbering_part = NumberingPart.new()
             self.relate_to(numbering_part, RT.NUMBERING)
             return numbering_part
+    
+    
 
     def save(self, path_or_stream):
         """
@@ -171,3 +174,19 @@ class DocumentPart(XmlPart):
             styles_part = StylesPart.default(self.package)
             self.relate_to(styles_part, RT.STYLES)
             return styles_part
+    @lazyproperty
+    def comments_part(self):
+        """
+        A |Comments| object providing read/write access to the core
+        properties of this document.
+        """
+        # return self.package._comments_part
+
+    @property
+    def _comments_part(self):
+        try:
+            return self.part_related_by(RT.COMMENTS)
+        except KeyError:
+            comments_part = CommentsPart.default(self) 
+            self.relate_to(comments_part, RT.COMMENTS)
+            return comments_part

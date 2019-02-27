@@ -26,6 +26,34 @@ class CT_P(BaseOxmlElement):
         new_p = OxmlElement('w:p')
         self.addprevious(new_p)
         return new_p
+    
+    def link_comment(self, _id, rangeStart=0, rangeEnd=0):
+        rStart = OxmlElement('w:commentRangeStart')
+        rStart._id = _id
+        rEnd = OxmlElement('w:commentRangeEnd')
+        rEnd._id = _id
+        if rangeStart == 0 and rangeEnd == 0:
+            self.insert(0,rStart)
+            self.append(rEnd)
+        else:
+            self.insert(rangeStart,rStart)
+            if rangeEnd == len(self.getchildren() ) - 1 :
+                self.append(rEnd)
+            else:
+                self.insert(rangeEnd+1, rEnd)
+
+    def add_comm(self, author, comment_part, initials, dtime, comment_text, rangeStart, rangeEnd):
+        
+        comment = comment_part.add_comment(author, initials, dtime)
+        comment._add_p(comment_text)
+        _r = self.add_r()
+        _r.add_comment_reference(comment._id)
+        self.link_comment(comment._id, rangeStart= rangeStart, rangeEnd=rangeEnd)
+
+        return comment
+
+
+        
 
     @property
     def alignment(self):
@@ -71,6 +99,15 @@ class CT_P(BaseOxmlElement):
         if pPr is None:
             return None
         return pPr.style
+    
+    @property
+    def comment_id(self):
+        _id = self.xpath('./w:commentRangeStart/@w:id')    
+        if(len(_id)>1):
+            return None
+        else:
+            return int(_id[0])
+        
 
     @style.setter
     def style(self, style):
