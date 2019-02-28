@@ -20,7 +20,7 @@ class CT_Com(BaseOxmlElement):
 	date = RequiredAttribute('w:date', ST_String)
 	author = RequiredAttribute('w:author', ST_String)
 	
-	_p = ZeroOrOne('w:p', successors=('w:comment',))
+	p = ZeroOrOne('w:p', successors=('w:comment',))
 
 	@classmethod
 	def new(cls, initials, comm_id, date, author):
@@ -40,7 +40,7 @@ class CT_Com(BaseOxmlElement):
 		_r = _p.add_r()
 		run = Run(_r,self)
 		run.text = text
-		self._insert_paragraph(_p)
+		self._insert_p(_p)
 		return _p
 	
 	@property
@@ -100,8 +100,6 @@ class CT_CRS(BaseOxmlElement):
 		commentRangeStart._id =_id
 
 		return commentRangeStart
-
-	
 
 class CT_CRE(BaseOxmlElement):
 	"""
