@@ -103,7 +103,7 @@ class CT_P(BaseOxmlElement):
     @property
     def comment_id(self):
         _id = self.xpath('./w:commentRangeStart/@w:id')    
-        if(len(_id)>1 or len(_id) == 0):
+        if(len(_id)>1):
             return None
         else:
             return int(_id[0])

@@ -4,9 +4,7 @@ Custom element classes related to the comments part
 
 from . import OxmlElement
 from .simpletypes import ST_DecimalNumber, ST_String
-from ..opc.constants import NAMESPACE
-from ..text.paragraph import Paragraph
-from ..text.run import Run
+from docx.text.run import Run
 from .xmlchemy import (
 	BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
 )
@@ -20,7 +18,7 @@ class CT_Com(BaseOxmlElement):
 	date = RequiredAttribute('w:date', ST_String)
 	author = RequiredAttribute('w:author', ST_String)
 	
-	_p = ZeroOrOne('w:p', successors=('w:comment',))
+	paragraph = ZeroOrOne('w:p', successors=('w:comment',))
 
 	@classmethod
 	def new(cls, initials, comm_id, date, author):
@@ -42,17 +40,6 @@ class CT_Com(BaseOxmlElement):
 		run.text = text
 		self._insert_paragraph(_p)
 		return _p
-	
-	@property
-	def meta(self):
-		return [self.author, self.initials, self.date]
-	
-	@property
-	def paragraph(self):
-		return Paragraph(self._p, self)
-		
-	
-
 
 class CT_Comments(BaseOxmlElement):
 	"""
@@ -121,10 +108,3 @@ class CT_CRef(BaseOxmlElement):
 		commentReference = OxmlElement('w:commentReference')
 		commentReference._id =_id
 		return commentReference
-
-	def get_comment_by_id(self, _id):
-		namesapce = NAMESPACE().WML_MAIN
-		for c in self.findall('.//w:comment',{'w':namesapce}):
-			if c._id == _id:
-				return c
-		return None

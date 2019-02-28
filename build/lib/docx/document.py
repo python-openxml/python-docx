@@ -114,7 +114,7 @@ class Document(ElementProxy):
         A |Comments| object providing read/write access to the core
         properties of this document.
         """
-        return self.part.comments_part
+        return self._part._package._comments_part
 
 
     @property
