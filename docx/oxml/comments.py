@@ -79,6 +79,13 @@ class CT_Comments(BaseOxmlElement):
 			return _ids[-1] + 2
 		except:
 			return 0
+		
+	def get_comment_by_id(self, _id):
+		namesapce = NAMESPACE().WML_MAIN
+		for c in self.findall('.//w:comment',{'w':namesapce}):
+			if c._id == _id:
+				return c
+		return None
 	
 
 class CT_CRS(BaseOxmlElement):
@@ -122,9 +129,4 @@ class CT_CRef(BaseOxmlElement):
 		commentReference._id =_id
 		return commentReference
 
-	def get_comment_by_id(self, _id):
-		namesapce = NAMESPACE().WML_MAIN
-		for c in self.findall('.//w:comment',{'w':namesapce}):
-			if c._id == _id:
-				return c
-		return None
+	
