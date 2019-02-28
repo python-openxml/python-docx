@@ -49,7 +49,7 @@ class CT_Com(BaseOxmlElement):
 	
 	@property
 	def paragraph(self):
-		return Paragraph(self._p, self)
+		return Paragraph(self.p, self)
 		
 	
 
