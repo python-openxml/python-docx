@@ -5,10 +5,11 @@ Custom element classes related to text runs (CT_R).
 """
 
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
+from ..simpletypes import ST_BrClear, ST_BrType, ST_DecimalNumber, ST_String
+
 from .. import OxmlElement
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne ,RequiredAttribute
 )
 
 from .. import OxmlElement
@@ -63,6 +64,29 @@ class CT_R(BaseOxmlElement):
         self.append(reference)
         return reference
     
+    def add_footnote_reference(self, _id):
+        rPr = self.get_or_add_rPr()
+        rstyle = rPr.get_or_add_rStyle()
+        rstyle.val = 'FootnoteReference'
+        reference = OxmlElement('w:footnoteReference')
+        reference._id = _id
+        self.append(reference)
+        return reference
+    
+    def add_footnoteRef(self):
+        ref = OxmlElement('w:footnoteRef')
+        self.append(ref)
+
+        return ref
+    
+    def footnote_style(self):
+        rPr = self.get_or_add_rPr()
+        rstyle = rPr.get_or_add_rStyle()
+        rstyle.val = 'FootnoteReference'
+
+        self.add_footnoteRef()
+        return self
+
     def clear_content(self):
         """
         Remove all child elements except the ``<w:rPr>`` element if present.
@@ -127,6 +151,13 @@ class CT_Text(BaseOxmlElement):
     """
 
 
+class CT_RPr(BaseOxmlElement):
+    rStyle  = ZeroOrOne('w:rStyle')
+     
+
+class CT_RStyle(BaseOxmlElement):
+    val = RequiredAttribute('w:val',ST_String)
+
 class _RunContentAppender(object):
     """
     Service object that knows how to translate a Python string into run
@@ -181,3 +212,5 @@ class _RunContentAppender(object):
         if text:
             self._r.add_t(text)
         del self._bfr[:]
+
+

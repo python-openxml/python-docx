@@ -74,7 +74,6 @@ class CT_Comments(BaseOxmlElement):
 		_ids = [int(_str) for _str in ids]
 		_ids.sort()
 
-		print(_ids)
 		try:
 			return _ids[-1] + 2
 		except:

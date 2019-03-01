@@ -12,6 +12,7 @@ from .packuri import PACKAGE_URI
 from .part import PartFactory
 from .parts.coreprops import CorePropertiesPart
 from docx.parts.comments import CommentsPart
+from ..parts.footnotes import FootnotesPart
 from .pkgreader import PackageReader
 from .pkgwriter import PackageWriter
 from .rel import Relationships
@@ -185,6 +186,19 @@ class OpcPackage(object):
             comments_part = CommentsPart.default(self) 
             self.relate_to(comments_part, RT.COMMENTS)
             return comments_part
+
+    @property
+    def _footnotes_part(self):
+        """
+        |FootnotesPart| object related to this package. Creates
+        a default Comments part if one is not present.
+        """
+        try:
+            return self.part_related_by(RT.FOOTNOTES)
+        except KeyError:
+            footnotes_part = FootnotesPart.default(self)
+            self.relate_to(footnotes_part, RT.FOOTNOTES)
+            return  footnotes_part
 
 
 class Unmarshaller(object):

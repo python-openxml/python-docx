@@ -58,6 +58,12 @@ class Paragraph(Parented):
         comment =  self._p.add_comm(author, comment_part, initials, dtime, text, rangeStart, rangeEnd)
 
         return comment
+    
+    def add_footnote(self, text):
+        footnotes_part = self.part._footnotes_part.element
+        footnote = self._p.add_fn(text, footnotes_part)
+
+        return footnote
 
     @property
     def alignment(self):
