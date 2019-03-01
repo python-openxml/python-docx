@@ -86,6 +86,14 @@ class CT_R(BaseOxmlElement):
 
         self.add_footnoteRef()
         return self
+    
+    @property
+    def footnote_id(self):
+        _id = self.xpath('./w:footnoteReference/@w:id')
+        if len(_id) > 1 or len(_id) == 0 :
+            return None
+        else:
+            return int(_id[0]) 
 
     def clear_content(self):
         """

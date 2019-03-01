@@ -52,8 +52,20 @@ class CT_P(BaseOxmlElement):
 
         return comment
 
-
+    def add_fn(self, text, footnotes_part):
+        footnote = footnotes_part.add_footnote()
+        footnote._add_p(' '+text)
+        _r = self.add_r()
+        _r.add_footnote_reference(footnote._id)
         
+        return footnote
+
+    def footnote_style(self):
+        pPr = self.get_or_add_pPr()
+        rstyle = pPr.get_or_add_pStyle()
+        rstyle.val = 'FootnoteText'
+
+        return self
 
     @property
     def alignment(self):
@@ -103,12 +115,20 @@ class CT_P(BaseOxmlElement):
     @property
     def comment_id(self):
         _id = self.xpath('./w:commentRangeStart/@w:id')    
-        if(len(_id)>1):
+        if len(_id) > 1 or len(_id) == 0:
             return None
         else:
             return int(_id[0])
         
+    @property
+    def footnote_id(self):
+        _id = self.xpath('./w:r/w:footnoteReference/@w:id')
+        if len(_id) > 1 or len(_id) == 0 :
+            return None
+        else:
+            return int(_id[0]) 
 
+        
     @style.setter
     def style(self, style):
         pPr = self.get_or_add_pPr()
