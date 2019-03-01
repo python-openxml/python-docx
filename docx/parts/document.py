@@ -18,6 +18,7 @@ from ..shared import lazyproperty
 from .settings import SettingsPart
 from .styles import StylesPart
 from .comments import CommentsPart
+from .footnotes import FootnotesPart
 
 
 class DocumentPart(XmlPart):
@@ -190,3 +191,16 @@ class DocumentPart(XmlPart):
             comments_part = CommentsPart.default(self) 
             self.relate_to(comments_part, RT.COMMENTS)
             return comments_part
+    
+    @property
+    def _footnotes_part(self):
+        """
+        |FootnotesPart| object related to this package. Creates
+        a default Comments part if one is not present.
+        """
+        try:
+            return self.part_related_by(RT.FOOTNOTES)
+        except KeyError:
+            footnotes_part = FootnotesPart.default(self)
+            self.relate_to(footnotes_part, RT.FOOTNOTES)
+            return  footnotes_part

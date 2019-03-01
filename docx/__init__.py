@@ -17,6 +17,7 @@ from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
 from docx.parts.comments import CommentsPart
+from docx.parts.footnotes import FootnotesPart
 
 
 def part_class_selector(content_type, reltype):
@@ -32,8 +33,9 @@ PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
+PartFactory.part_type_for[CT.WML_FOOTNOTES] = FootnotesPart
 
 del (
-    CT, CorePropertiesPart, CommentsPart, DocumentPart, NumberingPart, PartFactory,
+    CT, CorePropertiesPart, FootnotesPart, CommentsPart, DocumentPart, NumberingPart, PartFactory,
     StylesPart, part_class_selector,
 )
