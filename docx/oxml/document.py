@@ -5,7 +5,8 @@ Custom element classes that correspond to the document part, e.g.
 <w:document>.
 """
 
-from .xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
+from .simpletypes import XsdString
+from .xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore, RequiredAttribute
 
 
 class CT_Document(BaseOxmlElement):
@@ -31,6 +32,7 @@ class CT_Body(BaseOxmlElement):
     p = ZeroOrMore('w:p', successors=('w:sectPr',))
     tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
     sectPr = ZeroOrOne('w:sectPr', successors=())
+    altchunk = ZeroOrMore('w:altChunk', successors=())
 
     def add_section_break(self):
         """Return `w:sectPr` element for new section added at end of document.
@@ -65,3 +67,8 @@ class CT_Body(BaseOxmlElement):
             content_elms = self[:]
         for content_elm in content_elms:
             self.remove(content_elm)
+
+
+class CT_altChunk(BaseOxmlElement):
+    """`w:altChunk` element"""
+    rId = RequiredAttribute('r:id', XsdString)

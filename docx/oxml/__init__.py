@@ -72,9 +72,10 @@ register_element_cls("w:titlePg", CT_OnOff)
 from .coreprops import CT_CoreProperties  # noqa
 register_element_cls('cp:coreProperties', CT_CoreProperties)
 
-from .document import CT_Body, CT_Document  # noqa
+from .document import CT_Body, CT_Document, CT_altChunk  # noqa
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
+register_element_cls("w:altChunk", CT_altChunk)
 
 from .numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
@@ -246,3 +247,38 @@ from .text.run import CT_Br, CT_R, CT_Text  # noqa
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+
+from .text.form import (
+    CT_SimpleField,
+    CT_FldChar,
+    ST_FldCharType,
+    CT_FFData,
+    CT_FFDDList,
+    CT_FFCheckBox,
+    CT_FFTextInput,
+    CT_FFTextType,
+)
+register_element_cls('w:name', CT_String)
+register_element_cls('w:label', CT_DecimalNumber)
+register_element_cls('w:entryMacro', CT_String)
+register_element_cls('w:exitMacro', CT_String)
+register_element_cls('w:helpText', CT_String)
+register_element_cls('w:StatusText', CT_String) # This is not technically correct. See 17.16.31
+register_element_cls("w:checkBox", CT_FFCheckBox)
+register_element_cls("w:ddList", CT_FFDDList)
+register_element_cls("w:textInput", CT_FFTextInput)
+register_element_cls('w:label', CT_DecimalNumber)
+register_element_cls('w:fldChar', CT_FldChar)
+register_element_cls('w:ffData', CT_FFData)
+register_element_cls('w:instrText',  CT_Text)
+register_element_cls('w:default', CT_String)
+register_element_cls('w:result', CT_String)
+register_element_cls('w:listEntry', CT_String)
+register_element_cls('w:result', CT_DecimalNumber)
+register_element_cls('w:label', CT_DecimalNumber)
+register_element_cls('w:tabIndex', CT_DecimalNumber)
+register_element_cls('w:checked', CT_OnOff)
+register_element_cls('w:maxLength', CT_DecimalNumber)
+register_element_cls('w:tabIndex', CT_DecimalNumber)
+register_element_cls('w:format', CT_String)
+register_element_cls('w:type', CT_FFTextType)
