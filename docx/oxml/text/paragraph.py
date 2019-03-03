@@ -121,12 +121,12 @@ class CT_P(BaseOxmlElement):
             return int(_id[0])
         
     @property
-    def footnote_id(self):
+    def footnote_ids(self):
         _id = self.xpath('./w:r/w:footnoteReference/@w:id')
-        if len(_id) > 1 or len(_id) == 0 :
+        if  len(_id) == 0 :
             return None
         else:
-            return int(_id[0]) 
+            return _id 
 
         
     @style.setter

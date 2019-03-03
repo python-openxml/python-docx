@@ -122,7 +122,7 @@ class Document(ElementProxy):
         A |Footnotes| object providing read/write access to the core
         properties of this document.
         """
-        return self.part.footnotes_part
+        return self.part._footnotes_part
 
 
 
