@@ -1,10 +1,10 @@
 .. :changelog:
 
 
-Release History BayooG/bayooo-docx forked from (python-openxmm/python-docx)
+Release History BayooG/bayoo-docx forked from (python-openxmm/python-docx)
 ---------------
 
-0.1.2 (2019-03-07)
+0.1.3 (2019-03-08)
 ++++++++++++++++++
 
 - Add low-level implementation for comments part
