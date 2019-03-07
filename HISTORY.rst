@@ -1,6 +1,23 @@
 .. :changelog:
 
-Release History
+
+Release History BayooG/bayooo-docx forked from (python-openxmm/python-docx)
+---------------
+
+0.1.2 (2019-03-07)
+++++++++++++++++++
+
+- Add low-level implementation for comments part
+- Add oxml element for <w:comments> element and sub-elements
+- Add add_comment() method for docx.text.Paragraph 
+
+
+- Add low-level implementation for footnotes part
+- Add oxml element for <w:footnotes> element and sub-elements
+- Add add_footnote() method for docx.text.Paragraph 
+
+
+Release History python-openxmm/python-docx
 ---------------
 
 0.8.7 (2018-08-18)

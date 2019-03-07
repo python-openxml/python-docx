@@ -157,6 +157,13 @@ class Paragraph(Parented):
             text += run.text
         return text
 
+    @property
+    def footnotes(self):
+        if self._p.footnote_ids is not None :
+            return True
+        else :
+            return False
+
     @text.setter
     def text(self, text):
         self.clear()

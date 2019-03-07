@@ -116,13 +116,13 @@ class Document(ElementProxy):
         """
         return self.part.comments_part
     
-    @property
-    def footnotes_part(self):
-        """
-        A |Footnotes| object providing read/write access to the core
-        properties of this document.
-        """
-        return self.part._footnotes_part
+    # @property
+    # def footnotes_part(self):
+    #     """
+    #     A |Footnotes| object providing read/write access to the core
+    #     properties of this document.
+    #     """
+    #     return self.part._footnotes_part
 
 
 
