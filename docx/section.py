@@ -4,7 +4,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from collections import Sequence
+try:
+    from collections.abc import Sequence
+except ImportError:
+    # Python 2.7
+    from collections import Sequence
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_HEADER_FOOTER
