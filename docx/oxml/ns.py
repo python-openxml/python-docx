@@ -26,7 +26,7 @@ nsmap = {
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
 }
 
-pfxmap = dict((value, key) for key, value in nsmap.items())
+pfxmap = {value: key for key, value in nsmap.items()}
 
 
 class NamespacePrefixedTag(str):
@@ -100,7 +100,7 @@ def nspfxmap(*nspfxs):
     *nspfxs*. Any number of namespace prefixes can be supplied, e.g.
     namespaces('a', 'r', 'p').
     """
-    return dict((pfx, nsmap[pfx]) for pfx in nspfxs)
+    return {pfx: nsmap[pfx] for pfx in nspfxs}
 
 
 def qn(tag):

@@ -173,7 +173,7 @@ class _IfdEntries(object):
         *offset*.
         """
         ifd_parser = _IfdParser(stream, offset)
-        entries = dict((e.tag, e.value) for e in ifd_parser.iter_entries())
+        entries = {e.tag: e.value for e in ifd_parser.iter_entries()}
         return cls(entries)
 
     def get(self, tag_code, default=None):

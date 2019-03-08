@@ -6,16 +6,12 @@ Test suite for docx.opc.phys_pkg module
 
 from __future__ import absolute_import
 
-try:
-    from io import BytesIO  # Python 3
-except ImportError:
-    from StringIO import StringIO as BytesIO
-
 import hashlib
 import pytest
 
 from zipfile import ZIP_DEFLATED, ZipFile
 
+from docx.compat import BytesIO
 from docx.opc.exceptions import PackageNotFoundError
 from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.phys_pkg import (

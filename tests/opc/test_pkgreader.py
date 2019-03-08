@@ -90,7 +90,7 @@ class DescribePackageReader(object):
              'srels_2'),
         )
         iter_vals = [(t[0], t[2], t[3], t[4]) for t in test_data]
-        content_types = dict((t[0], t[1]) for t in test_data)
+        content_types = {t[0]: t[1] for t in test_data}
         # mockery ----------------------
         phys_reader = Mock(name='phys_reader')
         pkg_srels = Mock(name='pkg_srels')
