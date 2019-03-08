@@ -10,6 +10,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from ..compat import is_string
 from ..exceptions import InvalidXmlError
 from ..shared import Emu, Pt, RGBColor, Twips
 
@@ -44,13 +45,8 @@ class BaseSimpleType(object):
 
     @classmethod
     def validate_string(cls, value):
-        if isinstance(value, str):
+        if is_string(value):
             return value
-        try:
-            if isinstance(value, basestring):
-                return value
-        except NameError:  # means we're on Python 3
-            pass
         raise TypeError(
             "value must be a string, got %s" % type(value)
         )
