@@ -89,12 +89,29 @@ class CT_NumPr(BaseOxmlElement):
     #     numId.val = val
 
 
+class CT_Lvl(BaseOxmlElement):
+    """
+    ``<w:lvl>`` element, which identifies a level in a list definition.
+    """
+    start = OneAndOnlyOne('w:start')
+    numFmt = OneAndOnlyOne('w:numFmt')
+    lvlText = OneAndOnlyOne('w:lvlText')
+
+
+class CT_AbstractNum(BaseOxmlElement):
+    """
+    ``<w:abstractNum>`` element, which identifies a list definition.
+    """
+    lvl = ZeroOrMore('w:lvl')
+    
+
 class CT_Numbering(BaseOxmlElement):
     """
     ``<w:numbering>`` element, the root element of a numbering part, i.e.
     numbering.xml
     """
     num = ZeroOrMore('w:num', successors=('w:numIdMacAtCleanup',))
+    abstractNum = ZeroOrMore('w:abstractNum')
 
     def add_num(self, abstractNum_id):
         """
