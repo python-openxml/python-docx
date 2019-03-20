@@ -280,6 +280,8 @@ class CT_TblPr(BaseOxmlElement):
     )
     tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
+    tblW =ZeroOrOne ('w:tblW', successors=('w:tblPr',))
+    tblCellMar = ZeroOrOne('w:tblCellMar', successors=('w:tblPr',))
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
     del _tag_seq
@@ -893,3 +895,11 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
     val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+
+class CT_TblMar(BaseOxmlElement):
+    """
+    ``<w:tblCellMar>`` element
+    """
+    left = ZeroOrOne('w:left', successors=('w:tblCellMar',)) 
+    right = ZeroOrOne('w:write', successors=('w:tblCellMar',))
