@@ -1,3 +1,4 @@
+# encoding: utf-8
 """
 Implementation of the following forms elements
 
