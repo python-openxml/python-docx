@@ -129,3 +129,27 @@ class CT_Numbering(BaseOxmlElement):
             if num not in num_ids:
                 break
         return num
+
+
+class CT_AbstractNum(BaseOxmlElement):
+    """
+    ``<w:abstractNum>`` element, which represents a concrete list definition
+    """
+    abstractNumId = OneAndOnlyOne('w:abstractNumId')
+    lvl = ZeroOrOne('w:lvl')
+
+
+class CT_Lvl(BaseOxmlElement):
+    """
+    ``<w:lvl>`` element, which represents a numbering level definition
+    """
+    ilvl = RequiredAttribute("w:ilvl", ST_DecimalNumber)
+    start = ZeroOrOne("w:start") # register as ST_DecimalNumber
+    numFmt = ZeroOrOne("w:numFmt") # register as ST_String
+    pStyle = ZeroOrOne("w:pStyle") 
+    lvlRestart = ZeroOrOne("w:lvlRestart") # register as ST_DecimalNumber
+    suff = ZeroOrOne("w:suff") # register as ST_String
+    lvlText = ZeroOrOne("w:lvlText") # register as ST_String
+    lvlJc = ZeroOrOne("w:lvlJc") # register as ST_String
+    pPr = ZeroOrOne("w:pPr")
+    rPr = ZeroOrOne("w:rPr")
