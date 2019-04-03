@@ -1,32 +1,33 @@
+.. py:currentmodule:: docx.enum.section
+
 .. _WdSectionStart:
 
 ``WD_SECTION_START``
 ====================
 
-alias: **WD_SECTION**
+.. autoclass:: WD_SECTION_START
 
-Specifies the start type of a section break.
+   .. attribute:: CONTINUOUS
+      :annotation:
 
-Example::
+      Continuous section break.
 
-    from docx.enum.section import WD_SECTION
+   .. attribute:: NEW_COLUMN
+      :annotation:
 
-    section = document.sections[0]
-    section.start_type = WD_SECTION.NEW_PAGE
+      New column section break.
 
-----
+   .. attribute:: NEW_PAGE
+      :annotation:
 
-CONTINUOUS
-    Continuous section break.
+      New page section break.
 
-NEW_COLUMN
-    New column section break.
+   .. attribute:: EVEN_PAGE
+      :annotation:
 
-NEW_PAGE
-    New page section break.
+      Even pages section break.
 
-EVEN_PAGE
-    Even pages section break.
+   .. attribute:: ODD_PAGE
+      :annotation:
 
-ODD_PAGE
-    Section begins on next odd page.
+      Section begins on next odd page.

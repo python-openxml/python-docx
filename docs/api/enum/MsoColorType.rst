@@ -1,23 +1,23 @@
+.. py:currentmodule:: docx.enum.dml
+
 .. _MsoColorType:
 
 ``MSO_COLOR_TYPE``
 ==================
 
-Specifies the color specification scheme
+.. autoclass:: MSO_COLOR_TYPE
 
-Example::
+   .. attribute:: RGB
+      :annotation:
 
-    from docx.enum.dml import MSO_COLOR_TYPE
+      Color is specified by an |RGBColor| value.
 
-    assert font.color.type == MSO_COLOR_TYPE.THEME
+   .. attribute:: THEME
+      :annotation:
 
-----
+      Color is one of the preset theme colors.
 
-RGB
-    Color is specified by an |RGBColor| value.
+   .. attribute:: AUTO
+      :annotation:
 
-THEME
-    Color is one of the preset theme colors.
-
-AUTO
-    Color is determined automatically be the application.
+      Color is determined automatically be the application.

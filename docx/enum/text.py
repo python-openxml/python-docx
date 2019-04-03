@@ -12,7 +12,7 @@ from .base import alias, EnumMember, XmlEnumeration, XmlMappedEnumMember
 @alias('WD_ALIGN_PARAGRAPH')
 class WD_PARAGRAPH_ALIGNMENT(XmlEnumeration):
     """
-    alias: **WD_ALIGN_PARAGRAPH**
+    Alias: **WD_ALIGN_PARAGRAPH**
 
     Specifies paragraph justification type.
 
@@ -64,30 +64,72 @@ class WD_PARAGRAPH_ALIGNMENT(XmlEnumeration):
     )
 
 
-class WD_BREAK_TYPE(object):
+@alias('WD_BREAK')
+class WD_BREAK_TYPE(XmlEnumeration):
     """
-    Corresponds to WdBreakType enumeration
-    http://msdn.microsoft.com/en-us/library/office/ff195905.aspx
+    Alias: **WD_BREAK**
+
+    Specifies type of break.
     """
-    COLUMN = 8
-    LINE = 6
-    LINE_CLEAR_LEFT = 9
-    LINE_CLEAR_RIGHT = 10
-    LINE_CLEAR_ALL = 11  # added for consistency, not in MS version
-    PAGE = 7
-    SECTION_CONTINUOUS = 3
-    SECTION_EVEN_PAGE = 4
-    SECTION_NEXT_PAGE = 2
-    SECTION_ODD_PAGE = 5
-    TEXT_WRAPPING = 11
 
+    __ms_name__ = 'WdBreakType'
 
-WD_BREAK = WD_BREAK_TYPE
+    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff195905.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'COLUMN', 8, 'wdColumnBreak', 'Column break at the insertion point.'
+        ),
+        XmlMappedEnumMember(
+            'LINE', 6, 'wdLineBreak', 'Line break.'
+        ),
+        XmlMappedEnumMember(
+            'LINE_CLEAR_LEFT', 9, 'wdLineBreakClearLeft', 'Line break.'
+        ),
+        XmlMappedEnumMember(
+            'LINE_CLEAR_RIGHT', 10, 'wdLineBreakClearRight', 'Line break.'
+        ),
+        EnumMember(
+            'LINE_CLEAR_ALL', 11, 'Line break. Equivalent to TEXT_WRAPPING.'
+        ),
+        XmlMappedEnumMember(
+            'PAGE', 7, 'wdPageBreak', 'Page break at the insertion point.'
+        ),
+        XmlMappedEnumMember(
+            'SECTION_CONTINUOUS', 3, 'wdSectionBreakContinuous',
+            'New section without a corresponding page break.'
+        ),
+        XmlMappedEnumMember(
+            'SECTION_EVEN_PAGE', 4, 'wdSectionBreakEvenPage',
+            'Section break with the next section beginning on the next '
+            'even-numbered page. If the section break falls on an '
+            'even-numbered page, Word leaves the next odd-numbered page blank.'
+        ),
+        XmlMappedEnumMember(
+            'SECTION_NEXT_PAGE', 2, 'wdSectionBreakNextPage',
+            'Section break on next page.'
+        ),
+        XmlMappedEnumMember(
+            'SECTION_ODD_PAGE', 5, 'wdSectionBreakOddPage',
+            'Section break with the next section beginning on the next '
+            'odd-numbered page. If the section break falls on an odd-numbered '
+            'page, Word leaves the next even-numbered page blank.'
+        ),
+        XmlMappedEnumMember(
+            'TEXT_WRAPPING', 11, 'wdTextWrappingBreak',
+            'Ends the current line and forces the text to continue below a '
+            'picture, table, or other item. The text continues on the next '
+            'blank line that does not contain a table aligned with the left or '
+            'right margin.'
+        ),
+    )
 
 
 @alias('WD_COLOR')
 class WD_COLOR_INDEX(XmlEnumeration):
     """
+    Alias: **WD_COLOR**
+
     Specifies a standard preset color to apply. Used for font highlighting and
     perhaps other applications.
     """

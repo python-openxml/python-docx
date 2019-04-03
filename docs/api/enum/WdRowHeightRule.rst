@@ -1,26 +1,23 @@
+.. py:currentmodule:: docx.enum.table
+
 .. _WdRowHeightRule:
 
 ``WD_ROW_HEIGHT_RULE``
 ======================
 
-alias: **WD_ROW_HEIGHT**
+.. autoclass:: WD_ROW_HEIGHT_RULE
 
-Specifies the rule for determining the height of a table row
+   .. attribute:: AUTO
+      :annotation:
 
-Example::
+      The row height is adjusted to accommodate the tallest value in the row.
 
-    from docx.enum.table import WD_ROW_HEIGHT_RULE
+   .. attribute:: AT_LEAST
+      :annotation:
 
-    table = document.add_table(3, 3)
-    table.rows[0].height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
+      The row height is at least a minimum specified value.
 
-----
+   .. attribute:: EXACTLY
+      :annotation:
 
-AUTO
-    The row height is adjusted to accommodate the tallest value in the row.
-
-AT_LEAST
-    The row height is at least a minimum specified value.
-
-EXACTLY
-    The row height is an exact value.
+      The row height is an exact value.

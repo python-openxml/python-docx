@@ -1,62 +1,93 @@
+.. py:currentmodule:: docx.enum.text
+
 .. _WdColorIndex:
 
 ``WD_COLOR_INDEX``
 ==================
 
-alias: **WD_COLOR**
+.. autoclass:: WD_COLOR_INDEX
 
-Specifies a standard preset color to apply. Used for font highlighting and
-perhaps other applications.
+   .. attribute:: AUTO
+      :annotation:
 
-----
+      Automatic color. Default; usually black.
 
-AUTO
-    Automatic color. Default; usually black.
+   .. attribute:: BLACK
+      :annotation:
 
-BLACK
-    Black color.
+      Black color.
 
-BLUE
-    Blue color
+   .. attribute:: BLUE
+      :annotation:
 
-BRIGHT_GREEN
-    Bright green color.
+      Blue color
 
-DARK_BLUE
-    Dark blue color.
+   .. attribute:: BRIGHT_GREEN
+      :annotation:
 
-DARK_RED
-    Dark red color.
+      Bright green color.
 
-DARK_YELLOW
-    Dark yellow color.
+   .. attribute:: DARK_BLUE
+      :annotation:
 
-GRAY_25
-    25% shade of gray color.
+      Dark blue color.
 
-GRAY_50
-    50% shade of gray color.
+   .. attribute:: DARK_RED
+      :annotation:
 
-GREEN
-    Green color.
+      Dark red color.
 
-PINK
-    Pink color.
+   .. attribute:: DARK_YELLOW
+      :annotation:
 
-RED
-    Red color.
+      Dark yellow color.
 
-TEAL
-    Teal color.
+   .. attribute:: GRAY_25
+      :annotation:
 
-TURQUOISE
-    Turquoise color.
+      25% shade of gray color.
 
-VIOLET
-    Violet color.
+   .. attribute:: GRAY_50
+      :annotation:
 
-WHITE
-    White color.
+      50% shade of gray color.
 
-YELLOW
-    Yellow color.
+   .. attribute:: GREEN
+      :annotation:
+
+      Green color.
+
+   .. attribute:: PINK
+      :annotation:
+
+      Pink color.
+
+   .. attribute:: RED
+      :annotation:
+
+      Red color.
+
+   .. attribute:: TEAL
+      :annotation:
+
+      Teal color.
+
+   .. attribute:: TURQUOISE
+      :annotation:
+
+      Turquoise color.
+
+   .. attribute:: VIOLET
+      :annotation:
+
+      Violet color.
+
+   .. attribute:: WHITE
+      :annotation:
+
+      White color.
+
+   .. attribute:: YELLOW
+      :annotation:
+
+      Yellow color.

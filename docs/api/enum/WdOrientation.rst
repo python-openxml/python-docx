@@ -1,23 +1,18 @@
+.. py:currentmodule:: docx.enum.section
+
 .. _WdOrientation:
 
 ``WD_ORIENTATION``
 ==================
 
-alias: **WD_ORIENT**
+.. autoclass:: WD_ORIENTATION
 
-Specifies the page layout orientation.
+   .. attribute:: PORTRAIT
+      :annotation:
 
-Example::
+      Portrait orientation.
 
-    from docx.enum.section import WD_ORIENT
+   .. attribute:: LANDSCAPE
+      :annotation:
 
-    section = document.sections[-1]
-    section.orientation = WD_ORIENT.LANDSCAPE
-
-----
-
-PORTRAIT
-    Portrait orientation.
-
-LANDSCAPE
-    Landscape orientation.
+      Landscape orientation.

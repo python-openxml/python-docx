@@ -1,24 +1,20 @@
+.. py:currentmodule:: docx.enum.table
+
 .. _WdTableDirection:
 
 ``WD_TABLE_DIRECTION``
 ======================
 
-Specifies the direction in which an application orders cells in the
-specified table or row.
+.. autoclass:: WD_TABLE_DIRECTION
 
-Example::
+   .. attribute:: LTR
+      :annotation:
 
-    from docx.enum.table import WD_TABLE_DIRECTION
+      The table or row is arranged with the first column in the leftmost
+      position.
 
-    table = document.add_table(3, 3)
-    table.direction = WD_TABLE_DIRECTION.RTL
+   .. attribute:: RTL
+      :annotation:
 
-----
-
-LTR
-    The table or row is arranged with the first column in the leftmost
-    position.
-
-RTL
-    The table or row is arranged with the first column in the rightmost
-    position.
+      The table or row is arranged with the first column in the
+      rightmost position.

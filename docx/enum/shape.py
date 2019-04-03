@@ -6,17 +6,35 @@ Enumerations related to DrawingML shapes in WordprocessingML files
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from .base import alias, EnumMember, XmlEnumeration, XmlMappedEnumMember
 
-class WD_INLINE_SHAPE_TYPE(object):
+
+@alias('WD_INLINE_SHAPE')
+class WD_INLINE_SHAPE_TYPE(XmlEnumeration):
     """
-    Corresponds to WdInlineShapeType enumeration
-    http://msdn.microsoft.com/en-us/library/office/ff192587.aspx
+    Alias: **WD_INLINE_SHAPE**
+
+    Specifies a shape type for inline shapes.
     """
-    CHART = 12
-    LINKED_PICTURE = 4
-    PICTURE = 3
-    SMART_ART = 15
-    NOT_IMPLEMENTED = -6
 
+    __ms_name__ = 'WdInlineShapeType'
 
-WD_INLINE_SHAPE = WD_INLINE_SHAPE_TYPE
+    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff192587.aspx'
+
+    __members__ = (
+        XmlMappedEnumMember(
+            'CHART', 12, 'wdInlineShapeChart', 'Inline chart.'
+        ),
+        XmlMappedEnumMember(
+            'LINKED_PICTURE', 4, 'wdInlineShapeLinkedPicture', 'Linked picture.'
+        ),
+        XmlMappedEnumMember(
+            'PICTURE', 4, 'wdInlineShapePicture', 'Picture.'
+        ),
+        XmlMappedEnumMember(
+            'SMART_ART', 4, 'wdInlineShapeSmartArt', 'A SmartArt graphic.'
+        ),
+        EnumMember(
+            'NOT_IMPLEMENTED', -6, 'Unknown type.'
+        ),
+    )

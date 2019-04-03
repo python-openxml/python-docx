@@ -1,415 +1,668 @@
+.. py:currentmodule:: docx.enum.style
+
 .. _WdBuiltinStyle:
 
 ``WD_BUILTIN_STYLE``
 ====================
 
-alias: **WD_STYLE**
+.. autoclass:: WD_BUILTIN_STYLE
 
-Specifies a built-in Microsoft Word style.
+   .. attribute:: BLOCK_QUOTATION
+      :annotation:
 
-Example::
+      Block Text.
 
-    from docx import Document
-    from docx.enum.style import WD_STYLE
+   .. attribute:: BODY_TEXT
+      :annotation:
 
-    document = Document()
-    styles = document.styles
-    style = styles[WD_STYLE.BODY_TEXT]
+      Body Text.
 
-----
+   .. attribute:: BODY_TEXT_2
+      :annotation:
 
-BLOCK_QUOTATION
-    Block Text.
+      Body Text 2.
 
-BODY_TEXT
-    Body Text.
+   .. attribute:: BODY_TEXT_3
+      :annotation:
 
-BODY_TEXT_2
-    Body Text 2.
+      Body Text 3.
 
-BODY_TEXT_3
-    Body Text 3.
+   .. attribute:: BODY_TEXT_FIRST_INDENT
+      :annotation:
 
-BODY_TEXT_FIRST_INDENT
-    Body Text First Indent.
+      Body Text First Indent.
 
-BODY_TEXT_FIRST_INDENT_2
-    Body Text First Indent 2.
+   .. attribute:: BODY_TEXT_FIRST_INDENT_2
+      :annotation:
 
-BODY_TEXT_INDENT
-    Body Text Indent.
+      Body Text First Indent 2.
 
-BODY_TEXT_INDENT_2
-    Body Text Indent 2.
+   .. attribute:: BODY_TEXT_INDENT
+      :annotation:
 
-BODY_TEXT_INDENT_3
-    Body Text Indent 3.
+      Body Text Indent.
 
-BOOK_TITLE
-    Book Title.
+   .. attribute:: BODY_TEXT_INDENT_2
+      :annotation:
 
-CAPTION
-    Caption.
+      Body Text Indent 2.
 
-CLOSING
-    Closing.
+   .. attribute:: BODY_TEXT_INDENT_3
+      :annotation:
 
-COMMENT_REFERENCE
-    Comment Reference.
+      Body Text Indent 3.
 
-COMMENT_TEXT
-    Comment Text.
+   .. attribute:: BOOK_TITLE
+      :annotation:
 
-DATE
-    Date.
+      Book Title.
 
-DEFAULT_PARAGRAPH_FONT
-    Default Paragraph Font.
+   .. attribute:: CAPTION
+      :annotation:
 
-EMPHASIS
-    Emphasis.
+      Caption.
 
-ENDNOTE_REFERENCE
-    Endnote Reference.
+   .. attribute:: CLOSING
+      :annotation:
 
-ENDNOTE_TEXT
-    Endnote Text.
+      Closing.
 
-ENVELOPE_ADDRESS
-    Envelope Address.
+   .. attribute:: COMMENT_REFERENCE
+      :annotation:
 
-ENVELOPE_RETURN
-    Envelope Return.
+      Comment Reference.
 
-FOOTER
-    Footer.
+   .. attribute:: COMMENT_TEXT
+      :annotation:
 
-FOOTNOTE_REFERENCE
-    Footnote Reference.
+      Comment Text.
 
-FOOTNOTE_TEXT
-    Footnote Text.
+   .. attribute:: DATE
+      :annotation:
 
-HEADER
-    Header.
+      Date.
 
-HEADING_1
-    Heading 1.
+   .. attribute:: DEFAULT_PARAGRAPH_FONT
+      :annotation:
 
-HEADING_2
-    Heading 2.
+      Default Paragraph Font.
 
-HEADING_3
-    Heading 3.
+   .. attribute:: EMPHASIS
+      :annotation:
 
-HEADING_4
-    Heading 4.
+      Emphasis.
 
-HEADING_5
-    Heading 5.
+   .. attribute:: ENDNOTE_REFERENCE
+      :annotation:
 
-HEADING_6
-    Heading 6.
+      Endnote Reference.
 
-HEADING_7
-    Heading 7.
+   .. attribute:: ENDNOTE_TEXT
+      :annotation:
 
-HEADING_8
-    Heading 8.
+      Endnote Text.
 
-HEADING_9
-    Heading 9.
+   .. attribute:: ENVELOPE_ADDRESS
+      :annotation:
 
-HTML_ACRONYM
-    HTML Acronym.
+      Envelope Address.
 
-HTML_ADDRESS
-    HTML Address.
+   .. attribute:: ENVELOPE_RETURN
+      :annotation:
 
-HTML_CITE
-    HTML Cite.
+      Envelope Return.
 
-HTML_CODE
-    HTML Code.
+   .. attribute:: FOOTER
+      :annotation:
 
-HTML_DFN
-    HTML Definition.
+      Footer.
 
-HTML_KBD
-    HTML Keyboard.
+   .. attribute:: FOOTNOTE_REFERENCE
+      :annotation:
 
-HTML_NORMAL
-    Normal (Web).
+      Footnote Reference.
 
-HTML_PRE
-    HTML Preformatted.
+   .. attribute:: FOOTNOTE_TEXT
+      :annotation:
 
-HTML_SAMP
-    HTML Sample.
+      Footnote Text.
 
-HTML_TT
-    HTML Typewriter.
+   .. attribute:: HEADER
+      :annotation:
 
-HTML_VAR
-    HTML Variable.
+      Header.
 
-HYPERLINK
-    Hyperlink.
+   .. attribute:: HEADING_1
+      :annotation:
 
-HYPERLINK_FOLLOWED
-    Followed Hyperlink.
+      Heading 1.
 
-INDEX_1
-    Index 1.
+   .. attribute:: HEADING_2
+      :annotation:
 
-INDEX_2
-    Index 2.
+      Heading 2.
 
-INDEX_3
-    Index 3.
+   .. attribute:: HEADING_3
+      :annotation:
 
-INDEX_4
-    Index 4.
+      Heading 3.
 
-INDEX_5
-    Index 5.
+   .. attribute:: HEADING_4
+      :annotation:
 
-INDEX_6
-    Index 6.
+      Heading 4.
 
-INDEX_7
-    Index 7.
+   .. attribute:: HEADING_5
+      :annotation:
 
-INDEX_8
-    Index 8.
+      Heading 5.
 
-INDEX_9
-    Index 9.
+   .. attribute:: HEADING_6
+      :annotation:
 
-INDEX_HEADING
-    Index Heading
+      Heading 6.
 
-INTENSE_EMPHASIS
-    Intense Emphasis.
+   .. attribute:: HEADING_7
+      :annotation:
 
-INTENSE_QUOTE
-    Intense Quote.
+      Heading 7.
 
-INTENSE_REFERENCE
-    Intense Reference.
+   .. attribute:: HEADING_8
+      :annotation:
 
-LINE_NUMBER
-    Line Number.
+      Heading 8.
 
-LIST
-    List.
+   .. attribute:: HEADING_9
+      :annotation:
 
-LIST_2
-    List 2.
+      Heading 9.
 
-LIST_3
-    List 3.
+   .. attribute:: HTML_ACRONYM
+      :annotation:
 
-LIST_4
-    List 4.
+      HTML Acronym.
 
-LIST_5
-    List 5.
+   .. attribute:: HTML_ADDRESS
+      :annotation:
 
-LIST_BULLET
-    List Bullet.
+      HTML Address.
 
-LIST_BULLET_2
-    List Bullet 2.
+   .. attribute:: HTML_CITE
+      :annotation:
 
-LIST_BULLET_3
-    List Bullet 3.
+      HTML Cite.
 
-LIST_BULLET_4
-    List Bullet 4.
+   .. attribute:: HTML_CODE
+      :annotation:
 
-LIST_BULLET_5
-    List Bullet 5.
+      HTML Code.
 
-LIST_CONTINUE
-    List Continue.
+   .. attribute:: HTML_DFN
+      :annotation:
 
-LIST_CONTINUE_2
-    List Continue 2.
+      HTML Definition.
 
-LIST_CONTINUE_3
-    List Continue 3.
+   .. attribute:: HTML_KBD
+      :annotation:
 
-LIST_CONTINUE_4
-    List Continue 4.
+      HTML Keyboard.
 
-LIST_CONTINUE_5
-    List Continue 5.
+   .. attribute:: HTML_NORMAL
+      :annotation:
 
-LIST_NUMBER
-    List Number.
+      Normal (Web).
 
-LIST_NUMBER_2
-    List Number 2.
+   .. attribute:: HTML_PRE
+      :annotation:
 
-LIST_NUMBER_3
-    List Number 3.
+      HTML Preformatted.
 
-LIST_NUMBER_4
-    List Number 4.
+   .. attribute:: HTML_SAMP
+      :annotation:
 
-LIST_NUMBER_5
-    List Number 5.
+      HTML Sample.
 
-LIST_PARAGRAPH
-    List Paragraph.
+   .. attribute:: HTML_TT
+      :annotation:
 
-MACRO_TEXT
-    Macro Text.
+      HTML Typewriter.
 
-MESSAGE_HEADER
-    Message Header.
+   .. attribute:: HTML_VAR
+      :annotation:
 
-NAV_PANE
-    Document Map.
+      HTML Variable.
 
-NORMAL
-    Normal.
+   .. attribute:: HYPERLINK
+      :annotation:
 
-NORMAL_INDENT
-    Normal Indent.
+      Hyperlink.
 
-NORMAL_OBJECT
-    Normal (applied to an object).
+   .. attribute:: HYPERLINK_FOLLOWED
+      :annotation:
 
-NORMAL_TABLE
-    Normal (applied within a table).
+      Followed Hyperlink.
 
-NOTE_HEADING
-    Note Heading.
+   .. attribute:: INDEX_1
+      :annotation:
 
-PAGE_NUMBER
-    Page Number.
+      Index 1.
 
-PLAIN_TEXT
-    Plain Text.
+   .. attribute:: INDEX_2
+      :annotation:
 
-QUOTE
-    Quote.
+      Index 2.
 
-SALUTATION
-    Salutation.
+   .. attribute:: INDEX_3
+      :annotation:
 
-SIGNATURE
-    Signature.
+      Index 3.
 
-STRONG
-    Strong.
+   .. attribute:: INDEX_4
+      :annotation:
 
-SUBTITLE
-    Subtitle.
+      Index 4.
 
-SUBTLE_EMPHASIS
-    Subtle Emphasis.
+   .. attribute:: INDEX_5
+      :annotation:
 
-SUBTLE_REFERENCE
-    Subtle Reference.
+      Index 5.
 
-TABLE_COLORFUL_GRID
-    Colorful Grid.
+   .. attribute:: INDEX_6
+      :annotation:
 
-TABLE_COLORFUL_LIST
-    Colorful List.
+      Index 6.
 
-TABLE_COLORFUL_SHADING
-    Colorful Shading.
+   .. attribute:: INDEX_7
+      :annotation:
 
-TABLE_DARK_LIST
-    Dark List.
+      Index 7.
 
-TABLE_LIGHT_GRID
-    Light Grid.
+   .. attribute:: INDEX_8
+      :annotation:
 
-TABLE_LIGHT_GRID_ACCENT_1
-    Light Grid Accent 1.
+      Index 8.
 
-TABLE_LIGHT_LIST
-    Light List.
+   .. attribute:: INDEX_9
+      :annotation:
 
-TABLE_LIGHT_LIST_ACCENT_1
-    Light List Accent 1.
+      Index 9.
 
-TABLE_LIGHT_SHADING
-    Light Shading.
+   .. attribute:: INDEX_HEADING
+      :annotation:
 
-TABLE_LIGHT_SHADING_ACCENT_1
-    Light Shading Accent 1.
+      Index Heading
 
-TABLE_MEDIUM_GRID_1
-    Medium Grid 1.
+   .. attribute:: INTENSE_EMPHASIS
+      :annotation:
 
-TABLE_MEDIUM_GRID_2
-    Medium Grid 2.
+      Intense Emphasis.
 
-TABLE_MEDIUM_GRID_3
-    Medium Grid 3.
+   .. attribute:: INTENSE_QUOTE
+      :annotation:
 
-TABLE_MEDIUM_LIST_1
-    Medium List 1.
+      Intense Quote.
 
-TABLE_MEDIUM_LIST_1_ACCENT_1
-    Medium List 1 Accent 1.
+   .. attribute:: INTENSE_REFERENCE
+      :annotation:
 
-TABLE_MEDIUM_LIST_2
-    Medium List 2.
+      Intense Reference.
 
-TABLE_MEDIUM_SHADING_1
-    Medium Shading 1.
+   .. attribute:: LINE_NUMBER
+      :annotation:
 
-TABLE_MEDIUM_SHADING_1_ACCENT_1
-    Medium Shading 1 Accent 1.
+      Line Number.
 
-TABLE_MEDIUM_SHADING_2
-    Medium Shading 2.
+   .. attribute:: LIST
+      :annotation:
 
-TABLE_MEDIUM_SHADING_2_ACCENT_1
-    Medium Shading 2 Accent 1.
+      List.
 
-TABLE_OF_AUTHORITIES
-    Table of Authorities.
+   .. attribute:: LIST_2
+      :annotation:
 
-TABLE_OF_FIGURES
-    Table of Figures.
+      List 2.
 
-TITLE
-    Title.
+   .. attribute:: LIST_3
+      :annotation:
 
-TOAHEADING
-    TOA Heading.
+      List 3.
 
-TOC_1
-    TOC 1.
+   .. attribute:: LIST_4
+      :annotation:
 
-TOC_2
-    TOC 2.
+      List 4.
 
-TOC_3
-    TOC 3.
+   .. attribute:: LIST_5
+      :annotation:
 
-TOC_4
-    TOC 4.
+      List 5.
 
-TOC_5
-    TOC 5.
+   .. attribute:: LIST_BULLET
+      :annotation:
 
-TOC_6
-    TOC 6.
+      List Bullet.
 
-TOC_7
-    TOC 7.
+   .. attribute:: LIST_BULLET_2
+      :annotation:
 
-TOC_8
-    TOC 8.
+      List Bullet 2.
 
-TOC_9
-    TOC 9.
+   .. attribute:: LIST_BULLET_3
+      :annotation:
+
+      List Bullet 3.
+
+   .. attribute:: LIST_BULLET_4
+      :annotation:
+
+      List Bullet 4.
+
+   .. attribute:: LIST_BULLET_5
+      :annotation:
+
+      List Bullet 5.
+
+   .. attribute:: LIST_CONTINUE
+      :annotation:
+
+      List Continue.
+
+   .. attribute:: LIST_CONTINUE_2
+      :annotation:
+
+      List Continue 2.
+
+   .. attribute:: LIST_CONTINUE_3
+      :annotation:
+
+      List Continue 3.
+
+   .. attribute:: LIST_CONTINUE_4
+      :annotation:
+
+      List Continue 4.
+
+   .. attribute:: LIST_CONTINUE_5
+      :annotation:
+
+      List Continue 5.
+
+   .. attribute:: LIST_NUMBER
+      :annotation:
+
+      List Number.
+
+   .. attribute:: LIST_NUMBER_2
+      :annotation:
+
+      List Number 2.
+
+   .. attribute:: LIST_NUMBER_3
+      :annotation:
+
+      List Number 3.
+
+   .. attribute:: LIST_NUMBER_4
+      :annotation:
+
+      List Number 4.
+
+   .. attribute:: LIST_NUMBER_5
+      :annotation:
+
+      List Number 5.
+
+   .. attribute:: LIST_PARAGRAPH
+      :annotation:
+
+      List Paragraph.
+
+   .. attribute:: MACRO_TEXT
+      :annotation:
+
+      Macro Text.
+
+   .. attribute:: MESSAGE_HEADER
+      :annotation:
+
+      Message Header.
+
+   .. attribute:: NAV_PANE
+      :annotation:
+
+      Document Map.
+
+   .. attribute:: NORMAL
+      :annotation:
+
+      Normal.
+
+   .. attribute:: NORMAL_INDENT
+      :annotation:
+
+      Normal Indent.
+
+   .. attribute:: NORMAL_OBJECT
+      :annotation:
+
+      Normal (applied to an object).
+
+   .. attribute:: NORMAL_TABLE
+      :annotation:
+
+      Normal (applied within a table).
+
+   .. attribute:: NOTE_HEADING
+      :annotation:
+
+      Note Heading.
+
+   .. attribute:: PAGE_NUMBER
+      :annotation:
+
+      Page Number.
+
+   .. attribute:: PLAIN_TEXT
+      :annotation:
+
+      Plain Text.
+
+   .. attribute:: QUOTE
+      :annotation:
+
+      Quote.
+
+   .. attribute:: SALUTATION
+      :annotation:
+
+      Salutation.
+
+   .. attribute:: SIGNATURE
+      :annotation:
+
+      Signature.
+
+   .. attribute:: STRONG
+      :annotation:
+
+      Strong.
+
+   .. attribute:: SUBTITLE
+      :annotation:
+
+      Subtitle.
+
+   .. attribute:: SUBTLE_EMPHASIS
+      :annotation:
+
+      Subtle Emphasis.
+
+   .. attribute:: SUBTLE_REFERENCE
+      :annotation:
+
+      Subtle Reference.
+
+   .. attribute:: TABLE_COLORFUL_GRID
+      :annotation:
+
+      Colorful Grid.
+
+   .. attribute:: TABLE_COLORFUL_LIST
+      :annotation:
+
+      Colorful List.
+
+   .. attribute:: TABLE_COLORFUL_SHADING
+      :annotation:
+
+      Colorful Shading.
+
+   .. attribute:: TABLE_DARK_LIST
+      :annotation:
+
+      Dark List.
+
+   .. attribute:: TABLE_LIGHT_GRID
+      :annotation:
+
+      Light Grid.
+
+   .. attribute:: TABLE_LIGHT_GRID_ACCENT_1
+      :annotation:
+
+      Light Grid Accent 1.
+
+   .. attribute:: TABLE_LIGHT_LIST
+      :annotation:
+
+      Light List.
+
+   .. attribute:: TABLE_LIGHT_LIST_ACCENT_1
+      :annotation:
+
+      Light List Accent 1.
+
+   .. attribute:: TABLE_LIGHT_SHADING
+      :annotation:
+
+      Light Shading.
+
+   .. attribute:: TABLE_LIGHT_SHADING_ACCENT_1
+      :annotation:
+
+      Light Shading Accent 1.
+
+   .. attribute:: TABLE_MEDIUM_GRID_1
+      :annotation:
+
+      Medium Grid 1.
+
+   .. attribute:: TABLE_MEDIUM_GRID_2
+      :annotation:
+
+      Medium Grid 2.
+
+   .. attribute:: TABLE_MEDIUM_GRID_3
+      :annotation:
+
+      Medium Grid 3.
+
+   .. attribute:: TABLE_MEDIUM_LIST_1
+      :annotation:
+
+      Medium List 1.
+
+   .. attribute:: TABLE_MEDIUM_LIST_1_ACCENT_1
+      :annotation:
+
+      Medium List 1 Accent 1.
+
+   .. attribute:: TABLE_MEDIUM_LIST_2
+      :annotation:
+
+      Medium List 2.
+
+   .. attribute:: TABLE_MEDIUM_SHADING_1
+      :annotation:
+
+      Medium Shading 1.
+
+   .. attribute:: TABLE_MEDIUM_SHADING_1_ACCENT_1
+      :annotation:
+
+      Medium Shading 1 Accent 1.
+
+   .. attribute:: TABLE_MEDIUM_SHADING_2
+      :annotation:
+
+      Medium Shading 2.
+
+   .. attribute:: TABLE_MEDIUM_SHADING_2_ACCENT_1
+      :annotation:
+
+      Medium Shading 2 Accent 1.
+
+   .. attribute:: TABLE_OF_AUTHORITIES
+      :annotation:
+
+      Table of Authorities.
+
+   .. attribute:: TABLE_OF_FIGURES
+      :annotation:
+
+      Table of Figures.
+
+   .. attribute:: TITLE
+      :annotation:
+
+      Title.
+
+   .. attribute:: TOAHEADING
+      :annotation:
+
+      TOA Heading.
+
+   .. attribute:: TOC_1
+      :annotation:
+
+      TOC 1.
+
+   .. attribute:: TOC_2
+      :annotation:
+
+      TOC 2.
+
+   .. attribute:: TOC_3
+      :annotation:
+
+      TOC 3.
+
+   .. attribute:: TOC_4
+      :annotation:
+
+      TOC 4.
+
+   .. attribute:: TOC_5
+      :annotation:
+
+      TOC 5.
+
+   .. attribute:: TOC_6
+      :annotation:
+
+      TOC 6.
+
+   .. attribute:: TOC_7
+      :annotation:
+
+      TOC 7.
+
+   .. attribute:: TOC_8
+      :annotation:
+
+      TOC 8.
+
+   .. attribute:: TOC_9
+      :annotation:
+
+      TOC 9.

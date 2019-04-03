@@ -1,38 +1,58 @@
+.. py:currentmodule:: docx.enum.text
+
 .. _WdTabAlignment:
 
 ``WD_TAB_ALIGNMENT``
 ====================
 
-Specifies the tab stop alignment to apply.
+.. autoclass:: WD_TAB_ALIGNMENT
 
-----
+   .. attribute:: LEFT
+      :annotation:
 
-LEFT
-    Left-aligned.
+      Left-aligned.
 
-CENTER
-    Center-aligned.
+   .. attribute:: CENTER
+      :annotation:
 
-RIGHT
-    Right-aligned.
+      Center-aligned.
 
-DECIMAL
-    Decimal-aligned.
+   .. attribute:: RIGHT
+      :annotation:
 
-BAR
-    Bar-aligned.
+      Right-aligned.
 
-LIST
-    List-aligned. (deprecated)
+   .. attribute:: DECIMAL
+      :annotation:
 
-CLEAR
-    Clear an inherited tab stop.
+      Decimal-aligned.
 
-END
-    Right-aligned.  (deprecated)
+   .. attribute:: BAR
+      :annotation:
 
-NUM
-    Left-aligned.  (deprecated)
+      Bar-aligned.
 
-START
-    Left-aligned.  (deprecated)
+   .. attribute:: LIST
+      :annotation:
+
+      List-aligned. (deprecated)
+
+   .. attribute:: CLEAR
+      :annotation:
+
+      Clear an inherited tab stop.
+
+   .. attribute:: END
+      :annotation:
+
+      Right-aligned.  (deprecated)
+
+   .. attribute:: NUM
+      :annotation:
+
+      Left-aligned.  (deprecated)
+
+   .. attribute:: START
+      :annotation:
+
+      Left-aligned.  (deprecated)

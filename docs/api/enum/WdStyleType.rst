@@ -1,29 +1,28 @@
+.. py:currentmodule:: docx.enum.style
+
 .. _WdStyleType:
 
 ``WD_STYLE_TYPE``
 =================
 
-Specifies one of the four style types: paragraph, character, list, or
-table.
+.. autoclass:: WD_STYLE_TYPE
 
-Example::
+   .. attribute:: CHARACTER
+      :annotation:
 
-    from docx import Document
-    from docx.enum.style import WD_STYLE_TYPE
+      Character style.
 
-    styles = Document().styles
-    assert styles[0].type == WD_STYLE_TYPE.PARAGRAPH
+   .. attribute:: LIST
+      :annotation:
 
-----
+      List style.
 
-CHARACTER
-    Character style.
+   .. attribute:: PARAGRAPH
+      :annotation:
 
-LIST
-    List style.
+      Paragraph style.
 
-PARAGRAPH
-    Paragraph style.
+   .. attribute:: TABLE
+      :annotation:
 
-TABLE
-    Table style.
+      Table style.

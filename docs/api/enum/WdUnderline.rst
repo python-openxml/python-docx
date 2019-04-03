@@ -1,69 +1,106 @@
+.. py:currentmodule:: docx.enum.text
+
 .. _WdUnderline:
 
 ``WD_UNDERLINE``
 ================
 
-Specifies the style of underline applied to a run of characters.
+.. autoclass:: WD_UNDERLINE
 
-----
+   .. attribute:: NONE
+      :annotation:
 
-NONE
-    No underline. This setting overrides any inherited underline value, so can
-    be used to remove underline from a run that inherits underlining from its
-    containing paragraph. Note this is not the same as assigning |None| to
-    Run.underline. |None| is a valid assignment value, but causes the run to
-    inherit its underline value. Assigning ``WD_UNDERLINE.NONE`` causes
-    underlining to be unconditionally turned off.
+      No underline. This setting overrides any inherited underline
+      value, so can be used to remove underline from a run that inherits
+      underlining from its containing paragraph. Note this is not the
+      same as assigning |None| to Run.underline. |None| is a valid
+      assignment value, but causes the run to inherit its underline
+      value. Assigning ``WD_UNDERLINE.NONE`` causes underlining to be
+      unconditionally turned off.
 
-SINGLE
-    A single line. Note that this setting is write-only in the sense that
-    |True| (rather than ``WD_UNDERLINE.SINGLE``) is returned for a run having
-    this setting.
+   .. attribute:: SINGLE
+      :annotation:
 
-WORDS
-    Underline individual words only.
+      A single line. Note that this setting is write-only in the sense
+      that |True| (rather than ``WD_UNDERLINE.SINGLE``) is returned for
+      a run having this setting.
 
-DOUBLE
-    A double line.
+   .. attribute:: WORDS
+      :annotation:
 
-DOTTED
-    Dots.
+      Underline individual words only.
 
-THICK
-    A single thick line.
+   .. attribute:: DOUBLE
+      :annotation:
 
-DASH
-    Dashes.
+      A double line.
 
-DOT_DASH
-    Alternating dots and dashes.
+   .. attribute:: DOTTED
+      :annotation:
 
-DOT_DOT_DASH
-    An alternating dot-dot-dash pattern.
+      Dots.
 
-WAVY
-    A single wavy line.
+   .. attribute:: THICK
+      :annotation:
 
-DOTTED_HEAVY
-    Heavy dots.
+      A single thick line.
 
-DASH_HEAVY
-    Heavy dashes.
+   .. attribute:: DASH
+      :annotation:
 
-DOT_DASH_HEAVY
-    Alternating heavy dots and heavy dashes.
+      Dashes.
 
-DOT_DOT_DASH_HEAVY
-    An alternating heavy dot-dot-dash pattern.
+   .. attribute:: DOT_DASH
+      :annotation:
 
-WAVY_HEAVY
-    A heavy wavy line.
+      Alternating dots and dashes.
 
-DASH_LONG
-    Long dashes.
+   .. attribute:: DOT_DOT_DASH
+      :annotation:
 
-WAVY_DOUBLE
-    A double wavy line.
+      An alternating dot-dot-dash pattern.
 
-DASH_LONG_HEAVY
-    Long heavy dashes.
+   .. attribute:: WAVY
+      :annotation:
+
+      A single wavy line.
+
+   .. attribute:: DOTTED_HEAVY
+      :annotation:
+
+      Heavy dots.
+
+   .. attribute:: DASH_HEAVY
+      :annotation:
+
+      Heavy dashes.
+
+   .. attribute:: DOT_DASH_HEAVY
+      :annotation:
+
+      Alternating heavy dots and heavy dashes.
+
+   .. attribute:: DOT_DOT_DASH_HEAVY
+      :annotation:
+
+      An alternating heavy dot-dot-dash pattern.
+
+   .. attribute:: WAVY_HEAVY
+      :annotation:
+
+      A heavy wavy line.
+
+   .. attribute:: DASH_LONG
+      :annotation:
+
+      Long dashes.
+
+   .. attribute:: WAVY_DOUBLE
+      :annotation:
+
+      A double wavy line.
+
+   .. attribute:: DASH_LONG_HEAVY
+      :annotation:
+
+      Long heavy dashes.

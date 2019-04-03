@@ -1,26 +1,38 @@
+.. py:currentmodule:: docx.enum.text
+
 .. _WdTabLeader:
 
 ``WD_TAB_LEADER``
 =================
 
-Specifies the character to use as the leader with formatted tabs.
+.. autoclass:: WD_TAB_LEADER
 
-----
+   .. attribute:: SPACES
+      :annotation:
 
-SPACES
-    Spaces. Default.
+      Spaces. Default.
 
-DOTS
-    Dots.
+   .. attribute:: DOTS
+      :annotation:
 
-DASHES
-    Dashes.
+      Dots.
 
-LINES
-    Double lines.
+   .. attribute:: DASHES
+      :annotation:
 
-HEAVY
-    A heavy line.
+      Dashes.
 
-MIDDLE_DOT
-    A vertically-centered dot.
+   .. attribute:: LINES
+      :annotation:
+
+      Double lines.
+
+   .. attribute:: HEAVY
+      :annotation:
+
+      A heavy line.
+
+   .. attribute:: MIDDLE_DOT
+      :annotation:
+
+      A vertically-centered dot.
