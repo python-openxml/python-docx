@@ -10,12 +10,35 @@ from __future__ import absolute_import
 from lxml import etree
 
 from .ns import NamespacePrefixedTag, nsmap
-
+from ..compat import is_string
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()
 oxml_parser = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
 oxml_parser.set_element_class_lookup(element_class_lookup)
+
+
+def remove_hyperlink_tags(xml):
+    """
+    Strip hyperlinks from the document to just bare text so it'll be available after parsing.
+    This workaround for problem of missing text encased in hyperlinks was proposed by @Brad-Python in
+    https://github.com/python-openxml/python-docx/issues/85#issuecomment-62293768
+    """
+    import re
+
+    is_bytestring = not is_string(xml)
+    if is_bytestring:
+        # decode possible bytestring
+        xml = xml.decode('utf-8')
+
+    xml = xml.replace("</w:hyperlink>","")
+    xml = re.sub('<w:hyperlink[^>]*>',"",xml)
+
+    if is_bytestring:
+        # encode back to bytestring
+        xml = xml.encode('utf-8')
+
+    return xml
 
 
 def parse_xml(xml):
@@ -25,7 +48,8 @@ def parse_xml(xml):
     parser is used, so custom element classes are produced for elements in
     *xml* that have them.
     """
-    root_element = etree.fromstring(xml, oxml_parser)
+    stripped_xml = remove_hyperlink_tags(xml)
+    root_element = etree.fromstring(stripped_xml, oxml_parser)
     return root_element
 
 
