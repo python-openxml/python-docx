@@ -265,6 +265,8 @@ class CT_TblLayoutType(BaseOxmlElement):
     """
     type = OptionalAttribute('w:type', ST_TblLayoutType)
 
+class CT_TblBoarders(BaseOxmlElement):
+    pass
 
 class CT_TblPr(BaseOxmlElement):
     """
@@ -284,6 +286,7 @@ class CT_TblPr(BaseOxmlElement):
     tblCellMar = ZeroOrOne('w:tblCellMar', successors=('w:tblPr',))
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    tblBorders = ZeroOrOne('w:tblBorders', successors=('w:tblPr',))
     del _tag_seq
 
     @property
