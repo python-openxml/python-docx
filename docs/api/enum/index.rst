@@ -10,17 +10,19 @@ can be found here:
 
    MsoColorType
    MsoThemeColorIndex
-   WdAlignParagraph
+   WdBreakType
    WdBuiltinStyle
    WdCellVerticalAlignment
    WdColorIndex
+   WdInlineShapeType
    WdLineSpacing
    WdOrientation
-   WdRowAlignment
+   WdParagraphAlignment
    WdRowHeightRule
    WdSectionStart
    WdStyleType
    WdTabAlignment
    WdTabLeader
+   WdTableAlignment
    WdTableDirection
    WdUnderline

@@ -1,36 +1,41 @@
+.. py:currentmodule:: docx.enum.text
+
 .. _WdLineSpacing:
 
 ``WD_LINE_SPACING``
 ===================
 
-Specifies a line spacing format to be applied to a paragraph.
+.. autoclass:: WD_LINE_SPACING
 
-Example::
+   .. attribute:: ONE_POINT_FIVE
+      :annotation:
 
-    from docx.enum.text import WD_LINE_SPACING
+      Space-and-a-half line spacing.
 
-    paragraph = document.add_paragraph()
-    paragraph.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+   .. attribute:: AT_LEAST
+      :annotation:
 
-----
+      Line spacing is always at least the specified amount. The amount
+      is specified separately.
 
-ONE_POINT_FIVE
-    Space-and-a-half line spacing.
+   .. attribute:: DOUBLE
+      :annotation:
 
-AT_LEAST
-    Line spacing is always at least the specified amount. The amount is
-    specified separately.
+      Double spaced.
 
-DOUBLE
-    Double spaced.
+   .. attribute:: EXACTLY
+      :annotation:
 
-EXACTLY
-    Line spacing is exactly the specified amount. The amount is specified
-    separately.
+      Line spacing is exactly the specified amount. The amount is
+      specified separately.
 
-MULTIPLE
-    Line spacing is specified as a multiple of line heights. Changing the font
-    size will change the line spacing proportionately.
+   .. attribute:: MULTIPLE
+      :annotation:
 
-SINGLE
-    Single spaced (default).
+      Line spacing is specified as a multiple of line heights. Changing
+      the font size will change the line spacing proportionately.
+
+   .. attribute:: SINGLE
+      :annotation:
+
+      Single spaced (default).

@@ -12,7 +12,7 @@ from .base import alias, EnumMember, XmlEnumeration, XmlMappedEnumMember
 @alias('WD_STYLE')
 class WD_BUILTIN_STYLE(XmlEnumeration):
     """
-    alias: **WD_STYLE**
+    Alias: **WD_STYLE**
 
     Specifies a built-in Microsoft Word style.
 

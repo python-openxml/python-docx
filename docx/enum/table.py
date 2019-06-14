@@ -16,7 +16,7 @@ from .base import (
 @alias('WD_ALIGN_VERTICAL')
 class WD_CELL_VERTICAL_ALIGNMENT(XmlEnumeration):
     """
-    alias: **WD_ALIGN_VERTICAL**
+    Alias: **WD_ALIGN_VERTICAL**
 
     Specifies the vertical alignment of text in one or more cells of a table.
 
@@ -57,7 +57,7 @@ class WD_CELL_VERTICAL_ALIGNMENT(XmlEnumeration):
 @alias('WD_ROW_HEIGHT')
 class WD_ROW_HEIGHT_RULE(XmlEnumeration):
     """
-    alias: **WD_ROW_HEIGHT**
+    Alias: **WD_ROW_HEIGHT**
 
     Specifies the rule for determining the height of a table row
 

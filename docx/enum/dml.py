@@ -46,10 +46,10 @@ class MSO_COLOR_TYPE(Enumeration):
 @alias('MSO_THEME_COLOR')
 class MSO_THEME_COLOR_INDEX(XmlEnumeration):
     """
+    Alias: **MSO_THEME_COLOR**
+
     Indicates the Office theme color, one of those shown in the color gallery
     on the formatting ribbon.
-
-    Alias: ``MSO_THEME_COLOR``
 
     Example::
 

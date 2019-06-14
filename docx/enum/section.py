@@ -12,7 +12,7 @@ from .base import alias, XmlEnumeration, XmlMappedEnumMember
 @alias('WD_HEADER_FOOTER')
 class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
     """
-    alias: **WD_HEADER_FOOTER**
+    Alias: **WD_HEADER_FOOTER**
 
     Specifies one of the three possible header/footer definitions for a section.
 
@@ -39,7 +39,7 @@ class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
 @alias('WD_ORIENT')
 class WD_ORIENTATION(XmlEnumeration):
     """
-    alias: **WD_ORIENT**
+    Alias: **WD_ORIENT**
 
     Specifies the page layout orientation.
 
