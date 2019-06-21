@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 """
-Constants specific the the image sub-package
+Constants specific to the image sub-package
 """
 
 

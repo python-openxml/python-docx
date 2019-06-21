@@ -154,7 +154,7 @@ The same header on all pages of the document::
 
 
 Only an odd header. The section is exactly the same as above but
-`settings.xml` has the the `<w:evenAndOddHeaders>` property::
+`settings.xml` has the `<w:evenAndOddHeaders>` property::
 
    <w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
       ...
