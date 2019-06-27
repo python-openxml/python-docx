@@ -114,8 +114,11 @@ register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 
-from .styles import CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles
+from .styles import CT_DocDefaults, CT_RPrDefault, CT_PPrDefault, CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles
 register_element_cls('w:basedOn',        CT_String)
+register_element_cls('w:docDefaults',   CT_DocDefaults)
+register_element_cls('w:rPrDefault',   CT_RPrDefault)
+register_element_cls('w:pPrDefault',   CT_PPrDefault)
 register_element_cls('w:latentStyles',   CT_LatentStyles)
 register_element_cls('w:locked',         CT_OnOff)
 register_element_cls('w:lsdException',   CT_LsdException)
