@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.document module
-"""
+"""Unit test suite for the docx.document module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -25,17 +21,19 @@ from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 from .unitutil.cxml import element, xml
-from .unitutil.mock import (
-    class_mock, instance_mock, method_mock, property_mock
-)
+from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocument(object):
 
-    def it_can_add_a_heading(self, add_heading_fixture):
-        document, text, level, style, paragraph_ = add_heading_fixture
-        paragraph = document.add_heading(text, level)
-        document.add_paragraph.assert_called_once_with(text, style)
+    def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
+        level, style = add_heading_fixture
+        add_paragraph_.return_value = paragraph_
+        document = Document(None, None)
+
+        paragraph = document.add_heading("Spam vs. Bacon", level)
+
+        add_paragraph_.assert_called_once_with(document, "Spam vs. Bacon", style)
         assert paragraph is paragraph_
 
     def it_raises_on_heading_level_out_of_range(self):
@@ -45,10 +43,14 @@ class DescribeDocument(object):
         with pytest.raises(ValueError):
             document.add_heading(level=10)
 
-    def it_can_add_a_page_break(self, add_page_break_fixture):
-        document, paragraph_, run_ = add_page_break_fixture
+    def it_can_add_a_page_break(self, add_paragraph_, paragraph_, run_):
+        add_paragraph_.return_value = paragraph_
+        paragraph_.add_run.return_value = run_
+        document = Document(None, None)
+
         paragraph = document.add_page_break()
-        document.add_paragraph.assert_called_once_with()
+
+        add_paragraph_.assert_called_once_with(document)
         paragraph_.add_run.assert_called_once_with()
         run_.add_break.assert_called_once_with(WD_BREAK.PAGE)
         assert paragraph is paragraph_
@@ -65,15 +67,18 @@ class DescribeDocument(object):
         run_.add_picture.assert_called_once_with(path, width, height)
         assert picture is picture_
 
-    def it_can_add_a_section(self, add_section_fixture):
-        document, start_type, Section_ = add_section_fixture[:3]
-        section_, expected_xml = add_section_fixture[3:]
+    def it_can_add_a_section(
+        self, add_section_fixture, Section_, section_, document_part_
+    ):
+        document_elm, start_type, expected_xml = add_section_fixture
+        Section_.return_value = section_
+        document = Document(document_elm, document_part_)
 
         section = document.add_section(start_type)
 
         assert document.element.xml == expected_xml
         sectPr = document.element.xpath('w:body/w:sectPr')[0]
-        Section_.assert_called_once_with(sectPr)
+        Section_.assert_called_once_with(sectPr, document_part_)
         assert section is section_
 
     def it_can_add_a_table(self, add_table_fixture):
@@ -102,10 +107,14 @@ class DescribeDocument(object):
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
 
-    def it_provides_access_to_its_sections(self, sections_fixture):
-        document, Sections_, sections_ = sections_fixture
+    def it_provides_access_to_its_sections(self, document_part_, Sections_, sections_):
+        document_elm = element('w:document')
+        Sections_.return_value = sections_
+        document = Document(document_elm, document_part_)
+
         sections = document.sections
-        Sections_.assert_called_once_with(document._element)
+
+        Sections_.assert_called_once_with(document_elm, document_part_)
         assert sections is sections_
 
     def it_provides_access_to_its_settings(self, settings_fixture):
@@ -145,19 +154,9 @@ class DescribeDocument(object):
         (2, 'Heading 2'),
         (9, 'Heading 9'),
     ])
-    def add_heading_fixture(self, request, add_paragraph_, paragraph_):
+    def add_heading_fixture(self, request):
         level, style = request.param
-        document = Document(None, None)
-        text = 'Spam vs. Bacon'
-        add_paragraph_.return_value = paragraph_
-        return document, text, level, style, paragraph_
-
-    @pytest.fixture
-    def add_page_break_fixture(self, add_paragraph_, paragraph_, run_):
-        document = Document(None, None)
-        add_paragraph_.return_value = paragraph_
-        paragraph_.add_run.return_value = run_
-        return document, paragraph_, run_
+        return level, style
 
     @pytest.fixture(params=[
         ('',         None),
@@ -186,16 +185,14 @@ class DescribeDocument(object):
         ('w:sectPr/w:type{w:val=oddPage}',  WD_SECTION.NEW_PAGE,
          'w:sectPr'),
     ])
-    def add_section_fixture(self, request, Section_):
+    def add_section_fixture(self, request):
         sentinel, start_type, new_sentinel = request.param
-        document_cxml = 'w:document/w:body/(w:p,%s)' % sentinel
-        document = Document(element(document_cxml), None)
+        document_elm = element('w:document/w:body/(w:p,%s)' % sentinel)
         expected_xml = xml(
             'w:document/w:body/(w:p,w:p/w:pPr/%s,%s)' %
             (sentinel, new_sentinel)
         )
-        section_ = Section_.return_value
-        return document, start_type, Section_, section_, expected_xml
+        return document_elm, start_type, expected_xml
 
     @pytest.fixture
     def add_table_fixture(self, _block_width_prop_, body_prop_, table_):
@@ -250,13 +247,6 @@ class DescribeDocument(object):
         document = Document(None, document_part_)
         file_ = 'foobar.docx'
         return document, file_
-
-    @pytest.fixture
-    def sections_fixture(self, Sections_, sections_):
-        document_elm = element('w:document')
-        document = Document(document_elm, None)
-        Sections_.return_value = sections_
-        return document, Sections_, sections_
 
     @pytest.fixture
     def settings_fixture(self, document_part_, settings_):

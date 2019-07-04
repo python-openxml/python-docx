@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for docx.opc.part module
-"""
+"""Unit test suite for docx.opc.part module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -18,19 +14,25 @@ from docx.oxml.xmlchemy import BaseOxmlElement
 
 from ..unitutil.cxml import element
 from ..unitutil.mock import (
-    class_mock, cls_attr_mock, function_mock, initializer_mock,
-    instance_mock, loose_mock, Mock
+    ANY,
+    class_mock,
+    cls_attr_mock,
+    function_mock,
+    initializer_mock,
+    instance_mock,
+    loose_mock,
+    Mock,
 )
 
 
 class DescribePart(object):
 
-    def it_can_be_constructed_by_PartFactory(self, load_fixture):
-        partname_, content_type_, blob_, package_, __init_ = load_fixture
+    def it_can_be_constructed_by_PartFactory(
+        self, partname_, content_type_, blob_, package_, __init_
+    ):
         part = Part.load(partname_, content_type_, blob_, package_)
-        __init_.assert_called_once_with(
-            partname_, content_type_, blob_, package_
-        )
+
+        __init_.assert_called_once_with(ANY, partname_, content_type_, blob_, package_)
         assert isinstance(part, Part)
 
     def it_knows_its_partname(self, partname_get_fixture):
@@ -72,12 +74,6 @@ class DescribePart(object):
         content_type = 'content/type'
         part = Part(None, content_type, None, None)
         return part, content_type
-
-    @pytest.fixture
-    def load_fixture(
-            self, request, partname_, content_type_, blob_, package_,
-            __init_):
-        return (partname_, content_type_, blob_, package_, __init_)
 
     @pytest.fixture
     def package_get_fixture(self, package_):
@@ -437,15 +433,14 @@ class DescribePartFactory(object):
 
 class DescribeXmlPart(object):
 
-    def it_can_be_constructed_by_PartFactory(self, load_fixture):
-        partname_, content_type_, blob_, package_ = load_fixture[:4]
-        element_, parse_xml_, __init_ = load_fixture[4:]
-        # exercise ---------------------
+    def it_can_be_constructed_by_PartFactory(
+        self, partname_, content_type_, blob_, package_, element_, parse_xml_, __init_
+    ):
         part = XmlPart.load(partname_, content_type_, blob_, package_)
-        # verify -----------------------
+
         parse_xml_.assert_called_once_with(blob_)
         __init_.assert_called_once_with(
-            partname_, content_type_, element_, package_
+            ANY, partname_, content_type_, element_, package_
         )
         assert isinstance(part, XmlPart)
 
@@ -465,15 +460,6 @@ class DescribeXmlPart(object):
     def blob_fixture(self, request, element_, serialize_part_xml_):
         xml_part = XmlPart(None, None, element_, None)
         return xml_part, element_, serialize_part_xml_
-
-    @pytest.fixture
-    def load_fixture(
-            self, request, partname_, content_type_, blob_, package_,
-            element_, parse_xml_, __init_):
-        return (
-            partname_, content_type_, blob_, package_, element_, parse_xml_,
-            __init_
-        )
 
     @pytest.fixture
     def part_fixture(self):

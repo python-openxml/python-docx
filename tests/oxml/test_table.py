@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.oxml.text module.
-"""
+"""Test suite for the docx.oxml.text module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -55,10 +51,19 @@ class DescribeCT_Row(object):
 
 class DescribeCT_Tc(object):
 
-    def it_can_merge_to_another_tc(self, merge_fixture):
-        tc, other_tc, top_tr_, top_tc_, left, height, width = merge_fixture
+    def it_can_merge_to_another_tc(
+        self, tr_, _span_dimensions_, _tbl_, _grow_to_, top_tc_
+    ):
+        top_tr_ = tr_
+        tc, other_tc = element('w:tc'), element('w:tc')
+        top, left, height, width = 0, 1, 2, 3
+        _span_dimensions_.return_value = top, left, height, width
+        _tbl_.return_value.tr_lst = [tr_]
+        tr_.tc_at_grid_col.return_value = top_tc_
+
         merged_tc = tc.merge(other_tc)
-        tc._span_dimensions.assert_called_once_with(other_tc)
+
+        _span_dimensions_.assert_called_once_with(tc, other_tc)
         top_tr_.tc_at_grid_col.assert_called_once_with(left)
         top_tc_._grow_to.assert_called_once_with(width, height)
         assert merged_tc is top_tc_
@@ -83,11 +88,19 @@ class DescribeCT_Tc(object):
         tc._grow_to(width, height, top_tc)
         assert tc._span_to_width.call_args_list == expected_calls
 
-    def it_can_extend_its_horz_span_to_help_merge(self, span_width_fixture):
-        tc, grid_width, top_tc, vMerge, expected_calls = span_width_fixture
-        tc._span_to_width(grid_width, top_tc, vMerge)
-        tc._move_content_to.assert_called_once_with(top_tc)
-        assert tc._swallow_next_tc.call_args_list == expected_calls
+    def it_can_extend_its_horz_span_to_help_merge(
+        self, top_tc_, grid_span_, _move_content_to_, _swallow_next_tc_
+    ):
+        grid_span_.side_effect = [1, 3, 4]
+        grid_width, vMerge = 4, 'continue'
+        tc = element('w:tc')
+
+        tc._span_to_width(grid_width, top_tc_, vMerge)
+
+        _move_content_to_.assert_called_once_with(tc, top_tc_)
+        assert _swallow_next_tc_.call_args_list == [
+            call(tc, grid_width, top_tc_), call(tc, grid_width, top_tc_)
+        ]
         assert tc.vMerge == vMerge
 
     def it_can_swallow_the_next_tc_help_merge(self, swallow_fixture):
@@ -182,16 +195,6 @@ class DescribeCT_Tc(object):
         ][start:end]
         return tc, width, height, None, expected_calls
 
-    @pytest.fixture
-    def merge_fixture(
-            self, tr_, _span_dimensions_, _tbl_, _grow_to_, top_tc_):
-        tc, other_tc = element('w:tc'), element('w:tc')
-        top, left, height, width = 0, 1, 2, 3
-        _span_dimensions_.return_value = top, left, height, width
-        _tbl_.return_value.tr_lst = [tr_]
-        tr_.tc_at_grid_col.return_value = top_tc_
-        return tc, other_tc, tr_, top_tc_, left, height, width
-
     @pytest.fixture(params=[
         ('w:tc/w:p',             'w:tc/w:p',
          'w:tc/w:p',             'w:tc/w:p'),
@@ -247,18 +250,6 @@ class DescribeCT_Tc(object):
         tc = tbl.tr_lst[row].tc_lst[col]
         tc_2 = tbl.tr_lst[row_2].tc_lst[col_2]
         return tc, tc_2
-
-    @pytest.fixture
-    def span_width_fixture(
-            self, top_tc_, grid_span_, _move_content_to_, _swallow_next_tc_):
-        tc = element('w:tc')
-        grid_span_.side_effect = [1, 3, 4]
-        grid_width, vMerge = 4, 'continue'
-        expected_calls = [
-            call(grid_width, top_tc_),
-            call(grid_width, top_tc_)
-        ]
-        return tc, grid_width, top_tc_, vMerge, expected_calls
 
     @pytest.fixture(params=[
         ('w:tr/(w:tc/w:p,w:tc/w:p)',                              0, 2,
@@ -317,7 +308,7 @@ class DescribeCT_Tc(object):
 
     @pytest.fixture
     def _span_to_width_(self, request):
-        return method_mock(request, CT_Tc, '_span_to_width')
+        return method_mock(request, CT_Tc, '_span_to_width', autospec=False)
 
     def _snippet_tbl(self, idx):
         """

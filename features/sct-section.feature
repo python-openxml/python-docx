@@ -4,6 +4,59 @@ Feature: Access and change section properties
   I need a way to get and set the properties of a section
 
 
+  Scenario Outline: Section.different_first_page_header_footer getter
+    Given a Section object <with-or-without> a distinct first-page header as section
+     Then section.different_first_page_header_footer is <value>
+
+    Examples: Section.different_first_page_header_footer states
+      | with-or-without | value |
+      | with            | True  |
+      | without         | False |
+
+
+  Scenario Outline: Section.different_first_page_header_footer setter
+    Given a Section object <with-or-without> a distinct first-page header as section
+     When I assign <value> to section.different_first_page_header_footer
+     Then section.different_first_page_header_footer is <value>
+
+    Examples: Section.different_first_page_header_footer assignment cases
+      | with-or-without | value |
+      | with            | True  |
+      | with            | False |
+      | without         | True  |
+      | without         | False |
+
+
+  Scenario: Section.even_page_footer
+    Given a Section object as section
+     Then section.even_page_footer is a _Footer object
+
+
+  Scenario: Section.even_page_header
+    Given a Section object as section
+     Then section.even_page_header is a _Header object
+
+
+  Scenario: Section.first_page_footer
+    Given a Section object as section
+     Then section.first_page_footer is a _Footer object
+
+
+  Scenario: Section.first_page_header
+    Given a Section object as section
+     Then section.first_page_header is a _Header object
+
+
+  Scenario: Section.footer
+    Given a Section object as section
+     Then section.footer is a _Footer object
+
+
+  Scenario: Section.header
+    Given a Section object as section
+     Then section.header is a _Header object
+
+
   Scenario Outline: Get section start type
     Given a section having start type <start-type>
      Then the reported section start type is <start-type>

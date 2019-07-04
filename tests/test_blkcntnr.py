@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.blkcntnr (block item container) module
-"""
+"""Test suite for the docx.blkcntnr (block item container) module"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -20,16 +18,17 @@ from .unitutil.mock import call, instance_mock, method_mock
 
 class DescribeBlockItemContainer(object):
 
-    def it_can_add_a_paragraph(self, add_paragraph_fixture):
-        blkcntnr, text, style, paragraph_, add_run_calls = (
-            add_paragraph_fixture
-        )
-        new_paragraph = blkcntnr.add_paragraph(text, style)
+    def it_can_add_a_paragraph(self, add_paragraph_fixture, _add_paragraph_):
+        text, style, paragraph_, add_run_calls = add_paragraph_fixture
+        _add_paragraph_.return_value = paragraph_
+        blkcntnr = BlockItemContainer(None, None)
 
-        blkcntnr._add_paragraph.assert_called_once_with()
-        assert new_paragraph.add_run.call_args_list == add_run_calls
-        assert new_paragraph.style == style
-        assert new_paragraph is paragraph_
+        paragraph = blkcntnr.add_paragraph(text, style)
+
+        _add_paragraph_.assert_called_once_with(blkcntnr)
+        assert paragraph.add_run.call_args_list == add_run_calls
+        assert paragraph.style == style
+        assert paragraph is paragraph_
 
     def it_can_add_a_table(self, add_table_fixture):
         blkcntnr, rows, cols, width, expected_xml = add_table_fixture
@@ -78,14 +77,11 @@ class DescribeBlockItemContainer(object):
         ('',    'Bar'),
         ('Foo', 'Bar'),
     ])
-    def add_paragraph_fixture(self, request, _add_paragraph_, paragraph_,
-                              add_run_):
-        blkcntnr = BlockItemContainer(None, None)
+    def add_paragraph_fixture(self, request, paragraph_):
         text, style = request.param
-        _add_paragraph_.return_value = paragraph_
-        add_run_calls = [call(text)] if text else []
         paragraph_.style = None
-        return blkcntnr, text, style, paragraph_, add_run_calls
+        add_run_calls = [call(text)] if text else []
+        return text, style, paragraph_, add_run_calls
 
     @pytest.fixture
     def _add_paragraph_fixture(self, request):
@@ -130,10 +126,6 @@ class DescribeBlockItemContainer(object):
     @pytest.fixture
     def _add_paragraph_(self, request):
         return method_mock(request, BlockItemContainer, '_add_paragraph')
-
-    @pytest.fixture
-    def add_run_(self, request):
-        return method_mock(request, Paragraph, 'add_run')
 
     @pytest.fixture
     def paragraph_(self, request):

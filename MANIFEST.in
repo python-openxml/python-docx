@@ -1,5 +1,5 @@
 include HISTORY.rst LICENSE README.rst tox.ini
-graft docx/templates *
+graft docx/templates
 graft features
 graft tests
 graft docs

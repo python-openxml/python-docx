@@ -10,7 +10,7 @@ from .blkcntnr import BlockItemContainer
 from .enum.style import WD_STYLE_TYPE
 from .oxml.simpletypes import ST_Merge
 from .shared import Inches, lazyproperty, Parented
-
+from .section import Section
 
 class Table(Parented):
     """
@@ -44,6 +44,9 @@ class Table(Parented):
             tc.width = gridCol.w
         return _Row(tr, self)
 
+    @property
+    def section(self):
+        return Section(self._element._section, self.part)
     @property
     def alignment(self):
         """
