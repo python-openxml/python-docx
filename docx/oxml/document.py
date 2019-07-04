@@ -33,17 +33,25 @@ class CT_Body(BaseOxmlElement):
     sectPr = ZeroOrOne('w:sectPr', successors=())
 
     def add_section_break(self):
+        """Return `w:sectPr` element for new section added at end of document.
+
+        The last `w:sectPr` becomes the second-to-last, with the new `w:sectPr` being an
+        exact clone of the previous one, except that all header and footer references
+        are removed (and are therefore now "inherited" from the prior section).
+
+        A copy of the previously-last `w:sectPr` will now appear in a new `w:p` at the
+        end of the document. The returned `w:sectPr` is the sentinel `w:sectPr` for the
+        document (and as implemented, *is* the prior sentinel `w:sectPr` with headers
+        and footers removed).
         """
-        Return the current ``<w:sectPr>`` element after adding a clone of it
-        in a new ``<w:p>`` element appended to the block content elements.
-        Note that the "current" ``<w:sectPr>`` will always be the sentinel
-        sectPr in this case since we're always working at the end of the
-        block content.
-        """
+        # ---get the sectPr at file-end, which controls last section (sections[-1])---
         sentinel_sectPr = self.get_or_add_sectPr()
-        cloned_sectPr = sentinel_sectPr.clone()
-        p = self.add_p()
-        p.set_sectPr(cloned_sectPr)
+        # ---add exact copy to new `w:p` element; that is now second-to last section---
+        self.add_p().set_sectPr(sentinel_sectPr.clone())
+        # ---remove any header or footer references from "new" last section---
+        for hdrftr_ref in sentinel_sectPr.xpath("w:headerReference|w:footerReference"):
+            sentinel_sectPr.remove(hdrftr_ref)
+        # ---the sentinel `w:sectPr` now controls the new last section---
         return sentinel_sectPr
 
     def clear_content(self):

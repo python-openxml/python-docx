@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-"""
-Test suite for docx.image.jpeg module
-"""
+"""Unit test suite for docx.image.jpeg module"""
 
 from __future__ import absolute_import, print_function
 
@@ -12,13 +10,27 @@ from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE, MIME_TYPE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
-    _App0Marker, _App1Marker, Exif, Jfif, _JfifMarkers, Jpeg, _Marker,
-    _MarkerFactory, _MarkerFinder, _MarkerParser, _SofMarker
+    _App0Marker,
+    _App1Marker,
+    Exif,
+    Jfif,
+    _JfifMarkers,
+    Jpeg,
+    _Marker,
+    _MarkerFactory,
+    _MarkerFinder,
+    _MarkerParser,
+    _SofMarker,
 )
 from docx.image.tiff import Tiff
 
 from ..unitutil.mock import (
-    call, class_mock, initializer_mock, instance_mock, method_mock
+    ANY,
+    call,
+    class_mock,
+    initializer_mock,
+    instance_mock,
+    method_mock,
 )
 
 
@@ -106,13 +118,15 @@ class DescribeJpeg(object):
 
 class Describe_JfifMarkers(object):
 
-    def it_can_construct_from_a_jfif_stream(self, from_stream_fixture):
-        stream_, _MarkerParser_, _JfifMarkers__init_, marker_lst = (
-            from_stream_fixture
-        )
+    def it_can_construct_from_a_jfif_stream(
+            self, stream_, _MarkerParser_, _JfifMarkers__init_, soi_, app0_, sof_, sos_
+    ):
+        marker_lst = [soi_, app0_, sof_, sos_]
+
         jfif_markers = _JfifMarkers.from_stream(stream_)
+
         _MarkerParser_.from_stream.assert_called_once_with(stream_)
-        _JfifMarkers__init_.assert_called_once_with(marker_lst)
+        _JfifMarkers__init_.assert_called_once_with(ANY, marker_lst)
         assert isinstance(jfif_markers, _JfifMarkers)
 
     def it_can_find_the_APP0_marker(self, app0_fixture):
@@ -176,13 +190,6 @@ class Describe_JfifMarkers(object):
         return instance_mock(
             request, _SofMarker, marker_code=JPEG_MARKER_CODE.EOI
         )
-
-    @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, _MarkerParser_, _JfifMarkers__init_, soi_, app0_,
-            sof_, sos_):
-        marker_lst = [soi_, app0_, sof_, sos_]
-        return stream_, _MarkerParser_, _JfifMarkers__init_, marker_lst
 
     @pytest.fixture
     def _JfifMarkers__init_(self, request):
@@ -251,11 +258,11 @@ class Describe_JfifMarkers(object):
 class Describe_Marker(object):
 
     def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
-        stream, marker_code, offset, _Marker__init_, length = (
-            from_stream_fixture
-        )
+        stream, marker_code, offset, _Marker__init_, length = from_stream_fixture
+
         marker = _Marker.from_stream(stream, marker_code, offset)
-        _Marker__init_.assert_called_once_with(marker_code, offset, length)
+
+        _Marker__init_.assert_called_once_with(ANY, marker_code, offset, length)
         assert isinstance(marker, _Marker)
 
     # fixtures -------------------------------------------------------
@@ -277,12 +284,16 @@ class Describe_Marker(object):
 
 class Describe_App0Marker(object):
 
-    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
-        (stream, marker_code, offset, _App0Marker__init_, length,
-         density_units, x_density, y_density) = from_stream_fixture
+    def it_can_construct_from_a_stream_and_offset(self, _App0Marker__init_):
+        bytes_ = b'\x00\x10JFIF\x00\x01\x01\x01\x00\x2A\x00\x18'
+        marker_code, offset, length = JPEG_MARKER_CODE.APP0, 0, 16
+        density_units, x_density, y_density = 1, 42, 24
+        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+
         app0_marker = _App0Marker.from_stream(stream, marker_code, offset)
+
         _App0Marker__init_.assert_called_once_with(
-            marker_code, offset, length, density_units, x_density, y_density
+            ANY, marker_code, offset, length, density_units, x_density, y_density
         )
         assert isinstance(app0_marker, _App0Marker)
 
@@ -311,38 +322,34 @@ class Describe_App0Marker(object):
         )
         return density_units, x_density, y_density, horz_dpi, vert_dpi
 
-    @pytest.fixture
-    def from_stream_fixture(self, request, _App0Marker__init_):
-        bytes_ = b'\x00\x10JFIF\x00\x01\x01\x01\x00\x2A\x00\x18'
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
-        marker_code, offset, length = JPEG_MARKER_CODE.APP0, 0, 16
-        density_units, x_density, y_density = 1, 42, 24
-        return (
-            stream_reader, marker_code, offset, _App0Marker__init_, length,
-            density_units, x_density, y_density
-        )
-
 
 class Describe_App1Marker(object):
 
-    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
-        (stream, marker_code, offset, _App1Marker__init_, length,
-         _tiff_from_exif_segment_, horz_dpi, vert_dpi) = from_stream_fixture
+    def it_can_construct_from_a_stream_and_offset(
+        self, _App1Marker__init_, _tiff_from_exif_segment_
+    ):
+        bytes_ = b'\x00\x42Exif\x00\x00'
+        marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
+        horz_dpi, vert_dpi = 42, 24
+        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+
         app1_marker = _App1Marker.from_stream(stream, marker_code, offset)
-        _tiff_from_exif_segment_.assert_called_once_with(
-            stream, offset, length
-        )
+
+        _tiff_from_exif_segment_.assert_called_once_with(stream, offset, length)
         _App1Marker__init_.assert_called_once_with(
-            marker_code, offset, length, horz_dpi, vert_dpi
+            ANY, marker_code, offset, length, horz_dpi, vert_dpi
         )
         assert isinstance(app1_marker, _App1Marker)
 
-    def it_can_construct_from_non_Exif_APP1_segment(self, non_Exif_fixture):
-        stream, marker_code, offset = non_Exif_fixture[:3]
-        _App1Marker__init_, length = non_Exif_fixture[3:]
+    def it_can_construct_from_non_Exif_APP1_segment(self, _App1Marker__init_):
+        bytes_ = b'\x00\x42Foobar'
+        marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
+        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+
         app1_marker = _App1Marker.from_stream(stream, marker_code, offset)
+
         _App1Marker__init_.assert_called_once_with(
-            marker_code, offset, length, 72, 72
+            ANY, marker_code, offset, length, 72, 72
         )
         assert isinstance(app1_marker, _App1Marker)
 
@@ -375,18 +382,6 @@ class Describe_App1Marker(object):
         )
 
     @pytest.fixture
-    def from_stream_fixture(
-            self, request, _App1Marker__init_, _tiff_from_exif_segment_):
-        bytes_ = b'\x00\x42Exif\x00\x00'
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
-        marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
-        horz_dpi, vert_dpi = 42, 24
-        return (
-            stream_reader, marker_code, offset, _App1Marker__init_, length,
-            _tiff_from_exif_segment_, horz_dpi, vert_dpi
-        )
-
-    @pytest.fixture
     def get_tiff_fixture(self, request, BytesIO_, substream_, Tiff_, tiff_):
         bytes_ = b'xfillerxMM\x00*\x00\x00\x00\x42'
         stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
@@ -395,13 +390,6 @@ class Describe_App1Marker(object):
             stream_reader, offset, segment_length, BytesIO_, segment_bytes,
             substream_, Tiff_, tiff_
         )
-
-    @pytest.fixture
-    def non_Exif_fixture(self, request, _App1Marker__init_):
-        bytes_ = b'\x00\x42Foobar'
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
-        marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
-        return stream_reader, marker_code, offset, _App1Marker__init_, length
 
     @pytest.fixture
     def substream_(self, request):
@@ -420,19 +408,23 @@ class Describe_App1Marker(object):
     @pytest.fixture
     def _tiff_from_exif_segment_(self, request, tiff_):
         return method_mock(
-            request, _App1Marker, '_tiff_from_exif_segment',
+            request, _App1Marker, '_tiff_from_exif_segment', autospec=False,
             return_value=tiff_
         )
 
 
 class Describe_SofMarker(object):
 
-    def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
-        (stream, marker_code, offset, _SofMarker__init_, length,
-         px_width, px_height) = from_stream_fixture
+    def it_can_construct_from_a_stream_and_offset(self, request, _SofMarker__init_):
+        bytes_ = b'\x00\x11\x00\x00\x2A\x00\x18'
+        marker_code, offset, length = JPEG_MARKER_CODE.SOF0, 0, 17
+        px_width, px_height = 24, 42
+        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+
         sof_marker = _SofMarker.from_stream(stream, marker_code, offset)
+
         _SofMarker__init_.assert_called_once_with(
-            marker_code, offset, length, px_width, px_height
+            ANY, marker_code, offset, length, px_width, px_height
         )
         assert isinstance(sof_marker, _SofMarker)
 
@@ -442,17 +434,6 @@ class Describe_SofMarker(object):
         assert sof.px_height == 24
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def from_stream_fixture(self, request, _SofMarker__init_):
-        bytes_ = b'\x00\x11\x00\x00\x2A\x00\x18'
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
-        marker_code, offset, length = JPEG_MARKER_CODE.SOF0, 0, 17
-        px_width, px_height = 24, 42
-        return (
-            stream_reader, marker_code, offset, _SofMarker__init_, length,
-            px_width, px_height
-        )
 
     @pytest.fixture
     def _SofMarker__init_(self, request):
@@ -519,10 +500,10 @@ class Describe_MarkerFactory(object):
 
 class Describe_MarkerFinder(object):
 
-    def it_can_construct_from_a_stream(self, from_stream_fixture):
-        stream_, _MarkerFinder__init_ = from_stream_fixture
+    def it_can_construct_from_a_stream(self, stream_, _MarkerFinder__init_):
         marker_finder = _MarkerFinder.from_stream(stream_)
-        _MarkerFinder__init_.assert_called_once_with(stream_)
+
+        _MarkerFinder__init_.assert_called_once_with(ANY, stream_)
         assert isinstance(marker_finder, _MarkerFinder)
 
     def it_can_find_the_next_marker_after_a_given_offset(self, next_fixture):
@@ -531,10 +512,6 @@ class Describe_MarkerFinder(object):
         assert (marker_code, segment_offset) == expected_code_and_offset
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture
-    def from_stream_fixture(self, stream_, _MarkerFinder__init_):
-        return stream_, _MarkerFinder__init_
 
     @pytest.fixture
     def _MarkerFinder__init_(self, request):
@@ -564,13 +541,13 @@ class Describe_MarkerFinder(object):
 
 class Describe_MarkerParser(object):
 
-    def it_can_construct_from_a_jfif_stream(self, from_stream_fixture):
-        stream_, StreamReader_, _MarkerParser__init_, stream_reader_ = (
-            from_stream_fixture
-        )
+    def it_can_construct_from_a_jfif_stream(
+        self, stream_, StreamReader_, _MarkerParser__init_, stream_reader_
+    ):
         marker_parser = _MarkerParser.from_stream(stream_)
+
         StreamReader_.assert_called_once_with(stream_, BIG_ENDIAN)
-        _MarkerParser__init_.assert_called_once_with(stream_reader_)
+        _MarkerParser__init_.assert_called_once_with(ANY, stream_reader_)
         assert isinstance(marker_parser, _MarkerParser)
 
     def it_can_iterate_over_the_jfif_markers_in_its_stream(
@@ -599,12 +576,6 @@ class Describe_MarkerParser(object):
     @pytest.fixture
     def eoi_(self, request):
         return instance_mock(request, _Marker, segment_length=0)
-
-    @pytest.fixture
-    def from_stream_fixture(
-            self, stream_, StreamReader_, _MarkerParser__init_,
-            stream_reader_):
-        return stream_, StreamReader_, _MarkerParser__init_, stream_reader_
 
     @pytest.fixture
     def iter_markers_fixture(
