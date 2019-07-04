@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.text.paragraph module
-"""
+"""Unit test suite for the docx.text.paragraph module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -87,12 +83,12 @@ class DescribeParagraph(object):
             style_prop_.assert_called_once_with(style)
 
     def it_can_insert_a_paragraph_before_itself(self, insert_before_fixture):
-        paragraph, text, style, paragraph_, add_run_calls = (
-            insert_before_fixture
-        )
+        text, style, paragraph_, add_run_calls = insert_before_fixture
+        paragraph = Paragraph(None, None)
+
         new_paragraph = paragraph.insert_paragraph_before(text, style)
 
-        paragraph._insert_paragraph_before.assert_called_once_with()
+        paragraph._insert_paragraph_before.assert_called_once_with(paragraph)
         assert new_paragraph.add_run.call_args_list == add_run_calls
         assert new_paragraph.style == style
         assert new_paragraph is paragraph_
@@ -166,16 +162,12 @@ class DescribeParagraph(object):
         (None,  'Bar'),
         ('Foo', 'Bar'),
     ])
-    def insert_before_fixture(self, request, _insert_paragraph_before_,
-                              add_run_):
-        paragraph = Paragraph(None, None)
-        paragraph_ = _insert_paragraph_before_.return_value
+    def insert_before_fixture(self, request, _insert_paragraph_before_, add_run_):
         text, style = request.param
+        paragraph_ = _insert_paragraph_before_.return_value
         add_run_calls = [] if text is None else [call(text)]
         paragraph_.style = None
-        return (
-            paragraph, text, style, paragraph_, add_run_calls
-        )
+        return text, style, paragraph_, add_run_calls
 
     @pytest.fixture(params=[
         ('w:body/w:p{id=42}', 'w:body/(w:p,w:p{id=42})')

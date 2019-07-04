@@ -1,17 +1,15 @@
 # encoding: utf-8
 
-"""
-Utility functions wrapping the excellent *mock* library.
-"""
+"""Utility functions wrapping the excellent *mock* library"""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
 
 if sys.version_info >= (3, 3):
     from unittest import mock  # noqa
-    from unittest.mock import call, MagicMock  # noqa
-    from unittest.mock import create_autospec, Mock, patch, PropertyMock
+    from unittest.mock import ANY, call, MagicMock  # noqa
+    from unittest.mock import create_autospec, Mock, mock_open, patch, PropertyMock
 else:
     import mock  # noqa
     from mock import ANY, call, MagicMock  # noqa
@@ -19,8 +17,8 @@ else:
 
 
 def class_mock(request, q_class_name, autospec=True, **kwargs):
-    """
-    Return a mock patching the class with qualified name *q_class_name*.
+    """Return mock patching class with qualified name *q_class_name*.
+
     The mock is autospec'ed based on the patched class unless the optional
     argument *autospec* is set to False. Any other keyword arguments are
     passed through to Mock(). Patch is reversed after calling test returns.
@@ -41,22 +39,24 @@ def cls_attr_mock(request, cls, attr_name, name=None, **kwargs):
     return _patch.start()
 
 
-def function_mock(request, q_function_name, **kwargs):
+def function_mock(request, q_function_name, autospec=True, **kwargs):
+    """Return mock patching function with qualified name *q_function_name*.
+
+    Patch is reversed after calling test returns.
     """
-    Return a mock patching the function with qualified name
-    *q_function_name*. Patch is reversed after calling test returns.
-    """
-    _patch = patch(q_function_name, **kwargs)
+    _patch = patch(q_function_name, autospec=autospec, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 
 
-def initializer_mock(request, cls):
+def initializer_mock(request, cls, autospec=True, **kwargs):
+    """Return mock for __init__() method on *cls*.
+
+    The patch is reversed after pytest uses it.
     """
-    Return a mock for the __init__ method on *cls* where the patch is
-    reversed after pytest uses it.
-    """
-    _patch = patch.object(cls, '__init__', return_value=None)
+    _patch = patch.object(
+        cls, "__init__", autospec=autospec, return_value=None, **kwargs
+    )
     request.addfinalizer(_patch.stop)
     return _patch.start()
 
@@ -86,12 +86,22 @@ def loose_mock(request, name=None, **kwargs):
     return Mock(name=name, **kwargs)
 
 
-def method_mock(request, cls, method_name, **kwargs):
+def method_mock(request, cls, method_name, autospec=True, **kwargs):
+    """Return mock for method *method_name* on *cls*.
+
+    The patch is reversed after pytest uses it.
     """
-    Return a mock for method *method_name* on *cls* where the patch is
-    reversed after pytest uses it.
+    _patch = patch.object(cls, method_name, autospec=autospec, **kwargs)
+    request.addfinalizer(_patch.stop)
+    return _patch.start()
+
+
+def open_mock(request, module_name, **kwargs):
     """
-    _patch = patch.object(cls, method_name, **kwargs)
+    Return a mock for the builtin `open()` method in *module_name*.
+    """
+    target = '%s.open' % module_name
+    _patch = patch(target, mock_open(), create=True, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 

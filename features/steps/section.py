@@ -18,6 +18,17 @@ from helpers import test_docx
 
 # given ====================================================
 
+@given("a Section object as section")
+def given_a_Section_object_as_section(context):
+    context.section = Document(test_docx("sct-section-props")).sections[-1]
+
+
+@given("a Section object {with_or_without} a distinct first-page header as section")
+def given_a_Section_object_with_or_without_first_page_header(context, with_or_without):
+    section_idx = {"with": 1, "without": 0}[with_or_without]
+    context.section = Document(test_docx("sct-first-page-hdrftr")).sections[section_idx]
+
+
 @given('a section collection containing 3 sections')
 def given_a_section_collection_containing_3_sections(context):
     document = Document(test_docx('doc-access-sections'))
@@ -60,6 +71,11 @@ def given_a_section_having_known_orientation(context, orientation):
 
 
 # when =====================================================
+
+@when("I assign {bool_val} to section.different_first_page_header_footer")
+def when_I_assign_value_to_section_different_first_page_hdrftr(context, bool_val):
+    context.section.different_first_page_header_footer = eval(bool_val)
+
 
 @when('I set the {margin_side} margin to {inches} inches')
 def when_I_set_the_margin_side_length(context, margin_side, inches):
@@ -134,6 +150,66 @@ def then_len_sections_is_3(context):
     sections = context.sections
     assert len(sections) == 3, (
         'expected len(sections) of 3, got %s' % len(sections)
+    )
+
+
+@then("section.different_first_page_header_footer is {bool_val}")
+def then_section_different_first_page_header_footer_is(context, bool_val):
+    actual = context.section.different_first_page_header_footer
+    expected = eval(bool_val)
+    assert actual == expected, (
+        "section.different_first_page_header_footer is %s" % actual
+    )
+
+
+@then("section.even_page_footer is a _Footer object")
+def then_section_even_page_footer_is_a_Footer_object(context):
+    actual = type(context.section.even_page_footer).__name__
+    expected = "_Footer"
+    assert actual == expected, "section.even_page_footer is a %s object" % actual
+
+
+@then("section.even_page_header is a _Header object")
+def then_section_even_page_header_is_a_Header_object(context):
+    actual = type(context.section.even_page_header).__name__
+    expected = "_Header"
+    assert actual == expected, "section.even_page_header is a %s object" % actual
+
+
+@then("section.first_page_footer is a _Footer object")
+def then_section_first_page_footer_is_a_Footer_object(context):
+    actual = type(context.section.first_page_footer).__name__
+    expected = "_Footer"
+    assert actual == expected, "section.first_page_footer is a %s object" % actual
+
+
+@then("section.first_page_header is a _Header object")
+def then_section_first_page_header_is_a_Header_object(context):
+    actual = type(context.section.first_page_header).__name__
+    expected = "_Header"
+    assert actual == expected, "section.first_page_header is a %s object" % actual
+
+
+@then("section.footer is a _Footer object")
+def then_section_footer_is_a_Footer_object(context):
+    actual = type(context.section.footer).__name__
+    expected = "_Footer"
+    assert actual == expected, "section.footer is a %s object" % actual
+
+
+@then("section.header is a _Header object")
+def then_section_header_is_a_Header_object(context):
+    actual = type(context.section.header).__name__
+    expected = "_Header"
+    assert actual == expected, "section.header is a %s object" % actual
+
+
+@then("section.{propname}.is_linked_to_previous is True")
+def then_section_hdrftr_prop_is_linked_to_previous_is_True(context, propname):
+    actual = getattr(context.section, propname).is_linked_to_previous
+    expected = True
+    assert actual == expected, (
+        "section.%s.is_linked_to_previous is %s" % (propname, actual)
     )
 
 

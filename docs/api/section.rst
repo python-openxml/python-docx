@@ -22,4 +22,20 @@ Provides access to section properties such as margins and page orientation.
 
 
 .. autoclass:: Section
-   :members:
+   :members: 
+
+
+|_Header| and |_Footer| objects
+-------------------------------
+
+
+.. autoclass:: _Header()
+   :inherited-members: 
+   :members: 
+   :exclude-members: part
+
+
+.. autoclass:: _Footer()
+   :inherited-members: 
+   :members: 
+   :exclude-members: part

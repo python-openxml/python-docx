@@ -10,6 +10,7 @@ import os
 def absjoin(*paths):
     return os.path.abspath(os.path.join(*paths))
 
+
 thisdir = os.path.split(__file__)[0]
 scratch_dir = absjoin(thisdir, '../_scratch')
 

@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-WordprocessingML Package class and related objects
-"""
+"""WordprocessingML Package class and related objects"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -15,27 +13,30 @@ from docx.shared import lazyproperty
 
 
 class Package(OpcPackage):
-    """
-    Customizations specific to a WordprocessingML package.
-    """
+    """Customizations specific to a WordprocessingML package"""
+
     def after_unmarshal(self):
-        """
-        Called by loading code after all parts and relationships have been
-        loaded, to afford the opportunity for any required post-processing.
+        """Called by loading code after all parts and relationships have been loaded.
+
+        This method affords the opportunity for any required post-processing.
         """
         self._gather_image_parts()
 
+    def get_or_add_image_part(self, image_descriptor):
+        """Return |ImagePart| containing image specified by *image_descriptor*.
+
+        The image-part is newly created if a matching one is not already present in the
+        collection.
+        """
+        return self.image_parts.get_or_add_image_part(image_descriptor)
+
     @lazyproperty
     def image_parts(self):
-        """
-        Collection of all image parts in this package.
-        """
+        """|ImageParts| collection object for this package."""
         return ImageParts()
 
     def _gather_image_parts(self):
-        """
-        Load the image part collection with all the image parts in package.
-        """
+        """Load the image part collection with all the image parts in package."""
         for rel in self.iter_rels():
             if rel.is_external:
                 continue
@@ -47,12 +48,9 @@ class Package(OpcPackage):
 
 
 class ImageParts(object):
-    """
-    Collection of |ImagePart| instances corresponding to each image part in
-    the package.
-    """
+    """Collection of |ImagePart| objects corresponding to images in the package"""
+
     def __init__(self):
-        super(ImageParts, self).__init__()
         self._image_parts = []
 
     def __contains__(self, item):
@@ -68,10 +66,10 @@ class ImageParts(object):
         self._image_parts.append(item)
 
     def get_or_add_image_part(self, image_descriptor):
-        """
-        Return an |ImagePart| instance containing the image identified by
-        *image_descriptor*, newly created if a matching one is not present in
-        the collection.
+        """Return |ImagePart| object containing image identified by *image_descriptor*.
+
+        The image-part is newly created if a matching one is not present in the
+        collection.
         """
         image = Image.from_file(image_descriptor)
         matching_image_part = self._get_by_sha1(image.sha1)

@@ -59,6 +59,11 @@ def given_a_single_section_document_having_portrait_layout(context):
     context.original_dimensions = (section.page_width, section.page_height)
 
 
+@given("a single-section Document object with headers and footers as document")
+def given_a_single_section_Document_object_with_headers_and_footers(context):
+    context.document = Document(test_docx("doc-add-section"))
+
+
 # when ====================================================
 
 @when('I add a 2 x 2 table specifying only row and column count')
@@ -158,6 +163,11 @@ def when_I_change_the_new_section_layout_to_landscape(context):
     section.orientation = WD_ORIENT.LANDSCAPE
     section.page_width = new_width
     section.page_height = new_height
+
+
+@when("I execute section = document.add_section()")
+def when_I_execute_section_eq_document_add_section(context):
+    context.section = context.document.add_section()
 
 
 # then ====================================================

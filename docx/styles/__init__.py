@@ -16,7 +16,9 @@ class BabelFish(object):
     """
 
     style_aliases = (
-        ('Caption',   'caption'),
+        ('Caption', 'caption'),
+        ('Footer', 'footer'),
+        ('Header', 'header'),
         ('Heading 1', 'heading 1'),
         ('Heading 2', 'heading 2'),
         ('Heading 3', 'heading 3'),

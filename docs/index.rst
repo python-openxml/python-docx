@@ -76,6 +76,7 @@ User Guide
    user/documents
    user/text
    user/sections
+   user/hdrftr
    user/api-concepts
    user/styles-understanding
    user/styles-using
