@@ -10,7 +10,7 @@ from . import parse_xml
 from . import OxmlElement
 from ..enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
-from .ns import nsdecls, qn
+from .ns import nsdecls, qn, nsmap
 from ..shared import Emu, Twips
 from .simpletypes import (
     ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt, ST_String 
@@ -234,6 +234,20 @@ class CT_Tbl(BaseOxmlElement):
             ) % col_width.twips
         return xml
 
+    @property
+    def _section(self):
+        body = self.getparent()
+        sections = body.findall('.//w:sectPr', {'w':nsmap['w']})
+        if len(sections) == 1:
+            return sections[0]
+        else:
+            tbl_index = body.index(self)
+            for i,sect in enumerate(sections):
+                if i == len(sections) - 1 :
+                    return sect
+                else:
+                    if body.index(sect.getparent().getparent()) > tbl_index:
+                        return sect
 
 class CT_TblGrid(BaseOxmlElement):
     """
