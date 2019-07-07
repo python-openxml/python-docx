@@ -8,7 +8,7 @@ from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
-from docx.parts.settings import SettingsParts
+from docx.parts.settings import SettingsPart
 from docx.parts.story import BaseStoryPart
 from docx.parts.styles import StylesPart
 from docx.parts.comments import CommentsPart

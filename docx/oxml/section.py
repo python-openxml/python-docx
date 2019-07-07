@@ -54,7 +54,6 @@ class CT_PageSz(BaseOxmlElement):
         'w:orient', WD_ORIENTATION, default=WD_ORIENTATION.PORTRAIT
     )
 
-
 class CT_SectPr(BaseOxmlElement):
     """`w:sectPr` element, the container element for section properties"""
 
@@ -91,6 +90,7 @@ class CT_SectPr(BaseOxmlElement):
         headerReference.type_ = type_
         headerReference.rId = rId
         return headerReference
+
 
     @property
     def bottom_margin(self):
