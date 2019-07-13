@@ -118,7 +118,6 @@ class Document(ElementProxy):
     #     return self.part._footnotes_part
 
 
-
     @property
     def inline_shapes(self):
         """
@@ -183,6 +182,9 @@ class Document(ElementProxy):
         """
         return self._body.tables
 
+    @property
+    def elements(self):
+        return self._body.elements
     @property
     def _block_width(self):
         """
