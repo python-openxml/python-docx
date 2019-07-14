@@ -25,7 +25,7 @@ class BlockItemContainer(Parented):
         super(BlockItemContainer, self).__init__(parent)
         self._element = element
 
-    def add_paragraph(self, text='', style=None):
+    def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the content in this
         container, having *text* in a single run if present, and having
@@ -46,6 +46,7 @@ class BlockItemContainer(Parented):
         distributed between the table columns.
         """
         from .table import Table
+
         tbl = CT_Tbl.new_tbl(rows, cols, width)
         self._element._insert_tbl(tbl)
         return Table(tbl, self)
@@ -58,6 +59,13 @@ class BlockItemContainer(Parented):
         """
         return [Paragraph(p, self) for p in self._element.p_lst]
 
+    def start_bookmark(self, name):
+        """Return _Bookmark object identified by `name`.
+
+        The returned bookmark is anchored at the end of this block-item container.
+        """
+        raise NotImplementedError
+
     @property
     def tables(self):
         """
@@ -65,6 +73,7 @@ class BlockItemContainer(Parented):
         Read-only.
         """
         from .table import Table
+
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
 
     def _add_paragraph(self):
