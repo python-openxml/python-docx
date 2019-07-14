@@ -23,6 +23,18 @@ def given_a_Bookmarks_object_of_length_5_as_bookmarks(context):
 # then =====================================================
 
 
+@then("bookmark.id is an int")
+def then_bookmark_id_is_an_int(context):
+    bookmark = context.bookmark
+    assert isinstance(bookmark.id, int)
+
+
+@then('bookmark.name == "Target"')
+def then_bookmark_name_eq_Target(context):
+    bookmark = context.bookmark
+    assert bookmark.name == "Target"
+
+
 @then('bookmarks.get({name}) returns bookmark named "{name}" with id {id}')
 def then_bookmark_get_returns_bookmark_object(context, name, id):
     bookmark = context.bookmarks.get(name)
