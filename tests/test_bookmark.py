@@ -158,6 +158,18 @@ class DescribeBookmarks(object):
         return method_mock(request, Bookmarks, "__iter__")
 
 
+class Describe_Bookmark(object):
+    """Unit-test suite for `docx.bookmark._Bookmark` object."""
+
+    def it_knows_its_name(self):
+        bookmarkStart = element("w:bookmarkStart{w:name=bmk-0}")
+        bookmarkEnd = element("w:bookmarkEnd")
+
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        assert bookmark.name == "bmk-0"
+
+
 class Describe_DocumentBookmarkFinder(object):
     def it_finds_all_the_bookmark_pairs_in_the_document(
         self, pairs_fixture, _PartBookmarkFinder_
