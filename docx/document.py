@@ -159,6 +159,13 @@ class Document(ElementProxy):
         """
         return self._part.settings
 
+    def start_bookmark(self, name):
+        """Return _Bookmark object identified by `name`.
+
+        The returned bookmark is anchored at the end of this document.
+        """
+        return self._body.start_bookmark(name)
+
     @property
     def styles(self):
         """
