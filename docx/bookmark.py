@@ -55,9 +55,14 @@ class _Bookmark(object):
         self._bookmarkStart, self._bookmarkEnd = bookmark_pair
 
     @property
+    def id(self):
+        """Provides access to the bookmark id."""
+        raise NotImplementedError
+
+    @property
     def name(self):
         """Provides access to the bookmark name."""
-        raise NotImplementedError
+        return self._bookmarkStart.name
 
 
 class _DocumentBookmarkFinder(object):
