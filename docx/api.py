@@ -35,3 +35,14 @@ def _default_docx_path():
     """
     _thisdir = os.path.split(__file__)[0]
     return os.path.join(_thisdir, 'templates', 'default.docx')
+
+
+def element(element, part):
+    if str(type(element)) == "<class 'docx.oxml.text.paragraph.CT_P'>":
+        return Paragraph(element, element.getparent())
+    elif str(type(element)) == "<class 'docx.oxml.table.CT_Tbl'>":
+        from .table import Table
+        return Table(element, element.getparent())
+    elif str(type(element)) == "<class 'docx.oxml.section.CT_SectPr'>":
+        from .section import Section
+        return Section(element, part)

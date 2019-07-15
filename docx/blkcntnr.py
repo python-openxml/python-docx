@@ -11,7 +11,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from docx.oxml.table import CT_Tbl
 from docx.shared import Parented
 from docx.text.paragraph import Paragraph
-
+from docx.api import element
 
 class BlockItemContainer(Parented):
     """Base class for proxy objects that can contain block items.
@@ -66,6 +66,14 @@ class BlockItemContainer(Parented):
         """
         from .table import Table
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
+    @property
+    def elements(self):
+        """
+        A list containing the elements in this container (paragraph and tables), in document order.
+        """
+        #pass
+        return [element(item,self.part) for item in self._element.getchildren()]
+        
 
     def _add_paragraph(self):
         """
@@ -73,3 +81,4 @@ class BlockItemContainer(Parented):
         container.
         """
         return Paragraph(self._element.add_p(), self)
+
