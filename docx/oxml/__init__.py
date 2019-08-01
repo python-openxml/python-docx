@@ -246,3 +246,31 @@ from .text.run import CT_Br, CT_R, CT_Text  # noqa
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+
+from .comments import (
+    CT_Comments,
+    CT_Comment,
+    CT_CommentRef,
+    CT_CommentRgSt,
+    CT_CommentRgEd
+)
+register_element_cls('w:comments', CT_Comments)
+register_element_cls('w:comment', CT_Comment)
+register_element_cls('w:commentReference', CT_CommentRef)
+register_element_cls('w:commentRangeStart', CT_CommentRgSt)
+register_element_cls('w:commentRangeEnd', CT_CommentRgEd)
+
+from .customXml import (
+    CT_SmartTag,
+    CT_CustomXml,
+    CT_SmartTagPr,
+    CT_CustomXmlPr,
+    CT_Attr,
+    CT_Placeholder
+)
+register_element_cls('w:smartTag', CT_SmartTag)
+register_element_cls('w:customXml', CT_CustomXml)
+register_element_cls('w:smartTagPr', CT_SmartTagPr)
+register_element_cls('w:customXml', CT_CustomXmlPr)
+register_element_cls('w:attr', CT_Attr)
+register_element_cls('w:placeholder', CT_Placeholder)

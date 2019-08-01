@@ -7,7 +7,8 @@ Custom element classes related to text runs (CT_R).
 from ..ns import qn
 from ..simpletypes import ST_BrClear, ST_BrType
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OxmlElement,
+    OptionalAttribute, ZeroOrMore, ZeroOrOne
 )
 
 
@@ -102,6 +103,41 @@ class CT_R(BaseOxmlElement):
     def text(self, text):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
+
+    # def add_commentRgSt(self, id_comment):
+    #     """
+    #     Adds a ''<w:commentRangeStart>''  as a preceding sibling directly before this element.
+    #
+    #     :return: a new ''<w:commentRangStart>'' element.
+    #     """
+    #     new_commentRgSt = OxmlElement('w:commentRangeStart')
+    #     new_commentRgSt.id_crs = id_comment
+    #     self.addprevious(new_commentRgSt)
+    #
+    #     return new_commentRgSt
+    #
+    # def add_commentRgEd(self, id_comment):
+    #     """
+    #     Adds a  ''<w:commentRangeEnd>'' element as a following sibling directly after this element.
+    #
+    #     :return: a new ''<w:commentRangEnd>'' element.
+    #     """
+    #     new_commentRgEd = OxmlElement('w:commentRangeEnd')
+    #     new_commentRgEd.id_cre = id_comment
+    #     self.addnext(new_commentRgEd)
+    #
+    #     return new_commentRgEd
+    #
+    # def add_comment(self, id_comment):
+    #     """
+    #     Add a comment for this element.
+    #     :param id_comment: the id of the comment added.
+    #     :return: the id of the comment added.
+    #     """
+    #     self.add_commentRgSt(id_comment)
+    #     comment_range_end = self.add_commentRgEd(id_comment)
+    #     com
+    #     return id_comment
 
 
 class CT_Text(BaseOxmlElement):

@@ -407,3 +407,6 @@ class ST_VerticalAlignRun(XsdStringEnumeration):
     SUBSCRIPT = 'subscript'
 
     _members = (BASELINE, SUPERSCRIPT, SUBSCRIPT)
+
+class ST_DateTime(ST_String):
+    pass

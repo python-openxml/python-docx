@@ -155,6 +155,50 @@ class Document(ElementProxy):
         return self._part.styles
 
     @property
+    def comments(self):
+        """
+        A |Comments| object providing access to the styles in this document.
+        """
+        return self._part.comments
+
+    def add_comment_for(self, block, text=''):
+        """
+        Adds a comment for block.
+        This method should be revised in future.
+        :param block: a paragraph, a table, a run, or a table cell, etc.
+        :param text: the content of this new commnet. It is string.
+        :return: a new comment.
+        """
+
+        return self.comments.add_comment_for(block, text)
+
+    def remove_comment_of(self, block):
+        """
+        Removes comment in comments and comment reference in document.
+        :param comment: a block needing to delete comment and having _element.
+        :return True if remove comment successfully or False if the note have not comment
+                 or the note have not parent note.
+        """
+        # delete comment range and reference in document.
+        comment_range_ref = self.comments.get_comment_of(block)
+        if comment_range_ref is not None:
+            id_comment = comment_range_ref[0].id_crs
+            parent = block._element.getparent()
+            if parent is not None:
+                for i in comment_range_ref:
+                    parent.remove(i)
+            else:
+                return False
+        else:
+            return False
+
+        # delete comment in comments.
+        comment = self.comments.get_comment_by_id(id_comment)
+        self.comments.remove_comment(comment)
+
+        return True
+
+    @property
     def tables(self):
         """
         A list of |Table| instances corresponding to the tables in the

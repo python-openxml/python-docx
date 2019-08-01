@@ -9,6 +9,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
+from docx.parts.comments import CommentsPart
 from docx.parts.story import BaseStoryPart
 from docx.parts.styles import StylesPart
 from docx.shape import InlineShapes
@@ -127,6 +128,11 @@ class DocumentPart(BaseStoryPart):
         return self._styles_part.styles
 
     @property
+    def comments(self):
+
+        return self._comments_part.comments
+
+    @property
     def _settings_part(self):
         """
         A |SettingsPart| object providing access to the document-level
@@ -152,3 +158,17 @@ class DocumentPart(BaseStoryPart):
             styles_part = StylesPart.default(self.package)
             self.relate_to(styles_part, RT.STYLES)
             return styles_part
+
+    @property
+    def _comments_part(self):
+        """
+        Instance of |CommentPart| for this document. Creates an empty comments
+        part if one is not present.
+        """
+
+        try:
+            return self.part_related_by(RT.COMMENTS)
+        except KeyError:
+            comments_part = CommentsPart.default(self.package)
+            self.relate_to(comments_part, RT.COMMENTS)
+            return comments_part
