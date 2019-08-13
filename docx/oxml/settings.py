@@ -45,6 +45,7 @@ class CT_Settings(BaseOxmlElement):
         "w:readModeInkLockDown", "w:smartTagType", "sl:schemaLibrary",
         "w:shapeDefaults", "w:doNotEmbedSmartTags", "w:decimalSymbol", "w:listSeparator"
     )
+    trackRevisions = ZeroOrOne("w:trackRevisions", successors=())
     evenAndOddHeaders = ZeroOrOne("w:evenAndOddHeaders", successors=_tag_seq[48:])
     del _tag_seq
 
@@ -62,3 +63,18 @@ class CT_Settings(BaseOxmlElement):
             self._remove_evenAndOddHeaders()
         else:
             self.get_or_add_evenAndOddHeaders().val = value
+
+    @property
+    def trackRevisions_val(self):
+        """value of `w:trackRevisions/@w:val` or |None| if not present."""
+        trackRevisions = self.trackRevisions
+        if trackRevisions is None:
+            return False
+        return trackRevisions.val
+
+    @trackRevisions_val.setter
+    def trackRevisions_val(self, value):
+        if value in [None, False]:
+            self._remove_trackRevisions()
+        else:
+            self.get_or_add_trackRevisions().val = value
