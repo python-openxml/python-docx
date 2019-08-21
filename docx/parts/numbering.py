@@ -39,9 +39,13 @@ class _NumberingDefinitions(object):
     Collection of |_NumberingDefinition| instances corresponding to the
     ``<w:num>`` elements in a numbering part.
     """
+
     def __init__(self, numbering_elm):
         super(_NumberingDefinitions, self).__init__()
         self._numbering = numbering_elm
+
+    def add_num(self, abstractNum_id, restart=False):
+        return self._numbering.add_num(abstractNum_id, restart).numId
 
     def __len__(self):
         return len(self._numbering.num_lst)
