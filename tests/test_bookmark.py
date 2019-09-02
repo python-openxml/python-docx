@@ -30,6 +30,15 @@ from .unitutil.mock import (
 class DescribeBookmarks(object):
     """Unit-test suite for `docx.bookmark.Bookmarks` object."""
 
+    def it_knows_whether_it_contains_a_bookmark_by_name(self, contains_fixture, _iter_):
+        mock_bookmarks, name, expected_value = contains_fixture
+        _iter_.return_value = iter(mock_bookmarks)
+        bookmarks = Bookmarks(None)
+
+        has_bookmark_with_name = name in bookmarks
+
+        assert has_bookmark_with_name is expected_value
+
     def it_provides_access_to_bookmarks_by_index(
         self, _finder_prop_, finder_, _Bookmark_, bookmark_
     ):
@@ -122,6 +131,25 @@ class DescribeBookmarks(object):
 
         _DocumentBookmarkFinder_.assert_called_once_with(document_part_)
         assert finder is finder_
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            ((), "foo", False),
+            (("foo",), "foo", True),
+            (("foo",), "fiz", False),
+            (("foo", "bar", "baz"), "foo", True),
+            (("foo", "bar", "baz"), "fiz", False),
+        ]
+    )
+    def contains_fixture(self, request):
+        member_names, name, expected_value = request.param
+        mock_bookmarks = tuple(instance_mock(request, _Bookmark) for _ in member_names)
+        # ---assign name seperately to avoid mock(.., "name") param collision---
+        for idx, bookmark_ in enumerate(mock_bookmarks):
+            bookmark_.name = member_names[idx]
+        return mock_bookmarks, name, expected_value
 
     # fixture components ---------------------------------------------
 
