@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.bookmark import Bookmarks
 from docx.enum.style import WD_STYLE_TYPE
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
@@ -49,6 +50,15 @@ class DescribeDocumentPart(object):
         relate_to_.assert_called_once_with(document_part, header_part_, RT.HEADER)
         assert header_part is header_part_
         assert rId == "rId7"
+
+    def it_provides_access_to_the_package_bookmarks(self, Bookmarks_, bookmarks_):
+        Bookmarks_.return_value = bookmarks_
+        document_part = DocumentPart(None, None, None, None)
+
+        bookmarks = document_part.bookmarks
+
+        Bookmarks_.assert_called_once_with(document_part)
+        assert bookmarks is bookmarks_
 
     def it_can_drop_a_specified_header_part(self, drop_rel_):
         document_part = DocumentPart(None, None, None, None)
@@ -253,6 +263,14 @@ class DescribeDocumentPart(object):
         return document_part, styles_
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Bookmarks_(self, request):
+        return class_mock(request, "docx.parts.document.Bookmarks")
+
+    @pytest.fixture
+    def bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)
 
     @pytest.fixture
     def core_properties_(self, request):

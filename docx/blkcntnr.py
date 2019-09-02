@@ -94,4 +94,4 @@ class BlockItemContainer(Parented):
     @lazyproperty
     def _bookmarks(self):
         """Global |Bookmarks| object for overall document."""
-        raise NotImplementedError
+        return self.part.bookmarks

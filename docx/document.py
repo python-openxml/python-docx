@@ -6,7 +6,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from docx.blkcntnr import BlockItemContainer
 
-from docx.bookmark import Bookmarks
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
@@ -103,7 +102,7 @@ class Document(ElementProxy):
         footers, footnotes or endnotes. This collection contains all
         bookmarks defined in any of these parts.
         """
-        return Bookmarks(self._part)
+        return self._part.bookmarks
 
     @property
     def core_properties(self):
