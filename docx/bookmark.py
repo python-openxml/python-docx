@@ -14,8 +14,12 @@ from docx.shared import lazyproperty
 class Bookmarks(Sequence):
     """Sequence of |Bookmark| objects.
 
-    Supports indexed access (including slices), `len()`, and iteration. Iteration will
-    perform significantly better than repeated indexed access.
+    This object has mixed semantics. As a sequence, it supports indexed access
+    (including slices), `len()`, and iteration (which will perform significantly
+    better than repeated indexed access). It also supports some `dict` semantics on
+    bookmark name. Specifically, the `in` operator can be used to detect the presence of
+    a bookmark by name (e.g. `if name in bookmarks`) and it has a `get()` method that
+    allows a bookmark to be retrieved by name.
     """
 
     def __init__(self, document_part):
@@ -23,7 +27,10 @@ class Bookmarks(Sequence):
 
     def __contains__(self, name):
         """Supports `in` operator to test for presence of bookmark by `name`."""
-        raise NotImplementedError
+        for bookmark in self:
+            if bookmark.name == name:
+                return True
+        return False
 
     def __getitem__(self, idx):
         """Supports indexed and sliced access."""
@@ -45,7 +52,10 @@ class Bookmarks(Sequence):
         return _DocumentBookmarkFinder(self._document_part)
 
     def get(self, name):
-        """Get bookmark based on its name."""
+        """Get bookmark based on its name.
+
+        Raises `KeyError` if no bookmark with `name` is present in collection.
+        """
         for bookmark in self:
             if bookmark.name == name:
                 return bookmark
