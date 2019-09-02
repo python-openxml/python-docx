@@ -8,6 +8,8 @@ import pytest
 
 from docx.blkcntnr import BlockItemContainer
 from docx.bookmark import _Bookmark, Bookmarks
+from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.shared import Inches
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -110,10 +112,24 @@ class DescribeBlockItemContainer(object):
 
     def it_adds_a_paragraph_to_help(self, _add_paragraph_fixture):
         blkcntnr, expected_xml = _add_paragraph_fixture
+
         new_paragraph = blkcntnr._add_paragraph()
+
         assert isinstance(new_paragraph, Paragraph)
         assert new_paragraph._parent == blkcntnr
         assert blkcntnr._element.xml == expected_xml
+
+    def it_provides_access_to_the_global_bookmarks_collection_to_help(
+        self, bookmarks_fixture, part_prop_, bookmarks_
+    ):
+        parent_part_ = bookmarks_fixture
+        parent_part_.bookmarks = bookmarks_
+        part_prop_.return_value = parent_part_
+        blkcntnr = BlockItemContainer(None, None)
+
+        bookmarks = blkcntnr._bookmarks
+
+        assert bookmarks is bookmarks_
 
     # fixtures -------------------------------------------------------
 
@@ -137,6 +153,12 @@ class DescribeBlockItemContainer(object):
         rows, cols, width = 2, 2, Inches(2)
         expected_xml = snippet_seq("new-tbl")[0]
         return blkcntnr, rows, cols, width, expected_xml
+
+    @pytest.fixture(params=[DocumentPart, HeaderPart, FooterPart])
+    def bookmarks_fixture(self, request):
+        PartCls = request.param
+        parent_part_ = instance_mock(request, PartCls)
+        return parent_part_
 
     @pytest.fixture(
         params=[
@@ -210,3 +232,7 @@ class DescribeBlockItemContainer(object):
     @pytest.fixture
     def paragraph_(self, request):
         return instance_mock(request, Paragraph)
+
+    @pytest.fixture
+    def part_prop_(self, request):
+        return property_mock(request, BlockItemContainer, "part")

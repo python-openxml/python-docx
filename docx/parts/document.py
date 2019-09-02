@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from itertools import chain
 
+from docx.bookmark import Bookmarks
 from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.shape import CT_Inline
@@ -38,6 +39,11 @@ class DocumentPart(BaseStoryPart):
         header_part = HeaderPart.new(self.package)
         rId = self.relate_to(header_part, RT.HEADER)
         return header_part, rId
+
+    @lazyproperty
+    def bookmarks(self):
+        """Singleton |Bookmarks| object for this docx package."""
+        return Bookmarks(self)
 
     @property
     def core_properties(self):

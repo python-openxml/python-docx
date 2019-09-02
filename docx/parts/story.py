@@ -18,6 +18,11 @@ class BaseStoryPart(XmlPart):
     `.add_paragraph()`, `.add_table()` etc.
     """
 
+    @lazyproperty
+    def bookmarks(self):
+        """Global |Bookmarks| object for this docx package."""
+        raise NotImplementedError
+
     def get_or_add_image(self, image_descriptor):
         """Return (rId, image) pair for image identified by *image_descriptor*.
 
@@ -66,7 +71,7 @@ class BaseStoryPart(XmlPart):
         the existing id sequence are not filled. The id attribute value is unique in the
         document, without regard to the element type it appears on.
         """
-        id_str_lst = self._element.xpath('//@id')
+        id_str_lst = self._element.xpath("//@id")
         used_ids = [int(id_str) for id_str in id_str_lst if id_str.isdigit()]
         if not used_ids:
             return 1

@@ -95,15 +95,12 @@ class DescribeDocument(object):
         document.save(file_)
         document._part.save.assert_called_once_with(file_)
 
-    def it_provides_access_to_its_bookmarks(
-        self, document_part_, Bookmarks_, bookmarks_
-    ):
-        Bookmarks_.return_value = bookmarks_
+    def it_provides_access_to_its_bookmarks(self, document_part_, bookmarks_):
+        document_part_.bookmarks = bookmarks_
         document = Document(None, document_part_)
 
         bookmarks = document.bookmarks
 
-        Bookmarks_.assert_called_once_with(document_part_)
         assert bookmarks is bookmarks_
 
     def it_provides_access_to_its_core_properties(self, core_props_fixture):
@@ -309,10 +306,6 @@ class DescribeDocument(object):
     @pytest.fixture
     def bookmark_(self, request):
         return instance_mock(request, _Bookmark)
-
-    @pytest.fixture
-    def Bookmarks_(self, request):
-        return class_mock(request, "docx.document.Bookmarks")
 
     @pytest.fixture
     def bookmarks_(self, request):
