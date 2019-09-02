@@ -8,8 +8,9 @@ specialized ones like structured document tags.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from docx.bookmark import _Bookmark
 from docx.oxml.table import CT_Tbl
-from docx.shared import Parented
+from docx.shared import lazyproperty, Parented
 from docx.text.paragraph import Paragraph
 
 
@@ -60,11 +61,18 @@ class BlockItemContainer(Parented):
         return [Paragraph(p, self) for p in self._element.p_lst]
 
     def start_bookmark(self, name):
-        """Return _Bookmark object identified by `name`.
+        """Return newly-added |_Bookmark| object identified by `name`.
 
-        The returned bookmark is anchored at the end of this block-item container.
+        The returned bookmark is anchored at the end of this block-item container, for
+        example, after the last paragraph in the document when the document body is the
+        block-item container.
         """
-        raise NotImplementedError
+        if name in self._bookmarks:
+            raise KeyError("Document already contains bookmark with name %s" % name)
+
+        return _Bookmark(
+            (self._element.add_bookmarkStart(name, self._bookmarks.next_id), None)
+        )
 
     @property
     def tables(self):
@@ -82,3 +90,8 @@ class BlockItemContainer(Parented):
         container.
         """
         return Paragraph(self._element.add_p(), self)
+
+    @lazyproperty
+    def _bookmarks(self):
+        """Global |Bookmarks| object for overall document."""
+        raise NotImplementedError

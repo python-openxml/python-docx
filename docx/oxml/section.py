@@ -22,6 +22,19 @@ class CT_HdrFtr(BaseOxmlElement):
 
     p = ZeroOrMore("w:p", successors=())
     tbl = ZeroOrMore("w:tbl", successors=())
+    bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=())
+
+    def add_bookmarkStart(self, name, bookmark_id):
+        """Return `w:bookmarkStart` element added at the end of this header or footer.
+
+        The newly added `w:bookmarkStart` element is identified by both `name` and
+        `bookmark_id`. It is the caller's responsibility to determine that both `name`
+        and `bookmark_id` are unique, document-wide.
+        """
+        bookmarkStart = self._add_bookmarkStart()
+        bookmarkStart.name = name
+        bookmarkStart.id = bookmark_id
+        return bookmarkStart
 
 
 class CT_HdrFtrRef(BaseOxmlElement):

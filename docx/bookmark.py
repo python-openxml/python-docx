@@ -21,6 +21,10 @@ class Bookmarks(Sequence):
     def __init__(self, document_part):
         self._document_part = document_part
 
+    def __contains__(self, name):
+        """Supports `in` operator to test for presence of bookmark by `name`."""
+        raise NotImplementedError
+
     def __getitem__(self, idx):
         """Supports indexed and sliced access."""
         bookmark_pairs = self._finder.bookmark_pairs
@@ -46,6 +50,11 @@ class Bookmarks(Sequence):
             if bookmark.name == name:
                 return bookmark
         raise KeyError("Requested bookmark not found.")
+
+    @property
+    def next_id(self):
+        """Return the next available int bookmark-id, unique in document-wide scope."""
+        raise NotImplementedError
 
 
 class _Bookmark(object):
