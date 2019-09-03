@@ -46,7 +46,6 @@ Feature: Header and footer behaviors
      Then I can't detect the image but no exception is raised
 
 
-  @wip
   Scenario Outline: _Header.start_bookmark()
     Given a _Header object <with-or-no> header definition as header
      When I assign bookmark = header.start_bookmark("Target")
@@ -101,7 +100,6 @@ Feature: Header and footer behaviors
      Then I can't detect the image but no exception is raised
 
 
-  @wip
   Scenario Outline: _Footer.start_bookmark()
     Given a _Footer object <with-or-no> footer definition as footer
      When I assign bookmark = footer.start_bookmark("Target")
