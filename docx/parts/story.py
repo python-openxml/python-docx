@@ -21,7 +21,7 @@ class BaseStoryPart(XmlPart):
     @lazyproperty
     def bookmarks(self):
         """Global |Bookmarks| object for this docx package."""
-        raise NotImplementedError
+        return self._document_part.bookmarks
 
     def get_or_add_image(self, image_descriptor):
         """Return (rId, image) pair for image identified by *image_descriptor*.
