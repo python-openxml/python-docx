@@ -131,6 +131,16 @@ class DescribeDocument(object):
         document, settings_ = settings_fixture
         assert document.settings is settings_
 
+    def it_can_end_a_bookmark(self, _body_prop_, body_, bookmark_):
+        _body_prop_.return_value = body_
+        body_.end_bookmark.return_value = bookmark_
+        document = Document(None, None)
+
+        bookmark = document.end_bookmark(bookmark_)
+
+        body_.end_bookmark.assert_called_once_with(bookmark_)
+        assert bookmark is bookmark_
+
     def it_can_start_a_bookmark(self, _body_prop_, body_, bookmark_):
         _body_prop_.return_value = body_
         body_.start_bookmark.return_value = bookmark_
