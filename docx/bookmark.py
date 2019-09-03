@@ -46,11 +46,6 @@ class Bookmarks(Sequence):
     def __len__(self):
         return len(self._finder.bookmark_pairs)
 
-    @lazyproperty
-    def _finder(self):
-        """_DocumentBookmarkFinder instance for this document."""
-        return _DocumentBookmarkFinder(self._document_part)
-
     def get(self, name):
         """Get bookmark based on its name.
 
@@ -64,7 +59,15 @@ class Bookmarks(Sequence):
     @property
     def next_id(self):
         """Return the next available int bookmark-id, unique in document-wide scope."""
-        raise NotImplementedError
+        bookmark_ids = tuple(bookmark.id for bookmark in self)
+        if not bookmark_ids:
+            return 1
+        return max(bookmark_ids) + 1
+
+    @lazyproperty
+    def _finder(self):
+        """_DocumentBookmarkFinder instance for this document."""
+        return _DocumentBookmarkFinder(self._document_part)
 
 
 class _Bookmark(object):
