@@ -53,6 +53,18 @@ def given_the_next_Header_object_with_no_header_definition(context):
 # when =====================================================
 
 
+@when('I assign bookmark = footer.start_bookmark("Target")')
+def when_I_assign_bookmark_eq_footer_start_bookmark(context):
+    footer = context.footer
+    context.bookmark = footer.start_bookmark("Target")
+
+
+@when('I assign bookmark = header.start_bookmark("Target")')
+def when_I_assign_bookmark_eq_header_start_bookmark(context):
+    header = context.header
+    context.bookmark = header.start_bookmark("Target")
+
+
 @when('I assign "Normal" to footer.paragraphs[0].style')
 def when_I_assign_Body_Text_to_footer_style(context):
     context.footer.paragraphs[0].style = "Normal"

@@ -46,6 +46,19 @@ Feature: Header and footer behaviors
      Then I can't detect the image but no exception is raised
 
 
+  @wip
+  Scenario Outline: _Header.start_bookmark()
+    Given a _Header object <with-or-no> header definition as header
+     When I assign bookmark = header.start_bookmark("Target")
+     Then bookmark.name == "Target"
+      And bookmark.id is an int
+
+    Examples: _Header definition states
+      | with-or-no |
+      | with a     |
+      | with no    |
+
+
   Scenario Outline: _Footer.is_linked_to_previous getter
     Given a _Footer object <with-or-no> footer definition as footer
      Then footer.is_linked_to_previous is <value>
@@ -86,3 +99,16 @@ Feature: Header and footer behaviors
     Given a _Run object from a footer as run
      When I call run.add_picture()
      Then I can't detect the image but no exception is raised
+
+
+  @wip
+  Scenario Outline: _Footer.start_bookmark()
+    Given a _Footer object <with-or-no> footer definition as footer
+     When I assign bookmark = footer.start_bookmark("Target")
+     Then bookmark.name == "Target"
+      And bookmark.id is an int
+
+    Examples: _Footer definition states
+      | with-or-no |
+      | with a     |
+      | with no    |
