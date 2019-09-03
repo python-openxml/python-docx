@@ -54,7 +54,10 @@ class BlockItemContainer(Parented):
 
     def end_bookmark(self, bookmark):
         """Closes supplied bookmark at the end of this block-item-container."""
-        raise NotImplementedError
+        bookmarkend = self._element._add_bookmarkEnd()
+        bookmarkend.id = bookmark.id
+        bookmark._bookmarkEnd = bookmarkend
+        return bookmark
 
     @property
     def paragraphs(self):

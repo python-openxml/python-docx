@@ -9,7 +9,7 @@ Feature: Document properties and methods
      Then bookmark.name == "Target"
       And bookmark.id is an int
 
-  @wip
+
   Scenario: Document.end_bookmark()
     Given a Document object as document
      When I assign bookmark = document.start_bookmark("Target")

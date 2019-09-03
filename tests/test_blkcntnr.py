@@ -64,6 +64,18 @@ class DescribeBlockItemContainer(object):
             count += 1
         assert count == expected_count
 
+    def it_can_end_a_bookmark(self, end_bookmark_fixture):
+        blockContainer, name, bookmarkStart, expected_xml = end_bookmark_fixture
+
+        blkcntnr = BlockItemContainer(blockContainer, None)
+        bookmark_ = _Bookmark((bookmarkStart, None))
+
+        bookmark = blkcntnr.end_bookmark(bookmark_)
+
+        assert blkcntnr._element.xml == expected_xml
+        assert bookmark.name == name
+        assert bookmark is bookmark_
+
     def it_can_start_a_bookmark(
         self,
         start_bookmark_fixture,
@@ -159,6 +171,42 @@ class DescribeBlockItemContainer(object):
         PartCls = request.param
         parent_part_ = instance_mock(request, PartCls)
         return parent_part_
+
+    @pytest.fixture(
+        params=[
+            # ---document body---
+            (
+                "w:body/w:bookmarkStart{w:name=bmk-1, w:id=0}",
+                "w:bookmarkStart{w:name=bmk-1, w:id=0}",
+                "w:body/(w:bookmarkStart{w:name=bmk-1, w:id=0},w:bookmarkEnd{w:id=0})",
+            ),
+            # ---table cell---
+            (
+                "w:tc/(w:p,w:bookmarkStart{w:name=bmk-1, w:id=1})",
+                "w:bookmarkStart{w:name=bmk-1, w:id=1}",
+                "w:tc/(w:p,w:bookmarkStart{w:name=bmk-1, w:id=1},w:bookmarkEnd{w:id=1})",
+            ),
+            # ---header---
+            (
+                "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=42})",
+                "w:bookmarkStart{w:name=bmk-1, w:id=42}",
+                "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=42},w:bookmarkEnd{w:id=42})",
+            ),
+            # ---footer---
+            (
+                "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=24})",
+                "w:bookmarkStart{w:name=bmk-1, w:id=24}",
+                "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=24},w:bookmarkEnd{w:id=24})",
+            ),
+        ]
+    )
+    def end_bookmark_fixture(self, request):
+        cxml, bookmark_cxml, expected_cxml = request.param
+        blockContainer = element(cxml)
+        bookmarkStart = element(bookmark_cxml)
+        expected_xml = xml(expected_cxml)
+        name = "bmk-1"
+        return blockContainer, name, bookmarkStart, expected_xml
 
     @pytest.fixture(
         params=[

@@ -29,6 +29,7 @@ class CT_Body(BaseOxmlElement):
 
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=("w:sectPr",))
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=("w:sectPr",))
     sectPr = ZeroOrOne("w:sectPr", successors=())
 

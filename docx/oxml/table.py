@@ -398,6 +398,7 @@ class CT_Tc(BaseOxmlElement):
     tcPr = ZeroOrOne("w:tcPr")  # bunches of successors, overriding insert
     p = OneOrMore("w:p")
     tbl = OneOrMore("w:tbl")
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=())
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=())
 
     def add_bookmarkStart(self, name, bookmark_id):

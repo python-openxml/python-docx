@@ -22,6 +22,7 @@ class CT_HdrFtr(BaseOxmlElement):
 
     p = ZeroOrMore("w:p", successors=())
     tbl = ZeroOrMore("w:tbl", successors=())
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=())
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=())
 
     def add_bookmarkStart(self, name, bookmark_id):

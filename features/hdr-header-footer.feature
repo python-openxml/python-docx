@@ -57,7 +57,6 @@ Feature: Header and footer behaviors
       | with a     |
       | with no    |
 
-  @wip
   Scenario Outline: _Header.end_bookmark()
     Given a _Header object <with-or-no> header definition as header
      When I assign bookmark = header.start_bookmark("Target")
@@ -125,7 +124,7 @@ Feature: Header and footer behaviors
       | with a     |
       | with no    |
 
-  @wip
+
   Scenario Outline: _Footer.end_bookmark()
     Given a _Footer object <with-or-no> footer definition as footer
      When I assign bookmark = footer.start_bookmark("Target")
