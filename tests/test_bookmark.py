@@ -121,6 +121,15 @@ class DescribeBookmarks(object):
             bookmarks.get("barfoo")
         assert e.value.args[0] == "Requested bookmark not found."
 
+    def it_knows_the_next_available_bookmark_id(self, next_id_fixture, _iter_):
+        mock_bookmarks, expected_value = next_id_fixture
+        _iter_.return_value = iter(mock_bookmarks)
+        bookmarks = Bookmarks(None)
+
+        next_id = bookmarks.next_id
+
+        assert next_id is expected_value
+
     def it_provides_access_to_its_bookmark_finder_to_help(
         self, document_part_, _DocumentBookmarkFinder_, finder_
     ):
@@ -150,6 +159,14 @@ class DescribeBookmarks(object):
         for idx, bookmark_ in enumerate(mock_bookmarks):
             bookmark_.name = member_names[idx]
         return mock_bookmarks, name, expected_value
+
+    @pytest.fixture(params=[((), 1), ((1, 2, 3), 4), ((1, 3), 4), ((2, 42), 43)])
+    def next_id_fixture(self, request):
+        bookmark_ids, expected_value = request.param
+        mock_bookmarks = tuple(
+            instance_mock(request, _Bookmark, id=bmid) for bmid in bookmark_ids
+        )
+        return mock_bookmarks, expected_value
 
     # fixture components ---------------------------------------------
 
