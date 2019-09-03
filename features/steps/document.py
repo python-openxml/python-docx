@@ -159,6 +159,12 @@ def when_I_add_an_even_page_section_to_the_document(context):
     context.section = context.document.add_section(WD_SECTION.EVEN_PAGE)
 
 
+@when('I assign bookmark = document.bookmarks.get("Target")')
+def when_I_assign_bookmark_eq_document_bookmarks_get_target(context):
+    document = context.document
+    context.bookmark = document.bookmarks.get("Target")
+
+
 @when('I assign bookmark = document.start_bookmark("Target")')
 def when_I_assign_bookmark_eq_document_start_bookmark(context):
     document = context.document
@@ -172,6 +178,12 @@ def when_I_change_the_new_section_layout_to_landscape(context):
     section.orientation = WD_ORIENT.LANDSCAPE
     section.page_width = new_width
     section.page_height = new_height
+
+
+@when("I end bookmark by calling document.end_bookmark(bookmark)")
+def when_I_end_bookmark_by_calling_document_end_bookmark_with_bookmark(context):
+    document = context.document
+    document.end_bookmark(context.bookmark)
 
 
 @when("I execute section = document.add_section()")

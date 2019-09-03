@@ -3,6 +3,14 @@ Feature: _Cell properties and methods
   As a developer using python-docx
   I need properties and methods on a _Cell object
 
+  @wip
+  Scenario: _Cell.end_bookmark()
+    Given a _Cell object as cell
+     When I assign bookmark = cell.start_bookmark("Target")
+      And I end bookmark by calling cell.end_bookmark(bookmark)
+      And I assign bookmark = cell.bookmarks.get("Target")
+     Then bookmark.name == "Target"
+
 
   Scenario: _Cell.start_bookmark()
     Given a _Cell object as cell

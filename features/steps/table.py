@@ -180,6 +180,12 @@ def when_assign_string_to_cell_text_attribute(context):
     context.expected_text = text
 
 
+@when('I assign bookmark = cell.bookmarks.get("Target")')
+def when_I_assign_bookmark_eq_cell_bookmarks_get_target(context):
+    cell = context.cell
+    context.bookmark = cell._bookmarks.get("Target")
+
+
 @when('I assign bookmark = cell.start_bookmark("Target")')
 def when_I_assign_bookmark_eq_cell_start_bookmark(context):
     cell = context.cell
@@ -231,6 +237,12 @@ def when_apply_value_to_table_style(context, value):
 def when_assign_value_to_table_table_direction(context, value):
     new_value = None if value == "None" else getattr(WD_TABLE_DIRECTION, value)
     context.table_.table_direction = new_value
+
+
+@when("I end bookmark by calling cell.end_bookmark(bookmark)")
+def when_I_end_bookmark_by_calling_cell_end_bookmark_with_bookmark(context):
+    cell = context.cell
+    cell.end_bookmark(context.bookmark)
 
 
 @when("I merge from cell {origin} to cell {other}")

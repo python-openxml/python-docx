@@ -53,6 +53,18 @@ def given_the_next_Header_object_with_no_header_definition(context):
 # when =====================================================
 
 
+@when('I assign bookmark = footer._bookmarks.get("Target")')
+def when_I_assign_bookmark_eq_footer_bookmarks_get_target(context):
+    footer = context.footer
+    context.bookmark = footer._bookmarks.get("Target")
+
+
+@when('I assign bookmark = header._bookmarks.get("Target")')
+def when_I_assign_bookmark_eq_header_bookmarks_get_target(context):
+    header = context.header
+    context.bookmark = header._bookmarks.get("Target")
+
+
 @when('I assign bookmark = footer.start_bookmark("Target")')
 def when_I_assign_bookmark_eq_footer_start_bookmark(context):
     footer = context.footer
@@ -88,6 +100,18 @@ def when_I_assign_value_to_footer_is_linked_to_previous(context, value):
 @when("I call run.add_picture()")
 def when_I_call_run_add_picture(context):
     context.run.add_picture(test_file("test.png"))
+
+
+@when("I end bookmark by calling footer.end_bookmark(bookmark)")
+def when_I_end_bookmark_by_calling_footer_end_bookmark_with_bookmark(context):
+    footer = context.footer
+    footer.end_bookmark(context.bookmark)
+
+
+@when("I end bookmark by calling header.end_bookmark(bookmark)")
+def when_I_end_bookmark_by_calling_header_end_bookmark_with_bookmark(context):
+    header = context.header
+    header.end_bookmark(context.bookmark)
 
 
 # then =====================================================
