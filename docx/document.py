@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from docx.oxml.ns import qn
+
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -185,6 +187,20 @@ class Document(ElementProxy):
     @property
     def elements(self):
         return self._body.elements
+    
+    @property
+    def abstractNumIds(self):
+        """
+        Returns list of all the 'w:abstarctNumId' of this document
+        """
+        return self._body.abstractNumIds
+    
+    @property
+    def last_abs_num(self):
+        last = self.abstractNumIds[-1]
+        val = last.attrib.get(qn('w:abstractNumId'))
+        return  last, val
+    
     @property
     def _block_width(self):
         """
