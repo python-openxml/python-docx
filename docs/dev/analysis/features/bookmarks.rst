@@ -50,11 +50,19 @@ Adding a bookmark::
     >>> len(bookmarks)
     1
     >>> bookmarks.get('Target')
-    docx.text.bookmark.Bookmark object at 0x00fa1afe1>
-    >>> bookmarks.get(id=1)
-    docx.text.bookmark.Bookmark object at 0x00fa1afe1>
+    <docx.bookmark._Bookmark at 0x00fa1afe1>
+    >>> bookmarks.get_by_id(1)
+    <docx.bookmark._Bookmark at 0x00fa1afe1>
     >>> bookmarks[0]
-    docx.text.bookmark.Bookmark object at 0x00fa1afe1>
+    <docx.bookmark._Bookmark at 0x00fa1afe1>
+
+    # A bookmark can be deleted:
+    >>> len(bookmarks)
+    >>> 2
+    >>> bookmark =  bookmarks[0]
+    >>> bookmark.delete()
+    >>> len(bookmarks)
+    >>> 1
 
 
 Word Behavior
@@ -82,18 +90,24 @@ Word Behavior
 * A bookmark can be *hidden*, which occurs for example when cross-references
   are inserted into the document.
 
-* ? Do bookmarks need to be unique across all stories? (like headers, footers,
-  etc.)? This could be trouble for us because we don't yet have access to
-  those "stories".
+* As bookmarks need to be unique over all document stories, a check should
+  be done for uniqueness. (The word API replaces the bookmark by a new one
+  when a duplicate bookmarkname is used to insert a new bookmark.
+  The word editor removes duplicate bookmarks.)
 
-* ? How do overlapping bookmarks behave? Are those permitted? Like new one
-  starts before prior one finishes?
+* Bookmarks may overlap i.e. A new bookmark is started as the previous
+  one is not yet ended.
 
-  ? What about "nested" bookmarks? Are those permitted? Line second bookmark
-  starts and ends after first one starts and before it ends?
+* Bookmarks may be nested i.e. a bookmark may exists within the limits
+  of another bookmark.
 
 * A bookmark can be added in five different document parts: Body, Header,
   Footer, Footnote and Endnote.
+
+* As bookmarks can be added in at different locations as well as different
+  document parts, the bookmarkStart and bookmarkEnd elements should be added
+  to different complex types: CT_Body, CT_P and CT_Tbl, as well as CT_HdrFtr
+  and CT_FtnEdn.
 
 
 XML Semantics
@@ -136,81 +150,163 @@ MS API Protocol
 The MS API defines a `Bookmarks` object which is a collection of
 `Bookmark objects`
 
-.. _Bookmarks object:
-   https://msdn.microsoft.com/en-us/vba/word-vba/articles/bookmarks-object-word
+Bookmarks object:
 
-* Bookmarks.Add(name, range)
-* Bookmarks.Exists(name)
-* Bookmarks.Item(index)
-* Bookmarks.DefaultSorting
-* Bookmarks.ShowHidden
+https://msdn.microsoft.com/en-us/vba/word-vba/articles/bookmarks-object-word
 
-.. _Bookmark objects:
-   https://msdn.microsoft.com/en-us/vba/word-vba/articles/bookmark-object-word
+Methods:
+* Bookmarks.Exists(name) - Checks if bookmark name exists in document.
+* Bookmarks.Item(index) - Returns bookmark based on id or name.
 
-* Bookmark.Delete()
-* Bookmark.Column (boolean)
-* Bookmark.Empty (boolean, True if contains no text.)
-* Bookmark.End
-* Bookmark.Name
-* Bookmark.Start
-* Bookmark.StoryType
+Properties:
+* Bookmarks.Count - Number of bookmarks
 
+Bookmark objects:
+https://msdn.microsoft.com/en-us/vba/word-vba/articles/bookmark-object-word
+
+Methods:
+* Bookmark.Delete() - Removing the two elements from the document
+
+Properties:
+* Bookmark.Column (boolean) - True if bookmark is inside a table Column
+* Bookmark.Empty (boolean) - True if the specified bookmark is Empty
+* Bookmark.Name - Return name of bookmark.
 
 Schema excerpt
 --------------
 
 ::
 
-  <xsd:element name="document" type="CT_Document"/>
-
-  <xsd:element name="endnotes" type="CT_Endnotes"/>
-
-  <xsd:element name="footnotes" type="CT_Footnotes"/>
-
-  <xsd:element name="ftr" type="CT_HdrFtr"/>
-
-  <xsd:element name="hdr" type="CT_HdrFtr"/>
-
-  <xsd:complexType name="CT_Body">
+  <xsd:complexType name="CT_Body">  <!-- denormalized -->
     <xsd:sequence>
-      <xsd:choice minOccurs="0" maxOccurs="unbounded">
-        <xsd:element name="p"                           type="CT_P"/>
-        <xsd:element name="tbl"                         type="CT_Tbl"/>
-        <xsd:element name="customXml"                   type="CT_CustomXmlBlock"/>
-        <xsd:element name="sdt"                         type="CT_SdtBlock"/>
-        <xsd:element name="proofErr"                    type="CT_ProofErr"/>
-        <xsd:element name="permStart"                   type="CT_PermStart"/>
-        <xsd:element name="permEnd"                     type="CT_Perm"/>
-        <xsd:element name="ins"                         type="CT_RunTrackChange"/>
-        <xsd:element name="del"                         type="CT_RunTrackChange"/>
-        <xsd:element name="moveFrom"                    type="CT_RunTrackChange"/>
-        <xsd:element name="moveTo"                      type="CT_RunTrackChange"/>
-        <xsd:element  ref="m:oMathPara"                 type="CT_OMathPara"/>
-        <xsd:element  ref="m:oMath"                     type="CT_OMath"/>
-        <xsd:element name="bookmarkStart"               type="CT_Bookmark"/>
-        <xsd:element name="bookmarkEnd"                 type="CT_MarkupRange"/>
-        <xsd:element name="moveFromRangeStart"          type="CT_MoveBookmark"/>
-        <xsd:element name="moveFromRangeEnd"            type="CT_MarkupRange"/>
-        <xsd:element name="moveToRangeStart"            type="CT_MoveBookmark"/>
-        <xsd:element name="moveToRangeEnd"              type="CT_MarkupRange"/>
-        <xsd:element name="commentRangeStart"           type="CT_MarkupRange"/>
-        <xsd:element name="commentRangeEnd"             type="CT_MarkupRange"/>
-        <xsd:element name="customXmlInsRangeStart"      type="CT_TrackChange"/>
-        <xsd:element name="customXmlInsRangeEnd"        type="CT_Markup"/>
-        <xsd:element name="customXmlDelRangeStart"      type="CT_TrackChange"/>
-        <xsd:element name="customXmlDelRangeEnd"        type="CT_Markup"/>
-        <xsd:element name="customXmlMoveFromRangeStart" type="CT_TrackChange"/>
-        <xsd:element name="customXmlMoveFromRangeEnd"   type="CT_Markup"/>
-        <xsd:element name="customXmlMoveToRangeStart"   type="CT_TrackChange"/>
-        <xsd:element name="customXmlMoveToRangeEnd"     type="CT_Markup"/>
-        <xsd:element name="altChunk"                    type="CT_AltChunk"/>
+      <xsd:element name="customXml"                           type="CT_CustomXmlBlock"/>
+      <xsd:element name="sdt"                                 type="CT_SdtBlock"/>
+      <xsd:element name="p"                                   type="CT_P" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="tbl"                                 type="CT_Tbl" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="proofErr" minOccurs="0"              type="CT_ProofErr"/>
+      <xsd:element name="permStart" minOccurs="0"             type="CT_PermStart"/>
+      <xsd:element name="permEnd" minOccurs="0"               type="CT_Perm"/>
+      <xsd:group ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="ins"                                 type="CT_RunTrackChange" minOccurs="0"/>
+      <xsd:element name="del"                                 type="CT_RunTrackChange" minOccurs="0"/>
+      <xsd:element name="moveFrom"                            type="CT_RunTrackChange"/>
+      <xsd:element name="moveTo"                              type="CT_RunTrackChange"/>
+      <xsd:choice>
+        <xsd:element ref="m:oMathPara"/>
+        <xsd:element ref="m:oMath"/>
       </xsd:choice>
-      <xsd:element name="sectPr" type="CT_SectPr" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="altChunk"                            type="CT_AltChunk" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="sectPr" minOccurs="0" maxOccurs="1"  type="CT_SectPr"/>
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="CT_Bookmark">
+  <xsd:complexType name="CT_P">  <!-- denormalized -->
+    <xsd:sequence>
+      <xsd:element name="pPr"                           type="CT_PPr" minOccurs="0"/>
+      <xsd:element name="customXml"                     type="CT_CustomXmlRun"/>
+      <xsd:element name="smartTag"                      type="CT_SmartTagRun"/>
+      <xsd:element name="sdt"                           type="CT_SdtRun"/>
+      <xsd:element name="dir"                           type="CT_DirContentRun"/>
+      <xsd:element name="bdo"                           type="CT_BdoContentRun"/>
+      <xsd:element name="r"                             type="CT_R"/>
+      <xsd:element name="proofErr" minOccurs="0"        type="CT_ProofErr"/>
+      <xsd:element name="permStart" minOccurs="0"       type="CT_PermStart"/>
+      <xsd:element name="permEnd" minOccurs="0"         type="CT_Perm"/>
+      <xsd:group ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="ins"                           type="CT_RunTrackChange" minOccurs="0"/>
+      <xsd:element name="del"                           type="CT_RunTrackChange" minOccurs="0"/>
+      <xsd:element name="moveFrom"                      type="CT_RunTrackChange"/>
+      <xsd:element name="moveTo"                        type="CT_RunTrackChange"/>
+      <xsd:choice>
+        <xsd:element ref="m:oMathPara"/>
+        <xsd:element ref="m:oMath"/>
+      </xsd:choice>
+      <xsd:element name="fldSimple"                     type="CT_SimpleField" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="hyperlink"                     type="CT_Hyperlink"/>
+      <xsd:element name="subDoc"                        type="CT_Rel"/>
+    </xsd:sequence>
+    <xsd:attribute name="rsidRPr"                       type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidR"                         type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidDel"                       type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidP"                         type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidRDefault"                  type="ST_LongHexNumber"/>
+  </xsd:complexType>
+
+   <xsd:complexType name="CT_Tbl"> <!-- denormalized -->
+    <xsd:sequence>
+      <xsd:group ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="tblPr"                         type="CT_TblPr"/>
+      <xsd:element name="tblGrid"                       type="CT_TblGrid"/>
+      <xsd:group ref="EG_ContentRowContent" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_HdrFtr"> <!-- denormalized -->
+    <xsd:element name="customXml"                       type="CT_CustomXmlBlock"/>
+    <xsd:element name="sdt"                             type="CT_SdtBlock"/>
+    <xsd:element name="p"                               type="CT_P" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="tbl"                             type="CT_Tbl" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="proofErr" minOccurs="0"          type="CT_ProofErr"/>
+    <xsd:element name="permStart" minOccurs="0"         type="CT_PermStart"/>
+    <xsd:element name="permEnd" minOccurs="0"           type="CT_Perm"/>
+    <xsd:group ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="ins"                             type="CT_RunTrackChange" minOccurs="0"/>
+    <xsd:element name="del"                             type="CT_RunTrackChange" minOccurs="0"/>
+    <xsd:element name="moveFrom"                        type="CT_RunTrackChange"/>
+    <xsd:element name="moveTo"                          type="CT_RunTrackChange"/>
+    <xsd:choice>
+      <xsd:element ref="m:oMathPara"/>
+      <xsd:element ref="m:oMath"/>
+    </xsd:choice>
+    <xsd:element name="altChunk"                        type="CT_AltChunk" minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="CT_FtnEdn"> <!-- denormalized -->
+    <xsd:sequence>
+      <xsd:element name="customXml"               type="CT_CustomXmlBlock"/>
+      <xsd:element name="sdt"                     type="CT_SdtBlock"/>
+      <xsd:element name="p"                       type="CT_P" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="tbl"                     type="CT_Tbl" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="proofErr" minOccurs="0"  type="CT_ProofErr"/>
+      <xsd:element name="permStart" minOccurs="0" type="CT_PermStart"/>
+      <xsd:element name="permEnd" minOccurs="0"   type="CT_Perm"/>
+      <xsd:group ref="EG_RangeMarkupElements" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="ins"                     type="CT_RunTrackChange" minOccurs="0"/>
+      <xsd:element name="del"                     type="CT_RunTrackChange" minOccurs="0"/>
+      <xsd:element name="moveFrom"                type="CT_RunTrackChange"/>
+      <xsd:element name="moveTo"                  type="CT_RunTrackChange"/>
+      <xsd:choice>
+        <xsd:element ref="m:oMathPara"/>
+        <xsd:element ref="m:oMath"/>
+      </xsd:choice>
+      <xsd:element name="altChunk"                type="CT_AltChunk" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="type"                    type="ST_FtnEdn" use="optional"/>
+    <xsd:attribute name="id"                      type="ST_DecimalNumber" use="required"/>
+  </xsd:complexType>
+
+  <xsd:group name="EG_RangeMarkupElements">
+    <xsd:choice>
+      <xsd:element name="bookmarkStart"                 type="CT_Bookmark"/>
+      <xsd:element name="bookmarkEnd"                   type="CT_MarkupRange"/>
+      <xsd:element name="moveFromRangeStart"            type="CT_MoveBookmark"/>
+      <xsd:element name="moveFromRangeEnd"              type="CT_MarkupRange"/>
+      <xsd:element name="moveToRangeStart"              type="CT_MoveBookmark"/>
+      <xsd:element name="moveToRangeEnd"                type="CT_MarkupRange"/>
+      <xsd:element name="commentRangeStart"             type="CT_MarkupRange"/>
+      <xsd:element name="commentRangeEnd"               type="CT_MarkupRange"/>
+      <xsd:element name="customXmlInsRangeStart"        type="CT_TrackChange"/>
+      <xsd:element name="customXmlInsRangeEnd"          type="CT_Markup"/>
+      <xsd:element name="customXmlDelRangeStart"        type="CT_TrackChange"/>
+      <xsd:element name="customXmlDelRangeEnd"          type="CT_Markup"/>
+      <xsd:element name="customXmlMoveFromRangeStart"   type="CT_TrackChange"/>
+      <xsd:element name="customXmlMoveFromRangeEnd"     type="CT_Markup"/>
+      <xsd:element name="customXmlMoveToRangeStart"     type="CT_TrackChange"/>
+      <xsd:element name="customXmlMoveToRangeEnd"       type="CT_Markup"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:complexType name="CT_Bookmark">  <!-- denormalized -->
     <xsd:attribute name="id"                   type="ST_DecimalNumber" use="required"/>
     <xsd:attribute name="name"                 type="s:ST_String"      use="required"/>
     <xsd:attribute name="displacedByCustomXml" type="ST_DisplacedByCustomXml"/>
