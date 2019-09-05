@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from docx.bookmark import _Bookmark
 from docx.enum.style import WD_STYLE_TYPE
-from docx.shared import Parented
+from docx.shared import lazyproperty, Parented
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
@@ -54,6 +54,11 @@ class Paragraph(Parented):
     def alignment(self, value):
         self._p.alignment = value
 
+    @lazyproperty
+    def _bookmarks(self):
+        """Global |Bookmarks| object for overall document."""
+        raise NotImplementedError
+
     def clear(self):
         """
         Return this same paragraph after removing all its content.
@@ -97,7 +102,12 @@ class Paragraph(Parented):
 
         The returned bookmark is anchored at the end of this paragraph.
         """
-        raise NotImplementedError
+        if name in self._bookmarks:
+            raise KeyError("Document already contains bookmark with name %s" % name)
+
+        return _Bookmark(
+            (self._element.add_bookmarkStart(name, self._bookmarks.next_id), None)
+        )
 
     @property
     def style(self):
