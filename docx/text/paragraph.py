@@ -69,7 +69,10 @@ class Paragraph(Parented):
 
     def end_bookmark(self, bookmark):
         """Closes supplied bookmark at the end of this paragraph."""
-        raise NotImplementedError
+        bookmarkend = self._element._add_bookmarkEnd()
+        bookmarkend.id = bookmark.id
+        bookmark._bookmarkEnd = bookmarkend
+        return bookmark
 
     def insert_paragraph_before(self, text=None, style=None):
         """

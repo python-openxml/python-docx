@@ -10,7 +10,7 @@ Feature: Paragraph properties and methods
      Then bookmark.name == "Target"
       And bookmark.id is an int
 
-  @wip
+
   Scenario: Paragraph.end_bookmark()
     Given a Paragraph object as paragraph
      When I assign bookmark = paragraph.start_bookmark("Target")

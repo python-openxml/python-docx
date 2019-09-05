@@ -13,6 +13,7 @@ class CT_P(BaseOxmlElement):
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
 
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd")
     bookmarkStart = ZeroOrMore("w:bookmarkStart")
     pPr = ZeroOrOne("w:pPr")
     r = ZeroOrMore("w:r")

@@ -29,6 +29,18 @@ from ..unitutil.mock import (
 
 
 class DescribeParagraph(object):
+    def it_can_end_a_bookmark(self, end_bookmark_fixture):
+        blockContainer, name, bookmarkStart, expected_xml = end_bookmark_fixture
+
+        blkcntnr = Paragraph(blockContainer, None)
+        bookmark_ = _Bookmark((bookmarkStart, None))
+
+        bookmark = blkcntnr.end_bookmark(bookmark_)
+
+        assert blkcntnr._element.xml == expected_xml
+        assert bookmark.name == name
+        assert bookmark is bookmark_
+
     def it_can_start_a_bookmark(
         self,
         start_bookmark_fixture,
@@ -207,6 +219,30 @@ class DescribeParagraph(object):
         paragraph = Paragraph(element(initial_cxml), None)
         expected_xml = xml(expected_cxml)
         return paragraph, expected_xml
+
+    @pytest.fixture(
+        params=[
+            # ---at start of paragraph---
+            (
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=24})",
+                "w:bookmarkStart{w:name=bmk-1, w:id=24}",
+                "w:p/(w:bookmarkStart{w:name=bmk-1, w:id=24},w:bookmarkEnd{w:id=24})",
+            ),
+            (
+                # ---run in between bookmarks---
+                'w:p/(w:bookmarkStart{w:name=bmk-1, w:id=24}, w:r/w:t"foobar")',
+                "w:bookmarkStart{w:name=bmk-1, w:id=24}",
+                'w:p/(w:bookmarkStart{w:name=bmk-1, w:id=24},w:r/w:t"foobar", w:bookmarkEnd{w:id=24})',
+            ),
+        ]
+    )
+    def end_bookmark_fixture(self, request):
+        cxml, bookmark_cxml, expected_cxml = request.param
+        blockContainer = element(cxml)
+        bookmarkStart = element(bookmark_cxml)
+        expected_xml = xml(expected_cxml)
+        name = "bmk-1"
+        return blockContainer, name, bookmarkStart, expected_xml
 
     @pytest.fixture(params=[(None, None), ("Foo", None), (None, "Bar"), ("Foo", "Bar")])
     def insert_before_fixture(self, request, _insert_paragraph_before_, add_run_):
