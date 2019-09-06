@@ -39,10 +39,11 @@ def _default_docx_path():
 
 def element(element, part):
     if str(type(element)) == "<class 'docx.oxml.text.paragraph.CT_P'>":
-        return Paragraph(element, element.getparent())
+        from  .text.paragraph import  Paragraph
+        return Paragraph(element, part)
     elif str(type(element)) == "<class 'docx.oxml.table.CT_Tbl'>":
         from .table import Table
-        return Table(element, element.getparent())
+        return Table(element, part)
     elif str(type(element)) == "<class 'docx.oxml.section.CT_SectPr'>":
         from .section import Section
         return Section(element, part)
