@@ -201,12 +201,11 @@ class Run(Parented):
         '''
         return self.element.getparent().tag.split('}')[1] == 'hyperlink'
 
-    @property
-    def get_HyperLink(self):
+    def get_hyperLink(self):
         """
         returns the text of the hyperlink of the run in case of the run has a hyperlink
         """
-        document = self._parent._parent._parent
+        document = self._parent._parent.document
         parent   = self.element.getparent()
         linkText = ''
         if self.is_hyperlink:

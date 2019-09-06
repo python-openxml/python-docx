@@ -66,7 +66,7 @@ class Paragraph(Parented):
         r_lst = otherParagraph.runs
         self.merge_runs(r_lst)
     
-    def merge_runs(self, runs):
+    def append_runs(self, runs):
         self.add_run(' ')
         for run in runs:
             self._p.append(run._r)
@@ -171,7 +171,7 @@ class Paragraph(Parented):
         output Paragraph level in case of header or returns None
         '''
         headerPattern = re.compile(".*Heading (\d+)$")
-        level = None
+        level = 0
         if headerPattern.match(self.style.name):
             level = int(self.style.name.lower().split('heading')[-1].strip())
         return level
