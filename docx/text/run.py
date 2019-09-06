@@ -6,6 +6,8 @@ Run-related proxy objects for python-docx, Run in particular.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from docx.oxml.ns import qn
+
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
 from .font import Font
@@ -192,6 +194,35 @@ class Run(Parented):
         else:
             return None
 
+    @property
+    def is_hyperlink(self):
+        '''
+        checks if the run is nested inside a hyperlink element
+        '''
+        return self.element.getparent().tag.split('}')[1] == 'hyperlink'
+
+    def get_hyperLink(self):
+        """
+        returns the text of the hyperlink of the run in case of the run has a hyperlink
+        """
+        document = self._parent._parent.document
+        parent   = self.element.getparent()
+        linkText = ''
+        if self.is_hyperlink:
+            if parent.attrib.__contains__(qn('r:id')):
+                rId = parent.get(qn('r:id'))
+                linkText = document._part._rels[rId].target_ref
+                return linkText, True
+            elif parent.attrib.__contains__(qn('w:anchor')):
+                linkText = parent.get(qn('w:anchor'))
+                return linkText, False
+            else:
+                print('No Link in Hyperlink!')
+                print(self.text)
+                return '', False
+        else:
+            return 'None'
+        
 
 class _Text(object):
     """
