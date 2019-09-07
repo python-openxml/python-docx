@@ -11,11 +11,11 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 from docx.bookmark import _Bookmark, Bookmarks
-from docx.blkcntnr import BlockItemContainer
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import (
@@ -92,6 +92,18 @@ class DescribeParagraph(object):
         paragraph_format = paragraph.paragraph_format
         ParagraphFormat_.assert_called_once_with(paragraph._element)
         assert paragraph_format is paragraph_format_
+
+    def it_provides_access_to_the_global_bookmarks_collection_to_help(
+        self, bookmarks_fixture, part_prop_, bookmarks_
+    ):
+        parent_part_ = bookmarks_fixture
+        parent_part_.bookmarks = bookmarks_
+        part_prop_.return_value = parent_part_
+        blkcntnr = Paragraph(None, None)
+
+        bookmarks = blkcntnr._bookmarks
+
+        assert bookmarks is bookmarks_
 
     def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
         paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
@@ -175,6 +187,12 @@ class DescribeParagraph(object):
         paragraph = Paragraph(element(initial_cxml), None)
         expected_xml = xml(expected_cxml)
         return paragraph, new_alignment_value, expected_xml
+
+    @pytest.fixture(params=[DocumentPart, HeaderPart, FooterPart])
+    def bookmarks_fixture(self, request):
+        PartCls = request.param
+        parent_part_ = instance_mock(request, PartCls)
+        return parent_part_
 
     @pytest.fixture(
         params=[

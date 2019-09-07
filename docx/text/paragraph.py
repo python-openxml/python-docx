@@ -57,7 +57,7 @@ class Paragraph(Parented):
     @lazyproperty
     def _bookmarks(self):
         """Global |Bookmarks| object for overall document."""
-        raise NotImplementedError
+        return self.part.bookmarks
 
     def clear(self):
         """
@@ -66,6 +66,10 @@ class Paragraph(Parented):
         """
         self._p.clear_content()
         return self
+
+    def end_bookmark(self, bookmark):
+        """Closes supplied bookmark at the end of this paragraph."""
+        raise NotImplementedError
 
     def insert_paragraph_before(self, text=None, style=None):
         """

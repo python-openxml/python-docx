@@ -3,7 +3,7 @@ Feature: Paragraph properties and methods
   As a developer using python-docx
   I need properties and methods on the Paragraph object
 
-  @wip
+
   Scenario: Paragraph.start_bookmark()
     Given a Paragraph object as paragraph
      When I assign bookmark = paragraph.start_bookmark("Target")
