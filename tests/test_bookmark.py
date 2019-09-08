@@ -206,6 +206,25 @@ class DescribeBookmarks(object):
 class Describe_Bookmark(object):
     """Unit-test suite for `docx.bookmark._Bookmark` object."""
 
+    def it_knows_when_it_equals_another_bookmark_object(self):
+        bookmarkStart = element("w:bookmarkStart")
+        bookmarkStart_2 = element("w:bookmarkStart")
+        bookmarkEnd = element("w:bookmarkEnd")
+        bookmarkEnd_2 = element("w:bookmarkEnd")
+
+        # ---open bookmark---
+        assert _Bookmark((bookmarkStart, None)) == _Bookmark((bookmarkStart, None))
+        # ---closed bookmark---
+        assert _Bookmark((bookmarkStart, bookmarkEnd)) == _Bookmark(
+            (bookmarkStart, bookmarkEnd)
+        )
+        # ---different bookmark---
+        assert _Bookmark((bookmarkStart, bookmarkEnd)) != _Bookmark(
+            (bookmarkStart_2, bookmarkEnd_2)
+        )
+        # ---not a bookmark---
+        assert _Bookmark((bookmarkStart, bookmarkEnd)) != object()
+
     def it_can_close_itself_when_open(self):
         bookmarkStart = element("w:bookmarkStart{w:id=42}")
         bookmarkEnd = element("w:bookmarkEnd{w:id=42}")

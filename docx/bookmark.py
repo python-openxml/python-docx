@@ -76,6 +76,14 @@ class _Bookmark(object):
     def __init__(self, bookmark_pair):
         self._bookmarkStart, self._bookmarkEnd = bookmark_pair
 
+    def __eq__(self, other):
+        if not isinstance(other, _Bookmark):
+            return False
+        return (
+            self._bookmarkStart is other._bookmarkStart
+            and self._bookmarkEnd is other._bookmarkEnd
+        )
+
     def close(self, bookmarkEnd):
         """Return self after setting end marker to `bookmarkEnd`.
 
