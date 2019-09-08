@@ -52,6 +52,10 @@ class BlockItemContainer(Parented):
         self._element._insert_tbl(tbl)
         return Table(tbl, self)
 
+    def end_bookmark(self, bookmark):
+        """Return `bookmark` after closing it after last block item in container."""
+        raise NotImplementedError
+
     @property
     def paragraphs(self):
         """

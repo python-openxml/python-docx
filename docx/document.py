@@ -114,7 +114,7 @@ class Document(ElementProxy):
 
     def end_bookmark(self, bookmark):
         """Return `bookmark` after closing it at end of this document."""
-        raise NotImplementedError
+        return self._body.end_bookmark(bookmark)
 
     @property
     def inline_shapes(self):

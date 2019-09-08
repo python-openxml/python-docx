@@ -90,11 +90,6 @@ class DescribeDocument(object):
         assert table == table_
         assert table.style == style
 
-    def it_can_save_the_document_to_a_file(self, save_fixture):
-        document, file_ = save_fixture
-        document.save(file_)
-        document._part.save.assert_called_once_with(file_)
-
     def it_provides_access_to_its_bookmarks(self, document_part_, bookmarks_):
         document_part_.bookmarks = bookmarks_
         document = Document(None, document_part_)
@@ -108,6 +103,16 @@ class DescribeDocument(object):
         core_properties = document.core_properties
         assert core_properties is core_properties_
 
+    def it_can_end_a_bookmark(self, _body_prop_, body_, bookmark_):
+        _body_prop_.return_value = body_
+        body_.end_bookmark.return_value = bookmark_
+        document = Document(None, None)
+
+        bookmark = document.end_bookmark(bookmark_)
+
+        body_.end_bookmark.assert_called_once_with(bookmark_)
+        assert bookmark is bookmark_
+
     def it_provides_access_to_its_inline_shapes(self, inline_shapes_fixture):
         document, inline_shapes_ = inline_shapes_fixture
         assert document.inline_shapes is inline_shapes_
@@ -116,6 +121,11 @@ class DescribeDocument(object):
         document, paragraphs_ = paragraphs_fixture
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
+
+    def it_can_save_the_document_to_a_file(self, save_fixture):
+        document, file_ = save_fixture
+        document.save(file_)
+        document._part.save.assert_called_once_with(file_)
 
     def it_provides_access_to_its_sections(self, document_part_, Sections_, sections_):
         document_elm = element("w:document")
