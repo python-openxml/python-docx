@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-Step implementations for document-related features
-"""
+"""Step implementations for document-related features"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from behave import given, then, when
 
@@ -68,6 +66,11 @@ def given_a_single_section_document_having_portrait_layout(context):
 @given("a single-section Document object with headers and footers as document")
 def given_a_single_section_Document_object_with_headers_and_footers(context):
     context.document = Document(test_docx("doc-add-section"))
+
+
+@given('an open Bookmark object named "Target" as bookmark')
+def given_an_open_Bookmark_object_named_Target_as_bookmark(context):
+    context.bookmark = context.document.start_bookmark("Target")
 
 
 # when ====================================================
@@ -180,6 +183,17 @@ def when_I_execute_section_eq_document_add_section(context):
 
 
 # then ====================================================
+
+
+@then('bookmark == document.bookmarks.get("Target")')
+def then_bookmark_eq_document_bookmarks_get_Target(context):
+    assert context.bookmark == context.document.bookmarks.get("Target")
+
+
+@then("bookmark == document.end_bookmark(bookmark)")
+def then_bookmark_eq_document_end_bookmark(context):
+    bookmark = context.bookmark
+    assert bookmark == context.document.end_bookmark(bookmark)
 
 
 @then("document.bookmarks is a Bookmarks object")
