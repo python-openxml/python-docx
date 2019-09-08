@@ -206,6 +206,33 @@ class DescribeBookmarks(object):
 class Describe_Bookmark(object):
     """Unit-test suite for `docx.bookmark._Bookmark` object."""
 
+    def it_can_close_itself_when_open(self):
+        bookmarkStart = element("w:bookmarkStart{w:id=42}")
+        bookmarkEnd = element("w:bookmarkEnd{w:id=42}")
+        bookmark = _Bookmark((bookmarkStart, None))
+
+        return_value = bookmark.close(bookmarkEnd)
+
+        assert bookmark._bookmarkEnd == bookmarkEnd
+        assert return_value is bookmark
+
+    def but_it_raises_if_it_is_already_closed(self):
+        bookmarkEnd = element("w:bookmarkEnd")
+        bookmark = _Bookmark((None, bookmarkEnd))
+
+        with pytest.raises(ValueError) as e:
+            bookmark.close(bookmarkEnd)
+        assert "bookmark already closed" in str(e.value)
+
+    def and_it_raises_if_the_ids_dont_match(self):
+        bookmarkStart = element("w:bookmarkStart{w:id=42}")
+        bookmarkEnd = element("w:bookmarkEnd{w:id=24}")
+        bookmark = _Bookmark((bookmarkStart, None))
+
+        with pytest.raises(ValueError) as e:
+            bookmark.close(bookmarkEnd)
+        assert "end id does not match start id" in str(e.value)
+
     def it_knows_its_id(self):
         bookmarkStart = element("w:bookmarkStart{w:id=42}")
         bookmarkEnd = element("w:bookmarkEnd")

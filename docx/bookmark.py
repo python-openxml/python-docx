@@ -82,7 +82,12 @@ class _Bookmark(object):
         Raises ValueError if this bookmark is already closed or if `id` attribute of
         `bookmarkEnd` does not match that of the `bookmarkStart` element.
         """
-        raise NotImplementedError
+        if self._bookmarkEnd is not None:
+            raise ValueError("bookmark already closed")
+        if bookmarkEnd.id != self._bookmarkStart.id:
+            raise ValueError("end id does not match start id")
+        self._bookmarkEnd = bookmarkEnd
+        return self
 
     @property
     def id(self):
