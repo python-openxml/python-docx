@@ -92,7 +92,7 @@ class _Bookmark(object):
     @property
     def is_closed(self):
         """True if this bookmark has both a start and end element."""
-        raise NotImplementedError
+        return self._bookmarkEnd is not None
 
     @property
     def name(self):

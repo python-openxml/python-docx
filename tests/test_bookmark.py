@@ -214,6 +214,14 @@ class Describe_Bookmark(object):
 
         assert bookmark.id == 42
 
+    def it_knows_whether_it_is_closed(self, is_closed_fixture):
+        bookmarkStart, bookmarkEnd, expected_value = is_closed_fixture
+        bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
+
+        is_closed = bookmark.is_closed
+
+        assert is_closed == expected_value
+
     def it_knows_its_name(self):
         bookmarkStart = element("w:bookmarkStart{w:name=bmk-0}")
         bookmarkEnd = element("w:bookmarkEnd")
@@ -221,6 +229,21 @@ class Describe_Bookmark(object):
         bookmark = _Bookmark((bookmarkStart, bookmarkEnd))
 
         assert bookmark.name == "bmk-0"
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture(
+        params=[
+            (None, None, False),  # ---not expected---
+            ("w:bookmarkStart", None, False),
+            ("w:bookmarkStart", "w:bookmarkEnd", True),
+        ]
+    )
+    def is_closed_fixture(self, request):
+        bookmarkStart_cxml, bookmarkEnd_cxml, expected_value = request.param
+        bookmarkStart = element(bookmarkStart_cxml) if bookmarkStart_cxml else None
+        bookmarkEnd = element(bookmarkEnd_cxml) if bookmarkEnd_cxml else None
+        return bookmarkStart, bookmarkEnd, expected_value
 
 
 class Describe_DocumentBookmarkFinder(object):
