@@ -76,10 +76,23 @@ class _Bookmark(object):
     def __init__(self, bookmark_pair):
         self._bookmarkStart, self._bookmarkEnd = bookmark_pair
 
+    def close(self, bookmarkEnd):
+        """Return self after setting end marker to `bookmarkEnd`.
+
+        Raises ValueError if this bookmark is already closed or if `id` attribute of
+        `bookmarkEnd` does not match that of the `bookmarkStart` element.
+        """
+        raise NotImplementedError
+
     @property
     def id(self):
         """Provides access to the bookmark id."""
         return self._bookmarkStart.id
+
+    @property
+    def is_closed(self):
+        """True if this bookmark has both a start and end element."""
+        raise NotImplementedError
 
     @property
     def name(self):

@@ -50,6 +50,29 @@ class DescribeBlockItemContainer(object):
         assert table._element.xml == expected_xml
         assert table._parent is blkcntnr
 
+    def it_can_end_a_bookmark(self, end_bookmark_fixture, bookmark_):
+        blockContainer, bookmark_id, expected_xml = end_bookmark_fixture
+        bookmark_.close.return_value = bookmark_
+        bookmark_.id = bookmark_id
+        bookmark_.is_closed = False
+        blkcntnr = BlockItemContainer(blockContainer, None)
+
+        bookmark = blkcntnr.end_bookmark(bookmark_)
+
+        bookmark_.close.assert_called_once_with(
+            blockContainer.xpath("w:bookmarkEnd")[-1]
+        )
+        assert blkcntnr._element.xml == expected_xml
+        assert bookmark is bookmark_
+
+    def but_it_raises_when_bookmark_is_already_closed(self, bookmark_):
+        bookmark_.is_closed = True
+        blkcntnr = BlockItemContainer(None, None)
+
+        with pytest.raises(ValueError) as e:
+            blkcntnr.end_bookmark(bookmark_)
+        assert "bookmark already closed" in str(e.value)
+
     def it_provides_access_to_the_paragraphs_it_contains(self, paragraphs_fixture):
         # ---test len(), iterable, and indexed access---
         blkcntnr, expected_count = paragraphs_fixture
@@ -159,6 +182,24 @@ class DescribeBlockItemContainer(object):
         PartCls = request.param
         parent_part_ = instance_mock(request, PartCls)
         return parent_part_
+
+    @pytest.fixture(
+        params=[
+            # ---document body---
+            ("w:body", 0, "w:body/w:bookmarkEnd{w:id=0}"),
+            # ---table cell---
+            ("w:tc/w:p", 1, "w:tc/(w:p,w:bookmarkEnd{w:id=1})"),
+            # ---header---
+            ("w:hdr/w:p", 42, "w:hdr/(w:p,w:bookmarkEnd{w:id=42})"),
+            # ---footer---
+            ("w:ftr/w:p", 24, "w:ftr/(w:p,w:bookmarkEnd{w:id=24})"),
+        ]
+    )
+    def end_bookmark_fixture(self, request):
+        cxml, bookmark_id, expected_cxml = request.param
+        blockContainer = element(cxml)
+        expected_xml = xml(expected_cxml)
+        return blockContainer, bookmark_id, expected_xml
 
     @pytest.fixture(
         params=[

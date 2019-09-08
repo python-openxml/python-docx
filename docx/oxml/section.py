@@ -23,6 +23,18 @@ class CT_HdrFtr(BaseOxmlElement):
     p = ZeroOrMore("w:p", successors=())
     tbl = ZeroOrMore("w:tbl", successors=())
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=())
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=())
+
+    def add_bookmarkEnd(self, bookmark_id):
+        """Return `w:bookmarkEnd` element added at end of this header or footer.
+
+        The newly added `w:bookmarkEnd` element is linked to it's `w:bookmarkStart`
+        counterpart by `bookmark_id`. It is the caller's responsibility to determine
+        `bookmark_id` matches that of the intended `bookmarkStart` element.
+        """
+        bookmarkEnd = self._add_bookmarkEnd()
+        bookmarkEnd.id = bookmark_id
+        return bookmarkEnd
 
     def add_bookmarkStart(self, name, bookmark_id):
         """Return `w:bookmarkStart` element added at the end of this header or footer.

@@ -54,7 +54,9 @@ class BlockItemContainer(Parented):
 
     def end_bookmark(self, bookmark):
         """Return `bookmark` after closing it after last block item in container."""
-        raise NotImplementedError
+        if bookmark.is_closed:
+            raise ValueError("bookmark already closed")
+        return bookmark.close(self._element.add_bookmarkEnd(bookmark.id))
 
     @property
     def paragraphs(self):

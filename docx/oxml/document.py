@@ -1,9 +1,6 @@
 # encoding: utf-8
 
-"""
-Custom element classes that correspond to the document part, e.g.
-<w:document>.
-"""
+"""Custom element classes that correspond to the document part, e.g. <w:document>."""
 
 from .xmlchemy import BaseOxmlElement, ZeroOrOne, ZeroOrMore
 
@@ -30,7 +27,19 @@ class CT_Body(BaseOxmlElement):
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=("w:sectPr",))
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=("w:sectPr",))
     sectPr = ZeroOrOne("w:sectPr", successors=())
+
+    def add_bookmarkEnd(self, bookmark_id):
+        """Return `w:bookmarkEnd` element added at end of document.
+
+        The newly added `w:bookmarkEnd` element is linked to it's `w:bookmarkStart`
+        counterpart by `bookmark_id`. It is the caller's responsibility to determine
+        `bookmark_id` matches that of the intended `bookmarkStart` element.
+        """
+        bookmarkEnd = self._add_bookmarkEnd()
+        bookmarkEnd.id = bookmark_id
+        return bookmarkEnd
 
     def add_bookmarkStart(self, name, bookmark_id):
         """Return `w:bookmarkStart` element added at end of document.
