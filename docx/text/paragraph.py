@@ -64,7 +64,7 @@ class Paragraph(Parented):
 
     def merge_paragraph(self, otherParagraph):
         r_lst = otherParagraph.runs
-        self.merge_runs(r_lst)
+        self.append_runs(r_lst)
     
     def append_runs(self, runs):
         self.add_run(' ')
