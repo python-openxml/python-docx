@@ -3,6 +3,13 @@
 
 Release History BayooG/bayoo-docx forked from (python-openxmm/python-docx)
 ---------------
+0.2.4 (2019-9-4)
+
+- loop over all the document chieldern (Paragraphs, Tables, Sections) with the right order `document.elements`
+
+- addons to Paragraph Object (delete, heading_level, merge_paragraph )
+
+
 
 0.1.3 (2019-03-08)
 ++++++++++++++++++
