@@ -227,6 +227,7 @@ from .text.parfmt import (  # noqa
     CT_Jc,
     CT_PPr,
     CT_Spacing,
+    CT_Shading,
     CT_TabStop,
     CT_TabStops,
 )
@@ -238,6 +239,7 @@ register_element_cls('w:pageBreakBefore', CT_OnOff)
 register_element_cls('w:pPr',             CT_PPr)
 register_element_cls('w:pStyle',          CT_String)
 register_element_cls('w:spacing',         CT_Spacing)
+register_element_cls('w:shd',             CT_Shading)
 register_element_cls('w:tab',             CT_TabStop)
 register_element_cls('w:tabs',            CT_TabStops)
 register_element_cls('w:widowControl',    CT_OnOff)

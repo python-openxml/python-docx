@@ -9,6 +9,9 @@ from ...enum.text import (
 )
 from ...shared import Length
 from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
+from ..simpletypes import (
+    ST_HexColor, ST_String
+)
 from ..xmlchemy import (
     BaseOxmlElement, OneOrMore, OptionalAttribute, RequiredAttribute,
     ZeroOrOne
@@ -53,6 +56,7 @@ class CT_PPr(BaseOxmlElement):
     pageBreakBefore = ZeroOrOne('w:pageBreakBefore', successors=_tag_seq[4:])
     widowControl = ZeroOrOne('w:widowControl', successors=_tag_seq[6:])
     numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
+    shading = ZeroOrOne('w:shd', successors=_tag_seq[10:])
     tabs = ZeroOrOne('w:tabs', successors=_tag_seq[11:])
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
@@ -194,6 +198,38 @@ class CT_PPr(BaseOxmlElement):
             self.get_or_add_pageBreakBefore().val = value
 
     @property
+    def shading_color(self):
+        """
+        Value of `w:shd/@color` attribute, specifying foreground
+        color, or `None`.
+        """
+        shading = self.shading
+        if shading is None:
+            return None
+        return shading.color
+
+    @shading_color.setter
+    def shading_color(self, value):
+        highlight = self.get_or_add_shading()
+        highlight.color = value
+
+    @property
+    def shading_fill(self):
+        """
+        Value of `w:shd/@fill` attribute, specifying background
+        color, or `None`.
+        """
+        shading = self.shading
+        if shading is None:
+            return None
+        return shading.fill
+
+    @shading_fill.setter
+    def shading_fill(self, value):
+        shading = self.get_or_add_shading()
+        shading.fill = value
+
+    @property
     def spacing_after(self):
         """
         The value of `w:spacing/@w:after` or |None| if not present.
@@ -316,6 +352,14 @@ class CT_Spacing(BaseOxmlElement):
     line = OptionalAttribute('w:line', ST_SignedTwipsMeasure)
     lineRule = OptionalAttribute('w:lineRule', WD_LINE_SPACING)
 
+class CT_Shading(BaseOxmlElement):
+    """
+    ``<w:shd>`` element, specifying Paragraph shading/background color and foreground pattern.
+    """
+    #val = OptionalAttribute('w:val', ST_String)
+    #color = OptionalAttribute('w:color', ST_HexColor)
+    fill = RequiredAttribute('w:fill', ST_HexColor)
+    #val = RequiredAttribute('w:val', WD_COLOR)
 
 class CT_TabStop(BaseOxmlElement):
     """
