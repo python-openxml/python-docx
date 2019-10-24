@@ -60,6 +60,7 @@ CLASSIFIERS = [
 
 LONG_DESCRIPTION = text_of('README.rst') + '\n\n' + text_of('HISTORY.rst')
 
+ZIP_SAFE = False
 
 params = {
     'name':             NAME,
@@ -77,6 +78,7 @@ params = {
     'tests_require':    TESTS_REQUIRE,
     'test_suite':       TEST_SUITE,
     'classifiers':      CLASSIFIERS,
+    'zip_safe':         ZIP_SAFE,
 }
 
 setup(**params)
