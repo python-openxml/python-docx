@@ -49,11 +49,8 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2',
-    'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.3',
-    'Programming Language :: Python :: 3.4',
     'Topic :: Office/Business :: Office Suites',
     'Topic :: Software Development :: Libraries'
 ]
@@ -77,6 +74,7 @@ params = {
     'tests_require':    TESTS_REQUIRE,
     'test_suite':       TEST_SUITE,
     'classifiers':      CLASSIFIERS,
+    'python_requires':  '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
 }
 
 setup(**params)

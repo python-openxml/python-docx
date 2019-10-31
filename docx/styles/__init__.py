@@ -31,7 +31,7 @@ class BabelFish(object):
     )
 
     internal_style_names = dict(style_aliases)
-    ui_style_names = dict((item[1], item[0]) for item in style_aliases)
+    ui_style_names = {item[1]: item[0] for item in style_aliases}
 
     @classmethod
     def ui2internal(cls, ui_style_name):

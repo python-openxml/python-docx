@@ -93,13 +93,7 @@ class PackURI(str):
         *baseURI*. E.g. PackURI('/ppt/slideLayouts/slideLayout1.xml') would
         return '../slideLayouts/slideLayout1.xml' for baseURI '/ppt/slides'.
         """
-        # workaround for posixpath bug in 2.6, doesn't generate correct
-        # relative path when *start* (second) parameter is root ('/')
-        if baseURI == '/':
-            relpath = self[1:]
-        else:
-            relpath = posixpath.relpath(self, baseURI)
-        return relpath
+        return posixpath.relpath(self, baseURI)
 
     @property
     def rels_uri(self):
