@@ -77,7 +77,7 @@ class BlockItemContainer(Parented):
 
         def make_element(el, s):
             if isinstance(el, CT_P):
-                return Paragraph(el, self)
+                return Paragraph(el, s)
             elif isinstance(el, CT_Tbl):
                 return Table(el, s)
 
