@@ -8,6 +8,7 @@ from docx.blkcntnr import BlockItemContainer
 from docx.compat import Sequence
 from docx.enum.section import WD_HEADER_FOOTER
 from docx.shared import lazyproperty
+from docx.text.paragraph import Paragraph
 
 
 class Sections(Sequence):
@@ -257,6 +258,36 @@ class Section(object):
     @top_margin.setter
     def top_margin(self, value):
         self._sectPr.top_margin = value
+
+    @property
+    def paragraphs(self):
+        """
+        Get paragraphs in this section
+        """
+        from docx.oxml.document import CT_Body
+
+        paragraphs = []
+        if isinstance(self._sectPr.getparent(), CT_Body):
+            # last section
+            return self._paragraphs_until_section_break(self._sectPr)
+        else:
+            # user custom section
+            return self._paragraphs_until_section_break(self._sectPr.getparent().getparent())
+
+    @staticmethod
+    def _paragraphs_until_section_break(start):
+        from docx.oxml.text.paragraph import CT_P
+        paragraphs = [Paragraph(start, start.getparent())] if isinstance(start, CT_P) else []
+        start = start.getprevious()
+
+        while start is not None:
+            if isinstance(start, CT_P):
+                paragraph = Paragraph(start, start.getparent())
+                if paragraph.is_section_break():
+                    break
+                paragraphs.insert(0, paragraph)
+            start = start.getprevious()
+        return paragraphs
 
 
 class _BaseHeaderFooter(BlockItemContainer):

@@ -136,6 +136,12 @@ class Paragraph(Parented):
         self.clear()
         self.add_run(text)
 
+    def is_section_break(self):
+        """
+        Is this paragraph a section break
+        """
+        return self._p.has_sectPr()
+
     def _insert_paragraph_before(self):
         """
         Return a newly created paragraph, inserted directly before this
