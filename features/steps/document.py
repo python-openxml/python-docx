@@ -159,16 +159,9 @@ def when_I_add_an_even_page_section_to_the_document(context):
     context.section = context.document.add_section(WD_SECTION.EVEN_PAGE)
 
 
-@when('I assign bookmark = document.bookmarks.get("Target")')
-def when_I_assign_bookmark_eq_document_bookmarks_get_target(context):
-    document = context.document
-    context.bookmark = document.bookmarks.get("Target")
-
-
 @when('I assign bookmark = document.start_bookmark("Target")')
 def when_I_assign_bookmark_eq_document_start_bookmark(context):
-    document = context.document
-    context.bookmark = document.start_bookmark("Target")
+    context.bookmark = context.document.start_bookmark("Target")
 
 
 @when("I change the new section layout to landscape")
@@ -182,8 +175,7 @@ def when_I_change_the_new_section_layout_to_landscape(context):
 
 @when("I end bookmark by calling document.end_bookmark(bookmark)")
 def when_I_end_bookmark_by_calling_document_end_bookmark_with_bookmark(context):
-    document = context.document
-    document.end_bookmark(context.bookmark)
+    context.document.end_bookmark(context.bookmark)
 
 
 @when("I execute section = document.add_section()")
@@ -200,6 +192,9 @@ def then_document_bookmarks_is_a_Bookmarks_object(context):
     expected = "Bookmarks"
     assert actual == expected, "document.bookmarks is a %s object" % actual
 
+@then('document.bookmarks.get("Target").name == "Target"')
+def then_document_bookmarks_get_Target_name_eq_Target(context):
+    assert context.document.bookmarks.get("Target").name == "Target"
 
 @then("document.inline_shapes is an InlineShapes object")
 def then_document_inline_shapes_is_an_InlineShapes_object(context):

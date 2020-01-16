@@ -57,14 +57,14 @@ Feature: Header and footer behaviors
       | with a     |
       | with no    |
 
-
   @wip
   Scenario Outline: _Header.end_bookmark()
     Given a _Header object <with-or-no> header definition as header
      When I assign bookmark = header.start_bookmark("Target")
-      And I end bookmark by calling header.end_bookmark(bookmark)
-      And I assign bookmark = header._bookmarks.get("Target")
-     Then bookmark.name == "Target"
+      And I call header.end_bookmark(bookmark)
+     # ---bookmark can only be looked up by name if it is closed---
+     Then header._bookmarks.get("Target").name == "Target"
+
 
     Examples: _Footer definition states
       | with-or-no |
@@ -129,9 +129,9 @@ Feature: Header and footer behaviors
   Scenario Outline: _Footer.end_bookmark()
     Given a _Footer object <with-or-no> footer definition as footer
      When I assign bookmark = footer.start_bookmark("Target")
-      And I end bookmark by calling footer.end_bookmark(bookmark)
-      And I assign bookmark = footer._bookmarks.get("Target")
-     Then bookmark.name == "Target"
+      And I call footer.end_bookmark(bookmark)
+     # ---bookmark can only be looked up by name if it is closed---
+     Then footer._bookmarks.get("Target").name == "Target"
 
     Examples: _Footer definition states
       | with-or-no |

@@ -53,28 +53,24 @@ def given_the_next_Header_object_with_no_header_definition(context):
 # when =====================================================
 
 
-@when('I assign bookmark = footer._bookmarks.get("Target")')
-def when_I_assign_bookmark_eq_footer_bookmarks_get_target(context):
-    footer = context.footer
-    context.bookmark = footer._bookmarks.get("Target")
+@then('footer._bookmarks.get("Target").name == "Target"')
+def then_footer__bookmarks_get_Target_name_eq_Target(context):
+    assert context.footer._bookmarks.get("Target").name == "Target"
 
 
-@when('I assign bookmark = header._bookmarks.get("Target")')
-def when_I_assign_bookmark_eq_header_bookmarks_get_target(context):
-    header = context.header
-    context.bookmark = header._bookmarks.get("Target")
+@then('header._bookmarks.get("Target").name == "Target"')
+def then_header__bookmarks_get_Target_name_eq_Target(context):
+    assert context.header._bookmarks.get("Target").name == "Target"
 
 
 @when('I assign bookmark = footer.start_bookmark("Target")')
 def when_I_assign_bookmark_eq_footer_start_bookmark(context):
-    footer = context.footer
-    context.bookmark = footer.start_bookmark("Target")
+    context.bookmark = context.footer.start_bookmark("Target")
 
 
 @when('I assign bookmark = header.start_bookmark("Target")')
 def when_I_assign_bookmark_eq_header_start_bookmark(context):
-    header = context.header
-    context.bookmark = header.start_bookmark("Target")
+    context.bookmark = context.header.start_bookmark("Target")
 
 
 @when('I assign "Normal" to footer.paragraphs[0].style')
@@ -102,16 +98,14 @@ def when_I_call_run_add_picture(context):
     context.run.add_picture(test_file("test.png"))
 
 
-@when("I end bookmark by calling footer.end_bookmark(bookmark)")
-def when_I_end_bookmark_by_calling_footer_end_bookmark_with_bookmark(context):
-    footer = context.footer
-    footer.end_bookmark(context.bookmark)
+@when("I call footer.end_bookmark(bookmark)")
+def when_I_call_footer_end_bookmark(context):
+    context.footer.end_bookmark(context.bookmark)
 
 
-@when("I end bookmark by calling header.end_bookmark(bookmark)")
-def when_I_end_bookmark_by_calling_header_end_bookmark_with_bookmark(context):
-    header = context.header
-    header.end_bookmark(context.bookmark)
+@when("I call header.end_bookmark(bookmark)")
+def when_I_call_header_end_bookmark(context):
+    context.header.end_bookmark(context.bookmark)
 
 
 # then =====================================================

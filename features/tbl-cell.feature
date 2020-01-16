@@ -7,9 +7,9 @@ Feature: _Cell properties and methods
   Scenario: _Cell.end_bookmark()
     Given a _Cell object as cell
      When I assign bookmark = cell.start_bookmark("Target")
-      And I end bookmark by calling cell.end_bookmark(bookmark)
-      And I assign bookmark = cell.bookmarks.get("Target")
-     Then bookmark.name == "Target"
+      And I call cell.end_bookmark(bookmark)
+     # ---bookmark can only be looked up by name if it is closed---
+     Then cell._bookmarks.get("Target").name == "Target"
 
 
   Scenario: _Cell.start_bookmark()

@@ -14,5 +14,5 @@ Feature: Document properties and methods
     Given a Document object as document
      When I assign bookmark = document.start_bookmark("Target")
       And I end bookmark by calling document.end_bookmark(bookmark)
-      And I assign bookmark = document.bookmarks.get("Target")
-     Then bookmark.name == "Target"
+      # ---bookmark can only be looked up by name if it is closed---
+     Then document.bookmarks.get("Target").name == "Target"
