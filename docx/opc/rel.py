@@ -12,9 +12,8 @@ from .oxml import CT_Relationships
 
 
 class Relationships(dict):
-    """
-    Collection object for |_Relationship| instances, having list semantics.
-    """
+    """Collection object for |_Relationship| instances, having dict semantics"""
+
     def __init__(self, baseURI):
         super(Relationships, self).__init__()
         self._baseURI = baseURI
@@ -125,16 +124,15 @@ class Relationships(dict):
         Next available rId in collection, starting from 'rId1' and making use
         of any gaps in numbering, e.g. 'rId2' for rIds ['rId1', 'rId3'].
         """
-        for n in range(1, len(self)+2):
+        for n in range(1, len(self) + 2):
             rId_candidate = 'rId%d' % n  # like 'rId19'
             if rId_candidate not in self:
                 return rId_candidate
 
 
 class _Relationship(object):
-    """
-    Value object for relationship to part.
-    """
+    """Value object for relationship to part"""
+
     def __init__(self, rId, reltype, target, baseURI, external=False):
         super(_Relationship, self).__init__()
         self._rId = rId
@@ -157,9 +155,12 @@ class _Relationship(object):
 
     @property
     def target_part(self):
+        """|Part| or subclass this relationship links to."""
         if self._is_external:
-            raise ValueError("target_part property on _Relationship is undef"
-                             "ined when target mode is External")
+            raise ValueError(
+                "target_part property on _Relationship is undefined when target mode "
+                "is External"
+            )
         return self._target
 
     @property

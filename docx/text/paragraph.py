@@ -4,20 +4,20 @@
 Paragraph-related proxy types.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ..enum.style import WD_STYLE_TYPE
-from .parfmt import ParagraphFormat
-from .run import Run
-from ..shared import Parented
+from docx.bookmark import _Bookmark
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import lazyproperty, Parented
+from docx.text.parfmt import ParagraphFormat
+from docx.text.run import Run
 
 
 class Paragraph(Parented):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
+
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
@@ -54,6 +54,11 @@ class Paragraph(Parented):
     def alignment(self, value):
         self._p.alignment = value
 
+    @lazyproperty
+    def _bookmarks(self):
+        """Global |Bookmarks| object for overall document."""
+        return self.part.bookmarks
+
     def clear(self):
         """
         Return this same paragraph after removing all its content.
@@ -61,6 +66,13 @@ class Paragraph(Parented):
         """
         self._p.clear_content()
         return self
+
+    def end_bookmark(self, bookmark):
+        """Closes supplied bookmark at the end of this paragraph."""
+        bookmarkend = self._element._add_bookmarkEnd()
+        bookmarkend.id = bookmark.id
+        bookmark._bookmarkEnd = bookmarkend
+        return bookmark
 
     def insert_paragraph_before(self, text=None, style=None):
         """
@@ -92,6 +104,18 @@ class Paragraph(Parented):
         """
         return [Run(r, self) for r in self._p.r_lst]
 
+    def start_bookmark(self, name):
+        """Return newly-added |_Bookmark| object identified by `name`.
+
+        The returned bookmark is anchored at the end of this paragraph.
+        """
+        if name in self._bookmarks:
+            raise KeyError("Document already contains bookmark with name %s" % name)
+
+        return _Bookmark(
+            (self._element.add_bookmarkStart(name, self._bookmarks.next_id), None)
+        )
+
     @property
     def style(self):
         """
@@ -107,9 +131,7 @@ class Paragraph(Parented):
 
     @style.setter
     def style(self, style_or_name):
-        style_id = self.part.get_style_id(
-            style_or_name, WD_STYLE_TYPE.PARAGRAPH
-        )
+        style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.PARAGRAPH)
         self._p.style = style_id
 
     @property
@@ -126,7 +148,7 @@ class Paragraph(Parented):
         Paragraph-level formatting, such as style, is preserved. All
         run-level formatting, such as bold or italic, is removed.
         """
-        text = ''
+        text = ""
         for run in self.runs:
             text += run.text
         return text

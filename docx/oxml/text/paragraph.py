@@ -4,16 +4,31 @@
 Custom element classes related to paragraphs (CT_P).
 """
 
-from ..ns import qn
-from ..xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
+from docx.oxml.ns import qn
+from docx.oxml.xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
 
 
 class CT_P(BaseOxmlElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
-    pPr = ZeroOrOne('w:pPr')
-    r = ZeroOrMore('w:r')
+
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd")
+    bookmarkStart = ZeroOrMore("w:bookmarkStart")
+    pPr = ZeroOrOne("w:pPr")
+    r = ZeroOrMore("w:r")
+
+    def add_bookmarkStart(self, name, bookmark_id):
+        """Return `w:bookmarkStart` element added at the end of this header or footer.
+
+        The newly added `w:bookmarkStart` element is identified by both `name` and
+        `bookmark_id`. It is the caller's responsibility to determine that both `name`
+        and `bookmark_id` are unique, document-wide.
+        """
+        bookmarkStart = self._add_bookmarkStart()
+        bookmarkStart.name = name
+        bookmarkStart.id = bookmark_id
+        return bookmarkStart
 
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)
@@ -23,7 +38,7 @@ class CT_P(BaseOxmlElement):
         """
         Return a new ``<w:p>`` element inserted directly prior to this one.
         """
-        new_p = OxmlElement('w:p')
+        new_p = OxmlElement("w:p")
         self.addprevious(new_p)
         return new_p
 
@@ -48,7 +63,7 @@ class CT_P(BaseOxmlElement):
         Remove all child elements, except the ``<w:pPr>`` element if present.
         """
         for child in self[:]:
-            if child.tag == qn('w:pPr'):
+            if child.tag == qn("w:pPr"):
                 continue
             self.remove(child)
 
