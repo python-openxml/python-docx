@@ -145,6 +145,8 @@ class CT_R(BaseOxmlElement):
                 text += '\t'
             elif child.tag in (qn('w:br'), qn('w:cr')):
                 text += '\n'
+            elif child.tag == qn('w:noBreakHyphen'):
+                text += '-'
         return text
 
     @text.setter
