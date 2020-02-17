@@ -124,6 +124,20 @@ class Twips(Length):
         return Length.__new__(cls, emu)
 
 
+class IntOrPercent(object):
+    """
+    Integer or a percentage value
+    """
+
+    def __init__(self, str):
+        if str[-1] == "%":
+            self.is_percent = True
+            self.value = int(str[:-1])
+        else:
+            self.is_percent = False
+            self.value = int(str)
+
+
 class RGBColor(tuple):
     """
     Immutable value object defining a particular RGB color.
@@ -238,6 +252,7 @@ class Parented(object):
     such as add or drop a relationship. Provides ``self._parent`` attribute
     to subclasses.
     """
+
     def __init__(self, parent):
         super(Parented, self).__init__()
         self._parent = parent

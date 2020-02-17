@@ -12,12 +12,14 @@ from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 
 class Paragraph(Parented):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
+
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
@@ -136,6 +138,64 @@ class Paragraph(Parented):
         self.clear()
         self.add_run(text)
 
+    @property
+    def num_id(self):
+        """
+        Return the numId of the parent list.
+        """
+        if self._p.pPr is None:
+            return None
+        if self._p.pPr.numPr is None:
+            return None
+        if self._p.pPr.numPr.numId is None:
+            return None
+        return self._p.pPr.numPr.numId.val
+
+    @num_id.setter
+    def num_id(self, num_id):
+        """
+        Set the numId of the parent list.
+        """
+        self._p.get_or_add_pPr().get_or_add_numPr().get_or_add_numId().val = num_id
+
+    @property
+    def level(self):
+        """
+        Return the indentation level of the parent list.
+        """
+        if self._p.pPr is None:
+            return None
+        if self._p.pPr.numPr is None:
+            return None
+        if self._p.pPr.numPr.ilvl is None:
+            return None
+        return self._p.pPr.numPr.ilvl.val
+
+    @level.setter
+    def level(self, lvl):
+        """
+        Set the indentation level of the parent list.
+        """
+        self._p.get_or_add_pPr().get_or_add_numPr().get_or_add_ilvl().val = lvl
+
+    @property
+    def ind_left(self):
+        """
+        Return the indentation level of the parent list.
+        """
+        if self._p.pPr is None:
+            return None
+        if self._p.pPr.ind is None:
+            return None
+        return self._p.pPr.ind_left
+
+    @level.setter
+    def ind_left(self, left):
+        """
+        Set the indentation level of the parent list.
+        """
+        self._p.get_or_add_pPr().ind_left = left
+
     def _insert_paragraph_before(self):
         """
         Return a newly created paragraph, inserted directly before this
@@ -143,3 +203,97 @@ class Paragraph(Parented):
         """
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)
+
+    def add_hyperlink(self, text=None, url=None):
+        """
+        Append a run to this paragraph containing *text* and having character
+        style identified by style ID *style*. *text* can contain tab
+        (``\\t``) characters, which are converted to the appropriate XML form
+        for a tab. *text* can also include newline (``\\n``) or carriage
+        return (``\\r``) characters, each of which is converted to a line
+        break.
+        """
+        h = self._p.add_hyperlink()
+        # hyperlink = Hyperlink(h, self)
+        r = h.add_r()
+
+        run = Run(r, self)
+
+        if text:
+            # hyperlink.text = text
+            run.text = text
+
+        hyperlink = Hyperlink(h, self)
+        if url:
+            hyperlink.url = url
+        return hyperlink
+
+
+
+class Hyperlink(Parented):
+    """
+    Proxy object wrapping ``<w:hyperlink>`` element, which in turn contains a
+    ``<w:r>`` element. It has two main properties: The *url* it points to and
+    the *text* that is shown on the page.
+    """
+    def __init__(self, hyperlink, parent):
+        super(Hyperlink, self).__init__(parent)
+        self._hyperlink = hyperlink
+        
+    @property
+    def url(self):
+        """
+        Read/write. The relationship ID the Hyperlink points to, or |None| if
+        it has no directly-applied relationship. Setting this property sets
+        the The ``r:id`` attribute of the ``<w:rPr>`` element inside the
+        hyperlink.
+        """
+        part = self.part
+        rId = self._hyperlink.relationship
+        url = part.target_ref(rId) if rId else ''
+        return url
+
+    @url.setter
+    def url(self, url):
+        part = self.part
+        rId = part.relate_to(url, RT.HYPERLINK, is_external=True)
+        self._hyperlink.relationship = rId
+
+    @property
+    def text(self):
+        """
+        Read/write. The String content of the hyperlink that is visible on the 
+        page.
+        """
+        text = ''
+        for run in self.runs:
+            text += run.text
+        return text
+
+    @text.setter
+    def text(self, text):
+        self.clear()
+        self.add_run(text)
+
+    @property
+    def runs(self):
+
+        return [Run(r, self) for r in self._hyperlink.r_lst]
+
+    def add_run(self, text=None, style=None):
+        """
+        Append a run to this hyperlink containing *text* and having character
+        style identified by style ID *style*. *text* can contain tab
+        (``\\t``) characters, which are converted to the appropriate XML form
+        for a tab. *text* can also include newline (``\\n``) or carriage
+        return (``\\r``) characters, each of which is converted to a line
+        break.
+        """
+        r = self._hyperlink.add_r()
+        run = Run(r, self)
+        if text:
+            run.text = text
+        if style:
+            run.style = style
+        return run
+    
