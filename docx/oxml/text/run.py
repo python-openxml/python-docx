@@ -5,10 +5,12 @@ Custom element classes related to text runs (CT_R).
 """
 
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
+from ..simpletypes import ST_BrClear, ST_BrType, ST_RelationshipId
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne, OneOrMore, RequiredAttribute
 )
+
+from docx.styles import style
 
 
 class CT_Br(BaseOxmlElement):
@@ -164,3 +166,27 @@ class _RunContentAppender(object):
         if text:
             self._r.add_t(text)
         del self._bfr[:]
+
+
+class CT_Hyperlink(BaseOxmlElement):
+    """
+    ``<w:hyperlink>`` element, containing the properties and text for a hyperlink.
+    The ``<w:hyperlink>`` contains a ``<w:r>`` element which holds all the 
+    visible content. The ``<w:hyperlink>`` has an attribute ``r:id`` which 
+    holds an ID relating a URL in the document's relationships.
+    """
+    r = ZeroOrMore('w:r')
+    rid = RequiredAttribute('r:id', ST_RelationshipId)
+
+    @property
+    def relationship(self):
+        """
+        String contained in ``r:id`` attribute of <w:hyperlink>. It should
+        point to a URL in the document's relationships.
+        """
+        val = self.get(qn('r:id'))
+        return val
+    @relationship.setter
+    def relationship(self, rId):
+        self.set(qn('r:id'), rId)
+        self.set(qn('w:history'), '1')
