@@ -6,7 +6,7 @@ Style-related objects
 
 A style is used to collect a set of formatting properties under a single name
 and apply those properties to a content object all at once. This promotes
-formatting consistency thoroughout a document and across related documents
+formatting consistency throughout a document and across related documents
 and allows formatting changes to be made globally by changing the definition
 in the appropriate style.
 
