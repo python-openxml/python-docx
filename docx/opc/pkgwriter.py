@@ -50,7 +50,13 @@ class PackageWriter(object):
         Write the blob of each part in *parts* to the package, along with a
         rels item for its relationships if and only if it has any.
         """
+        from docx.parts.image import ImagePart
         for part in parts:
+            if isinstance(part, ImagePart):
+                if part.partname.endswith('.svg'):
+                    part.load_rel("http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                                  part,
+                                  'rId0')
             phys_writer.write(part.partname, part.blob)
             if len(part._rels):
                 phys_writer.write(part.partname.rels_uri, part._rels.xml)
