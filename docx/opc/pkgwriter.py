@@ -52,11 +52,6 @@ class PackageWriter(object):
         """
         from docx.parts.image import ImagePart
         for part in parts:
-            if isinstance(part, ImagePart):
-                if part.partname.endswith('.svg'):
-                    part.load_rel("http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-                                  part,
-                                  'rId0')
             phys_writer.write(part.partname, part.blob)
             if len(part._rels):
                 phys_writer.write(part.partname.rels_uri, part._rels.xml)
