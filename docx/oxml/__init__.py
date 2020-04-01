@@ -99,6 +99,9 @@ register_element_cls('w:lvl',           CT_Lvl)
 register_element_cls('w:abstractNum',   CT_AbstractNum)
 register_element_cls('w:nsid',          CT_LongHexNumber)
 register_element_cls('w:tmpl',          CT_LongHexNumber)
+register_element_cls('w:start',         CT_DecimalNumber)
+register_element_cls('w:styleLink',     CT_String)
+register_element_cls('w:numStyleLink',  CT_String)
 
 from .section import (  # noqa
     CT_HdrFtr,
