@@ -97,6 +97,8 @@ register_element_cls('w:lvlText',       CT_LevelText)
 register_element_cls('w:numPicBullet',  CT_NumPicBullet)
 register_element_cls('w:lvl',           CT_Lvl)
 register_element_cls('w:abstractNum',   CT_AbstractNum)
+register_element_cls('w:nsid',          CT_LongHexNumber)
+register_element_cls('w:tmpl',          CT_LongHexNumber)
 
 from .section import (  # noqa
     CT_HdrFtr,
