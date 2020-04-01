@@ -317,7 +317,7 @@ class ST_MultiLevelType(XsdStringEnumeration):
     Valid values for <w:multiLevelType val=""> attribute
     """
     SINGLE = 'singleLevel'
-    MULTI = 'multiLevel'
+    MULTI = 'multilevel'
     HYBRID = 'hybridMultiLevel'
 
     _members = (SINGLE, MULTI, HYBRID)
