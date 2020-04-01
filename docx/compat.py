@@ -4,9 +4,7 @@
 Provides Python 2/3 compatibility objects
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
 
@@ -16,12 +14,11 @@ import sys
 
 if sys.version_info >= (3, 0):
 
+    from collections.abc import Sequence
     from io import BytesIO
 
     def is_string(obj):
-        """
-        Return True if *obj* is a string, False otherwise.
-        """
+        """Return True if *obj* is a string, False otherwise."""
         return isinstance(obj, str)
 
     Unicode = str
@@ -32,12 +29,11 @@ if sys.version_info >= (3, 0):
 
 else:
 
+    from collections import Sequence  # noqa
     from StringIO import StringIO as BytesIO  # noqa
 
     def is_string(obj):
-        """
-        Return True if *obj* is a string, False otherwise.
-        """
+        """Return True if *obj* is a string, False otherwise."""
         return isinstance(obj, basestring)
 
     Unicode = unicode

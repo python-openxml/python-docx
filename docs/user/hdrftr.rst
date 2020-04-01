@@ -77,24 +77,13 @@ Adding "zoned" header content
 -----------------------------
 
 A header with multiple "zones" is often accomplished using carefully placed tab stops.
-The required tab-stops for a center and right-aligned "zone" are part of the latent
-``Header`` style in Word, but that style is not present in the default ``python-docx``
-template and will need to be added::
 
-    >>> from docx.enum.style import WD_STYLE_TYPE
-    >>> from docx.enum.text import WD_TAB_ALIGNMENT
-    >>> styles = document.styles
-    >>> style = styles.add_style("Header", WD_STYLE_TYPE.PARAGRAPH)
-    >>> style.base_style = styles["Normal"]
-    >>> tab_stops = style.paragraph_format.tab_stops
-    >>> tab_stops.add_tab_stop(Inches(3.25), WD_TAB_ALIGNMENT.CENTER)
-    >>> tab_stops.add_tab_stop(Inches(6.5), WD_TAB_ALIGNMENT.RIGHT)
+The required tab-stops for a center and right-aligned "zone" are part of the ``Header``
+and ``Footer`` styles in Word. If you're using a custom template rather than the
+`python-docx` default, it probably makes sense to define that style in your template.
 
-If you're using a custom template rather than the `python-docx` default, it probably
-makes sense to define that style in your template.
-
-Once the ``Header`` style is present, tabs are used to separate left, center, and
-right-aligned header content::
+Inserted tab characters (``"\t"``) are used to separate left, center, and right-aligned
+header content::
 
     >>> paragraph = header.paragraphs[0]
     >>> paragraph.text = "Left Text\tCenter Text\tRight Text"
@@ -102,6 +91,10 @@ right-aligned header content::
 
 .. image:: /_static/img/hdrftr-02.png
    :scale: 75%
+
+The ``Header`` style is automatically applied to a new header, so the third line just
+above (applying the ``Header`` style) is unnecessary in this case, but included here to
+illustrate the general case.
 
 
 Removing a header
