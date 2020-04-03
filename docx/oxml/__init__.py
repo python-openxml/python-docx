@@ -102,6 +102,9 @@ register_element_cls('w:tmpl',          CT_LongHexNumber)
 register_element_cls('w:start',         CT_DecimalNumber)
 register_element_cls('w:styleLink',     CT_String)
 register_element_cls('w:numStyleLink',  CT_String)
+register_element_cls('w:lvlRestart',    CT_DecimalNumber)
+register_element_cls('w:lvlPicBulletId',CT_DecimalNumber)
+register_element_cls('w:isLgl',         CT_OnOff)
 
 from .section import (  # noqa
     CT_HdrFtr,
