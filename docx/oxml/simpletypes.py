@@ -318,7 +318,7 @@ class ST_MultiLevelType(XsdStringEnumeration):
     """
     SINGLE = 'singleLevel'
     MULTI = 'multilevel'
-    HYBRID = 'hybridMultiLevel'
+    HYBRID = 'hybridMultilevel'
 
     _members = (SINGLE, MULTI, HYBRID)
 
