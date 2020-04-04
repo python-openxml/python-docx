@@ -455,7 +455,7 @@ class ST_SignedTwipsMeasure(XsdInt):
 
     @classmethod
     def convert_to_xml(cls, value):
-        emu = Emu(value)
+        emu = Twips(value)
         twips = emu.twips
         return str(twips)
 
@@ -498,7 +498,7 @@ class ST_TwipsMeasure(XsdUnsignedLong):
 
     @classmethod
     def convert_to_xml(cls, value):
-        emu = Emu(value)
+        emu = Twips(value)
         twips = emu.twips
         return str(twips)
 
