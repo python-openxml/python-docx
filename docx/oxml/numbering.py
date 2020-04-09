@@ -278,6 +278,17 @@ class CT_Numbering(BaseOxmlElement):
         except IndexError:
             raise KeyError('no <w:num> element with numId %d' % numId)
 
+    def abstractNum_having_abstractNumId(self, abstractNumId):
+        """
+        Return the ``<w:num>`` child element having ``numId`` attribute
+        matching *numId*.
+        """
+        xpath = './w:abstractNum[@w:AbstractNumId="%d"]' % abstractNumId
+        try:
+            return self.xpath(xpath)[0]
+        except IndexError:
+            raise KeyError('no <w:num> element with numId %d' % abstractNumId)
+
     @property
     def _next_numId(self):
         """
