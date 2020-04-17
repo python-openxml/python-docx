@@ -30,9 +30,10 @@ class PackageWriter(object):
         content types of the parts.
         """
         phys_writer = PhysPkgWriter(pkg_file)
-        PackageWriter._write_content_types_stream(phys_writer, parts)
+        sorted_parts = sorted(parts, key=lambda p: p.partname)
+        PackageWriter._write_content_types_stream(phys_writer, sorted_parts)
         PackageWriter._write_pkg_rels(phys_writer, pkg_rels)
-        PackageWriter._write_parts(phys_writer, parts)
+        PackageWriter._write_parts(phys_writer, sorted_parts)
         phys_writer.close()
 
     @staticmethod

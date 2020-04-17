@@ -78,7 +78,7 @@ class Relationships(dict):
         as a .rels file in an OPC package.
         """
         rels_elm = CT_Relationships.new()
-        for rel in self.values():
+        for rel in sorted(self.values(), key=lambda r: r._rId):
             rels_elm.add_rel(
                 rel.rId, rel.reltype, rel.target_ref, rel.is_external
             )

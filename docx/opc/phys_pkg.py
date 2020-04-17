@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 import os
 
-from zipfile import ZipFile, is_zipfile, ZIP_DEFLATED
+from zipfile import ZipFile, ZipInfo, is_zipfile, ZIP_DEFLATED
 
 from .compat import is_string
 from .exceptions import PackageNotFoundError
@@ -152,4 +152,5 @@ class _ZipPkgWriter(PhysPkgWriter):
         Write *blob* to this zip package with the membername corresponding to
         *pack_uri*.
         """
-        self._zipf.writestr(pack_uri.membername, blob)
+        zinfo = ZipInfo(filename=pack_uri.membername, date_time=(1980, 1, 1, 0, 0, 0))
+        self._zipf.writestr(zinfo, blob)
