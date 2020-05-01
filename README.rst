@@ -1,20 +1,19 @@
-Bayoo-docx
-===========
+#Bayoo-docx
 
 Python library forked from  `python-docx <github.com/python-openxml/python-docx/>`_.
 
 The main purpose of the fork was to add implementation for comments and footnotes to the library
 
-Installation
-------------
+##Installation
+
 
 Use the package manager `pip <pypi.org/project/bayoo-docx/>`_ to install bayoo-docx.
 
 
 `pip install bayoo-docx`
 
-Usage
------
+##Usage
+
 ::
     
     import docx
@@ -29,7 +28,6 @@ Usage
 
 
 
-License
---------------
+##License
 
 `MIT <https://choosealicense.com/licenses/mit/>`_
