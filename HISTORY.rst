@@ -2,7 +2,7 @@
 
 
 Release History BayooG/bayoo-docx forked from (python-openxmm/python-docx)
----------------
+--------------------------------------------------------------------------
 
 0.2.7 (2020-05-01)
 +++++++++++++++++++
@@ -14,14 +14,7 @@ Release History BayooG/bayoo-docx forked from (python-openxmm/python-docx)
 +++++++++++++++++++
 
 - loop over all the document chieldern (Paragraphs, Tables, Sections) with the right order `document.elements`
-
 - addons to Paragraph Object (delete, heading_level, merge_paragraph )
-
-
-
-0.1.3 (2019-03-08)
-++++++++++++++++++
-
 - Add low-level implementation for comments part
 - Add oxml element for <w:comments> element and sub-elements
 - Add add_comment() method for docx.text.Paragraph 
@@ -32,8 +25,6 @@ Release History BayooG/bayoo-docx forked from (python-openxmm/python-docx)
 - Add add_footnote() method for docx.text.Paragraph 
 
 
-Release History python-openxmm/python-docx
----------------
 
 0.8.10 (2019-01-08)
 +++++++++++++++++++
