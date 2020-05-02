@@ -6,7 +6,7 @@ import re
 from setuptools import find_packages, setup
 
 
-def text_of(relpath):
+def text_of(relpath, long_description=False):
     """
     Return string containing the contents of the file at *relpath* relative to
     this file.
@@ -15,6 +15,9 @@ def text_of(relpath):
     file_path = os.path.join(thisdir, os.path.normpath(relpath))
     with open(file_path) as f:
         text = f.read()
+        if long_description:
+            text = re.sub(text, '=+\n', '\n')
+            text = re.sub(text, '-+\n', '\n')
     return text
 
 
@@ -58,7 +61,7 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries'
 ]
 
-LONG_DESCRIPTION = text_of('README.rst') + '\n\n' + text_of('HISTORY.rst')
+LONG_DESCRIPTION = text_of('README.rst',long_description=True) + '\n\n' + text_of('HISTORY.rst')
 
 
 params = {

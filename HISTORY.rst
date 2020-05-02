@@ -4,13 +4,13 @@
 #Release History BayooG/bayoo-docx forked from (python-openxmm/python-docx)
 
 
-###0.2.7 (2020-05-01)
+0.2.8 (2020-05-02)
 
-
+- add comments implementation on a run level
 - fix issue with comments date (comments dates are set to current date)
 
 
-###0.2.4 (2019-9-4)
+0.2.4 (2019-9-4)
 
 - loop over all the document chieldern (Paragraphs, Tables, Sections) with the right order `document.elements`
 - addons to Paragraph Object (delete, heading_level, merge_paragraph )
