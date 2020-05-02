@@ -58,6 +58,24 @@ class CT_R(BaseOxmlElement):
         drawing.append(inline_or_anchor)
         return drawing
 
+    def add_comm(self, author, comment_part, initials, dtime, comment_text):
+        
+        comment = comment_part.add_comment(author, initials, dtime)
+        comment._add_p(comment_text)
+        # _r = self.add_r()
+        self.add_comment_reference(comment._id)
+        self.link_comment(comment._id)
+
+        return comment
+    
+    def link_comment(self, _id):
+        rStart = OxmlElement('w:commentRangeStart')
+        rStart._id = _id
+        rEnd = OxmlElement('w:commentRangeEnd')
+        rEnd._id = _id
+        self.insert(0,rStart)
+        self.append(rEnd)
+
     def add_comment_reference(self, _id):
         reference = OxmlElement('w:commentReference')
         reference._id = _id

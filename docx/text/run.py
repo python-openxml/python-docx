@@ -5,6 +5,7 @@ Run-related proxy objects for python-docx, Run in particular.
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
+from datetime import datetime
 
 from docx.oxml.ns import qn
 
@@ -82,6 +83,13 @@ class Run(Parented):
         t = self._r.add_t(text)
         return _Text(t)
 
+    def add_comment(self, text, author='python-docx', initials='pd', dtime=None):
+        comment_part = self.part._comments_part.element
+        if dtime is None:
+            dtime = str( datetime.now() ).replace(' ', 'T')
+        comment =  self._r.add_comm(author, comment_part, initials, dtime, text)
+
+        return comment
     @property
     def bold(self):
         """
