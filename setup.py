@@ -58,7 +58,7 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries'
 ]
 
-LONG_DESCRIPTION = text_of('README.rst') + '\n\n' + text_of('HISTORY.rst')
+LONG_DESCRIPTION = text_of('DESCRIPTION.rst') + '\n\n' + text_of('HISTORY.rst')
 
 
 params = {
