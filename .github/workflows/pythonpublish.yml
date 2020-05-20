@@ -5,7 +5,9 @@ name: Upload Python Package
 
 on:
   pull_request:
-    branches: master
+    branches: 
+      - master
+      - develop
 
 jobs:
   deploy:
