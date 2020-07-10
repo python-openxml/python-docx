@@ -12,32 +12,20 @@ from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
 from ..shared import Parented
+from ..runcntnr import RunItemContainer
+from .hyperlink import Hyperlink
+from ..oxml.ns import qn
 
-
-class Paragraph(Parented):
+class Paragraph(RunItemContainer):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
     def __init__(self, p, parent):
-        super(Paragraph, self).__init__(parent)
+        super(Paragraph, self).__init__(p, parent)
         self._p = self._element = p
 
     def add_run(self, text=None, style=None):
-        """
-        Append a run to this paragraph containing *text* and having character
-        style identified by style ID *style*. *text* can contain tab
-        (``\\t``) characters, which are converted to the appropriate XML form
-        for a tab. *text* can also include newline (``\\n``) or carriage
-        return (``\\r``) characters, each of which is converted to a line
-        break.
-        """
-        r = self._p.add_r()
-        run = Run(r, self)
-        if text:
-            run.text = text
-        if style:
-            run.style = style
-        return run
+        return super(Paragraph, self).add_paragraph(text, style)
 
     @property
     def alignment(self):
@@ -86,11 +74,11 @@ class Paragraph(Parented):
 
     @property
     def runs(self):
-        """
-        Sequence of |Run| instances corresponding to the <w:r> elements in
-        this paragraph.
-        """
-        return [Run(r, self) for r in self._p.r_lst]
+        return super(Paragraph, self).runs
+    
+    @property
+    def inline_items(self):
+        return [self._get_inline_item_class(t.tag)(t, self) for t in self._p.inline_items]
 
     @property
     def style(self):
@@ -127,8 +115,8 @@ class Paragraph(Parented):
         run-level formatting, such as bold or italic, is removed.
         """
         text = ''
-        for run in self.runs:
-            text += run.text
+        for inline in self.inline_items:
+            text += inline.text
         return text
 
     @text.setter
@@ -143,3 +131,10 @@ class Paragraph(Parented):
         """
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)
+
+    def _get_inline_item_class(self, tag):
+        if tag == qn('w:r'):
+            return Run
+
+        if tag == qn('w:hyperlink'):
+            return Hyperlink

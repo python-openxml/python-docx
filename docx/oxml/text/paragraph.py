@@ -76,3 +76,13 @@ class CT_P(BaseOxmlElement):
     def style(self, style):
         pPr = self.get_or_add_pPr()
         pPr.style = style
+    
+    @property
+    def inline_items(self):
+        return self.xpath('./w:r | ./w:hyperlink')
+
+    inline_items.__doc__ = (
+        'A list containing each of the ``<w:r> | <w:hyperlink>`` child elements, in the o'
+        'rder they appear.'
+    )
+
