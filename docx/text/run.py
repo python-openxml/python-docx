@@ -11,7 +11,8 @@ from ..enum.text import WD_BREAK
 from .font import Font
 from ..shape import InlineShape
 from ..shared import Parented
-
+from ..fntent.footnoteReference import FootnoteReference 
+from ..fntent.endnoteReference import EndnoteReference 
 
 class Run(Parented):
     """
@@ -181,6 +182,21 @@ class Run(Parented):
     def underline(self, value):
         self.font.underline = value
 
+    @property
+    def footnotes(self):
+        """
+        Return a list of footnote proxy elements.
+        """
+
+        return [FootnoteReference(footnoteReference, self) for footnoteReference in self._r.footnoteReference_lst]
+
+    @property
+    def endnotes(self):
+        """
+        Return a list of endnote proxy elements.
+        """
+
+        return [EndnoteReference(endnoteReference, self) for endnoteReference in self._r.endnoteReference_lst]
 
 class _Text(object):
     """

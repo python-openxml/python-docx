@@ -7,3 +7,5 @@
 _scratch/
 Session.vim
 /.tox/
+.vscode
+venv
