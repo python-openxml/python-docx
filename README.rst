@@ -41,7 +41,9 @@ Usage
 
 Donation
 ------------
-`bitcoin: bc1q9dftn4ndufwzyzkm8ryu0kky0v8y7w00zdah9r`
+::
+
+    bitcoin: bc1q9dftn4ndufwzyzkm8ryu0kky0v8y7w00zdah9r
 
 
 License
