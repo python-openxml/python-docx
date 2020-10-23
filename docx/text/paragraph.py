@@ -225,6 +225,11 @@ class Paragraph(Parented):
         else :
             return False
 
+    @property
+    def comments(self):
+        runs_comments = [run.comments for run in self.runs]
+        return [comment for comments in runs_comments for comment in comments]
+
     @text.setter
     def text(self, text):
         self.clear()
