@@ -52,8 +52,6 @@ class CT_Com(BaseOxmlElement):
 		return Paragraph(self.p, self)
 		
 	
-
-
 class CT_Comments(BaseOxmlElement):
 	"""
 	A ``<w:comments>`` element, a container for Comments properties

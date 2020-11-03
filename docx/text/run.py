@@ -15,6 +15,7 @@ from .font import Font
 from ..shape import InlineShape
 from ..shared import Parented
 
+from .comment import Comment
 
 class Run(Parented):
     """
@@ -230,7 +231,15 @@ class Run(Parented):
                 return '', False
         else:
             return 'None'
-        
+
+    @property
+    def comments(self):
+        comment_part = self._parent._parent.part._comments_part.element
+        comment_refs = self._element.findall(qn('w:commentReference'))
+        ids = [int(ref.get(qn('w:id'))) for ref in comment_refs]
+        coms = [com for com in comment_part if com._id in ids]
+        return [Comment(com, comment_part) for com in coms]
+ 
 
 class _Text(object):
     """

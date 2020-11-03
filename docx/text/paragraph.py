@@ -48,8 +48,9 @@ class Paragraph(Parented):
         self._p.getparent().remove(self._p)
         self._p = self._element = None
     
-    def add_comment(self, text, author='python-docx', initials='pd', dtime=None ,rangeStart=0, rangeEnd=0):
-        comment_part = self.part._comments_part.element
+    def add_comment(self, text, author='python-docx', initials='pd', dtime=None ,rangeStart=0, rangeEnd=0, comment_part=None):
+        if comment_part is None:
+            comment_part = self.part._comments_part.element
         if dtime is None:
             dtime = str( datetime.now() ).replace(' ', 'T')
         comment =  self._p.add_comm(author, comment_part, initials, dtime, text, rangeStart, rangeEnd)
@@ -223,6 +224,11 @@ class Paragraph(Parented):
             return True
         else :
             return False
+
+    @property
+    def comments(self):
+        runs_comments = [run.comments for run in self.runs]
+        return [comment for comments in runs_comments for comment in comments]
 
     @text.setter
     def text(self, text):
