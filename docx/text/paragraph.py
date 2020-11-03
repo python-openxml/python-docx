@@ -127,6 +127,9 @@ class Paragraph(Parented):
         return [Run(r, self) for r in self._p.r_lst]
 
     @property
+    def all_runs(self):
+        return [Run(r, self) for r in self._p.xpath('.//w:r[not(ancestor::w:r)]')]
+    @property
     def style(self):
         """
         Read/Write. |_ParagraphStyle| object representing the style assigned
@@ -215,8 +218,7 @@ class Paragraph(Parented):
     
     @property
     def full_text(self):
-        allRuns = [Run(r, self) for r in self._p.xpath('.//w:r[not(ancestor::w:r)]')]
-        return u"".join([r.text for r in allRuns])
+        return u"".join([r.text for r in self.all_runs])
     
     @property
     def footnotes(self):
