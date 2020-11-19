@@ -76,11 +76,12 @@ from .document import CT_Body, CT_Document  # noqa
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
-from .numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
+from .numbering import CT_Num, CT_AbstractNum,  CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
 register_element_cls('w:lvlOverride',   CT_NumLvl)
 register_element_cls('w:num',           CT_Num)
+register_element_cls('w:abstractNum',   CT_AbstractNum)
 register_element_cls('w:numId',         CT_DecimalNumber)
 register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
@@ -135,8 +136,11 @@ register_element_cls('wp:docPr',      CT_NonVisualDrawingProps)
 register_element_cls('wp:extent',     CT_PositiveSize2D)
 register_element_cls('wp:inline',     CT_Inline)
 
-from .styles import CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles  # noqa
+from .styles import CT_DocDefaults, CT_RPrDefault, CT_PPrDefault, CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles  # noqa
 register_element_cls('w:basedOn',        CT_String)
+register_element_cls('w:docDefaults',   CT_DocDefaults)
+register_element_cls('w:rPrDefault',   CT_RPrDefault)
+register_element_cls('w:pPrDefault',   CT_PPrDefault)
 register_element_cls('w:latentStyles',   CT_LatentStyles)
 register_element_cls('w:locked',         CT_OnOff)
 register_element_cls('w:lsdException',   CT_LsdException)
@@ -162,7 +166,11 @@ from .table import (  # noqa
     CT_TcPr,
     CT_TrPr,
     CT_VMerge,
+    CT_TblMar,
     CT_VerticalJc,
+    CT_TblBoarders,
+    CT_Bottom,
+    CT_TcBorders,
 )
 register_element_cls('w:bidiVisual', CT_OnOff)
 register_element_cls('w:gridCol',    CT_TblGridCol)
@@ -171,6 +179,8 @@ register_element_cls('w:tbl',        CT_Tbl)
 register_element_cls('w:tblGrid',    CT_TblGrid)
 register_element_cls('w:tblLayout',  CT_TblLayoutType)
 register_element_cls('w:tblPr',      CT_TblPr)
+register_element_cls('w:tblW',       CT_TblWidth)
+register_element_cls('w:tblCellMar', CT_TblMar)
 register_element_cls('w:tblStyle',   CT_String)
 register_element_cls('w:tc',         CT_Tc)
 register_element_cls('w:tcPr',       CT_TcPr)
@@ -180,6 +190,9 @@ register_element_cls('w:trHeight',   CT_Height)
 register_element_cls('w:trPr',       CT_TrPr)
 register_element_cls('w:vAlign',     CT_VerticalJc)
 register_element_cls('w:vMerge',     CT_VMerge)
+register_element_cls('w:tblBorders', CT_TblBoarders)
+register_element_cls('w:tcBorders',  CT_TcBorders)
+register_element_cls('w:bottom',     CT_Bottom)
 
 from .text.font import (  # noqa
     CT_Color,
@@ -246,3 +259,20 @@ from .text.run import CT_Br, CT_R, CT_Text  # noqa
 register_element_cls('w:br', CT_Br)
 register_element_cls('w:r',  CT_R)
 register_element_cls('w:t',  CT_Text)
+register_element_cls('w:rPr', CT_RPr)
+
+
+from .comments import CT_Comments,CT_Com, CT_CRE, CT_CRS, CT_CRef
+register_element_cls('w:comments', CT_Comments)
+register_element_cls('w:comment', CT_Com)
+register_element_cls('w:commentRangeStart', CT_CRS)
+register_element_cls('w:commentRangeEnd', CT_CRE)
+register_element_cls('w:commentReference', CT_CRef)
+
+
+from .footnotes import CT_Footnotes, CT_Footnote, CT_FNR, CT_FootnoteRef
+
+register_element_cls('w:footnotes', CT_Footnotes)
+register_element_cls('w:footnote', CT_Footnote)
+register_element_cls('w:footnoteReference', CT_FNR)
+register_element_cls('w:footnoteRef', CT_FootnoteRef)

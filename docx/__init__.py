@@ -2,7 +2,7 @@
 
 from docx.api import Document  # noqa
 
-__version__ = '0.8.10'
+__version__ = '0.2.14' 
 
 
 # register custom Part classes with opc package reader
@@ -17,6 +17,8 @@ from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
+from docx.parts.comments import CommentsPart
+from docx.parts.footnotes import FootnotesPart
 
 
 def part_class_selector(content_type, reltype):
@@ -26,6 +28,7 @@ def part_class_selector(content_type, reltype):
 
 
 PartFactory.part_class_selector = part_class_selector
+PartFactory.part_type_for[CT.WML_COMMENTS] = CommentsPart
 PartFactory.part_type_for[CT.OPC_CORE_PROPERTIES] = CorePropertiesPart
 PartFactory.part_type_for[CT.WML_DOCUMENT_MAIN] = DocumentPart
 PartFactory.part_type_for[CT.WML_FOOTER] = FooterPart
@@ -33,6 +36,7 @@ PartFactory.part_type_for[CT.WML_HEADER] = HeaderPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
+PartFactory.part_type_for[CT.WML_FOOTNOTES] = FootnotesPart
 
 del (
     CT,
@@ -40,6 +44,8 @@ del (
     DocumentPart,
     FooterPart,
     HeaderPart,
+    FootnotesPart,
+    CommentsPart,
     NumberingPart,
     PartFactory,
     SettingsPart,

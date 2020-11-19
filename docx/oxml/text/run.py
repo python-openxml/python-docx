@@ -5,10 +5,14 @@ Custom element classes related to text runs (CT_R).
 """
 
 from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
+from ..simpletypes import ST_BrClear, ST_BrType, ST_DecimalNumber, ST_String
+
+from .. import OxmlElement
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne ,RequiredAttribute
 )
+
+from .. import OxmlElement
 
 
 class CT_Br(BaseOxmlElement):
@@ -24,6 +28,8 @@ class CT_R(BaseOxmlElement):
     ``<w:r>`` element, containing the properties and text for a run.
     """
     rPr = ZeroOrOne('w:rPr')
+    ###wrong 
+    ref = ZeroOrOne('w:commentRangeStart', successors=('w:r',))
     t = ZeroOrMore('w:t')
     br = ZeroOrMore('w:br')
     cr = ZeroOrMore('w:cr')
@@ -52,6 +58,61 @@ class CT_R(BaseOxmlElement):
         drawing.append(inline_or_anchor)
         return drawing
 
+    def add_comm(self, author, comment_part, initials, dtime, comment_text):
+        
+        comment = comment_part.add_comment(author, initials, dtime)
+        comment._add_p(comment_text)
+        # _r = self.add_r()
+        self.add_comment_reference(comment._id)
+        self.link_comment(comment._id)
+
+        return comment
+    
+    def link_comment(self, _id):
+        rStart = OxmlElement('w:commentRangeStart')
+        rStart._id = _id
+        rEnd = OxmlElement('w:commentRangeEnd')
+        rEnd._id = _id
+        self.addprevious(rStart)
+        self.addnext(rEnd)
+
+    def add_comment_reference(self, _id):
+        reference = OxmlElement('w:commentReference')
+        reference._id = _id
+        self.append(reference)
+        return reference
+    
+    def add_footnote_reference(self, _id):
+        rPr = self.get_or_add_rPr()
+        rstyle = rPr.get_or_add_rStyle()
+        rstyle.val = 'FootnoteReference'
+        reference = OxmlElement('w:footnoteReference')
+        reference._id = _id
+        self.append(reference)
+        return reference
+    
+    def add_footnoteRef(self):
+        ref = OxmlElement('w:footnoteRef')
+        self.append(ref)
+
+        return ref
+    
+    def footnote_style(self):
+        rPr = self.get_or_add_rPr()
+        rstyle = rPr.get_or_add_rStyle()
+        rstyle.val = 'FootnoteReference'
+
+        self.add_footnoteRef()
+        return self
+    
+    @property
+    def footnote_id(self):
+        _id = self.xpath('./w:footnoteReference/@w:id')
+        if len(_id) > 1 or len(_id) == 0 :
+            return None
+        else:
+            return int(_id[0]) 
+
     def clear_content(self):
         """
         Remove all child elements except the ``<w:rPr>`` element if present.
@@ -59,6 +120,12 @@ class CT_R(BaseOxmlElement):
         content_child_elms = self[1:] if self.rPr is not None else self[:]
         for child in content_child_elms:
             self.remove(child)
+
+    def add_comment_reference(self, _id):
+        reference = OxmlElement('w:commentReference')
+        reference._id = _id
+        self.append(reference)
+        return reference
 
     @property
     def style(self):
@@ -96,6 +163,8 @@ class CT_R(BaseOxmlElement):
                 text += '\t'
             elif child.tag in (qn('w:br'), qn('w:cr')):
                 text += '\n'
+            elif child.tag == qn('w:noBreakHyphen'):
+                text += '-'
         return text
 
     @text.setter
@@ -109,6 +178,13 @@ class CT_Text(BaseOxmlElement):
     ``<w:t>`` element, containing a sequence of characters within a run.
     """
 
+
+class CT_RPr(BaseOxmlElement):
+    rStyle  = ZeroOrOne('w:rStyle')
+     
+
+class CT_RStyle(BaseOxmlElement):
+    val = RequiredAttribute('w:val',ST_String)
 
 class _RunContentAppender(object):
     """
@@ -164,3 +240,5 @@ class _RunContentAppender(object):
         if text:
             self._r.add_t(text)
         del self._bfr[:]
+
+

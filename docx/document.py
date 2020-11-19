@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from docx.oxml.ns import qn
+
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -102,6 +104,23 @@ class Document(ElementProxy):
         return self._part.core_properties
 
     @property
+    def comments_part(self):
+        """
+        A |Comments| object providing read/write access to the core
+        properties of this document.
+        """
+        return self.part.comments_part
+    
+    # @property
+    # def footnotes_part(self):
+    #     """
+    #     A |Footnotes| object providing read/write access to the core
+    #     properties of this document.
+    #     """
+    #     return self.part._footnotes_part
+
+
+    @property
     def inline_shapes(self):
         """
         An |InlineShapes| object providing access to the inline shapes in
@@ -165,6 +184,23 @@ class Document(ElementProxy):
         """
         return self._body.tables
 
+    @property
+    def elements(self):
+        return self._body.elements
+    
+    @property
+    def abstractNumIds(self):
+        """
+        Returns list of all the 'w:abstarctNumId' of this document
+        """
+        return self._body.abstractNumIds
+    
+    @property
+    def last_abs_num(self):
+        last = self.abstractNumIds[-1]
+        val = last.attrib.get(qn('w:abstractNumId'))
+        return  last, val
+    
     @property
     def _block_width(self):
         """

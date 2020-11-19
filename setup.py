@@ -26,13 +26,13 @@ version = re.search(
 ).group(1)
 
 
-NAME = 'python-docx'
+NAME = 'bayoo-docx'
 VERSION = version
 DESCRIPTION = 'Create and update Microsoft Word .docx files.'
 KEYWORDS = 'docx office openxml word'
-AUTHOR = 'Steve Canny'
-AUTHOR_EMAIL = 'python-docx@googlegroups.com'
-URL = 'https://github.com/python-openxml/python-docx'
+AUTHOR = 'Obay Daba'
+AUTHOR_EMAIL = 'ObayDaba96@googlegroups.com'
+URL = 'https://github.com/BayooG/bayooo-docx'
 LICENSE = text_of('LICENSE')
 PACKAGES = find_packages(exclude=['tests', 'tests.*'])
 PACKAGE_DATA = {'docx': ['templates/*.xml', 'templates/*.docx']}
@@ -58,7 +58,7 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries'
 ]
 
-LONG_DESCRIPTION = text_of('README.rst') + '\n\n' + text_of('HISTORY.rst')
+LONG_DESCRIPTION = text_of('DESCRIPTION.rst') + '\n\n' + text_of('HISTORY.rst')
 
 
 params = {

@@ -198,6 +198,25 @@ class Font(ElementProxy):
         rPr.rFonts_hAnsi = value
 
     @property
+    def theme(self):
+        """
+        Get or set the typeface theme for this |Font| instance, causing the
+        text it controls to appear in the themed font, if a matching font is
+        found. |None| indicates the typeface is inherited from the style
+        hierarchy.
+        """
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.rFonts_asciiTheme
+
+    @theme.setter
+    def theme(self, value):
+        rPr = self._element.get_or_add_rPr()
+        rPr.rFonts_asciiTheme = value
+        rPr.rFonts_hAnsiTheme = value
+
+    @property
     def no_proof(self):
         """
         Read/write tri-state value. When |True|, specifies that the contents

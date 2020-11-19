@@ -1,12 +1,12 @@
 Bayoo-docx
-==========
+
 
 Python library forked from  `python-docx <github.com/python-openxml/python-docx/>`_.
 
 The main purpose of the fork was to add implementation for comments and footnotes to the library
 
 Installation
-------------
+
 
 Use the package manager `pip <pypi.org/project/bayoo-docx/>`_ to install bayoo-docx.
 
@@ -14,7 +14,7 @@ Use the package manager `pip <pypi.org/project/bayoo-docx/>`_ to install bayoo-d
 `pip install bayoo-docx`
 
 Usage
------
+
 
 ::
     
@@ -32,21 +32,11 @@ Usage
 
     run.add_comment('comment') # add a comment only for the run text 
 
-    run.add_comment('comment2')
-
-    run_comments = run.comments
-
     paragraph.add_footnote('footnote text') # add a footnote
 
 
-Donation
-------------
-::
-
-    bitcoin: bc1q9dftn4ndufwzyzkm8ryu0kky0v8y7w00zdah9r
-
 
 License
--------
+
 
 `MIT <https://choosealicense.com/licenses/mit/>`_

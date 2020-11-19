@@ -7,12 +7,13 @@ from __future__ import (
 )
 
 from . import parse_xml
+from . import OxmlElement
 from ..enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
-from .ns import nsdecls, qn
+from .ns import nsdecls, qn, nsmap
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt, ST_String 
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -233,6 +234,20 @@ class CT_Tbl(BaseOxmlElement):
             ) % col_width.twips
         return xml
 
+    @property
+    def _section(self):
+        body = self.getparent()
+        sections = body.findall('.//w:sectPr', {'w':nsmap['w']})
+        if len(sections) == 1:
+            return sections[0]
+        else:
+            tbl_index = body.index(self)
+            for i,sect in enumerate(sections):
+                if i == len(sections) - 1 :
+                    return sect
+                else:
+                    if body.index(sect.getparent().getparent()) > tbl_index:
+                        return sect
 
 class CT_TblGrid(BaseOxmlElement):
     """
@@ -265,6 +280,8 @@ class CT_TblLayoutType(BaseOxmlElement):
     """
     type = OptionalAttribute('w:type', ST_TblLayoutType)
 
+class CT_TblBoarders(BaseOxmlElement):
+    pass
 
 class CT_TblPr(BaseOxmlElement):
     """
@@ -280,8 +297,11 @@ class CT_TblPr(BaseOxmlElement):
     )
     tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
+    tblW =ZeroOrOne ('w:tblW', successors=('w:tblPr',))
+    tblCellMar = ZeroOrOne('w:tblCellMar', successors=('w:tblPr',))
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    tblBorders = ZeroOrOne('w:tblBorders', successors=('w:tblPr',))
     del _tag_seq
 
     @property
@@ -747,6 +767,29 @@ class CT_Tc(BaseOxmlElement):
         """
         return self._tbl.tr_lst.index(self._tr)
 
+class CT_TcBorders(BaseOxmlElement):
+    """
+    <w:tcBorders> element
+    """
+    top = ZeroOrOne('w:top')
+    start = ZeroOrOne('w:start')
+    bottom = ZeroOrOne('w:bottom',successors=('w:tblPr',) )
+    end = ZeroOrOne('w:end')
+    
+
+    def new(cls):
+        """
+        Return a new ``<w:tcBorders>`` element
+        """
+        return parse_xml(
+            '<w:tcBorders %s>\n'
+            '</w:tcBorders>' % nsdecls('w')
+        )
+    
+    def add_bottom_border(self, val, sz):
+        bottom = CT_Bottom.new ( val, sz)
+        return self._insert_bottom(bottom)   
+
 
 class CT_TcPr(BaseOxmlElement):
     """
@@ -760,8 +803,10 @@ class CT_TcPr(BaseOxmlElement):
     )
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
+    tcBorders = ZeroOrOne('w:tcBorders', successors = ('w:tcPr',))
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
     vAlign = ZeroOrOne('w:vAlign', successors=_tag_seq[12:])
+    
     del _tag_seq
 
     @property
@@ -892,3 +937,31 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
     val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+
+class CT_TblMar(BaseOxmlElement):
+    """
+    ``<w:tblCellMar>`` element
+    """
+    left = ZeroOrOne('w:left', successors=('w:tblCellMar',)) 
+    right = ZeroOrOne('w:write', successors=('w:tblCellMar',))
+
+
+class CT_Bottom(BaseOxmlElement):
+    """
+    <w:bottom> element
+    """
+    val= OptionalAttribute('w:val', ST_String)
+    sz= OptionalAttribute('w:sz', ST_String)
+    space = OptionalAttribute('w:space', ST_String)
+    color = OptionalAttribute('w:color', ST_String)
+
+    @classmethod
+    def new(cls, val, sz):
+        bottom = OxmlElement('w:bottom')
+        bottom.val = val
+        bottom.sz = sz 
+        bottom.space = "0"
+        bottom.color = "auto"
+
+        return bottom 
