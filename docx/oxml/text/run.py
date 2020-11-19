@@ -73,8 +73,8 @@ class CT_R(BaseOxmlElement):
         rStart._id = _id
         rEnd = OxmlElement('w:commentRangeEnd')
         rEnd._id = _id
-        self.insert(0,rStart)
-        self.append(rEnd)
+        self.addprevious(rStart)
+        self.addnext(rEnd)
 
     def add_comment_reference(self, _id):
         reference = OxmlElement('w:commentReference')
