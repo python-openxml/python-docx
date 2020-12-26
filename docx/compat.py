@@ -34,6 +34,6 @@ else:
 
     def is_string(obj):
         """Return True if *obj* is a string, False otherwise."""
-        return isinstance(obj, basestring)
+        return isinstance(obj, basestring)  # noqa
 
-    Unicode = unicode
+    Unicode = unicode  # noqa
