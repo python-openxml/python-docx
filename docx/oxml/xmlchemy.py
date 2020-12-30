@@ -613,7 +613,7 @@ class ZeroOrOne(_BaseChildElement):
 
 class ZeroOrOneChoice(_BaseChildElement):
     """
-    Correspondes to an ``EG_*`` element group where at most one of its
+    Corresponds to an ``EG_*`` element group where at most one of its
     members may appear as a child.
     """
     def __init__(self, choices, successors=()):

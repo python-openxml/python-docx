@@ -149,6 +149,7 @@ class RGBColor(tuple):
         """
         Return a new instance from an RGB color hex string like ``'3C2F80'``.
         """
+        rgb_hex_str = rgb_hex_str.replace('#', '')
         r = int(rgb_hex_str[:2], 16)
         g = int(rgb_hex_str[2:4], 16)
         b = int(rgb_hex_str[4:], 16)
