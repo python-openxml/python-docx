@@ -1,8 +1,6 @@
 # encoding: utf-8
 
-"""
-lxml custom element classes for core properties-related XML elements.
-"""
+"""Custom element classes for core properties-related XML elements"""
 
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
@@ -12,9 +10,10 @@ import re
 
 from datetime import datetime, timedelta
 
-from . import parse_xml
-from .ns import nsdecls, qn
-from .xmlchemy import BaseOxmlElement, ZeroOrOne
+from docx.compat import is_string
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls, qn
+from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
 class CT_CoreProperties(BaseOxmlElement):
@@ -238,7 +237,7 @@ class CT_CoreProperties(BaseOxmlElement):
         td = timedelta(hours=hours, minutes=minutes)
         return dt + td
 
-    _offset_pattern = re.compile('([+-])(\d\d):(\d\d)')
+    _offset_pattern = re.compile(r'([+-])(\d\d):(\d\d)')
 
     @classmethod
     def _parse_W3CDTF_to_datetime(cls, w3cdtf_str):
@@ -293,10 +292,10 @@ class CT_CoreProperties(BaseOxmlElement):
             del self.attrib[qn('xsi:foo')]
 
     def _set_element_text(self, prop_name, value):
-        """
-        Set string value of *name* property to *value*.
-        """
-        value = str(value)
+        """Set string value of *name* property to *value*."""
+        if not is_string(value):
+            value = str(value)
+
         if len(value) > 255:
             tmpl = (
                 "exceeded 255 char limit for property, got:\n\n'%s'"

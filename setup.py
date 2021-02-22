@@ -17,6 +17,7 @@ def text_of(relpath):
         text = f.read()
     return text
 
+
 # Read the version from docx.__version__ without importing the package
 # (and thus attempting to import packages it depends on that may not be
 # installed yet)
@@ -34,7 +35,7 @@ AUTHOR_EMAIL = 'python-docx@googlegroups.com'
 URL = 'https://github.com/python-openxml/python-docx'
 LICENSE = text_of('LICENSE')
 PACKAGES = find_packages(exclude=['tests', 'tests.*'])
-PACKAGE_DATA = {'docx': ['templates/*']}
+PACKAGE_DATA = {'docx': ['templates/*.xml', 'templates/*.docx']}
 
 INSTALL_REQUIRES = ['lxml>=2.3.2']
 TEST_SUITE = 'tests'

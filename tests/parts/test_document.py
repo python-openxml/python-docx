@@ -1,51 +1,89 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.parts.document module
-"""
+"""Unit test suite for the docx.parts.document module"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
-from docx.image.image import Image
+from docx.enum.style import WD_STYLE_TYPE
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.package import Package
 from docx.parts.document import DocumentPart
-from docx.parts.image import ImagePart
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
 from docx.settings import Settings
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
-from docx.text.paragraph import Paragraph
 
 from ..oxml.parts.unitdata.document import a_body, a_document
-from ..oxml.unitdata.text import a_p
-from ..unitutil.file import snippet_text
-from ..unitutil.mock import (
-    instance_mock, class_mock, method_mock, property_mock
-)
+from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocumentPart(object):
+
+    def it_can_add_a_footer_part(self, package_, FooterPart_, footer_part_, relate_to_):
+        FooterPart_.new.return_value = footer_part_
+        relate_to_.return_value = "rId12"
+        document_part = DocumentPart(None, None, None, package_)
+
+        footer_part, rId = document_part.add_footer_part()
+
+        FooterPart_.new.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, footer_part_, RT.FOOTER)
+        assert footer_part is footer_part_
+        assert rId == "rId12"
+
+    def it_can_add_a_header_part(self, package_, HeaderPart_, header_part_, relate_to_):
+        HeaderPart_.new.return_value = header_part_
+        relate_to_.return_value = "rId7"
+        document_part = DocumentPart(None, None, None, package_)
+
+        header_part, rId = document_part.add_header_part()
+
+        HeaderPart_.new.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, header_part_, RT.HEADER)
+        assert header_part is header_part_
+        assert rId == "rId7"
+
+    def it_can_drop_a_specified_header_part(self, drop_rel_):
+        document_part = DocumentPart(None, None, None, None)
+
+        document_part.drop_header_part("rId42")
+
+        drop_rel_.assert_called_once_with(document_part, "rId42")
+
+    def it_provides_access_to_a_footer_part_by_rId(
+        self, related_parts_prop_, related_parts_, footer_part_
+    ):
+        related_parts_prop_.return_value = related_parts_
+        related_parts_.__getitem__.return_value = footer_part_
+        document_part = DocumentPart(None, None, None, None)
+
+        footer_part = document_part.footer_part("rId9")
+
+        related_parts_.__getitem__.assert_called_once_with("rId9")
+        assert footer_part is footer_part_
+
+    def it_provides_access_to_a_header_part_by_rId(
+        self, related_parts_prop_, related_parts_, header_part_
+    ):
+        related_parts_prop_.return_value = related_parts_
+        related_parts_.__getitem__.return_value = header_part_
+        document_part = DocumentPart(None, None, None, None)
+
+        header_part = document_part.header_part("rId11")
+
+        related_parts_.__getitem__.assert_called_once_with("rId11")
+        assert header_part is header_part_
 
     def it_can_save_the_package_to_a_file(self, save_fixture):
         document, file_ = save_fixture
         document.save(file_)
         document._package.save.assert_called_once_with(file_)
-
-    def it_can_get_or_add_an_image(self, get_image_fixture):
-        document_part, path, image_part_, rId_, image_ = get_image_fixture
-
-        rId, image = document_part.get_or_add_image(path)
-
-        image_parts = document_part._package.image_parts
-        image_parts.get_or_add_image_part.assert_called_once_with(path)
-        document_part.relate_to.assert_called_once_with(image_part_, RT.IMAGE)
-        assert (rId, image) == (rId_, image_)
 
     def it_provides_access_to_the_document_settings(self, settings_fixture):
         document_part, settings_ = settings_fixture
@@ -69,89 +107,96 @@ class DescribeDocumentPart(object):
         InlineShapes_.assert_called_once_with(body_elm, document)
         assert inline_shapes is InlineShapes_.return_value
 
-    def it_provides_access_to_the_numbering_part(self, nmprt_get_fixture):
-        document_part, numbering_part_ = nmprt_get_fixture
+    def it_provides_access_to_the_numbering_part(
+        self, part_related_by_, numbering_part_
+    ):
+        part_related_by_.return_value = numbering_part_
+        document_part = DocumentPart(None, None, None, None)
+
         numbering_part = document_part.numbering_part
-        document_part.part_related_by.assert_called_once_with(RT.NUMBERING)
+
+        part_related_by_.assert_called_once_with(document_part, RT.NUMBERING)
         assert numbering_part is numbering_part_
 
-    def it_creates_numbering_part_if_not_present(self, nmprt_create_fixture):
-        document_part, NumberingPart_, numbering_part_ = nmprt_create_fixture
+    def and_it_creates_a_numbering_part_if_not_present(
+        self, part_related_by_, relate_to_, NumberingPart_, numbering_part_
+    ):
+        part_related_by_.side_effect = KeyError
+        NumberingPart_.new.return_value = numbering_part_
+        document_part = DocumentPart(None, None, None, None)
+
         numbering_part = document_part.numbering_part
+
         NumberingPart_.new.assert_called_once_with()
-        document_part.relate_to.assert_called_once_with(
-            numbering_part_, RT.NUMBERING
-        )
+        relate_to_.assert_called_once_with(document_part, numbering_part_, RT.NUMBERING)
         assert numbering_part is numbering_part_
 
-    def it_knows_the_next_available_xml_id(self, next_id_fixture):
-        document, expected_id = next_id_fixture
-        assert document.next_id == expected_id
+    def it_can_get_a_style_by_id(self, styles_prop_, styles_, style_):
+        styles_prop_.return_value = styles_
+        styles_.get_by_id.return_value = style_
+        document_part = DocumentPart(None, None, None, None)
 
-    def it_can_create_a_new_pic_inline(self, new_pic_fixture):
-        document_part, path, width, height = new_pic_fixture[:4]
-        image_, expected_xml = new_pic_fixture[4:]
+        style = document_part.get_style("BodyText", WD_STYLE_TYPE.PARAGRAPH)
 
-        inline = document_part.new_pic_inline(path, width, height)
-
-        document_part.get_or_add_image.assert_called_once_with(path)
-        image_.scaled_dimensions.assert_called_once_with(width, height)
-        assert inline.xml == expected_xml
-
-    def it_can_get_a_style_by_id(self, get_style_fixture):
-        document_part, style_id, style_type, style_ = get_style_fixture
-        style = document_part.get_style(style_id, style_type)
-        document_part.styles.get_by_id.assert_called_once_with(
-            style_id, style_type
-        )
+        styles_.get_by_id.assert_called_once_with("BodyText", WD_STYLE_TYPE.PARAGRAPH)
         assert style is style_
 
-    def it_can_get_the_id_of_a_style(self, get_style_id_fixture):
-        document_part, style_or_name, style_type, style_id_ = (
-            get_style_id_fixture
-        )
-        style_id = document_part.get_style_id(style_or_name, style_type)
+    def it_can_get_the_id_of_a_style(self, style_, styles_prop_, styles_):
+        styles_prop_.return_value = styles_
+        styles_.get_style_id.return_value = "BodyCharacter"
+        document_part = DocumentPart(None, None, None, None)
 
-        document_part.styles.get_style_id.assert_called_once_with(
-            style_or_name, style_type
-        )
-        assert style_id is style_id_
+        style_id = document_part.get_style_id(style_, WD_STYLE_TYPE.CHARACTER)
+
+        styles_.get_style_id.assert_called_once_with(style_, WD_STYLE_TYPE.CHARACTER)
+        assert style_id == "BodyCharacter"
 
     def it_provides_access_to_its_settings_part_to_help(
-            self, settings_part_get_fixture):
-        document_part, settings_part_ = settings_part_get_fixture
+        self, part_related_by_, settings_part_
+    ):
+        part_related_by_.return_value = settings_part_
+        document_part = DocumentPart(None, None, None, None)
+
         settings_part = document_part._settings_part
-        document_part.part_related_by.assert_called_once_with(RT.SETTINGS)
+
+        part_related_by_.assert_called_once_with(document_part, RT.SETTINGS)
         assert settings_part is settings_part_
 
-    def it_creates_default_settings_part_if_not_present_to_help(
-            self, settings_part_create_fixture):
-        document_part, SettingsPart_, settings_part_ = (
-            settings_part_create_fixture
-        )
+    def and_it_creates_a_default_settings_part_if_not_present(
+        self, package_, part_related_by_, SettingsPart_, settings_part_, relate_to_
+    ):
+        part_related_by_.side_effect = KeyError
+        SettingsPart_.default.return_value = settings_part_
+        document_part = DocumentPart(None, None, None, package_)
+
         settings_part = document_part._settings_part
 
-        SettingsPart_.default.assert_called_once_with(document_part.package)
-        document_part.relate_to.assert_called_once_with(
-            settings_part_, RT.SETTINGS
-        )
+        SettingsPart_.default.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, settings_part_, RT.SETTINGS)
         assert settings_part is settings_part_
 
     def it_provides_access_to_its_styles_part_to_help(
-            self, styles_part_get_fixture):
-        document_part, styles_part_ = styles_part_get_fixture
+        self, part_related_by_, styles_part_
+    ):
+        part_related_by_.return_value = styles_part_
+        document_part = DocumentPart(None, None, None, None)
+
         styles_part = document_part._styles_part
-        document_part.part_related_by.assert_called_once_with(RT.STYLES)
+
+        part_related_by_.assert_called_once_with(document_part, RT.STYLES)
         assert styles_part is styles_part_
 
-    def it_creates_default_styles_part_if_not_present_to_help(
-            self, styles_part_create_fixture):
-        document_part, StylesPart_, styles_part_ = styles_part_create_fixture
+    def and_it_creates_a_default_styles_part_if_not_present(
+        self, package_, part_related_by_, StylesPart_, styles_part_, relate_to_
+    ):
+        part_related_by_.side_effect = KeyError
+        StylesPart_.default.return_value = styles_part_
+        document_part = DocumentPart(None, None, None, package_)
+
         styles_part = document_part._styles_part
-        StylesPart_.default.assert_called_once_with(document_part.package)
-        document_part.relate_to.assert_called_once_with(
-            styles_part_, RT.STYLES
-        )
+
+        StylesPart_.default.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, styles_part_, RT.STYLES)
         assert styles_part is styles_part_
 
     # fixtures -------------------------------------------------------
@@ -163,31 +208,6 @@ class DescribeDocumentPart(object):
         return document_part, core_properties_
 
     @pytest.fixture
-    def get_image_fixture(self, package_, image_part_, image_, relate_to_):
-        document_part = DocumentPart(None, None, None, package_)
-        path, rId_ = 'foobar.png', 'rId42'
-
-        package_.image_parts.get_or_add_image_part.return_value = image_part_
-        relate_to_.return_value = rId_
-        image_part_.image = image_
-
-        return document_part, path, image_part_, rId_, image_
-
-    @pytest.fixture
-    def get_style_fixture(self, styles_prop_, style_):
-        document_part = DocumentPart(None, None, None, None)
-        style_id, style_type = 'Foobar', 1
-        styles_prop_.return_value.get_by_id.return_value = style_
-        return document_part, style_id, style_type, style_
-
-    @pytest.fixture
-    def get_style_id_fixture(self, styles_prop_):
-        document_part = DocumentPart(None, None, None, None)
-        style_or_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
-        styles_prop_.return_value.get_style_id.return_value = style_id_
-        return document_part, style_or_name, style_type, style_id_
-
-    @pytest.fixture
     def inline_shapes_fixture(self, request, InlineShapes_):
         document_elm = (
             a_document().with_nsdecls().with_child(
@@ -196,47 +216,6 @@ class DescribeDocumentPart(object):
         body_elm = document_elm[0]
         document = DocumentPart(None, None, document_elm, None)
         return document, InlineShapes_, body_elm
-
-    @pytest.fixture(params=[
-        ((), 1), ((1,), 2), ((2,), 1), ((1, 2, 3), 4), ((1, 2, 4), 3),
-        ((0, 0), 1), ((0, 0, 1, 3), 2), (('foo', 1, 2), 3), ((1, 'bar'), 2)
-    ])
-    def next_id_fixture(self, request):
-        existing_ids, expected_id = request.param
-        document_elm = a_document().with_nsdecls().element
-        for n in existing_ids:
-            p = a_p().with_nsdecls().element
-            p.set('id', str(n))
-            document_elm.append(p)
-        document = DocumentPart(None, None, document_elm, None)
-        return document, expected_id
-
-    @pytest.fixture
-    def new_pic_fixture(self, image_, get_or_add_image_, next_id_prop_):
-        document_part = DocumentPart(None, None, None, None)
-        path, width, height, rId = 'foo/bar.png', 111, 222, 'rId42'
-        expected_xml = snippet_text('inline')
-
-        get_or_add_image_.return_value = rId, image_
-        image_.scaled_dimensions.return_value = 444, 888
-        image_.filename = 'bar.png'
-        next_id_prop_.return_value = 24
-
-        return document_part, path, width, height, image_, expected_xml
-
-    @pytest.fixture
-    def nmprt_create_fixture(self, part_related_by_, relate_to_,
-                             NumberingPart_, numbering_part_):
-        document_part = DocumentPart(None, None, None, None)
-        part_related_by_.side_effect = KeyError
-        NumberingPart_.new.return_value = numbering_part_
-        return document_part, NumberingPart_, numbering_part_
-
-    @pytest.fixture
-    def nmprt_get_fixture(self, part_related_by_, numbering_part_):
-        document_part = DocumentPart(None, None, None, None)
-        part_related_by_.return_value = numbering_part_
-        return document_part, numbering_part_
 
     @pytest.fixture
     def save_fixture(self, package_):
@@ -253,41 +232,11 @@ class DescribeDocumentPart(object):
         return document_part, settings_
 
     @pytest.fixture
-    def settings_part_create_fixture(
-            self, package_, part_related_by_, SettingsPart_, settings_part_,
-            relate_to_):
-        document_part = DocumentPart(None, None, None, package_)
-        part_related_by_.side_effect = KeyError
-        SettingsPart_.default.return_value = settings_part_
-        return document_part, SettingsPart_, settings_part_
-
-    @pytest.fixture
-    def settings_part_get_fixture(self, part_related_by_, settings_part_):
-        document_part = DocumentPart(None, None, None, None)
-        part_related_by_.return_value = settings_part_
-        return document_part, settings_part_
-
-    @pytest.fixture
     def styles_fixture(self, _styles_part_prop_, styles_part_, styles_):
         document_part = DocumentPart(None, None, None, None)
         _styles_part_prop_.return_value = styles_part_
         styles_part_.styles = styles_
         return document_part, styles_
-
-    @pytest.fixture
-    def styles_part_create_fixture(
-            self, package_, part_related_by_, StylesPart_, styles_part_,
-            relate_to_):
-        document_part = DocumentPart(None, None, None, package_)
-        part_related_by_.side_effect = KeyError
-        StylesPart_.default.return_value = styles_part_
-        return document_part, StylesPart_, styles_part_
-
-    @pytest.fixture
-    def styles_part_get_fixture(self, part_related_by_, styles_part_):
-        document_part = DocumentPart(None, None, None, None)
-        part_related_by_.return_value = styles_part_
-        return document_part, styles_part_
 
     # fixture components ---------------------------------------------
 
@@ -296,24 +245,28 @@ class DescribeDocumentPart(object):
         return instance_mock(request, CoreProperties)
 
     @pytest.fixture
-    def get_or_add_image_(self, request):
-        return method_mock(request, DocumentPart, 'get_or_add_image')
+    def drop_rel_(self, request):
+        return method_mock(request, DocumentPart, "drop_rel", autospec=True)
 
     @pytest.fixture
-    def image_(self, request):
-        return instance_mock(request, Image)
+    def FooterPart_(self, request):
+        return class_mock(request, 'docx.parts.document.FooterPart')
 
     @pytest.fixture
-    def image_part_(self, request):
-        return instance_mock(request, ImagePart)
+    def footer_part_(self, request):
+        return instance_mock(request, FooterPart)
+
+    @pytest.fixture
+    def HeaderPart_(self, request):
+        return class_mock(request, 'docx.parts.document.HeaderPart')
+
+    @pytest.fixture
+    def header_part_(self, request):
+        return instance_mock(request, HeaderPart)
 
     @pytest.fixture
     def InlineShapes_(self, request):
         return class_mock(request, 'docx.parts.document.InlineShapes')
-
-    @pytest.fixture
-    def next_id_prop_(self, request):
-        return property_mock(request, DocumentPart, 'next_id')
 
     @pytest.fixture
     def NumberingPart_(self, request):
@@ -322,10 +275,6 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def numbering_part_(self, request):
         return instance_mock(request, NumberingPart)
-
-    @pytest.fixture
-    def p_(self, request):
-        return instance_mock(request, Paragraph)
 
     @pytest.fixture
     def package_(self, request):
@@ -338,6 +287,14 @@ class DescribeDocumentPart(object):
     @pytest.fixture
     def relate_to_(self, request):
         return method_mock(request, DocumentPart, 'relate_to')
+
+    @pytest.fixture
+    def related_parts_(self, request):
+        return instance_mock(request, dict)
+
+    @pytest.fixture
+    def related_parts_prop_(self, request):
+        return property_mock(request, DocumentPart, 'related_parts')
 
     @pytest.fixture
     def SettingsPart_(self, request):
@@ -372,10 +329,8 @@ class DescribeDocumentPart(object):
         return instance_mock(request, StylesPart)
 
     @pytest.fixture
-    def styles_prop_(self, request, styles_):
-        return property_mock(
-            request, DocumentPart, 'styles', return_value=styles_
-        )
+    def styles_prop_(self, request):
+        return property_mock(request, DocumentPart, 'styles')
 
     @pytest.fixture
     def _styles_part_prop_(self, request):

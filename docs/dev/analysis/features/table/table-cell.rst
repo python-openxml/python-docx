@@ -7,6 +7,22 @@ properties affecting its size, appearance, and how the content it contains is
 formatted.
 
 
+Candidate protocol
+------------------
+
+Cell.vertical_alignment::
+
+    >>> from docx.enum.table import WD_CELL_ALIGN_VERTICAL
+    >>> cell = table.add_row().cells[0]
+    >>> cell
+    <docx.table._Cell object at 0x...>
+    >>> cell.vertical_alignment
+    None
+    >>> cell.vertical_alignment = WD_CELL_ALIGN_VERTICAL.CENTER
+    >>> print(cell.vertical_alignment)
+    CENTER (1)
+
+
 MS API - Partial Summary
 ------------------------
 
@@ -29,6 +45,25 @@ MS API - Partial Summary
 * WordWrap
 
 
+WD_ALIGN_VERTICAL Enumeration
+---------------------------------
+
+wdAlignVerticalBoth (101)
+    This is an option in the OpenXml spec, but not in Word itself. It's not
+    clear what Word behavior this setting produces. If you find out please let
+    us know and we'll update the documentation. Otherwise, probably best to
+    avoid this option.
+
+wdAlignVerticalBottom (3)
+    Text is aligned to the bottom border of the cell.
+
+wdAlignVerticalCenter (1)
+    Text is aligned to the center of the cell.
+
+wdAlignVerticalTop (0)
+    Text is aligned to the top border of the cell.
+
+
 Specimen XML
 ------------
 
@@ -39,6 +74,7 @@ Specimen XML
   <w:tc>
     <w:tcPr>
       <w:tcW w:w="7038" w:type="dxa"/>
+      <w:vAlign w:val="bottom"/>
     </w:tcPr>
     <w:p>
       <w:pPr>
@@ -127,22 +163,18 @@ Schema Definitions
     <xsd:attribute name="type" type="ST_TblWidth"/>
   </xsd:complexType>
 
-  <xsd:simpleType name="ST_MeasurementOrPercent">
-    <xsd:union memberTypes="ST_DecimalNumberOrPercent s:ST_UniversalMeasure"/>
-  </xsd:simpleType>
+  <xsd:complexType name="CT_VerticalJc">
+    <xsd:attribute name="val" type="ST_VerticalJc" use="required"/>
+  </xsd:complexType>
+
+  <!-- simple types -->
 
   <xsd:simpleType name="ST_DecimalNumberOrPercent">
     <xsd:union memberTypes="ST_UnqualifiedPercentage s:ST_Percentage"/>
   </xsd:simpleType>
 
-  <xsd:simpleType name="ST_UniversalMeasure">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="-?[0-9]+(\.[0-9]+)?(mm|cm|in|pt|pc|pi)"/>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="ST_UnqualifiedPercentage">
-    <xsd:restriction base="xsd:integer"/>
+  <xsd:simpleType name="ST_MeasurementOrPercent">
+    <xsd:union memberTypes="ST_DecimalNumberOrPercent s:ST_UniversalMeasure"/>
   </xsd:simpleType>
 
   <xsd:simpleType name="ST_Percentage">
@@ -157,6 +189,25 @@ Schema Definitions
       <xsd:enumeration value="pct"/>
       <xsd:enumeration value="dxa"/>
       <xsd:enumeration value="auto"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_UniversalMeasure">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="-?[0-9]+(\.[0-9]+)?(mm|cm|in|pt|pc|pi)"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_UnqualifiedPercentage">
+    <xsd:restriction base="xsd:integer"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ST_VerticalJc">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="top"/>
+      <xsd:enumeration value="center"/>
+      <xsd:enumeration value="both"/>
+      <xsd:enumeration value="bottom"/>
     </xsd:restriction>
   </xsd:simpleType>
 

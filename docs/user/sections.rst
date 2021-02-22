@@ -98,7 +98,7 @@ from portrait to landscape::
     >>> section.page_width = new_width
     >>> section.page_height = new_height
     >>> section.orientation, section.page_width, section.page_height
-    (LANDSCAPE (1), 10058400, 7772400) 
+    (LANDSCAPE (1), 10058400, 7772400)
 
 
 Page margins

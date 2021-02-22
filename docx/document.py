@@ -1,24 +1,21 @@
 # encoding: utf-8
 
-"""
-|Document| and closely related objects
-"""
+"""|Document| and closely related objects"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-from .blkcntnr import BlockItemContainer
-from .enum.section import WD_SECTION
-from .enum.text import WD_BREAK
-from .section import Section, Sections
-from .shared import ElementProxy, Emu
+from docx.blkcntnr import BlockItemContainer
+from docx.enum.section import WD_SECTION
+from docx.enum.text import WD_BREAK
+from docx.section import Section, Sections
+from docx.shared import ElementProxy, Emu
 
 
 class Document(ElementProxy):
-    """
-    WordprocessingML (WML) document. Not intended to be constructed directly.
-    Use :func:`docx.Document` to open or create a document.
+    """WordprocessingML (WML) document.
+
+    Not intended to be constructed directly. Use :func:`docx.Document` to open or create
+    a document.
     """
 
     __slots__ = ('_part', '__body')
@@ -28,25 +25,21 @@ class Document(ElementProxy):
         self._part = part
         self.__body = None
 
-    def add_heading(self, text='', level=1):
-        """
-        Return a heading paragraph newly added to the end of the document,
-        containing *text* and having its paragraph style determined by
-        *level*. If *level* is 0, the style is set to `Title`. If *level* is
-        1 (or omitted), `Heading 1` is used. Otherwise the style is set to
-        `Heading {level}`. Raises |ValueError| if *level* is outside the
-        range 0-9.
+    def add_heading(self, text="", level=1):
+        """Return a heading paragraph newly added to the end of the document.
+
+        The heading paragraph will contain *text* and have its paragraph style
+        determined by *level*. If *level* is 0, the style is set to `Title`. If *level*
+        is 1 (or omitted), `Heading 1` is used. Otherwise the style is set to `Heading
+        {level}`. Raises |ValueError| if *level* is outside the range 0-9.
         """
         if not 0 <= level <= 9:
             raise ValueError("level must be in range 0-9, got %d" % level)
-        style = 'Title' if level == 0 else 'Heading %d' % level
+        style = "Title" if level == 0 else "Heading %d" % level
         return self.add_paragraph(text, style)
 
     def add_page_break(self):
-        """
-        Return a paragraph newly added to the end of the document and
-        containing only a page break.
-        """
+        """Return newly |Paragraph| object containing only a page break."""
         paragraph = self.add_paragraph()
         paragraph.add_run().add_break(WD_BREAK.PAGE)
         return paragraph
@@ -87,7 +80,7 @@ class Document(ElementProxy):
         """
         new_sectPr = self._element.body.add_section_break()
         new_sectPr.start_type = start_type
-        return Section(new_sectPr)
+        return Section(new_sectPr, self._part)
 
     def add_table(self, rows, cols, style=None):
         """
@@ -143,11 +136,8 @@ class Document(ElementProxy):
 
     @property
     def sections(self):
-        """
-        A |Sections| object providing access to each section in this
-        document.
-        """
-        return Sections(self._element)
+        """|Sections| object providing access to each section in this document."""
+        return Sections(self._element, self._part)
 
     @property
     def settings(self):

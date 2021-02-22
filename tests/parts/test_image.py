@@ -1,10 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for docx.parts.image module
-"""
+"""Unit test suite for docx.parts.image module"""
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -16,31 +14,30 @@ from docx.package import Package
 from docx.parts.image import ImagePart
 
 from ..unitutil.file import test_file
-from ..unitutil.mock import initializer_mock, instance_mock, method_mock
+from ..unitutil.mock import ANY, initializer_mock, instance_mock, method_mock
 
 
 class DescribeImagePart(object):
 
-    def it_is_used_by_PartFactory_to_construct_image_part(self, load_fixture):
-        # fixture ----------------------
-        image_part_load_, partname_, blob_, package_, image_part_ = (
-            load_fixture
-        )
+    def it_is_used_by_PartFactory_to_construct_image_part(
+        self, image_part_load_, partname_, blob_, package_, image_part_
+    ):
         content_type = CT.JPEG
         reltype = RT.IMAGE
-        # exercise ---------------------
+        image_part_load_.return_value = image_part_
+
         part = PartFactory(partname_, content_type, reltype, blob_, package_)
-        # verify -----------------------
+
         image_part_load_.assert_called_once_with(
             partname_, content_type, blob_, package_
         )
         assert part is image_part_
 
-    def it_can_construct_from_an_Image_instance(self, from_image_fixture):
-        image_, partname_, ImagePart__init__ = from_image_fixture
+    def it_can_construct_from_an_Image_instance(self, image_, partname_, _init_):
         image_part = ImagePart.from_image(image_, partname_)
-        ImagePart__init__.assert_called_once_with(
-            partname_, image_.content_type, image_.blob, image_
+
+        _init_.assert_called_once_with(
+            ANY, partname_, image_.content_type, image_.blob, image_
         )
         assert isinstance(image_part, ImagePart)
 
@@ -96,15 +93,11 @@ class DescribeImagePart(object):
         return image_part, expected_filename
 
     @pytest.fixture
-    def from_image_fixture(self, image_, partname_, ImagePart__init__):
-        return image_, partname_, ImagePart__init__
-
-    @pytest.fixture
     def image_(self, request):
         return instance_mock(request, Image)
 
     @pytest.fixture
-    def ImagePart__init__(self, request):
+    def _init_(self, request):
         return initializer_mock(request, ImagePart)
 
     @pytest.fixture
@@ -112,15 +105,8 @@ class DescribeImagePart(object):
         return instance_mock(request, ImagePart)
 
     @pytest.fixture
-    def image_part_load_(self, request, image_part_):
-        return method_mock(
-            request, ImagePart, 'load', return_value=image_part_
-        )
-
-    @pytest.fixture
-    def load_fixture(
-            self, image_part_load_, partname_, blob_, package_, image_part_):
-        return image_part_load_, partname_, blob_, package_, image_part_
+    def image_part_load_(self, request):
+        return method_mock(request, ImagePart, 'load', autospec=False)
 
     @pytest.fixture
     def package_(self, request):

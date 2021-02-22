@@ -15,6 +15,7 @@ feature analyses:
    :titlesonly:
 
    table-props
+   table-row
    table-cell
    cell-merge
 
