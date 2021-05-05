@@ -22,6 +22,7 @@ class CT_Ind(BaseOxmlElement):
     left = OptionalAttribute('w:left', ST_SignedTwipsMeasure)
     right = OptionalAttribute('w:right', ST_SignedTwipsMeasure)
     firstLine = OptionalAttribute('w:firstLine', ST_TwipsMeasure)
+    firstLineChars = OptionalAttribute('w:firstLineChars', ST_TwipsMeasure)
     hanging = OptionalAttribute('w:hanging', ST_TwipsMeasure)
 
 
@@ -90,6 +91,37 @@ class CT_PPr(BaseOxmlElement):
             ind.hanging = -value
         else:
             ind.firstLine = value
+
+    @property
+    def first_line_chars_indent(self):
+        """
+        A |Length| value calculated from the values of `w:ind/@w:firstLineChars`
+        and `w:ind/@w:hanging`. Returns |None| if the `w:ind` child is not
+        present.
+        """
+        ind = self.ind
+        if ind is None:
+            return None
+        hanging = ind.hanging
+        if hanging is not None:
+            return Length(-hanging)
+        firstLine = ind.firstLineChars
+        if firstLine is None:
+            return None
+        return firstLine
+
+    @first_line_chars_indent.setter
+    def first_line_chars_indent(self, value):
+        if self.ind is None and value is None:
+            return
+        ind = self.get_or_add_ind()
+        ind.firstLineChars = ind.hanging = None
+        if value is None:
+            return
+        elif value < 0:
+            ind.hanging = -value
+        else:
+            ind.firstLineChars = value
 
     @property
     def ind_left(self):
