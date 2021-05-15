@@ -24,7 +24,6 @@ class CT_Blip(BaseOxmlElement):
     embed = OptionalAttribute('r:embed', ST_RelationshipId)
     link = OptionalAttribute('r:link', ST_RelationshipId)
 
-
 class CT_BlipFillProperties(BaseOxmlElement):
     """
     ``<pic:blipFill>`` element, specifies picture properties
@@ -81,7 +80,10 @@ class CT_Inline(BaseOxmlElement):
         specified by the argument values.
         """
         pic_id = 0  # Word doesn't seem to use this, but does not omit it
-        pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
+        if filename.endswith('.svg'):
+            pic = CT_SVGPicture.new(pic_id, filename, rId, cx, cy)
+        else:
+            pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
         inline = cls.new(cx, cy, shape_id, pic)
         inline.graphic.graphicData._insert_pic(pic)
         return inline
@@ -165,6 +167,56 @@ class CT_Picture(BaseOxmlElement):
             '</pic:pic>' % nsdecls('pic', 'a', 'r')
         )
 
+class CT_SVGPicture(CT_Picture):
+    """
+    ``<pic:pic>`` element, a DrawingML picture
+    """
+
+    @classmethod
+    def new(cls, pic_id, filename, rId, cx, cy):
+        """
+        Return a new ``<pic:pic>`` element populated with the minimal
+        contents required to define a viable picture element, based on the
+        values passed as parameters.
+        """
+        XML = cls._pic_xml()
+        XML = XML.replace("${rId}", rId)
+        pic = parse_xml(XML)
+        pic.nvPicPr.cNvPr.id = pic_id
+        pic.nvPicPr.cNvPr.name = filename
+        pic.spPr.cx = cx
+        pic.spPr.cy = cy
+        return pic
+
+    @classmethod
+    def _pic_xml(cls):
+        return (
+            '<pic:pic %s>\n'
+            '  <pic:nvPicPr>\n'
+            '    <pic:cNvPr id="666" name="unnamed"/>\n'
+            '    <pic:cNvPicPr/>\n'
+            '  </pic:nvPicPr>\n'
+            '  <pic:blipFill>\n'
+            '    <a:blip>\n'
+            '      <a:extLst>\n'
+            '        <a:ext uri="{96DAC541-7B7A-43D3-8B79-37D633B846F1}">\n'
+            '          <asvg:svgBlip xmlns:asvg="http://schemas.microsoft.com/office/drawing/2016/SVG/main" r:embed="${rId}"/>\n'
+            '        </a:ext>\n'
+            '      </a:extLst>\n'
+            '    </a:blip>\n'
+            '    <a:stretch>\n'
+            '      <a:fillRect/>\n'
+            '    </a:stretch>\n'
+            '  </pic:blipFill>\n'
+            '  <pic:spPr>\n'
+            '    <a:xfrm>\n'
+            '      <a:off x="0" y="0"/>\n'
+            '      <a:ext cx="914400" cy="914400"/>\n'
+            '    </a:xfrm>\n'
+            '    <a:prstGeom prst="rect"/>\n'
+            '  </pic:spPr>\n'
+            '</pic:pic>' % nsdecls('pic', 'a', 'r')
+        )
 
 class CT_PictureNonVisual(BaseOxmlElement):
     """
