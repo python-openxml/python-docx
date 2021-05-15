@@ -21,7 +21,7 @@ def text_of(relpath):
 # Read the version from docx.__version__ without importing the package
 # (and thus attempting to import packages it depends on that may not be
 # installed yet)
-version = re.search("__version__ = '([^']+)'", text_of("docx/__init__.py")).group(1)
+version = re.search(r'__version__ = "([^"]+)"', text_of("docx/__init__.py")).group(1)
 
 
 NAME = "python-docx"

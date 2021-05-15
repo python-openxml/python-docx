@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+0.8.11 (2021-05-15)
++++++++++++++++++++
+
+- Small build changes and Python 3.8 version changes like collections.abc location.
+
+
 0.8.10 (2019-01-08)
 +++++++++++++++++++
 
