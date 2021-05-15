@@ -200,7 +200,7 @@ class _IfdParser(object):
         directory.
         """
         for idx in range(self._entry_count):
-            dir_entry_offset = self._offset + 2 + (idx*12)
+            dir_entry_offset = self._offset + 2 + (idx * 12)
             ifd_entry = _IfdEntryFactory(self._stream_rdr, dir_entry_offset)
             yield ifd_entry
 
@@ -291,7 +291,7 @@ class _AsciiIfdEntry(_IfdEntry):
         The length of the string, including a terminating '\x00' (NUL)
         character, is in *value_count*.
         """
-        return stream_rdr.read_str(value_count-1, value_offset)
+        return stream_rdr.read_str(value_count - 1, value_offset)
 
 
 class _ShortIfdEntry(_IfdEntry):

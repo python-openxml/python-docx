@@ -37,7 +37,7 @@ def snippet_seq(name, offset=0, count=1024):
     with open(path, 'rb') as f:
         text = f.read().decode('utf-8')
     snippets = text.split('\n\n')
-    start, end = offset, offset+count
+    start, end = offset, offset + count
     return tuple(snippets[start:end])
 
 

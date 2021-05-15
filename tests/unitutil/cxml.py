@@ -171,7 +171,7 @@ class Element(object):
         self._indent_str = ' ' * indent
         xml = self._start_tag
         for child in self._children:
-            xml += child._xml(indent+2)
+            xml += child._xml(indent + 2)
         xml += self._end_tag
         return xml
 
@@ -256,27 +256,23 @@ def grammar():
 
     # w:jc{val=right} ----------------------------
     element = (
-        tagname('tagname')
-        + Group(Optional(attr_list))('attr_list')
-        + Optional(text, default='')('text')
+        tagname('tagname') +
+        Group(Optional(attr_list))('attr_list') +
+        Optional(text, default='')('text')
     ).setParseAction(Element.from_token)
 
     child_node_list = Forward()
 
     node = Group(
-        element('element')
-        + Group(Optional(slash + child_node_list))('child_node_list')
+        element('element') + Group(Optional(slash + child_node_list))('child_node_list')
     ).setParseAction(connect_node_children)
 
-    child_node_list << (
-        open_paren + delimitedList(node) + close_paren
-        | node
-    )
+    child_node_list << (open_paren + delimitedList(node) + close_paren | node)
 
     root_node = (
-        element('element')
-        + Group(Optional(slash + child_node_list))('child_node_list')
-        + stringEnd
+        element('element') +
+        Group(Optional(slash + child_node_list))('child_node_list') +
+        stringEnd
     ).setParseAction(connect_root_node_children)
 
     return root_node
