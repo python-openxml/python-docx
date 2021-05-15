@@ -69,6 +69,11 @@ class DescribeTable(object):
         row_cells = table.row_cells(row_idx)
         assert row_cells == expected_cells
 
+    def it_detects_the_beginning_of_new_rows(self, inconsistet_col_span_fixture):
+        table, row_idx, col_idx, expected_text = inconsistet_col_span_fixture
+        cell = table.cell(row_idx, col_idx)
+        assert cell.text == expected_text
+
     def it_knows_its_alignment_setting(self, alignment_get_fixture):
         table, expected_value = alignment_get_fixture
         assert table.alignment == expected_value
@@ -268,6 +273,20 @@ class DescribeTable(object):
         row_idx = 1
         expected_cells = [3, 4, 5]
         return table, row_idx, expected_cells
+
+    @pytest.fixture
+    def inconsistet_col_span_fixture(self):
+        # the second row is missing one column
+        tbl_cxml = 'w:tbl/(w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)' \
+            + ',w:tr/(w:tc,w:tc/w:tcPr/w:gridSpan{w:val=2})' \
+            + ',w:tr/(w:tc,w:tc/w:tcPr/w:gridSpan{w:val=1})' \
+            + ',w:tr/(w:tc/w:p/w:r/w:t"correct cell",w:tc/w:tcPr/w:gridSpan{w:val=2})' \
+            + ')'
+        table = Table(element(tbl_cxml), None)
+        row_idx = 2
+        col_idx = 0
+        expected_text = "correct cell"
+        return table, row_idx, col_idx, expected_text
 
     @pytest.fixture
     def style_get_fixture(self, part_prop_):
