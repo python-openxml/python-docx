@@ -287,6 +287,10 @@ class EnumValue(int):
         self._docstring = docstring
 
     @property
+    def name(self):
+        return self._member_name
+
+    @property
     def __doc__(self):
         """
         The description of this enumeration member

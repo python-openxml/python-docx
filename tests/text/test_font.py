@@ -10,7 +10,7 @@ from __future__ import (
 
 from docx.dml.color import ColorFormat
 from docx.enum.text import WD_COLOR, WD_UNDERLINE
-from docx.shared import Pt
+from docx.shared import Pt, RGBColor
 from docx.text.font import Font
 
 import pytest
@@ -188,6 +188,7 @@ class DescribeFont(object):
         ('w:r/w:rPr',                            None),
         ('w:r/w:rPr/w:highlight{w:val=default}', WD_COLOR.AUTO),
         ('w:r/w:rPr/w:highlight{w:val=blue}',    WD_COLOR.BLUE),
+        ('w:r/w:rPr/w:shd{w:fill=6195ED}',       RGBColor.from_string('6195ED')),
     ])
     def highlight_get_fixture(self, request):
         r_cxml, expected_value = request.param
@@ -201,7 +202,9 @@ class DescribeFont(object):
          'w:r/w:rPr/w:highlight{w:val=green}'),
         ('w:r/w:rPr/w:highlight{w:val=green}',  WD_COLOR.YELLOW,
          'w:r/w:rPr/w:highlight{w:val=yellow}'),
-        ('w:r/w:rPr/w:highlight{w:val=yellow}', None,
+        ('w:r/w:rPr/w:highlight{w:val=yellow}', RGBColor.from_string('6195ED'),
+         'w:r/w:rPr/w:shd{w:fill=6195ED}'),
+        ('w:r/w:rPr/w:shd{w:fill=6195ED}',      None,
          'w:r/w:rPr'),
         ('w:r/w:rPr',                           None,
          'w:r/w:rPr'),

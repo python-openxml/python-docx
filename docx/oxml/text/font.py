@@ -14,6 +14,7 @@ from ..simpletypes import (
 from ..xmlchemy import (
     BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
 )
+from ...shared import RGBColor
 
 
 class CT_Color(BaseOxmlElement):
@@ -39,6 +40,13 @@ class CT_Highlight(BaseOxmlElement):
     `w:highlight` element, specifying font highlighting/background color.
     """
     val = RequiredAttribute('w:val', WD_COLOR)
+
+
+class CT_Shd(BaseOxmlElement):
+    """
+    `w:shd` element, specifying font highlighting/background color.
+    """
+    fill = RequiredAttribute('w:fill', ST_HexColor)
 
 
 class CT_HpsMeasure(BaseOxmlElement):
@@ -83,6 +91,7 @@ class CT_RPr(BaseOxmlElement):
     color = ZeroOrOne('w:color', successors=_tag_seq[19:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
+    shd = ZeroOrOne('w:shd', successors=_tag_seq[26:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
     vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
     rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
@@ -111,11 +120,36 @@ class CT_RPr(BaseOxmlElement):
 
     @highlight_val.setter
     def highlight_val(self, value):
+        self._remove_shd()
         if value is None:
             self._remove_highlight()
             return
         highlight = self.get_or_add_highlight()
         highlight.val = value
+
+    @property
+    def shd_fill(self):
+        """
+        Value of `w:shd/@fill` attribute, specifying a font's highlight
+        color, or `None` if the text is not highlighted.
+        """
+        shd = self.shd
+        if shd is None:
+            return None
+        return shd.fill
+
+    @shd_fill.setter
+    def shd_fill(self, fill):
+        self._remove_highlight()
+        if fill is None:
+            self._remove_shd()
+            return
+
+        if isinstance(fill, str):
+            fill = RGBColor.from_string(fill)
+
+        shd = self.get_or_add_shd()
+        shd.fill = fill
 
     @property
     def rFonts_ascii(self):

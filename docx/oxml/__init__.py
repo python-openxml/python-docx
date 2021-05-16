@@ -185,6 +185,7 @@ from .text.font import (  # noqa
     CT_Color,
     CT_Fonts,
     CT_Highlight,
+    CT_Shd,
     CT_HpsMeasure,
     CT_RPr,
     CT_Underline,
@@ -198,6 +199,7 @@ register_element_cls('w:cs',         CT_OnOff)
 register_element_cls('w:dstrike',    CT_OnOff)
 register_element_cls('w:emboss',     CT_OnOff)
 register_element_cls('w:highlight',  CT_Highlight)
+register_element_cls('w:shd',        CT_Shd)
 register_element_cls('w:i',          CT_OnOff)
 register_element_cls('w:iCs',        CT_OnOff)
 register_element_cls('w:imprint',    CT_OnOff)

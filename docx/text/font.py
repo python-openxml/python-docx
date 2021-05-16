@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from ..dml.color import ColorFormat
+from ..enum.text import WD_COLOR_INDEX
 from ..shared import ElementProxy
 
 
@@ -134,12 +135,20 @@ class Font(ElementProxy):
         rPr = self._element.rPr
         if rPr is None:
             return None
-        return rPr.highlight_val
+
+        highlight = rPr.highlight_val
+        if highlight is not None:
+            return highlight
+
+        return rPr.shd_fill
 
     @highlight_color.setter
     def highlight_color(self, value):
         rPr = self._element.get_or_add_rPr()
-        rPr.highlight_val = value
+        if not isinstance(value, str) and getattr(WD_COLOR_INDEX, value.name, None) is not None:
+            rPr.highlight_val = value
+        else:
+            rPr.shd_fill = value
 
     @property
     def italic(self):
