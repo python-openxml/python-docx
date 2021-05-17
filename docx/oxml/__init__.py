@@ -64,10 +64,9 @@ def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
 # custom element class mappings
 # ===========================================================================
 
-from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
+from .shared import CT_DecimalNumber, CT_OnOff, CT_String, CT_LongHexNumber  # noqa
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 register_element_cls("w:titlePg", CT_OnOff)
-
 
 from .coreprops import CT_CoreProperties  # noqa
 register_element_cls('cp:coreProperties', CT_CoreProperties)
@@ -76,7 +75,12 @@ from .document import CT_Body, CT_Document  # noqa
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
-from .numbering import CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr  # noqa
+from .numbering import ( # noqa
+    CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr,
+    CT_LevelSuffix, CT_NumFmt, CT_MultiLevelType,
+    CT_LvlLegacy, CT_LevelText, CT_NumPicBullet,
+    CT_Lvl, CT_AbstractNum
+)
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
 register_element_cls('w:lvlOverride',   CT_NumLvl)
@@ -85,6 +89,22 @@ register_element_cls('w:numId',         CT_DecimalNumber)
 register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
+register_element_cls('w:suff',          CT_LevelSuffix)
+register_element_cls('w:numFmt',        CT_NumFmt)
+register_element_cls('w:multiLevelType',CT_MultiLevelType)
+register_element_cls('w:legacy',        CT_LvlLegacy)
+register_element_cls('w:lvlText',       CT_LevelText)
+register_element_cls('w:numPicBullet',  CT_NumPicBullet)
+register_element_cls('w:lvl',           CT_Lvl)
+register_element_cls('w:abstractNum',   CT_AbstractNum)
+register_element_cls('w:nsid',          CT_LongHexNumber)
+register_element_cls('w:tmpl',          CT_LongHexNumber)
+register_element_cls('w:start',         CT_DecimalNumber)
+register_element_cls('w:styleLink',     CT_String)
+register_element_cls('w:numStyleLink',  CT_String)
+register_element_cls('w:lvlRestart',    CT_DecimalNumber)
+register_element_cls('w:lvlPicBulletId',CT_DecimalNumber)
+register_element_cls('w:isLgl',         CT_OnOff)
 
 from .section import (  # noqa
     CT_HdrFtr,

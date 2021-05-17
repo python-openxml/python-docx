@@ -197,6 +197,20 @@ class ST_BrClear(XsdString):
             )
 
 
+class ST_LongHexNumber(XsdUnsignedInt):
+
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return int(str_value,16)
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        """
+        Keep alpha hex numerals all uppercase just for consistency.
+        """
+        # expecting eight hexadeximal digits
+        return '%08X' % value
+
 class ST_BrType(XsdString):
 
     @classmethod
@@ -297,6 +311,111 @@ class ST_Merge(XsdStringEnumeration):
     RESTART = 'restart'
 
     _members = (CONTINUE, RESTART)
+
+class ST_MultiLevelType(XsdStringEnumeration):
+    """
+    Valid values for <w:multiLevelType val=""> attribute
+    """
+    SINGLE = 'singleLevel'
+    MULTI = 'multilevel'
+    HYBRID = 'hybridMultilevel'
+
+    _members = (SINGLE, MULTI, HYBRID)
+
+class ST_LevelSuffix(XsdStringEnumeration):
+    """
+    Valid values for <w:suff val=""> attribute
+    """
+    TAB = 'tab'
+    SPACE = 'space'
+    NOTHING = 'nothing'
+
+    _members = (TAB, SPACE, NOTHING)
+
+class ST_NumberFormat(XsdStringEnumeration):
+    """
+    Valid values for <w:numFmt val=""> attribute
+    """
+    DECIMAL = 'decimal'
+    UPPERROMAN = 'upperRoman'
+    LOWERROMAN = 'lowerRoman'
+    UPPERLETTER = 'upperLetter'
+    LOWERLETTER = 'lowerLetter'
+    ORDINAL = 'ordinal'
+    CARDINALTEXT = 'cardinalText'
+    ORDINALTEXT = 'ordinalText'
+    HEX = 'hex'
+    CHICAGO = 'chicago'
+    IDEOGRAPHDIGITAL = 'ideographDigital'
+    JAPANESECOUNTING = 'japaneseCounting'
+    AIUEO = 'aiueo'
+    IROHA = 'iroha'
+    DECIMALFULLWIDTH = 'decimalFullWidth'
+    DECIMALHALFWIDTH = 'decimalHalfWidth'
+    JAPANESELEGAL = 'japaneseLegal'
+    JAPANESEDIGITALTENTHOUSAND = 'japaneseDigitalTenThousand'
+    DECIMALENCLOSEDCIRCLE = 'decimalEnclosedCircle'
+    DECIMALFULLWIDTH2 = 'decimalFullWidth2'
+    AIUEOFULLWIDTH = 'aiueoFullWidth'
+    IROHAFULLWIDTH = 'irohaFullWidth'
+    DECIMALZERO = 'decimalZero'
+    BULLET = 'bullet'
+    GANADA = 'ganada'
+    CHOSUNG = 'chosung'
+    DECIMALENCLOSEDFULLSTOP = 'decimalEnclosedFullstop'
+    DECIMALENCLOSEDPAREN = 'decimalEnclosedParen'
+    DECIMALENCLOSEDCIRCLECHINESE = 'decimalEnclosedCircleChinese'
+    IDEOGRAPHENCLOSEDCIRCLE = 'ideographEnclosedCircle'
+    IDEOGRAPHTRADITIONAL = 'ideographTraditional'
+    IDEOGRAPHZODIAC = 'ideographZodiac'
+    IDEOGRAPHZODIACTRADITIONAL = 'ideographZodiacTraditional'
+    TAIWANESECOUNTING = 'taiwaneseCounting'
+    IDEOGRAPHLEGALTRADITIONAL = 'ideographLegalTraditional'
+    TAIWANESECOUNTINGTHOUSAND = 'taiwaneseCountingThousand'
+    TAIWANESEDIGITAL = 'taiwaneseDigital'
+    CHINESECOUNTING = 'chineseCounting'
+    CHINESELEGALSIMPLIFIED = 'chineseLegalSimplified'
+    CHINESECOUNTINGTHOUSAND = 'chineseCountingThousand'
+    KOREANDIGITAL = 'koreanDigital'
+    KOREANCOUNTING = 'koreanCounting'
+    KOREANLEGAL = 'koreanLegal'
+    KOREANDIGITAL2 = 'koreanDigital2'
+    VIETNAMESECOUNTING = 'vietnameseCounting'
+    RUSSIANLOWER = 'russianLower'
+    RUSSIANUPPER = 'russianUpper'
+    NONE = 'none'
+    NUMBERINdASH = 'numberInDash'
+    HEBREW1 = 'hebrew1'
+    HEBREW2 = 'hebrew2'
+    ARABICALPHA = 'arabicAlpha'
+    ARABICABJAD = 'arabicAbjad'
+    HINDIVOWELS = 'hindiVowels'
+    HINDICONSONANTS = 'hindiConsonants'
+    HINDINUMBERS = 'hindiNumbers'
+    HINDICOUNTING = 'hindiCounting'
+    THAILETTERS = 'thaiLetters'
+    THAINUMBERS = 'thaiNumbers'
+    THAICOUNTING = 'thaiCounting'
+    BAHTTEXT = 'bahtText'
+    DOLLARTEXT = 'dollarText'
+    CUSTOM = 'custom'
+
+    _members = (DECIMAL, UPPERROMAN, LOWERROMAN, UPPERLETTER,
+            LOWERLETTER, ORDINAL, CARDINALTEXT, ORDINALTEXT,
+            HEX, CHICAGO, IDEOGRAPHDIGITAL, JAPANESECOUNTING,
+            AIUEO, IROHA, DECIMALFULLWIDTH, DECIMALHALFWIDTH,
+            JAPANESELEGAL, JAPANESEDIGITALTENTHOUSAND, DECIMALENCLOSEDCIRCLE, DECIMALFULLWIDTH2,
+            AIUEOFULLWIDTH, IROHAFULLWIDTH, DECIMALZERO, BULLET,
+            GANADA, CHOSUNG, DECIMALENCLOSEDFULLSTOP, DECIMALENCLOSEDPAREN,
+            DECIMALENCLOSEDCIRCLECHINESE, IDEOGRAPHENCLOSEDCIRCLE, IDEOGRAPHTRADITIONAL, IDEOGRAPHZODIAC,
+            IDEOGRAPHZODIACTRADITIONAL, TAIWANESECOUNTING, IDEOGRAPHLEGALTRADITIONAL, TAIWANESECOUNTINGTHOUSAND,
+            TAIWANESEDIGITAL, CHINESECOUNTING, CHINESELEGALSIMPLIFIED, CHINESECOUNTINGTHOUSAND,
+            KOREANDIGITAL, KOREANCOUNTING, KOREANLEGAL, KOREANDIGITAL2,
+            VIETNAMESECOUNTING, RUSSIANLOWER, RUSSIANUPPER, NONE,
+            NUMBERINdASH, HEBREW1, HEBREW2, ARABICALPHA,
+            ARABICABJAD, HINDIVOWELS, HINDICONSONANTS, HINDINUMBERS,
+            HINDICOUNTING, THAILETTERS, THAINUMBERS, THAICOUNTING,
+            BAHTTEXT, DOLLARTEXT, CUSTOM)
 
 
 class ST_OnOff(XsdBoolean):

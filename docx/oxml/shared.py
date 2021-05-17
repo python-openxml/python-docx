@@ -8,8 +8,16 @@ from __future__ import absolute_import
 
 from . import OxmlElement
 from .ns import qn
-from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
+from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String, ST_LongHexNumber
 from .xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute
+
+
+class CT_LongHexNumber(BaseOxmlElement):
+    """
+    ``<w:suff>`` element, which specifies the form of the space
+    between a list number and the list paragraph
+    """
+    val = RequiredAttribute('w:val', ST_LongHexNumber )
 
 
 class CT_DecimalNumber(BaseOxmlElement):
