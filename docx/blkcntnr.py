@@ -67,6 +67,23 @@ class BlockItemContainer(Parented):
         from .table import Table
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
 
+    @property
+    def story(self):
+        """
+        A list containing paragraphs and tables in document order
+        """
+        from .table import Table
+        from docx.oxml.text.paragraph import CT_P
+        from docx.oxml.table import CT_Tbl
+
+        def make_element(el, s):
+            if isinstance(el, CT_P):
+                return Paragraph(el, s)
+            elif isinstance(el, CT_Tbl):
+                return Table(el, s)
+
+        return [make_element(el, self) for el in self._element if isinstance(el, CT_P) or isinstance(el, CT_Tbl)]
+
     def _add_paragraph(self):
         """
         Return a paragraph newly added to the end of the content in this

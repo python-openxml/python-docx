@@ -121,6 +121,13 @@ class Document(ElementProxy):
         return self._body.paragraphs
 
     @property
+    def story(self):
+        """
+        A list of |Paragraph| and |Table| instances in document order
+        """
+        return self._body.story
+
+    @property
     def part(self):
         """
         The |DocumentPart| object of this document.
