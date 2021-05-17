@@ -59,6 +59,25 @@ class ParagraphFormat(ElementProxy):
         pPr.first_line_indent = value
 
     @property
+    def first_line_chars_indent(self):
+        """
+        |Length| value specifying the relative difference in indentation for
+        the first line of the paragraph. A positive value causes the first
+        line to be indented. A negative value produces a hanging indent.
+        |None| indicates first line indentation is inherited from the style
+        hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.first_line_chars_indent
+
+    @first_line_chars_indent.setter
+    def first_line_chars_indent(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.first_line_chars_indent = value
+
+    @property
     def keep_together(self):
         """
         |True| if the paragraph should be kept "in one piece" and not broken
