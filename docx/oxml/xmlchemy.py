@@ -317,6 +317,26 @@ class _BaseChildElement(object):
         )
         self._add_to_class(self._insert_method_name, _insert_child)
 
+    def _add_inserter_at(self):
+        """
+        Add an ``_insert_at()`` method to the element class for this child element.
+        the child element MUST has a _element attribute
+        """
+        def _insert_child(obj, n, elm):
+            if elm is None:
+                new_method = getattr(obj, self._new_method_name)
+                child = new_method()
+            else:
+                child = elm._element
+            return obj.insert_element_at(child, self._nsptagname, n)
+
+        _insert_child.__doc__ = (
+            'Return the passed ``<%s>`` element after inserting it as a child in the '
+            ' required position. If position exceed max available position None is returned' % self._nsptagname
+        )
+        self._add_to_class(self._insert_at_method_name, _insert_child)
+
+
     def _add_list_getter(self):
         """
         Add a read-only ``{prop_name}_lst`` property to the element class to
@@ -344,6 +364,21 @@ class _BaseChildElement(object):
             'he correct sequence.' % self._nsptagname
         )
         self._add_to_class(self._public_add_method_name, add_child)
+
+    def _add_remove_at(self):
+        """
+        Add an ``_remove_at()`` method to the element class for this child element.
+        the child element MUST has a _element attribute
+        """
+
+        def _remove_child(obj, n):
+            return obj.remove_element_at(self._nsptagname, n)
+
+        _remove_child.__doc__ = (
+            'Remove ``<%s>`` element in the required position. If position exceed max available position None is removed' % self._nsptagname
+        )
+        self._add_to_class(self._remove_at_method_name, _remove_child)
+
 
     def _add_to_class(self, name, method):
         """
@@ -383,6 +418,10 @@ class _BaseChildElement(object):
     def _insert_method_name(self):
         return '_insert_%s' % self._prop_name
 
+    @lazyproperty
+    def _insert_at_method_name(self):
+        return '_insert_at_%s' % self._prop_name
+
     @property
     def _list_getter(self):
         """
@@ -408,6 +447,10 @@ class _BaseChildElement(object):
         return 'add_%s' % self._prop_name
 
     @lazyproperty
+    def _remove_at_method_name(self):
+        return '_remove_at_%s' % self._prop_name
+
+    @lazyproperty
     def _remove_method_name(self):
         return '_remove_%s' % self._prop_name
 
@@ -425,8 +468,7 @@ class Choice(_BaseChildElement):
     def nsptagname(self):
         return self._nsptagname
 
-    def populate_class_members(
-            self, element_cls, group_prop_name, successors):
+    def populate_class_members(self, element_cls, group_prop_name, successors):
         """
         Add the appropriate methods to *element_cls*.
         """
@@ -557,6 +599,8 @@ class ZeroOrMore(_BaseChildElement):
         self._add_list_getter()
         self._add_creator()
         self._add_inserter()
+        self._add_inserter_at()
+        self._add_remove_at()
         self._add_adder()
         self._add_public_adder()
         delattr(element_cls, prop_name)
@@ -702,6 +746,18 @@ class _OxmlElementBase(etree.ElementBase):
             self.__class__.__name__, self._nsptag, id(self)
         )
 
+    def n_child_found_of(self, tagname, n):
+        """
+        Return the n-th element with tag equal to tagname
+        If n is greater than number of total tags, then NONE is returned
+        """
+        children = self.findall(qn(tagname))
+        if (n > len(children)):
+            return None
+        else:
+            return children[n]
+
+
     def first_child_found_in(self, *tagnames):
         """
         Return the first child found with tag in *tagnames*, or None if
@@ -711,6 +767,13 @@ class _OxmlElementBase(etree.ElementBase):
             child = self.find(qn(tagname))
             if child is not None:
                 return child
+        return None
+
+    def insert_element_at(self, elm, tagname, n):
+        successor = self.n_child_found_of(tagname, n)
+        if successor is not None:
+            successor.addprevious(elm)
+            return elm
         return None
 
     def insert_element_before(self, elm, *tagnames):
@@ -730,6 +793,15 @@ class _OxmlElementBase(etree.ElementBase):
             matching = self.findall(qn(tagname))
             for child in matching:
                 self.remove(child)
+
+    def remove_element_at(self, tagname, n):
+        """
+	    Remove the n-th element (if present)
+	    """
+        matching = self.findall(qn(tagname))
+        if (n < len(matching)):
+            child = matching[n]
+            self.remove(child)
 
     @property
     def xml(self):

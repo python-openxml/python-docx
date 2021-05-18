@@ -60,6 +60,17 @@ class CT_R(BaseOxmlElement):
         for child in content_child_elms:
             self.remove(child)
 
+    def replace_text(self, text):
+        """
+        replace the text inside run with the text without cleaning the other content of
+        run ``<w:r>`` element
+        """
+        text_child_elms = self.t_lst + self.br_lst + self.cr_lst + self.tab_lst
+        for child in text_child_elms:
+            self.remove(child)
+        _RunContentAppender.append_to_run_from_text(self, text)
+
+
     @property
     def style(self):
         """

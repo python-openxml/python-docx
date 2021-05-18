@@ -119,6 +119,9 @@ class Run(Parented):
     def italic(self, value):
         self.font.italic = value
 
+    def replace_text(self, text):
+        self._r.replace_text(text)
+
     @property
     def style(self):
         """

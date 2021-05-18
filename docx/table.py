@@ -11,6 +11,7 @@ from .enum.style import WD_STYLE_TYPE
 from .oxml.simpletypes import ST_Merge
 from .shared import Inches, lazyproperty, Parented
 
+import copy
 
 class Table(Parented):
     """
@@ -44,6 +45,25 @@ class Table(Parented):
             tc.width = gridCol.w
         return _Row(tr, self)
 
+    def add_row_at(self, n, row = None):
+        """
+        Return a |_Row| instance, newly added as n row into the table.
+        """
+
+        tbl = self._tbl
+        tr = tbl._insert_at_tr(n, row)
+        if (row is None):
+            for gridCol in tbl.tblGrid.gridCol_lst:
+                tc = tr.add_tc()
+                tc.width = gridCol.w
+        return _Row(tr, self)
+
+    def remove_row_at(self, n):
+        """
+        Remove row n with n base 1
+        """
+        self._tbl._remove_at_tr(n-1)
+
     @property
     def alignment(self):
         """
@@ -71,6 +91,13 @@ class Table(Parented):
     @autofit.setter
     def autofit(self, value):
         self._tblPr.autofit = value
+
+    @property
+    def caption(self):
+        """
+        :return: he caption of the table
+        """
+        return self._tblPr.caption
 
     def cell(self, row_idx, col_idx):
         """
@@ -399,6 +426,12 @@ class _Row(Parented):
         Sequence of |_Cell| instances corresponding to cells in this row.
         """
         return tuple(self.table.row_cells(self._index))
+
+    def copy(self):
+        """
+        Return a copy of this row
+        """
+        return _Row(copy.deepcopy(self._element), self._parent)
 
     @property
     def height(self):

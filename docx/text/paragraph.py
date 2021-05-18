@@ -7,6 +7,7 @@ Paragraph-related proxy types.
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
+import re
 
 from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
@@ -83,6 +84,65 @@ class Paragraph(Parented):
         properties for this paragraph, such as line spacing and indentation.
         """
         return ParagraphFormat(self._element)
+
+    def replace_text(self, old, new):
+        """
+        Replace all occurrences of old string in the paragraph with the new one
+        :param old: old string to replace
+        :param new: new string to write
+        """
+        positions = [(a.start(), a.end() -1) for a in re.finditer(old,self.text)]
+        l_run = self.runs
+        i_pos = 0
+        j_run = 0
+        virtual_start = 0
+        if (len(positions)> 0):
+            occurrences_finished = False   # loop over runs finishes when all occurrences are processed
+            while (not occurrences_finished):
+                r = l_run[j_run]
+                virtual_stop = virtual_start + len(r.text) -1
+                # now consider the 5 cases (behaviour copied from Libre Office)
+                # 1. start of run is part of suffix of old : delete the part of the string for run
+                # 2. old is all contained in run : replace
+                # 3. start of old is suffix of run : replace
+                # 4. run is a substring of old : delete the text
+                pos = positions[i_pos]
+                len_original_text = len(r.text)
+                load_next_run = False
+                while (pos[0] <= virtual_stop and not load_next_run):
+                    if (pos[0] < virtual_start and pos[1] <= virtual_stop):
+                        # case 1
+                        tmp_old = old[-(pos[1]-virtual_start+1):]
+                        tmp_text = r.text.replace(tmp_old, '')
+                        r.replace_text(tmp_text)
+
+                    if (pos[0] >= virtual_start and pos[1] <= virtual_stop):
+                        # case 2
+                        tmp_text = r.text.replace(old, new)
+                        r.replace_text(tmp_text)
+
+                    if (pos[0] >= virtual_start and pos[1] > virtual_stop):
+                        # case 3
+                        tmp_old = old[:virtual_stop - pos[0] +1]
+                        tmp_text = r.text.replace(tmp_old, new)
+                        r.replace_text(tmp_text)
+                        load_next_run = True
+
+                    if (pos[0] < virtual_start and pos[1] > virtual_stop):
+                        # case 4
+                        r.replace_text('')
+                        load_next_run = True
+
+                    if (not load_next_run):
+                        i_pos += 1
+                        if (i_pos < len(positions)):
+                            pos = positions[i_pos]
+                        else:
+                            occurrences_finished = True
+                            load_next_run = True
+                j_run += 1
+                virtual_start += len_original_text
+
 
     @property
     def runs(self):
