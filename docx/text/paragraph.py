@@ -136,6 +136,19 @@ class Paragraph(Parented):
         self.clear()
         self.add_run(text)
 
+    @property
+    def accepted_text(self):
+        """
+        String formed by accepting all changes and concatenating
+        the text of each run in the paragraph.
+        Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n``
+        characters respectively.
+        """
+        text = ''
+        for run_text in self._p.xpath(".//w:t"):
+            text += run_text.text
+        return text
+        
     def _insert_paragraph_before(self):
         """
         Return a newly created paragraph, inserted directly before this
