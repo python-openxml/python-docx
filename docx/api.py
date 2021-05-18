@@ -23,7 +23,7 @@ def Document(docx=None):
     """
     docx = _default_docx_path() if docx is None else docx
     document_part = Package.open(docx).main_document_part
-    if document_part.content_type != CT.WML_DOCUMENT_MAIN:
+    if document_part.content_type not in [CT.WML_DOCUMENT_MAIN, CT.WML_DOCUMENT_MACRO_ENABLED_MAIN]:
         tmpl = "file '%s' is not a Word file, content type is '%s'"
         raise ValueError(tmpl % (docx, document_part.content_type))
     return document_part.document
