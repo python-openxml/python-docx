@@ -41,6 +41,10 @@ class Styles(ElementProxy):
         if style_elm is not None:
             return StyleFactory(style_elm)
 
+        style_elm = self._element.get_by_name(key)
+        if style_elm is not None:
+            return StyleFactory(style_elm)
+
         style_elm = self._element.get_by_id(key)
         if style_elm is not None:
             msg = (
