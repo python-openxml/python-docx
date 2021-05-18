@@ -12,12 +12,12 @@ from .oxml.simpletypes import ST_Merge
 from .shared import Inches, lazyproperty, Parented
 
 
-class Table(Parented):
+class _Table(Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
     """
     def __init__(self, tbl, parent):
-        super(Table, self).__init__(parent)
+        super(_Table, self).__init__(parent)
         self._element = self._tbl = tbl
 
     def add_column(self, width):
@@ -467,3 +467,23 @@ class _Rows(Parented):
         Reference to the |Table| object this row collection belongs to.
         """
         return self._parent.table
+
+
+class Table(_Table):
+    def __init__(self,*args,**kwargs):
+        super(Table,self).__init__(*args,**kwargs)
+        self.__cells = None
+
+    @property
+    def _cells(self):
+        if self.__cells is not None:
+            if len(self.rows) != self.__row_count:
+                self.__cells = None
+            if self._column_count != self.__column_count:
+                self.__cells = None
+        if self.__cells is None:
+            self.__column_count = self._column_count
+            self.__row_count = len(self.rows)
+            self.__cells = super(Table,self)._cells
+        return self.__cells
+
