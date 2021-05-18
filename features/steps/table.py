@@ -180,6 +180,60 @@ def given_a_table_row_having_height_rule_state(context, state):
     context.row = table.rows[0]
 
 
+@given('a table having a Header Row setting of {header_row}')
+def given_a_table(context, header_row):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    header_row_value = True if header_row == 'True' else False
+    context.table_.show_header_row = header_row_value
+
+
+@given('a table having a Total Row setting of {total_row}')
+def given_a_table(context, total_row):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    total_row_value = True if total_row == 'True' else False
+    context.table_.show_total_row = total_row_value
+
+
+@given('a table having a First Column setting of {header_column}')
+def given_a_table(context, header_column):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    header_column_value = True if header_column == 'True' else False
+    context.table_.show_header_column = header_column_value
+
+
+@given('a table having a Last Column setting of {last_column}')
+def given_a_table(context, last_column):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    last_column_value = True if last_column == 'True' else False
+    context.table_.show_last_column = last_column_value
+
+
+@given('a table having a Banded Rows setting of {banded_rows}')
+def given_a_table(context, banded_rows):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    banded_rows_value = True if banded_rows == 'True' else False
+    context.table_.show_banded_rows = banded_rows_value
+
+
+@given('a table having a Banded Columns setting of {banded_columns}')
+def given_a_table(context, banded_columns):
+    docx_path = test_docx('blk-containing-table')
+    document = Document(docx_path)
+    context.table_ = document.tables[0]
+    banded_columns_value = True if banded_columns == 'True' else False
+    context.table_.show_banded_columns = banded_columns_value
+
+
 # when =====================================================
 
 @when('I add a 1.0 inch column to the table')
@@ -272,6 +326,48 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
     new_value = {'autofit': True, 'fixed': False}[setting]
     table = context.table_
     table.autofit = new_value
+
+
+@when('I assign {updated_value} to table.show_header_row')
+def when_I_update_header_row_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_header_row = new_value
+
+
+@when('I assign {updated_value} to table.show_total_row')
+def when_I_update_total_row_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_total_row = new_value
+
+
+@when('I assign {updated_value} to table.show_header_column')
+def when_I_update_header_column_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_header_column = new_value
+
+
+@when('I assign {updated_value} to table.show_last_column')
+def when_I_update_last_column_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_last_column = new_value
+
+
+@when('I assign {updated_value} to table.show_banded_rows')
+def when_I_update_banded_rows_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_banded_rows = new_value
+
+
+@when('I assign {updated_value} to table.show_banded_columns')
+def when_I_update_banded_columns_table_style_option(context, updated_value):
+    new_value = True if updated_value == 'True' else False
+    table = context.table_
+    table.show_banded_columns = new_value
 
 
 # then =====================================================
@@ -495,3 +591,45 @@ def then_the_width_of_each_column_is_inches(context, inches):
     expected_width = Inches(float(inches))
     for column in table.columns:
         assert column.width == expected_width, 'got %s' % column.width.inches
+
+
+@then('table.show_header_row is {value}')
+def then_the_show_header_row_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_header_row == expected_value
+
+
+@then('table.show_total_row is {value}')
+def then_the_show_total_row_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_total_row == expected_value
+
+
+@then('table.show_header_column is {value}')
+def then_the_show_header_column_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_header_column == expected_value
+
+
+@then('table.show_last_column is {value}')
+def then_the_show_last_column_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_last_column == expected_value
+
+
+@then('table.show_banded_rows is {value}')
+def then_the_show_banded_rows_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_banded_rows == expected_value
+
+
+@then('table.show_banded_columns is {value}')
+def then_the_show_banded_columns_table_style_option_is(context, value):
+    table_ = context.table_
+    expected_value = True if value == 'True' else False
+    assert table_.show_banded_columns == expected_value

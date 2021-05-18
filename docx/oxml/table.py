@@ -12,7 +12,8 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt,
+    ST_OnOff
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -187,9 +188,14 @@ class CT_Tbl(BaseOxmlElement):
             '<w:tbl %s>\n'
             '  <w:tblPr>\n'
             '    <w:tblW w:type="auto" w:w="0"/>\n'
-            '    <w:tblLook w:firstColumn="1" w:firstRow="1"\n'
-            '               w:lastColumn="0" w:lastRow="0" w:noHBand="0"\n'
-            '               w:noVBand="1" w:val="04A0"/>\n'
+            '    <w:tblLook'
+            '      w:firstColumn="true"'
+            '      w:firstRow="true"'
+            '      w:lastColumn="true"'
+            '      w:lastRow="true"'
+            '      w:noHBand="true"'
+            '      w:noVBand="true"'
+            '    />'
             '  </w:tblPr>\n'
             '%s'  # tblGrid
             '%s'  # trs
@@ -282,6 +288,7 @@ class CT_TblPr(BaseOxmlElement):
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    tblLook = OneAndOnlyOne('w:tblLook')
     del _tag_seq
 
     @property
@@ -337,6 +344,60 @@ class CT_TblPr(BaseOxmlElement):
         if value is None:
             return
         self._add_tblStyle(val=value)
+
+    @property
+    def show_total_row(self):
+        return self.tblLook.show_total_row
+
+    @show_total_row.setter
+    def show_total_row(self, value):
+        tblLook = self.tblLook
+        tblLook.show_total_row = True if value else False
+
+    @property
+    def show_header_row(self):
+        return self.tblLook.show_header_row
+
+    @show_header_row.setter
+    def show_header_row(self, value):
+        tblLook = self.tblLook
+        tblLook.show_header_row = True if value else False
+
+    @property
+    def show_header_column(self):
+        return self.tblLook.show_header_column
+
+    @show_header_column.setter
+    def show_header_column(self, value):
+        tblLook = self.tblLook
+        tblLook.show_header_column = True if value else False
+
+    @property
+    def show_last_column(self):
+        return self.tblLook.show_last_column
+
+    @show_last_column.setter
+    def show_last_column(self, value):
+        tblLook = self.tblLook
+        tblLook.show_last_column = True if value else False
+
+    @property
+    def show_banded_rows(self):
+        return self.tblLook.show_banded_rows
+
+    @show_banded_rows.setter
+    def show_banded_rows(self, value):
+        tblLook = self.tblLook
+        tblLook.show_banded_rows = False if value else True
+
+    @property
+    def show_banded_columns(self):
+        return self.tblLook.show_banded_columns
+
+    @show_banded_columns.setter
+    def show_banded_columns(self, value):
+        tblLook = self.tblLook
+        tblLook.show_banded_columns = False if value else True
 
 
 class CT_TblWidth(BaseOxmlElement):
@@ -892,3 +953,12 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
     val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+
+class CT_TblLook(BaseOxmlElement):
+    show_total_row = RequiredAttribute('w:lastRow', ST_OnOff)
+    show_header_row = RequiredAttribute('w:firstRow', ST_OnOff)
+    show_header_column = RequiredAttribute('w:firstColumn', ST_OnOff)
+    show_last_column = RequiredAttribute('w:lastColumn', ST_OnOff)
+    show_banded_rows = RequiredAttribute('w:noHBand', ST_OnOff)
+    show_banded_columns = RequiredAttribute('w:noVBand', ST_OnOff)
