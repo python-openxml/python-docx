@@ -14,7 +14,7 @@ from docx.image.gif import Gif
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.image.tiff import Tiff
-
+from docx.image.wmf import Wmf
 
 SIGNATURES = (
     # class, offset, signature_bytes
@@ -26,4 +26,5 @@ SIGNATURES = (
     (Tiff, 0, b'MM\x00*'),  # big-endian (Motorola) TIFF
     (Tiff, 0, b'II*\x00'),  # little-endian (Intel) TIFF
     (Bmp,  0, b'BM'),
+    (Wmf,  0, b'\xd7\xcd\xc6\x9a\x00\x00'), # require wmf with Aldus Placeable Metafiles header
 )

@@ -207,6 +207,22 @@ class ParagraphFormat(ElementProxy):
         pPr.ind_right = value
 
     @property
+    def shading_fill(self):
+        """
+        A member of :ref:`WdColorIndex` indicating the color of highlighting
+        applied, or `None` if no highlighting is applied.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.shading_fill
+
+    @shading_fill.setter
+    def shading_fill(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.shading_fill = value
+
+    @property
     def space_after(self):
         """
         |Length| value specifying the spacing to appear between this
