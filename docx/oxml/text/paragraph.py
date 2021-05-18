@@ -61,6 +61,15 @@ class CT_P(BaseOxmlElement):
         pPr._remove_sectPr()
         pPr._insert_sectPr(sectPr)
 
+    def has_sectPr(self):
+        """
+        If has <w:sectPr>, return True, else return False
+        """
+        pPr = self.pPr
+        if pPr is None:
+            return False
+        return pPr.sectPr is not None
+
     @property
     def style(self):
         """

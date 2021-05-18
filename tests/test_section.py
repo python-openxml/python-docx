@@ -75,6 +75,15 @@ class DescribeSections(object):
         ]
         assert section_lst == [section_, section_]
 
+    def it_knows_how_many_paragraphs_in_each_section(self):
+        document_elm = element(
+            "w:document/w:body/(w:p,w:p,w:p/w:pPr/w:sectPr,w:p/w:pPr/w:sectPr,w:p,w:sectPr)"
+        )
+        sections = Sections(document_elm, None)
+        expected = [3, 1, 1]
+        for i, section in enumerate(sections):
+            assert len(section.paragraphs) == expected[i]
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
