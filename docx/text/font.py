@@ -196,6 +196,8 @@ class Font(ElementProxy):
         rPr = self._element.get_or_add_rPr()
         rPr.rFonts_ascii = value
         rPr.rFonts_hAnsi = value
+        rPr.rFonts_eastAsia = value
+        rPr.rFonts_cs = value
 
     @property
     def no_proof(self):
@@ -272,6 +274,7 @@ class Font(ElementProxy):
     def size(self, emu):
         rPr = self._element.get_or_add_rPr()
         rPr.sz_val = emu
+        rPr.szCs_val = emu
 
     @property
     def small_caps(self):

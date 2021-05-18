@@ -75,6 +75,17 @@ class ParagraphFormat(ElementProxy):
         self._element.get_or_add_pPr().keepLines_val = value
 
     @property
+    def bidi(self):
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.bidi_val
+
+    @bidi.setter
+    def bidi(self, value):
+        self._element.get_or_add_pPr().bidi_val = value
+        
+    @property
     def keep_with_next(self):
         """
         |True| if the paragraph should be kept on the same page as the

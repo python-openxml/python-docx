@@ -45,7 +45,7 @@ class CT_PPr(BaseOxmlElement):
         'w:spacing', 'w:ind', 'w:contextualSpacing', 'w:mirrorIndents',
         'w:suppressOverlap', 'w:jc', 'w:textDirection', 'w:textAlignment',
         'w:textboxTightWrap', 'w:outlineLvl', 'w:divId', 'w:cnfStyle',
-        'w:rPr', 'w:sectPr', 'w:pPrChange'
+        'w:rPr', 'w:sectPr', 'w:pPrChange', 'w:bidi'
     )
     pStyle = ZeroOrOne('w:pStyle', successors=_tag_seq[1:])
     keepNext = ZeroOrOne('w:keepNext', successors=_tag_seq[2:])
@@ -58,6 +58,7 @@ class CT_PPr(BaseOxmlElement):
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
     sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[35:])
+    bidi = ZeroOrOne('w:bidi', successors=_tag_seq[36:])
     del _tag_seq
 
     @property
@@ -158,6 +159,20 @@ class CT_PPr(BaseOxmlElement):
             self._remove_keepLines()
         else:
             self.get_or_add_keepLines().val = value
+
+    @property
+    def bidi_val(self):
+        bidi = self.bidi
+        if bidi is None:
+            return None
+        return bidi.val
+
+    @bidi_val.setter
+    def bidi_val(self, value):
+        if value is None:
+            self._remove_bidi()
+        else:
+            self.get_or_add_bidi().val = value
 
     @property
     def keepNext_val(self):

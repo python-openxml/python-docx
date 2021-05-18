@@ -32,6 +32,8 @@ class CT_Fonts(BaseOxmlElement):
     """
     ascii = OptionalAttribute('w:ascii', ST_String)
     hAnsi = OptionalAttribute('w:hAnsi', ST_String)
+    eastAsia = OptionalAttribute('w:eastAsia', ST_String)
+    cs = OptionalAttribute('w:cs', ST_String)
 
 
 class CT_Highlight(BaseOxmlElement):
@@ -82,6 +84,7 @@ class CT_RPr(BaseOxmlElement):
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
     color = ZeroOrOne('w:color', successors=_tag_seq[19:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
+    szCs = ZeroOrOne('w:szCs', successors=_tag_seq[25:])
     highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
     vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
@@ -137,6 +140,40 @@ class CT_RPr(BaseOxmlElement):
             return
         rFonts = self.get_or_add_rFonts()
         rFonts.ascii = value
+
+    @property
+    def rFonts_eastAsia(self):
+        """
+        The value of `w:rFonts/@w:eastAsia` or |None| if not present.
+        """
+        rFonts = self.rFonts
+        if rFonts is None:
+            return None
+        return rFonts.eastAsia
+
+    @rFonts_eastAsia.setter
+    def rFonts_eastAsia(self, value):
+        if value is None and self.rFonts is None:
+            return
+        rFonts = self.get_or_add_rFonts()
+        rFonts.eastAsia = value
+
+    @property
+    def rFonts_cs(self):
+        """
+        The value of `w:rFonts/@w:cs` or |None| if not present.
+        """
+        rFonts = self.rFonts
+        if rFonts is None:
+            return None
+        return rFonts.cs
+
+    @rFonts_cs.setter
+    def rFonts_cs(self, value):
+        if value is None and self.rFonts is None:
+            return
+        rFonts = self.get_or_add_rFonts()
+        rFonts.cs = value
 
     @property
     def rFonts_hAnsi(self):
@@ -230,6 +267,24 @@ class CT_RPr(BaseOxmlElement):
         elif self.vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT:
             self._remove_vertAlign()
 
+    @property
+    def szCs_val(self):
+        """
+        The value of `w:szCs/@w:val` or |None| if not present.
+        """
+        szCs = self.szCs
+        if szCs is None:
+            return None
+        return szCs.val
+
+    @szCs_val.setter
+    def szCs_val(self, value):
+        if value is None:
+            self._remove_szCs()
+            return
+        szCs = self.get_or_add_szCs()
+        szCs.val = value
+        
     @property
     def sz_val(self):
         """
