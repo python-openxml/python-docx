@@ -210,6 +210,22 @@ class _Cell(BlockItemContainer):
         """
         return super(_Cell, self).add_paragraph(text, style)
 
+    def add_picture(self, image_path_or_stream, width=None, height=None):
+        """
+        Return a new picture shape added in its own paragraph at the end of
+        the document. The picture contains the image at
+        *image_path_or_stream*, scaled based on *width* and *height*. If
+        neither width nor height is specified, the picture appears at its
+        native size. If only one is specified, it is used to compute
+        a scaling factor that is then applied to the unspecified dimension,
+        preserving the aspect ratio of the image. The native size of the
+        picture is calculated using the dots-per-inch (dpi) value specified
+        in the image file, defaulting to 72 dpi if no value is specified, as
+        is often the case.
+        """
+        run = self.add_paragraph().add_run()
+        return run.add_picture(image_path_or_stream, width, height)
+
     def add_table(self, rows, cols):
         """
         Return a table newly added to this cell after any existing cell
