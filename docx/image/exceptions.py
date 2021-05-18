@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 """
-Exceptions specific the the image sub-package
+Exceptions specific to the image sub-package
 """
 
 
