@@ -1,4 +1,4 @@
-# encoding: utf-8
+encoding: utf-8
 
 """Custom element classes for tables"""
 
