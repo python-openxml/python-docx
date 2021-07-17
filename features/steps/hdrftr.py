@@ -13,6 +13,7 @@ from helpers import test_docx, test_file
 
 # given ====================================================
 
+
 @given("a _Footer object {with_or_no} footer definition as footer")
 def given_a_Footer_object_with_or_no_footer_definition(context, with_or_no):
     section_idx = {"with a": 0, "with no": 1}[with_or_no]
@@ -51,12 +52,25 @@ def given_the_next_Header_object_with_no_header_definition(context):
 
 # when =====================================================
 
-@when("I assign \"Normal\" to footer.paragraphs[0].style")
+
+@when('I assign bookmark = footer.start_bookmark("Target")')
+def when_I_assign_bookmark_eq_footer_start_bookmark(context):
+    footer = context.footer
+    context.bookmark = footer.start_bookmark("Target")
+
+
+@when('I assign bookmark = header.start_bookmark("Target")')
+def when_I_assign_bookmark_eq_header_start_bookmark(context):
+    header = context.header
+    context.bookmark = header.start_bookmark("Target")
+
+
+@when('I assign "Normal" to footer.paragraphs[0].style')
 def when_I_assign_Body_Text_to_footer_style(context):
     context.footer.paragraphs[0].style = "Normal"
 
 
-@when("I assign \"Normal\" to header.paragraphs[0].style")
+@when('I assign "Normal" to header.paragraphs[0].style')
 def when_I_assign_Body_Text_to_header_style(context):
     context.header.paragraphs[0].style = "Normal"
 
@@ -78,6 +92,7 @@ def when_I_call_run_add_picture(context):
 
 # then =====================================================
 
+
 @then("footer.is_linked_to_previous is {value}")
 def then_footer_is_linked_to_previous_is_value(context, value):
     actual = context.footer.is_linked_to_previous
@@ -85,7 +100,7 @@ def then_footer_is_linked_to_previous_is_value(context, value):
     assert actual == expected, "footer.is_linked_to_previous is %s" % actual
 
 
-@then("footer.paragraphs[0].style.name == \"Normal\"")
+@then('footer.paragraphs[0].style.name == "Normal"')
 def then_footer_paragraphs_0_style_name_eq_Normal(context):
     actual = context.footer.paragraphs[0].style.name
     expected = "Normal"
@@ -113,7 +128,7 @@ def then_header_is_linked_to_previous_is_value(context, value):
     assert actual == expected, "header.is_linked_to_previous is %s" % actual
 
 
-@then("header.paragraphs[0].style.name == \"Normal\"")
+@then('header.paragraphs[0].style.name == "Normal"')
 def then_header_paragraphs_0_style_name_eq_Normal(context):
     actual = context.header.paragraphs[0].style.name
     expected = "Normal"

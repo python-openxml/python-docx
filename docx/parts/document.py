@@ -4,8 +4,12 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from itertools import chain
+
+from docx.bookmark import Bookmarks
 from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.oxml.shape import CT_Inline
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
@@ -35,6 +39,11 @@ class DocumentPart(BaseStoryPart):
         header_part = HeaderPart.new(self.package)
         rId = self.relate_to(header_part, RT.HEADER)
         return header_part, rId
+
+    @lazyproperty
+    def bookmarks(self):
+        """Singleton |Bookmarks| object for this docx package."""
+        return Bookmarks(self)
 
     @property
     def core_properties(self):
@@ -89,6 +98,45 @@ class DocumentPart(BaseStoryPart):
         """
         return InlineShapes(self._element.body, self)
 
+    def iter_story_parts(self):
+        """Generate all parts in document that contain a story.
+
+        A story is a sequence of block-level items (paragraphs and tables).
+        Story parts include this main document part, headers, footers,
+        footnotes, and endnotes.
+        """
+        return chain(
+            (self,),
+            self.iter_parts_related_by(
+                {RT.COMMENTS, RT.ENDNOTES, RT.FOOTER, RT.FOOTNOTES, RT.HEADER}
+            ),
+        )
+
+    def new_pic_inline(self, image_descriptor, width, height):
+        """
+        Return a newly-created `w:inline` element containing the image
+        specified by *image_descriptor* and scaled based on the values of
+        *width* and *height*.
+        """
+        rId, image = self.get_or_add_image(image_descriptor)
+        cx, cy = image.scaled_dimensions(width, height)
+        shape_id, filename = self.next_id, image.filename
+        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+
+    @property
+    def next_id(self):
+        """Next available positive integer id value in this document.
+
+        Calculated by incrementing maximum existing id value. Gaps in the
+        existing id sequence are not filled. The id attribute value is unique
+        in the document, without regard to the element type it appears on.
+        """
+        id_str_lst = self._element.xpath("//@id")
+        used_ids = [int(id_str) for id_str in id_str_lst if id_str.isdigit()]
+        if not used_ids:
+            return 1
+        return max(used_ids) + 1
+
     @lazyproperty
     def numbering_part(self):
         """
@@ -102,6 +150,13 @@ class DocumentPart(BaseStoryPart):
             numbering_part = NumberingPart.new()
             self.relate_to(numbering_part, RT.NUMBERING)
             return numbering_part
+
+    def related_hdrftr_body(self, rId):
+        """
+        Return the |HeaderFooterBody| object corresponding to the related
+        part identified by *rId*.
+        """
+        raise NotImplementedError
 
     def save(self, path_or_stream):
         """

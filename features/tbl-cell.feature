@@ -1,7 +1,20 @@
-Feature: Get and set table cell properties
+Feature: _Cell properties and methods
   In order to format a table cell to my requirements
   As a developer using python-docx
-  I need a way to get and set the properties of a table cell
+  I need properties and methods on a _Cell object
+
+
+  Scenario: _Cell.start_bookmark()
+    Given a _Cell object as cell
+     When I assign bookmark = cell.start_bookmark("Target")
+     Then bookmark.name == "Target"
+      And bookmark.id is an int
+
+
+  Scenario: _Cell.text setter
+     Given a _Cell object as cell
+      When I assign a string to the cell text attribute
+      Then the cell contains the string I assigned
 
 
   Scenario Outline: Get _Cell.vertical_alignment
@@ -47,3 +60,11 @@ Feature: Get and set table cell properties
       | width-setting       | new-setting | reported-width |
       | no explicit setting | 1 inch      | 1 inch         |
       | 2 inches            | 1 inch      | 1 inch         |
+
+
+  Scenario: Add a table into a table cell
+    Given a _Cell object as cell
+     When I add a 2 x 2 table into the first cell
+     Then cell.tables[0] is a 2 x 2 table
+      And the width of each column is 1.5375 inches
+      And the width of each cell is 1.5375 inches

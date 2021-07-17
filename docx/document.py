@@ -5,10 +5,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.blkcntnr import BlockItemContainer
+
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
-from docx.shared import ElementProxy, Emu
+from docx.shared import ElementProxy, Emu, lazyproperty
 
 
 class Document(ElementProxy):
@@ -18,7 +19,7 @@ class Document(ElementProxy):
     a document.
     """
 
-    __slots__ = ('_part', '__body')
+    __slots__ = ("__body", "_bookmarks", "_part")
 
     def __init__(self, element, part):
         super(Document, self).__init__(element)
@@ -44,7 +45,7 @@ class Document(ElementProxy):
         paragraph.add_run().add_break(WD_BREAK.PAGE)
         return paragraph
 
-    def add_paragraph(self, text='', style=None):
+    def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the document, populated
         with *text* and having paragraph style *style*. *text* can contain
@@ -80,7 +81,11 @@ class Document(ElementProxy):
         """
         new_sectPr = self._element.body.add_section_break()
         new_sectPr.start_type = start_type
+  <<<<<<< feature/header
+        return Section(new_sectPr, self)
+  =======
         return Section(new_sectPr, self._part)
+  >>>>>>> master
 
     def add_table(self, rows, cols, style=None):
         """
@@ -93,6 +98,16 @@ class Document(ElementProxy):
         table.style = style
         return table
 
+    @lazyproperty
+    def bookmarks(self):
+        """|Bookmarks| object providing access to |Bookmark| objects.
+
+        A bookmark may exist in the main document story, but also in headers,
+        footers, footnotes or endnotes. This collection contains all
+        bookmarks defined in any of these parts.
+        """
+        return self._part.bookmarks
+
     @property
     def core_properties(self):
         """
@@ -100,6 +115,10 @@ class Document(ElementProxy):
         properties of this document.
         """
         return self._part.core_properties
+
+    def end_bookmark(self, bookmark):
+        """Return `bookmark` after closing it at end of this document."""
+        return self._body.end_bookmark(bookmark)
 
     @property
     def inline_shapes(self):
@@ -136,8 +155,16 @@ class Document(ElementProxy):
 
     @property
     def sections(self):
+  <<<<<<< feature/header
+        """
+        A |Sections| object providing access to each section in this
+        document.
+        """
+        return Sections(self._element, self)
+  =======
         """|Sections| object providing access to each section in this document."""
         return Sections(self._element, self._part)
+  >>>>>>> master
 
     @property
     def settings(self):
@@ -146,6 +173,13 @@ class Document(ElementProxy):
         for this document.
         """
         return self._part.settings
+
+    def start_bookmark(self, name):
+        """Return _Bookmark object identified by `name`.
+
+        The returned bookmark is anchored at the end of this document.
+        """
+        return self._body.start_bookmark(name)
 
     @property
     def styles(self):
@@ -172,9 +206,7 @@ class Document(ElementProxy):
         space between the margins of the last section of this document.
         """
         section = self.sections[-1]
-        return Emu(
-            section.page_width - section.left_margin - section.right_margin
-        )
+        return Emu(section.page_width - section.left_margin - section.right_margin)
 
     @property
     def _body(self):
@@ -191,6 +223,7 @@ class _Body(BlockItemContainer):
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
+
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm

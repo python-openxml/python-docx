@@ -1,4 +1,4 @@
-# encoding: utf-8
+encoding: utf-8
 
 """Parser for Compact XML Expression Language (CXEL) ('see-ex-ell').
 
@@ -28,9 +28,9 @@ from docx.oxml import parse_xml
 from docx.oxml.ns import nsmap
 
 
-# ====================================================================
-# api functions
-# ====================================================================
+====================================================================
+api functions
+====================================================================
 
 def element(cxel_str):
     """
@@ -49,9 +49,9 @@ def xml(cxel_str):
     return xml
 
 
-# ====================================================================
-# internals
-# ====================================================================
+====================================================================
+internals
+====================================================================
 
 
 def nsdecls(*nspfxs):
@@ -61,6 +61,8 @@ def nsdecls(*nspfxs):
     """
     nsdecls = ''
     for nspfx in nspfxs:
+        if nspfx == 'xml':
+            continue
         nsdecls += ' xmlns:%s="%s"' % (nspfx, nsmap[nspfx])
     return nsdecls
 
@@ -131,7 +133,11 @@ class Element(object):
         nspfxs = [nspfx(self._tagname, True)]
         for name, val in self._attrs:
             pfx = nspfx(name)
+  <<<<<<< feature/header
+            if pfx is None or pfx in nspfxs:
+  =======
             if pfx is None or pfx in nspfxs or pfx == "xml":
+  >>>>>>> master
                 continue
             nspfxs.append(pfx)
         return nspfxs
@@ -171,7 +177,7 @@ class Element(object):
         self._indent_str = ' ' * indent
         xml = self._start_tag
         for child in self._children:
-            xml += child._xml(indent+2)
+            xml += child._xml(indent + 2)
         xml += self._end_tag
         return xml
 
@@ -215,11 +221,11 @@ class Element(object):
         return tag
 
 
-# ====================================================================
-# parser
-# ====================================================================
+====================================================================
+parser
+====================================================================
 
-# parse actions ----------------------------------
+parse actions ----------------------------------
 
 def connect_node_children(s, loc, tokens):
     node = tokens[0]
@@ -232,7 +238,7 @@ def connect_root_node_children(root_node):
 
 
 def grammar():
-    # terminals ----------------------------------
+    terminals ----------------------------------
     colon = Literal(':')
     equal = Suppress('=')
     slash = Suppress('/')
@@ -241,12 +247,12 @@ def grammar():
     open_brace = Suppress('{')
     close_brace = Suppress('}')
 
-    # np:tagName ---------------------------------
+    np:tagName ---------------------------------
     nspfx = Word(alphas)
     local_name = Word(alphanums)
     tagname = Combine(nspfx + colon + local_name)
 
-    # np:attr_name=attr_val ----------------------
+    np:attr_name=attr_val ----------------------
     attr_name = Word(alphas + ':')
     attr_val = Word(alphanums + ' %-./:_')
     attr_def = Group(attr_name + equal + attr_val)
@@ -254,29 +260,25 @@ def grammar():
 
     text = dblQuotedString.setParseAction(removeQuotes)
 
-    # w:jc{val=right} ----------------------------
+    w:jc{val=right} ----------------------------
     element = (
-        tagname('tagname')
-        + Group(Optional(attr_list))('attr_list')
-        + Optional(text, default='')('text')
+        tagname('tagname') +
+        Group(Optional(attr_list))('attr_list') +
+        Optional(text, default='')('text')
     ).setParseAction(Element.from_token)
 
     child_node_list = Forward()
 
     node = Group(
-        element('element')
-        + Group(Optional(slash + child_node_list))('child_node_list')
+        element('element') + Group(Optional(slash + child_node_list))('child_node_list')
     ).setParseAction(connect_node_children)
 
-    child_node_list << (
-        open_paren + delimitedList(node) + close_paren
-        | node
-    )
+    child_node_list << (open_paren + delimitedList(node) + close_paren | node)
 
     root_node = (
-        element('element')
-        + Group(Optional(slash + child_node_list))('child_node_list')
-        + stringEnd
+        element('element') +
+        Group(Optional(slash + child_node_list))('child_node_list') +
+        stringEnd
     ).setParseAction(connect_root_node_children)
 
     return root_node

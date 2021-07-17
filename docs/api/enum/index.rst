@@ -14,6 +14,7 @@ can be found here:
    WdBuiltinStyle
    WdCellVerticalAlignment
    WdColorIndex
+   WdHeaderFooterIndex
    WdLineSpacing
    WdOrientation
    WdRowAlignment
