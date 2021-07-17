@@ -250,7 +250,7 @@ class DescribePackageReader(object):
             self, request, partnames_, content_types_, reltypes_, blobs_):
         sparts_ = []
         for idx in range(2):
-            name = 'spart_%s' % (('%d_' % (idx+1)) if idx else '')
+            name = 'spart_%s' % (('%d_' % (idx + 1)) if idx else '')
             spart_ = instance_mock(
                 request, _SerializedPart, name=name,
                 partname=partnames_[idx], content_type=content_types_[idx],

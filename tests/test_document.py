@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.bookmark import _Bookmark, Bookmarks
 from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -25,6 +26,7 @@ from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocument(object):
+    """Unit-test suite for `docx.document.Document` object."""
 
     def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
         level, style = add_heading_fixture
@@ -77,10 +79,14 @@ class DescribeDocument(object):
         section = document.add_section(start_type)
 
         assert document.element.xml == expected_xml
+  <<<<<<< feature/bookmarks
+        sectPr = document.element.xpath("w:body/w:sectPr")[0]
+  =======
         sectPr = document.element.xpath('w:body/w:sectPr')[0]
   <<<<<<< feature/header
         Section_.assert_called_once_with(sectPr, document)
   =======
+  >>>>>> develop
         Section_.assert_called_once_with(sectPr, document_part_)
   >>>>>>> master
         assert section is section_
@@ -92,15 +98,28 @@ class DescribeDocument(object):
         assert table == table_
         assert table.style == style
 
-    def it_can_save_the_document_to_a_file(self, save_fixture):
-        document, file_ = save_fixture
-        document.save(file_)
-        document._part.save.assert_called_once_with(file_)
+    def it_provides_access_to_its_bookmarks(self, document_part_, bookmarks_):
+        document_part_.bookmarks = bookmarks_
+        document = Document(None, document_part_)
+
+        bookmarks = document.bookmarks
+
+        assert bookmarks is bookmarks_
 
     def it_provides_access_to_its_core_properties(self, core_props_fixture):
         document, core_properties_ = core_props_fixture
         core_properties = document.core_properties
         assert core_properties is core_properties_
+
+    def it_can_end_a_bookmark(self, _body_prop_, body_, bookmark_):
+        _body_prop_.return_value = body_
+        body_.end_bookmark.return_value = bookmark_
+        document = Document(None, None)
+
+        bookmark = document.end_bookmark(bookmark_)
+
+        body_.end_bookmark.assert_called_once_with(bookmark_)
+        assert bookmark is bookmark_
 
     def it_provides_access_to_its_inline_shapes(self, inline_shapes_fixture):
         document, inline_shapes_ = inline_shapes_fixture
@@ -111,8 +130,13 @@ class DescribeDocument(object):
         paragraphs = document.paragraphs
         assert paragraphs is paragraphs_
 
+    def it_can_save_the_document_to_a_file(self, save_fixture):
+        document, file_ = save_fixture
+        document.save(file_)
+        document._part.save.assert_called_once_with(file_)
+
     def it_provides_access_to_its_sections(self, document_part_, Sections_, sections_):
-        document_elm = element('w:document')
+        document_elm = element("w:document")
         Sections_.return_value = sections_
         document = Document(document_elm, document_part_)
 
@@ -128,6 +152,16 @@ class DescribeDocument(object):
     def it_provides_access_to_its_settings(self, settings_fixture):
         document, settings_ = settings_fixture
         assert document.settings is settings_
+
+    def it_can_start_a_bookmark(self, _body_prop_, body_, bookmark_):
+        _body_prop_.return_value = body_
+        body_.start_bookmark.return_value = bookmark_
+        document = Document(None, None)
+
+        bookmark = document.start_bookmark("foobar")
+
+        body_.start_bookmark.assert_called_once_with("foobar")
+        assert bookmark is bookmark_
 
     def it_provides_access_to_its_styles(self, styles_fixture):
         document, styles_ = styles_fixture
@@ -156,57 +190,52 @@ class DescribeDocument(object):
 
     fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        (0, 'Title'),
-        (1, 'Heading 1'),
-        (2, 'Heading 2'),
-        (9, 'Heading 9'),
-    ])
+    @pytest.fixture(
+        params=[(0, "Title"), (1, "Heading 1"), (2, "Heading 2"), (9, "Heading 9")]
+    )
     def add_heading_fixture(self, request):
         level, style = request.param
         return level, style
 
-    @pytest.fixture(params=[
-        ('',         None),
-        ('',         'Heading 1'),
-        ('foo\rbar', 'Body Text'),
-    ])
-    def add_paragraph_fixture(self, request, body_prop_, paragraph_):
+    @pytest.fixture(params=[("", None), ("", "Heading 1"), ("foo\rbar", "Body Text")])
+    def add_paragraph_fixture(self, request, _body_prop_, paragraph_):
         text, style = request.param
         document = Document(None, None)
-        body_prop_.return_value.add_paragraph.return_value = paragraph_
+        _body_prop_.return_value.add_paragraph.return_value = paragraph_
         return document, text, style, paragraph_
 
     @pytest.fixture
     def add_picture_fixture(self, request, add_paragraph_, run_, picture_):
         document = Document(None, None)
-        path, width, height = 'foobar.png', 100, 200
+        path, width, height = "foobar.png", 100, 200
         add_paragraph_.return_value.add_run.return_value = run_
         run_.add_picture.return_value = picture_
         return document, path, width, height, run_, picture_
 
-    @pytest.fixture(params=[
-        ('w:sectPr',                        WD_SECTION.EVEN_PAGE,
-         'w:sectPr/w:type{w:val=evenPage}'),
-        ('w:sectPr/w:type{w:val=evenPage}', WD_SECTION.ODD_PAGE,
-         'w:sectPr/w:type{w:val=oddPage}'),
-        ('w:sectPr/w:type{w:val=oddPage}',  WD_SECTION.NEW_PAGE,
-         'w:sectPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:sectPr", WD_SECTION.EVEN_PAGE, "w:sectPr/w:type{w:val=evenPage}"),
+            (
+                "w:sectPr/w:type{w:val=evenPage}",
+                WD_SECTION.ODD_PAGE,
+                "w:sectPr/w:type{w:val=oddPage}",
+            ),
+            ("w:sectPr/w:type{w:val=oddPage}", WD_SECTION.NEW_PAGE, "w:sectPr"),
+        ]
+    )
     def add_section_fixture(self, request):
         sentinel, start_type, new_sentinel = request.param
-        document_elm = element('w:document/w:body/(w:p,%s)' % sentinel)
+        document_elm = element("w:document/w:body/(w:p,%s)" % sentinel)
         expected_xml = xml(
-            'w:document/w:body/(w:p,w:p/w:pPr/%s,%s)' %
-            (sentinel, new_sentinel)
+            "w:document/w:body/(w:p,w:p/w:pPr/%s,%s)" % (sentinel, new_sentinel)
         )
         return document_elm, start_type, expected_xml
 
     @pytest.fixture
-    def add_table_fixture(self, _block_width_prop_, body_prop_, table_):
+    def add_table_fixture(self, _block_width_prop_, _body_prop_, table_):
         document = Document(None, None)
-        rows, cols, style = 4, 2, 'Light Shading Accent 1'
-        body_prop_.return_value.add_table.return_value = table_
+        rows, cols, style = 4, 2, "Light Shading Accent 1"
+        _body_prop_.return_value.add_table.return_value = table_
         _block_width_prop_.return_value = width = 42
         return document, rows, cols, style, width, table_
 
@@ -222,7 +251,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def body_fixture(self, _Body_, body_):
-        document_elm = element('w:document/w:body')
+        document_elm = element("w:document/w:body")
         body_elm = document_elm[0]
         document = Document(document_elm, None)
         return document, body_elm, _Body_, body_
@@ -240,9 +269,9 @@ class DescribeDocument(object):
         return document, inline_shapes_
 
     @pytest.fixture
-    def paragraphs_fixture(self, body_prop_, paragraphs_):
+    def paragraphs_fixture(self, _body_prop_, paragraphs_):
         document = Document(None, None)
-        body_prop_.return_value.paragraphs = paragraphs_
+        _body_prop_.return_value.paragraphs = paragraphs_
         return document, paragraphs_
 
     @pytest.fixture
@@ -253,7 +282,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def save_fixture(self, document_part_):
         document = Document(None, document_part_)
-        file_ = 'foobar.docx'
+        file_ = "foobar.docx"
         return document, file_
 
     @pytest.fixture
@@ -269,32 +298,40 @@ class DescribeDocument(object):
         return document, styles_
 
     @pytest.fixture
-    def tables_fixture(self, body_prop_, tables_):
+    def tables_fixture(self, _body_prop_, tables_):
         document = Document(None, None)
-        body_prop_.return_value.tables = tables_
+        _body_prop_.return_value.tables = tables_
         return document, tables_
 
     fixture components ---------------------------------------------
 
     @pytest.fixture
     def add_paragraph_(self, request):
-        return method_mock(request, Document, 'add_paragraph')
+        return method_mock(request, Document, "add_paragraph")
+
+    @pytest.fixture
+    def _block_width_prop_(self, request):
+        return property_mock(request, Document, "_block_width")
 
     @pytest.fixture
     def _Body_(self, request, body_):
-        return class_mock(request, 'docx.document._Body', return_value=body_)
+        return class_mock(request, "docx.document._Body", return_value=body_)
 
     @pytest.fixture
     def body_(self, request):
         return instance_mock(request, _Body)
 
     @pytest.fixture
-    def _block_width_prop_(self, request):
-        return property_mock(request, Document, '_block_width')
+    def _body_prop_(self, request, body_):
+        return property_mock(request, Document, "_body")
 
     @pytest.fixture
-    def body_prop_(self, request, body_):
-        return property_mock(request, Document, '_body', return_value=body_)
+    def bookmark_(self, request):
+        return instance_mock(request, _Bookmark)
+
+    @pytest.fixture
+    def bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)
 
     @pytest.fixture
     def core_properties_(self, request):
@@ -326,7 +363,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def Section_(self, request):
-        return class_mock(request, 'docx.document.Section')
+        return class_mock(request, "docx.document.Section")
 
     @pytest.fixture
     def section_(self, request):
@@ -334,7 +371,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def Sections_(self, request):
-        return class_mock(request, 'docx.document.Sections')
+        return class_mock(request, "docx.document.Sections")
 
     @pytest.fixture
     def sections_(self, request):
@@ -342,7 +379,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def sections_prop_(self, request):
-        return property_mock(request, Document, 'sections')
+        return property_mock(request, Document, "sections")
 
     @pytest.fixture
     def settings_(self, request):
@@ -354,7 +391,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def table_(self, request):
-        return instance_mock(request, Table, style='UNASSIGNED')
+        return instance_mock(request, Table, style="UNASSIGNED")
 
     @pytest.fixture
     def tables_(self, request):
@@ -362,7 +399,6 @@ class DescribeDocument(object):
 
 
 class Describe_Body(object):
-
     def it_can_clear_itself_of_all_content_it_holds(self, clear_fixture):
         body, expected_xml = clear_fixture
         _body = body.clear_content()
@@ -371,12 +407,14 @@ class Describe_Body(object):
 
     fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:body',                 'w:body'),
-        ('w:body/w:p',             'w:body'),
-        ('w:body/w:sectPr',        'w:body/w:sectPr'),
-        ('w:body/(w:p, w:sectPr)', 'w:body/w:sectPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:body", "w:body"),
+            ("w:body/w:p", "w:body"),
+            ("w:body/w:sectPr", "w:body/w:sectPr"),
+            ("w:body/(w:p, w:sectPr)", "w:body/w:sectPr"),
+        ]
+    )
     def clear_fixture(self, request):
         before_cxml, after_cxml = request.param
         body = _Body(element(before_cxml), None)
