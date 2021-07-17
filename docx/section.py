@@ -1,4 +1,4 @@
-# encoding: utf-8
+ encoding: utf-8
 
 """The |Section| object and related proxy classes"""
 
@@ -9,20 +9,42 @@ from docx.compat import Sequence
 from docx.enum.section import WD_HEADER_FOOTER
 from docx.shared import lazyproperty
 
+from .enum.header import WD_HEADER_FOOTER
+from .header import Header
+from .shared import ElementProxy, lazyproperty
+
 
 class Sections(Sequence):
     """Sequence of |Section| objects corresponding to the sections in the document.
 
     Supports ``len()``, iteration, and indexed access.
     """
+  <<<<<<< feature/header
+    Sequence of |Section| objects corresponding to the sections in the
+    document. Supports ``len()``, iteration, and indexed access.
+    """
+    def __init__(self, document_elm, parent):
+  =======
 
     def __init__(self, document_elm, document_part):
+  >>>>>>> master
         super(Sections, self).__init__()
+        self._parent = parent
         self._document_elm = document_elm
         self._document_part = document_part
 
     def __getitem__(self, key):
         if isinstance(key, slice):
+  <<<<<<< feature/header
+            sectPr_lst = self._document_elm.sectPr_lst[key]
+            return [Section(sectPr, self._parent) for sectPr in sectPr_lst]
+        sectPr = self._document_elm.sectPr_lst[key]
+        return Section(sectPr, self._parent)
+
+    def __iter__(self):
+        for sectPr in self._document_elm.sectPr_lst:
+            yield Section(sectPr, self._parent)
+   =======
             return [
                 Section(sectPr, self._document_part)
                 for sectPr in self._document_elm.sectPr_lst[key]
@@ -32,11 +54,20 @@ class Sections(Sequence):
     def __iter__(self):
         for sectPr in self._document_elm.sectPr_lst:
             yield Section(sectPr, self._document_part)
+    >>>>>>> master
 
     def __len__(self):
         return len(self._document_elm.sectPr_lst)
 
 
+    <<<<<<< feature/header
+class Section(ElementProxy):
+    """
+    Document section, providing access to section and page setup settings.
+    """
+    def __init__(self, sectPr, parent):
+        super(Section, self).__init__(sectPr, parent)
+    =======
 class Section(object):
     """Document section, providing access to section and page setup settings.
 
@@ -45,6 +76,7 @@ class Section(object):
 
     def __init__(self, sectPr, document_part):
         super(Section, self).__init__()
+    >>>>>>> master
         self._sectPr = sectPr
         self._document_part = document_part
 
@@ -147,12 +179,22 @@ class Section(object):
 
     @lazyproperty
     def header(self):
+    <<<<<<< feature/header
+        """
+        Return the |Header| object representing the default header for this
+        section. A |Header| object is always returned, whether such a header
+        is present or not. The header itself is added, updated, or removed
+        using the returned object.
+        """
+        return Header(self._sectPr, self, WD_HEADER_FOOTER.PRIMARY)
+    =======
         """|_Header| object representing default page header for this section.
 
         The default header is used for odd-numbered pages when separate odd/even headers
         are enabled. It is used for both odd and even-numbered pages otherwise.
         """
         return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.PRIMARY)
+  >>>>>>> master
 
     @property
     def header_distance(self):
@@ -278,13 +320,13 @@ class _BaseHeaderFooter(BlockItemContainer):
         section. Assigning ``False`` causes a new, empty definition to be added for this
         section, but only if no definition is already present.
         """
-        # ---absence of a header/footer part indicates "linked" behavior---
+        ---absence of a header/footer part indicates "linked" behavior---
         return not self._has_definition
 
     @is_linked_to_previous.setter
     def is_linked_to_previous(self, value):
         new_state = bool(value)
-        # ---do nothing when value is not being changed---
+        ---do nothing when value is not being changed---
         if new_state == self.is_linked_to_previous:
             return
         if new_state is True:
@@ -330,11 +372,11 @@ class _BaseHeaderFooter(BlockItemContainer):
         first section), a new definition is added for that first section and then
         returned.
         """
-        # ---note this method is called recursively to access inherited definitions---
-        # ---case-1: definition is not inherited---
+        ---note this method is called recursively to access inherited definitions---
+        ---case-1: definition is not inherited---
         if self._has_definition:
             return self._definition
-        # ---case-2: definition is inherited and belongs to second-or-later section---
+        ---case-2: definition is inherited and belongs to second-or-later section---
         prior_headerfooter = self._prior_headerfooter
         if prior_headerfooter:
             return prior_headerfooter._get_or_add_definition()

@@ -80,7 +80,11 @@ class Document(ElementProxy):
         """
         new_sectPr = self._element.body.add_section_break()
         new_sectPr.start_type = start_type
+  <<<<<<< feature/header
+        return Section(new_sectPr, self)
+  =======
         return Section(new_sectPr, self._part)
+  >>>>>>> master
 
     def add_table(self, rows, cols, style=None):
         """
@@ -136,8 +140,16 @@ class Document(ElementProxy):
 
     @property
     def sections(self):
+  <<<<<<< feature/header
+        """
+        A |Sections| object providing access to each section in this
+        document.
+        """
+        return Sections(self._element, self)
+  =======
         """|Sections| object providing access to each section in this document."""
         return Sections(self._element, self._part)
+  >>>>>>> master
 
     @property
     def settings(self):

@@ -1,4 +1,4 @@
-# encoding: utf-8
+encoding: utf-8
 
 """Section-related custom element classes"""
 
@@ -6,6 +6,25 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from copy import deepcopy
 
+  <<<<<<< feature/header
+from ..enum.header import WD_HEADER_FOOTER
+from ..enum.section import WD_ORIENTATION, WD_SECTION_START
+from .simpletypes import (
+    ST_RelationshipId, ST_SignedTwipsMeasure, ST_TwipsMeasure
+)
+from .xmlchemy import (
+    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
+    ZeroOrOne
+)
+
+
+class CT_HdrFtrRef(BaseOxmlElement):
+    """
+    `w:headerReference` and `w:footerReference` elements, specifying the
+    various headers and footers for a section.
+    """
+    rId == RequiredAttribute('r:id', ST_RelationshipId)
+  =======
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
 from docx.oxml.xmlchemy import (
@@ -29,6 +48,7 @@ class CT_HdrFtrRef(BaseOxmlElement):
 
     type_ = RequiredAttribute('w:type', WD_HEADER_FOOTER)
     rId = RequiredAttribute('r:id', XsdString)
+  >>>>>>> master
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -56,6 +76,23 @@ class CT_PageSz(BaseOxmlElement):
 
 
 class CT_SectPr(BaseOxmlElement):
+  <<<<<<< feature/header
+    """
+    ``<w:sectPr>`` element, the container element for section properties.
+    """
+    _tag_seq = (
+        'w:headerReference', 'w:footerReference', 'w:footnotePr',
+        'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar', 'w:paperSrc',
+        'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols', 'w:formProt',
+        'w:vAlign', 'w:noEndnote', 'w:titlePg', 'w:textDirection', 'w:bidi',
+        'w:rtlGutter', 'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
+    )
+    headerReference = ZeroOrMore('w:headerReference', successors=_tag_seq[1:])
+    type = ZeroOrOne('w:type', successors=_tag_seq[5:])
+    pgSz = ZeroOrOne('w:pgSz', successors=_tag_seq[6:])
+    pgMar = ZeroOrOne('w:pgMar', successors=_tag_seq[7:])
+    del _tag_seq
+  =======
     """`w:sectPr` element, the container element for section properties"""
 
     _tag_seq = (
@@ -91,6 +128,7 @@ class CT_SectPr(BaseOxmlElement):
         headerReference.type_ = type_
         headerReference.rId = rId
         return headerReference
+  >>>>>>> master
 
     @property
     def bottom_margin(self):
@@ -136,6 +174,18 @@ class CT_SectPr(BaseOxmlElement):
         pgMar = self.get_or_add_pgMar()
         pgMar.footer = value
 
+  <<<<<<< feature/header
+    def get_headerReference_of_type(self, type_member):
+        """
+        Return the `w:headerReference` child having type attribute value
+        associated with *type_member*, or |None| if not present.
+        """
+        type_str = WD_HEADER_FOOTER.to_xml(type_member)
+        matches = self.xpath('w:headerReference[@w:type="%s"]' % type_str)
+        if matches:
+            return matches[0]
+        return None
+  =======
     def get_footerReference(self, type_):
         """Return footerReference element of *type_* or None if not present."""
         path = "./w:footerReference[@w:type='%s']" % WD_HEADER_FOOTER.to_xml(type_)
@@ -152,6 +202,7 @@ class CT_SectPr(BaseOxmlElement):
         if len(matching_headerReferences) == 0:
             return None
         return matching_headerReferences[0]
+  >>>>>>> master
 
     @property
     def gutter(self):
