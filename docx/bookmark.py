@@ -64,6 +64,11 @@ class Bookmarks(Sequence):
             return 1
         return max(bookmark_ids) + 1
 
+    def remove(self, name):
+        """Remove bookmark by name."""
+        bmk = self.get(name)
+        bmk.remove()
+
     @lazyproperty
     def _finder(self):
         """_DocumentBookmarkFinder instance for this document."""
@@ -83,6 +88,19 @@ class _Bookmark(object):
             self._bookmarkStart is other._bookmarkStart
             and self._bookmarkEnd is other._bookmarkEnd
         )
+
+    def remove(self):
+        """Remove bookmark elements from their parent elements."""
+        start_parent = self._bookmarkStart.getparent()
+        start_parent.remove(self._bookmarkStart)
+        end_parent = self._bookmarkEnd.getparent()
+        end_parent.remove(self._bookmarkEnd)
+        # -- Remove possible 'dangling' empty paragraphs
+        body = start_parent.getparent()
+        if len(start_parent) == 0:
+            body.remove(start_parent)
+        if len(end_parent) == 0:
+            body.remove(end_parent)
 
     def close(self, bookmarkEnd):
         """Return self after setting end marker to `bookmarkEnd`.
