@@ -60,7 +60,7 @@ class DescribeBlockItemContainer(object):
         bookmark = blkcntnr.end_bookmark(bookmark_)
 
         bookmark_.close.assert_called_once_with(
-            blockContainer.xpath("w:bookmarkEnd")[-1]
+            blockContainer.xpath("//w:bookmarkEnd")[-1]
         )
         assert blkcntnr._element.xml == expected_xml
         assert bookmark is bookmark_
@@ -186,13 +186,13 @@ class DescribeBlockItemContainer(object):
     @pytest.fixture(
         params=[
             # ---document body---
-            ("w:body", 0, "w:body/w:bookmarkEnd{w:id=0}"),
+            ("w:body", 0, "w:body/w:p/w:bookmarkEnd{w:id=0}"),
             # ---table cell---
-            ("w:tc/w:p", 1, "w:tc/(w:p,w:bookmarkEnd{w:id=1})"),
+            ("w:tc/w:p", 1, "w:tc/(w:p,w:p/w:bookmarkEnd{w:id=1})"),
             # ---header---
-            ("w:hdr/w:p", 42, "w:hdr/(w:p,w:bookmarkEnd{w:id=42})"),
+            ("w:hdr/w:p", 42, "w:hdr/(w:p,w:p/w:bookmarkEnd{w:id=42})"),
             # ---footer---
-            ("w:ftr/w:p", 24, "w:ftr/(w:p,w:bookmarkEnd{w:id=24})"),
+            ("w:ftr/w:p", 24, "w:ftr/(w:p,w:p/w:bookmarkEnd{w:id=24})"),
         ]
     )
     def end_bookmark_fixture(self, request):
@@ -218,13 +218,13 @@ class DescribeBlockItemContainer(object):
     @pytest.fixture(
         params=[
             # ---document body---
-            ("w:body", 0, "w:body/w:bookmarkStart{w:name=bmk-1, w:id=0}"),
+            ("w:body", 0, "w:body/w:p/w:bookmarkStart{w:name=bmk-1, w:id=0}"),
             # ---table cell---
-            ("w:tc/w:p", 1, "w:tc/(w:p,w:bookmarkStart{w:name=bmk-1, w:id=1})"),
+            ("w:tc/w:p", 1, "w:tc/(w:p,w:p/w:bookmarkStart{w:name=bmk-1, w:id=1})"),
             # ---header---
-            ("w:hdr", 42, "w:hdr/(w:bookmarkStart{w:name=bmk-1, w:id=42})"),
+            ("w:hdr", 42, "w:hdr/(w:p/w:bookmarkStart{w:name=bmk-1, w:id=42})"),
             # ---footer---
-            ("w:ftr", 24, "w:ftr/(w:bookmarkStart{w:name=bmk-1, w:id=24})"),
+            ("w:ftr", 24, "w:ftr/(w:p/w:bookmarkStart{w:name=bmk-1, w:id=24})"),
         ]
     )
     def start_bookmark_fixture(self, request):

@@ -56,7 +56,8 @@ class BlockItemContainer(Parented):
         """Return `bookmark` after closing it after last block item in container."""
         if bookmark.is_closed:
             raise ValueError("bookmark already closed")
-        return bookmark.close(self._element.add_bookmarkEnd(bookmark.id))
+        paragraph = self._add_paragraph()
+        return bookmark.close(paragraph._element.add_bookmarkEnd(bookmark.id))
 
     @property
     def paragraphs(self):
@@ -73,11 +74,12 @@ class BlockItemContainer(Parented):
         example, after the last paragraph in the document when the document body is the
         block-item container.
         """
+        
         if name in self._bookmarks:
             raise KeyError("Document already contains bookmark with name %s" % name)
-
+        paragraph = self._add_paragraph()
         return _Bookmark(
-            (self._element.add_bookmarkStart(name, self._bookmarks.next_id), None)
+            (paragraph._element.add_bookmarkStart(name, self._bookmarks.next_id), None)
         )
 
     @property
