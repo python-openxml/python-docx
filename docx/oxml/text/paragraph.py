@@ -4,16 +4,17 @@
 Custom element classes related to paragraphs (CT_P).
 """
 
-from ..ns import qn
-from ..xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
+from docx.oxml.ns import qn
+from docx.oxml.xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
 
 
 class CT_P(BaseOxmlElement):
     """
     ``<w:p>`` element, containing the properties and text for a paragraph.
     """
-    pPr = ZeroOrOne('w:pPr')
-    r = ZeroOrMore('w:r')
+
+    pPr = ZeroOrOne("w:pPr")
+    r = ZeroOrMore("w:r")
     bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=("w:pPr",))
     bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=("w:pPr",))
 
@@ -48,7 +49,7 @@ class CT_P(BaseOxmlElement):
         """
         Return a new ``<w:p>`` element inserted directly prior to this one.
         """
-        new_p = OxmlElement('w:p')
+        new_p = OxmlElement("w:p")
         self.addprevious(new_p)
         return new_p
 
@@ -73,7 +74,7 @@ class CT_P(BaseOxmlElement):
         Remove all child elements, except the ``<w:pPr>`` element if present.
         """
         for child in self[:]:
-            if child.tag == qn('w:pPr'):
+            if child.tag == qn("w:pPr"):
                 continue
             self.remove(child)
 

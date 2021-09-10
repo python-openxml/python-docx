@@ -74,7 +74,7 @@ class BlockItemContainer(Parented):
         example, after the last paragraph in the document when the document body is the
         block-item container.
         """
-        
+
         if name in self._bookmarks:
             raise KeyError("Document already contains bookmark with name %s" % name)
         paragraph = self._add_paragraph()

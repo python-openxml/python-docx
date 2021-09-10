@@ -14,7 +14,8 @@ class CT_Bookmark(BaseOxmlElement):
     id = RequiredAttribute("w:id", ST_DecimalNumber)
     name = RequiredAttribute("w:name", ST_String)
 
+
 class CT_MarkupRange(BaseOxmlElement):
     """`w:bookmarkEnd` element"""
 
-    id = RequiredAttribute("w:id", ST_DecimalNumber)  
+    id = RequiredAttribute("w:id", ST_DecimalNumber)
