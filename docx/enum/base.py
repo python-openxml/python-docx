@@ -72,8 +72,8 @@ class _DocsPageFormatter(object):
         """
         member_docstring = textwrap.dedent(member.docstring).strip()
         member_docstring = textwrap.fill(
-            member_docstring, width=78, initial_indent=' '*4,
-            subsequent_indent=' '*4
+            member_docstring, width=78, initial_indent=' ' * 4,
+            subsequent_indent=' ' * 4
         )
         return '%s\n%s\n' % (member.name, member_docstring)
 
@@ -103,7 +103,7 @@ class _DocsPageFormatter(object):
         The title for the documentation page, formatted as code (surrounded
         in double-backtics) and underlined with '=' characters
         """
-        title_underscore = '=' * (len(self._clsname)+4)
+        title_underscore = '=' * (len(self._clsname) + 4)
         return '``%s``\n%s' % (self._clsname, title_underscore)
 
 

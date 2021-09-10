@@ -122,7 +122,7 @@ class BaseBuilder(object):
         else:
             xml = '%s%s\n' % (indent_str, self._start_tag)
             for child_bldr in self._child_bldrs:
-                xml += child_bldr.xml(indent+2)
+                xml += child_bldr.xml(indent + 2)
             xml += '%s%s' % (indent_str, self._end_tag)
         return xml
 
