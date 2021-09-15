@@ -27,8 +27,8 @@ class Bookmarks(Sequence):
 
     def __contains__(self, name):
         """Supports `in` operator to test for presence of bookmark by `name`."""
-        for bookmark in self:
-            if bookmark.name == name:
+        for start in self._iter_bookmark_starts():
+            if start.name == name:
                 return True
         return False
 
@@ -56,10 +56,13 @@ class Bookmarks(Sequence):
                 return bookmark
         raise KeyError("Requested bookmark not found.")
 
+    def _iter_bookmark_starts(self):
+        return (start for _, start in self._finder.bookmark_starts)
+
     @property
     def next_id(self):
         """Return the next available int bookmark-id, unique in document-wide scope."""
-        bookmark_ids = tuple(bookmark.id for bookmark in self)
+        bookmark_ids = tuple(start.id for start in self._iter_bookmark_starts())
         if not bookmark_ids:
             return 1
         return max(bookmark_ids) + 1
@@ -161,6 +164,18 @@ class _DocumentBookmarkFinder(object):
             )
         )
 
+    @property
+    def bookmark_starts(self):
+        """List of (bookmarkStart, idx) element pairs for document."""
+        return list(
+            chain(
+                *(
+                    _PartBookmarkFinder.iter_bookmark_starts(part)
+                    for part in self._document_part.iter_story_parts()
+                )
+            )
+        )
+
 
 class _PartBookmarkFinder(object):
     """Provides access to bookmark oxml elements in a story part."""
@@ -172,6 +187,11 @@ class _PartBookmarkFinder(object):
     def iter_start_end_pairs(cls, part):
         """Generate each (bookmarkStart, bookmarkEnd) in *part*."""
         return cls(part)._iter_start_end_pairs()
+
+    @classmethod
+    def iter_bookmark_starts(cls, part):
+        """Generate each (bookmarkStart, bookmarkEnd) in *part*."""
+        return cls(part)._iter_starts()
 
     def _iter_start_end_pairs(self):
         """Generate each (bookmarkStart, bookmarkEnd) in this part."""
