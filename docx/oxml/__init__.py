@@ -257,8 +257,9 @@ register_element_cls("w:tab", CT_TabStop)
 register_element_cls("w:tabs", CT_TabStops)
 register_element_cls("w:widowControl", CT_OnOff)
 
-from docx.oxml.text.run import CT_R, CT_Br, CT_Text
+from docx.oxml.text.run import CT_R, CT_Br, CT_SimpleField, CT_Text
 
 register_element_cls("w:br", CT_Br)
+register_element_cls("w:fldSimple", CT_SimpleField)
 register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
