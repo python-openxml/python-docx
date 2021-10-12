@@ -4,31 +4,40 @@
 Custom element classes related to text runs (CT_R).
 """
 
-from ..ns import qn
-from ..simpletypes import ST_BrClear, ST_BrType
-from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
-)
+from docx.enum.fields import WD_FIELD_TYPE
+from docx.oxml.ns import qn
+from docx.oxml.simpletypes import ST_BrClear, ST_BrType
+from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 
 
 class CT_Br(BaseOxmlElement):
     """
     ``<w:br>`` element, indicating a line, page, or column break in a run.
     """
-    type = OptionalAttribute('w:type', ST_BrType)
-    clear = OptionalAttribute('w:clear', ST_BrClear)
+
+    type = OptionalAttribute("w:type", ST_BrType)
+    clear = OptionalAttribute("w:clear", ST_BrClear)
 
 
 class CT_R(BaseOxmlElement):
     """
     ``<w:r>`` element, containing the properties and text for a run.
     """
-    rPr = ZeroOrOne('w:rPr')
-    t = ZeroOrMore('w:t')
-    br = ZeroOrMore('w:br')
-    cr = ZeroOrMore('w:cr')
-    tab = ZeroOrMore('w:tab')
-    drawing = ZeroOrMore('w:drawing')
+
+    rPr = ZeroOrOne("w:rPr")
+    t = ZeroOrMore("w:t")
+    br = ZeroOrMore("w:br")
+    cr = ZeroOrMore("w:cr")
+    fldsimple = ZeroOrMore("w:fldSimple")
+    tab = ZeroOrMore("w:tab")
+    drawing = ZeroOrMore("w:drawing")
+
+    def add_field(self, fieldtype=WD_FIELD_TYPE.REF, switches="\h"):
+        """Return a newly created ``<w:fldSimple>`` element containing a fieldcode."""
+        fld = self._add_fldsimple(
+            instr=WD_FIELD_TYPE.to_xml(fieldtype) + f" {switches}"
+        )
+        return fld
 
     def _insert_rPr(self, rPr):
         self.insert(0, rPr)
@@ -40,7 +49,7 @@ class CT_R(BaseOxmlElement):
         """
         t = self._add_t(text=text)
         if len(text.strip()) < len(text):
-            t.set(qn('xml:space'), 'preserve')
+            t.set(qn("xml:space"), "preserve")
         return t
 
     def add_drawing(self, inline_or_anchor):
@@ -87,15 +96,15 @@ class CT_R(BaseOxmlElement):
         child elements like ``<w:tab/>`` translated to their Python
         equivalent.
         """
-        text = ''
+        text = ""
         for child in self:
-            if child.tag == qn('w:t'):
+            if child.tag == qn("w:t"):
                 t_text = child.text
-                text += t_text if t_text is not None else ''
-            elif child.tag == qn('w:tab'):
-                text += '\t'
-            elif child.tag in (qn('w:br'), qn('w:cr')):
-                text += '\n'
+                text += t_text if t_text is not None else ""
+            elif child.tag == qn("w:tab"):
+                text += "\t"
+            elif child.tag in (qn("w:br"), qn("w:cr")):
+                text += "\n"
         return text
 
     @text.setter
@@ -119,6 +128,7 @@ class _RunContentAppender(object):
     appended. Likewise a newline or carriage return character ('\n', '\r')
     causes a ``<w:cr>`` element to be appended.
     """
+
     def __init__(self, r):
         self._r = r
         self._bfr = []
@@ -150,17 +160,17 @@ class _RunContentAppender(object):
         which must be called at the end of text to ensure any pending
         ``<w:t>`` element is written.
         """
-        if char == '\t':
+        if char == "\t":
             self.flush()
             self._r.add_tab()
-        elif char in '\r\n':
+        elif char in "\r\n":
             self.flush()
             self._r.add_br()
         else:
             self._bfr.append(char)
 
     def flush(self):
-        text = ''.join(self._bfr)
+        text = "".join(self._bfr)
         if text:
             self._r.add_t(text)
         del self._bfr[:]

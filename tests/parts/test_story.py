@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pytest
 
+from docx.bookmark import Bookmarks
 from docx.enum.style import WD_STYLE_TYPE
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -21,6 +22,18 @@ from ..unitutil.mock import instance_mock, method_mock, property_mock
 
 
 class DescribeBaseStoryPart(object):
+    """Unit-test suite for `docx.parts.story.BaseStoryPart` object."""
+
+    def it_provides_access_to_the_package_bookmarks(
+        self, _document_part_prop_, document_part_, bookmarks_
+    ):
+        document_part_.bookmarks = bookmarks_
+        _document_part_prop_.return_value = document_part_
+        story_part = BaseStoryPart(None, None, None, None)
+
+        bookmarks = story_part.bookmarks
+
+        assert bookmarks is bookmarks_
 
     def it_can_get_or_add_an_image(self, package_, image_part_, image_, relate_to_):
         package_.get_or_add_image_part.return_value = image_part_
@@ -113,6 +126,10 @@ class DescribeBaseStoryPart(object):
         return story_element, expected_value
 
     # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)
 
     @pytest.fixture
     def document_part_(self, request):
