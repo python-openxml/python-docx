@@ -3,7 +3,7 @@
 """
 Custom element classes related to paragraphs (CT_P).
 """
-
+from docx.enum.fields import WD_FIELD_TYPE
 from docx.oxml.ns import qn
 from docx.oxml.xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
 
@@ -15,8 +15,8 @@ class CT_P(BaseOxmlElement):
 
     pPr = ZeroOrOne("w:pPr")
     r = ZeroOrMore("w:r")
-    bookmarkStart = ZeroOrMore("w:bookmarkStart", successors=("w:pPr",))
-    bookmarkEnd = ZeroOrMore("w:bookmarkEnd", successors=("w:pPr",))
+    bookmarkStart = ZeroOrMore("w:bookmarkStart")
+    bookmarkEnd = ZeroOrMore("w:bookmarkEnd")
 
     def add_bookmarkEnd(self, bookmark_id):
         """Return `w:bookmarkEnd` element added at end of document.
@@ -40,6 +40,13 @@ class CT_P(BaseOxmlElement):
         bookmarkStart.name = name
         bookmarkStart.id = bookmark_id
         return bookmarkStart
+
+    def add_field(self, fieldtype=WD_FIELD_TYPE.REF, switches="\h"):
+        """Return a newly created ``<w:fldSimple>`` element containing a fieldcode."""
+        fld = self._add_fldsimple(
+            instr=WD_FIELD_TYPE.to_xml(fieldtype) + f" {switches}"
+        )
+        return fld
 
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)

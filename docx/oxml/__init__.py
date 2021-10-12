@@ -262,3 +262,8 @@ from docx.oxml.text.run import CT_R, CT_Br, CT_Text
 register_element_cls("w:br", CT_Br)
 register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
+
+
+from docx.oxml.field import CT_SimpleField
+
+register_element_cls("w:fldSimple", CT_SimpleField)

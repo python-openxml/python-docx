@@ -7,8 +7,10 @@ Paragraph-related proxy types.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.bookmark import _Bookmark
+from docx.enum.fields import WD_FIELD_TYPE
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Parented
+from docx.text.fields import Field
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
@@ -21,6 +23,17 @@ class Paragraph(Parented):
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+
+    def add_field(self, fieldtype=WD_FIELD_TYPE.REF, switches=None):
+        """
+        Return a |Field| element which will be evaluated upon updating the
+        fields in the word editor. A field should be a member of the `WD_FIELD_TYPE`
+        enumeration. An can have various different switches. For example a 'REF'
+        field requires a bookmark name and a \h switch to work as a proper hyperlink.
+        """
+        r = self._p.add_r()
+        fld = r.add_field(fieldtype, switches)
+        return Field(fld)
 
     def add_run(self, text=None, style=None):
         """
