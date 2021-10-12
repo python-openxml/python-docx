@@ -4,30 +4,10 @@
 Custom element classes related to text runs (CT_R).
 """
 
-from docx.enum.fields import WD_FIELDCODE
+from docx.enum.fields import WD_FIELD_TYPE
 from docx.oxml.ns import qn
-from docx.oxml.simpletypes import ST_BrClear, ST_BrType, ST_OnOff, ST_String
-from docx.oxml.xmlchemy import (
-    BaseOxmlElement,
-    OptionalAttribute,
-    RequiredAttribute,
-    ZeroOrMore,
-    ZeroOrOne,
-)
-
-
-class CT_SimpleField(BaseOxmlElement):
-    """
-    `<w:fldSimple>` element, indicating a simple field character.
-    """
-
-    instr = RequiredAttribute("w:instr", ST_String)
-    fldLock = OptionalAttribute("w:fldLock", ST_OnOff)
-    dirty = OptionalAttribute("w:dirty", ST_OnOff)
-
-    def set_field(self, field_name, properties):
-        if getattr(WD_FIELDCODE, field_name):
-            self.instr = field_name + " " + properties
+from docx.oxml.simpletypes import ST_BrClear, ST_BrType
+from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 
 
 class CT_Br(BaseOxmlElement):
@@ -51,6 +31,13 @@ class CT_R(BaseOxmlElement):
     fldsimple = ZeroOrMore("w:fldSimple")
     tab = ZeroOrMore("w:tab")
     drawing = ZeroOrMore("w:drawing")
+
+    def add_field(self, fieldtype=WD_FIELD_TYPE.REF, switches="\h"):
+        """Return a newly created ``<w:fldSimple>`` element containing a fieldcode."""
+        fld = self._add_fldsimple(
+            instr=WD_FIELD_TYPE.to_xml(fieldtype) + f" {switches}"
+        )
+        return fld
 
     def _insert_rPr(self, rPr):
         self.insert(0, rPr)
