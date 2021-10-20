@@ -1,6 +1,6 @@
-behave>=1.2.3
-flake8>=2.0
-lxml>=3.1.0
-mock>=1.0.1
-pyparsing>=2.0.1
-pytest>=2.5
+behave>=1.2.6
+flake8>=4.0.1
+lxml>=4.6.3
+mock>=4.0.3
+pyparsing>=2.4.7
+pytest>=6.2.5
