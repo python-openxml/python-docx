@@ -2,29 +2,19 @@
 
 """Custom element classes for tables"""
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-from . import parse_xml
 from ..enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
-from .ns import nsdecls, qn
 from ..shared import Emu, Twips
-from .simpletypes import (
-    ST_Merge,
-    ST_TblLayoutType,
-    ST_TblWidth,
-    ST_TwipsMeasure,
-    XsdInt,
-)
-from .xmlchemy import (
-    BaseOxmlElement,
-    OneAndOnlyOne,
-    OneOrMore,
-    OptionalAttribute,
-    RequiredAttribute,
-    ZeroOrOne,
-    ZeroOrMore,
-)
+from . import parse_xml
+from .ns import nsdecls, qn
+from .simpletypes import (ST_Merge, ST_TblLayoutType, ST_TblWidth,
+                          ST_TwipsMeasure, XsdInt)
+from .xmlchemy import (BaseOxmlElement, OneAndOnlyOne, OneOrMore,
+                       OptionalAttribute, RequiredAttribute, ZeroOrMore,
+                       ZeroOrOne)
 
 
 class CT_Height(BaseOxmlElement):
@@ -826,6 +816,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne("w:tcW", successors=_tag_seq[2:])
     gridSpan = ZeroOrOne("w:gridSpan", successors=_tag_seq[3:])
     vMerge = ZeroOrOne("w:vMerge", successors=_tag_seq[5:])
+    shd = ZeroOrOne("w:shd", successors=_tag_seq[7:])
     vAlign = ZeroOrOne("w:vAlign", successors=_tag_seq[12:])
     del _tag_seq
 
