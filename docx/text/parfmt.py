@@ -4,13 +4,14 @@
 Paragraph-related proxy types.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-from ..enum.text import WD_LINE_SPACING
-from ..shared import ElementProxy, Emu, lazyproperty, Length, Pt, Twips
-from .tabstops import TabStops
+from docx.enum.shading import WD_SHADING_PATTERN
+from docx.enum.text import WD_LINE_SPACING
+from docx.shading import Shading
+from docx.shared import ElementProxy, Emu, Length, Pt, Twips, lazyproperty
+from docx.text.tabstops import TabStops
 
 
 class ParagraphFormat(ElementProxy):
@@ -205,6 +206,13 @@ class ParagraphFormat(ElementProxy):
     def right_indent(self, value):
         pPr = self._element.get_or_add_pPr()
         pPr.ind_right = value
+
+    @property
+    def shading(self):
+        pPr = self._element.get_or_add_pPr()
+        if pPr.shd is None:
+            pPr.get_or_add_shd().val = WD_SHADING_PATTERN.CLEAR
+        return Shading(pPr.shd)
 
     @property
     def space_after(self):

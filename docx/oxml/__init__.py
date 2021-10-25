@@ -240,6 +240,7 @@ from docx.oxml.text.parfmt import (
     CT_Ind,
     CT_Jc,
     CT_PPr,
+    CT_Shd,
     CT_Spacing,
     CT_TabStop,
     CT_TabStops,
@@ -253,6 +254,7 @@ register_element_cls("w:pageBreakBefore", CT_OnOff)
 register_element_cls("w:pPr", CT_PPr)
 register_element_cls("w:pStyle", CT_String)
 register_element_cls("w:spacing", CT_Spacing)
+register_element_cls("w:shd", CT_Shd)
 register_element_cls("w:tab", CT_TabStop)
 register_element_cls("w:tabs", CT_TabStops)
 register_element_cls("w:widowControl", CT_OnOff)

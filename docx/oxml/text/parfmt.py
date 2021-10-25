@@ -3,61 +3,105 @@
 """
 Custom element classes related to paragraph properties (CT_PPr).
 """
-
-from ...enum.text import (
-    WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT, WD_TAB_LEADER
+from docx.enum.dml import MSO_THEME_COLOR
+from docx.enum.shading import WD_SHADING_PATTERN
+from docx.enum.text import (
+    WD_ALIGN_PARAGRAPH,
+    WD_LINE_SPACING,
+    WD_TAB_ALIGNMENT,
+    WD_TAB_LEADER,
 )
-from ...shared import Length
-from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from ..xmlchemy import (
-    BaseOxmlElement, OneOrMore, OptionalAttribute, RequiredAttribute,
-    ZeroOrOne
+from docx.oxml.simpletypes import (
+    ST_HexColor,
+    ST_HexColorAuto,
+    ST_SignedTwipsMeasure,
+    ST_TwipsMeasure,
+    ST_UcharHexNumber,
 )
+from docx.oxml.xmlchemy import (
+    BaseOxmlElement,
+    OneOrMore,
+    OptionalAttribute,
+    RequiredAttribute,
+    ZeroOrOne,
+)
+from docx.shared import Length
 
 
 class CT_Ind(BaseOxmlElement):
     """
     ``<w:ind>`` element, specifying paragraph indentation.
     """
-    left = OptionalAttribute('w:left', ST_SignedTwipsMeasure)
-    right = OptionalAttribute('w:right', ST_SignedTwipsMeasure)
-    firstLine = OptionalAttribute('w:firstLine', ST_TwipsMeasure)
-    hanging = OptionalAttribute('w:hanging', ST_TwipsMeasure)
+
+    left = OptionalAttribute("w:left", ST_SignedTwipsMeasure)
+    right = OptionalAttribute("w:right", ST_SignedTwipsMeasure)
+    firstLine = OptionalAttribute("w:firstLine", ST_TwipsMeasure)
+    hanging = OptionalAttribute("w:hanging", ST_TwipsMeasure)
 
 
 class CT_Jc(BaseOxmlElement):
     """
     ``<w:jc>`` element, specifying paragraph justification.
     """
-    val = RequiredAttribute('w:val', WD_ALIGN_PARAGRAPH)
+
+    val = RequiredAttribute("w:val", WD_ALIGN_PARAGRAPH)
 
 
 class CT_PPr(BaseOxmlElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
     """
+
     _tag_seq = (
-        'w:pStyle', 'w:keepNext', 'w:keepLines', 'w:pageBreakBefore',
-        'w:framePr', 'w:widowControl', 'w:numPr', 'w:suppressLineNumbers',
-        'w:pBdr', 'w:shd', 'w:tabs', 'w:suppressAutoHyphens', 'w:kinsoku',
-        'w:wordWrap', 'w:overflowPunct', 'w:topLinePunct', 'w:autoSpaceDE',
-        'w:autoSpaceDN', 'w:bidi', 'w:adjustRightInd', 'w:snapToGrid',
-        'w:spacing', 'w:ind', 'w:contextualSpacing', 'w:mirrorIndents',
-        'w:suppressOverlap', 'w:jc', 'w:textDirection', 'w:textAlignment',
-        'w:textboxTightWrap', 'w:outlineLvl', 'w:divId', 'w:cnfStyle',
-        'w:rPr', 'w:sectPr', 'w:pPrChange'
+        "w:pStyle",
+        "w:keepNext",
+        "w:keepLines",
+        "w:pageBreakBefore",
+        "w:framePr",
+        "w:widowControl",
+        "w:numPr",
+        "w:suppressLineNumbers",
+        "w:pBdr",
+        "w:shd",
+        "w:tabs",
+        "w:suppressAutoHyphens",
+        "w:kinsoku",
+        "w:wordWrap",
+        "w:overflowPunct",
+        "w:topLinePunct",
+        "w:autoSpaceDE",
+        "w:autoSpaceDN",
+        "w:bidi",
+        "w:adjustRightInd",
+        "w:snapToGrid",
+        "w:spacing",
+        "w:ind",
+        "w:contextualSpacing",
+        "w:mirrorIndents",
+        "w:suppressOverlap",
+        "w:jc",
+        "w:textDirection",
+        "w:textAlignment",
+        "w:textboxTightWrap",
+        "w:outlineLvl",
+        "w:divId",
+        "w:cnfStyle",
+        "w:rPr",
+        "w:sectPr",
+        "w:pPrChange",
     )
-    pStyle = ZeroOrOne('w:pStyle', successors=_tag_seq[1:])
-    keepNext = ZeroOrOne('w:keepNext', successors=_tag_seq[2:])
-    keepLines = ZeroOrOne('w:keepLines', successors=_tag_seq[3:])
-    pageBreakBefore = ZeroOrOne('w:pageBreakBefore', successors=_tag_seq[4:])
-    widowControl = ZeroOrOne('w:widowControl', successors=_tag_seq[6:])
-    numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
-    tabs = ZeroOrOne('w:tabs', successors=_tag_seq[11:])
-    spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
-    ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
-    jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
-    sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[35:])
+    pStyle = ZeroOrOne("w:pStyle", successors=_tag_seq[1:])
+    keepNext = ZeroOrOne("w:keepNext", successors=_tag_seq[2:])
+    keepLines = ZeroOrOne("w:keepLines", successors=_tag_seq[3:])
+    pageBreakBefore = ZeroOrOne("w:pageBreakBefore", successors=_tag_seq[4:])
+    widowControl = ZeroOrOne("w:widowControl", successors=_tag_seq[6:])
+    numPr = ZeroOrOne("w:numPr", successors=_tag_seq[7:])
+    shd = ZeroOrOne("w:shd", successors=_tag_seq[10:])
+    tabs = ZeroOrOne("w:tabs", successors=_tag_seq[11:])
+    spacing = ZeroOrOne("w:spacing", successors=_tag_seq[22:])
+    ind = ZeroOrOne("w:ind", successors=_tag_seq[23:])
+    jc = ZeroOrOne("w:jc", successors=_tag_seq[27:])
+    sectPr = ZeroOrOne("w:sectPr", successors=_tag_seq[35:])
     del _tag_seq
 
     @property
@@ -306,33 +350,51 @@ class CT_PPr(BaseOxmlElement):
             self.get_or_add_widowControl().val = value
 
 
+class CT_Shd(BaseOxmlElement):
+    """
+    ``<w:shd>`` element specifying paragraph or cell shading attributes such
+    as fill value and color.
+    """
+
+    val = RequiredAttribute("w:val", WD_SHADING_PATTERN)
+    color = OptionalAttribute("w:color", ST_HexColor, default=ST_HexColorAuto.AUTO)
+    themeColor = OptionalAttribute("w:themeColor", MSO_THEME_COLOR)
+    themeTint = OptionalAttribute("w:themeTint", ST_UcharHexNumber)
+    themeShade = OptionalAttribute("w:themeShade", ST_UcharHexNumber)
+    fill = OptionalAttribute("w:fill", ST_HexColor, default=ST_HexColorAuto.AUTO)
+    themeFill = OptionalAttribute("w:themeFill", MSO_THEME_COLOR)
+    themeFillTint = OptionalAttribute("w:themeFillTint", ST_UcharHexNumber)
+    themeFillShade = OptionalAttribute("w:themeFillShade", ST_UcharHexNumber)
+
+
 class CT_Spacing(BaseOxmlElement):
     """
     ``<w:spacing>`` element, specifying paragraph spacing attributes such as
     space before and line spacing.
     """
-    after = OptionalAttribute('w:after', ST_TwipsMeasure)
-    before = OptionalAttribute('w:before', ST_TwipsMeasure)
-    line = OptionalAttribute('w:line', ST_SignedTwipsMeasure)
-    lineRule = OptionalAttribute('w:lineRule', WD_LINE_SPACING)
+
+    after = OptionalAttribute("w:after", ST_TwipsMeasure)
+    before = OptionalAttribute("w:before", ST_TwipsMeasure)
+    line = OptionalAttribute("w:line", ST_SignedTwipsMeasure)
+    lineRule = OptionalAttribute("w:lineRule", WD_LINE_SPACING)
 
 
 class CT_TabStop(BaseOxmlElement):
     """
     ``<w:tab>`` element, representing an individual tab stop.
     """
-    val = RequiredAttribute('w:val', WD_TAB_ALIGNMENT)
-    leader = OptionalAttribute(
-        'w:leader', WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES
-    )
-    pos = RequiredAttribute('w:pos', ST_SignedTwipsMeasure)
+
+    val = RequiredAttribute("w:val", WD_TAB_ALIGNMENT)
+    leader = OptionalAttribute("w:leader", WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES)
+    pos = RequiredAttribute("w:pos", ST_SignedTwipsMeasure)
 
 
 class CT_TabStops(BaseOxmlElement):
     """
     ``<w:tabs>`` element, container for a sorted sequence of tab stops.
     """
-    tab = OneOrMore('w:tab', successors=())
+
+    tab = OneOrMore("w:tab", successors=())
 
     def insert_tab_in_order(self, pos, align, leader):
         """
