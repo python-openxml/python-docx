@@ -3,22 +3,29 @@
 """
 Custom element classes related to paragraph properties (CT_PPr).
 """
-
-from ...enum.text import (
+from docx.enum.dml import MSO_THEME_COLOR
+from docx.enum.shading import WD_SHADING_PATTERN
+from docx.enum.text import (
     WD_ALIGN_PARAGRAPH,
     WD_LINE_SPACING,
     WD_TAB_ALIGNMENT,
     WD_TAB_LEADER,
 )
-from ...shared import Length
-from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from ..xmlchemy import (
+from docx.oxml.simpletypes import (
+    ST_HexColor,
+    ST_HexColorAuto,
+    ST_SignedTwipsMeasure,
+    ST_TwipsMeasure,
+    ST_UcharHexNumber,
+)
+from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OneOrMore,
     OptionalAttribute,
     RequiredAttribute,
     ZeroOrOne,
 )
+from docx.shared import Length
 
 
 class CT_Ind(BaseOxmlElement):
@@ -89,6 +96,7 @@ class CT_PPr(BaseOxmlElement):
     pageBreakBefore = ZeroOrOne("w:pageBreakBefore", successors=_tag_seq[4:])
     widowControl = ZeroOrOne("w:widowControl", successors=_tag_seq[6:])
     numPr = ZeroOrOne("w:numPr", successors=_tag_seq[7:])
+    shd = ZeroOrOne("w:shd", successors=_tag_seq[10:])
     tabs = ZeroOrOne("w:tabs", successors=_tag_seq[11:])
     spacing = ZeroOrOne("w:spacing", successors=_tag_seq[22:])
     ind = ZeroOrOne("w:ind", successors=_tag_seq[23:])
@@ -340,6 +348,23 @@ class CT_PPr(BaseOxmlElement):
             self._remove_widowControl()
         else:
             self.get_or_add_widowControl().val = value
+
+
+class CT_Shd(BaseOxmlElement):
+    """
+    ``<w:shd>`` element specifying paragraph or cell shading attributes such
+    as fill value and color.
+    """
+
+    val = RequiredAttribute("w:val", WD_SHADING_PATTERN)
+    color = OptionalAttribute("w:color", ST_HexColor, default=ST_HexColorAuto.AUTO)
+    themeColor = OptionalAttribute("w:themeColor", MSO_THEME_COLOR)
+    themeTint = OptionalAttribute("w:themeTint", ST_UcharHexNumber)
+    themeShade = OptionalAttribute("w:themeShade", ST_UcharHexNumber)
+    fill = OptionalAttribute("w:fill", ST_HexColor, default=ST_HexColorAuto.AUTO)
+    themeFill = OptionalAttribute("w:themeFill", MSO_THEME_COLOR)
+    themeFillTint = OptionalAttribute("w:themeFillTint", ST_UcharHexNumber)
+    themeFillShade = OptionalAttribute("w:themeFillShade", ST_UcharHexNumber)
 
 
 class CT_Spacing(BaseOxmlElement):

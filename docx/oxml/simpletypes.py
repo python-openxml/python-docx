@@ -350,6 +350,16 @@ class ST_TwipsMeasure(XsdUnsignedLong):
         return str(twips)
 
 
+class ST_UcharHexNumber(BaseStringType):
+    @classmethod
+    def convert_from_xml(cls, str_value):
+        return int(str_value, 16)
+
+    @classmethod
+    def convert_to_xml(cls, value):
+        return "%02X" % int(value)
+
+
 class ST_UniversalMeasure(BaseSimpleType):
     @classmethod
     def convert_from_xml(cls, str_value):
