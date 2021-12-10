@@ -4,12 +4,14 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu
-
+from docx.oxml.shared import qn
+from docx.oxml import CT_P
 
 class Document(ElementProxy):
     """WordprocessingML (WML) document.
@@ -92,7 +94,62 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
-
+    def bookmark_text(self, bookmark_name, text, underline = False, italic = False, bold = False, style = None):
+        doc_element = self._part._element
+        bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
+        for bookmark in bookmarks_list:
+            name = bookmark.get(qn('w:name'))
+            if name == bookmark_name:
+                par = bookmark.getparent()
+                if not isinstance(par, CT_P):
+                    return False
+                else:
+                    i = par.index(bookmark) + 1
+                    p = self.add_paragraph()
+                    run = p.add_run(text, style)
+                    run.underline = underline
+                    run.italic = italic
+                    run.bold = bold
+                    par.insert(i,run._element)
+                    p = p._element
+                    p.getparent().remove(p)
+                    p._p = p._element = None
+                    return True
+        return False
+    def bookmark_table(self, bookmark_name, rows, cols, style=None):
+        tb = self.add_table(rows=rows, cols=cols, style=style)
+        doc_element = self._part._element
+        bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
+        for bookmark in bookmarks_list:
+            name = bookmark.get(qn('w:name'))
+            if name == bookmark_name:
+                par = bookmark.getparent()
+                if not isinstance(par, CT_P):
+                    return False
+                else:
+                    i = par.index(bookmark) + 1
+                    par.addnext(tb._element)
+                    return tb
+        return tb
+    def bookmark_picture(self, bookmark_name, picture):
+        doc_element = self._part._element
+        bookmarks_list = doc_element.findall('.//' + qn('w:bookmarkStart'))
+        for bookmark in bookmarks_list:
+            name = bookmark.get(qn('w:name'))
+            if name == bookmark_name:
+                par = bookmark.getparent()
+                if not isinstance(par, CT_P):
+                    return False
+                else:
+                    i = par.index(bookmark) + 1
+                    p = self.add_paragraph()
+                    run = p.add_run()
+                    run.add_picture(picture) 
+                    par.insert(i,run._element)
+                    p = p._element
+                    p.getparent().remove(p)
+                    p._p = p._element = None
+                    return True
     @property
     def core_properties(self):
         """
