@@ -9,7 +9,8 @@ from __future__ import (
 )
 
 from ..enum.text import WD_LINE_SPACING
-from ..shared import ElementProxy, Emu, Length, Pt, Twips
+from ..shared import ElementProxy, Emu, lazyproperty, Length, Pt, Twips
+from .tabstops import TabStops
 
 
 class ParagraphFormat(ElementProxy):
@@ -19,7 +20,7 @@ class ParagraphFormat(ElementProxy):
     control.
     """
 
-    __slots__ = ()
+    __slots__ = ('_tab_stops',)
 
     @property
     def alignment(self):
@@ -242,6 +243,15 @@ class ParagraphFormat(ElementProxy):
     @space_before.setter
     def space_before(self, value):
         self._element.get_or_add_pPr().spacing_before = value
+
+    @lazyproperty
+    def tab_stops(self):
+        """
+        |TabStops| object providing access to the tab stops defined for this
+        paragraph format.
+        """
+        pPr = self._element.get_or_add_pPr()
+        return TabStops(pPr)
 
     @property
     def widow_control(self):

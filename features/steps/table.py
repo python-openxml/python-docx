@@ -11,7 +11,10 @@ from __future__ import (
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+from docx.enum.table import WD_ALIGN_VERTICAL  # noqa
+from docx.enum.table import (
+    WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+)
 from docx.shared import Inches
 from docx.table import _Column, _Columns, _Row, _Rows
 
@@ -35,6 +38,19 @@ def given_a_3x3_table_having_span_state(context, span_state):
     }[span_state]
     document = Document(test_docx('tbl-cell-access'))
     context.table_ = document.tables[table_idx]
+
+
+@given('a _Cell object with {state} vertical alignment as cell')
+def given_a_Cell_object_with_vertical_alignment_as_cell(context, state):
+    table_idx = {
+        'inherited': 0,
+        'bottom':    1,
+        'center':    2,
+        'top':       3,
+    }[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.cell = table.cell(0, 0)
 
 
 @given('a column collection having two columns')
@@ -139,6 +155,31 @@ def given_a_table_having_two_rows(context):
     context.table_ = document.tables[0]
 
 
+@given('a table row having height of {state}')
+def given_a_table_row_having_height_of_state(context, state):
+    table_idx = {
+        'no explicit setting': 0,
+        '2 inches':            2,
+        '3 inches':            3
+    }[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.row = table.rows[0]
+
+
+@given('a table row having height rule {state}')
+def given_a_table_row_having_height_rule_state(context, state):
+    table_idx = {
+        'no explicit setting': 0,
+        'automatic':           1,
+        'at least':            2,
+        'exactly':             3
+    }[state]
+    document = Document(test_docx('tbl-props'))
+    table = document.tables[table_idx]
+    context.row = table.rows[0]
+
+
 # when =====================================================
 
 @when('I add a 1.0 inch column to the table')
@@ -150,6 +191,25 @@ def when_I_add_a_1_inch_column_to_table(context):
 def when_add_row_to_table(context):
     table = context.table_
     context.row = table.add_row()
+
+
+@when('I assign {value} to cell.vertical_alignment')
+def when_I_assign_value_to_cell_vertical_alignment(context, value):
+    context.cell.vertical_alignment = eval(value)
+
+
+@when('I assign {value} to row.height')
+def when_I_assign_value_to_row_height(context, value):
+    new_value = None if value == 'None' else int(value)
+    context.row.height = new_value
+
+
+@when('I assign {value} to row.height_rule')
+def when_I_assign_value_to_row_height_rule(context, value):
+    new_value = (
+        None if value == 'None' else getattr(WD_ROW_HEIGHT_RULE, value)
+    )
+    context.row.height_rule = new_value
 
 
 @when('I assign {value_str} to table.alignment')
@@ -216,6 +276,15 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 # then =====================================================
 
+@then('cell.vertical_alignment is {value}')
+def then_cell_vertical_alignment_is_value(context, value):
+    expected_value = eval(value)
+    actual_value = context.cell.vertical_alignment
+    assert actual_value is expected_value, (
+        'cell.vertical_alignment is %s' % actual_value
+    )
+
+
 @then('I can access a collection column by index')
 def then_can_access_collection_column_by_index(context):
     columns = context.columns
@@ -264,6 +333,26 @@ def then_can_iterate_over_row_collection(context):
         actual_count += 1
         assert isinstance(row, _Row)
     assert actual_count == 2
+
+
+@then('row.height is {value}')
+def then_row_height_is_value(context, value):
+    expected_height = None if value == 'None' else int(value)
+    actual_height = context.row.height
+    assert actual_height == expected_height, (
+        'expected %s, got %s' % (expected_height, actual_height)
+    )
+
+
+@then('row.height_rule is {value}')
+def then_row_height_rule_is_value(context, value):
+    expected_rule = (
+        None if value == 'None' else getattr(WD_ROW_HEIGHT_RULE, value)
+    )
+    actual_rule = context.row.height_rule
+    assert actual_rule == expected_rule, (
+        'expected %s, got %s' % (expected_rule, actual_rule)
+    )
 
 
 @then('table.alignment is {value_str}')

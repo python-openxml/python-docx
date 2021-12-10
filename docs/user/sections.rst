@@ -52,7 +52,7 @@ The :meth:`Document.add_section` method allows a new section to be started at
 the end of the document. Paragraphs and tables added after calling this method
 will appear in the new section::
 
-    >>> current_section = document.section[-1]  # last section in document
+    >>> current_section = document.sections[-1]  # last section in document
     >>> current_section.start_type
     NEW_PAGE (2)
     >>> new_section = document.add_section(WD_SECTION.ODD_PAGE)
@@ -98,7 +98,7 @@ from portrait to landscape::
     >>> section.page_width = new_width
     >>> section.page_height = new_height
     >>> section.orientation, section.page_width, section.page_height
-    (LANDSCAPE (1), 10058400, 7772400) 
+    (LANDSCAPE (1), 10058400, 7772400)
 
 
 Page margins

@@ -2,10 +2,6 @@
 Picture
 =======
 
-
-Overview
---------
-
 Word allows a picture to be placed in a graphical object container, either an
 inline shape or a floating shape.
 
@@ -16,7 +12,7 @@ Candidate protocol
 ::
 
     >>> run = paragraph.add_run()
-    >>> inline_shape = run.add_inline_picture(file_like_image, MIME_type=None)
+    >>> inline_shape = run.add_picture(file_like_image, MIME_type=None)
     >>> inline_shape.width = width
     >>> inline_shape.height = height
 

@@ -10,7 +10,7 @@ Example::
     from docx.enum.text import WD_LINE_SPACING
 
     paragraph = document.add_paragraph()
-    paragraph.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+    paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
 
 ----
 

@@ -93,38 +93,85 @@ inheritance from the style hierarchy::
     >>> paragraph = document.add_paragraph()
     >>> paragraph_format = paragraph.paragraph_format
 
-    >>> paragraph.left_indent
+    >>> paragraph_format.left_indent
     None  # indicating indentation is inherited from the style hierarchy
-    >>> paragraph.left_indent = Inches(0.5)
-    >>> paragraph.left_indent
+    >>> paragraph_format.left_indent = Inches(0.5)
+    >>> paragraph_format.left_indent
     457200
-    >>> paragraph.left_indent.inches
+    >>> paragraph_format.left_indent.inches
     0.5
 
 
 Right-side indent works in a similar way::
 
     >>> from docx.shared import Pt
-    >>> paragraph.right_indent
+    >>> paragraph_format.right_indent
     None
-    >>> paragraph.right_indent = Pt(24)
-    >>> paragraph.right_indent
+    >>> paragraph_format.right_indent = Pt(24)
+    >>> paragraph_format.right_indent
     304800
-    >>> paragraph.right_indent.pt
+    >>> paragraph_format.right_indent.pt
     24.0
+
+
 
 
 First-line indent is specified using the
 :attr:`~.ParagraphFormat.first_line_indent` property and is interpreted
 relative to the left indent. A negative value indicates a hanging indent::
 
-    >>> paragraph.first_line_indent
+    >>> paragraph_format.first_line_indent
     None
-    >>> paragraph.first_line_indent = Inches(-0.25)
-    >>> paragraph.first_line_indent
+    >>> paragraph_format.first_line_indent = Inches(-0.25)
+    >>> paragraph_format.first_line_indent
     -228600
-    >>> paragraph.first_line_indent.inches
+    >>> paragraph_format.first_line_indent.inches
     -0.25
+
+
+Tab stops
+~~~~~~~~~
+
+A tab stop determines the rendering of a tab character in the text of
+a paragraph. In particular, it specifies the position where the text
+following the tab character will start, how it will be aligned to that
+position, and an optional leader character that will fill the horizontal
+space spanned by the tab.
+
+The tab stops for a paragraph or style are contained in a |TabStops| object
+accessed using the :attr:`~.ParagraphFormat.tab_stops` property on
+|ParagraphFormat|::
+
+    >>> tab_stops = paragraph_format.tab_stops
+    >>> tab_stops
+    <docx.text.tabstops.TabStops object at 0x106b802d8>
+
+A new tab stop is added using the :meth:`~.TabStops.add_tab_stop` method::
+
+    >>> tab_stop = tab_stops.add_tab_stop(Inches(1.5))
+    >>> tab_stop.position
+    1371600
+    >>> tab_stop.position.inches
+    1.5
+
+Alignment defaults to left, but may be specified by providing a member of the
+:ref:`WdTabAlignment` enumeration. The leader character defaults to spaces,
+but may be specified by providing a member of the :ref:`WdTabLeader`
+enumeration::
+
+    >>> from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
+    >>> tab_stop = tab_stops.add_tab_stop(Inches(1.5), WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
+    >>> print(tab_stop.alignment)
+    RIGHT (2)
+    >>> print(tab_stop.leader)
+    DOTS (1)
+
+Existing tab stops are accessed using sequence semantics on |TabStops|::
+
+    >>> tab_stops[0]
+    <docx.text.tabstops.TabStop object at 0x1105427e8>
+
+More details are available in the |TabStops| and |TabStop| API documentation
 
 
 Paragraph spacing
@@ -177,7 +224,7 @@ of the :ref:`WdLineSpacing` enumeration or |None|::
     None
 
     >>> paragraph_format.line_spacing = Pt(18)
-    >>> isinstance(Length, paragraph_format.line_spacing)
+    >>> isinstance(paragraph_format.line_spacing, Length)
     True
     >>> paragraph_format.line_spacing.pt
     18.0

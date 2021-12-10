@@ -6,7 +6,7 @@ Custom element classes related to run properties (font).
 
 from .. import parse_xml
 from ...enum.dml import MSO_THEME_COLOR
-from ...enum.text import WD_UNDERLINE
+from ...enum.text import WD_COLOR, WD_UNDERLINE
 from ..ns import nsdecls, qn
 from ..simpletypes import (
     ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
@@ -32,6 +32,13 @@ class CT_Fonts(BaseOxmlElement):
     """
     ascii = OptionalAttribute('w:ascii', ST_String)
     hAnsi = OptionalAttribute('w:hAnsi', ST_String)
+
+
+class CT_Highlight(BaseOxmlElement):
+    """
+    `w:highlight` element, specifying font highlighting/background color.
+    """
+    val = RequiredAttribute('w:val', WD_COLOR)
 
 
 class CT_HpsMeasure(BaseOxmlElement):
@@ -75,6 +82,7 @@ class CT_RPr(BaseOxmlElement):
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
     color = ZeroOrOne('w:color', successors=_tag_seq[19:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
+    highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
     vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
     rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
@@ -89,6 +97,25 @@ class CT_RPr(BaseOxmlElement):
         create.
         """
         return parse_xml('<w:color %s w:val="000000"/>' % nsdecls('w'))
+
+    @property
+    def highlight_val(self):
+        """
+        Value of `w:highlight/@val` attribute, specifying a font's highlight
+        color, or `None` if the text is not highlighted.
+        """
+        highlight = self.highlight
+        if highlight is None:
+            return None
+        return highlight.val
+
+    @highlight_val.setter
+    def highlight_val(self, value):
+        if value is None:
+            self._remove_highlight()
+            return
+        highlight = self.get_or_add_highlight()
+        highlight.val = value
 
     @property
     def rFonts_ascii(self):

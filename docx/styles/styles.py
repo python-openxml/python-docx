@@ -1,26 +1,22 @@
 # encoding: utf-8
 
-"""
-Styles object, container for all objects in the styles part.
-"""
+"""Styles object, container for all objects in the styles part"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from warnings import warn
 
-from . import BabelFish
-from .latent import LatentStyles
-from ..shared import ElementProxy
-from .style import BaseStyle, StyleFactory
+from docx.shared import ElementProxy
+from docx.styles import BabelFish
+from docx.styles.latent import LatentStyles
+from docx.styles.style import BaseStyle, StyleFactory
 
 
 class Styles(ElementProxy):
-    """
-    A collection providing access to the styles defined in a document.
-    Accessed using the :attr:`.Document.styles` property. Supports ``len()``,
-    iteration, and dictionary-style access by style name.
+    """Provides access to the styles defined in a document.
+
+    Accessed using the :attr:`.Document.styles` property. Supports ``len()``, iteration,
+    and dictionary-style access by style name.
     """
 
     __slots__ = ()
@@ -51,7 +47,7 @@ class Styles(ElementProxy):
                 'style lookup by style_id is deprecated. Use style name as '
                 'key instead.'
             )
-            warn(msg, UserWarning)
+            warn(msg, UserWarning, stacklevel=2)
             return StyleFactory(style_elm)
 
         raise KeyError("no style with name '%s'" % key)
@@ -87,9 +83,9 @@ class Styles(ElementProxy):
         return StyleFactory(style)
 
     def get_by_id(self, style_id, style_type):
-        """
-        Return the style of *style_type* matching *style_id*. Returns the
-        default for *style_type* if *style_id* is not found or is |None|, or
+        """Return the style of *style_type* matching *style_id*.
+
+        Returns the default for *style_type* if *style_id* is not found or is |None|, or
         if the style having *style_id* is not of *style_type*.
         """
         if style_id is None:

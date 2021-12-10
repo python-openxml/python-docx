@@ -60,8 +60,8 @@ Basic merge protocol
 A merge is specified using two diagonal cells::
 
     >>> table = document.add_table(3, 3)
-    >>> a = table.cells(0, 0)
-    >>> b = table.cells(1, 1)
+    >>> a = table.cell(0, 0)
+    >>> b = table.cell(1, 1)
     >>> A = a.merge(b)
 
 ::

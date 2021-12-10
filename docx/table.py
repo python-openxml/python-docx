@@ -190,12 +190,11 @@ class Table(Parented):
 
 
 class _Cell(BlockItemContainer):
-    """
-    Table cell
-    """
+    """Table cell"""
+
     def __init__(self, tc, parent):
         super(_Cell, self).__init__(tc, parent)
-        self._tc = tc
+        self._tc = self._element = tc
 
     def add_paragraph(self, text='', style=None):
         """
@@ -269,6 +268,24 @@ class _Cell(BlockItemContainer):
         p = tc.add_p()
         r = p.add_r()
         r.text = text
+
+    @property
+    def vertical_alignment(self):
+        """Member of :ref:`WdCellVerticalAlignment` or None.
+
+        A value of |None| indicates vertical alignment for this cell is
+        inherited. Assigning |None| causes any explicitly defined vertical
+        alignment to be removed, restoring inheritance.
+        """
+        tcPr = self._element.tcPr
+        if tcPr is None:
+            return None
+        return tcPr.vAlign_val
+
+    @vertical_alignment.setter
+    def vertical_alignment(self, value):
+        tcPr = self._element.get_or_add_tcPr()
+        tcPr.vAlign_val = value
 
     @property
     def width(self):
@@ -374,7 +391,7 @@ class _Row(Parented):
     """
     def __init__(self, tr, parent):
         super(_Row, self).__init__(parent)
-        self._tr = tr
+        self._tr = self._element = tr
 
     @property
     def cells(self):
@@ -382,6 +399,31 @@ class _Row(Parented):
         Sequence of |_Cell| instances corresponding to cells in this row.
         """
         return tuple(self.table.row_cells(self._index))
+
+    @property
+    def height(self):
+        """
+        Return a |Length| object representing the height of this cell, or
+        |None| if no explicit height is set.
+        """
+        return self._tr.trHeight_val
+
+    @height.setter
+    def height(self, value):
+        self._tr.trHeight_val = value
+
+    @property
+    def height_rule(self):
+        """
+        Return the height rule of this cell as a member of the
+        :ref:`WdRowHeightRule` enumeration, or |None| if no explicit
+        height_rule is set.
+        """
+        return self._tr.trHeight_hRule
+
+    @height_rule.setter
+    def height_rule(self, value):
+        self._tr.trHeight_hRule = value
 
     @property
     def table(self):

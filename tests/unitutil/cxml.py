@@ -1,16 +1,27 @@
 # encoding: utf-8
 
-"""
-Parser for Compact XML Expression Language (CXEL) ('see-ex-ell'), a compact
-XML specification language I made up that's useful for producing XML element
-trees suitable for unit testing.
+"""Parser for Compact XML Expression Language (CXEL) ('see-ex-ell').
+
+CXEL is a compact XML specification language I made up that's useful for producing XML
+element trees suitable for unit testing.
 """
 
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from pyparsing import (
-    alphas, alphanums, Combine, dblQuotedString, delimitedList, Forward,
-    Group, Literal, Optional, removeQuotes, stringEnd, Suppress, Word
+    alphas,
+    alphanums,
+    Combine,
+    dblQuotedString,
+    delimitedList,
+    Forward,
+    Group,
+    Literal,
+    Optional,
+    removeQuotes,
+    stringEnd,
+    Suppress,
+    Word,
 )
 
 from docx.oxml import parse_xml
@@ -105,16 +116,25 @@ class Element(object):
         self._is_root = bool(value)
 
     @property
-    def nspfx(self):
+    def local_nspfxs(self):
         """
-        The namespace prefix of this element, the empty string (``''``) if
-        the tag is in the default namespace.
+        The namespace prefixes local to this element, both on the tagname and
+        all of its attributes. An empty string (``''``) is used to represent
+        the default namespace for an element tag having no prefix.
         """
-        tagname = self._tagname
-        idx = tagname.find(':')
-        if idx == -1:
-            return ''
-        return tagname[:idx]
+        def nspfx(name, is_element=False):
+            idx = name.find(':')
+            if idx == -1:
+                return '' if is_element else None
+            return name[:idx]
+
+        nspfxs = [nspfx(self._tagname, True)]
+        for name, val in self._attrs:
+            pfx = nspfx(name)
+            if pfx is None or pfx in nspfxs or pfx == "xml":
+                continue
+            nspfxs.append(pfx)
+        return nspfxs
 
     @property
     def nspfxs(self):
@@ -129,7 +149,7 @@ class Element(object):
                     continue
                 seq.append(item)
 
-        nspfxs = [self.nspfx]
+        nspfxs = self.local_nspfxs
         for child in self._children:
             merge(nspfxs, child.nspfxs)
         return nspfxs
@@ -223,12 +243,12 @@ def grammar():
 
     # np:tagName ---------------------------------
     nspfx = Word(alphas)
-    local_name = Word(alphas)
+    local_name = Word(alphanums)
     tagname = Combine(nspfx + colon + local_name)
 
     # np:attr_name=attr_val ----------------------
     attr_name = Word(alphas + ':')
-    attr_val = Word(alphanums + ' -.%')
+    attr_val = Word(alphanums + ' %-./:_')
     attr_def = Group(attr_name + equal + attr_val)
     attr_list = open_brace + delimitedList(attr_def) + close_brace
 
@@ -260,5 +280,6 @@ def grammar():
     ).setParseAction(connect_root_node_children)
 
     return root_node
+
 
 root_node = grammar()

@@ -4,11 +4,14 @@
 Custom element classes related to paragraph properties (CT_PPr).
 """
 
-from ...enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from ...enum.text import (
+    WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT, WD_TAB_LEADER
+)
 from ...shared import Length
 from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
+    BaseOxmlElement, OneOrMore, OptionalAttribute, RequiredAttribute,
+    ZeroOrOne
 )
 
 
@@ -50,6 +53,7 @@ class CT_PPr(BaseOxmlElement):
     pageBreakBefore = ZeroOrOne('w:pageBreakBefore', successors=_tag_seq[4:])
     widowControl = ZeroOrOne('w:widowControl', successors=_tag_seq[6:])
     numPr = ZeroOrOne('w:numPr', successors=_tag_seq[7:])
+    tabs = ZeroOrOne('w:tabs', successors=_tag_seq[11:])
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
@@ -311,3 +315,34 @@ class CT_Spacing(BaseOxmlElement):
     before = OptionalAttribute('w:before', ST_TwipsMeasure)
     line = OptionalAttribute('w:line', ST_SignedTwipsMeasure)
     lineRule = OptionalAttribute('w:lineRule', WD_LINE_SPACING)
+
+
+class CT_TabStop(BaseOxmlElement):
+    """
+    ``<w:tab>`` element, representing an individual tab stop.
+    """
+    val = RequiredAttribute('w:val', WD_TAB_ALIGNMENT)
+    leader = OptionalAttribute(
+        'w:leader', WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES
+    )
+    pos = RequiredAttribute('w:pos', ST_SignedTwipsMeasure)
+
+
+class CT_TabStops(BaseOxmlElement):
+    """
+    ``<w:tabs>`` element, container for a sorted sequence of tab stops.
+    """
+    tab = OneOrMore('w:tab', successors=())
+
+    def insert_tab_in_order(self, pos, align, leader):
+        """
+        Insert a newly created `w:tab` child element in *pos* order.
+        """
+        new_tab = self._new_tab()
+        new_tab.pos, new_tab.val, new_tab.leader = pos, align, leader
+        for tab in self.tab_lst:
+            if new_tab.pos < tab.pos:
+                tab.addprevious(new_tab)
+                return new_tab
+        self.append(new_tab)
+        return new_tab

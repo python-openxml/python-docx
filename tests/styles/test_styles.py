@@ -1,12 +1,8 @@
 # encoding: utf-8
 
-"""
-Test suite for the docx.styles.styles module
-"""
+"""Unit test suite for the docx.styles.styles module"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -43,6 +39,7 @@ class DescribeStyles(object):
         assert count == expected_count
         assert StyleFactory_.call_args_list == expected_calls
 
+    @pytest.mark.filterwarnings('ignore::UserWarning')
     def it_can_get_a_style_by_id(self, getitem_id_fixture):
         styles, key, expected_element = getitem_id_fixture
         style = styles[key]
@@ -84,25 +81,55 @@ class DescribeStyles(object):
         assert StyleFactory_.call_args_list == StyleFactory_calls
         assert style is style_
 
-    def it_can_get_a_style_of_type_by_id(self, get_by_id_fixture):
-        styles, style_id, style_type = get_by_id_fixture[:3]
-        default_calls, _get_by_id_calls, style_ = get_by_id_fixture[3:]
+    def it_can_get_a_style_of_type_by_id(self, _get_by_id_, style_):
+        style_id, style_type = 42, 7
+        _get_by_id_.return_value = style_
+        styles = Styles(None)
 
         style = styles.get_by_id(style_id, style_type)
 
-        assert styles.default.call_args_list == default_calls
-        assert styles._get_by_id.call_args_list == _get_by_id_calls
+        _get_by_id_.assert_called_once_with(styles, style_id, style_type)
         assert style is style_
 
-    def it_can_get_a_style_id(self, get_style_id_fixture):
-        styles, style_or_name, style_type = get_style_id_fixture[:3]
-        style_calls, name_calls, style_id_ = get_style_id_fixture[3:]
+    def but_it_returns_the_default_style_for_style_id_None(self, default_, style_):
+        style_type = 17
+        default_.return_value = style_
+        styles = Styles(None)
 
-        style_id = styles.get_style_id(style_or_name, style_type)
+        style = styles.get_by_id(None, style_type)
 
-        assert styles._get_style_id_from_style.call_args_list == style_calls
-        assert styles._get_style_id_from_name.call_args_list == name_calls
-        assert style_id is style_id_
+        default_.assert_called_once_with(styles, style_type)
+        assert style is style_
+
+    def it_can_get_a_style_id_from_a_style(self, _get_style_id_from_style_):
+        style = BaseStyle(None)
+        style_type = 22
+        _get_style_id_from_style_.return_value = "StyleId"
+        styles = Styles(None)
+
+        style_id = styles.get_style_id(style, style_type)
+
+        _get_style_id_from_style_.assert_called_once_with(styles, style, style_type)
+        assert style_id == "StyleId"
+
+    def and_it_can_get_a_style_id_from_a_style_name(self, _get_style_id_from_name_):
+        style_type = 22
+        _get_style_id_from_name_.return_value = "StyleId"
+        styles = Styles(None)
+
+        style_id = styles.get_style_id("Style Name", style_type)
+
+        _get_style_id_from_name_.assert_called_once_with(
+            styles, "Style Name", style_type
+        )
+        assert style_id == "StyleId"
+
+    def but_it_returns_None_for_a_style_or_name_of_None(self):
+        styles = Styles(None)
+
+        style_id = styles.get_style_id(None, style_type=22)
+
+        assert style_id is None
 
     def it_gets_a_style_by_id_to_help(self, _get_by_id_fixture):
         styles, style_id, style_type, default_calls = _get_by_id_fixture[:4]
@@ -114,15 +141,18 @@ class DescribeStyles(object):
         assert StyleFactory_.call_args_list == StyleFactory_calls
         assert style is style_
 
-    def it_gets_a_style_id_from_a_name_to_help(self, id_name_fixture):
-        styles, style_name, style_type, style_, style_id_ = id_name_fixture
+    def it_gets_a_style_id_from_a_name_to_help(
+        self, _getitem_, _get_style_id_from_style_, style_
+    ):
+        style_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
+        _getitem_.return_value = style_
+        _get_style_id_from_style_.return_value = style_id_
+        styles = Styles(None)
 
         style_id = styles._get_style_id_from_name(style_name, style_type)
 
-        styles.__getitem__.assert_called_once_with(style_name)
-        styles._get_style_id_from_style.assert_called_once_with(
-            style_, style_type
-        )
+        styles.__getitem__.assert_called_once_with(styles, style_name)
+        _get_style_id_from_style_.assert_called_once_with(styles, style_, style_type)
         assert style_id is style_id_
 
     def it_gets_a_style_id_from_a_style_to_help(self, id_style_fixture):
@@ -130,7 +160,7 @@ class DescribeStyles(object):
 
         style_id = styles._get_style_id_from_style(style_, style_type)
 
-        styles.default.assert_called_once_with(style_type)
+        styles.default.assert_called_once_with(styles, style_type)
         assert style_id is style_id_
 
     def it_raises_on_style_type_mismatch(self, id_style_raises_fixture):
@@ -189,41 +219,6 @@ class DescribeStyles(object):
             expected_value
         )
 
-    @pytest.fixture(params=[None, 'Foo'])
-    def get_by_id_fixture(self, request, default_, _get_by_id_, style_):
-        style_id, style_type = request.param, 1
-        styles = Styles(None)
-        default_calls = [call(style_type)] if style_id is None else []
-        _get_by_id_calls = (
-            [] if style_id is None else [call(style_id, style_type)]
-        )
-        default_.return_value = _get_by_id_.return_value = style_
-        return (
-            styles, style_id, style_type, default_calls, _get_by_id_calls,
-            style_
-        )
-
-    @pytest.fixture(params=[None, BaseStyle(None), 'Style Name'])
-    def get_style_id_fixture(self, request, _get_style_id_from_style_,
-                             _get_style_id_from_name_):
-        style_or_name, style_type = request.param, 1
-        styles = Styles(None)
-        style_calls = (
-            [call(style_or_name, style_type)]
-            if isinstance(style_or_name, BaseStyle) else []
-        )
-        name_calls = (
-            [call(style_or_name, style_type)]
-            if style_or_name == 'Style Name' else []
-        )
-        style_id_ = None if style_or_name is None else 'StyleName'
-        _get_style_id_from_style_.return_value = style_id_
-        _get_style_id_from_name_.return_value = style_id_
-        return (
-            styles, style_or_name, style_type, style_calls, name_calls,
-            style_id_
-        )
-
     @pytest.fixture(params=[
         ('w:styles/w:style{w:type=paragraph,w:styleId=Foo}', 'Foo',
          WD_STYLE_TYPE.PARAGRAPH),
@@ -237,7 +232,7 @@ class DescribeStyles(object):
         styles_elm = element(styles_cxml)
         style_elm = styles_elm[0]
         styles = Styles(styles_elm)
-        default_calls = [] if style_id == 'Foo' else [call(style_type)]
+        default_calls = [] if style_id == 'Foo' else [call(styles, style_type)]
         StyleFactory_calls = [call(style_elm)] if style_id == 'Foo' else []
         default_.return_value = StyleFactory_.return_value = style_
         return (
@@ -277,14 +272,6 @@ class DescribeStyles(object):
         styles_cxml = request.param
         styles = Styles(element(styles_cxml))
         return styles, 'bar'
-
-    @pytest.fixture
-    def id_name_fixture(self, _getitem_, _get_style_id_from_style_, style_):
-        styles = Styles(None)
-        style_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
-        _getitem_.return_value = style_
-        _get_style_id_from_style_.return_value = style_id_
-        return styles, style_name, style_type, style_, style_id_
 
     @pytest.fixture(params=[True, False])
     def id_style_fixture(self, request, default_, style_):

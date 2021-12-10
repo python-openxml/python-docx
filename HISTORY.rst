@@ -3,6 +3,53 @@
 Release History
 ---------------
 
+0.8.11 (2021-05-15)
++++++++++++++++++++
+
+- Small build changes and Python 3.8 version changes like collections.abc location.
+
+
+0.8.10 (2019-01-08)
++++++++++++++++++++
+
+- Revert use of expanded package directory for default.docx to work around setup.py
+  problem with filenames containing square brackets.
+
+
+0.8.9 (2019-01-08)
+++++++++++++++++++
+
+- Fix gap in MANIFEST.in that excluded default document template directory
+
+
+0.8.8 (2019-01-07)
+++++++++++++++++++
+
+- Add support for headers and footers
+
+
+0.8.7 (2018-08-18)
+++++++++++++++++++
+
+- Add _Row.height_rule
+- Add _Row.height
+- Add _Cell.vertical_alignment
+- Fix #455: increment next_id, don't fill gaps
+- Add #375: import docx failure on --OO optimization
+- Add #254: remove default zoom percentage
+- Add #266: miscellaneous documentation fixes
+- Add #175: refine MANIFEST.ini
+- Add #168: Unicode error on core-props in Python 2
+
+
+0.8.6 (2016-06-22)
+++++++++++++++++++
+
+- Add #257: add Font.highlight_color
+- Add #261: add ParagraphFormat.tab_stops
+- Add #303: disallow XML entity expansion
+
+
 0.8.5 (2015-02-21)
 ++++++++++++++++++
 

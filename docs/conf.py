@@ -20,7 +20,7 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-from docx import __version__
+from docx import __version__  # noqa
 
 
 # -- General configuration ---------------------------------------------------
@@ -73,6 +73,8 @@ rst_epilog = """
 
 .. |BaseStyle| replace:: :class:`.BaseStyle`
 
+.. |BlockItemContainer| replace:: :class:`.BlockItemContainer`
+
 .. |_Body| replace:: :class:`._Body`
 
 .. |_Cell| replace:: :class:`._Cell`
@@ -104,6 +106,16 @@ rst_epilog = """
 .. |float| replace:: :class:`.float`
 
 .. |Font| replace:: :class:`.Font`
+
+.. |_Footer| replace:: :class:`._Footer`
+
+.. |FooterPart| replace:: :class:`.FooterPart`
+
+.. |_Header| replace:: :class:`._Header`
+
+.. |HeaderPart| replace:: :class:`.HeaderPart`
+
+.. |ImageParts| replace:: :class:`.ImageParts`
 
 .. |Inches| replace:: :class:`.Inches`
 
@@ -155,6 +167,8 @@ rst_epilog = """
 
 .. |Sections| replace:: :class:`.Sections`
 
+.. |Settings| replace:: :class:`.Settings`
+
 .. |str| replace:: :class:`.str`
 
 .. |Styles| replace:: :class:`.Styles`
@@ -164,6 +178,10 @@ rst_epilog = """
 .. |Table| replace:: :class:`.Table`
 
 .. |_TableStyle| replace:: :class:`._TableStyle`
+
+.. |TabStop| replace:: :class:`.TabStop`
+
+.. |TabStops| replace:: :class:`.TabStops`
 
 .. |_Text| replace:: :class:`._Text`
 
@@ -363,4 +381,4 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {'http://docs.python.org/3/': None}

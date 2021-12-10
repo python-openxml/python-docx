@@ -1,14 +1,13 @@
 # encoding: utf-8
 
-"""
-Custom element classes for tables
-"""
+"""Custom element classes for tables"""
 
 from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
 from . import parse_xml
+from ..enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
@@ -19,6 +18,14 @@ from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
     RequiredAttribute, ZeroOrOne, ZeroOrMore
 )
+
+
+class CT_Height(BaseOxmlElement):
+    """
+    Used for ``<w:trHeight>`` to specify a row height and row height rule.
+    """
+    val = OptionalAttribute('w:val', ST_TwipsMeasure)
+    hRule = OptionalAttribute('w:hRule', WD_ROW_HEIGHT_RULE)
 
 
 class CT_Row(BaseOxmlElement):
@@ -50,6 +57,38 @@ class CT_Row(BaseOxmlElement):
         element.
         """
         return self.getparent().tr_lst.index(self)
+
+    @property
+    def trHeight_hRule(self):
+        """
+        Return the value of `w:trPr/w:trHeight@w:hRule`, or |None| if not
+        present.
+        """
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.trHeight_hRule
+
+    @trHeight_hRule.setter
+    def trHeight_hRule(self, value):
+        trPr = self.get_or_add_trPr()
+        trPr.trHeight_hRule = value
+
+    @property
+    def trHeight_val(self):
+        """
+        Return the value of `w:trPr/w:trHeight@w:val`, or |None| if not
+        present.
+        """
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.trHeight_val
+
+    @trHeight_val.setter
+    def trHeight_val(self, value):
+        trPr = self.get_or_add_trPr()
+        trPr.trHeight_val = value
 
     def _insert_tblPrEx(self, tblPrEx):
         self.insert(0, tblPrEx)
@@ -328,9 +367,8 @@ class CT_TblWidth(BaseOxmlElement):
 
 
 class CT_Tc(BaseOxmlElement):
-    """
-    ``<w:tc>`` table cell element
-    """
+    """`w:tc` table cell element"""
+
     tcPr = ZeroOrOne('w:tcPr')  # bunches of successors, overriding insert
     p = OneOrMore('w:p')
     tbl = OneOrMore('w:tbl')
@@ -651,7 +689,7 @@ class CT_Tc(BaseOxmlElement):
         """
         The tbl element this tc element appears in.
         """
-        return self.xpath('./ancestor::w:tbl')[0]
+        return self.xpath('./ancestor::w:tbl[position()=1]')[0]
 
     @property
     def _tc_above(self):
@@ -675,7 +713,7 @@ class CT_Tc(BaseOxmlElement):
         """
         The tr element this tc element appears in.
         """
-        return self.xpath('./ancestor::w:tr')[0]
+        return self.xpath('./ancestor::w:tr[position()=1]')[0]
 
     @property
     def _tr_above(self):
@@ -723,6 +761,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    vAlign = ZeroOrOne('w:vAlign', successors=_tag_seq[12:])
     del _tag_seq
 
     @property
@@ -741,6 +780,25 @@ class CT_TcPr(BaseOxmlElement):
         self._remove_gridSpan()
         if value > 1:
             self.get_or_add_gridSpan().val = value
+
+    @property
+    def vAlign_val(self):
+        """Value of `w:val` attribute on  `w:vAlign` child.
+
+        Value is |None| if `w:vAlign` child is not present. The `w:val`
+        attribute on `w:vAlign` is required.
+        """
+        vAlign = self.vAlign
+        if vAlign is None:
+            return None
+        return vAlign.val
+
+    @vAlign_val.setter
+    def vAlign_val(self, value):
+        if value is None:
+            self._remove_vAlign()
+            return
+        self.get_or_add_vAlign().val = value
 
     @property
     def vMerge_val(self):
@@ -774,6 +832,59 @@ class CT_TcPr(BaseOxmlElement):
     def width(self, value):
         tcW = self.get_or_add_tcW()
         tcW.width = value
+
+
+class CT_TrPr(BaseOxmlElement):
+    """
+    ``<w:trPr>`` element, defining table row properties
+    """
+    _tag_seq = (
+        'w:cnfStyle', 'w:divId', 'w:gridBefore', 'w:gridAfter', 'w:wBefore',
+        'w:wAfter', 'w:cantSplit', 'w:trHeight', 'w:tblHeader',
+        'w:tblCellSpacing', 'w:jc', 'w:hidden', 'w:ins', 'w:del',
+        'w:trPrChange'
+    )
+    trHeight = ZeroOrOne('w:trHeight', successors=_tag_seq[8:])
+    del _tag_seq
+
+    @property
+    def trHeight_hRule(self):
+        """
+        Return the value of `w:trHeight@w:hRule`, or |None| if not present.
+        """
+        trHeight = self.trHeight
+        if trHeight is None:
+            return None
+        return trHeight.hRule
+
+    @trHeight_hRule.setter
+    def trHeight_hRule(self, value):
+        if value is None and self.trHeight is None:
+            return
+        trHeight = self.get_or_add_trHeight()
+        trHeight.hRule = value
+
+    @property
+    def trHeight_val(self):
+        """
+        Return the value of `w:trHeight@w:val`, or |None| if not present.
+        """
+        trHeight = self.trHeight
+        if trHeight is None:
+            return None
+        return trHeight.val
+
+    @trHeight_val.setter
+    def trHeight_val(self, value):
+        if value is None and self.trHeight is None:
+            return
+        trHeight = self.get_or_add_trHeight()
+        trHeight.val = value
+
+
+class CT_VerticalJc(BaseOxmlElement):
+    """`w:vAlign` element, specifying vertical alignment of cell."""
+    val = RequiredAttribute('w:val', WD_CELL_VERTICAL_ALIGNMENT)
 
 
 class CT_VMerge(BaseOxmlElement):

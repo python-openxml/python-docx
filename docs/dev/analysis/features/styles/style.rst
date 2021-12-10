@@ -182,6 +182,8 @@ contents does not cause the `w:semiHidden` element to be removed.
 Candidate protocol
 ~~~~~~~~~~~~~~~~~~
 
+.. highlight:: python
+
 ::
 
     >>> style = document.styles['Foo']
@@ -243,6 +245,8 @@ will appear in the gallery in the order specified by `w:uiPriority`.
 Candidate protocol
 ~~~~~~~~~~~~~~~~~~
 
+.. highlight:: python
+
 ::
 
     >>> style = document.styles['Foo']
@@ -300,6 +304,8 @@ Behavior
 Candidate protocol
 ~~~~~~~~~~~~~~~~~~
 
+.. highlight:: python
+
 ::
 
     >>> style = document.styles['Foo']
@@ -344,6 +350,8 @@ used when writing XML::
 Candidate protocols
 -------------------
 
+.. highlight:: python
+
 Identification::
 
     >>> style = document.styles['Body Text']
@@ -385,7 +393,7 @@ Example XML
 
   <w:styles>
 
-    <!-- ... -->   
+    <!-- ... -->
 
     <w:style w:type="paragraph" w:default="1" w:styleId="Normal">
       <w:name w:val="Normal"/>

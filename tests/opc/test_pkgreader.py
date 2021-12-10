@@ -1,51 +1,58 @@
 # encoding: utf-8
 
-"""
-Test suite for opc.pkgreader module
-"""
+"""Unit test suite for docx.opc.pkgreader module"""
 
 from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 
-from docx.opc.constants import (
-    CONTENT_TYPE as CT, RELATIONSHIP_TARGET_MODE as RTM
-)
+from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TARGET_MODE as RTM
 from docx.opc.packuri import PackURI
 from docx.opc.phys_pkg import _ZipPkgReader
 from docx.opc.pkgreader import (
-    _ContentTypeMap, PackageReader, _SerializedPart, _SerializedRelationship,
-    _SerializedRelationships
+    _ContentTypeMap,
+    PackageReader,
+    _SerializedPart,
+    _SerializedRelationship,
+    _SerializedRelationships,
 )
 
 from .unitdata.types import a_Default, a_Types, an_Override
 from ..unitutil.mock import (
-    call, class_mock, function_mock, initializer_mock, instance_mock,
-    loose_mock, method_mock, Mock, patch
+    ANY,
+    call,
+    class_mock,
+    function_mock,
+    initializer_mock,
+    instance_mock,
+    loose_mock,
+    method_mock,
+    Mock,
+    patch,
 )
 
 
 class DescribePackageReader(object):
 
     def it_can_construct_from_pkg_file(
-            self, init, PhysPkgReader_, from_xml, _srels_for,
-            _load_serialized_parts):
-        # mockery ----------------------
+        self, _init_, PhysPkgReader_, from_xml, _srels_for, _load_serialized_parts
+    ):
         phys_reader = PhysPkgReader_.return_value
         content_types = from_xml.return_value
         pkg_srels = _srels_for.return_value
         sparts = _load_serialized_parts.return_value
         pkg_file = Mock(name='pkg_file')
-        # exercise ---------------------
+
         pkg_reader = PackageReader.from_file(pkg_file)
-        # verify -----------------------
+
         PhysPkgReader_.assert_called_once_with(pkg_file)
         from_xml.assert_called_once_with(phys_reader.content_types_xml)
         _srels_for.assert_called_once_with(phys_reader, '/')
-        _load_serialized_parts.assert_called_once_with(phys_reader, pkg_srels,
-                                                       content_types)
+        _load_serialized_parts.assert_called_once_with(
+            phys_reader, pkg_srels, content_types
+        )
         phys_reader.close.assert_called_once_with()
-        init.assert_called_once_with(content_types, pkg_srels, sparts)
+        _init_.assert_called_once_with(ANY, content_types, pkg_srels, sparts)
         assert isinstance(pkg_reader, PackageReader)
 
     def it_can_iterate_over_the_serialized_parts(self, iter_sparts_fixture):
@@ -186,10 +193,10 @@ class DescribePackageReader(object):
 
     @pytest.fixture
     def from_xml(self, request):
-        return method_mock(request, _ContentTypeMap, 'from_xml')
+        return method_mock(request, _ContentTypeMap, 'from_xml', autospec=False)
 
     @pytest.fixture
-    def init(self, request):
+    def _init_(self, request):
         return initializer_mock(request, PackageReader)
 
     @pytest.fixture
@@ -204,7 +211,9 @@ class DescribePackageReader(object):
 
     @pytest.fixture
     def _load_serialized_parts(self, request):
-        return method_mock(request, PackageReader, '_load_serialized_parts')
+        return method_mock(
+            request, PackageReader, '_load_serialized_parts', autospec=False
+        )
 
     @pytest.fixture
     def partnames_(self, request):
@@ -252,11 +261,11 @@ class DescribePackageReader(object):
 
     @pytest.fixture
     def _srels_for(self, request):
-        return method_mock(request, PackageReader, '_srels_for')
+        return method_mock(request, PackageReader, '_srels_for', autospec=False)
 
     @pytest.fixture
     def _walk_phys_parts(self, request):
-        return method_mock(request, PackageReader, '_walk_phys_parts')
+        return method_mock(request, PackageReader, '_walk_phys_parts', autospec=False)
 
 
 class Describe_ContentTypeMap(object):
