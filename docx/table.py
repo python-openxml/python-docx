@@ -114,7 +114,7 @@ class Table(Parented):
             if i != j:  # first != last -> merged cells
                 r1, c1 = divmod(i, cols)
                 r2, c2 = divmod(j, cols)
-                merges.append((r1, r2, c1, c2))  # sort as `xlrd` style
+                merges.append((r1, r2 + 1, c1, c2 + 1))  # sort as `xlrd` style
         return merges
 
     def row_cells(self, row_idx):
