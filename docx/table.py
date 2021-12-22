@@ -96,6 +96,27 @@ class Table(Parented):
         """
         return _Columns(self._tbl, self)
 
+    @property
+    def merges(self):
+        """
+        Sequence of merged cells in this table. e.g. [(r1, r2, c1, c2), ...]
+        """
+        cells  = self._cells
+        cols   = self._column_count
+        length = len(cells)
+        merges = []
+        for i, cell in enumerate(cells):
+            if cell in cells[:i]:  # only find first repeated cell
+                continue
+            for j in range(length - 1, 0, -1):  # find last repeated cell
+                if cell is cells[j]:  # always can be found
+                    break
+            if i != j:  # first != last -> merged cells
+                r1, c1 = divmod(i, cols)
+                r2, c2 = divmod(j, cols)
+                merges.append((r1, r2, c1, c2))  # sort as `xlrd` style
+        return merges
+
     def row_cells(self, row_idx):
         """
         Sequence of cells in the row at *row_idx* in this table.
