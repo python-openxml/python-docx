@@ -3,13 +3,25 @@
 """
 Custom element classes related to the styles part
 """
+from lxml import etree
 
+from ..styles import BabelFish
 from ..enum.style import WD_STYLE_TYPE
 from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
     ZeroOrOne
 )
+
+def _xpath_ui2internal(xpath, items):
+    """
+    Return the BabelFish.ui2internal() value when
+    called from a xpath expression
+    """
+
+    return [BabelFish.ui2internal(item) for item in items]
+
+etree.FunctionNamespace('')['ui2internal'] = _xpath_ui2internal
 
 
 def styleId_from_name(name):
@@ -338,7 +350,7 @@ class CT_Styles(BaseOxmlElement):
         Return the ``<w:style>`` child element having ``<w:name>`` child
         element with value *name*, or |None| if not found.
         """
-        xpath = 'w:style[w:name/@w:val="%s"]' % name
+        xpath = 'w:style[ui2internal(w:name/@w:val)="%s"]' % name
         try:
             return self.xpath(xpath)[0]
         except IndexError:
