@@ -188,7 +188,7 @@ def _ImageHeaderFactory(stream):
 
     def read_32(stream):
         stream.seek(0)
-        return stream.read(32)
+        return stream.read(64)
 
     header = read_32(stream)
     for cls, offset, signature_bytes in SIGNATURES:
