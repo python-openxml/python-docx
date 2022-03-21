@@ -24,13 +24,13 @@ def text_of(relpath):
 version = re.search(r'__version__ = "([^"]+)"', text_of("docx/__init__.py")).group(1)
 
 
-NAME = "python-docx"
+NAME = "python-docx-valutico"
 VERSION = version
 DESCRIPTION = "Create and update Microsoft Word .docx files."
 KEYWORDS = "docx office openxml word"
-AUTHOR = "Steve Canny"
-AUTHOR_EMAIL = "python-docx@googlegroups.com"
-URL = "https://github.com/python-openxml/python-docx"
+AUTHOR = "Andreas Steinet"
+AUTHOR_EMAIL = "a.steiner@valutico.com"
+URL = "https://github.com/AndreasSteiner/python-docx"
 LICENSE = text_of("LICENSE")
 PACKAGES = find_packages(exclude=["tests", "tests.*"])
 PACKAGE_DATA = {"docx": ["templates/*.xml", "templates/*.docx"]}
@@ -66,6 +66,7 @@ params = {
     "description": DESCRIPTION,
     "keywords": KEYWORDS,
     "long_description": LONG_DESCRIPTION,
+    "long_description_content_type": "text/markdown",
     "author": AUTHOR,
     "author_email": AUTHOR_EMAIL,
     "url": URL,
