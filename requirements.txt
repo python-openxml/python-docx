@@ -4,3 +4,4 @@ lxml>=3.1.0
 mock>=1.0.1
 pyparsing>=2.0.1
 pytest>=2.5
+python-pptx>=0.6.5

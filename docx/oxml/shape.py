@@ -7,13 +7,14 @@ Custom element classes for shape-related elements like ``<w:inline>``
 from . import parse_xml
 from .ns import nsdecls
 from .simpletypes import (
-    ST_Coordinate, ST_DrawingElementId, ST_PositiveCoordinate,
-    ST_RelationshipId, XsdString, XsdToken
+    ST_Coordinate,
+    ST_DrawingElementId,
+    ST_PositiveCoordinate,
+    ST_RelationshipId,
+    XsdString,
+    XsdToken,
 )
-from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute,
-    ZeroOrOne
-)
+from .xmlchemy import BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute, ZeroOrOne
 
 
 class CT_Blip(BaseOxmlElement):
@@ -21,41 +22,45 @@ class CT_Blip(BaseOxmlElement):
     ``<a:blip>`` element, specifies image source and adjustments such as
     alpha and tint.
     """
-    embed = OptionalAttribute('r:embed', ST_RelationshipId)
-    link = OptionalAttribute('r:link', ST_RelationshipId)
+
+    embed = OptionalAttribute("r:embed", ST_RelationshipId)
+    link = OptionalAttribute("r:link", ST_RelationshipId)
 
 
 class CT_BlipFillProperties(BaseOxmlElement):
     """
     ``<pic:blipFill>`` element, specifies picture properties
     """
-    blip = ZeroOrOne('a:blip', successors=(
-        'a:srcRect', 'a:tile', 'a:stretch'
-    ))
+
+    blip = ZeroOrOne("a:blip", successors=("a:srcRect", "a:tile", "a:stretch"))
 
 
 class CT_GraphicalObject(BaseOxmlElement):
     """
     ``<a:graphic>`` element, container for a DrawingML object
     """
-    graphicData = OneAndOnlyOne('a:graphicData')
+
+    graphicData = OneAndOnlyOne("a:graphicData")
 
 
 class CT_GraphicalObjectData(BaseOxmlElement):
     """
     ``<a:graphicData>`` element, container for the XML of a DrawingML object
     """
-    pic = ZeroOrOne('pic:pic')
-    uri = RequiredAttribute('uri', XsdToken)
+
+    pic = ZeroOrOne("pic:pic")
+    cChart = ZeroOrOne("c:chart")
+    uri = RequiredAttribute("uri", XsdToken)
 
 
 class CT_Inline(BaseOxmlElement):
     """
     ``<w:inline>`` element, container for an inline shape.
     """
-    extent = OneAndOnlyOne('wp:extent')
-    docPr = OneAndOnlyOne('wp:docPr')
-    graphic = OneAndOnlyOne('a:graphic')
+
+    extent = OneAndOnlyOne("wp:extent")
+    docPr = OneAndOnlyOne("wp:docPr")
+    graphic = OneAndOnlyOne("a:graphic")
 
     @classmethod
     def new(cls, cx, cy, shape_id, pic):
@@ -67,10 +72,8 @@ class CT_Inline(BaseOxmlElement):
         inline.extent.cx = cx
         inline.extent.cy = cy
         inline.docPr.id = shape_id
-        inline.docPr.name = 'Picture %d' % shape_id
-        inline.graphic.graphicData.uri = (
-            'http://schemas.openxmlformats.org/drawingml/2006/picture'
-        )
+        inline.docPr.name = "Picture %d" % shape_id
+        inline.graphic.graphicData.uri = "http://schemas.openxmlformats.org/drawingml/2006/picture"
         inline.graphic.graphicData._insert_pic(pic)
         return inline
 
@@ -89,16 +92,43 @@ class CT_Inline(BaseOxmlElement):
     @classmethod
     def _inline_xml(cls):
         return (
-            '<wp:inline %s>\n'
+            "<wp:inline %s>\n"
             '  <wp:extent cx="914400" cy="914400"/>\n'
             '  <wp:docPr id="666" name="unnamed"/>\n'
-            '  <wp:cNvGraphicFramePr>\n'
+            "  <wp:cNvGraphicFramePr>\n"
             '    <a:graphicFrameLocks noChangeAspect="1"/>\n'
-            '  </wp:cNvGraphicFramePr>\n'
-            '  <a:graphic>\n'
+            "  </wp:cNvGraphicFramePr>\n"
+            "  <a:graphic>\n"
             '    <a:graphicData uri="URI not set"/>\n'
-            '  </a:graphic>\n'
-            '</wp:inline>' % nsdecls('wp', 'a', 'pic', 'r')
+            "  </a:graphic>\n"
+            "</wp:inline>" % nsdecls("wp", "a", "pic", "r")
+        )
+
+    @classmethod
+    def new_chart_inline(cls, shape_id, rId, x, y, cx, cy):
+        """
+        Return a new ``<wp:inline>`` element populated with the values passed
+        as parameters.
+        """
+        inline = parse_xml(cls._chart_xml())
+        inline.extent.cx = cx
+        inline.extent.cy = cy
+        chart = CT_Chart.new(rId)
+        inline.graphic.graphicData._insert_cChart(chart)
+        return inline
+
+    @classmethod
+    def _chart_xml(cls):
+        return (
+            "<wp:inline %s>\n"
+            "  <wp:extent/>\n"
+            '  <wp:effectExtent l="0" t="0" r="0" b="0"/>\n'
+            '  <wp:docPr id="1" name="Chart 1"/>\n'
+            "  <wp:cNvGraphicFramePr/>\n"
+            "  <a:graphic %s>\n"
+            '    <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart"/>\n'
+            "  </a:graphic>\n"
+            "</wp:inline>" % (nsdecls("wp", "a"), nsdecls("a"))
         )
 
 
@@ -107,8 +137,9 @@ class CT_NonVisualDrawingProps(BaseOxmlElement):
     Used for ``<wp:docPr>`` element, and perhaps others. Specifies the id and
     name of a DrawingML drawing.
     """
-    id = RequiredAttribute('id', ST_DrawingElementId)
-    name = RequiredAttribute('name', XsdString)
+
+    id = RequiredAttribute("id", ST_DrawingElementId)
+    name = RequiredAttribute("name", XsdString)
 
 
 class CT_NonVisualPictureProperties(BaseOxmlElement):
@@ -118,13 +149,35 @@ class CT_NonVisualPictureProperties(BaseOxmlElement):
     """
 
 
+class CT_Chart(BaseOxmlElement):
+    """
+    ``<c:chart>`` element, a DrawingML picture
+    """
+
+    @classmethod
+    def new(cls, rId):
+        """
+        Return a new ``<c:chart>`` element populated with the minimal
+        contents required to define a viable chart element, based on the
+        values passed as parameters.
+        """
+        chart = parse_xml(cls._chart_xml(rId))
+        chart.id = rId
+        return chart
+
+    @classmethod
+    def _chart_xml(cls, rId):
+        return '<c:chart %s r:id="%s"/>\n' % (nsdecls("c", "r"), rId)
+
+
 class CT_Picture(BaseOxmlElement):
     """
     ``<pic:pic>`` element, a DrawingML picture
     """
-    nvPicPr = OneAndOnlyOne('pic:nvPicPr')
-    blipFill = OneAndOnlyOne('pic:blipFill')
-    spPr = OneAndOnlyOne('pic:spPr')
+
+    nvPicPr = OneAndOnlyOne("pic:nvPicPr")
+    blipFill = OneAndOnlyOne("pic:blipFill")
+    spPr = OneAndOnlyOne("pic:spPr")
 
     @classmethod
     def new(cls, pic_id, filename, rId, cx, cy):
@@ -144,25 +197,25 @@ class CT_Picture(BaseOxmlElement):
     @classmethod
     def _pic_xml(cls):
         return (
-            '<pic:pic %s>\n'
-            '  <pic:nvPicPr>\n'
+            "<pic:pic %s>\n"
+            "  <pic:nvPicPr>\n"
             '    <pic:cNvPr id="666" name="unnamed"/>\n'
-            '    <pic:cNvPicPr/>\n'
-            '  </pic:nvPicPr>\n'
-            '  <pic:blipFill>\n'
-            '    <a:blip/>\n'
-            '    <a:stretch>\n'
-            '      <a:fillRect/>\n'
-            '    </a:stretch>\n'
-            '  </pic:blipFill>\n'
-            '  <pic:spPr>\n'
-            '    <a:xfrm>\n'
+            "    <pic:cNvPicPr/>\n"
+            "  </pic:nvPicPr>\n"
+            "  <pic:blipFill>\n"
+            "    <a:blip/>\n"
+            "    <a:stretch>\n"
+            "      <a:fillRect/>\n"
+            "    </a:stretch>\n"
+            "  </pic:blipFill>\n"
+            "  <pic:spPr>\n"
+            "    <a:xfrm>\n"
             '      <a:off x="0" y="0"/>\n'
             '      <a:ext cx="914400" cy="914400"/>\n'
-            '    </a:xfrm>\n'
+            "    </a:xfrm>\n"
             '    <a:prstGeom prst="rect"/>\n'
-            '  </pic:spPr>\n'
-            '</pic:pic>' % nsdecls('pic', 'a', 'r')
+            "  </pic:spPr>\n"
+            "</pic:pic>" % nsdecls("pic", "a", "r")
         )
 
 
@@ -170,7 +223,8 @@ class CT_PictureNonVisual(BaseOxmlElement):
     """
     ``<pic:nvPicPr>`` element, non-visual picture properties
     """
-    cNvPr = OneAndOnlyOne('pic:cNvPr')
+
+    cNvPr = OneAndOnlyOne("pic:cNvPr")
 
 
 class CT_Point2D(BaseOxmlElement):
@@ -178,8 +232,9 @@ class CT_Point2D(BaseOxmlElement):
     Used for ``<a:off>`` element, and perhaps others. Specifies an x, y
     coordinate (point).
     """
-    x = RequiredAttribute('x', ST_Coordinate)
-    y = RequiredAttribute('y', ST_Coordinate)
+
+    x = RequiredAttribute("x", ST_Coordinate)
+    y = RequiredAttribute("y", ST_Coordinate)
 
 
 class CT_PositiveSize2D(BaseOxmlElement):
@@ -187,8 +242,9 @@ class CT_PositiveSize2D(BaseOxmlElement):
     Used for ``<wp:extent>`` element, and perhaps others later. Specifies the
     size of a DrawingML drawing.
     """
-    cx = RequiredAttribute('cx', ST_PositiveCoordinate)
-    cy = RequiredAttribute('cy', ST_PositiveCoordinate)
+
+    cx = RequiredAttribute("cx", ST_PositiveCoordinate)
+    cy = RequiredAttribute("cy", ST_PositiveCoordinate)
 
 
 class CT_PresetGeometry2D(BaseOxmlElement):
@@ -209,10 +265,20 @@ class CT_ShapeProperties(BaseOxmlElement):
     """
     ``<pic:spPr>`` element, specifies size and shape of picture container.
     """
-    xfrm = ZeroOrOne('a:xfrm', successors=(
-        'a:custGeom', 'a:prstGeom', 'a:ln', 'a:effectLst', 'a:effectDag',
-        'a:scene3d', 'a:sp3d', 'a:extLst'
-    ))
+
+    xfrm = ZeroOrOne(
+        "a:xfrm",
+        successors=(
+            "a:custGeom",
+            "a:prstGeom",
+            "a:ln",
+            "a:effectLst",
+            "a:effectDag",
+            "a:scene3d",
+            "a:sp3d",
+            "a:extLst",
+        ),
+    )
 
     @property
     def cx(self):
@@ -256,8 +322,9 @@ class CT_Transform2D(BaseOxmlElement):
     """
     ``<a:xfrm>`` element, specifies size and shape of picture container.
     """
-    off = ZeroOrOne('a:off', successors=('a:ext',))
-    ext = ZeroOrOne('a:ext', successors=())
+
+    off = ZeroOrOne("a:off", successors=("a:ext",))
+    ext = ZeroOrOne("a:ext", successors=())
 
     @property
     def cx(self):

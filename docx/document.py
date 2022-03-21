@@ -18,7 +18,7 @@ class Document(ElementProxy):
     a document.
     """
 
-    __slots__ = ('_part', '__body')
+    __slots__ = ("_part", "__body")
 
     def __init__(self, element, part):
         super(Document, self).__init__(element)
@@ -44,7 +44,7 @@ class Document(ElementProxy):
         paragraph.add_run().add_break(WD_BREAK.PAGE)
         return paragraph
 
-    def add_paragraph(self, text='', style=None):
+    def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the document, populated
         with *text* and having paragraph style *style*. *text* can contain
@@ -92,6 +92,20 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+
+    def add_chart(self, chart_type, x, y, cx, cy, chart_data):
+        """
+        Add a new chart of *chart_type* to the slide, positioned at (*x*,
+        *y*), having size (*cx*, *cy*), and depicting *chart_data*.
+        *chart_type* is one of the :ref:`XlChartType` enumeration values.
+        *chart_data* is a |ChartData| object populated with the categories
+        and series values for the chart. Note that a |GraphicFrame| shape
+        object is returned, not the |Chart| object contained in that graphic
+        frame shape. The chart object may be accessed using the :attr:`chart`
+        property of the returned |GraphicFrame| object.
+        """
+        run = self.add_paragraph().add_run()
+        return run.add_chart(chart_type, x, y, cx, cy, chart_data)
 
     @property
     def core_properties(self):
@@ -172,9 +186,7 @@ class Document(ElementProxy):
         space between the margins of the last section of this document.
         """
         section = self.sections[-1]
-        return Emu(
-            section.page_width - section.left_margin - section.right_margin
-        )
+        return Emu(section.page_width - section.left_margin - section.right_margin)
 
     @property
     def _body(self):
@@ -191,6 +203,7 @@ class _Body(BlockItemContainer):
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
+
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
