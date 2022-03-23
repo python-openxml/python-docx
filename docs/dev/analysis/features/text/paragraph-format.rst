@@ -353,7 +353,7 @@ Getting and setting outline level::
     0
     >>> paragraph_format.outline_level = 9
     >>> paragraph_format.outline_level
-    0
+    9
     >>> paragraph_format.outline_level = 10
     >>> paragraph_format.outline_level
     9
