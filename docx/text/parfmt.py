@@ -173,6 +173,24 @@ class ParagraphFormat(ElementProxy):
             pPr.spacing_lineRule = value
 
     @property
+    def outline_level(self):
+        """
+        A number between 0-9 inclusive, which describes the outline
+        level for the paragraph (as visible in the TOC / Navigation Pane)
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        if pPr.outlineLvl_val is None or pPr.outlineLvl_val >= 9:
+            return 9
+        return pPr.outlineLvl_val
+
+    @outline_level.setter
+    def outline_level(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.outlineLvl_val = value
+
+    @property
     def page_break_before(self):
         """
         |True| if the paragraph should appear at the top of the page

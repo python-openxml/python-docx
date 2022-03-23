@@ -325,6 +325,68 @@ A right-aligned paragraph::
   </w:p>
 
 
+Outline level
+-------------
+
+This specifies the outline level which shall be associated with the text of the
+current paragraph in the document. This level does not affect the appearance of
+the text in the document, but instead is used by the application (for example in
+MS Word, it impacts appearance of the text and the associated hierarchy level in
+the Navigation Pane and the TOC).
+
+The value for the outline level can be a digit from 0 to 9, where 9 specifically
+indicates that there is no outline level applied to this paragraph. If this
+element is omitted, then the outline level of the content is assumed to be 9 (no
+level).
+
+Protocol
+~~~~~~~~
+
+.. higlight:: python
+
+Getting and setting outline level::
+
+    >>> paragraph_format.outline_level
+    None
+    >>> paragraph_format.outline_level = 0
+    >>> paragraph_format.outline_level
+    0
+    >>> paragraph_format.outline_level = 9
+    >>> paragraph_format.outline_level
+    9
+    >>> paragraph_format.outline_level = 10
+    >>> paragraph_format.outline_level
+    9
+
+
+XML Semantics
+~~~~~~~~~~~~~
+
+* The value is specified by `w:outlineLvl/@w:val` which has to be a decimal
+  integer, between 0 to 9.
+* If a value greater than 9 is set via the api, the value in the underlying xml
+  is set to 9.
+* If a value greater than 9 is present in the underlying xml, the api will
+  return the value 9.
+
+
+Specimen XML
+~~~~~~~~~~~~
+
+.. highlight:: xml
+
+Text at outline level 1::
+
+  <w:pPr>
+    <w:outlineLvl w:val="1"/>
+  </w:pPr>
+
+Explicit indication that no outline level is set::
+
+  <w:pPr>
+    <w:outlineLvl w:val="9"/>
+  </w:pPr>
+
 
 Schema excerpt
 --------------

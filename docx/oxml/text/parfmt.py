@@ -57,7 +57,8 @@ class CT_PPr(BaseOxmlElement):
     spacing = ZeroOrOne('w:spacing', successors=_tag_seq[22:])
     ind = ZeroOrOne('w:ind', successors=_tag_seq[23:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[27:])
-    sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[35:])
+    outlineLvl = ZeroOrOne('w:outlineLvl', successors=_tag_seq[31:])
+    sectPr = ZeroOrOne('w:sectPr', successors=_tag_seq[36:])
     del _tag_seq
 
     @property
@@ -124,6 +125,24 @@ class CT_PPr(BaseOxmlElement):
             return
         ind = self.get_or_add_ind()
         ind.right = value
+
+    @property
+    def outlineLvl_val(self):
+        """
+        The value of `w:outlineLvl/@w:val` or |None| if not present.
+        """
+        outlineLvl = self.outlineLvl
+        if outlineLvl is None:
+            return None
+        return outlineLvl.val
+
+    @outlineLvl_val.setter
+    def outlineLvl_val(self, value):
+        if value is None:
+            self._remove_outline_lvl()
+            return
+        outline_lvl = self.get_or_add_outlineLvl()
+        outline_lvl.val = value if value <= 9 else 9
 
     @property
     def jc_val(self):
