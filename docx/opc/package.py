@@ -12,6 +12,7 @@ from docx.opc.pkgreader import PackageReader
 from docx.opc.pkgwriter import PackageWriter
 from docx.opc.rel import Relationships
 from docx.opc.shared import lazyproperty
+from pptx.opc.package import _Relationships
 
 
 class OpcPackage(object):
@@ -71,17 +72,30 @@ class OpcPackage(object):
         """
 
         def walk_parts(source, visited=list()):
-            for rel in source.rels.values():
-                if rel.is_external:
-                    continue
-                part = rel.target_part
-                if part in visited:
-                    continue
-                visited.append(part)
-                yield part
-                new_source = part
-                for part in walk_parts(new_source, visited):
+            if isinstance(source.rels, _Relationships):
+                for rel in source.rels:
+                    if rel.is_external:
+                        continue
+                    part = rel.target_part
+                    if part in visited:
+                        continue
+                    visited.append(part)
                     yield part
+                    new_source = part
+                    for part in walk_parts(new_source, visited):
+                        yield part
+            else:
+                for rel in source.rels.values():
+                    if rel.is_external:
+                        continue
+                    part = rel.target_part
+                    if part in visited:
+                        continue
+                    visited.append(part)
+                    yield part
+                    new_source = part
+                    for part in walk_parts(new_source, visited):
+                        yield part
 
         for part in walk_parts(self):
             yield part
@@ -185,7 +199,10 @@ class OpcPackage(object):
         a file (a string) or a file-like object.
         """
         for part in self.parts:
-            part.before_marshal()
+            try:
+                part.before_marshal()
+            except AttributeError:
+                ...
         PackageWriter.write(pkg_file, self.rels, self.parts)
 
     @property
