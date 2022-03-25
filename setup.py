@@ -35,7 +35,7 @@ LICENSE = text_of("LICENSE")
 PACKAGES = find_packages(exclude=["tests", "tests.*"])
 PACKAGE_DATA = {"docx": ["templates/*.xml", "templates/*.docx"]}
 
-INSTALL_REQUIRES = ["lxml>=2.3.2", "python-pptx>=0.6.5"]
+INSTALL_REQUIRES = ["lxml>=2.3.2", "python-pptx-valutico==0.6.23"]
 TEST_SUITE = "tests"
 TESTS_REQUIRE = ["behave", "mock", "pyparsing", "pytest"]
 
