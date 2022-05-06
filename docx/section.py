@@ -5,8 +5,12 @@ The |Section| object and related proxy classes.
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
+import sys
 
-from collections import Sequence
+if sys.version_info.major > 3 or (sys.version_info.major == 3 and sys.version_info.minor >= 10):
+	from collections.abc import Sequence
+else:
+	from collections import Sequence
 
 
 class Sections(Sequence):
