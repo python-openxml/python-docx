@@ -218,6 +218,7 @@ register_element_cls('w:u',          CT_Underline)
 register_element_cls('w:vanish',     CT_OnOff)
 register_element_cls('w:vertAlign',  CT_VerticalAlignRun)
 register_element_cls('w:webHidden',  CT_OnOff)
+register_element_cls('w:w',          CT_DecimalNumber)
 
 from .text.paragraph import CT_P  # noqa
 register_element_cls('w:p', CT_P)

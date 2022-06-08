@@ -274,6 +274,18 @@ class Font(ElementProxy):
         rPr.sz_val = emu
 
     @property
+    def scaling(self):
+        rPr = self._element.rPr
+        if rPr is None:
+            return None
+        return rPr.w_val
+
+    @scaling.setter
+    def scaling(self, emu):
+        rPr = self._element.get_or_add_rPr()
+        rPr.w_val = emu
+
+    @property
     def small_caps(self):
         """
         Read/write tri-state value. When |True| causes the lowercase
