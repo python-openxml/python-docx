@@ -36,6 +36,7 @@ def snippet_seq(name, offset=0, count=1024):
     path = os.path.join(test_file_dir, 'snippets', '%s.txt' % name)
     with open(path, 'rb') as f:
         text = f.read().decode('utf-8')
+        text = text.replace('\r\n', '\n')
     snippets = text.split('\n\n')
     start, end = offset, offset+count
     return tuple(snippets[start:end])

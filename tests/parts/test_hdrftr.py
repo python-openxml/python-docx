@@ -50,7 +50,7 @@ class DescribeFooterPart(object):
 
     def it_loads_default_footer_XML_from_a_template_to_help(self):
         # ---tests integration with OS---
-        xml_bytes = FooterPart._default_footer_xml()
+        xml_bytes = FooterPart._default_footer_xml().replace(b'\r\n', b'\n')
 
         assert xml_bytes.startswith(
             b"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n<w:ftr\n"
@@ -119,7 +119,7 @@ class DescribeHeaderPart(object):
 
     def it_loads_default_header_XML_from_a_template_to_help(self):
         # ---tests integration with OS---
-        xml_bytes = HeaderPart._default_header_xml()
+        xml_bytes = HeaderPart._default_header_xml().replace(b'\r\n', b'\n')
 
         assert xml_bytes.startswith(
             b"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n<w:hdr\n"
