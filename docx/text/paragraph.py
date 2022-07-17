@@ -126,10 +126,9 @@ class Paragraph(Parented):
         Paragraph-level formatting, such as style, is preserved. All
         run-level formatting, such as bold or italic, is removed.
         """
-        text = ''
-        for run in self.runs:
-            text += run.text
-        return text
+        if not self.runs:
+            return ''
+        return ''.join([run.text for run in self.runs])
 
     @text.setter
     def text(self, text):
