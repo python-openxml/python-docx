@@ -104,7 +104,6 @@ class MetaOxmlElement(type):
             if isinstance(value, dispatchable):
                 value.populate_class_members(cls, key)
 
-
 class BaseAttribute(object):
     """
     Base class for OptionalAttribute and RequiredAttribute, providing common
@@ -753,7 +752,9 @@ class _OxmlElementBase(etree.ElementBase):
     def _nsptag(self):
         return NamespacePrefixedTag.from_clark_name(self.tag)
 
+_OxmlElementBase_dict = dict(_OxmlElementBase.__dict__)
+_OxmlElementBase_dict.pop('__dict__', None)
 
 BaseOxmlElement = MetaOxmlElement(
-    'BaseOxmlElement', (etree.ElementBase,), dict(_OxmlElementBase.__dict__)
+    'BaseOxmlElement', (etree.ElementBase,), _OxmlElementBase_dict
 )

@@ -25,6 +25,18 @@ from .unitdata.text import a_b, a_u, an_i, an_rPr
 
 class DescribeBaseOxmlElement(object):
 
+    def it_has_dir_and_has_xmlchemy_methods(self, simple_fixture):
+        element = simple_fixture
+        try:
+            dir_dict = dir(element)
+            assert "oomChild_lst" in dir_dict
+            assert "_new_oomChild" in dir_dict
+            assert "_insert_oomChild" in dir_dict
+            assert "_add_oomChild" in dir_dict
+            assert "add_oomChild" in dir_dict
+        except TypeError:
+            pytest.fail("Unexpected exception")
+
     def it_can_find_the_first_of_its_children_named_in_a_sequence(
             self, first_fixture):
         element, tagnames, matching_child = first_fixture
@@ -43,6 +55,10 @@ class DescribeBaseOxmlElement(object):
         assert element.xml == expected_xml
 
     # fixtures ---------------------------------------------
+
+    @pytest.fixture
+    def simple_fixture(self):
+        return a_simple_parent().with_nsdecls().element
 
     @pytest.fixture(params=[
         ('biu', 'iu',  'i'),
@@ -737,6 +753,11 @@ class CT_Parent(BaseOxmlElement):
     optAttr = OptionalAttribute('w:optAttr', ST_IntegerType)
     reqAttr = RequiredAttribute('reqAttr', ST_IntegerType)
 
+class CT_SimpleParent(BaseOxmlElement):
+    """
+    ``<w:simpleparent>`` element, an invented element for use in testing.
+    """
+    oomChild = OneOrMore('w:oomChild')
 
 class CT_Choice(BaseOxmlElement):
     """
@@ -767,6 +788,7 @@ class CT_ZooChild(BaseOxmlElement):
 
 
 register_element_cls('w:parent',   CT_Parent)
+register_element_cls('w:simpleparent',   CT_SimpleParent)
 register_element_cls('w:choice',   CT_Choice)
 register_element_cls('w:oomChild', CT_OomChild)
 register_element_cls('w:zomChild', CT_ZomChild)
@@ -789,6 +811,12 @@ class CT_ParentBuilder(BaseBuilder):
     __tag__ = 'w:parent'
     __nspfxs__ = ('w',)
     __attrs__ = ('w:optAttr', 'reqAttr')
+
+
+class CT_SimpleParentBuilder(BaseBuilder):
+    __tag__ = 'w:simpleparent'
+    __nspfxs__ = ('w',)
+    __attrs__ = ()
 
 
 class CT_OomChildBuilder(BaseBuilder):
@@ -825,6 +853,10 @@ def a_choice2():
 
 def a_parent():
     return CT_ParentBuilder()
+
+
+def a_simple_parent():
+    return CT_SimpleParentBuilder()
 
 
 def a_zomChild():
