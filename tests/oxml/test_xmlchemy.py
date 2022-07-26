@@ -5,6 +5,7 @@ Test suite for docx.oxml.xmlchemy
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
+import re
 
 import pytest
 
@@ -12,7 +13,7 @@ from docx.compat import Unicode
 from docx.oxml import parse_xml, register_element_cls
 from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import qn
-from docx.oxml.simpletypes import BaseIntType
+from docx.oxml.simpletypes import BaseIntType, ST_String
 from docx.oxml.xmlchemy import (
     BaseOxmlElement, Choice, serialize_for_reading, OneOrMore, OneAndOnlyOne,
     OptionalAttribute, RequiredAttribute, ZeroOrMore, ZeroOrOne,
@@ -555,6 +556,150 @@ class DescribeZeroOrMore(object):
             'Add a new ``<w:zomChild>`` child element '
         )
 
+    def it_has_add_method_that_appends_to_end(self):
+        parent = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zooChild())
+        ).element
+        zomChild_1 = a_zomChild().with_nsdecls().element
+
+        parent.add_zomChild(zomChild_1)
+
+        expected_xml_1 = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zomChild()).with_child(
+                a_zooChild())
+        ).xml()
+        assert parent.xml == expected_xml_1
+
+        expected_xml_2 = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zomChild()).with_child(
+                a_zomChild().with_optval("optionalvalueset")    
+                ).with_child(
+                a_zooChild())
+        ).xml()
+
+        zomChild_2 = a_zomChild().with_nsdecls().element
+        zomChild_2.optval = "optionalvalueset"
+        parent.add_zomChild(zomChild_2)
+        assert parent.xml == expected_xml_2
+
+    def it_has_add_method_that_inserts_into_sequence(self):
+        parent = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zooChild()).with_child(
+                a_zomChild().with_optval("optionalvalue1")
+                )
+        ).element
+
+        zomChild = a_zomChild().with_nsdecls().element
+        zomChild.optval = "optionalvalue2"
+
+        parent.add_zomChild(zomChild, successor_element=parent.zomChild_lst[0])
+
+        expected_xml = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zooChild()).with_child(
+                a_zomChild().with_optval("optionalvalue2")).with_child(
+                a_zomChild().with_optval("optionalvalue1")
+                )
+        ).xml()
+
+        assert parent.xml == expected_xml
+
+        child = parent.add_zomChild(None, successor_element=parent.zomChild_lst[0])
+
+        assert isinstance(child, CT_ZomChild)
+        
+        expected_xml = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zooChild()).with_child(
+                a_zomChild()).with_child(
+                a_zomChild().with_optval("optionalvalue2")).with_child(
+                a_zomChild().with_optval("optionalvalue1")
+                )
+        ).xml()
+
+        assert parent.xml == expected_xml
+
+
+    def it_adds_a_public_method_for_removing_specific_child_element(self):
+        parent_builder = a_parent().with_nsdecls().with_child(
+            an_oomChild()).with_child(
+            an_oooChild()).with_child(
+            a_zomChild()).with_child(
+            a_zomChild().with_optval("optionalvalueset")).with_child(
+            a_zomChild().with_optval("optionalvalueset2")).with_child(
+            a_zooChild())
+        parent = parent_builder.element
+
+        child_1 = parent.zomChild_lst[0]
+        child_2 = parent.zomChild_lst[1]
+        child_3 = parent.zomChild_lst[2]
+
+        expected_xml1 = a_parent().with_nsdecls().with_child(
+            an_oomChild()).with_child(
+            an_oooChild()).with_child(
+            a_zomChild()).with_child(
+            a_zomChild().with_optval("optionalvalueset2")).with_child(
+            a_zooChild()).xml()
+
+        parent.remove_zomChild(child_2)
+        assert parent.xml == expected_xml1
+        assert len(parent.zomChild_lst) == 2
+
+        expected_xml2 = a_parent().with_nsdecls().with_child(
+            an_oomChild()).with_child(
+            an_oooChild()).with_child(
+            a_zomChild()).with_child(
+            a_zooChild()).xml()
+
+        parent.remove_zomChild(child_3)
+        assert parent.xml == expected_xml2
+        assert len(parent.zomChild_lst) == 1
+
+        expected_xml3 = a_parent().with_nsdecls().with_child(
+            an_oomChild()).with_child(
+            an_oooChild()).with_child(
+            a_zooChild()).xml()
+
+        parent.remove_zomChild(child_1)
+        assert parent.xml == expected_xml3
+        assert len(parent.zomChild_lst) == 0
+
+    def it_adds_a_public_method_for_removing_all_child_element(self):
+        parent_builder = a_parent().with_nsdecls().with_child(
+            an_oomChild()).with_child(
+            an_oooChild()).with_child(
+            a_zomChild()).with_child(
+            a_zomChild().with_optval("optionalvalueset")).with_child(
+            a_zomChild().with_optval("optionalvalueset2")).with_child(
+            a_zooChild())
+        parent = parent_builder.element
+
+        parent.remove_zomChild(None)
+
+        expected_xml = a_parent().with_nsdecls().with_child(
+            an_oomChild()).with_child(
+            an_oooChild()).with_child(
+            a_zooChild()).xml()
+
+        assert parent.xml == expected_xml
+        assert len(parent.zomChild_lst) == 0
+
     def it_removes_the_property_root_name_used_for_declaration(self):
         assert not hasattr(CT_Parent, 'zomChild')
 
@@ -638,6 +783,11 @@ class DescribeZeroOrOne(object):
         parent._remove_zooChild()
         assert parent.xml == expected_xml
 
+    def it_adds_a_public_setter_for_the_child_element(self, public_setter_fixture):
+        parent, zooChild, expected_xml = public_setter_fixture
+        parent.set_zooChild(zooChild)
+        assert parent.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -684,6 +834,52 @@ class DescribeZeroOrOne(object):
         parent = self.parent_bldr(zooChild_is_present).element
         expected_xml = self.parent_bldr(False).xml()
         return parent, expected_xml
+
+    @pytest.fixture(params=[
+        ("empty", None, "empty"),
+        ("empty", "element", "present"),
+        ("present", None, "empty"),
+        ("present", "element2", "present2")
+    ])
+    def public_setter_fixture(self, request):
+        pre_type, new_element_type, post_type = request.param
+        optional_value = "optionalvalue"
+        
+        parent_builder = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zomChild())
+        )
+        if pre_type == "empty":
+            pass
+        elif pre_type == "present":
+            parent_builder = parent_builder.with_child(a_zooChild())
+
+        new_element = a_zooChild().with_nsdecls().element
+        if new_element_type is None:
+            new_element = None
+        elif new_element_type == "element":
+            pass
+        elif new_element_type == "element2":
+            new_element.optval = optional_value
+
+        post_builder = (
+            a_parent().with_nsdecls().with_child(
+                an_oomChild()).with_child(
+                an_oooChild()).with_child(
+                a_zomChild())
+        )
+
+        if post_type == "empty":
+            pass
+        elif post_type == "present":
+            post_builder = post_builder.with_child(a_zooChild())
+        elif post_type == "present2":
+            post_builder = post_builder.with_child(
+                a_zooChild().with_optval(optional_value)
+            )
+        return parent_builder.element, new_element, post_builder.xml()
 
     # fixture components ---------------------------------------------
 
@@ -778,6 +974,7 @@ class CT_ZomChild(BaseOxmlElement):
     Zom standing for 'ZeroOrMore', ``<w:zomChild>`` element, representing an
     optional child element that can appear multiple times in sequence.
     """
+    optval = OptionalAttribute("w:optval", ST_String)
 
 
 class CT_ZooChild(BaseOxmlElement):
@@ -785,6 +982,7 @@ class CT_ZooChild(BaseOxmlElement):
     Zoo standing for 'ZeroOrOne', ``<w:zooChild>`` element, an invented
     element for use in testing.
     """
+    optval = OptionalAttribute("w:optval", ST_String)
 
 
 register_element_cls('w:parent',   CT_Parent)
@@ -834,13 +1032,13 @@ class CT_OooChildBuilder(BaseBuilder):
 class CT_ZomChildBuilder(BaseBuilder):
     __tag__ = 'w:zomChild'
     __nspfxs__ = ('w',)
-    __attrs__ = ()
+    __attrs__ = ('w:optval',)
 
 
 class CT_ZooChildBuilder(BaseBuilder):
     __tag__ = 'w:zooChild'
     __nspfxs__ = ('w',)
-    __attrs__ = ()
+    __attrs__ = ('w:optval',)
 
 
 def a_choice():

@@ -71,6 +71,8 @@ rst_epilog = """
 
 .. |AttributeError| replace:: :exc:`.AttributeError`
 
+.. |BaseOxmlElement| replace:: :class:`.BaseOxmlElement`
+
 .. |BaseStyle| replace:: :class:`.BaseStyle`
 
 .. |BlockItemContainer| replace:: :class:`.BlockItemContainer`
@@ -124,6 +126,8 @@ rst_epilog = """
 .. |InlineShapes| replace:: :class:`.InlineShapes`
 
 .. |InvalidSpanError| replace:: :class:`.InvalidSpanError`
+
+.. |InvalidXmlError| replace:: :class:`.InvalidXmlError`
 
 .. |int| replace:: :class:`.int`
 
