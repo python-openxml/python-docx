@@ -540,8 +540,60 @@ class OneOrMore(_BaseChildElement):
         self._add_inserter()
         self._add_adder()
         self._add_public_adder()
+        self._add_remover()
         delattr(element_cls, prop_name)
 
+    @lazyproperty
+    def _public_remove_method_name(self):
+        return 'remove_%s' % self._prop_name
+
+    def _add_remover(self):
+        """
+        Add a public ``remove_x(child_element)`` method to the parent 
+        element class.
+        """
+        def remove_child(obj, target_child):
+            obj.remove(target_child)
+        remove_child.__doc__ = (
+            'Remove ``<%s>`` child element unconditionally.' % self._nsptagname
+        )
+
+        self._add_to_class(self._public_remove_method_name, remove_child)
+
+    def _add_public_adder(self):
+        """
+        Add a public ``add_x()`` method to the parent element class.
+        """
+        def add_child(obj, new_child=None, successor_element=None):
+            private_add_method = getattr(obj, self._add_method_name)
+            if successor_element is None:
+                if new_child is None: 
+                    child = private_add_method()
+                    return child
+                else:
+                    insert_method = getattr(obj, self._insert_method_name)
+                    insert_method(new_child)
+                    return new_child
+            else:
+                if new_child is None:
+                    creator_method = getattr(obj, self._new_method_name)
+                    child = creator_method()
+                    _idx = obj.index(successor_element)
+                    obj.insert(_idx, child)
+                    return child
+                else:
+                    _idx = obj.index(successor_element)
+                    obj.insert(_idx, new_child)
+                    return new_child
+
+        add_child.__doc__ = (
+            'Insert and return ``new_child`` (``<%s>``) into list. If '
+            '``new_child`` is |None|, will insert a new empty element. If '
+            '``successor_element`` is None, will append to end of list. '
+            'Otherwise, will insert ``new_child`` before ``successor_element``.'
+            % self._nsptagname
+        )
+        self._add_to_class(self._public_add_method_name, add_child)
 
 class ZeroOrMore(_BaseChildElement):
     """

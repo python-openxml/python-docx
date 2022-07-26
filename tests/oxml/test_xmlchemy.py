@@ -386,6 +386,52 @@ class DescribeOneOrMore(object):
             'Add a new ``<w:oomChild>`` child element '
         )
 
+    def it_has_public_add_method_that_appends_to_end(self):
+        parent = a_parent().with_nsdecls().with_child(
+            an_oomChild().with_optval("val1")
+        ).element
+
+        new_child = an_oomChild().with_nsdecls().with_optval("val2").element
+
+        parent.add_oomChild(new_child)
+
+        expected_xml = a_parent().with_nsdecls().with_child(
+            an_oomChild().with_optval("val1")).with_child(
+                an_oomChild().with_optval("val2")
+            ).xml()
+
+        assert parent.xml == expected_xml
+
+    def it_has_public_add_method_that_inserts_into_sequence(self):
+        parent = a_parent().with_nsdecls().with_child(
+            an_oomChild().with_optval("val1")
+        ).element
+
+        new_child = an_oomChild().with_nsdecls().with_optval("val2").element
+
+        parent.add_oomChild(new_child, successor_element=parent.oomChild_lst[0])
+
+        expected_xml = a_parent().with_nsdecls().with_child(
+            an_oomChild().with_optval("val2")).with_child(
+                an_oomChild().with_optval("val1")
+            ).xml()
+
+        assert parent.xml == expected_xml
+
+    def it_adds_a_public_method_for_removing_specific_child_element(self):
+        parent = a_parent().with_nsdecls().with_child(
+            an_oomChild().with_optval("val1")).with_child(
+                an_oomChild().with_optval("val2")
+            ).element
+        
+        parent.remove_oomChild(parent.oomChild_lst[0])
+
+        expected_xml = a_parent().with_nsdecls().with_child(
+                an_oomChild().with_optval("val2")
+            ).xml()
+
+        assert parent.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -556,7 +602,7 @@ class DescribeZeroOrMore(object):
             'Add a new ``<w:zomChild>`` child element '
         )
 
-    def it_has_add_method_that_appends_to_end(self):
+    def it_has_public_add_method_that_appends_to_end(self):
         parent = (
             a_parent().with_nsdecls().with_child(
                 an_oomChild()).with_child(
@@ -591,7 +637,7 @@ class DescribeZeroOrMore(object):
         parent.add_zomChild(zomChild_2)
         assert parent.xml == expected_xml_2
 
-    def it_has_add_method_that_inserts_into_sequence(self):
+    def it_has_public_add_method_that_inserts_into_sequence(self):
         parent = (
             a_parent().with_nsdecls().with_child(
                 an_oomChild()).with_child(
@@ -967,6 +1013,7 @@ class CT_OomChild(BaseOxmlElement):
     child element that can appear multiple times in sequence, but must appear
     at least once.
     """
+    optval = OptionalAttribute("w:optval", ST_String)
 
 
 class CT_ZomChild(BaseOxmlElement):
@@ -1020,7 +1067,7 @@ class CT_SimpleParentBuilder(BaseBuilder):
 class CT_OomChildBuilder(BaseBuilder):
     __tag__ = 'w:oomChild'
     __nspfxs__ = ('w',)
-    __attrs__ = ()
+    __attrs__ = ('w:optval',)
 
 
 class CT_OooChildBuilder(BaseBuilder):
