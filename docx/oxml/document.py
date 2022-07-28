@@ -20,7 +20,7 @@ class CT_Document(BaseOxmlElement):
         Return a list containing a reference to each ``<w:sectPr>`` element
         in the document, in the order encountered.
         """
-        return self.xpath('.//w:sectPr')
+        return self.xpath('.//w:sectPr[not(ancestor::w:sectPrChange)]')
 
 
 class CT_Body(BaseOxmlElement):
