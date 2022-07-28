@@ -90,7 +90,7 @@ class DescribeRun(object):
 
         picture = run.add_picture(image, width, height)
 
-        run.part.new_pic_inline.assert_called_once_with(image, width, height)
+        run.part.new_pic_inline.assert_called_once_with(image, width, height, None)
         assert run._r.xml == expected_xml
         InlineShape_.assert_called_once_with(inline)
         assert picture is picture_

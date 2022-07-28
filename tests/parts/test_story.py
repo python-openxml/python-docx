@@ -92,6 +92,16 @@ class DescribeBaseStoryPart(object):
 
         assert document_part is document_part_
 
+    def it_knows_existing_image_ids(self):
+        elem = element('w:hdr/w:p/('
+            'w:r/w:drawing/wp:inline/wp:docPr{id=1},'
+            'w:r/w:drawing/wp:inline/wp:docPr{id=2})'
+        )
+        story_part = BaseStoryPart(None, None, elem, None)
+        assert 2 == len(story_part.part_shape_ids)
+        assert 1 in story_part.part_shape_ids
+        assert 2 in story_part.part_shape_ids
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(

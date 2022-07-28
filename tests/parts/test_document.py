@@ -18,10 +18,10 @@ from docx.parts.styles import StylesPart
 from docx.settings import Settings
 from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
+from docx.api import Document
 
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
-
 
 class DescribeDocumentPart(object):
 
@@ -68,6 +68,19 @@ class DescribeDocumentPart(object):
         related_parts_.__getitem__.assert_called_once_with("rId9")
         assert footer_part is footer_part_
 
+    def it_provides_access_to_footer_parts(self):
+        doc = Document()
+        doc_part = doc._part
+        footer_part1, footer_part1_id = doc_part.add_footer_part()
+        assert 1 == len(doc_part.footer_parts)
+        assert footer_part1.element == doc_part.footer_parts[-1].element
+        assert doc_part.footer_part(footer_part1_id) == doc_part.footer_parts[-1]
+
+        footer_part2, footer_part2_id = doc._part.add_footer_part()
+        assert 2 == len(doc._part.footer_parts)
+        assert footer_part2.element == doc_part.footer_parts[-1].element
+        assert doc_part.footer_part(footer_part2_id) == doc_part.footer_parts[-1]
+
     def it_provides_access_to_a_header_part_by_rId(
         self, related_parts_prop_, related_parts_, header_part_
     ):
@@ -79,6 +92,22 @@ class DescribeDocumentPart(object):
 
         related_parts_.__getitem__.assert_called_once_with("rId11")
         assert header_part is header_part_
+
+    def it_provides_access_to_header_parts(self):
+        doc = Document()
+        doc_part = doc._part
+        header_part1, header_part1_id = doc_part.add_header_part()
+        assert 1 == len(doc_part.header_parts)
+        assert header_part1.element == doc_part.header_parts[-1].element
+        assert doc_part.header_part(header_part1_id) == doc_part.header_parts[-1]
+
+        header_part2, header_part2_id = doc._part.add_header_part()
+        assert 2 == len(doc_part.header_parts)
+        assert header_part2.element == doc_part.header_parts[-1].element
+        assert doc_part.header_part(header_part2_id) == doc_part.header_parts[-1]
+
+    def it_provides_access_to_document_drawing_ids(self):
+        pass
 
     def it_can_save_the_package_to_a_file(self, save_fixture):
         document, file_ = save_fixture

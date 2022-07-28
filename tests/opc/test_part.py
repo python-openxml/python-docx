@@ -164,6 +164,13 @@ class DescribePartRelationshipManagementInterface(object):
         part.rels.part_with_reltype.assert_called_once_with(reltype_)
         assert related_part is related_part_
 
+    def it_can_find_related_parts_by_reltype(self, related_part_fixture):
+        part, reltype_, related_part_ = related_part_fixture
+        related_parts = part.parts_related_by(reltype_)
+        part.rels.parts_with_reltype.assert_called_once_with(reltype_)
+        assert 1 == len(related_parts)
+        assert related_parts[0] is related_part_
+
     def it_can_find_a_related_part_by_rId(self, related_parts_fixture):
         part, related_parts_ = related_parts_fixture
         assert part.related_parts is related_parts_
@@ -256,6 +263,7 @@ class DescribePartRelationshipManagementInterface(object):
     def rels_(self, request, part_, rel_, rId_, related_parts_):
         rels_ = instance_mock(request, Relationships)
         rels_.part_with_reltype.return_value = part_
+        rels_.parts_with_reltype.return_value = [part_]
         rels_.get_or_add.return_value = rel_
         rels_.get_or_add_ext_rel.return_value = rId_
         rels_.related_parts = related_parts_

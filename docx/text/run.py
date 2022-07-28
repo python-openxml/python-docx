@@ -46,7 +46,7 @@ class Run(Parented):
         if clear is not None:
             br.clear = clear
 
-    def add_picture(self, image_path_or_stream, width=None, height=None):
+    def add_picture(self, image_path_or_stream, width=None, height=None, shape_id=None):
         """
         Return an |InlineShape| instance containing the image identified by
         *image_path_or_stream*, added to the end of this run.
@@ -58,8 +58,22 @@ class Run(Parented):
         native size of the picture is calculated using the dots-per-inch
         (dpi) value specified in the image file, defaulting to 72 dpi if no
         value is specified, as is often the case.
+
+        *shape_id* are used to differentiate different inline shapes (including
+        pictures), and should be unique across all parts (main body, headers and
+        footers). Extracted from the id attribute in the ``<wp:docPr id={val}>``
+        element (direct child of ``<wp:inline>``). You can get the next free 
+        *shape_id* across the entire document with ``Document.next_shape_id``.
+
+        If *shape_id* is |None|, will fall back to getting the next free shape id
+        from within the document part (main document, header or footer) containing the
+        run.
         """
-        inline = self.part.new_pic_inline(image_path_or_stream, width, height)
+        if shape_id is None:
+            import warnings
+            warnings.warn("Passing in `None` for `shape_id` can lead to undesirable behavior.")
+        inline = self.part.new_pic_inline(image_path_or_stream, width, height, 
+            shape_id=shape_id)
         self._r.add_drawing(inline)
         return InlineShape(inline)
 

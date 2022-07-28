@@ -55,7 +55,7 @@ class Document(ElementProxy):
         """
         return self._body.add_paragraph(text, style)
 
-    def add_picture(self, image_path_or_stream, width=None, height=None):
+    def add_picture(self, image_path_or_stream, width=None, height=None, shape_id=None):
         """
         Return a new picture shape added in its own paragraph at the end of
         the document. The picture contains the image at
@@ -67,9 +67,19 @@ class Document(ElementProxy):
         picture is calculated using the dots-per-inch (dpi) value specified
         in the image file, defaulting to 72 dpi if no value is specified, as
         is often the case.
+
+        *shape_id* are used to differentiate different inline shapes (including
+        pictures), and should be unique across all parts (main body, headers and
+        footers). Extracted from the id attribute in the ``<wp:docPr id={val}>``
+        element (direct child of ``<wp:inline>``).
+
+        If *shape_id* is |None|, will automatically try to get next free value with 
+        *next_shape_id*
         """
+        if shape_id is None:
+            shape_id = self.next_shape_id
         run = self.add_paragraph().add_run()
-        return run.add_picture(image_path_or_stream, width, height)
+        return run.add_picture(image_path_or_stream, width, height, shape_id=shape_id)
 
     def add_section(self, start_type=WD_SECTION.NEW_PAGE):
         """
@@ -185,6 +195,16 @@ class Document(ElementProxy):
             self.__body = _Body(self._element.body, self)
         return self.__body
 
+    @property
+    def next_shape_id(self):
+        """
+        Returns the next free shape/drawing id. 
+        Shape ids are used to differentiate different inline shapes (including pictures),
+        and should be unique across all parts (main body, headers and footers).
+        Extracted from the id attribute in the ``<wp:docPr id={val}>`` element (direct child
+        of ``<wp:inline>``).
+        """
+        return self._part.next_shape_id
 
 class _Body(BlockItemContainer):
     """

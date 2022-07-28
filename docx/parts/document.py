@@ -51,6 +51,24 @@ class DocumentPart(BaseStoryPart):
         """
         return Document(self._element, self)
 
+    @property
+    def document_shape_ids(self):
+        shape_ids = []
+        for footer_part in self.footer_parts:
+            shape_ids.extend(footer_part.part_shape_ids)
+        for header_part in self.header_parts:
+            shape_ids.extend(header_part.part_shape_ids)
+        shape_ids.extend(self.part_shape_ids)
+        return shape_ids
+
+    @property
+    def next_shape_id(self):
+        shape_ids = self.document_shape_ids
+        if len(shape_ids) == 0:
+            return 1
+        else:
+            return max(shape_ids) + 1
+
     def drop_header_part(self, rId):
         """Remove related header part identified by *rId*."""
         self.drop_rel(rId)
@@ -58,6 +76,11 @@ class DocumentPart(BaseStoryPart):
     def footer_part(self, rId):
         """Return |FooterPart| related by *rId*."""
         return self.related_parts[rId]
+
+    @property
+    def footer_parts(self):
+        """Return list of |FooterPart|s."""
+        return self.parts_related_by(RT.FOOTER)
 
     def get_style(self, style_id, style_type):
         """
@@ -80,6 +103,11 @@ class DocumentPart(BaseStoryPart):
     def header_part(self, rId):
         """Return |HeaderPart| related by *rId*."""
         return self.related_parts[rId]
+
+    @property
+    def header_parts(self):
+        """Return list of |HeaderPart|s."""
+        return self.parts_related_by(RT.HEADER)
 
     @lazyproperty
     def inline_shapes(self):
