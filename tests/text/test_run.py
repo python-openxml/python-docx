@@ -84,11 +84,13 @@ class DescribeRun(object):
         run.add_tab()
         assert run._r.xml == expected_xml
 
+    @pytest.mark.filterwarnings("ignore")
     def it_can_add_a_picture(self, add_picture_fixture):
         run, image, width, height, inline = add_picture_fixture[:5]
         expected_xml, InlineShape_, picture_ = add_picture_fixture[5:]
 
-        picture = run.add_picture(image, width, height)
+        with pytest.warns(UserWarning):
+            picture = run.add_picture(image, width, height)
 
         run.part.new_pic_inline.assert_called_once_with(image, width, height, None)
         assert run._r.xml == expected_xml
