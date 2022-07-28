@@ -9,7 +9,6 @@ from __future__ import (
 )
 
 import pytest
-from docx.opc import part
 
 from docx.opc.oxml import CT_Relationships
 from docx.opc.packuri import PackURI

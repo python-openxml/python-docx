@@ -73,7 +73,7 @@ class Document(ElementProxy):
         footers). Extracted from the id attribute in the ``<wp:docPr id={val}>``
         element (direct child of ``<wp:inline>``).
 
-        If *shape_id* is |None|, will automatically try to get next free value with 
+        If *shape_id* is |None|, will automatically try to get next free value with
         *next_shape_id*
         """
         if shape_id is None:
@@ -198,13 +198,14 @@ class Document(ElementProxy):
     @property
     def next_shape_id(self):
         """
-        Returns the next free shape/drawing id. 
-        Shape ids are used to differentiate different inline shapes (including pictures),
-        and should be unique across all parts (main body, headers and footers).
-        Extracted from the id attribute in the ``<wp:docPr id={val}>`` element (direct child
-        of ``<wp:inline>``).
+        Returns the next free shape/drawing id.
+        Shape ids are used to differentiate different inline shapes (including
+        pictures), and should be unique across all parts (main body, headers and
+        footers). Extracted from the id attribute in the ``<wp:docPr id={val}>`` element
+        (direct child of ``<wp:inline>``).
         """
         return self._part.next_shape_id
+
 
 class _Body(BlockItemContainer):
     """

@@ -62,7 +62,7 @@ class Run(Parented):
         *shape_id* are used to differentiate different inline shapes (including
         pictures), and should be unique across all parts (main body, headers and
         footers). Extracted from the id attribute in the ``<wp:docPr id={val}>``
-        element (direct child of ``<wp:inline>``). You can get the next free 
+        element (direct child of ``<wp:inline>``). You can get the next free
         *shape_id* across the entire document with ``Document.next_shape_id``.
 
         If *shape_id* is |None|, will fall back to getting the next free shape id
@@ -71,9 +71,10 @@ class Run(Parented):
         """
         if shape_id is None:
             import warnings
-            warnings.warn("Passing in `None` for `shape_id` can lead to undesirable behavior.")
-        inline = self.part.new_pic_inline(image_path_or_stream, width, height, 
-            shape_id=shape_id)
+            warnings.warn("Passing in `None` for `shape_id` can lead to undesirable"
+                          " behavior.")
+        inline = self.part.new_pic_inline(image_path_or_stream, width, height,
+                                          shape_id=shape_id)
         self._r.add_drawing(inline)
         return InlineShape(inline)
 

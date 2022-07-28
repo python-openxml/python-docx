@@ -5,7 +5,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
-from docx import document
 
 from docx.document import _Body, Document
 from docx.enum.section import WD_SECTION
@@ -25,6 +24,7 @@ from .unitutil.cxml import element, xml
 from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 from .test_files.word_files import get_multi_header_and_footer_document
 from .test_files import get_python_icon_png
+
 
 class DescribeDocument(object):
 
@@ -81,8 +81,8 @@ class DescribeDocument(object):
         assert picture.shape_id == 2
         assert 3 == doc.next_shape_id
 
-    def it_can_add_a_picture_with_auto_id_across_parts(self, 
-            multi_header_footer_document):
+    def it_can_add_a_picture_with_auto_id_across_parts(self,
+                                                       multi_header_footer_document):
         doc = multi_header_footer_document
         header = doc.sections[0].header
         header.paragraphs[0].runs[0].add_picture(
@@ -93,9 +93,7 @@ class DescribeDocument(object):
         )
         assert picture.shape_id == 2
         assert 3 == doc.next_shape_id
-        #print(doc.sections[0].header._element.xml)
 
-        
     def it_can_add_a_section(
         self, add_section_fixture, Section_, section_, document_part_
     ):
@@ -385,6 +383,7 @@ class DescribeDocument(object):
     def multi_header_footer_document(self, request):
         from docx import Document as DocumentApi
         return DocumentApi(get_multi_header_and_footer_document())
+
 
 class Describe_Body(object):
 

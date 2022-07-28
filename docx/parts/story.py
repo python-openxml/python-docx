@@ -84,7 +84,7 @@ class BaseStoryPart(XmlPart):
         """
         Returns list of drawing/shape ids in part.
 
-        Drawing ids are that id attribute in ``<wp:docPr>`` (Drawing Object 
+        Drawing ids are that id attribute in ``<wp:docPr>`` (Drawing Object
         Non-Visual Properties) elements. Drawing Ids should be unique across all parts.
         """
         return [x.id for x in self._element.xpath('//wp:docPr')]

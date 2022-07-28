@@ -104,6 +104,7 @@ class MetaOxmlElement(type):
             if isinstance(value, dispatchable):
                 value.populate_class_members(cls, key)
 
+
 class BaseAttribute(object):
     """
     Base class for OptionalAttribute and RequiredAttribute, providing common
@@ -549,7 +550,7 @@ class OneOrMore(_BaseChildElement):
 
     def _add_remover(self):
         """
-        Add a public ``remove_x(child_element)`` method to the parent 
+        Add a public ``remove_x(child_element)`` method to the parent
         element class.
         """
         def remove_child(obj, target_child):
@@ -567,7 +568,7 @@ class OneOrMore(_BaseChildElement):
         def add_child(obj, new_child=None, successor_element=None):
             private_add_method = getattr(obj, self._add_method_name)
             if successor_element is None:
-                if new_child is None: 
+                if new_child is None:
                     child = private_add_method()
                     return child
                 else:
@@ -595,6 +596,7 @@ class OneOrMore(_BaseChildElement):
         )
         self._add_to_class(self._public_add_method_name, add_child)
 
+
 class ZeroOrMore(_BaseChildElement):
     """
     Defines an optional repeating child element for MetaOxmlElement.
@@ -621,7 +623,7 @@ class ZeroOrMore(_BaseChildElement):
         def add_child(obj, new_child=None, successor_element=None):
             private_add_method = getattr(obj, self._add_method_name)
             if successor_element is None:
-                if new_child is None: 
+                if new_child is None:
                     child = private_add_method()
                     return child
                 else:
@@ -655,7 +657,7 @@ class ZeroOrMore(_BaseChildElement):
 
     def _add_remover(self):
         """
-        Add a public ``remove_x(child_element)`` method to the parent 
+        Add a public ``remove_x(child_element)`` method to the parent
         element class.
         """
         def remove_child(obj, target_child):
@@ -726,7 +728,7 @@ class ZeroOrOne(_BaseChildElement):
 
     def _add_public_setter(self):
         """
-        Add a ``set_x(new_element)`` method to the element class for this 
+        Add a ``set_x(new_element)`` method to the element class for this
         child element.
         """
         def public_setter(obj, new_element):
@@ -891,6 +893,7 @@ class _OxmlElementBase(etree.ElementBase):
     @property
     def _nsptag(self):
         return NamespacePrefixedTag.from_clark_name(self.tag)
+
 
 _OxmlElementBase_dict = dict(_OxmlElementBase.__dict__)
 _OxmlElementBase_dict.pop('__dict__', None)

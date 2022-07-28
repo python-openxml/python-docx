@@ -23,6 +23,7 @@ from docx.api import Document
 from ..oxml.parts.unitdata.document import a_body, a_document
 from ..unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
+
 class DescribeDocumentPart(object):
 
     def it_can_add_a_footer_part(self, package_, FooterPart_, footer_part_, relate_to_):
