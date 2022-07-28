@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 import pytest
+from docx.opc import part
 
 from docx.opc.oxml import CT_Relationships
 from docx.opc.packuri import PackURI
@@ -115,6 +116,27 @@ class DescribeRelationships(object):
         rels, reltype, known_target_part = rels_with_target_known_by_reltype
         part = rels.part_with_reltype(reltype)
         assert part is known_target_part
+
+    def it_can_find_related_parts_by_reltype(
+        self
+    ):
+        rels = Relationships('/baseURI')
+        rels.add_relationship(
+            reltype='http://rt-hyperlink', target='http://some/link',
+            rId='rId1', is_external=True
+        )
+        rels.add_relationship(
+            reltype='http://rt-header', target='header1.xml',
+            rId='rId2', is_external=False
+        )
+        rels.add_relationship(
+            reltype='http://rt-header', target='header2.xml',
+            rId='rId3', is_external=False
+        )
+        part_rels = rels.parts_with_reltype('http://rt-header')
+        assert 2 == len(part_rels)
+        assert "header1.xml" in part_rels
+        assert "header2.xml" in part_rels
 
     def it_can_compose_rels_xml(self, rels, rels_elm):
         # exercise ---------------------

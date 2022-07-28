@@ -63,6 +63,13 @@ class Relationships(dict):
         rel = self._get_rel_of_type(reltype)
         return rel.target_part
 
+    def parts_with_reltype(self, reltype):
+        """
+        Return list of target parts of rels with matching *reltype*.
+        """
+        matching = [rel.target_part for rel in self.values() if rel.reltype == reltype]
+        return matching
+
     @property
     def related_parts(self):
         """
