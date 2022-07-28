@@ -47,7 +47,7 @@ class BaseStoryPart(XmlPart):
         """
         return self._document_part.get_style_id(style_or_name, style_type)
 
-    def new_pic_inline(self, image_descriptor, width, height):
+    def new_pic_inline(self, image_descriptor, width, height, shape_id=None):
         """Return a newly-created `w:inline` element.
 
         The element contains the image specified by *image_descriptor* and is scaled
@@ -55,7 +55,9 @@ class BaseStoryPart(XmlPart):
         """
         rId, image = self.get_or_add_image(image_descriptor)
         cx, cy = image.scaled_dimensions(width, height)
-        shape_id, filename = self.next_id, image.filename
+        if shape_id is None:
+            shape_id = self.next_id
+        filename = image.filename
         return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
 
     @property
@@ -76,3 +78,13 @@ class BaseStoryPart(XmlPart):
     def _document_part(self):
         """|DocumentPart| object for this package."""
         return self.package.main_document_part
+
+    @property
+    def part_shape_ids(self):
+        """
+        Returns list of drawing/shape ids in part.
+
+        Drawing ids are that id attribute in ``<wp:docPr>`` (Drawing Object
+        Non-Visual Properties) elements. Drawing Ids should be unique across all parts.
+        """
+        return [x.id for x in self._element.xpath('//wp:docPr')]

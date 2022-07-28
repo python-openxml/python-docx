@@ -51,6 +51,16 @@ A new document does not have a header (on the single section it contains) and so
 counterintuitive in that there *is no previous section header* to link to. In
 this "no previous header" case, no header is displayed.
 
+Multiple Headers in a Section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The word specification allows for a section to have multiple headers to implement 
+specific headers for first page, odd pages and even pages.
+
+The default header is the same odd page header, and can be accessed with ``.header``.
+
+See ``.different_first_page_header_footer``, ``.even_page_header``, 
+``.first_page_header`` documentation for more information.
 
 Adding a header (simple case)
 -----------------------------
@@ -164,3 +174,22 @@ account any "inheritance". So for example, if the section 2 header inherits from
 1 and you edit the section 2 header, you actually change the contents of the section
 1 header. A new header definition is not added for section 2 unless you first explicitly
 assign ``False`` to its ``.is_linked_to_previous`` property.
+
+Adding Images to a Header
+-------------------------
+
+``_Header`` objects do not have a simple API for adding pictures. However, they can be
+added by directly accessing a run::
+
+    >>> document = Document()
+    >>> header = document.sections[0].header
+    >>> run = header.paragraphs[0].add_run()
+    >>> run.add_picture("file_path.png", 100, 100, shape_id=document.next_shape_id)
+
+The ``shape_id`` parameter in ``Run.add_picture()`` must be manually set to ensure that
+all images across the entire document (all headers and footers + the main body) have
+unique identifiers. Unfortunately, the |Run| class as currently implemented lacks 
+sufficient context to always be able to garuntee a unique ID, so you'll have to pass
+it in manually yourself.
+
+Note that ``Document.add_picture()`` is able to automatically call ``.next_shape_id``.

@@ -25,3 +25,12 @@ issue tracker. The ``Document.add_picture()`` method adds a specified picture
 to the end of the document in a paragraph of its own. However, by digging
 a little deeper into the API you can place text on either side of the picture
 in its paragraph, or both.
+
+Inline pictures have a "shape ID" which must be unique across all the parts of a 
+document (including the main body, all headers and footers). When adding to the main 
+document portion, the ``Document.add_picture()`` method handles getting a proper 
+shape id. However the ``Run.add_picture()`` does *NOT handle this properly*. It's
+default behavior gets the next shape ID free within a document part, which can lead
+to duplicate IDs and undesirable behavior. You can call ``Document.next_shape_id``
+to get an appropiate shape ID to pass into ``Run.add_picture()``. This default 
+behavior was retained as an expedient.

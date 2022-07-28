@@ -5,7 +5,6 @@ Test suite for docx.oxml.xmlchemy
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
-import re
 
 import pytest
 
@@ -423,7 +422,7 @@ class DescribeOneOrMore(object):
             an_oomChild().with_optval("val1")).with_child(
                 an_oomChild().with_optval("val2")
             ).element
-        
+
         parent.remove_oomChild(parent.oomChild_lst[0])
 
         expected_xml = a_parent().with_nsdecls().with_child(
@@ -627,7 +626,7 @@ class DescribeZeroOrMore(object):
                 an_oomChild()).with_child(
                 an_oooChild()).with_child(
                 a_zomChild()).with_child(
-                a_zomChild().with_optval("optionalvalueset")    
+                a_zomChild().with_optval("optionalvalueset")
                 ).with_child(
                 a_zooChild())
         ).xml()
@@ -667,7 +666,7 @@ class DescribeZeroOrMore(object):
         child = parent.add_zomChild(None, successor_element=parent.zomChild_lst[0])
 
         assert isinstance(child, CT_ZomChild)
-        
+
         expected_xml = (
             a_parent().with_nsdecls().with_child(
                 an_oomChild()).with_child(
@@ -680,7 +679,6 @@ class DescribeZeroOrMore(object):
         ).xml()
 
         assert parent.xml == expected_xml
-
 
     def it_adds_a_public_method_for_removing_specific_child_element(self):
         parent_builder = a_parent().with_nsdecls().with_child(
@@ -890,7 +888,7 @@ class DescribeZeroOrOne(object):
     def public_setter_fixture(self, request):
         pre_type, new_element_type, post_type = request.param
         optional_value = "optionalvalue"
-        
+
         parent_builder = (
             a_parent().with_nsdecls().with_child(
                 an_oomChild()).with_child(
@@ -995,11 +993,13 @@ class CT_Parent(BaseOxmlElement):
     optAttr = OptionalAttribute('w:optAttr', ST_IntegerType)
     reqAttr = RequiredAttribute('reqAttr', ST_IntegerType)
 
+
 class CT_SimpleParent(BaseOxmlElement):
     """
     ``<w:simpleparent>`` element, an invented element for use in testing.
     """
     oomChild = OneOrMore('w:oomChild')
+
 
 class CT_Choice(BaseOxmlElement):
     """

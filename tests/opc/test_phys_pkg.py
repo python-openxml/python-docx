@@ -48,7 +48,8 @@ class DescribeDirPkgReader(object):
         assert sha1 == '0e62d87ea74ea2b8088fd11ee97b42da9b4c77b0'
 
     def it_can_get_the_content_types_xml(self, dir_reader):
-        sha1 = hashlib.sha1(dir_reader.content_types_xml.replace(b'\r\n', b'\n')).hexdigest()
+        sha1 = hashlib.sha1(dir_reader.content_types_xml.replace(b'\r\n', b'\n')
+                            ).hexdigest()
         assert sha1 == '89aadbb12882dd3d7340cd47382dc2c73d75dd81'
 
     def it_can_retrieve_the_rels_xml_for_a_source_uri(self, dir_reader):

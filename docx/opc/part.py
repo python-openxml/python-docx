@@ -120,6 +120,12 @@ class Part(object):
         """
         return self.rels.part_with_reltype(reltype)
 
+    def parts_related_by(self, reltype):
+        """
+        Return list of parts to which this part has a relationship of *reltype*.
+        """
+        return self.rels.parts_with_reltype(reltype)
+
     def relate_to(self, target, reltype, is_external=False):
         """
         Return rId key of relationship of *reltype* to *target*, from an

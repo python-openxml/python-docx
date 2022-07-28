@@ -22,6 +22,8 @@ from docx.text.run import Run
 
 from .unitutil.cxml import element, xml
 from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
+from .test_files.word_files import get_multi_header_and_footer_document
+from .test_files import get_python_icon_png
 
 
 class DescribeDocument(object):
@@ -61,11 +63,36 @@ class DescribeDocument(object):
         document._body.add_paragraph.assert_called_once_with(text, style)
         assert paragraph is paragraph_
 
-    def it_can_add_a_picture(self, add_picture_fixture):
+    def it_can_add_a_picture_with_manual_id(self, add_picture_fixture):
         document, path, width, height, run_, picture_ = add_picture_fixture
-        picture = document.add_picture(path, width, height)
-        run_.add_picture.assert_called_once_with(path, width, height)
+        picture = document.add_picture(path, width, height, 1)
+        run_.add_picture.assert_called_once_with(path, width, height, 1)
         assert picture is picture_
+
+    def it_can_add_a_picture_with_auto_id(self, multi_header_footer_document):
+        doc = multi_header_footer_document
+        picture = doc.add_picture(
+            get_python_icon_png(), 100, 100
+        )
+        assert picture.shape_id == 1
+        picture = doc.add_picture(
+            get_python_icon_png(), 100, 100
+        )
+        assert picture.shape_id == 2
+        assert 3 == doc.next_shape_id
+
+    def it_can_add_a_picture_with_auto_id_across_parts(self,
+                                                       multi_header_footer_document):
+        doc = multi_header_footer_document
+        header = doc.sections[0].header
+        header.paragraphs[0].runs[0].add_picture(
+            get_python_icon_png(), 100, 100, doc.next_shape_id
+        )
+        picture = doc.add_picture(
+            get_python_icon_png(), 100, 100
+        )
+        assert picture.shape_id == 2
+        assert 3 == doc.next_shape_id
 
     def it_can_add_a_section(
         self, add_section_fixture, Section_, section_, document_part_
@@ -351,6 +378,11 @@ class DescribeDocument(object):
     @pytest.fixture
     def tables_(self, request):
         return instance_mock(request, list)
+
+    @pytest.fixture
+    def multi_header_footer_document(self, request):
+        from docx import Document as DocumentApi
+        return DocumentApi(get_multi_header_and_footer_document())
 
 
 class Describe_Body(object):
