@@ -11,33 +11,43 @@ from __future__ import (
 from ..enum.style import WD_STYLE_TYPE
 from .parfmt import ParagraphFormat
 from .run import Run
-from ..shared import Parented
+from .hyperlink import Hyperlink
+from ..runcntnr import RunItemContainer
+from docx.oxml.ns import qn
 
 
-class Paragraph(Parented):
+class Paragraph(RunItemContainer):
     """
     Proxy object wrapping ``<w:p>`` element.
     """
     def __init__(self, p, parent):
-        super(Paragraph, self).__init__(parent)
-        self._p = self._element = p
+        super(Paragraph, self).__init__(p, parent)
+        self._p = p
 
-    def add_run(self, text=None, style=None):
-        """
-        Append a run to this paragraph containing *text* and having character
-        style identified by style ID *style*. *text* can contain tab
-        (``\\t``) characters, which are converted to the appropriate XML form
-        for a tab. *text* can also include newline (``\\n``) or carriage
-        return (``\\r``) characters, each of which is converted to a line
-        break.
-        """
-        r = self._p.add_r()
-        run = Run(r, self)
-        if text:
-            run.text = text
-        if style:
-            run.style = style
-        return run
+    def add_hyperlink(self, text=None, style=None, anchor=None, hyperlink_url=None,
+                      relationship_id=None, document=None):
+        if hyperlink_url is not None and document is None:
+            raise ValueError("Need document object to add hyperlink URL.")
+        if hyperlink_url is not None and relationship_id is not None:
+            raise ValueError("Only one of `hyperlink_url` and `relationship_id` can be set at once.")
+        
+        _hyperlink = self._element.add_hyperlink()
+
+        hyperlink = Hyperlink(_hyperlink, self)
+        run = hyperlink.add_run(text, style)
+        if anchor is not None:
+            hyperlink.anchor = anchor
+        if relationship_id is not None:
+            hyperlink.relationship_id = relationship_id
+        if hyperlink_url is not None and document is not None:
+            if style is None:
+                _hyperlink_style = Hyperlink.add_hyperlink_styles(document)
+                run.style = "Hyperlink"
+            else:
+                run.style = style
+            rel = document.add_hyperlink_relationship(hyperlink_url)
+            hyperlink.relationship_id = rel.rId
+        return hyperlink
 
     @property
     def alignment(self):
@@ -77,6 +87,14 @@ class Paragraph(Parented):
         return paragraph
 
     @property
+    def hyperlinks(self):
+        """
+        Sequence of |Hyperlink| instances. Corresponds to the ``<w:hyperlink>`` elements
+        in this paragraph.
+        """
+        return [Hyperlink(_h, self) for _h in self._element.hyperlink_lst]
+
+    @property
     def paragraph_format(self):
         """
         The |ParagraphFormat| object providing access to the formatting
@@ -87,10 +105,21 @@ class Paragraph(Parented):
     @property
     def runs(self):
         """
-        Sequence of |Run| instances corresponding to the <w:r> elements in
-        this paragraph.
+        Sequence of |Run| instances. Correponds to the ``<w:r>`` elements
+        in this paragraph, and ``<w:r>`` elements in ``<w:hyperlink>`` elements
+        in this paragraph.
+
+        |Run| instances are returned in document order.
         """
-        return [Run(r, self) for r in self._p.r_lst]
+        ret_list = []
+        for child in self._element[:]:
+            if child.tag == qn('w:r'):
+                ret_list.append(Run(child, self))
+            if child.tag == qn('w:hyperlink'):
+                _hyperlink = Hyperlink(child, self)
+                for sub_run_elem in _hyperlink._element.r_lst:
+                    ret_list.append(Run(sub_run_elem, _hyperlink))
+        return ret_list
 
     @property
     def style(self):
@@ -111,30 +140,6 @@ class Paragraph(Parented):
             style_or_name, WD_STYLE_TYPE.PARAGRAPH
         )
         self._p.style = style_id
-
-    @property
-    def text(self):
-        """
-        String formed by concatenating the text of each run in the paragraph.
-        Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n``
-        characters respectively.
-
-        Assigning text to this property causes all existing paragraph content
-        to be replaced with a single run containing the assigned text.
-        A ``\\t`` character in the text is mapped to a ``<w:tab/>`` element
-        and each ``\\n`` or ``\\r`` character is mapped to a line break.
-        Paragraph-level formatting, such as style, is preserved. All
-        run-level formatting, such as bold or italic, is removed.
-        """
-        text = ''
-        for run in self.runs:
-            text += run.text
-        return text
-
-    @text.setter
-    def text(self, text):
-        self.clear()
-        self.add_run(text)
 
     def _insert_paragraph_before(self):
         """

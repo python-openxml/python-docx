@@ -9,7 +9,7 @@ from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu
-
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 class Document(ElementProxy):
     """WordprocessingML (WML) document.
@@ -110,6 +110,31 @@ class Document(ElementProxy):
         properties of this document.
         """
         return self._part.core_properties
+
+    @property
+    def _external_hyperlink_map(self):
+        """
+        A read-only dictionary mapping relationship ID to external hyperlink target.
+        """
+        hyperlink_target_dict = {}
+        for relId, rel in self._part.rels.items():
+            if rel.rel_type == RT.HYPERLINK:
+                hyperlink_target_dict[relId] = rel._target
+        return hyperlink_target_dict
+
+    def hyperlink_target_by_id(self, rId):
+        relationship = self._part.rels.get(rId, None)
+        if relationship is None:
+            return None
+        if relationship.rel_type != RT.HYPERLINK:
+            return None
+        return relationship._target
+
+    def add_hyperlink_relationship(self, hyperlink_target):
+        rId = self._part.rels._next_rId
+        rel = self._part.rels.add_relationship(RT.HYPERLINK, hyperlink_target, rId,
+                                               is_external=True)
+        return rel
 
     @property
     def inline_shapes(self):
@@ -224,3 +249,4 @@ class _Body(BlockItemContainer):
         """
         self._body.clear_content()
         return self
+

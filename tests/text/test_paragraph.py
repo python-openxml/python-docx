@@ -9,9 +9,11 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
+from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
+from docx.api import Document as OpenDocument
 
 import pytest
 
@@ -66,12 +68,20 @@ class DescribeParagraph(object):
         assert paragraph_format is paragraph_format_
 
     def it_provides_access_to_the_runs_it_contains(self, runs_fixture):
-        paragraph, Run_, r_, r_2_, run_, run_2_ = runs_fixture
+        paragraph, expected_run_xml = runs_fixture
         runs = paragraph.runs
-        assert Run_.mock_calls == [
-            call(r_, paragraph), call(r_2_, paragraph)
-        ]
-        assert runs == [run_, run_2_]
+        assert len(expected_run_xml) == len(runs)
+        for i, run in enumerate(runs):
+            assert isinstance(run, Run)
+            assert run._element.xml == expected_run_xml[i]
+
+    def it_provides_access_to_the_hyperlinks_it_contains(self, hyperlinks_fixture):
+        paragraph, expected_hyperlink_xmls = hyperlinks_fixture
+        hyperlinks = paragraph.hyperlinks
+        assert len(expected_hyperlink_xmls) == len(hyperlinks)
+        for i, hyperlink in enumerate(hyperlinks):
+            assert isinstance(hyperlink, Hyperlink)
+            assert hyperlink._element.xml == expected_hyperlink_xmls[i]
 
     def it_can_add_a_run_to_itself(self, add_run_fixture):
         paragraph, text, style, style_prop_, expected_xml = add_run_fixture
@@ -106,7 +116,29 @@ class DescribeParagraph(object):
         assert isinstance(new_paragraph, Paragraph)
         assert body.xml == expected_xml
 
+    def it_can_add_hyperlink_with_relationship_id(self):
+        # using r:d=d to set namespace
+        p = Paragraph(element('w:p{r:d=d}'), None)
+        p.add_hyperlink("test", relationship_id='rId1')
+        expected_xml = xml('w:p{r:d=d}/w:hyperlink{r:id=rId1}/w:r/w:t"test"')
+        assert p._element.xml == expected_xml
+
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        (
+            {'relationship_id':'rId1'}, 
+            'w:p{r:d=d}/w:hyperlink{r:id=rId1}/w:r/w:t"test")'
+        ),
+        (
+            {'relationship_id':'rId1'}, 
+            'w:p{r:d=d}/w:hyperlink{r:id=rId1}/w:r/w:t"test")'
+        ),
+
+    ])
+    def add_hyperlink_fixture(self, request):
+        p = Paragraph(element('w:p{r:d=d}'), None)
+
 
     @pytest.fixture(params=[
         ('w:p', None,     None,     'w:p/w:r'),
@@ -185,10 +217,32 @@ class DescribeParagraph(object):
         return paragraph, ParagraphFormat_, paragraph_format_
 
     @pytest.fixture
-    def runs_fixture(self, p_, Run_, r_, r_2_, runs_):
-        paragraph = Paragraph(p_, None)
-        run_, run_2_ = runs_
-        return paragraph, Run_, r_, r_2_, run_, run_2_
+    def hyperlinks_fixture(self):
+        p_elem = element('w:p/(w:r/w:t"foo1",w:hyperlink/w:r/w:t"foo2",'
+                         'w:hyperlink/w:r/w:t"foo3",w:r/w:t"foo4")')
+        paragraph = Paragraph(p_elem, None)
+        expected_hyperlink_xmls = [
+            xml('w:hyperlink/w:r/w:t"foo2"'),
+            xml('w:hyperlink/w:r/w:t"foo3"')
+        ]
+        return paragraph, expected_hyperlink_xmls
+
+    @pytest.fixture(params=[
+        (
+            'w:p/(w:r/w:t"foo1",w:r/w:t"foo2")',
+            ['w:r/w:t"foo1"', 'w:r/w:t"foo2"']
+        ),
+        (
+            'w:p/(w:r/w:t"foo1",w:r/w:t"foo2",w:hyperlink/w:r/w:t"foo3",w:r/w:t"foo4")',
+            ['w:r/w:t"foo1"', 'w:r/w:t"foo2"', 'w:r/w:t"foo3"', 'w:r/w:t"foo4"']
+        ),
+    ])
+    def runs_fixture(self, request):
+        paragraph_cxml, expected_run_cxmls = request.param
+        p_elem = element(paragraph_cxml)
+        paragraph = Paragraph(p_elem, None)
+        expected_run_xmls = [xml(_cxml) for _cxml in expected_run_cxmls]
+        return paragraph, expected_run_xmls
 
     @pytest.fixture
     def style_get_fixture(self, part_prop_):
@@ -227,6 +281,7 @@ class DescribeParagraph(object):
         ('w:p/w:r/(w:t"foo", w:tab, w:t"bar")', 'foo\tbar'),
         ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', 'foo\nbar'),
         ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', 'foo\nbar'),
+        ('w:p/(w:r/w:t"foo",w:hyperlink/w:r/w:t"bar")', 'foobar')
     ])
     def text_get_fixture(self, request):
         p_cxml, expected_text_value = request.param

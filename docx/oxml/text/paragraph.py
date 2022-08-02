@@ -14,6 +14,7 @@ class CT_P(BaseOxmlElement):
     """
     pPr = ZeroOrOne('w:pPr')
     r = ZeroOrMore('w:r')
+    hyperlink = ZeroOrMore('w:hyperlink')
 
     def _insert_pPr(self, pPr):
         self.insert(0, pPr)
@@ -76,3 +77,13 @@ class CT_P(BaseOxmlElement):
     def style(self, style):
         pPr = self.get_or_add_pPr()
         pPr.style = style
+
+    @property
+    def run_and_hyperlink_lst(self):
+        ret_list = []
+        for child in self[:]:
+            if child.tag == qn('w:r'):
+                ret_list.append(child)
+            if child.tag == qn('w:hyperlink'):
+                ret_list.append(child)
+        return ret_list

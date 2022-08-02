@@ -219,6 +219,9 @@ register_element_cls('w:vanish',     CT_OnOff)
 register_element_cls('w:vertAlign',  CT_VerticalAlignRun)
 register_element_cls('w:webHidden',  CT_OnOff)
 
+from .text.hyperlink import CT_Hyperlink # noqa
+register_element_cls('w:hyperlink', CT_Hyperlink)
+
 from .text.paragraph import CT_P  # noqa
 register_element_cls('w:p', CT_P)
 
