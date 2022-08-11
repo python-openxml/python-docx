@@ -12,7 +12,8 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt, ST_Border,
+    ST_HexColor, ST_EighthPointMeasure, ST_PointMeasure
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -761,6 +762,7 @@ class CT_TcPr(BaseOxmlElement):
     tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
     gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
     vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
+    tcBorders = ZeroOrOne('w:tcBorders', successors=_tag_seq[6:])
     vAlign = ZeroOrOne('w:vAlign', successors=_tag_seq[12:])
     del _tag_seq
 
@@ -845,6 +847,7 @@ class CT_TrPr(BaseOxmlElement):
         'w:trPrChange'
     )
     trHeight = ZeroOrOne('w:trHeight', successors=_tag_seq[8:])
+    cantSplit = ZeroOrOne('w:cantSplit', successors=_tag_seq[7:])
     del _tag_seq
 
     @property
@@ -881,6 +884,23 @@ class CT_TrPr(BaseOxmlElement):
         trHeight = self.get_or_add_trHeight()
         trHeight.val = value
 
+    def _get_bool_val(self, name):
+        """
+        Return the value of the boolean child element having *name*, e.g.
+        'b', 'i', and 'smallCaps'.
+        """
+        element = getattr(self, name)
+        if element is None:
+            return None
+        return element.val
+
+    def _set_bool_val(self, name, value):
+        if value is None:
+            getattr(self, '_remove_%s' % name)()
+            return
+        element = getattr(self, 'get_or_add_%s' % name)()
+        element.val = value
+
 
 class CT_VerticalJc(BaseOxmlElement):
     """`w:vAlign` element, specifying vertical alignment of cell."""
@@ -892,3 +912,58 @@ class CT_VMerge(BaseOxmlElement):
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
     val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+
+class CT_Border(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_Border)
+    color = OptionalAttribute('w:color', ST_HexColor, default='auto')
+    sz = OptionalAttribute('w:sz', ST_EighthPointMeasure, default=4)
+    space = OptionalAttribute('w:space', ST_PointMeasure, default=0)
+
+
+class CT_TcBorders(BaseOxmlElement):
+    _tag_seq = (
+        'w:top', 'w:start', 'w:left', 'w:bottom', 'w:end',
+        'w:right', 'w:insideH', 'w:insideV', 'w:tl2br', 'w:tr2bl'
+    )
+    top = ZeroOrOne('w:top', successors=_tag_seq[1:])
+    start = ZeroOrOne('w:start', successors=_tag_seq[2:])
+    left = ZeroOrOne('w:left', successors=_tag_seq[3:])
+    bottom = ZeroOrOne('w:bottom', successors=_tag_seq[4:])
+    end = ZeroOrOne('w:end', successors=_tag_seq[5:])
+    right = ZeroOrOne('w:right', successors=_tag_seq[6:])
+    insideH = ZeroOrOne('w:insideH', successors=_tag_seq[7:])
+    insideV = ZeroOrOne('w:insideV', successors=_tag_seq[8:])
+    tl2br = ZeroOrOne('w:tl2br', successors=_tag_seq[9:])
+    tr2bl = ZeroOrOne('w:tr2bl', successors=_tag_seq[10:])
+
+    @property
+    def as_dict(self):
+        borders = {}
+        for tag in self._tag_seq:
+            name = tag.split(':')[1]
+            brd = getattr(self, name, None)
+            if brd is None:
+                continue
+            borders[name] = brd
+        return borders
+
+    def add_border(self, name, line, sz=None, space=None, color=None):
+        if not 'w:%s' % name in self._tag_seq:
+            raise AttributeError('border %s can not be applied' % name)
+        get_or_add_method = getattr(self, 'get_or_add_%s' % name, None)
+        if get_or_add_method:
+            element = get_or_add_method()
+            element.val = line
+            if sz:
+                element.sz = sz
+            if space:
+                element.space = space
+            if color:
+                element.color = color
+            return element
+
+    def remove_border(self, name):
+        remove_method = getattr(self, '_remove_%s' % name, None)
+        if remove_method:
+            remove_method()

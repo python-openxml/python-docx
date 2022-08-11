@@ -163,6 +163,8 @@ from .table import (  # noqa
     CT_TrPr,
     CT_VMerge,
     CT_VerticalJc,
+    CT_Border,
+    CT_TcBorders
 )
 register_element_cls('w:bidiVisual', CT_OnOff)
 register_element_cls('w:gridCol',    CT_TblGridCol)
@@ -178,8 +180,20 @@ register_element_cls('w:tcW',        CT_TblWidth)
 register_element_cls('w:tr',         CT_Row)
 register_element_cls('w:trHeight',   CT_Height)
 register_element_cls('w:trPr',       CT_TrPr)
+register_element_cls('w:cantSplit',  CT_OnOff)
 register_element_cls('w:vAlign',     CT_VerticalJc)
 register_element_cls('w:vMerge',     CT_VMerge)
+register_element_cls('w:tcBorders',  CT_TcBorders)
+register_element_cls('w:top',        CT_Border)
+register_element_cls('w:start',      CT_Border)
+register_element_cls('w:left',       CT_Border)
+register_element_cls('w:bottom',     CT_Border)
+register_element_cls('w:end',        CT_Border)
+register_element_cls('w:right',      CT_Border)
+register_element_cls('w:insideH',    CT_Border)
+register_element_cls('w:insideV',    CT_Border)
+register_element_cls('w:tl2br',      CT_Border)
+register_element_cls('w:tr2bl',      CT_Border)
 
 from .text.font import (  # noqa
     CT_Color,
