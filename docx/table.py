@@ -188,6 +188,13 @@ class Table(Parented):
     def _tblPr(self):
         return self._tbl.tblPr
 
+    @lazyproperty
+    def borders(self):
+        """
+        |_Borders| instance containing the sequence of borders.
+        """
+        return _TblBorders(self._tbl, self)
+
 
 class _Cell(BlockItemContainer):
     """Table cell"""
@@ -298,6 +305,12 @@ class _Cell(BlockItemContainer):
     def width(self, value):
         self._tc.width = value
 
+    @lazyproperty
+    def borders(self):
+        """
+        |_Borders| instance containing the sequence of borders.
+        """
+        return _CellBorders(self._tc, self)
 
 class _Column(Parented):
     """
@@ -413,6 +426,30 @@ class _Row(Parented):
         self._tr.trHeight_val = value
 
     @property
+    def dont_split(self):
+        return self._get_bool_prop('cantSplit')
+
+    @dont_split.setter
+    def dont_split(self, value):
+        self._set_bool_prop('cantSplit', value)
+
+    def _get_bool_prop(self, name):
+        """
+        Return the value of boolean child of `w:trPr` having *name*.
+        """
+        trPr = self._element.trPr
+        if trPr is None:
+            return None
+        return trPr._get_bool_val(name)
+
+    def _set_bool_prop(self, name, value):
+        """
+        Assign *value* to the boolean child *name* of `w:trPr`.
+        """
+        trPr = self._element.get_or_add_trPr()
+        trPr._set_bool_val(name, value)
+
+    @property
     def height_rule(self):
         """
         Return the height rule of this cell as a member of the
@@ -467,3 +504,185 @@ class _Rows(Parented):
         Reference to the |Table| object this row collection belongs to.
         """
         return self._parent.table
+
+class _Border(Parented):
+    def __init__(self, name, cb, parent):
+        super(_Border, self).__init__(parent)
+        self._name = name
+        self._cb = self._element = cb
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if value is None:
+            self._parent.remove_border(self.name)
+            return
+        self._parent.remove_border(self.name)
+        return self._parent.add_border(value, self.line, sz=self.size, space=self.space, color=self.color)
+
+    @property
+    def line(self):
+        return self._cb.val
+
+    @line.setter
+    def line(self, value):
+        if value is None:
+            self._cb._remove_val()
+            return
+        self._cb.val = value
+
+    @property
+    def size(self):
+        return self._cb.sz
+
+    @size.setter
+    def size(self, value):
+        if value is None:
+            self._cb._remove_sz()
+            return
+        self._cb.sz = value
+
+    @property
+    def space(self):
+        return self._cb.space
+
+    @space.setter
+    def space(self, value):
+        if value is None:
+            self._cb._remove_space()
+            return
+        self._cb.space = value
+
+    @property
+    def color(self):
+        return self._cb.color
+
+    @color.setter
+    def color(self, value):
+        if value is None:
+            self._cb._remove_color()
+            return
+        self._cb.color = value
+
+class _CellBorders(Parented):
+    """
+    Sequence of |_Border| objects.
+    Supports ``len()``, iteration, indexed access, and slicing.
+    """
+    def __init__(self, cell, parent):
+        super(_CellBorders, self).__init__(parent)
+        self._cell = cell
+
+    def __getitem__(self, idx):
+        return list(self)[idx]
+
+    def __iter__(self):
+        return (_Border(name, cb, self) for name, cb in self._borders.items())
+
+    def __len__(self):
+        return len(self._borders)
+
+    @property
+    def _tcBorders(self):
+        tcPr = self._cell.tcPr
+        if tcPr is None:
+            return None
+        tcBorders = tcPr.tcBorders
+        if tcBorders is None:
+            return None
+        return tcBorders
+
+    @property
+    def _borders(self):
+        tcBorders = self._tcBorders
+        if tcBorders is None:
+            return {}
+        return tcBorders.as_dict
+
+    @property
+    def table(self):
+        """
+        Reference to the |Table| object this row collection belongs to.
+        """
+        return self._parent.table
+
+    def add_border(self, name, line, sz=None, space=None, color=None):
+        tcPr = self._cell.get_or_add_tcPr()
+        if tcPr is None:
+            return None
+        tcBorders = tcPr.get_or_add_tcBorders()
+        if tcBorders is None:
+            return None
+        brd = tcBorders.add_border(name, line, sz=sz, space=space, color=color)
+        if brd is not None:
+            return _Border(name, brd, self)
+
+    def remove_border(self, border_name):
+        tcBorders = self._tcBorders
+        if tcBorders is None:
+            return None
+        remove_method = getattr(tcBorders, '_remove_%s' % border_name)
+        if remove_method:
+            remove_method()
+
+class _TblBorders(Parented):
+    """
+    Sequence of |_Border| objects.
+    Supports ``len()``, iteration, indexed access, and slicing.
+    """
+    def __init__(self, tbl, parent):
+        super(_TblBorders, self).__init__(parent)
+        self._tbl = tbl
+
+    def __getitem__(self, idx):
+        return list(self)[idx]
+
+    def __iter__(self):
+        return (_Border(name, brd, self) for name, brd in self._borders.items())
+
+    def __len__(self):
+        return len(self._borders)
+
+    @property
+    def _tblBorders(self):
+        tblPr = self._tbl.tblPr
+        if tblPr is None:
+            return None
+        tblBorders = tblPr.tblBorders
+        if tblBorders is None:
+            return None
+        return tblBorders
+
+    @property
+    def _borders(self):
+        tblBorders = self._tblBorders
+        if tblBorders is None:
+            return {}
+        return tblBorders.as_dict
+
+    @property
+    def table(self):
+        """
+        Reference to the |Table| object this row collection belongs to.
+        """
+        return self._parent.table
+
+    def add_border(self, name, line, sz=None, space=None, color=None):
+        tblPr = self._tbl.tblPr
+        tblBorders = tblPr.get_or_add_tblBorders()
+        if tblBorders is None:
+            return None
+        brd = tblBorders.add_border(name, line, sz=sz, space=space, color=color)
+        if brd is not None:
+            return _Border(name, brd, self)
+
+    def remove_border(self, border_name):
+        tblBorders = self._tblBorders
+        if tblBorders is None:
+            return None
+        remove_method = getattr(tblBorders, '_remove_%s' % border_name)
+        if remove_method:
+            remove_method()
