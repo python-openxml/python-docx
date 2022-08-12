@@ -164,7 +164,8 @@ from .table import (  # noqa
     CT_VMerge,
     CT_VerticalJc,
     CT_Border,
-    CT_TcBorders
+    CT_TcBorders,
+    CT_TblBorders
 )
 register_element_cls('w:bidiVisual', CT_OnOff)
 register_element_cls('w:gridCol',    CT_TblGridCol)
@@ -183,6 +184,7 @@ register_element_cls('w:trPr',       CT_TrPr)
 register_element_cls('w:cantSplit',  CT_OnOff)
 register_element_cls('w:vAlign',     CT_VerticalJc)
 register_element_cls('w:vMerge',     CT_VMerge)
+register_element_cls('w:tblBorders', CT_TblBorders)
 register_element_cls('w:tcBorders',  CT_TcBorders)
 register_element_cls('w:top',        CT_Border)
 register_element_cls('w:start',      CT_Border)

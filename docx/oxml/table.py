@@ -282,6 +282,7 @@ class CT_TblPr(BaseOxmlElement):
     tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
     bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
     jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
+    tblBorders = ZeroOrOne('w:tblBorders', successors=_tag_seq[11:])
     tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
     del _tag_seq
 
@@ -935,7 +936,47 @@ class CT_TcBorders(BaseOxmlElement):
     insideH = ZeroOrOne('w:insideH', successors=_tag_seq[7:])
     insideV = ZeroOrOne('w:insideV', successors=_tag_seq[8:])
     tl2br = ZeroOrOne('w:tl2br', successors=_tag_seq[9:])
-    tr2bl = ZeroOrOne('w:tr2bl', successors=_tag_seq[10:])
+    tr2bl = ZeroOrOne('w:tr2bl', successors=[])
+
+    @property
+    def as_dict(self):
+        borders = {}
+        for tag in self._tag_seq:
+            name = tag.split(':')[1]
+            brd = getattr(self, name, None)
+            if brd is None:
+                continue
+            borders[name] = brd
+        return borders
+
+    def add_border(self, name, line, sz=None, space=None, color=None):
+        if not 'w:%s' % name in self._tag_seq:
+            raise AttributeError('border %s can not be applied' % name)
+        get_or_add_method = getattr(self, 'get_or_add_%s' % name, None)
+        if get_or_add_method:
+            element = get_or_add_method()
+            element.val = line
+            if sz:
+                element.sz = sz
+            if space:
+                element.space = space
+            if color:
+                element.color = color
+            return element
+
+    def remove_border(self, name):
+        remove_method = getattr(self, '_remove_%s' % name, None)
+        if remove_method:
+            remove_method()
+
+class CT_TblBorders(BaseOxmlElement):
+    _tag_seq = ('w:top', 'w:start', 'w:bottom', 'w:end', 'w:insideH', 'w:insideV')
+    top = ZeroOrOne('w:top', successors=_tag_seq[1:])
+    start = ZeroOrOne('w:start', successors=_tag_seq[2:])
+    bottom = ZeroOrOne('w:bottom', successors=_tag_seq[3:])
+    end = ZeroOrOne('w:end', successors=_tag_seq[4:])
+    insideH = ZeroOrOne('w:insideH', successors=_tag_seq[5:])
+    insideV = ZeroOrOne('w:insideV', successors=[])
 
     @property
     def as_dict(self):

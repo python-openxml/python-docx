@@ -188,6 +188,13 @@ class Table(Parented):
     def _tblPr(self):
         return self._tbl.tblPr
 
+    @lazyproperty
+    def borders(self):
+        """
+        |_Borders| instance containing the sequence of borders.
+        """
+        return _TblBorders(self._tbl, self)
+
 
 class _Cell(BlockItemContainer):
     """Table cell"""
@@ -303,7 +310,7 @@ class _Cell(BlockItemContainer):
         """
         |_Borders| instance containing the sequence of borders.
         """
-        return _Borders(self._tc, self)
+        return _CellBorders(self._tc, self)
 
 class _Column(Parented):
     """
@@ -560,13 +567,13 @@ class _Border(Parented):
             return
         self._cb.color = value
 
-class _Borders(Parented):
+class _CellBorders(Parented):
     """
     Sequence of |_Border| objects.
     Supports ``len()``, iteration, indexed access, and slicing.
     """
     def __init__(self, cell, parent):
-        super(_Borders, self).__init__(parent)
+        super(_CellBorders, self).__init__(parent)
         self._cell = cell
 
     def __getitem__(self, idx):
@@ -618,5 +625,64 @@ class _Borders(Parented):
         if tcBorders is None:
             return None
         remove_method = getattr(tcBorders, '_remove_%s' % border_name)
+        if remove_method:
+            remove_method()
+
+class _TblBorders(Parented):
+    """
+    Sequence of |_Border| objects.
+    Supports ``len()``, iteration, indexed access, and slicing.
+    """
+    def __init__(self, tbl, parent):
+        super(_TblBorders, self).__init__(parent)
+        self._tbl = tbl
+
+    def __getitem__(self, idx):
+        return list(self)[idx]
+
+    def __iter__(self):
+        return (_Border(name, brd, self) for name, brd in self._borders.items())
+
+    def __len__(self):
+        return len(self._borders)
+
+    @property
+    def _tblBorders(self):
+        tblPr = self._tbl.tblPr
+        if tblPr is None:
+            return None
+        tblBorders = tblPr.tblBorders
+        if tblBorders is None:
+            return None
+        return tblBorders
+
+    @property
+    def _borders(self):
+        tblBorders = self._tblBorders
+        if tblBorders is None:
+            return {}
+        return tblBorders.as_dict
+
+    @property
+    def table(self):
+        """
+        Reference to the |Table| object this row collection belongs to.
+        """
+        return self._parent.table
+
+    def add_border(self, name, line, sz=None, space=None, color=None):
+        tblPr = self._tbl.tblPr
+        tblBorders = tblPr.get_or_add_tblBorders()
+        if tblBorders is None:
+            return None
+        brd = tblBorders.add_border(name, line, sz=sz, space=space, color=color)
+        if brd is not None:
+            return _Border(name, brd, self)
+
+    def remove_border(self, border_name):
+        tblBorders = self._tblBorders
+        if tblBorders is None:
+            return None
+        remove_method = getattr(tblBorders, '_remove_%s' % border_name)
         if remove_method:
             remove_method()
