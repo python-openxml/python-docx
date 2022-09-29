@@ -45,7 +45,6 @@ class CustomPropertiesPart(XmlPart):
         values for its base properties.
         """
         custom_properties_part = cls._new(package)
-        custom_properties = custom_properties_part.custom_properties
         return custom_properties_part
 
     @property
