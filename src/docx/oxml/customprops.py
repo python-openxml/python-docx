@@ -8,13 +8,13 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
+from datetime import datetime, timedelta
 import re
 
-from datetime import datetime, timedelta
-from lxml import etree
-from .ns import nsdecls, qn
-from .xmlchemy import BaseOxmlElement, ZeroOrOne
-from . import parse_xml
+from docx.oxml.ns import nsdecls, qn
+from docx.oxml.xmlchemy import BaseOxmlElement
+from docx.oxml import parse_xml
+
 
 
 class CT_CustomProperties(BaseOxmlElement):
@@ -25,6 +25,7 @@ class CT_CustomProperties(BaseOxmlElement):
     """
 
     _customProperties_tmpl = "<cup:Properties %s/>\n" % nsdecls("cup", "vt")
+    _offset_pattern = re.compile("([+-])(\\d\\d):(\\d\\d)")
 
     @classmethod
     def new(cls):
@@ -32,8 +33,8 @@ class CT_CustomProperties(BaseOxmlElement):
         Return a new ``<property>`` element
         """
         xml = cls._customProperties_tmpl
-        customProperties = parse_xml(xml)
-        return customProperties
+        custom_properties = parse_xml(xml)
+        return custom_properties
 
     def _datetime_of_element(self, property_name):
         element = getattr(self, property_name)
@@ -74,8 +75,6 @@ class CT_CustomProperties(BaseOxmlElement):
         td = timedelta(hours=hours, minutes=minutes)
         return dt + td
 
-    _offset_pattern = re.compile('([+-])(\d\d):(\d\d)')
-
     @classmethod
     def _parse_W3CDTF_to_datetime(cls, w3cdtf_str):
         # valid W3CDTF date cases:
@@ -101,8 +100,7 @@ class CT_CustomProperties(BaseOxmlElement):
             except ValueError:
                 continue
         if dt is None:
-            tmpl = "could not parse W3CDTF datetime string '%s'"
-            raise ValueError(tmpl % w3cdtf_str)
+            raise ValueError("could not parse W3CDTF datetime string '%s'" % {w3cdtf_str})
         if len(offset_str) == 6:
             return cls._offset_dt(dt, offset_str)
         return dt
@@ -112,18 +110,15 @@ class CT_CustomProperties(BaseOxmlElement):
         Set date/time value of child element having *prop_name* to *value*.
         """
         if not isinstance(value, datetime):
-            tmpl = (
-                "property requires <type 'datetime.datetime'> object, got %s"
-            )
-            raise ValueError(tmpl % type(value))
+            raise ValueError("property requires <type 'datetime.datetime'> object, got %s" % type(value))
         element = self._get_or_add(prop_name)
         dt_str = value.strftime('%Y-%m-%dT%H:%M:%SZ')
         element.text = dt_str
         if prop_name in ('created', 'modified'):
-            # These two require an explicit 'xsi:type="dcterms:W3CDTF"'
-            # attribute. The first and last line are a hack required to add
+            # These two require an explicit 'xsi:type="dcterms:W3CDTF"' attribute.
+            # The first and last line are a hack required to add
             # the xsi namespace to the root element rather than each child
-            # element in which it is referenced
+            # element in which it is referenced.
             self.set(qn('xsi:foo'), 'bar')
             element.set(qn('xsi:type'), 'dcterms:W3CDTF')
             del self.attrib[qn('xsi:foo')]
@@ -134,10 +129,7 @@ class CT_CustomProperties(BaseOxmlElement):
         """
         value = str(value)
         if len(value) > 255:
-            tmpl = (
-                "exceeded 255 char limit for property, got:\n\n'%s'"
-            )
-            raise ValueError(tmpl % value)
+            raise ValueError("exceeded 255 char limit for property, got:\n\n'%s'" % value)
         element = self._get_or_add(prop_name)
         element.text = value
 
@@ -152,4 +144,3 @@ class CT_CustomProperties(BaseOxmlElement):
         if element.text is None:
             return ''
         return element.text
-

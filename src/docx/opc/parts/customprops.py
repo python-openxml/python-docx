@@ -10,13 +10,11 @@ from __future__ import (
 
 from lxml import etree
 
-from datetime import datetime
-
-from ..constants import CONTENT_TYPE as CT
-from ..customprops import CustomProperties
-from ...oxml.customprops import CT_CustomProperties
-from ..packuri import PackURI
-from ..part import XmlPart
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.customprops import CustomProperties
+from docx.oxml.customprops import CT_CustomProperties
+from docx.opc.packuri import PackURI
+from docx.opc.part import XmlPart
 
 # configure XML parser
 parser_lookup = etree.ElementDefaultClassLookup(element=CT_CustomProperties)
@@ -33,7 +31,6 @@ def ct_parse_xml(xml):
     """
     root_element = etree.fromstring(xml, ct_parser)
     return root_element
-
 
 
 class CustomPropertiesPart(XmlPart):
