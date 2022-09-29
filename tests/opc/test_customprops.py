@@ -10,12 +10,9 @@ from __future__ import (
 
 import pytest
 
-from datetime import datetime
-
 from docx.opc.customprops import CustomProperties
-from docx.oxml.customprops import CT_CustomProperties
 from docx.oxml import parse_xml
-from lxml import etree
+
 
 class DescribeCustomProperties(object):
 
@@ -51,12 +48,12 @@ class DescribeCustomProperties(object):
     ])
     def prop_set_fixture(self, request, custom_properties_blank):
         prop_name, str_type, str_value, value = request.param
-        expected_xml = self.customProperties(prop_name, str_type, str_value)
+        expected_xml = self.build_custom_properties_xml(prop_name, str_type, str_value)
         return custom_properties_blank, prop_name, value, expected_xml
 
     # fixture components ---------------------------------------------
 
-    def customProperties(self, prop_name, str_type, str_value):
+    def build_custom_properties_xml(self, prop_name, str_type, str_value):
         tmpl = (
             '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" '
             'xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">\n'
@@ -65,7 +62,7 @@ class DescribeCustomProperties(object):
             '  </property>\n'
             '</Properties>'
         )
-        return tmpl %(prop_name, str_type, str_value, str_type)
+        return tmpl % (prop_name, str_type, str_value, str_type)
 
     @pytest.fixture
     def custom_properties_blank(self):
