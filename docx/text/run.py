@@ -8,6 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from datetime import datetime
 
 from docx.oxml.ns import qn
+from docx.opc.part import PackURI, Part
 
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
@@ -239,7 +240,25 @@ class Run(Parented):
         ids = [int(ref.get(qn('w:id'))) for ref in comment_refs]
         coms = [com for com in comment_part if com._id in ids]
         return [Comment(com, comment_part) for com in coms]
- 
+    
+    
+    def add_ole_object_to_run(self, ole_object_path):
+        """
+        Add saved OLE Object in the disk to an run and retun the newly created relationship ID
+        Note: OLE Objects must be stored in the disc as `.bin` file
+        """
+        reltype: str = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject"
+        pack_path: str = "/word/embeddings/" + ole_object_path.split("\\")[-1]
+        partname = PackURI(pack_path)
+        content_type: str = "application/vnd.openxmlformats-officedocument.oleObject"
+        
+        with open(ole_object_path, "rb") as f:
+            blob = f.read()
+        target_part = Part(partname=partname, content_type=content_type, blob=blob)
+        rel_id: str = self.part.rels._next_rId
+        self.part.rels.add_relationship(reltype=reltype, target=target_part, rId=rel_id)
+        return rel_id
+    
 
 class _Text(object):
     """
