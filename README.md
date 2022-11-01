@@ -48,4 +48,4 @@ Donation
 License
 -------
 
-`MIT <https://choosealicense.com/licenses/mit/>`_
+`MIT <https://choosealicense.com/licenses/mit/>`
