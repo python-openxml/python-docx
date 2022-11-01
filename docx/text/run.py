@@ -10,6 +10,7 @@ from datetime import datetime
 from docx.oxml.ns import qn
 from docx.opc.part import *
 
+
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
 from .font import Font
