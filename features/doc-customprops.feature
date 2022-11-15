@@ -26,3 +26,7 @@ Feature: Read and write custom document properties
      Given a document having no custom properties part
       When I assign new values to the custom properties
       Then the custom property values match the new values
+
+  Scenario: iterate the custom properties of a document
+     Given a document having known custom properties
+      Then I can iterate the custom properties object

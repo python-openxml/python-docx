@@ -65,6 +65,10 @@ class CustomProperties(object):
     def __len__(self):
         return len(self._element)
 
+    def __iter__(self):
+        for child in self._element:
+            yield child.get("name")
+
     def lookup(self, item):
         for child in self._element:
             if child.get("name") == item:

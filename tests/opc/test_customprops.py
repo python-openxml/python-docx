@@ -21,13 +21,27 @@ class DescribeCustomProperties(object):
         actual_value = custom_properties[prop_name]
         assert actual_value == exp_value
 
-    def it_can_change_existing_prop_values(self):
-        pass
+    def it_can_change_existing_prop_values(self, custom_properties_default, prop_set_fixture):
+        _, prop_name, value, _ = prop_set_fixture
+        assert custom_properties_default[prop_name] != value
+        custom_properties_default[prop_name] = value
+        assert custom_properties_default[prop_name] == value
 
     def it_can_set_new_prop_values(self, prop_set_fixture):
         custom_properties, prop_name, value, exp_xml = prop_set_fixture
         custom_properties[prop_name] = value
         assert custom_properties._element.xml == exp_xml
+
+    def it_can_iterate_existing_props(self, custom_properties_default):
+        exp_names = ['CustomPropBool', 'CustomPropInt', 'CustomPropString']
+
+        # check 1: as list
+        assert list(custom_properties_default) == ['CustomPropBool', 'CustomPropInt', 'CustomPropString']
+
+        # check 2: use iterator
+        exp_names_iter = iter(exp_names)
+        for prop_name in custom_properties_default:
+            assert prop_name == next(exp_names_iter)
 
     # fixtures -------------------------------------------------------
 

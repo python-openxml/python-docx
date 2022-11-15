@@ -78,7 +78,6 @@ def then_the_custom_property_values_match_the_known_values(context):
             "got '%s' for custom property '%s'" % (value, name)
         )
 
-
 @then('the custom property values match the new values')
 def then_the_custom_property_values_match_the_new_values(context):
     custom_properties = context.document.custom_properties
@@ -87,3 +86,11 @@ def then_the_custom_property_values_match_the_new_values(context):
         assert value == expected_value, (
             "got '%s' for custom property '%s'" % (value, name)
         )
+
+@then('I can iterate the custom properties object')
+def then_I_can_iterate_the_custom_properties_object(context):
+    exp_names = iter(['AppVersion', 'CustomPropBool', 'CustomPropInt', 'CustomPropString',
+                      'DocSecurity', 'HyperlinksChanged', 'LinksUpToDate', 'ScaleCrop', 'ShareDoc'])
+    custom_properties = context.document.custom_properties
+    for prop_name in custom_properties:
+        assert prop_name == next(exp_names)
