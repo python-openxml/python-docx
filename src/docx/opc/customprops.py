@@ -62,6 +62,11 @@ class CustomProperties(object):
             else:
                 elm.text = str(value)
 
+    def __delitem__(self, key):
+        prop = self.lookup(key)
+        if prop is not None:
+            self._element.remove(prop)
+
     def __len__(self):
         return len(self._element)
 

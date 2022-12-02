@@ -23,11 +23,16 @@ from helpers import test_docx
 @given('a document having known custom properties')
 def given_a_document_having_known_custom_properties(context):
     context.document = Document(test_docx('doc-customprops'))
+    context.exp_prop_names = [
+        'AppVersion', 'CustomPropBool', 'CustomPropInt', 'CustomPropString',
+        'DocSecurity', 'HyperlinksChanged', 'LinksUpToDate', 'ScaleCrop', 'ShareDoc'
+    ]
 
 
 @given('a document having no custom properties part')
 def given_a_document_having_no_custom_properties_part(context):
     context.document = Document(test_docx('doc-no-customprops'))
+    context.exp_prop_names = []
 
 
 # when ====================================================
@@ -49,6 +54,13 @@ def when_I_assign_new_values_to_the_custom_properties(context):
         custom_properties[name] = value
 
 
+@when("I delete an existing custom property")
+def when_I_delete_an_existing_custom_property(context):
+    custom_properties = context.document.custom_properties
+    del custom_properties["CustomPropInt"]
+    context.prop_name = "CustomPropInt"
+
+
 # then ====================================================
 
 @then('a custom properties part with no values is added')
@@ -59,9 +71,16 @@ def then_a_custom_properties_part_with_no_values_is_added(context):
 
 @then('I can access the custom properties object')
 def then_I_can_access_the_custom_properties_object(context):
-    document = context.document
-    custom_properties = document.custom_properties
+    custom_properties = context.document.custom_properties
     assert isinstance(custom_properties, CustomProperties)
+
+
+@then('the expected custom properties are visible')
+def then_the_expected_custom_properties_are_visible(context):
+    custom_properties = context.document.custom_properties
+    exp_prop_names = context.exp_prop_names
+    for name in exp_prop_names:
+        assert custom_properties.lookup(name) is not None
 
 
 @then('the custom property values match the known values')
@@ -78,6 +97,7 @@ def then_the_custom_property_values_match_the_known_values(context):
             "got '%s' for custom property '%s'" % (value, name)
         )
 
+
 @then('the custom property values match the new values')
 def then_the_custom_property_values_match_the_new_values(context):
     custom_properties = context.document.custom_properties
@@ -87,10 +107,19 @@ def then_the_custom_property_values_match_the_new_values(context):
             "got '%s' for custom property '%s'" % (value, name)
         )
 
+
 @then('I can iterate the custom properties object')
 def then_I_can_iterate_the_custom_properties_object(context):
-    exp_names = iter(['AppVersion', 'CustomPropBool', 'CustomPropInt', 'CustomPropString',
-                      'DocSecurity', 'HyperlinksChanged', 'LinksUpToDate', 'ScaleCrop', 'ShareDoc'])
     custom_properties = context.document.custom_properties
-    for prop_name in custom_properties:
-        assert prop_name == next(exp_names)
+    exp_prop_names = context.exp_prop_names
+    act_prop_names = [name for name in custom_properties]
+    assert act_prop_names == exp_prop_names
+
+
+@then('the custom property is missing in the remaining list of custom properties')
+def then_the_custom_property_is_missing_in_the_remaining_list_of_custom_properties(context):
+    custom_properties = context.document.custom_properties
+    prop_name = context.prop_name
+    assert prop_name is not None
+    assert custom_properties.lookup(prop_name) is None
+    assert prop_name not in [name for name in custom_properties]

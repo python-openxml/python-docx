@@ -7,6 +7,7 @@ Feature: Read and write custom document properties
   Scenario: read the custom properties of a document
      Given a document having known custom properties
       Then I can access the custom properties object
+       And the expected custom properties are visible
        And the custom property values match the known values
 
 
@@ -27,6 +28,13 @@ Feature: Read and write custom document properties
       When I assign new values to the custom properties
       Then the custom property values match the new values
 
+
   Scenario: iterate the custom properties of a document
      Given a document having known custom properties
       Then I can iterate the custom properties object
+
+
+  Scenario: delete an existing custom property
+     Given a document having known custom properties
+      When I delete an existing custom property
+      Then the custom property is missing in the remaining list of custom properties

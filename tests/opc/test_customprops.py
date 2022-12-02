@@ -32,6 +32,11 @@ class DescribeCustomProperties(object):
         custom_properties[prop_name] = value
         assert custom_properties._element.xml == exp_xml
 
+    def it_can_delete_existing_prop(self, prop_get_fixture):
+        custom_properties, prop_name, _ = prop_get_fixture
+        del custom_properties[prop_name]
+        assert custom_properties.lookup(prop_name) is None
+
     def it_can_iterate_existing_props(self, custom_properties_default):
         exp_names = ['CustomPropBool', 'CustomPropInt', 'CustomPropString']
 
