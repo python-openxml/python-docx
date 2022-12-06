@@ -41,6 +41,9 @@ class Image(object):
         Return a new |Image| subclass instance loaded from the image file
         identified by *image_descriptor*, a path or file-like object.
         """
+        if isinstance(image_descriptor, Path):
+            image_descriptor = str(image_descriptor)
+        
         if is_string(image_descriptor):
             path = image_descriptor
             with open(path, 'rb') as f:
