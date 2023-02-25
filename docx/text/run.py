@@ -10,7 +10,6 @@ from datetime import datetime
 from docx.oxml.ns import qn
 from docx.opc.part import *
 
-
 from ..enum.style import WD_STYLE_TYPE
 from ..enum.text import WD_BREAK
 from .font import Font
@@ -18,6 +17,7 @@ from ..shape import InlineShape
 from ..shared import Parented
 
 from .comment import Comment
+
 
 class Run(Parented):
     """
@@ -27,6 +27,7 @@ class Run(Parented):
     not specified directly on the run and its effective value is taken from
     the style hierarchy.
     """
+
     def __init__(self, r, parent):
         super(Run, self).__init__(parent)
         self._r = self._element = self.element = r
@@ -89,10 +90,11 @@ class Run(Parented):
     def add_comment(self, text, author='python-docx', initials='pd', dtime=None):
         comment_part = self.part._comments_part.element
         if dtime is None:
-            dtime = str( datetime.now() ).replace(' ', 'T')
-        comment =  self._r.add_comm(author, comment_part, initials, dtime, text)
+            dtime = str(datetime.now()).replace(' ', 'T')
+        comment = self._r.add_comm(author, comment_part, initials, dtime, text)
 
         return comment
+
     @property
     def bold(self):
         """
@@ -193,11 +195,11 @@ class Run(Parented):
     @underline.setter
     def underline(self, value):
         self.font.underline = value
-    
+
     @property
     def footnote(self):
         _id = self._r.footnote_id
-        
+
         if _id is not None:
             footnotes_part = self._parent._parent.part._footnotes_part.element
             footnote = footnotes_part.get_footnote_by_id(_id)
@@ -217,7 +219,7 @@ class Run(Parented):
         returns the text of the hyperlink of the run in case of the run has a hyperlink
         """
         document = self._parent._parent.document
-        parent   = self.element.getparent()
+        parent = self.element.getparent()
         linkText = ''
         if self.is_hyperlink:
             if parent.attrib.__contains__(qn('r:id')):
@@ -241,8 +243,7 @@ class Run(Parented):
         ids = [int(ref.get(qn('w:id'))) for ref in comment_refs]
         coms = [com for com in comment_part if com._id in ids]
         return [Comment(com, comment_part) for com in coms]
-    
-    
+
     def add_ole_object_to_run(self, ole_object_path):
         """
         Add saved OLE Object in the disk to an run and retun the newly created relationship ID
@@ -252,19 +253,39 @@ class Run(Parented):
         pack_path: str = "/word/embeddings/" + ole_object_path.split("\\")[-1]
         partname = PackURI(pack_path)
         content_type: str = "application/vnd.openxmlformats-officedocument.oleObject"
-        
+
         with open(ole_object_path, "rb") as f:
             blob = f.read()
         target_part = Part(partname=partname, content_type=content_type, blob=blob)
         rel_id: str = self.part.rels._next_rId
         self.part.rels.add_relationship(reltype=reltype, target=target_part, rId=rel_id)
         return rel_id
-    
+
+    def add_fldChar(self, fldCharType, fldLock: bool = False, dirty: bool = False):
+
+        fldChar = self._r.add_fldChar(fldCharType, fldLock, dirty)
+        return fldChar
+
+    @property
+    def instr_text(self):
+        return self._r.instr_text
+
+    @instr_text.setter
+    def instr_text(self, instr_text_val):
+        self._r.instr_text = instr_text_val
+
+    def remove_instr_text(self):
+        if self.instr_text is None:
+            return None
+        else:
+            self._r._remove_instr_text()
+
 
 class _Text(object):
     """
     Proxy object wrapping ``<w:t>`` element.
     """
+
     def __init__(self, t_elm):
         super(_Text, self).__init__()
         self._t = t_elm
