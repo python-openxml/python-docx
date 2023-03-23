@@ -168,7 +168,7 @@ class Table(Parented):
                     if tc.vMerge == ST_Merge.CONTINUE:
                         cells[row_idx].append(cells[row_idx - 1][col_idx])
                     elif grid_span_idx > 0:
-                        cells[row_idx].apppend(cells[row_idx][col_idx - 1])
+                        cells[row_idx].append(cells[row_idx][col_idx - 1])
                     else:
                         cells[row_idx].append(_Cell(tc, self))
         return cells
