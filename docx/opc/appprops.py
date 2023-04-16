@@ -18,7 +18,7 @@ class AppProperties(object):
 
     @property
     def template(self):
-        return self._element
+        return self._element.Template
 
     @template.setter
     def template(self, value):
