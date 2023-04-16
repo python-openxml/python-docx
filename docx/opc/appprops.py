@@ -18,8 +18,16 @@ class AppProperties(object):
 
     @property
     def template(self):
-        return self._element.Template
+        return self._element.template_text
 
     @template.setter
     def template(self, value):
-        pass
+        self._element.template_text = value
+    
+    @property
+    def template_text(self):
+        return self._element.template
+
+    @template_text.setter
+    def template_text(self, value):
+        self._element.template = value

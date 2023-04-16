@@ -39,41 +39,28 @@ class CT_AppProperties(BaseOxmlElement):
         """
         Return a new ``<Properties>`` element
         """
-        xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-        <Template>Normal.dotm</Template>
-        <TotalTime>152</TotalTime>
-        <Pages>2</Pages>
-        <Words>238</Words>
-        <Characters>1311</Characters>
-        <Application>Microsoft Office Word</Application>
-        <DocSecurity>0</DocSecurity>
-        <Lines>10</Lines>
-        <Paragraphs>3</Paragraphs>
-        <ScaleCrop>false</ScaleCrop>
-        <Company></Company>
-        <LinksUpToDate>false</LinksUpToDate>
-        <CharactersWithSpaces>1546</CharactersWithSpaces>
-        <SharedDoc>false</SharedDoc>
-        <HyperlinksChanged>false</HyperlinksChanged>
-        <AppVersion>16.0000</AppVersion>
-        </Properties>"""
-
-        element = parse_xml(xml)
-        app_props = CT_AppProperties(element)
-
-        return app_props
+        xml = cls._appProperties_tmpl
+        appProperties = parse_xml(xml)
+        return appProperties
 
     @property
     def template_text(self):
         """
         The text in the `Template` child element.
         """
-        return self.total_time_text
+        return self._text_of_element('Template')
 
     @template_text.setter
     def template_text(self, value):
         self._set_element_text('Template', value)
+    
+    @property
+    def template(self):
+        return self._template
+    
+    @template.setter
+    def template(self, value):
+        self._template = value
 
     # @property
     # def appVersion_text(self):
