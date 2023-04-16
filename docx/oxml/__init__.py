@@ -72,6 +72,9 @@ register_element_cls("w:titlePg", CT_OnOff)
 from .coreprops import CT_CoreProperties  # noqa
 register_element_cls('cp:coreProperties', CT_CoreProperties)
 
+from .appprops import CT_AppProperties  # noqa
+register_element_cls('cp:appProperties', CT_AppProperties)
+
 from .document import CT_Body, CT_Document  # noqa
 register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
