@@ -72,8 +72,8 @@ register_element_cls("w:titlePg", CT_OnOff)
 from .coreprops import CT_CoreProperties  # noqa
 register_element_cls('cp:coreProperties', CT_CoreProperties)
 
-from .appprops import CT_AppProperties  # noqa
-register_element_cls('cp:appProperties', CT_AppProperties)
+from .extendedprops import CT_ExtendedProperties  # noqa
+register_element_cls('ok:Properties', CT_ExtendedProperties)
 
 from .document import CT_Body, CT_Document  # noqa
 register_element_cls('w:body',     CT_Body)

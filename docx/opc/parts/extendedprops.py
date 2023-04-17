@@ -10,13 +10,13 @@ from __future__ import (
 
 
 from ..constants import CONTENT_TYPE as CT
-from ..appprops import AppProperties
-from ...oxml.appprops import CT_AppProperties
+from ..extendedprops import ExtendedProperties
+from ...oxml.extendedprops import CT_ExtendedProperties
 from ..packuri import PackURI
 from ..part import XmlPart
 
 
-class AppPropertiesPart(XmlPart):
+class ExtendedPropertiesPart(XmlPart):
     """
     Corresponds to part named ``/docProps/app.xml``, containing the app
     document properties for this document package.
@@ -27,29 +27,29 @@ class AppPropertiesPart(XmlPart):
         Return a new |AppPropertiesPart| object initialized with default
         values for its base properties.
         """
-        app_properties_part = cls._new(package)
-        app_properties = app_properties_part.app_properties
-        app_properties.total_time = '1'
-        # app_properties.last_modified_by = 'python-docx'
-        # app_properties.revision = 1
-        # app_properties.modified = datetime.utcnow()
+        extended_properties_part = cls._new(package)
+        extended_properties = extended_properties_part.extended_properties
+        extended_properties.total_time = '1'
+        # extended_properties.last_modified_by = 'python-docx'
+        # extended_properties.revision = 1
+        # extended_properties.modified = datetime.utc.now()
 
         # TODO : Fill in the values with the correct `'app'` properties
-        return app_properties_part
+        return extended_properties_part
 
     @property
-    def app_properties(self):
+    def extended_properties(self):
         """
         A |AppProperties| object providing read/write access to the app
         properties contained in this app properties part.
         """
-        return AppProperties(self.element)
+        return ExtendedProperties(self.element)
 
     @classmethod
     def _new(cls, package):
         partname = PackURI('/docProps/app.xml')
-        content_type = CT.OPC_APP_PROPERTIES
-        appProperties = CT_AppProperties.new()
-        return AppPropertiesPart(
-            partname, content_type, appProperties, package
+        content_type = CT.OFC_EXTENDED_PROPERTIES
+        extended_properties = CT_ExtendedProperties.new()
+        return ExtendedPropertiesPart(
+            partname, content_type, extended_properties, package
         )

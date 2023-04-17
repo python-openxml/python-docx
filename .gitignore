@@ -12,3 +12,4 @@ Session.vim
 build-install.bat
 app.xml
 core.xml
+editor-appproperties.py

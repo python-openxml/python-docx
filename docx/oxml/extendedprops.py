@@ -11,56 +11,48 @@ from docx.oxml.ns import nsdecls, qn
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
-class CT_AppProperties(BaseOxmlElement):
+class CT_ExtendedProperties(BaseOxmlElement):
     """
-    ``<Properties>`` element, the root element of the App Properties
-    part stored as ``/docProps/app.xml``. Implements the App document metadata
+    ``<Properties>`` element, the root element of the Extended Properties
+    part stored as ``/docProps/app.xml``. Implements the Extended document metadata
     elements. String elements resolve to an empty string ('') if the element is
     not present in the XML.
     """
-    template = ZeroOrOne('Template', successors=())
-    # application = ZeroOrOne('Application', successors=())
-    # appVersion = ZeroOrOne('AppVersion', successors=())
-    # company = ZeroOrOne('Company', successors=())
-    # contentStatus = ZeroOrOne('ContentStatus', successors=())
-    # created = ZeroOrOne('dcterms:created', successors=())
-    # lastModifiedBy = ZeroOrOne('LastModifiedBy', successors=())
-    # lastPrinted = ZeroOrOne('LastPrinted', successors=())
-    # modified = ZeroOrOne('dcterms:modified', successors=())
-    # revision = ZeroOrOne('Revision', successors=())
-    # scaleCrop = ZeroOrOne('ScaleCrop', successors=())
-    # template = ZeroOrOne('Template', successors=())
-    # pages = ZeroOrOne('Pages', successors=())
+    total_time = ZeroOrOne('Properties', successors=())
 
-    _appProperties_tmpl = ('<Properties %s/>\n' % nsdecls('xmlns', 'vt'))
+    _extendedProperties_tmpl = (
+        '<Properties %s/>\n' % nsdecls('xmlns', 'vt')
+    )
 
     @classmethod
     def new(cls):
         """
         Return a new ``<Properties>`` element
         """
-        xml = cls._appProperties_tmpl
-        appProperties = parse_xml(xml)
-        return appProperties
+        xml = cls._extendedProperties_tmpl
+        extended_properties = parse_xml(xml)
+        return extended_properties
 
     @property
-    def template_text(self):
+    def properties(self):
         """
         The text in the `Template` child element.
         """
-        return self._text_of_element('Template')
+        return self._text_of_element('Pro[erties')
 
-    @template_text.setter
-    def template_text(self, value):
-        self._set_element_text('Template', value)
-    
-    @property
-    def template(self):
-        return self._template
-    
-    @template.setter
-    def template(self, value):
-        self._template = value
+    # @total_time.setter
+    # def total_time(self, value):
+    #     """
+    #     Set revision property to string value of integer *value*.
+    #     """
+    #     if not isinstance(value, str) or value < 1:
+    #         tmpl = "str req, got '%s'"
+    #         raise ValueError(tmpl % value)
+    #     total_time = self.get_or_add_total_time()
+    #     total_time.text = str(value)
+    @properties.setter
+    def properties(self, value):
+        self._set_element_text('subject', value)
 
     # @property
     # def appVersion_text(self):

@@ -8,7 +8,9 @@ properties to and from the app.xml part of a .pptx file.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-class AppProperties(object):
+
+# Getting error 'AttributeError("'lxml.etree._Element' object has no attribute 'template_text'")'
+class ExtendedProperties(object):
     """
     Corresponds to part named ``/docProps/app.xml``, containing the app
     document properties for this document package.
@@ -17,17 +19,9 @@ class AppProperties(object):
         self._element = element
 
     @property
-    def template(self):
-        return self._element.template_text
+    def properties(self):
+        return self._element.properties
 
-    @template.setter
-    def template(self, value):
-        self._element.template_text = value
-    
-    @property
-    def template_text(self):
-        return self._element.template
-
-    @template_text.setter
-    def template_text(self, value):
-        self._element.template = value
+    @properties.setter
+    def properties(self, value):
+        self._element.properties = value
