@@ -16,12 +16,12 @@ class ExtendedProperties(object):
     document properties for this document package.
     """
     def __init__(self, element):
-        self._element = element
+        self._element = element[1]
 
     @property
-    def properties(self):
-        return self._element.properties
+    def total_time(self):
+        return self._element.text
 
-    @properties.setter
-    def properties(self, value):
-        self._element.properties = value
+    @total_time.setter
+    def total_time(self, value):
+        self._element.text = value

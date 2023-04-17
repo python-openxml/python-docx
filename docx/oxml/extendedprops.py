@@ -18,10 +18,10 @@ class CT_ExtendedProperties(BaseOxmlElement):
     elements. String elements resolve to an empty string ('') if the element is
     not present in the XML.
     """
-    total_time = ZeroOrOne('Properties', successors=())
+    total_time = ZeroOrOne('TotalTime', successors=())
 
     _extendedProperties_tmpl = (
-        '<Properties %s/>\n' % nsdecls('xmlns', 'vt')
+            '<Properties %s/>\n' % nsdecls('xmlns', 'vt')
     )
 
     @classmethod
@@ -34,25 +34,29 @@ class CT_ExtendedProperties(BaseOxmlElement):
         return extended_properties
 
     @property
-    def properties(self):
+    def total_time_text(self):
         """
-        The text in the `Template` child element.
+        The text in the `TotalTime` child element.
         """
-        return self._text_of_element('Pro[erties')
+        return self._text_of_element('TotalTime')
 
-    # @total_time.setter
-    # def total_time(self, value):
+    # @total_time_text.setter
+    # def total_time_text(self, value):
     #     """
     #     Set revision property to string value of integer *value*.
     #     """
-    #     if not isinstance(value, str) or value < 1:
+    #     if not isinstance(value, str) or value == '':
     #         tmpl = "str req, got '%s'"
     #         raise ValueError(tmpl % value)
-    #     total_time = self.get_or_add_total_time()
+    #     total_time = self.get_or_add_TotalTime()
     #     total_time.text = str(value)
-    @properties.setter
-    def properties(self, value):
-        self._set_element_text('subject', value)
+    #
+    # def get_or_add_total_time(self):
+    #     return '123'
+
+    # @total_time.setter
+    # def total_time(self, value):
+    #     self._set_element_text('TotalTime', value)
 
     # @property
     # def appVersion_text(self):
@@ -86,7 +90,7 @@ class CT_ExtendedProperties(BaseOxmlElement):
     # @contentStatus_text.setter
     # def contentStatus_text(self, value):
     #     self._set_element_text('contentStatus', value)
-        
+
     # @property
     # def totalTime_text(self):
     #     """
@@ -115,7 +119,7 @@ class CT_ExtendedProperties(BaseOxmlElement):
     #     The last_modified_by value of the child element.
     #     """
     #     return self._text_of_element('lastModifiedBy')
-    
+
     # @lastModifiedBy_text.setter
     # def lastModifiedBy_text(self, value):
     #     self._set_element_text('lastModifiedBy', value)
