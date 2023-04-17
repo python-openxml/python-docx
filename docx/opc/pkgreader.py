@@ -213,7 +213,7 @@ class _SerializedRelationship(object):
         self._rId = rel_elm.rId
         self._reltype = rel_elm.reltype
         self._target_mode = rel_elm.target_mode
-        self._target_ref = rel_elm.target_ref
+        self._target_ref = rel_elm.target_ref.replace('\\', '/') if '\\' in rel_elm.target_ref else rel_elm.target_ref 
 
     @property
     def is_external(self):
