@@ -49,7 +49,6 @@ class CorePropertiesPart(XmlPart):
         partname = PackURI('/docProps/core.xml')
         content_type = CT.OPC_CORE_PROPERTIES
         coreProperties = CT_CoreProperties.new()
-        print(coreProperties)
         return CorePropertiesPart(
             partname, content_type, coreProperties, package
         )
