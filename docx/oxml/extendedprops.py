@@ -18,7 +18,9 @@ class CT_ExtendedProperties(BaseOxmlElement):
     elements. String elements resolve to an empty string ('') if the element is
     not present in the XML.
     """
-    total_time = ZeroOrOne('TotalTime', successors=())
+    totalTime = ZeroOrOne('TotalTime', successors=())
+    pages = ZeroOrOne('Pages', successors=())
+    template = ZeroOrOne('Template', successors=())
 
     _extendedProperties_tmpl = (
             '<Properties %s/>\n' % nsdecls('xmlns', 'vt')
@@ -26,103 +28,33 @@ class CT_ExtendedProperties(BaseOxmlElement):
 
     @classmethod
     def new(cls):
-        """
-        Return a new ``<Properties>`` element
-        """
         xml = cls._extendedProperties_tmpl
-        extended_properties = parse_xml(xml)
-        return extended_properties
+        extendedProperties = parse_xml(xml)
+        return extendedProperties
 
     @property
-    def total_time_text(self):
-        """
-        The text in the `TotalTime` child element.
-        """
+    def total_time(self):
         return self._text_of_element('TotalTime')
 
-    # @total_time_text.setter
-    # def total_time_text(self, value):
-    #     """
-    #     Set revision property to string value of integer *value*.
-    #     """
-    #     if not isinstance(value, str) or value == '':
-    #         tmpl = "str req, got '%s'"
-    #         raise ValueError(tmpl % value)
-    #     total_time = self.get_or_add_TotalTime()
-    #     total_time.text = str(value)
-    #
-    # def get_or_add_total_time(self):
-    #     return '123'
+    @total_time.setter
+    def total_time(self, value):
+        self._set_element_text('TotalTime', value)
 
-    # @total_time.setter
-    # def total_time(self, value):
-    #     self._set_element_text('TotalTime', value)
+    @property
+    def template_text(self):
+        return self._text_of_element('Template')
 
-    # @property
-    # def appVersion_text(self):
-    #     """
-    #     The text in the `AppVersion` child element.
-    #     """
-    #     return self._text_of_element('appVersion')
+    @template_text.setter
+    def template_text(self, value):
+        self._set_element_text('Template', value)
 
-    # @appVersion_text.setter
-    # def appVersion_text(self, value):
-    #     self._set_element_text('appVersion', value)
+    @property
+    def pages_text(self):
+        return self._text_of_element('Pages')
 
-    # @property
-    # def company_text(self):
-    #     """
-    #     The text in the `Company` child element.
-    #     """
-    #     return self._text_of_element('company')
-
-    # @company_text.setter
-    # def company_text(self, value):
-    #     self._set_element_text('company', value)
-
-    # @property
-    # def contentStatus_text(self):
-    #     """
-    #     The text in the `ContentStatus` child element.
-    #     """
-    #     return self._text_of_element('contentStatus')
-
-    # @contentStatus_text.setter
-    # def contentStatus_text(self, value):
-    #     self._set_element_text('contentStatus', value)
-
-    # @property
-    # def totalTime_text(self):
-    #     """
-    #     The text in the `TotalTime` child element.
-    #     """
-    #     return self._text_of_element('totalTime')
-
-    # @totalTime_text.setter
-    # def totalTime_text(self, value):
-    #     self._set_element_text('totalTime', value)
-
-    # @property
-    # def created_datetime(self):
-    #     """
-    #     The datetime value of the `dcterms:created` child element.
-    #     """
-    #     return self._datetime_of_element('created')
-
-    # @created_datetime.setter
-    # def created_datetime(self, value):
-    #     self._set_element_datetime('created', value)
-
-    # @property
-    # def lastModifiedBy_text(self):
-    #     """
-    #     The last_modified_by value of the child element.
-    #     """
-    #     return self._text_of_element('lastModifiedBy')
-
-    # @lastModifiedBy_text.setter
-    # def lastModifiedBy_text(self, value):
-    #     self._set_element_text('lastModifiedBy', value)
+    @pages_text.setter
+    def pages_text(self, value):
+        self._set_element_text('Pages', value)
 
     def _datetime_of_element(self, property_name):
         element = getattr(self, property_name)
