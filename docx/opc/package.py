@@ -8,6 +8,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.part import PartFactory
 from docx.opc.parts.coreprops import CorePropertiesPart
+from docx.opc.parts.extendedprops import ExtendedPropertiesPart
 from docx.opc.pkgreader import PackageReader
 from docx.opc.pkgwriter import PackageWriter
 from docx.opc.rel import Relationships
@@ -40,6 +41,14 @@ class OpcPackage(object):
         Core properties for this document.
         """
         return self._core_properties_part.core_properties
+    
+    @property
+    def extended_properties(self):
+        """
+        |AppProperties| object providing read/write access to the Dublin
+        App properties for this document.
+        """
+        return self._extended_properties_part.extended_properties
 
     def iter_rels(self):
         """
@@ -183,6 +192,19 @@ class OpcPackage(object):
             core_properties_part = CorePropertiesPart.default(self)
             self.relate_to(core_properties_part, RT.CORE_PROPERTIES)
             return core_properties_part
+    
+    @property
+    def _extended_properties_part(self):
+        """
+        |ExtendedPropertiesPart| object related to this package. Creates
+        a default app properties part if one is not present (not common).
+        """
+        try:
+            return self.part_related_by(RT.EXTENDED_PROPERTIES)
+        except KeyError:
+            extended_properties_part = ExtendedPropertiesPart.default(self)
+            self.relate_to(extended_properties_part, RT.EXTENDED_PROPERTIES)
+            return extended_properties_part
 
 
 class Unmarshaller(object):

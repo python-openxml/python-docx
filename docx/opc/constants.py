@@ -77,6 +77,9 @@ class CONTENT_TYPE(object):
     OPC_CORE_PROPERTIES = (
         'application/vnd.openxmlformats-package.core-properties+xml'
     )
+    OPC_EXTENDED_PROPERTIES = (
+        'application/vnd.openxmlformats-officedocument.extended-properties+xml'
+    )
     OPC_DIGITAL_SIGNATURE_CERTIFICATE = (
         'application/vnd.openxmlformats-package.digital-signature-certificat'
         'e'
@@ -409,8 +412,8 @@ class RELATIONSHIP_TYPE(object):
         '/control'
     )
     CORE_PROPERTIES = (
-        'http://schemas.openxmlformats.org/package/2006/relationships/metada'
-        'ta/core-properties'
+        'http://schemas.openxmlformats.org/package/2006/relationships/metadata'
+        '/core-properties'
     )
     CUSTOM_PROPERTIES = (
         'http://schemas.openxmlformats.org/officeDocument/2006/relationships'

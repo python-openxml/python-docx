@@ -11,6 +11,8 @@ nsmap = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
     "c": "http://schemas.openxmlformats.org/drawingml/2006/chart",
     "cp": "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+    "ep": "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties",
+    "vt": "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes",
     "dc": "http://purl.org/dc/elements/1.1/",
     "dcmitype": "http://purl.org/dc/dcmitype/",
     "dcterms": "http://purl.org/dc/terms/",
@@ -85,13 +87,13 @@ class NamespacePrefixedTag(str):
         """
         return self._ns_uri
 
-
 def nsdecls(*prefixes):
     """
     Return a string containing a namespace declaration for each of the
     namespace prefix strings, e.g. 'p', 'ct', passed as *prefixes*.
     """
-    return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
+    # return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
+    return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes if pfx in nsmap])
 
 
 def nspfxmap(*nspfxs):
