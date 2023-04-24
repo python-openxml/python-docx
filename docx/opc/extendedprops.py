@@ -25,9 +25,33 @@ class ExtendedProperties(object):
 
     def __init__(self, element):
         self._element = element
-        self.pages = None
         self.template = None
+        self.manager = None
+        self.company = None
+        self.pages = None
+        self.words = None
+        self.characters = None
+        self.presentation_format = None
+        self.lines = None
+        self.paragraphs = None
+        self.slides = None
+        self.notes = None
         self.total_time = None
+        self.hidden_slides = None
+        self.mm_clips = None
+        self.scale_crop = None
+        self.heading_pairs = None
+        self.titles_of_parts = None
+        self.links_up_to_date = None
+        self.characters_with_space = None
+        self.shared_doc = None
+        self.hyperlink_base = None
+        self.h_links = None
+        self.hyperlinks_changed = None
+        self.dig_sig = None
+        self.application = None
+        self.app_version = None
+        self.doc_security = None
         self._property_elements = {}
 
         for child in self._element:
