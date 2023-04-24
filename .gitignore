@@ -1,14 +1,15 @@
 .coverage
+.vscode
+.idea
+.pytest_cache/
 /dist/
 /docs/.build/
 /*.egg-info
 *.pyc
-.pytest_cache/
 _scratch/
 Session.vim
 /.tox/
 /build/
-.vscode
 build-install.bat
 app.xml
 core.xml
