@@ -60,7 +60,7 @@ class CT_RPr(BaseOxmlElement):
         'w:webHidden', 'w:color', 'w:spacing', 'w:w', 'w:kern', 'w:position',
         'w:sz', 'w:szCs', 'w:highlight', 'w:u', 'w:effect', 'w:bdr', 'w:shd',
         'w:fitText', 'w:vertAlign', 'w:rtl', 'w:cs', 'w:em', 'w:lang',
-        'w:eastAsianLayout', 'w:specVanish', 'w:oMath', 'w:w'
+        'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
     )
     rStyle = ZeroOrOne('w:rStyle', successors=_tag_seq[1:])
     rFonts = ZeroOrOne('w:rFonts', successors=_tag_seq[2:])
@@ -81,6 +81,7 @@ class CT_RPr(BaseOxmlElement):
     vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
     color = ZeroOrOne('w:color', successors=_tag_seq[19:])
+    w = ZeroOrOne('w:w', successors=_tag_seq[21:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
@@ -89,7 +90,6 @@ class CT_RPr(BaseOxmlElement):
     cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
     specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
     oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
-    w = ZeroOrOne('w:w', successors=_tag_seq[40:])
     del _tag_seq
 
     def _new_color(self):
