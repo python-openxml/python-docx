@@ -81,6 +81,7 @@ class CT_RPr(BaseOxmlElement):
     vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
     webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
     color = ZeroOrOne('w:color', successors=_tag_seq[19:])
+    w = ZeroOrOne('w:w', successors=_tag_seq[21:])
     sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
     highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
     u = ZeroOrOne('w:u', successors=_tag_seq[27:])
@@ -247,6 +248,24 @@ class CT_RPr(BaseOxmlElement):
             return
         sz = self.get_or_add_sz()
         sz.val = value
+
+    @property
+    def w_val(self):
+        """
+        The value of `w:w/@w:val` or |None| if not present.
+        """
+        w = self.w
+        if w is None:
+            return None
+        return w.val
+
+    @w_val.setter
+    def w_val(self, value):
+        if value is None:
+            self._remove_w()
+            return
+        w = self.get_or_add_w()
+        w.val = value
 
     @property
     def u_val(self):
