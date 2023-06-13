@@ -93,8 +93,10 @@ class PackageReader(object):
         """
         if visited_partnames is None:
             visited_partnames = []
+        # Detect and ignore rels to missing files like Word does
+        missing_srels = []
         for srel in srels:
-            if srel.is_external:
+            if srel.is_external or srel in missing_srels:
                 continue
             partname = srel.target_partname
             if partname in visited_partnames:
@@ -102,13 +104,21 @@ class PackageReader(object):
             visited_partnames.append(partname)
             reltype = srel.reltype
             part_srels = PackageReader._srels_for(phys_reader, partname)
-            blob = phys_reader.blob_for(partname)
+            try:
+                blob = phys_reader.blob_for(partname)
+            except KeyError:
+                missing_srels.append(srel)
+                continue
             yield (partname, blob, reltype, part_srels)
             next_walker = PackageReader._walk_phys_parts(
                 phys_reader, part_srels, visited_partnames
             )
             for partname, blob, reltype, srels in next_walker:
                 yield (partname, blob, reltype, srels)
+        else:
+            # Make the parent think the broken srels were never there
+            for srel in missing_srels:
+                srels._srels.remove(srel)
 
 
 class _ContentTypeMap(object):
