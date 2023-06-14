@@ -755,5 +755,5 @@ class _OxmlElementBase(etree.ElementBase):
 
 
 BaseOxmlElement = MetaOxmlElement(
-    'BaseOxmlElement', (etree.ElementBase,), dict(_OxmlElementBase.__dict__)
+    'BaseOxmlElement', (_OxmlElementBase,), dict(_OxmlElementBase.__dict__)
 )
