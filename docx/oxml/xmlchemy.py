@@ -745,7 +745,7 @@ class _OxmlElementBase(etree.ElementBase):
         Override of ``lxml`` _Element.xpath() method to provide standard Open
         XML namespace mapping (``nsmap``) in centralized location.
         """
-        return super(BaseOxmlElement, self).xpath(
+        return super(_OxmlElementBase, self).xpath(
             xpath_str, namespaces=nsmap
         )
 
