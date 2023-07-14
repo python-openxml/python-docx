@@ -42,6 +42,9 @@ class CONTENT_TYPE(object):
     JPEG = (
         'image/jpeg'
     )
+    SVG = (
+        'image/svg'
+    )
     MS_PHOTO = (
         'image/vnd.ms-photo'
     )
