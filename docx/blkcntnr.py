@@ -50,6 +50,28 @@ class BlockItemContainer(Parented):
         self._element._insert_tbl(tbl)
         return Table(tbl, self)
 
+    def add_table_from_df(self, df, width, header):
+        """
+        Return a table with the data from the dataframe along with the column headings
+        """
+        idx_shift = 1 if header else 0
+        tbl = self.add_table(
+            rows=df.shape[0] + idx_shift, cols=df.shape[1], width=width
+        )
+
+        if header:
+            # Add the column headings
+            for j in range(df.shape[1]):
+                tbl.cell(0, j).text = df.columns[j]
+
+        # Add the body of the data frame
+        for i in range(df.shape[0]):
+            for j in range(df.shape[1]):
+                cell = df.iat[i, j]
+                tbl.cell(i + idx_shift, j).text = str(cell)
+
+        return tbl
+
     @property
     def paragraphs(self):
         """

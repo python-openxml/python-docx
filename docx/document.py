@@ -93,6 +93,24 @@ class Document(ElementProxy):
         table.style = style
         return table
 
+    def add_table_from_df(
+        self,
+        df,
+        style=None,
+        header=True,
+        auto_fit=True,
+    ):
+        """
+        Add a table having row and column counts of *rows* and *cols*
+        respectively and table style of *style*. *style* may be a paragraph
+        style object or a paragraph style name. If *style* is |None|, the
+        table inherits the default table style of the document.
+        """
+        table = self._body.add_table_from_df(df, self._block_width, header, auto_fit)
+        table.style = style
+        table.autofit = auto_fit
+        return table
+
     @property
     def core_properties(self):
         """
