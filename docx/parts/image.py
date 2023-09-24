@@ -4,9 +4,7 @@
 The proxy class for an image part, and related objects.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import hashlib
 
@@ -20,6 +18,7 @@ class ImagePart(Part):
     An image part. Corresponds to the target part of a relationship with type
     RELATIONSHIP_TYPE.IMAGE.
     """
+
     def __init__(self, partname, content_type, blob, image=None):
         super(ImagePart, self).__init__(partname, content_type, blob)
         self._image = image
@@ -57,7 +56,7 @@ class ImagePart(Part):
         """
         if self._image is not None:
             return self._image.filename
-        return 'image.%s' % self.partname.ext
+        return "image.%s" % self.partname.ext
 
     @classmethod
     def from_image(cls, image, partname):

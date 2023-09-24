@@ -26,7 +26,6 @@ from ..unitutil.mock import (
 
 
 class DescribePart(object):
-
     def it_can_be_constructed_by_PartFactory(
         self, partname_, content_type_, blob_, package_, __init_
     ):
@@ -71,7 +70,7 @@ class DescribePart(object):
 
     @pytest.fixture
     def content_type_fixture(self):
-        content_type = 'content/type'
+        content_type = "content/type"
         part = Part(None, content_type, None, None)
         return part, content_type
 
@@ -87,14 +86,14 @@ class DescribePart(object):
 
     @pytest.fixture
     def partname_get_fixture(self):
-        partname = PackURI('/part/name')
+        partname = PackURI("/part/name")
         part = Part(partname, None, None, None)
         return part, partname
 
     @pytest.fixture
     def partname_set_fixture(self):
-        old_partname = PackURI('/old/part/name')
-        new_partname = PackURI('/new/part/name')
+        old_partname = PackURI("/old/part/name")
+        new_partname = PackURI("/new/part/name")
         part = Part(old_partname, None, None, None)
         return part, new_partname
 
@@ -122,7 +121,6 @@ class DescribePart(object):
 
 
 class DescribePartRelationshipManagementInterface(object):
-
     def it_provides_access_to_its_relationships(self, rels_fixture):
         part, Relationships_, partname_, rels_ = rels_fixture
         rels = part.rels
@@ -132,19 +130,15 @@ class DescribePartRelationshipManagementInterface(object):
     def it_can_load_a_relationship(self, load_rel_fixture):
         part, rels_, reltype_, target_, rId_ = load_rel_fixture
         part.load_rel(reltype_, target_, rId_)
-        rels_.add_relationship.assert_called_once_with(
-            reltype_, target_, rId_, False
-        )
+        rels_.add_relationship.assert_called_once_with(reltype_, target_, rId_, False)
 
-    def it_can_establish_a_relationship_to_another_part(
-            self, relate_to_part_fixture):
+    def it_can_establish_a_relationship_to_another_part(self, relate_to_part_fixture):
         part, target_, reltype_, rId_ = relate_to_part_fixture
         rId = part.relate_to(target_, reltype_)
         part.rels.get_or_add.assert_called_once_with(reltype_, target_)
         assert rId is rId_
 
-    def it_can_establish_an_external_relationship(
-            self, relate_to_url_fixture):
+    def it_can_establish_an_external_relationship(self, relate_to_url_fixture):
         part, url_, reltype_, rId_ = relate_to_url_fixture
         rId = part.relate_to(url_, reltype_, is_external=True)
         part.rels.get_or_add_ext_rel.assert_called_once_with(reltype_, url_)
@@ -168,22 +162,23 @@ class DescribePartRelationshipManagementInterface(object):
         part, related_parts_ = related_parts_fixture
         assert part.related_parts is related_parts_
 
-    def it_can_find_the_uri_of_an_external_relationship(
-            self, target_ref_fixture):
+    def it_can_find_the_uri_of_an_external_relationship(self, target_ref_fixture):
         part, rId_, url_ = target_ref_fixture
         url = part.target_ref(rId_)
         assert url == url_
 
     # fixtures ---------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:p', True),
-        ('w:p/r:a{r:id=rId42}', True),
-        ('w:p/r:a{r:id=rId42}/r:b{r:id=rId42}', False),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:p", True),
+            ("w:p/r:a{r:id=rId42}", True),
+            ("w:p/r:a{r:id=rId42}/r:b{r:id=rId42}", False),
+        ]
+    )
     def drop_rel_fixture(self, request, part):
         part_cxml, rel_should_be_dropped = request.param
-        rId = 'rId42'
+        rId = "rId42"
         part._element = element(part_cxml)
         part._rels = {rId: None}
         return part, rId, rel_should_be_dropped
@@ -194,15 +189,13 @@ class DescribePartRelationshipManagementInterface(object):
         return part, rels_, reltype_, part_, rId_
 
     @pytest.fixture
-    def relate_to_part_fixture(
-            self, request, part, reltype_, part_, rels_, rId_):
+    def relate_to_part_fixture(self, request, part, reltype_, part_, rels_, rId_):
         part._rels = rels_
         target_ = part_
         return part, target_, reltype_, rId_
 
     @pytest.fixture
-    def relate_to_url_fixture(
-            self, request, part, rels_, url_, reltype_, rId_):
+    def relate_to_url_fixture(self, request, part, rels_, url_, reltype_, rId_):
         part._rels = rels_
         return part, url_, reltype_, rId_
 
@@ -242,15 +235,11 @@ class DescribePartRelationshipManagementInterface(object):
 
     @pytest.fixture
     def Relationships_(self, request, rels_):
-        return class_mock(
-            request, 'docx.opc.part.Relationships', return_value=rels_
-        )
+        return class_mock(request, "docx.opc.part.Relationships", return_value=rels_)
 
     @pytest.fixture
     def rel_(self, request, rId_, url_):
-        return instance_mock(
-            request, _Relationship, rId=rId_, target_ref=url_
-        )
+        return instance_mock(request, _Relationship, rId=rId_, target_ref=url_)
 
     @pytest.fixture
     def rels_(self, request, part_, rel_, rId_, related_parts_):
@@ -279,12 +268,14 @@ class DescribePartRelationshipManagementInterface(object):
 
 
 class DescribePartFactory(object):
-
-    def it_constructs_part_from_selector_if_defined(
-            self, cls_selector_fixture):
+    def it_constructs_part_from_selector_if_defined(self, cls_selector_fixture):
         # fixture ----------------------
-        (cls_selector_fn_, part_load_params, CustomPartClass_,
-         part_of_custom_type_) = cls_selector_fixture
+        (
+            cls_selector_fn_,
+            part_load_params,
+            CustomPartClass_,
+            part_of_custom_type_,
+        ) = cls_selector_fixture
         partname, content_type, reltype, blob, package = part_load_params
         # exercise ---------------------
         PartFactory.part_class_selector = cls_selector_fn_
@@ -297,7 +288,8 @@ class DescribePartFactory(object):
         assert part is part_of_custom_type_
 
     def it_constructs_custom_part_type_for_registered_content_types(
-            self, part_args_, CustomPartClass_, part_of_custom_type_):
+        self, part_args_, CustomPartClass_, part_of_custom_type_
+    ):
         # fixture ----------------------
         partname, content_type, reltype, package, blob = part_args_
         # exercise ---------------------
@@ -310,7 +302,8 @@ class DescribePartFactory(object):
         assert part is part_of_custom_type_
 
     def it_constructs_part_using_default_class_when_no_custom_registered(
-            self, part_args_2_, DefaultPartClass_, part_of_default_type_):
+        self, part_args_2_, DefaultPartClass_, part_of_default_type_
+    ):
         partname, content_type, reltype, blob, package = part_args_2_
         part = PartFactory(partname, content_type, reltype, blob, package)
         DefaultPartClass_.load.assert_called_once_with(
@@ -331,21 +324,29 @@ class DescribePartFactory(object):
     @pytest.fixture
     def cls_method_fn_(self, request, cls_selector_fn_):
         return function_mock(
-            request, 'docx.opc.part.cls_method_fn',
-            return_value=cls_selector_fn_
+            request, "docx.opc.part.cls_method_fn", return_value=cls_selector_fn_
         )
 
     @pytest.fixture
     def cls_selector_fixture(
-            self, request, cls_selector_fn_, cls_method_fn_, part_load_params,
-            CustomPartClass_, part_of_custom_type_):
+        self,
+        request,
+        cls_selector_fn_,
+        cls_method_fn_,
+        part_load_params,
+        CustomPartClass_,
+        part_of_custom_type_,
+    ):
         def reset_part_class_selector():
             PartFactory.part_class_selector = original_part_class_selector
+
         original_part_class_selector = PartFactory.part_class_selector
         request.addfinalizer(reset_part_class_selector)
         return (
-            cls_selector_fn_, part_load_params, CustomPartClass_,
-            part_of_custom_type_
+            cls_selector_fn_,
+            part_load_params,
+            CustomPartClass_,
+            part_of_custom_type_,
         )
 
     @pytest.fixture
@@ -355,7 +356,7 @@ class DescribePartFactory(object):
         cls_selector_fn_.return_value = CustomPartClass_
         # Python 2 version
         cls_selector_fn_.__func__ = loose_mock(
-            request, name='__func__', return_value=cls_selector_fn_
+            request, name="__func__", return_value=cls_selector_fn_
         )
         return cls_selector_fn_
 
@@ -369,15 +370,13 @@ class DescribePartFactory(object):
 
     @pytest.fixture
     def CustomPartClass_(self, request, part_of_custom_type_):
-        CustomPartClass_ = Mock(name='CustomPartClass', spec=Part)
+        CustomPartClass_ = Mock(name="CustomPartClass", spec=Part)
         CustomPartClass_.load.return_value = part_of_custom_type_
         return CustomPartClass_
 
     @pytest.fixture
     def DefaultPartClass_(self, request, part_of_default_type_):
-        DefaultPartClass_ = cls_attr_mock(
-            request, PartFactory, 'default_part_type'
-        )
+        DefaultPartClass_ = cls_attr_mock(request, PartFactory, "default_part_type")
         DefaultPartClass_.load.return_value = part_of_default_type_
         return DefaultPartClass_
 
@@ -390,8 +389,7 @@ class DescribePartFactory(object):
         return instance_mock(request, OpcPackage)
 
     @pytest.fixture
-    def part_load_params(
-            self, partname_, content_type_, reltype_, blob_, package_):
+    def part_load_params(self, partname_, content_type_, reltype_, blob_, package_):
         return partname_, content_type_, reltype_, blob_, package_
 
     @pytest.fixture
@@ -411,15 +409,13 @@ class DescribePartFactory(object):
         return instance_mock(request, PackURI)
 
     @pytest.fixture
-    def part_args_(
-            self, request, partname_, content_type_, reltype_, package_,
-            blob_):
+    def part_args_(self, request, partname_, content_type_, reltype_, package_, blob_):
         return partname_, content_type_, reltype_, blob_, package_
 
     @pytest.fixture
     def part_args_2_(
-            self, request, partname_2_, content_type_2_, reltype_2_,
-            package_2_, blob_2_):
+        self, request, partname_2_, content_type_2_, reltype_2_, package_2_, blob_2_
+    ):
         return partname_2_, content_type_2_, reltype_2_, blob_2_, package_2_
 
     @pytest.fixture
@@ -432,7 +428,6 @@ class DescribePartFactory(object):
 
 
 class DescribeXmlPart(object):
-
     def it_can_be_constructed_by_PartFactory(
         self, partname_, content_type_, blob_, package_, element_, parse_xml_, __init_
     ):
@@ -489,9 +484,7 @@ class DescribeXmlPart(object):
 
     @pytest.fixture
     def parse_xml_(self, request, element_):
-        return function_mock(
-            request, 'docx.opc.part.parse_xml', return_value=element_
-        )
+        return function_mock(request, "docx.opc.part.parse_xml", return_value=element_)
 
     @pytest.fixture
     def partname_(self, request):
@@ -499,6 +492,4 @@ class DescribeXmlPart(object):
 
     @pytest.fixture
     def serialize_part_xml_(self, request):
-        return function_mock(
-            request, 'docx.opc.part.serialize_part_xml'
-        )
+        return function_mock(request, "docx.opc.part.serialize_part_xml")

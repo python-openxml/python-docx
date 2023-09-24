@@ -5,9 +5,7 @@ Objects related to shapes, visual objects that appear on the drawing layer of
 a document.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from .enum.shape import WD_INLINE_SHAPE
 from .oxml.ns import nsmap
@@ -19,6 +17,7 @@ class InlineShapes(Parented):
     Sequence of |InlineShape| instances, supporting len(), iteration, and
     indexed access.
     """
+
     def __init__(self, body_elm, parent):
         super(InlineShapes, self).__init__(parent)
         self._body = body_elm
@@ -43,7 +42,7 @@ class InlineShapes(Parented):
     @property
     def _inline_lst(self):
         body = self._body
-        xpath = '//w:p/w:r/w:drawing/wp:inline'
+        xpath = "//w:p/w:r/w:drawing/wp:inline"
         return body.xpath(xpath)
 
 
@@ -52,6 +51,7 @@ class InlineShape(object):
     Proxy for an ``<wp:inline>`` element, representing the container for an
     inline graphical object.
     """
+
     def __init__(self, inline):
         super(InlineShape, self).__init__()
         self._inline = inline
@@ -78,14 +78,14 @@ class InlineShape(object):
         """
         graphicData = self._inline.graphic.graphicData
         uri = graphicData.uri
-        if uri == nsmap['pic']:
+        if uri == nsmap["pic"]:
             blip = graphicData.pic.blipFill.blip
             if blip.link is not None:
                 return WD_INLINE_SHAPE.LINKED_PICTURE
             return WD_INLINE_SHAPE.PICTURE
-        if uri == nsmap['c']:
+        if uri == nsmap["c"]:
             return WD_INLINE_SHAPE.CHART
-        if uri == nsmap['dgm']:
+        if uri == nsmap["dgm"]:
             return WD_INLINE_SHAPE.SMART_ART
         return WD_INLINE_SHAPE.NOT_IMPLEMENTED
 

@@ -4,9 +4,7 @@
 |NumberingPart| and closely related objects
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ..opc.part import XmlPart
 from ..shared import lazyproperty
@@ -17,6 +15,7 @@ class NumberingPart(XmlPart):
     Proxy for the numbering.xml part containing numbering definitions for
     a document or glossary.
     """
+
     @classmethod
     def new(cls):
         """
@@ -39,6 +38,7 @@ class _NumberingDefinitions(object):
     Collection of |_NumberingDefinition| instances corresponding to the
     ``<w:num>`` elements in a numbering part.
     """
+
     def __init__(self, numbering_elm):
         super(_NumberingDefinitions, self).__init__()
         self._numbering = numbering_elm

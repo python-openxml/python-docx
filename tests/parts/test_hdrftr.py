@@ -16,7 +16,6 @@ from ..unitutil.mock import function_mock, initializer_mock, instance_mock, meth
 
 
 class DescribeFooterPart(object):
-
     def it_is_used_by_loader_to_construct_footer_part(
         self, package_, FooterPart_load_, footer_part_
     ):
@@ -85,7 +84,6 @@ class DescribeFooterPart(object):
 
 
 class DescribeHeaderPart(object):
-
     def it_is_used_by_loader_to_construct_header_part(
         self, package_, HeaderPart_load_, header_part_
     ):

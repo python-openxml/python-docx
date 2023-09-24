@@ -66,7 +66,7 @@ class BaseStoryPart(XmlPart):
         the existing id sequence are not filled. The id attribute value is unique in the
         document, without regard to the element type it appears on.
         """
-        id_str_lst = self._element.xpath('//@id')
+        id_str_lst = self._element.xpath("//@id")
         used_ids = [int(id_str) for id_str in id_str_lst if id_str.isdigit()]
         if not used_ids:
             return 1

@@ -4,9 +4,7 @@
 Sub-package module for docx.styles sub-package.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 
 class BabelFish(object):
@@ -16,18 +14,18 @@ class BabelFish(object):
     """
 
     style_aliases = (
-        ('Caption', 'caption'),
-        ('Footer', 'footer'),
-        ('Header', 'header'),
-        ('Heading 1', 'heading 1'),
-        ('Heading 2', 'heading 2'),
-        ('Heading 3', 'heading 3'),
-        ('Heading 4', 'heading 4'),
-        ('Heading 5', 'heading 5'),
-        ('Heading 6', 'heading 6'),
-        ('Heading 7', 'heading 7'),
-        ('Heading 8', 'heading 8'),
-        ('Heading 9', 'heading 9'),
+        ("Caption", "caption"),
+        ("Footer", "footer"),
+        ("Header", "header"),
+        ("Heading 1", "heading 1"),
+        ("Heading 2", "heading 2"),
+        ("Heading 3", "heading 3"),
+        ("Heading 4", "heading 4"),
+        ("Heading 5", "heading 5"),
+        ("Heading 6", "heading 6"),
+        ("Heading 7", "heading 7"),
+        ("Heading 8", "heading 8"),
+        ("Heading 9", "heading 9"),
     )
 
     internal_style_names = dict(style_aliases)
@@ -47,6 +45,4 @@ class BabelFish(object):
         Return the user interface style name corresponding to
         *internal_style_name*, such as 'Heading 1' for 'heading 1'.
         """
-        return cls.ui_style_names.get(
-            internal_style_name, internal_style_name
-        )
+        return cls.ui_style_names.get(internal_style_name, internal_style_name)

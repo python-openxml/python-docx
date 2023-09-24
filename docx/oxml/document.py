@@ -12,7 +12,8 @@ class CT_Document(BaseOxmlElement):
     """
     ``<w:document>`` element, the root element of a document.xml file.
     """
-    body = ZeroOrOne('w:body')
+
+    body = ZeroOrOne("w:body")
 
     @property
     def sectPr_lst(self):
@@ -20,7 +21,7 @@ class CT_Document(BaseOxmlElement):
         Return a list containing a reference to each ``<w:sectPr>`` element
         in the document, in the order encountered.
         """
-        return self.xpath('.//w:sectPr')
+        return self.xpath(".//w:sectPr")
 
 
 class CT_Body(BaseOxmlElement):
@@ -28,9 +29,10 @@ class CT_Body(BaseOxmlElement):
     ``<w:body>``, the container element for the main document story in
     ``document.xml``.
     """
-    p = ZeroOrMore('w:p', successors=('w:sectPr',))
-    tbl = ZeroOrMore('w:tbl', successors=('w:sectPr',))
-    sectPr = ZeroOrOne('w:sectPr', successors=())
+
+    p = ZeroOrMore("w:p", successors=("w:sectPr",))
+    tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))
+    sectPr = ZeroOrOne("w:sectPr", successors=())
 
     def add_section_break(self):
         """Return `w:sectPr` element for new section added at end of document.

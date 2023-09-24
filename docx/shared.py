@@ -14,6 +14,7 @@ class Length(int):
     36,000 to the mm. Provides convenience unit conversion methods in the form
     of read-only properties. Immutable.
     """
+
     _EMUS_PER_INCH = 914400
     _EMUS_PER_CM = 360000
     _EMUS_PER_MM = 36000
@@ -71,6 +72,7 @@ class Inches(Length):
     Convenience constructor for length in inches, e.g.
     ``width = Inches(0.5)``.
     """
+
     def __new__(cls, inches):
         emu = int(inches * Length._EMUS_PER_INCH)
         return Length.__new__(cls, emu)
@@ -81,6 +83,7 @@ class Cm(Length):
     Convenience constructor for length in centimeters, e.g.
     ``height = Cm(12)``.
     """
+
     def __new__(cls, cm):
         emu = int(cm * Length._EMUS_PER_CM)
         return Length.__new__(cls, emu)
@@ -91,6 +94,7 @@ class Emu(Length):
     Convenience constructor for length in English Metric Units, e.g.
     ``width = Emu(457200)``.
     """
+
     def __new__(cls, emu):
         return Length.__new__(cls, int(emu))
 
@@ -100,6 +104,7 @@ class Mm(Length):
     Convenience constructor for length in millimeters, e.g.
     ``width = Mm(240.5)``.
     """
+
     def __new__(cls, mm):
         emu = int(mm * Length._EMUS_PER_MM)
         return Length.__new__(cls, emu)
@@ -109,6 +114,7 @@ class Pt(Length):
     """
     Convenience value class for specifying a length in points
     """
+
     def __new__(cls, points):
         emu = int(points * Length._EMUS_PER_PT)
         return Length.__new__(cls, emu)
@@ -119,6 +125,7 @@ class Twips(Length):
     Convenience constructor for length in twips, e.g. ``width = Twips(42)``.
     A twip is a twentieth of a point, 635 EMU.
     """
+
     def __new__(cls, twips):
         emu = int(twips * Length._EMUS_PER_TWIP)
         return Length.__new__(cls, emu)
@@ -128,21 +135,22 @@ class RGBColor(tuple):
     """
     Immutable value object defining a particular RGB color.
     """
+
     def __new__(cls, r, g, b):
-        msg = 'RGBColor() takes three integer values 0-255'
+        msg = "RGBColor() takes three integer values 0-255"
         for val in (r, g, b):
             if not isinstance(val, int) or val < 0 or val > 255:
                 raise ValueError(msg)
         return super(RGBColor, cls).__new__(cls, (r, g, b))
 
     def __repr__(self):
-        return 'RGBColor(0x%02x, 0x%02x, 0x%02x)' % self
+        return "RGBColor(0x%02x, 0x%02x, 0x%02x)" % self
 
     def __str__(self):
         """
         Return a hex string rgb value, like '3C2F80'
         """
-        return '%02X%02X%02X' % self
+        return "%02X%02X%02X" % self
 
     @classmethod
     def from_string(cls, rgb_hex_str):
@@ -161,7 +169,7 @@ def lazyproperty(f):
     to calculate a cached property value. After that, the cached value is
     returned.
     """
-    cache_attr_name = '_%s' % f.__name__  # like '_foobar' for prop 'foobar'
+    cache_attr_name = "_%s" % f.__name__  # like '_foobar' for prop 'foobar'
     docstring = f.__doc__
 
     def get_prop_value(obj):
@@ -193,7 +201,7 @@ class ElementProxy(object):
     type of class in python-docx other than custom element (oxml) classes.
     """
 
-    __slots__ = ('_element', '_parent')
+    __slots__ = ("_element", "_parent")
 
     def __init__(self, element, parent=None):
         self._element = element
@@ -238,6 +246,7 @@ class Parented(object):
     such as add or drop a relationship. Provides ``self._parent`` attribute
     to subclasses.
     """
+
     def __init__(self, parent):
         super(Parented, self).__init__()
         self._parent = parent

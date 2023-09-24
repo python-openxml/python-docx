@@ -15,6 +15,7 @@ class CaseInsensitiveDict(dict):
     assumes str keys, and that it is created empty; keys passed in constructor
     are not accounted for
     """
+
     def __contains__(self, key):
         return super(CaseInsensitiveDict, self).__contains__(key.lower())
 
@@ -22,9 +23,7 @@ class CaseInsensitiveDict(dict):
         return super(CaseInsensitiveDict, self).__getitem__(key.lower())
 
     def __setitem__(self, key, value):
-        return super(CaseInsensitiveDict, self).__setitem__(
-            key.lower(), value
-        )
+        return super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
 
 
 def lazyproperty(f):
@@ -33,7 +32,7 @@ def lazyproperty(f):
     to calculate a cached property value. After that, the cached value is
     returned.
     """
-    cache_attr_name = '_%s' % f.__name__  # like '_foobar' for prop 'foobar'
+    cache_attr_name = "_%s" % f.__name__  # like '_foobar' for prop 'foobar'
     docstring = f.__doc__
 
     def get_prop_value(obj):

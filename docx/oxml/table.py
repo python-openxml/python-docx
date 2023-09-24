@@ -2,9 +2,7 @@
 
 """Custom element classes for tables"""
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from . import parse_xml
 from ..enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
@@ -12,11 +10,20 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    ST_Merge,
+    ST_TblLayoutType,
+    ST_TblWidth,
+    ST_TwipsMeasure,
+    XsdInt,
 )
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
-    RequiredAttribute, ZeroOrOne, ZeroOrMore
+    BaseOxmlElement,
+    OneAndOnlyOne,
+    OneOrMore,
+    OptionalAttribute,
+    RequiredAttribute,
+    ZeroOrOne,
+    ZeroOrMore,
 )
 
 
@@ -24,17 +31,19 @@ class CT_Height(BaseOxmlElement):
     """
     Used for ``<w:trHeight>`` to specify a row height and row height rule.
     """
-    val = OptionalAttribute('w:val', ST_TwipsMeasure)
-    hRule = OptionalAttribute('w:hRule', WD_ROW_HEIGHT_RULE)
+
+    val = OptionalAttribute("w:val", ST_TwipsMeasure)
+    hRule = OptionalAttribute("w:hRule", WD_ROW_HEIGHT_RULE)
 
 
 class CT_Row(BaseOxmlElement):
     """
     ``<w:tr>`` element
     """
-    tblPrEx = ZeroOrOne('w:tblPrEx')  # custom inserter below
-    trPr = ZeroOrOne('w:trPr')        # custom inserter below
-    tc = ZeroOrMore('w:tc')
+
+    tblPrEx = ZeroOrOne("w:tblPrEx")  # custom inserter below
+    trPr = ZeroOrOne("w:trPr")  # custom inserter below
+    tc = ZeroOrMore("w:tc")
 
     def tc_at_grid_col(self, idx):
         """
@@ -47,8 +56,8 @@ class CT_Row(BaseOxmlElement):
                 return tc
             grid_col += tc.grid_span
             if grid_col > idx:
-                raise ValueError('no cell on grid column %d' % idx)
-        raise ValueError('index out of bounds')
+                raise ValueError("no cell on grid column %d" % idx)
+        raise ValueError("index out of bounds")
 
     @property
     def tr_idx(self):
@@ -108,9 +117,10 @@ class CT_Tbl(BaseOxmlElement):
     """
     ``<w:tbl>`` element
     """
-    tblPr = OneAndOnlyOne('w:tblPr')
-    tblGrid = OneAndOnlyOne('w:tblGrid')
-    tr = ZeroOrMore('w:tr')
+
+    tblPr = OneAndOnlyOne("w:tblPr")
+    tblGrid = OneAndOnlyOne("w:tblGrid")
+    tr = ZeroOrMore("w:tr")
 
     @property
     def bidiVisual_val(self):
@@ -182,54 +192,52 @@ class CT_Tbl(BaseOxmlElement):
 
     @classmethod
     def _tbl_xml(cls, rows, cols, width):
-        col_width = Emu(width/cols) if cols > 0 else Emu(0)
+        col_width = Emu(width / cols) if cols > 0 else Emu(0)
         return (
-            '<w:tbl %s>\n'
-            '  <w:tblPr>\n'
+            "<w:tbl %s>\n"
+            "  <w:tblPr>\n"
             '    <w:tblW w:type="auto" w:w="0"/>\n'
             '    <w:tblLook w:firstColumn="1" w:firstRow="1"\n'
             '               w:lastColumn="0" w:lastRow="0" w:noHBand="0"\n'
             '               w:noVBand="1" w:val="04A0"/>\n'
-            '  </w:tblPr>\n'
-            '%s'  # tblGrid
-            '%s'  # trs
-            '</w:tbl>\n'
+            "  </w:tblPr>\n"
+            "%s"  # tblGrid
+            "%s"  # trs
+            "</w:tbl>\n"
         ) % (
-            nsdecls('w'),
+            nsdecls("w"),
             cls._tblGrid_xml(cols, col_width),
-            cls._trs_xml(rows, cols, col_width)
+            cls._trs_xml(rows, cols, col_width),
         )
 
     @classmethod
     def _tblGrid_xml(cls, col_count, col_width):
-        xml = '  <w:tblGrid>\n'
+        xml = "  <w:tblGrid>\n"
         for i in range(col_count):
             xml += '    <w:gridCol w:w="%d"/>\n' % col_width.twips
-        xml += '  </w:tblGrid>\n'
+        xml += "  </w:tblGrid>\n"
         return xml
 
     @classmethod
     def _trs_xml(cls, row_count, col_count, col_width):
-        xml = ''
+        xml = ""
         for i in range(row_count):
-            xml += (
-                '  <w:tr>\n'
-                '%s'
-                '  </w:tr>\n'
-            ) % cls._tcs_xml(col_count, col_width)
+            xml += ("  <w:tr>\n" "%s" "  </w:tr>\n") % cls._tcs_xml(
+                col_count, col_width
+            )
         return xml
 
     @classmethod
     def _tcs_xml(cls, col_count, col_width):
-        xml = ''
+        xml = ""
         for i in range(col_count):
             xml += (
-                '    <w:tc>\n'
-                '      <w:tcPr>\n'
+                "    <w:tc>\n"
+                "      <w:tcPr>\n"
                 '        <w:tcW w:type="dxa" w:w="%d"/>\n'
-                '      </w:tcPr>\n'
-                '      <w:p/>\n'
-                '    </w:tc>\n'
+                "      </w:tcPr>\n"
+                "      <w:p/>\n"
+                "    </w:tc>\n"
             ) % col_width.twips
         return xml
 
@@ -239,7 +247,8 @@ class CT_TblGrid(BaseOxmlElement):
     ``<w:tblGrid>`` element, child of ``<w:tbl>``, holds ``<w:gridCol>``
     elements that define column count, width, etc.
     """
-    gridCol = ZeroOrMore('w:gridCol', successors=('w:tblGridChange',))
+
+    gridCol = ZeroOrMore("w:gridCol", successors=("w:tblGridChange",))
 
 
 class CT_TblGridCol(BaseOxmlElement):
@@ -247,7 +256,8 @@ class CT_TblGridCol(BaseOxmlElement):
     ``<w:gridCol>`` element, child of ``<w:tblGrid>``, defines a table
     column.
     """
-    w = OptionalAttribute('w:w', ST_TwipsMeasure)
+
+    w = OptionalAttribute("w:w", ST_TwipsMeasure)
 
     @property
     def gridCol_idx(self):
@@ -263,7 +273,8 @@ class CT_TblLayoutType(BaseOxmlElement):
     ``<w:tblLayout>`` element, specifying whether column widths are fixed or
     can be automatically adjusted based on content.
     """
-    type = OptionalAttribute('w:type', ST_TblLayoutType)
+
+    type = OptionalAttribute("w:type", ST_TblLayoutType)
 
 
 class CT_TblPr(BaseOxmlElement):
@@ -271,17 +282,31 @@ class CT_TblPr(BaseOxmlElement):
     ``<w:tblPr>`` element, child of ``<w:tbl>``, holds child elements that
     define table properties such as style and borders.
     """
+
     _tag_seq = (
-        'w:tblStyle', 'w:tblpPr', 'w:tblOverlap', 'w:bidiVisual',
-        'w:tblStyleRowBandSize', 'w:tblStyleColBandSize', 'w:tblW', 'w:jc',
-        'w:tblCellSpacing', 'w:tblInd', 'w:tblBorders', 'w:shd',
-        'w:tblLayout', 'w:tblCellMar', 'w:tblLook', 'w:tblCaption',
-        'w:tblDescription', 'w:tblPrChange'
+        "w:tblStyle",
+        "w:tblpPr",
+        "w:tblOverlap",
+        "w:bidiVisual",
+        "w:tblStyleRowBandSize",
+        "w:tblStyleColBandSize",
+        "w:tblW",
+        "w:jc",
+        "w:tblCellSpacing",
+        "w:tblInd",
+        "w:tblBorders",
+        "w:shd",
+        "w:tblLayout",
+        "w:tblCellMar",
+        "w:tblLook",
+        "w:tblCaption",
+        "w:tblDescription",
+        "w:tblPrChange",
     )
-    tblStyle = ZeroOrOne('w:tblStyle', successors=_tag_seq[1:])
-    bidiVisual = ZeroOrOne('w:bidiVisual', successors=_tag_seq[4:])
-    jc = ZeroOrOne('w:jc', successors=_tag_seq[8:])
-    tblLayout = ZeroOrOne('w:tblLayout', successors=_tag_seq[13:])
+    tblStyle = ZeroOrOne("w:tblStyle", successors=_tag_seq[1:])
+    bidiVisual = ZeroOrOne("w:bidiVisual", successors=_tag_seq[4:])
+    jc = ZeroOrOne("w:jc", successors=_tag_seq[8:])
+    tblLayout = ZeroOrOne("w:tblLayout", successors=_tag_seq[13:])
     del _tag_seq
 
     @property
@@ -313,12 +338,12 @@ class CT_TblPr(BaseOxmlElement):
         tblLayout = self.tblLayout
         if tblLayout is None:
             return True
-        return False if tblLayout.type == 'fixed' else True
+        return False if tblLayout.type == "fixed" else True
 
     @autofit.setter
     def autofit(self, value):
         tblLayout = self.get_or_add_tblLayout()
-        tblLayout.type = 'autofit' if value else 'fixed'
+        tblLayout.type = "autofit" if value else "fixed"
 
     @property
     def style(self):
@@ -344,11 +369,12 @@ class CT_TblWidth(BaseOxmlElement):
     Used for ``<w:tblW>`` and ``<w:tcW>`` elements and many others, to
     specify a table-related width.
     """
+
     # the type for `w` attr is actually ST_MeasurementOrPercent, but using
     # XsdInt for now because only dxa (twips) values are being used. It's not
     # entirely clear what the semantics are for other values like -01.4mm
-    w = RequiredAttribute('w:w', XsdInt)
-    type = RequiredAttribute('w:type', ST_TblWidth)
+    w = RequiredAttribute("w:w", XsdInt)
+    type = RequiredAttribute("w:type", ST_TblWidth)
 
     @property
     def width(self):
@@ -356,22 +382,22 @@ class CT_TblWidth(BaseOxmlElement):
         Return the EMU length value represented by the combined ``w:w`` and
         ``w:type`` attributes.
         """
-        if self.type != 'dxa':
+        if self.type != "dxa":
             return None
         return Twips(self.w)
 
     @width.setter
     def width(self, value):
-        self.type = 'dxa'
+        self.type = "dxa"
         self.w = Emu(value).twips
 
 
 class CT_Tc(BaseOxmlElement):
     """`w:tc` table cell element"""
 
-    tcPr = ZeroOrOne('w:tcPr')  # bunches of successors, overriding insert
-    p = OneOrMore('w:p')
-    tbl = OneOrMore('w:tbl')
+    tcPr = ZeroOrOne("w:tcPr")  # bunches of successors, overriding insert
+    p = OneOrMore("w:p")
+    tbl = OneOrMore("w:tbl")
 
     @property
     def bottom(self):
@@ -422,7 +448,7 @@ class CT_Tc(BaseOxmlElement):
         Generate a reference to each of the block-level content elements in
         this cell, in the order they appear.
         """
-        block_item_tags = (qn('w:p'), qn('w:tbl'), qn('w:sdt'))
+        block_item_tags = (qn("w:p"), qn("w:tbl"), qn("w:sdt"))
         for child in self:
             if child.tag in block_item_tags:
                 yield child
@@ -451,11 +477,7 @@ class CT_Tc(BaseOxmlElement):
         Return a new ``<w:tc>`` element, containing an empty paragraph as the
         required EG_BlockLevelElt.
         """
-        return parse_xml(
-            '<w:tc %s>\n'
-            '  <w:p/>\n'
-            '</w:tc>' % nsdecls('w')
-        )
+        return parse_xml("<w:tc %s>\n" "  <w:p/>\n" "</w:tc>" % nsdecls("w"))
 
     @property
     def right(self):
@@ -532,6 +554,7 @@ class CT_Tc(BaseOxmlElement):
         horizontal spans and creating continuation cells to form vertical
         spans.
         """
+
         def vMerge_val(top_tc):
             if top_tc is not self:
                 return ST_Merge.CONTINUE
@@ -542,7 +565,7 @@ class CT_Tc(BaseOxmlElement):
         top_tc = self if top_tc is None else top_tc
         self._span_to_width(width, top_tc, vMerge_val(top_tc))
         if height > 1:
-            self._tc_below._grow_to(width, height-1, top_tc)
+            self._tc_below._grow_to(width, height - 1, top_tc)
 
     def _insert_tcPr(self, tcPr):
         """
@@ -591,7 +614,7 @@ class CT_Tc(BaseOxmlElement):
         The `w:tc` element immediately following this one in this row, or
         |None| if this is the last `w:tc` element in the row.
         """
-        following_tcs = self.xpath('./following-sibling::w:tc')
+        following_tcs = self.xpath("./following-sibling::w:tc")
         return following_tcs[0] if following_tcs else None
 
     def _remove(self):
@@ -607,7 +630,7 @@ class CT_Tc(BaseOxmlElement):
         """
         block_items = list(self.iter_block_items())
         last_content_elm = block_items[-1]
-        if last_content_elm.tag != qn('w:p'):
+        if last_content_elm.tag != qn("w:p"):
             return
         p = last_content_elm
         if len(p.r_lst) > 0:
@@ -620,20 +643,21 @@ class CT_Tc(BaseOxmlElement):
         the merged cell formed by using this tc and *other_tc* as opposite
         corner extents.
         """
+
         def raise_on_inverted_L(a, b):
             if a.top == b.top and a.bottom != b.bottom:
-                raise InvalidSpanError('requested span not rectangular')
+                raise InvalidSpanError("requested span not rectangular")
             if a.left == b.left and a.right != b.right:
-                raise InvalidSpanError('requested span not rectangular')
+                raise InvalidSpanError("requested span not rectangular")
 
         def raise_on_tee_shaped(a, b):
             top_most, other = (a, b) if a.top < b.top else (b, a)
             if top_most.top < other.top and top_most.bottom > other.bottom:
-                raise InvalidSpanError('requested span not rectangular')
+                raise InvalidSpanError("requested span not rectangular")
 
             left_most, other = (a, b) if a.left < b.left else (b, a)
             if left_most.left < other.left and left_most.right > other.right:
-                raise InvalidSpanError('requested span not rectangular')
+                raise InvalidSpanError("requested span not rectangular")
 
         raise_on_inverted_L(self, other_tc)
         raise_on_tee_shaped(self, other_tc)
@@ -671,11 +695,12 @@ class CT_Tc(BaseOxmlElement):
         |InvalidSpanError| if the width of the resulting cell is greater than
         *grid_width* or if there is no next `<w:tc>` element in the row.
         """
+
         def raise_on_invalid_swallow(next_tc):
             if next_tc is None:
-                raise InvalidSpanError('not enough grid columns')
+                raise InvalidSpanError("not enough grid columns")
             if self.grid_span + next_tc.grid_span > grid_width:
-                raise InvalidSpanError('span is not rectangular')
+                raise InvalidSpanError("span is not rectangular")
 
         next_tc = self._next_tc
         raise_on_invalid_swallow(next_tc)
@@ -689,7 +714,7 @@ class CT_Tc(BaseOxmlElement):
         """
         The tbl element this tc element appears in.
         """
-        return self.xpath('./ancestor::w:tbl[position()=1]')[0]
+        return self.xpath("./ancestor::w:tbl[position()=1]")[0]
 
     @property
     def _tc_above(self):
@@ -713,7 +738,7 @@ class CT_Tc(BaseOxmlElement):
         """
         The tr element this tc element appears in.
         """
-        return self.xpath('./ancestor::w:tr[position()=1]')[0]
+        return self.xpath("./ancestor::w:tr[position()=1]")[0]
 
     @property
     def _tr_above(self):
@@ -724,8 +749,8 @@ class CT_Tc(BaseOxmlElement):
         tr_lst = self._tbl.tr_lst
         tr_idx = tr_lst.index(self._tr)
         if tr_idx == 0:
-            raise ValueError('no tr above topmost tr')
-        return tr_lst[tr_idx-1]
+            raise ValueError("no tr above topmost tr")
+        return tr_lst[tr_idx - 1]
 
     @property
     def _tr_below(self):
@@ -736,7 +761,7 @@ class CT_Tc(BaseOxmlElement):
         tr_lst = self._tbl.tr_lst
         tr_idx = tr_lst.index(self._tr)
         try:
-            return tr_lst[tr_idx+1]
+            return tr_lst[tr_idx + 1]
         except IndexError:
             return None
 
@@ -752,16 +777,31 @@ class CT_TcPr(BaseOxmlElement):
     """
     ``<w:tcPr>`` element, defining table cell properties
     """
+
     _tag_seq = (
-        'w:cnfStyle', 'w:tcW', 'w:gridSpan', 'w:hMerge', 'w:vMerge',
-        'w:tcBorders', 'w:shd', 'w:noWrap', 'w:tcMar', 'w:textDirection',
-        'w:tcFitText', 'w:vAlign', 'w:hideMark', 'w:headers', 'w:cellIns',
-        'w:cellDel', 'w:cellMerge', 'w:tcPrChange'
+        "w:cnfStyle",
+        "w:tcW",
+        "w:gridSpan",
+        "w:hMerge",
+        "w:vMerge",
+        "w:tcBorders",
+        "w:shd",
+        "w:noWrap",
+        "w:tcMar",
+        "w:textDirection",
+        "w:tcFitText",
+        "w:vAlign",
+        "w:hideMark",
+        "w:headers",
+        "w:cellIns",
+        "w:cellDel",
+        "w:cellMerge",
+        "w:tcPrChange",
     )
-    tcW = ZeroOrOne('w:tcW', successors=_tag_seq[2:])
-    gridSpan = ZeroOrOne('w:gridSpan', successors=_tag_seq[3:])
-    vMerge = ZeroOrOne('w:vMerge', successors=_tag_seq[5:])
-    vAlign = ZeroOrOne('w:vAlign', successors=_tag_seq[12:])
+    tcW = ZeroOrOne("w:tcW", successors=_tag_seq[2:])
+    gridSpan = ZeroOrOne("w:gridSpan", successors=_tag_seq[3:])
+    vMerge = ZeroOrOne("w:vMerge", successors=_tag_seq[5:])
+    vAlign = ZeroOrOne("w:vAlign", successors=_tag_seq[12:])
     del _tag_seq
 
     @property
@@ -838,13 +878,25 @@ class CT_TrPr(BaseOxmlElement):
     """
     ``<w:trPr>`` element, defining table row properties
     """
+
     _tag_seq = (
-        'w:cnfStyle', 'w:divId', 'w:gridBefore', 'w:gridAfter', 'w:wBefore',
-        'w:wAfter', 'w:cantSplit', 'w:trHeight', 'w:tblHeader',
-        'w:tblCellSpacing', 'w:jc', 'w:hidden', 'w:ins', 'w:del',
-        'w:trPrChange'
+        "w:cnfStyle",
+        "w:divId",
+        "w:gridBefore",
+        "w:gridAfter",
+        "w:wBefore",
+        "w:wAfter",
+        "w:cantSplit",
+        "w:trHeight",
+        "w:tblHeader",
+        "w:tblCellSpacing",
+        "w:jc",
+        "w:hidden",
+        "w:ins",
+        "w:del",
+        "w:trPrChange",
     )
-    trHeight = ZeroOrOne('w:trHeight', successors=_tag_seq[8:])
+    trHeight = ZeroOrOne("w:trHeight", successors=_tag_seq[8:])
     del _tag_seq
 
     @property
@@ -884,11 +936,13 @@ class CT_TrPr(BaseOxmlElement):
 
 class CT_VerticalJc(BaseOxmlElement):
     """`w:vAlign` element, specifying vertical alignment of cell."""
-    val = RequiredAttribute('w:val', WD_CELL_VERTICAL_ALIGNMENT)
+
+    val = RequiredAttribute("w:val", WD_CELL_VERTICAL_ALIGNMENT)
 
 
 class CT_VMerge(BaseOxmlElement):
     """
     ``<w:vMerge>`` element, specifying vertical merging behavior of a cell.
     """
-    val = OptionalAttribute('w:val', ST_Merge, default=ST_Merge.CONTINUE)
+
+    val = OptionalAttribute("w:val", ST_Merge, default=ST_Merge.CONTINUE)

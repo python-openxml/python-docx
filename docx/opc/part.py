@@ -4,9 +4,7 @@
 Open Packaging Convention (OPC) objects related to package parts.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from .compat import cls_method_fn
 from .oxml import serialize_part_xml
@@ -22,6 +20,7 @@ class Part(object):
     intended to be subclassed in client code to implement specific part
     behaviors.
     """
+
     def __init__(self, partname, content_type, blob=None, package=None):
         super(Part, self).__init__()
         self._partname = partname
@@ -160,7 +159,7 @@ class Part(object):
         Return the count of references in this part's XML to the relationship
         identified by *rId*.
         """
-        rIds = self._element.xpath('//@r:id')
+        rIds = self._element.xpath("//@r:id")
         return len([_rId for _rId in rIds if _rId == rId])
 
 
@@ -177,6 +176,7 @@ class PartFactory(object):
     either of these, the class contained in ``PartFactory.default_part_type``
     is used to construct the part, which is by default ``opc.package.Part``.
     """
+
     part_class_selector = None
     part_type_for = {}
     default_part_type = Part
@@ -184,7 +184,7 @@ class PartFactory(object):
     def __new__(cls, partname, content_type, reltype, blob, package):
         PartClass = None
         if cls.part_class_selector is not None:
-            part_class_selector = cls_method_fn(cls, 'part_class_selector')
+            part_class_selector = cls_method_fn(cls, "part_class_selector")
             PartClass = part_class_selector(content_type, reltype)
         if PartClass is None:
             PartClass = cls._part_cls_for(content_type)
@@ -209,10 +209,9 @@ class XmlPart(Part):
     of parsing and reserializing the XML payload and managing relationships
     to other parts.
     """
+
     def __init__(self, partname, content_type, element, package):
-        super(XmlPart, self).__init__(
-            partname, content_type, package=package
-        )
+        super(XmlPart, self).__init__(partname, content_type, package=package)
         self._element = element
 
     @property

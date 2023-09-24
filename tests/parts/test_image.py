@@ -18,7 +18,6 @@ from ..unitutil.mock import ANY, initializer_mock, instance_mock, method_mock
 
 
 class DescribeImagePart(object):
-
     def it_is_used_by_PartFactory_to_construct_image_part(
         self, image_part_load_, partname_, blob_, package_, image_part_
     ):
@@ -51,9 +50,9 @@ class DescribeImagePart(object):
         assert image_part.filename == expected_filename
 
     def it_knows_the_sha1_of_its_image(self):
-        blob = b'fO0Bar'
+        blob = b"fO0Bar"
         image_part = ImagePart(None, None, blob)
-        assert image_part.sha1 == '4921e7002ddfba690a937d54bda226a7b8bdeb68'
+        assert image_part.sha1 == "4921e7002ddfba690a937d54bda226a7b8bdeb68"
 
     # fixtures -------------------------------------------------------
 
@@ -61,33 +60,31 @@ class DescribeImagePart(object):
     def blob_(self, request):
         return instance_mock(request, str)
 
-    @pytest.fixture(params=['loaded', 'new'])
+    @pytest.fixture(params=["loaded", "new"])
     def dimensions_fixture(self, request):
-        image_file_path = test_file('monty-truth.png')
+        image_file_path = test_file("monty-truth.png")
         image = Image.from_file(image_file_path)
         expected_cx, expected_cy = 1905000, 2717800
 
         # case 1: image part is loaded by PartFactory w/no Image inst
-        if request.param == 'loaded':
-            partname = PackURI('/word/media/image1.png')
+        if request.param == "loaded":
+            partname = PackURI("/word/media/image1.png")
             content_type = CT.PNG
-            image_part = ImagePart.load(
-                partname, content_type, image.blob, None
-            )
+            image_part = ImagePart.load(partname, content_type, image.blob, None)
         # case 2: image part is newly created from image file
-        elif request.param == 'new':
+        elif request.param == "new":
             image_part = ImagePart.from_image(image, None)
 
         return image_part, expected_cx, expected_cy
 
-    @pytest.fixture(params=['loaded', 'new'])
+    @pytest.fixture(params=["loaded", "new"])
     def filename_fixture(self, request, image_):
-        partname = PackURI('/word/media/image666.png')
-        if request.param == 'loaded':
+        partname = PackURI("/word/media/image666.png")
+        if request.param == "loaded":
             image_part = ImagePart(partname, None, None, None)
-            expected_filename = 'image.png'
-        elif request.param == 'new':
-            image_.filename = 'foobar.PXG'
+            expected_filename = "image.png"
+        elif request.param == "new":
+            image_.filename = "foobar.PXG"
             image_part = ImagePart(partname, None, None, image_)
             expected_filename = image_.filename
         return image_part, expected_filename
@@ -106,7 +103,7 @@ class DescribeImagePart(object):
 
     @pytest.fixture
     def image_part_load_(self, request):
-        return method_mock(request, ImagePart, 'load', autospec=False)
+        return method_mock(request, ImagePart, "load", autospec=False)
 
     @pytest.fixture
     def package_(self, request):

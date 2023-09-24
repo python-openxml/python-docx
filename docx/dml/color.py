@@ -4,9 +4,7 @@
 DrawingML objects related to color, ColorFormat being the most prominent.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ..enum.dml import MSO_COLOR_TYPE
 from ..oxml.simpletypes import ST_HexColorAuto

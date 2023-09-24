@@ -18,7 +18,8 @@ class CT_DecimalNumber(BaseOxmlElement):
     others, containing a text representation of a decimal number (e.g. 42) in
     its ``val`` attribute.
     """
-    val = RequiredAttribute('w:val', ST_DecimalNumber)
+
+    val = RequiredAttribute("w:val", ST_DecimalNumber)
 
     @classmethod
     def new(cls, nsptagname, val):
@@ -26,7 +27,7 @@ class CT_DecimalNumber(BaseOxmlElement):
         Return a new ``CT_DecimalNumber`` element having tagname *nsptagname*
         and ``val`` attribute set to *val*.
         """
-        return OxmlElement(nsptagname, attrs={qn('w:val'): str(val)})
+        return OxmlElement(nsptagname, attrs={qn("w:val"): str(val)})
 
 
 class CT_OnOff(BaseOxmlElement):
@@ -34,7 +35,8 @@ class CT_OnOff(BaseOxmlElement):
     Used for ``<w:b>``, ``<w:i>`` elements and others, containing a bool-ish
     string in its ``val`` attribute, xsd:boolean plus 'on' and 'off'.
     """
-    val = OptionalAttribute('w:val', ST_OnOff, default=True)
+
+    val = OptionalAttribute("w:val", ST_OnOff, default=True)
 
 
 class CT_String(BaseOxmlElement):
@@ -42,7 +44,8 @@ class CT_String(BaseOxmlElement):
     Used for ``<w:pStyle>`` and ``<w:tblStyle>`` elements and others,
     containing a style name in its ``val`` attribute.
     """
-    val = RequiredAttribute('w:val', ST_String)
+
+    val = RequiredAttribute("w:val", ST_String)
 
     @classmethod
     def new(cls, nsptagname, val):

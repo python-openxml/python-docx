@@ -4,9 +4,7 @@
 Latent style-related objects.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from . import BabelFish
 from ..shared import ElementProxy
@@ -67,11 +65,11 @@ class LatentStyles(ElementProxy):
         to be hidden. A hidden style does not appear in the recommended list
         or in the style gallery.
         """
-        return self._element.bool_prop('defSemiHidden')
+        return self._element.bool_prop("defSemiHidden")
 
     @default_to_hidden.setter
     def default_to_hidden(self, value):
-        self._element.set_bool_prop('defSemiHidden', value)
+        self._element.set_bool_prop("defSemiHidden", value)
 
     @property
     def default_to_locked(self):
@@ -82,11 +80,11 @@ class LatentStyles(ElementProxy):
         behavior is only active when formatting protection is turned on for
         the document (via the Developer menu).
         """
-        return self._element.bool_prop('defLockedState')
+        return self._element.bool_prop("defLockedState")
 
     @default_to_locked.setter
     def default_to_locked(self, value):
-        self._element.set_bool_prop('defLockedState', value)
+        self._element.set_bool_prop("defLockedState", value)
 
     @property
     def default_to_quick_style(self):
@@ -94,11 +92,11 @@ class LatentStyles(ElementProxy):
         Boolean specifying whether the default behavior for latent styles is
         to appear in the style gallery when not hidden.
         """
-        return self._element.bool_prop('defQFormat')
+        return self._element.bool_prop("defQFormat")
 
     @default_to_quick_style.setter
     def default_to_quick_style(self, value):
-        self._element.set_bool_prop('defQFormat', value)
+        self._element.set_bool_prop("defQFormat", value)
 
     @property
     def default_to_unhide_when_used(self):
@@ -106,11 +104,11 @@ class LatentStyles(ElementProxy):
         Boolean specifying whether the default behavior for latent styles is
         to be unhidden when first applied to content.
         """
-        return self._element.bool_prop('defUnhideWhenUsed')
+        return self._element.bool_prop("defUnhideWhenUsed")
 
     @default_to_unhide_when_used.setter
     def default_to_unhide_when_used(self, value):
-        self._element.set_bool_prop('defUnhideWhenUsed', value)
+        self._element.set_bool_prop("defUnhideWhenUsed", value)
 
     @property
     def load_count(self):
@@ -155,11 +153,11 @@ class _LatentStyle(ElementProxy):
         the recommended list. |None| indicates the effective value is
         inherited from the parent ``<w:latentStyles>`` element.
         """
-        return self._element.on_off_prop('semiHidden')
+        return self._element.on_off_prop("semiHidden")
 
     @hidden.setter
     def hidden(self, value):
-        self._element.set_on_off_prop('semiHidden', value)
+        self._element.set_on_off_prop("semiHidden", value)
 
     @property
     def locked(self):
@@ -170,11 +168,11 @@ class _LatentStyle(ElementProxy):
         only active when formatting protection is turned on for the document
         (via the Developer menu).
         """
-        return self._element.on_off_prop('locked')
+        return self._element.on_off_prop("locked")
 
     @locked.setter
     def locked(self, value):
-        self._element.set_on_off_prop('locked', value)
+        self._element.set_on_off_prop("locked", value)
 
     @property
     def name(self):
@@ -202,11 +200,11 @@ class _LatentStyle(ElementProxy):
         effective value should be inherited from the default values in its
         parent |LatentStyles| object.
         """
-        return self._element.on_off_prop('qFormat')
+        return self._element.on_off_prop("qFormat")
 
     @quick_style.setter
     def quick_style(self, value):
-        self._element.set_on_off_prop('qFormat', value)
+        self._element.set_on_off_prop("qFormat", value)
 
     @property
     def unhide_when_used(self):
@@ -217,8 +215,8 @@ class _LatentStyle(ElementProxy):
         inherited from the default specified by its parent |LatentStyles|
         object.
         """
-        return self._element.on_off_prop('unhideWhenUsed')
+        return self._element.on_off_prop("unhideWhenUsed")
 
     @unhide_when_used.setter
     def unhide_when_used(self, value):
-        self._element.set_on_off_prop('unhideWhenUsed', value)
+        self._element.set_on_off_prop("unhideWhenUsed", value)

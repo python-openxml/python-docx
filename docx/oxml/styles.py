@@ -7,8 +7,11 @@ Custom element classes related to the styles part
 from ..enum.style import WD_STYLE_TYPE
 from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from .xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore,
-    ZeroOrOne
+    BaseOxmlElement,
+    OptionalAttribute,
+    RequiredAttribute,
+    ZeroOrMore,
+    ZeroOrOne,
 )
 
 
@@ -18,17 +21,17 @@ def styleId_from_name(name):
     special-case names such as 'Heading 1'.
     """
     return {
-        'caption':   'Caption',
-        'heading 1': 'Heading1',
-        'heading 2': 'Heading2',
-        'heading 3': 'Heading3',
-        'heading 4': 'Heading4',
-        'heading 5': 'Heading5',
-        'heading 6': 'Heading6',
-        'heading 7': 'Heading7',
-        'heading 8': 'Heading8',
-        'heading 9': 'Heading9',
-    }.get(name, name.replace(' ', ''))
+        "caption": "Caption",
+        "heading 1": "Heading1",
+        "heading 2": "Heading2",
+        "heading 3": "Heading3",
+        "heading 4": "Heading4",
+        "heading 5": "Heading5",
+        "heading 6": "Heading6",
+        "heading 7": "Heading7",
+        "heading 8": "Heading8",
+        "heading 9": "Heading9",
+    }.get(name, name.replace(" ", ""))
 
 
 class CT_LatentStyles(BaseOxmlElement):
@@ -37,14 +40,15 @@ class CT_LatentStyles(BaseOxmlElement):
     and containing `w:lsdException` child elements that each override those
     defaults for a named latent style.
     """
-    lsdException = ZeroOrMore('w:lsdException', successors=())
 
-    count = OptionalAttribute('w:count', ST_DecimalNumber)
-    defLockedState = OptionalAttribute('w:defLockedState', ST_OnOff)
-    defQFormat = OptionalAttribute('w:defQFormat', ST_OnOff)
-    defSemiHidden = OptionalAttribute('w:defSemiHidden', ST_OnOff)
-    defUIPriority = OptionalAttribute('w:defUIPriority', ST_DecimalNumber)
-    defUnhideWhenUsed = OptionalAttribute('w:defUnhideWhenUsed', ST_OnOff)
+    lsdException = ZeroOrMore("w:lsdException", successors=())
+
+    count = OptionalAttribute("w:count", ST_DecimalNumber)
+    defLockedState = OptionalAttribute("w:defLockedState", ST_OnOff)
+    defQFormat = OptionalAttribute("w:defQFormat", ST_OnOff)
+    defSemiHidden = OptionalAttribute("w:defSemiHidden", ST_OnOff)
+    defUIPriority = OptionalAttribute("w:defUIPriority", ST_DecimalNumber)
+    defUnhideWhenUsed = OptionalAttribute("w:defUnhideWhenUsed", ST_OnOff)
 
     def bool_prop(self, attr_name):
         """
@@ -78,12 +82,13 @@ class CT_LsdException(BaseOxmlElement):
     ``<w:lsdException>`` element, defining override visibility behaviors for
     a named latent style.
     """
-    locked = OptionalAttribute('w:locked', ST_OnOff)
-    name = RequiredAttribute('w:name', ST_String)
-    qFormat = OptionalAttribute('w:qFormat', ST_OnOff)
-    semiHidden = OptionalAttribute('w:semiHidden', ST_OnOff)
-    uiPriority = OptionalAttribute('w:uiPriority', ST_DecimalNumber)
-    unhideWhenUsed = OptionalAttribute('w:unhideWhenUsed', ST_OnOff)
+
+    locked = OptionalAttribute("w:locked", ST_OnOff)
+    name = RequiredAttribute("w:name", ST_String)
+    qFormat = OptionalAttribute("w:qFormat", ST_OnOff)
+    semiHidden = OptionalAttribute("w:semiHidden", ST_OnOff)
+    uiPriority = OptionalAttribute("w:uiPriority", ST_DecimalNumber)
+    unhideWhenUsed = OptionalAttribute("w:unhideWhenUsed", ST_OnOff)
 
     def delete(self):
         """
@@ -109,29 +114,47 @@ class CT_Style(BaseOxmlElement):
     """
     A ``<w:style>`` element, representing a style definition
     """
+
     _tag_seq = (
-        'w:name', 'w:aliases', 'w:basedOn', 'w:next', 'w:link',
-        'w:autoRedefine', 'w:hidden', 'w:uiPriority', 'w:semiHidden',
-        'w:unhideWhenUsed', 'w:qFormat', 'w:locked', 'w:personal',
-        'w:personalCompose', 'w:personalReply', 'w:rsid', 'w:pPr', 'w:rPr',
-        'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
+        "w:name",
+        "w:aliases",
+        "w:basedOn",
+        "w:next",
+        "w:link",
+        "w:autoRedefine",
+        "w:hidden",
+        "w:uiPriority",
+        "w:semiHidden",
+        "w:unhideWhenUsed",
+        "w:qFormat",
+        "w:locked",
+        "w:personal",
+        "w:personalCompose",
+        "w:personalReply",
+        "w:rsid",
+        "w:pPr",
+        "w:rPr",
+        "w:tblPr",
+        "w:trPr",
+        "w:tcPr",
+        "w:tblStylePr",
     )
-    name = ZeroOrOne('w:name', successors=_tag_seq[1:])
-    basedOn = ZeroOrOne('w:basedOn', successors=_tag_seq[3:])
-    next = ZeroOrOne('w:next', successors=_tag_seq[4:])
-    uiPriority = ZeroOrOne('w:uiPriority', successors=_tag_seq[8:])
-    semiHidden = ZeroOrOne('w:semiHidden', successors=_tag_seq[9:])
-    unhideWhenUsed = ZeroOrOne('w:unhideWhenUsed', successors=_tag_seq[10:])
-    qFormat = ZeroOrOne('w:qFormat', successors=_tag_seq[11:])
-    locked = ZeroOrOne('w:locked', successors=_tag_seq[12:])
-    pPr = ZeroOrOne('w:pPr', successors=_tag_seq[17:])
-    rPr = ZeroOrOne('w:rPr', successors=_tag_seq[18:])
+    name = ZeroOrOne("w:name", successors=_tag_seq[1:])
+    basedOn = ZeroOrOne("w:basedOn", successors=_tag_seq[3:])
+    next = ZeroOrOne("w:next", successors=_tag_seq[4:])
+    uiPriority = ZeroOrOne("w:uiPriority", successors=_tag_seq[8:])
+    semiHidden = ZeroOrOne("w:semiHidden", successors=_tag_seq[9:])
+    unhideWhenUsed = ZeroOrOne("w:unhideWhenUsed", successors=_tag_seq[10:])
+    qFormat = ZeroOrOne("w:qFormat", successors=_tag_seq[11:])
+    locked = ZeroOrOne("w:locked", successors=_tag_seq[12:])
+    pPr = ZeroOrOne("w:pPr", successors=_tag_seq[17:])
+    rPr = ZeroOrOne("w:rPr", successors=_tag_seq[18:])
     del _tag_seq
 
-    type = OptionalAttribute('w:type', WD_STYLE_TYPE)
-    styleId = OptionalAttribute('w:styleId', ST_String)
-    default = OptionalAttribute('w:default', ST_OnOff)
-    customStyle = OptionalAttribute('w:customStyle', ST_OnOff)
+    type = OptionalAttribute("w:type", WD_STYLE_TYPE)
+    styleId = OptionalAttribute("w:styleId", ST_String)
+    default = OptionalAttribute("w:default", ST_OnOff)
+    customStyle = OptionalAttribute("w:customStyle", ST_OnOff)
 
     @property
     def basedOn_val(self):
@@ -291,9 +314,10 @@ class CT_Styles(BaseOxmlElement):
     ``<w:styles>`` element, the root element of a styles part, i.e.
     styles.xml
     """
-    _tag_seq = ('w:docDefaults', 'w:latentStyles', 'w:style')
-    latentStyles = ZeroOrOne('w:latentStyles', successors=_tag_seq[2:])
-    style = ZeroOrMore('w:style', successors=())
+
+    _tag_seq = ("w:docDefaults", "w:latentStyles", "w:style")
+    latentStyles = ZeroOrOne("w:latentStyles", successors=_tag_seq[2:])
+    style = ZeroOrMore("w:style", successors=())
     del _tag_seq
 
     def add_style_of_type(self, name, style_type, builtin):
@@ -314,8 +338,7 @@ class CT_Styles(BaseOxmlElement):
         Return `w:style[@w:type="*{style_type}*][-1]` or |None| if not found.
         """
         default_styles_for_type = [
-            s for s in self._iter_styles()
-            if s.type == style_type and s.default
+            s for s in self._iter_styles() if s.type == style_type and s.default
         ]
         if not default_styles_for_type:
             return None
@@ -348,4 +371,4 @@ class CT_Styles(BaseOxmlElement):
         """
         Generate each of the `w:style` child elements in document order.
         """
-        return (style for style in self.xpath('w:style'))
+        return (style for style in self.xpath("w:style"))

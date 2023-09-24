@@ -4,9 +4,7 @@
 Paragraph-related proxy types.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ..enum.text import WD_LINE_SPACING
 from ..shared import ElementProxy, Emu, lazyproperty, Length, Pt, Twips
@@ -20,7 +18,7 @@ class ParagraphFormat(ElementProxy):
     control.
     """
 
-    __slots__ = ('_tab_stops',)
+    __slots__ = ("_tab_stops",)
 
     @property
     def alignment(self):
@@ -153,9 +151,7 @@ class ParagraphFormat(ElementProxy):
         pPr = self._element.pPr
         if pPr is None:
             return None
-        return self._line_spacing_rule(
-            pPr.spacing_line, pPr.spacing_lineRule
-        )
+        return self._line_spacing_rule(pPr.spacing_line, pPr.spacing_lineRule)
 
     @line_spacing_rule.setter
     def line_spacing_rule(self, value):

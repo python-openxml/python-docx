@@ -4,9 +4,7 @@
 |SettingsPart| and closely related objects
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 
@@ -21,13 +19,14 @@ class SettingsPart(XmlPart):
     """
     Document-level settings part of a WordprocessingML (WML) package.
     """
+
     @classmethod
     def default(cls, package):
         """
         Return a newly created settings part, containing a default
         `w:settings` element tree.
         """
-        partname = PackURI('/word/settings.xml')
+        partname = PackURI("/word/settings.xml")
         content_type = CT.WML_SETTINGS
         element = parse_xml(cls._default_settings_xml())
         return cls(partname, content_type, element, package)
@@ -46,9 +45,8 @@ class SettingsPart(XmlPart):
         Return a bytestream containing XML for a default settings part.
         """
         path = os.path.join(
-            os.path.split(__file__)[0], '..', 'templates',
-            'default-settings.xml'
+            os.path.split(__file__)[0], "..", "templates", "default-settings.xml"
         )
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             xml_bytes = f.read()
         return xml_bytes

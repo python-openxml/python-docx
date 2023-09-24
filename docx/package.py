@@ -104,10 +104,12 @@ class ImageParts(object):
         partname is unique by number, without regard to the extension. *ext*
         does not include the leading period.
         """
+
         def image_partname(n):
-            return PackURI('/word/media/image%d.%s' % (n, ext))
+            return PackURI("/word/media/image%d.%s" % (n, ext))
+
         used_numbers = [image_part.partname.idx for image_part in self]
-        for n in range(1, len(self)+1):
+        for n in range(1, len(self) + 1):
             if n not in used_numbers:
                 return image_partname(n)
-        return image_partname(len(self)+1)
+        return image_partname(len(self) + 1)

@@ -13,7 +13,6 @@ import sys
 # ===========================================================================
 
 if sys.version_info >= (3, 0):
-
     from collections.abc import Sequence
     from io import BytesIO
 
@@ -28,7 +27,6 @@ if sys.version_info >= (3, 0):
 # ===========================================================================
 
 else:
-
     from collections import Sequence  # noqa
     from StringIO import StringIO as BytesIO  # noqa
 

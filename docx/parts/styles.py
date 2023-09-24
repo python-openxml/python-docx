@@ -4,9 +4,7 @@
 Provides StylesPart and related objects
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 
@@ -22,13 +20,14 @@ class StylesPart(XmlPart):
     Proxy for the styles.xml part containing style definitions for a document
     or glossary.
     """
+
     @classmethod
     def default(cls, package):
         """
         Return a newly created styles part, containing a default set of
         elements.
         """
-        partname = PackURI('/word/styles.xml')
+        partname = PackURI("/word/styles.xml")
         content_type = CT.WML_STYLES
         element = parse_xml(cls._default_styles_xml())
         return cls(partname, content_type, element, package)
@@ -47,9 +46,8 @@ class StylesPart(XmlPart):
         Return a bytestream containing XML for a default styles part.
         """
         path = os.path.join(
-            os.path.split(__file__)[0], '..', 'templates',
-            'default-styles.xml'
+            os.path.split(__file__)[0], "..", "templates", "default-styles.xml"
         )
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             xml_bytes = f.read()
         return xml_bytes

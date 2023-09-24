@@ -8,12 +8,8 @@ from .. import parse_xml
 from ...enum.dml import MSO_THEME_COLOR
 from ...enum.text import WD_COLOR, WD_UNDERLINE
 from ..ns import nsdecls, qn
-from ..simpletypes import (
-    ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
-)
-from ..xmlchemy import (
-    BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
-)
+from ..simpletypes import ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
+from ..xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
 
 
 class CT_Color(BaseOxmlElement):
@@ -21,8 +17,9 @@ class CT_Color(BaseOxmlElement):
     `w:color` element, specifying the color of a font and perhaps other
     objects.
     """
-    val = RequiredAttribute('w:val', ST_HexColor)
-    themeColor = OptionalAttribute('w:themeColor', MSO_THEME_COLOR)
+
+    val = RequiredAttribute("w:val", ST_HexColor)
+    themeColor = OptionalAttribute("w:themeColor", MSO_THEME_COLOR)
 
 
 class CT_Fonts(BaseOxmlElement):
@@ -30,15 +27,17 @@ class CT_Fonts(BaseOxmlElement):
     ``<w:rFonts>`` element, specifying typeface name for the various language
     types.
     """
-    ascii = OptionalAttribute('w:ascii', ST_String)
-    hAnsi = OptionalAttribute('w:hAnsi', ST_String)
+
+    ascii = OptionalAttribute("w:ascii", ST_String)
+    hAnsi = OptionalAttribute("w:hAnsi", ST_String)
 
 
 class CT_Highlight(BaseOxmlElement):
     """
     `w:highlight` element, specifying font highlighting/background color.
     """
-    val = RequiredAttribute('w:val', WD_COLOR)
+
+    val = RequiredAttribute("w:val", WD_COLOR)
 
 
 class CT_HpsMeasure(BaseOxmlElement):
@@ -46,49 +45,83 @@ class CT_HpsMeasure(BaseOxmlElement):
     Used for ``<w:sz>`` element and others, specifying font size in
     half-points.
     """
-    val = RequiredAttribute('w:val', ST_HpsMeasure)
+
+    val = RequiredAttribute("w:val", ST_HpsMeasure)
 
 
 class CT_RPr(BaseOxmlElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
     """
+
     _tag_seq = (
-        'w:rStyle', 'w:rFonts', 'w:b', 'w:bCs', 'w:i', 'w:iCs', 'w:caps',
-        'w:smallCaps', 'w:strike', 'w:dstrike', 'w:outline', 'w:shadow',
-        'w:emboss', 'w:imprint', 'w:noProof', 'w:snapToGrid', 'w:vanish',
-        'w:webHidden', 'w:color', 'w:spacing', 'w:w', 'w:kern', 'w:position',
-        'w:sz', 'w:szCs', 'w:highlight', 'w:u', 'w:effect', 'w:bdr', 'w:shd',
-        'w:fitText', 'w:vertAlign', 'w:rtl', 'w:cs', 'w:em', 'w:lang',
-        'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
+        "w:rStyle",
+        "w:rFonts",
+        "w:b",
+        "w:bCs",
+        "w:i",
+        "w:iCs",
+        "w:caps",
+        "w:smallCaps",
+        "w:strike",
+        "w:dstrike",
+        "w:outline",
+        "w:shadow",
+        "w:emboss",
+        "w:imprint",
+        "w:noProof",
+        "w:snapToGrid",
+        "w:vanish",
+        "w:webHidden",
+        "w:color",
+        "w:spacing",
+        "w:w",
+        "w:kern",
+        "w:position",
+        "w:sz",
+        "w:szCs",
+        "w:highlight",
+        "w:u",
+        "w:effect",
+        "w:bdr",
+        "w:shd",
+        "w:fitText",
+        "w:vertAlign",
+        "w:rtl",
+        "w:cs",
+        "w:em",
+        "w:lang",
+        "w:eastAsianLayout",
+        "w:specVanish",
+        "w:oMath",
     )
-    rStyle = ZeroOrOne('w:rStyle', successors=_tag_seq[1:])
-    rFonts = ZeroOrOne('w:rFonts', successors=_tag_seq[2:])
-    b = ZeroOrOne('w:b', successors=_tag_seq[3:])
-    bCs = ZeroOrOne('w:bCs', successors=_tag_seq[4:])
-    i = ZeroOrOne('w:i', successors=_tag_seq[5:])
-    iCs = ZeroOrOne('w:iCs', successors=_tag_seq[6:])
-    caps = ZeroOrOne('w:caps', successors=_tag_seq[7:])
-    smallCaps = ZeroOrOne('w:smallCaps', successors=_tag_seq[8:])
-    strike = ZeroOrOne('w:strike', successors=_tag_seq[9:])
-    dstrike = ZeroOrOne('w:dstrike', successors=_tag_seq[10:])
-    outline = ZeroOrOne('w:outline', successors=_tag_seq[11:])
-    shadow = ZeroOrOne('w:shadow', successors=_tag_seq[12:])
-    emboss = ZeroOrOne('w:emboss', successors=_tag_seq[13:])
-    imprint = ZeroOrOne('w:imprint', successors=_tag_seq[14:])
-    noProof = ZeroOrOne('w:noProof', successors=_tag_seq[15:])
-    snapToGrid = ZeroOrOne('w:snapToGrid', successors=_tag_seq[16:])
-    vanish = ZeroOrOne('w:vanish', successors=_tag_seq[17:])
-    webHidden = ZeroOrOne('w:webHidden', successors=_tag_seq[18:])
-    color = ZeroOrOne('w:color', successors=_tag_seq[19:])
-    sz = ZeroOrOne('w:sz', successors=_tag_seq[24:])
-    highlight = ZeroOrOne('w:highlight', successors=_tag_seq[26:])
-    u = ZeroOrOne('w:u', successors=_tag_seq[27:])
-    vertAlign = ZeroOrOne('w:vertAlign', successors=_tag_seq[32:])
-    rtl = ZeroOrOne('w:rtl', successors=_tag_seq[33:])
-    cs = ZeroOrOne('w:cs', successors=_tag_seq[34:])
-    specVanish = ZeroOrOne('w:specVanish', successors=_tag_seq[38:])
-    oMath = ZeroOrOne('w:oMath', successors=_tag_seq[39:])
+    rStyle = ZeroOrOne("w:rStyle", successors=_tag_seq[1:])
+    rFonts = ZeroOrOne("w:rFonts", successors=_tag_seq[2:])
+    b = ZeroOrOne("w:b", successors=_tag_seq[3:])
+    bCs = ZeroOrOne("w:bCs", successors=_tag_seq[4:])
+    i = ZeroOrOne("w:i", successors=_tag_seq[5:])
+    iCs = ZeroOrOne("w:iCs", successors=_tag_seq[6:])
+    caps = ZeroOrOne("w:caps", successors=_tag_seq[7:])
+    smallCaps = ZeroOrOne("w:smallCaps", successors=_tag_seq[8:])
+    strike = ZeroOrOne("w:strike", successors=_tag_seq[9:])
+    dstrike = ZeroOrOne("w:dstrike", successors=_tag_seq[10:])
+    outline = ZeroOrOne("w:outline", successors=_tag_seq[11:])
+    shadow = ZeroOrOne("w:shadow", successors=_tag_seq[12:])
+    emboss = ZeroOrOne("w:emboss", successors=_tag_seq[13:])
+    imprint = ZeroOrOne("w:imprint", successors=_tag_seq[14:])
+    noProof = ZeroOrOne("w:noProof", successors=_tag_seq[15:])
+    snapToGrid = ZeroOrOne("w:snapToGrid", successors=_tag_seq[16:])
+    vanish = ZeroOrOne("w:vanish", successors=_tag_seq[17:])
+    webHidden = ZeroOrOne("w:webHidden", successors=_tag_seq[18:])
+    color = ZeroOrOne("w:color", successors=_tag_seq[19:])
+    sz = ZeroOrOne("w:sz", successors=_tag_seq[24:])
+    highlight = ZeroOrOne("w:highlight", successors=_tag_seq[26:])
+    u = ZeroOrOne("w:u", successors=_tag_seq[27:])
+    vertAlign = ZeroOrOne("w:vertAlign", successors=_tag_seq[32:])
+    rtl = ZeroOrOne("w:rtl", successors=_tag_seq[33:])
+    cs = ZeroOrOne("w:cs", successors=_tag_seq[34:])
+    specVanish = ZeroOrOne("w:specVanish", successors=_tag_seq[38:])
+    oMath = ZeroOrOne("w:oMath", successors=_tag_seq[39:])
     del _tag_seq
 
     def _new_color(self):
@@ -96,7 +129,7 @@ class CT_RPr(BaseOxmlElement):
         Override metaclass method to set `w:color/@val` to RGB black on
         create.
         """
-        return parse_xml('<w:color %s w:val="000000"/>' % nsdecls('w'))
+        return parse_xml('<w:color %s w:val="000000"/>' % nsdecls("w"))
 
     @property
     def highlight_val(self):
@@ -276,9 +309,9 @@ class CT_RPr(BaseOxmlElement):
 
     def _set_bool_val(self, name, value):
         if value is None:
-            getattr(self, '_remove_%s' % name)()
+            getattr(self, "_remove_%s" % name)()
             return
-        element = getattr(self, 'get_or_add_%s' % name)()
+        element = getattr(self, "get_or_add_%s" % name)()
         element.val = value
 
 
@@ -286,12 +319,13 @@ class CT_Underline(BaseOxmlElement):
     """
     ``<w:u>`` element, specifying the underlining style for a run.
     """
+
     @property
     def val(self):
         """
         The underline type corresponding to the ``w:val`` attribute value.
         """
-        val = self.get(qn('w:val'))
+        val = self.get(qn("w:val"))
         underline = WD_UNDERLINE.from_xml(val)
         if underline == WD_UNDERLINE.SINGLE:
             return True
@@ -310,11 +344,12 @@ class CT_Underline(BaseOxmlElement):
             value = WD_UNDERLINE.NONE
 
         val = WD_UNDERLINE.to_xml(value)
-        self.set(qn('w:val'), val)
+        self.set(qn("w:val"), val)
 
 
 class CT_VerticalAlignRun(BaseOxmlElement):
     """
     ``<w:vertAlign>`` element, specifying subscript or superscript.
     """
-    val = RequiredAttribute('w:val', ST_VerticalAlignRun)
+
+    val = RequiredAttribute("w:val", ST_VerticalAlignRun)

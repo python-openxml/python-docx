@@ -13,13 +13,10 @@ from docx.styles.style import BaseStyle
 from docx.styles.styles import Styles
 
 from ..unitutil.cxml import element
-from ..unitutil.mock import (
-    call, class_mock, function_mock, instance_mock, method_mock
-)
+from ..unitutil.mock import call, class_mock, function_mock, instance_mock, method_mock
 
 
 class DescribeStyles(object):
-
     def it_supports_the_in_operator_on_style_name(self, in_fixture):
         styles, name, expected_value = in_fixture
         assert (name in styles) is expected_value
@@ -29,9 +26,7 @@ class DescribeStyles(object):
         assert len(styles) == expected_value
 
     def it_can_iterate_over_its_styles(self, iter_fixture):
-        styles, expected_count, style_, StyleFactory_, expected_calls = (
-            iter_fixture
-        )
+        styles, expected_count, style_, StyleFactory_, expected_calls = iter_fixture
         count = 0
         for style in styles:
             assert style is style_
@@ -39,7 +34,7 @@ class DescribeStyles(object):
         assert count == expected_count
         assert StyleFactory_.call_args_list == expected_calls
 
-    @pytest.mark.filterwarnings('ignore::UserWarning')
+    @pytest.mark.filterwarnings("ignore::UserWarning")
     def it_can_get_a_style_by_id(self, getitem_id_fixture):
         styles, key, expected_element = getitem_id_fixture
         style = styles[key]
@@ -144,7 +139,7 @@ class DescribeStyles(object):
     def it_gets_a_style_id_from_a_name_to_help(
         self, _getitem_, _get_style_id_from_style_, style_
     ):
-        style_name, style_type, style_id_ = 'Foo Bar', 1, 'FooBar'
+        style_name, style_type, style_id_ = "Foo Bar", 1, "FooBar"
         _getitem_.return_value = style_
         _get_style_id_from_style_.return_value = style_id_
         styles = Styles(None)
@@ -176,37 +171,53 @@ class DescribeStyles(object):
 
     # fixture --------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('Foo Bar',   'Foo Bar',   WD_STYLE_TYPE.CHARACTER, False),
-        ('Heading 1', 'heading 1', WD_STYLE_TYPE.PARAGRAPH, True),
-    ])
-    def add_fixture(self, request, styles_elm_, _getitem_, style_elm_,
-                    StyleFactory_, style_):
+    @pytest.fixture(
+        params=[
+            ("Foo Bar", "Foo Bar", WD_STYLE_TYPE.CHARACTER, False),
+            ("Heading 1", "heading 1", WD_STYLE_TYPE.PARAGRAPH, True),
+        ]
+    )
+    def add_fixture(
+        self, request, styles_elm_, _getitem_, style_elm_, StyleFactory_, style_
+    ):
         name, name_, style_type, builtin = request.param
         styles = Styles(styles_elm_)
         _getitem_.return_value = None
         styles_elm_.add_style_of_type.return_value = style_elm_
         StyleFactory_.return_value = style_
         return (
-            styles, name, style_type, builtin, name_, StyleFactory_,
-            style_elm_, style_
+            styles,
+            name,
+            style_type,
+            builtin,
+            name_,
+            StyleFactory_,
+            style_elm_,
+            style_,
         )
 
     @pytest.fixture
     def add_raises_fixture(self, _getitem_):
-        styles = Styles(element('w:styles/w:style/w:name{w:val=heading 1}'))
-        name = 'Heading 1'
+        styles = Styles(element("w:styles/w:style/w:name{w:val=heading 1}"))
+        name = "Heading 1"
         return styles, name
 
-    @pytest.fixture(params=[
-        ('w:styles',
-         False, WD_STYLE_TYPE.CHARACTER),
-        ('w:styles/w:style{w:type=paragraph,w:default=1}',
-         True, WD_STYLE_TYPE.PARAGRAPH),
-        ('w:styles/(w:style{w:type=table,w:default=1},w:style{w:type=table,w'
-         ':default=1})',
-         True, WD_STYLE_TYPE.TABLE),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles", False, WD_STYLE_TYPE.CHARACTER),
+            (
+                "w:styles/w:style{w:type=paragraph,w:default=1}",
+                True,
+                WD_STYLE_TYPE.PARAGRAPH,
+            ),
+            (
+                "w:styles/(w:style{w:type=table,w:default=1},w:style{w:type=table,w"
+                ":default=1})",
+                True,
+                WD_STYLE_TYPE.TABLE,
+            ),
+        ]
+    )
     def default_fixture(self, request, StyleFactory_, style_):
         styles_cxml, is_defined, style_type = request.param
         styles_elm = element(styles_cxml)
@@ -214,70 +225,89 @@ class DescribeStyles(object):
         StyleFactory_calls = [call(styles_elm[-1])] if is_defined else []
         StyleFactory_.return_value = style_
         expected_value = style_ if is_defined else None
-        return (
-            styles, style_type, StyleFactory_, StyleFactory_calls,
-            expected_value
-        )
+        return (styles, style_type, StyleFactory_, StyleFactory_calls, expected_value)
 
-    @pytest.fixture(params=[
-        ('w:styles/w:style{w:type=paragraph,w:styleId=Foo}', 'Foo',
-         WD_STYLE_TYPE.PARAGRAPH),
-        ('w:styles/w:style{w:type=paragraph,w:styleId=Foo}', 'Bar',
-         WD_STYLE_TYPE.PARAGRAPH),
-        ('w:styles/w:style{w:type=table,w:styleId=Bar}',     'Bar',
-         WD_STYLE_TYPE.PARAGRAPH),
-    ])
+    @pytest.fixture(
+        params=[
+            (
+                "w:styles/w:style{w:type=paragraph,w:styleId=Foo}",
+                "Foo",
+                WD_STYLE_TYPE.PARAGRAPH,
+            ),
+            (
+                "w:styles/w:style{w:type=paragraph,w:styleId=Foo}",
+                "Bar",
+                WD_STYLE_TYPE.PARAGRAPH,
+            ),
+            (
+                "w:styles/w:style{w:type=table,w:styleId=Bar}",
+                "Bar",
+                WD_STYLE_TYPE.PARAGRAPH,
+            ),
+        ]
+    )
     def _get_by_id_fixture(self, request, default_, StyleFactory_, style_):
         styles_cxml, style_id, style_type = request.param
         styles_elm = element(styles_cxml)
         style_elm = styles_elm[0]
         styles = Styles(styles_elm)
-        default_calls = [] if style_id == 'Foo' else [call(styles, style_type)]
-        StyleFactory_calls = [call(style_elm)] if style_id == 'Foo' else []
+        default_calls = [] if style_id == "Foo" else [call(styles, style_type)]
+        StyleFactory_calls = [call(style_elm)] if style_id == "Foo" else []
         default_.return_value = StyleFactory_.return_value = style_
         return (
-            styles, style_id, style_type, default_calls, StyleFactory_,
-            StyleFactory_calls, style_
+            styles,
+            style_id,
+            style_type,
+            default_calls,
+            StyleFactory_,
+            StyleFactory_calls,
+            style_,
         )
 
-    @pytest.fixture(params=[
-        ('w:styles/(w:style{%s,w:styleId=Foobar},w:style,w:style)', 0),
-        ('w:styles/(w:style,w:style{%s,w:styleId=Foobar},w:style)', 1),
-        ('w:styles/(w:style,w:style,w:style{%s,w:styleId=Foobar})', 2),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles/(w:style{%s,w:styleId=Foobar},w:style,w:style)", 0),
+            ("w:styles/(w:style,w:style{%s,w:styleId=Foobar},w:style)", 1),
+            ("w:styles/(w:style,w:style,w:style{%s,w:styleId=Foobar})", 2),
+        ]
+    )
     def getitem_id_fixture(self, request):
         styles_cxml_tmpl, style_idx = request.param
-        styles_cxml = styles_cxml_tmpl % 'w:type=paragraph'
+        styles_cxml = styles_cxml_tmpl % "w:type=paragraph"
         styles = Styles(element(styles_cxml))
         expected_element = styles._element[style_idx]
-        return styles, 'Foobar', expected_element
+        return styles, "Foobar", expected_element
 
-    @pytest.fixture(params=[
-        ('w:styles/(w:style%s/w:name{w:val=foo},w:style)', 'foo',       0),
-        ('w:styles/(w:style,w:style%s/w:name{w:val=foo})', 'foo',       1),
-        ('w:styles/w:style%s/w:name{w:val=heading 1}',     'Heading 1', 0),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles/(w:style%s/w:name{w:val=foo},w:style)", "foo", 0),
+            ("w:styles/(w:style,w:style%s/w:name{w:val=foo})", "foo", 1),
+            ("w:styles/w:style%s/w:name{w:val=heading 1}", "Heading 1", 0),
+        ]
+    )
     def getitem_name_fixture(self, request):
         styles_cxml_tmpl, key, style_idx = request.param
-        styles_cxml = styles_cxml_tmpl % '{w:type=character}'
+        styles_cxml = styles_cxml_tmpl % "{w:type=character}"
         styles = Styles(element(styles_cxml))
         expected_element = styles._element[style_idx]
         return styles, key, expected_element
 
-    @pytest.fixture(params=[
-        ('w:styles/(w:style,w:style/w:name{w:val=foo},w:style)'),
-        ('w:styles/(w:style{w:styleId=foo},w:style,w:style)'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles/(w:style,w:style/w:name{w:val=foo},w:style)"),
+            ("w:styles/(w:style{w:styleId=foo},w:style,w:style)"),
+        ]
+    )
     def get_raises_fixture(self, request):
         styles_cxml = request.param
         styles = Styles(element(styles_cxml))
-        return styles, 'bar'
+        return styles, "bar"
 
     @pytest.fixture(params=[True, False])
     def id_style_fixture(self, request, default_, style_):
         style_is_default = request.param
         styles = Styles(None)
-        style_id, style_type = 'FooBar', 1
+        style_id, style_type = "FooBar", 1
         default_.return_value = style_ if style_is_default else None
         style_.style_id, style_.type = style_id, style_type
         expected_value = None if style_is_default else style_id
@@ -290,23 +320,27 @@ class DescribeStyles(object):
         style_type = 2
         return styles, style_, style_type
 
-    @pytest.fixture(params=[
-        ('w:styles/w:style/w:name{w:val=heading 1}', 'Heading 1', True),
-        ('w:styles/w:style/w:name{w:val=Foo Bar}',   'Foo Bar',   True),
-        ('w:styles/w:style/w:name{w:val=heading 1}', 'Foobar',    False),
-        ('w:styles',                                 'Foobar',    False),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles/w:style/w:name{w:val=heading 1}", "Heading 1", True),
+            ("w:styles/w:style/w:name{w:val=Foo Bar}", "Foo Bar", True),
+            ("w:styles/w:style/w:name{w:val=heading 1}", "Foobar", False),
+            ("w:styles", "Foobar", False),
+        ]
+    )
     def in_fixture(self, request):
         styles_cxml, name, expected_value = request.param
         styles = Styles(element(styles_cxml))
         return styles, name, expected_value
 
-    @pytest.fixture(params=[
-        ('w:styles',                           0),
-        ('w:styles/w:style',                   1),
-        ('w:styles/(w:style,w:style)',         2),
-        ('w:styles/(w:style,w:style,w:style)', 3),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles", 0),
+            ("w:styles/w:style", 1),
+            ("w:styles/(w:style,w:style)", 2),
+            ("w:styles/(w:style,w:style,w:style)", 3),
+        ]
+    )
     def iter_fixture(self, request, StyleFactory_, style_):
         styles_cxml, expected_count = request.param
         styles_elm = element(styles_cxml)
@@ -317,15 +351,17 @@ class DescribeStyles(object):
 
     @pytest.fixture
     def latent_styles_fixture(self, LatentStyles_, latent_styles_):
-        styles = Styles(element('w:styles/w:latentStyles'))
+        styles = Styles(element("w:styles/w:latentStyles"))
         return styles, LatentStyles_, latent_styles_
 
-    @pytest.fixture(params=[
-        ('w:styles',                           0),
-        ('w:styles/w:style',                   1),
-        ('w:styles/(w:style,w:style)',         2),
-        ('w:styles/(w:style,w:style,w:style)', 3),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles", 0),
+            ("w:styles/w:style", 1),
+            ("w:styles/(w:style,w:style)", 2),
+            ("w:styles/(w:style,w:style,w:style)", 3),
+        ]
+    )
     def len_fixture(self, request):
         styles_cxml, expected_value = request.param
         styles = Styles(element(styles_cxml))
@@ -335,29 +371,28 @@ class DescribeStyles(object):
 
     @pytest.fixture
     def default_(self, request):
-        return method_mock(request, Styles, 'default')
+        return method_mock(request, Styles, "default")
 
     @pytest.fixture
     def _get_by_id_(self, request):
-        return method_mock(request, Styles, '_get_by_id')
+        return method_mock(request, Styles, "_get_by_id")
 
     @pytest.fixture
     def _getitem_(self, request):
-        return method_mock(request, Styles, '__getitem__')
+        return method_mock(request, Styles, "__getitem__")
 
     @pytest.fixture
     def _get_style_id_from_name_(self, request):
-        return method_mock(request, Styles, '_get_style_id_from_name')
+        return method_mock(request, Styles, "_get_style_id_from_name")
 
     @pytest.fixture
     def _get_style_id_from_style_(self, request):
-        return method_mock(request, Styles, '_get_style_id_from_style')
+        return method_mock(request, Styles, "_get_style_id_from_style")
 
     @pytest.fixture
     def LatentStyles_(self, request, latent_styles_):
         return class_mock(
-            request, 'docx.styles.styles.LatentStyles',
-            return_value=latent_styles_
+            request, "docx.styles.styles.LatentStyles", return_value=latent_styles_
         )
 
     @pytest.fixture
@@ -370,7 +405,7 @@ class DescribeStyles(object):
 
     @pytest.fixture
     def StyleFactory_(self, request):
-        return function_mock(request, 'docx.styles.styles.StyleFactory')
+        return function_mock(request, "docx.styles.styles.StyleFactory")
 
     @pytest.fixture
     def style_elm_(self, request):

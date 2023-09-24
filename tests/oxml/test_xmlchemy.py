@@ -14,9 +14,17 @@ from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import BaseIntType
 from docx.oxml.xmlchemy import (
-    BaseOxmlElement, Choice, serialize_for_reading, OneOrMore, OneAndOnlyOne,
-    OptionalAttribute, RequiredAttribute, ZeroOrMore, ZeroOrOne,
-    ZeroOrOneChoice, XmlString
+    BaseOxmlElement,
+    Choice,
+    serialize_for_reading,
+    OneOrMore,
+    OneAndOnlyOne,
+    OptionalAttribute,
+    RequiredAttribute,
+    ZeroOrMore,
+    ZeroOrOne,
+    ZeroOrOneChoice,
+    XmlString,
 )
 
 from ..unitdata import BaseBuilder
@@ -24,64 +32,71 @@ from .unitdata.text import a_b, a_u, an_i, an_rPr
 
 
 class DescribeBaseOxmlElement(object):
-
-    def it_can_find_the_first_of_its_children_named_in_a_sequence(
-            self, first_fixture):
+    def it_can_find_the_first_of_its_children_named_in_a_sequence(self, first_fixture):
         element, tagnames, matching_child = first_fixture
         assert element.first_child_found_in(*tagnames) is matching_child
 
-    def it_can_insert_an_element_before_named_successors(
-            self, insert_fixture):
+    def it_can_insert_an_element_before_named_successors(self, insert_fixture):
         element, child, tagnames, expected_xml = insert_fixture
         element.insert_element_before(child, *tagnames)
         assert element.xml == expected_xml
 
-    def it_can_remove_all_children_with_name_in_sequence(
-            self, remove_fixture):
+    def it_can_remove_all_children_with_name_in_sequence(self, remove_fixture):
         element, tagnames, expected_xml = remove_fixture
         element.remove_all(*tagnames)
         assert element.xml == expected_xml
 
     # fixtures ---------------------------------------------
 
-    @pytest.fixture(params=[
-        ('biu', 'iu',  'i'),
-        ('bu',  'iu',  'u'),
-        ('bi',  'u',   None),
-        ('b',   'iu',  None),
-        ('iu',  'biu', 'i'),
-        ('',    'biu', None),
-    ])
+    @pytest.fixture(
+        params=[
+            ("biu", "iu", "i"),
+            ("bu", "iu", "u"),
+            ("bi", "u", None),
+            ("b", "iu", None),
+            ("iu", "biu", "i"),
+            ("", "biu", None),
+        ]
+    )
     def first_fixture(self, request):
         present, matching, match = request.param
         element = self.rPr_bldr(present).element
         tagnames = self.nsptags(matching)
-        matching_child = element.find(qn('w:%s' % match)) if match else None
+        matching_child = element.find(qn("w:%s" % match)) if match else None
         return element, tagnames, matching_child
 
-    @pytest.fixture(params=[
-        ('iu', 'b', 'iu', 'biu'),
-        ('u',  'b', 'iu', 'bu'),
-        ('',   'b', 'iu', 'b'),
-        ('bu', 'i', 'u',  'biu'),
-        ('bi', 'u', '',   'biu'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("iu", "b", "iu", "biu"),
+            ("u", "b", "iu", "bu"),
+            ("", "b", "iu", "b"),
+            ("bu", "i", "u", "biu"),
+            ("bi", "u", "", "biu"),
+        ]
+    )
     def insert_fixture(self, request):
         present, new, successors, after = request.param
         element = self.rPr_bldr(present).element
-        child = {
-            'b': a_b(), 'i': an_i(), 'u': a_u()
-        }[new].with_nsdecls().element
-        tagnames = [('w:%s' % char) for char in successors]
+        child = {"b": a_b(), "i": an_i(), "u": a_u()}[new].with_nsdecls().element
+        tagnames = [("w:%s" % char) for char in successors]
         expected_xml = self.rPr_bldr(after).xml()
         return element, child, tagnames, expected_xml
 
-    @pytest.fixture(params=[
-        ('biu', 'b', 'iu'), ('biu', 'bi', 'u'), ('bbiiuu',  'i',   'bbuu'),
-        ('biu', 'i', 'bu'), ('biu', 'bu', 'i'), ('bbiiuu',   '', 'bbiiuu'),
-        ('biu', 'u', 'bi'), ('biu', 'ui', 'b'), ('bbiiuu', 'bi',     'uu'),
-        ('bu',  'i', 'bu'), ('',    'ui',  ''),
-    ])
+    @pytest.fixture(
+        params=[
+            ("biu", "b", "iu"),
+            ("biu", "bi", "u"),
+            ("bbiiuu", "i", "bbuu"),
+            ("biu", "i", "bu"),
+            ("biu", "bu", "i"),
+            ("bbiiuu", "", "bbiiuu"),
+            ("biu", "u", "bi"),
+            ("biu", "ui", "b"),
+            ("bbiiuu", "bi", "uu"),
+            ("bu", "i", "bu"),
+            ("", "ui", ""),
+        ]
+    )
     def remove_fixture(self, request):
         present, remove, after = request.param
         element = self.rPr_bldr(present).element
@@ -92,16 +107,16 @@ class DescribeBaseOxmlElement(object):
     # fixture components ---------------------------------------------
 
     def nsptags(self, letters):
-        return [('w:%s' % letter) for letter in letters]
+        return [("w:%s" % letter) for letter in letters]
 
     def rPr_bldr(self, children):
         rPr_bldr = an_rPr().with_nsdecls()
         for char in children:
-            if char == 'b':
+            if char == "b":
                 rPr_bldr.with_child(a_b())
-            elif char == 'i':
+            elif char == "i":
                 rPr_bldr.with_child(an_i())
-            elif char == 'u':
+            elif char == "u":
                 rPr_bldr.with_child(a_u())
             else:
                 raise NotImplementedError("got '%s'" % char)
@@ -109,7 +124,6 @@ class DescribeBaseOxmlElement(object):
 
 
 class DescribeSerializeForReading(object):
-
     def it_pretty_prints_an_lxml_element(self, pretty_fixture):
         element, expected_xml_text = pretty_fixture
         xml_text = serialize_for_reading(element)
@@ -124,11 +138,7 @@ class DescribeSerializeForReading(object):
 
     @pytest.fixture
     def pretty_fixture(self, element):
-        expected_xml_text = (
-            '<foø>\n'
-            '  <bår>text</bår>\n'
-            '</foø>\n'
-        )
+        expected_xml_text = "<foø>\n" "  <bår>text</bår>\n" "</foø>\n"
         return element, expected_xml_text
 
     @pytest.fixture
@@ -139,11 +149,10 @@ class DescribeSerializeForReading(object):
 
     @pytest.fixture
     def element(self):
-        return parse_xml('<foø><bår>text</bår></foø>')
+        return parse_xml("<foø><bår>text</bår></foø>")
 
 
 class DescribeXmlString(object):
-
     def it_parses_a_line_to_help_compare(self, parse_fixture):
         """
         This internal function is important to test separately because if it
@@ -167,54 +176,67 @@ class DescribeXmlString(object):
 
     # fixtures ---------------------------------------------
 
-    @pytest.fixture(params=[
-        ('<a>text</a>',  '<a',   '',       '>',  'text</a>'),
-        ('<a:f/>',       '<a:f', '',       '/>', None),
-        ('<a:f b="c"/>', '<a:f', ' b="c"', '/>', None),
-        ('<a:f>t</a:f>', '<a:f', '',       '>',  't</a:f>'),
-        ('<dcterms:created xsi:type="dcterms:W3CDTF">2013-12-23T23:15:00Z</d'
-         'cterms:created>', '<dcterms:created', ' xsi:type="dcterms:W3CDTF"',
-         '>', '2013-12-23T23:15:00Z</dcterms:created>'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("<a>text</a>", "<a", "", ">", "text</a>"),
+            ("<a:f/>", "<a:f", "", "/>", None),
+            ('<a:f b="c"/>', "<a:f", ' b="c"', "/>", None),
+            ("<a:f>t</a:f>", "<a:f", "", ">", "t</a:f>"),
+            (
+                '<dcterms:created xsi:type="dcterms:W3CDTF">2013-12-23T23:15:00Z</d'
+                "cterms:created>",
+                "<dcterms:created",
+                ' xsi:type="dcterms:W3CDTF"',
+                ">",
+                "2013-12-23T23:15:00Z</dcterms:created>",
+            ),
+        ]
+    )
     def parse_fixture(self, request):
         line, front, attrs, close, text = request.param
         return line, front, attrs, close, text
 
-    @pytest.fixture(params=[
-        'simple_elm', 'nsp_tagname', 'indent', 'attrs', 'nsdecl_order',
-        'closing_elm',
-    ])
+    @pytest.fixture(
+        params=[
+            "simple_elm",
+            "nsp_tagname",
+            "indent",
+            "attrs",
+            "nsdecl_order",
+            "closing_elm",
+        ]
+    )
     def xml_line_case(self, request):
         cases = {
-            'simple_elm': (
-                '<name/>',
-                '<name/>',
-                '<name>',
+            "simple_elm": (
+                "<name/>",
+                "<name/>",
+                "<name>",
             ),
-            'nsp_tagname': (
-                '<xyz:name/>',
-                '<xyz:name/>',
-                '<abc:name/>',
+            "nsp_tagname": (
+                "<xyz:name/>",
+                "<xyz:name/>",
+                "<abc:name/>",
             ),
-            'indent': (
-                '  <xyz:name/>',
-                '  <xyz:name/>',
-                '<xyz:name/>',
+            "indent": (
+                "  <xyz:name/>",
+                "  <xyz:name/>",
+                "<xyz:name/>",
             ),
-            'attrs': (
+            "attrs": (
                 '  <abc:Name foo="bar" bar="foo">',
                 '  <abc:Name bar="foo" foo="bar">',
                 '  <abc:Name far="boo" foo="bar">',
             ),
-            'nsdecl_order': (
+            "nsdecl_order": (
                 '    <name xmlns:a="http://ns/1" xmlns:b="http://ns/2"/>',
                 '    <name xmlns:b="http://ns/2" xmlns:a="http://ns/1"/>',
                 '    <name xmlns:b="http://ns/2" xmlns:a="http://ns/1">',
             ),
-            'closing_elm': (
-                '</xyz:name>',
-                '</xyz:name>',
-                '<xyz:name>',
+            "closing_elm": (
+                "</xyz:name>",
+                "</xyz:name>",
+                "<xyz:name>",
             ),
         }
         line, other, differs = cases[request.param]
@@ -222,9 +244,7 @@ class DescribeXmlString(object):
 
 
 class DescribeChoice(object):
-
-    def it_adds_a_getter_property_for_the_choice_element(
-            self, getter_fixture):
+    def it_adds_a_getter_property_for_the_choice_element(self, getter_fixture):
         parent, expected_choice = getter_fixture
         assert parent.choice is expected_choice
 
@@ -238,7 +258,7 @@ class DescribeChoice(object):
         parent._insert_choice(choice)
         assert parent.xml == expected_xml
         assert parent._insert_choice.__doc__.startswith(
-            'Return the passed ``<w:choice>`` '
+            "Return the passed ``<w:choice>`` "
         )
 
     def it_adds_an_add_method_for_the_child_element(self, add_fixture):
@@ -247,11 +267,12 @@ class DescribeChoice(object):
         assert parent.xml == expected_xml
         assert isinstance(choice, CT_Choice)
         assert parent._add_choice.__doc__.startswith(
-            'Add a new ``<w:choice>`` child element '
+            "Add a new ``<w:choice>`` child element "
         )
 
     def it_adds_a_get_or_change_to_method_for_the_child_element(
-            self, get_or_change_to_fixture):
+        self, get_or_change_to_fixture
+    ):
         parent, expected_xml = get_or_change_to_fixture
         choice = parent.get_or_change_to_choice()
         assert isinstance(choice, CT_Choice)
@@ -262,40 +283,44 @@ class DescribeChoice(object):
     @pytest.fixture
     def add_fixture(self):
         parent = self.parent_bldr().element
-        expected_xml = self.parent_bldr('choice').xml()
+        expected_xml = self.parent_bldr("choice").xml()
         return parent, expected_xml
 
-    @pytest.fixture(params=[
-        ('choice2', 'choice'),
-        (None,      'choice'),
-        ('choice',  'choice'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("choice2", "choice"),
+            (None, "choice"),
+            ("choice", "choice"),
+        ]
+    )
     def get_or_change_to_fixture(self, request):
         before_member_tag, after_member_tag = request.param
         parent = self.parent_bldr(before_member_tag).element
         expected_xml = self.parent_bldr(after_member_tag).xml()
         return parent, expected_xml
 
-    @pytest.fixture(params=['choice', None])
+    @pytest.fixture(params=["choice", None])
     def getter_fixture(self, request):
         choice_tag = request.param
         parent = self.parent_bldr(choice_tag).element
-        expected_choice = parent.find(qn('w:choice'))  # None if not found
+        expected_choice = parent.find(qn("w:choice"))  # None if not found
         return parent, expected_choice
 
     @pytest.fixture
     def insert_fixture(self):
         parent = (
-            a_parent().with_nsdecls().with_child(
-                an_oomChild()).with_child(
-                an_oooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
         ).element
         choice = a_choice().with_nsdecls().element
         expected_xml = (
-            a_parent().with_nsdecls().with_child(
-                a_choice()).with_child(
-                an_oomChild()).with_child(
-                an_oooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(a_choice())
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
         ).xml()
         return parent, choice, expected_xml
 
@@ -309,15 +334,14 @@ class DescribeChoice(object):
 
     def parent_bldr(self, choice_tag=None):
         parent_bldr = a_parent().with_nsdecls()
-        if choice_tag == 'choice':
+        if choice_tag == "choice":
             parent_bldr.with_child(a_choice())
-        if choice_tag == 'choice2':
+        if choice_tag == "choice2":
             parent_bldr.with_child(a_choice2())
         return parent_bldr
 
 
 class DescribeOneAndOnlyOne(object):
-
     def it_adds_a_getter_property_for_the_child_element(self, getter_fixture):
         parent, oooChild = getter_fixture
         assert parent.oooChild is oooChild
@@ -327,14 +351,12 @@ class DescribeOneAndOnlyOne(object):
     @pytest.fixture
     def getter_fixture(self):
         parent = a_parent().with_nsdecls().with_child(an_oooChild()).element
-        oooChild = parent.find(qn('w:oooChild'))
+        oooChild = parent.find(qn("w:oooChild"))
         return parent, oooChild
 
 
 class DescribeOneOrMore(object):
-
-    def it_adds_a_getter_property_for_the_child_element_list(
-            self, getter_fixture):
+    def it_adds_a_getter_property_for_the_child_element_list(self, getter_fixture):
         parent, oomChild = getter_fixture
         assert parent.oomChild_lst[0] is oomChild
 
@@ -348,7 +370,7 @@ class DescribeOneOrMore(object):
         parent._insert_oomChild(oomChild)
         assert parent.xml == expected_xml
         assert parent._insert_oomChild.__doc__.startswith(
-            'Return the passed ``<w:oomChild>`` '
+            "Return the passed ``<w:oomChild>`` "
         )
 
     def it_adds_a_private_add_method_for_the_child_element(self, add_fixture):
@@ -357,7 +379,7 @@ class DescribeOneOrMore(object):
         assert parent.xml == expected_xml
         assert isinstance(oomChild, CT_OomChild)
         assert parent._add_oomChild.__doc__.startswith(
-            'Add a new ``<w:oomChild>`` child element '
+            "Add a new ``<w:oomChild>`` child element "
         )
 
     def it_adds_a_public_add_method_for_the_child_element(self, add_fixture):
@@ -366,7 +388,7 @@ class DescribeOneOrMore(object):
         assert parent.xml == expected_xml
         assert isinstance(oomChild, CT_OomChild)
         assert parent._add_oomChild.__doc__.startswith(
-            'Add a new ``<w:oomChild>`` child element '
+            "Add a new ``<w:oomChild>`` child element "
         )
 
     # fixtures -------------------------------------------------------
@@ -380,24 +402,26 @@ class DescribeOneOrMore(object):
     @pytest.fixture
     def getter_fixture(self):
         parent = self.parent_bldr(True).element
-        oomChild = parent.find(qn('w:oomChild'))
+        oomChild = parent.find(qn("w:oomChild"))
         return parent, oomChild
 
     @pytest.fixture
     def insert_fixture(self):
         parent = (
-            a_parent().with_nsdecls().with_child(
-                an_oooChild()).with_child(
-                a_zomChild()).with_child(
-                a_zooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oooChild())
+            .with_child(a_zomChild())
+            .with_child(a_zooChild())
         ).element
         oomChild = an_oomChild().with_nsdecls().element
         expected_xml = (
-            a_parent().with_nsdecls().with_child(
-                an_oomChild()).with_child(
-                an_oooChild()).with_child(
-                a_zomChild()).with_child(
-                a_zooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
+            .with_child(a_zomChild())
+            .with_child(a_zooChild())
         ).xml()
         return parent, oomChild, expected_xml
 
@@ -417,7 +441,6 @@ class DescribeOneOrMore(object):
 
 
 class DescribeOptionalAttribute(object):
-
     def it_adds_a_getter_property_for_the_attr_value(self, getter_fixture):
         parent, optAttr_python_value = getter_fixture
         assert parent.optAttr == optAttr_python_value
@@ -436,13 +459,13 @@ class DescribeOptionalAttribute(object):
 
     @pytest.fixture
     def getter_fixture(self):
-        parent = a_parent().with_nsdecls().with_optAttr('24').element
+        parent = a_parent().with_nsdecls().with_optAttr("24").element
         return parent, 24
 
     @pytest.fixture(params=[36, None])
     def setter_fixture(self, request):
         value = request.param
-        parent = a_parent().with_nsdecls().with_optAttr('42').element
+        parent = a_parent().with_nsdecls().with_optAttr("42").element
         if value is None:
             expected_xml = a_parent().with_nsdecls().xml()
         else:
@@ -451,7 +474,6 @@ class DescribeOptionalAttribute(object):
 
 
 class DescribeRequiredAttribute(object):
-
     def it_adds_a_getter_property_for_the_attr_value(self, getter_fixture):
         parent, reqAttr_python_value = getter_fixture
         assert parent.reqAttr == reqAttr_python_value
@@ -480,14 +502,16 @@ class DescribeRequiredAttribute(object):
 
     @pytest.fixture
     def getter_fixture(self):
-        parent = a_parent().with_nsdecls().with_reqAttr('42').element
+        parent = a_parent().with_nsdecls().with_reqAttr("42").element
         return parent, 42
 
-    @pytest.fixture(params=[
-        (None, TypeError),
-        (-4,   ValueError),
-        ('2',  TypeError),
-    ])
+    @pytest.fixture(
+        params=[
+            (None, TypeError),
+            (-4, ValueError),
+            ("2", TypeError),
+        ]
+    )
     def invalid_assign_fixture(self, request):
         invalid_value, expected_exception = request.param
         parent = a_parent().with_nsdecls().with_reqAttr(1).element
@@ -495,16 +519,14 @@ class DescribeRequiredAttribute(object):
 
     @pytest.fixture
     def setter_fixture(self):
-        parent = a_parent().with_nsdecls().with_reqAttr('42').element
+        parent = a_parent().with_nsdecls().with_reqAttr("42").element
         value = 24
         expected_xml = a_parent().with_nsdecls().with_reqAttr(value).xml()
         return parent, value, expected_xml
 
 
 class DescribeZeroOrMore(object):
-
-    def it_adds_a_getter_property_for_the_child_element_list(
-            self, getter_fixture):
+    def it_adds_a_getter_property_for_the_child_element_list(self, getter_fixture):
         parent, zomChild = getter_fixture
         assert parent.zomChild_lst[0] is zomChild
 
@@ -518,7 +540,7 @@ class DescribeZeroOrMore(object):
         parent._insert_zomChild(zomChild)
         assert parent.xml == expected_xml
         assert parent._insert_zomChild.__doc__.startswith(
-            'Return the passed ``<w:zomChild>`` '
+            "Return the passed ``<w:zomChild>`` "
         )
 
     def it_adds_an_add_method_for_the_child_element(self, add_fixture):
@@ -527,7 +549,7 @@ class DescribeZeroOrMore(object):
         assert parent.xml == expected_xml
         assert isinstance(zomChild, CT_ZomChild)
         assert parent._add_zomChild.__doc__.startswith(
-            'Add a new ``<w:zomChild>`` child element '
+            "Add a new ``<w:zomChild>`` child element "
         )
 
     def it_adds_a_public_add_method_for_the_child_element(self, add_fixture):
@@ -536,11 +558,11 @@ class DescribeZeroOrMore(object):
         assert parent.xml == expected_xml
         assert isinstance(zomChild, CT_ZomChild)
         assert parent._add_zomChild.__doc__.startswith(
-            'Add a new ``<w:zomChild>`` child element '
+            "Add a new ``<w:zomChild>`` child element "
         )
 
     def it_removes_the_property_root_name_used_for_declaration(self):
-        assert not hasattr(CT_Parent, 'zomChild')
+        assert not hasattr(CT_Parent, "zomChild")
 
     # fixtures -------------------------------------------------------
 
@@ -553,24 +575,26 @@ class DescribeZeroOrMore(object):
     @pytest.fixture
     def getter_fixture(self):
         parent = self.parent_bldr(True).element
-        zomChild = parent.find(qn('w:zomChild'))
+        zomChild = parent.find(qn("w:zomChild"))
         return parent, zomChild
 
     @pytest.fixture
     def insert_fixture(self):
         parent = (
-            a_parent().with_nsdecls().with_child(
-                an_oomChild()).with_child(
-                an_oooChild()).with_child(
-                a_zooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
+            .with_child(a_zooChild())
         ).element
         zomChild = a_zomChild().with_nsdecls().element
         expected_xml = (
-            a_parent().with_nsdecls().with_child(
-                an_oomChild()).with_child(
-                an_oooChild()).with_child(
-                a_zomChild()).with_child(
-                a_zooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
+            .with_child(a_zomChild())
+            .with_child(a_zooChild())
         ).xml()
         return parent, zomChild, expected_xml
 
@@ -588,7 +612,6 @@ class DescribeZeroOrMore(object):
 
 
 class DescribeZeroOrOne(object):
-
     def it_adds_a_getter_property_for_the_child_element(self, getter_fixture):
         parent, zooChild = getter_fixture
         assert parent.zooChild is zooChild
@@ -599,7 +622,7 @@ class DescribeZeroOrOne(object):
         assert parent.xml == expected_xml
         assert isinstance(zooChild, CT_ZooChild)
         assert parent._add_zooChild.__doc__.startswith(
-            'Add a new ``<w:zooChild>`` child element '
+            "Add a new ``<w:zooChild>`` child element "
         )
 
     def it_adds_an_insert_method_for_the_child_element(self, insert_fixture):
@@ -607,11 +630,10 @@ class DescribeZeroOrOne(object):
         parent._insert_zooChild(zooChild)
         assert parent.xml == expected_xml
         assert parent._insert_zooChild.__doc__.startswith(
-            'Return the passed ``<w:zooChild>`` '
+            "Return the passed ``<w:zooChild>`` "
         )
 
-    def it_adds_a_get_or_add_method_for_the_child_element(
-            self, get_or_add_fixture):
+    def it_adds_a_get_or_add_method_for_the_child_element(self, get_or_add_fixture):
         parent, expected_xml = get_or_add_fixture
         zooChild = parent.get_or_add_zooChild()
         assert isinstance(zooChild, CT_ZooChild)
@@ -634,7 +656,7 @@ class DescribeZeroOrOne(object):
     def getter_fixture(self, request):
         zooChild_is_present = request.param
         parent = self.parent_bldr(zooChild_is_present).element
-        zooChild = parent.find(qn('w:zooChild'))  # None if not found
+        zooChild = parent.find(qn("w:zooChild"))  # None if not found
         return parent, zooChild
 
     @pytest.fixture(params=[True, False])
@@ -647,18 +669,20 @@ class DescribeZeroOrOne(object):
     @pytest.fixture
     def insert_fixture(self):
         parent = (
-            a_parent().with_nsdecls().with_child(
-                an_oomChild()).with_child(
-                an_oooChild()).with_child(
-                a_zomChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
+            .with_child(a_zomChild())
         ).element
         zooChild = a_zooChild().with_nsdecls().element
         expected_xml = (
-            a_parent().with_nsdecls().with_child(
-                an_oomChild()).with_child(
-                an_oooChild()).with_child(
-                a_zomChild()).with_child(
-                a_zooChild())
+            a_parent()
+            .with_nsdecls()
+            .with_child(an_oomChild())
+            .with_child(an_oooChild())
+            .with_child(a_zomChild())
+            .with_child(a_zooChild())
         ).xml()
         return parent, zooChild, expected_xml
 
@@ -679,18 +703,17 @@ class DescribeZeroOrOne(object):
 
 
 class DescribeZeroOrOneChoice(object):
-
     def it_adds_a_getter_for_the_current_choice(self, getter_fixture):
         parent, expected_choice = getter_fixture
         assert parent.eg_zooChoice is expected_choice
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[None, 'choice', 'choice2'])
+    @pytest.fixture(params=[None, "choice", "choice2"])
     def getter_fixture(self, request):
         choice_tag = request.param
         parent = self.parent_bldr(choice_tag).element
-        tagname = 'w:%s' % choice_tag
+        tagname = "w:%s" % choice_tag
         expected_choice = parent.find(qn(tagname))  # None if not found
         return parent, expected_choice
 
@@ -698,9 +721,9 @@ class DescribeZeroOrOneChoice(object):
 
     def parent_bldr(self, choice_tag=None):
         parent_bldr = a_parent().with_nsdecls()
-        if choice_tag == 'choice':
+        if choice_tag == "choice":
             parent_bldr.with_child(a_choice())
-        if choice_tag == 'choice2':
+        if choice_tag == "choice2":
             parent_bldr.with_child(a_choice2())
         return parent_bldr
 
@@ -709,33 +732,32 @@ class DescribeZeroOrOneChoice(object):
 # static shared fixture
 # --------------------------------------------------------------------
 
-class ST_IntegerType(BaseIntType):
 
+class ST_IntegerType(BaseIntType):
     @classmethod
     def validate(cls, value):
         cls.validate_int(value)
         if value < 1 or value > 42:
-            raise ValueError(
-                "value must be in range 1 to 42 inclusive"
-            )
+            raise ValueError("value must be in range 1 to 42 inclusive")
 
 
 class CT_Parent(BaseOxmlElement):
     """
     ``<w:parent>`` element, an invented element for use in testing.
     """
+
     eg_zooChoice = ZeroOrOneChoice(
-        (Choice('w:choice'), Choice('w:choice2')),
-        successors=('w:oomChild', 'w:oooChild')
+        (Choice("w:choice"), Choice("w:choice2")),
+        successors=("w:oomChild", "w:oooChild"),
     )
-    oomChild = OneOrMore('w:oomChild', successors=(
-        'w:oooChild', 'w:zomChild', 'w:zooChild'
-    ))
-    oooChild = OneAndOnlyOne('w:oooChild')
-    zomChild = ZeroOrMore('w:zomChild', successors=('w:zooChild',))
-    zooChild = ZeroOrOne('w:zooChild', successors=())
-    optAttr = OptionalAttribute('w:optAttr', ST_IntegerType)
-    reqAttr = RequiredAttribute('reqAttr', ST_IntegerType)
+    oomChild = OneOrMore(
+        "w:oomChild", successors=("w:oooChild", "w:zomChild", "w:zooChild")
+    )
+    oooChild = OneAndOnlyOne("w:oooChild")
+    zomChild = ZeroOrMore("w:zomChild", successors=("w:zooChild",))
+    zooChild = ZeroOrOne("w:zooChild", successors=())
+    optAttr = OptionalAttribute("w:optAttr", ST_IntegerType)
+    reqAttr = RequiredAttribute("reqAttr", ST_IntegerType)
 
 
 class CT_Choice(BaseOxmlElement):
@@ -766,52 +788,52 @@ class CT_ZooChild(BaseOxmlElement):
     """
 
 
-register_element_cls('w:parent',   CT_Parent)
-register_element_cls('w:choice',   CT_Choice)
-register_element_cls('w:oomChild', CT_OomChild)
-register_element_cls('w:zomChild', CT_ZomChild)
-register_element_cls('w:zooChild', CT_ZooChild)
+register_element_cls("w:parent", CT_Parent)
+register_element_cls("w:choice", CT_Choice)
+register_element_cls("w:oomChild", CT_OomChild)
+register_element_cls("w:zomChild", CT_ZomChild)
+register_element_cls("w:zooChild", CT_ZooChild)
 
 
 class CT_ChoiceBuilder(BaseBuilder):
-    __tag__ = 'w:choice'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:choice"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_Choice2Builder(BaseBuilder):
-    __tag__ = 'w:choice2'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:choice2"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_ParentBuilder(BaseBuilder):
-    __tag__ = 'w:parent'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:optAttr', 'reqAttr')
+    __tag__ = "w:parent"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:optAttr", "reqAttr")
 
 
 class CT_OomChildBuilder(BaseBuilder):
-    __tag__ = 'w:oomChild'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:oomChild"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_OooChildBuilder(BaseBuilder):
-    __tag__ = 'w:oooChild'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:oooChild"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_ZomChildBuilder(BaseBuilder):
-    __tag__ = 'w:zomChild'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:zomChild"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_ZooChildBuilder(BaseBuilder):
-    __tag__ = 'w:zooChild'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:zooChild"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 

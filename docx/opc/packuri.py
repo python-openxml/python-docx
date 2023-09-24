@@ -14,10 +14,11 @@ class PackURI(str):
     Provides access to pack URI components such as the baseURI and the
     filename slice. Behaves as |str| otherwise.
     """
-    _filename_re = re.compile('([a-zA-Z]+)([1-9][0-9]*)?')
+
+    _filename_re = re.compile("([a-zA-Z]+)([1-9][0-9]*)?")
 
     def __new__(cls, pack_uri_str):
-        if not pack_uri_str[0] == '/':
+        if not pack_uri_str[0] == "/":
             tmpl = "PackURI must begin with slash, got '%s'"
             raise ValueError(tmpl % pack_uri_str)
         return str.__new__(cls, pack_uri_str)
@@ -49,7 +50,7 @@ class PackURI(str):
         """
         # raw_ext is either empty string or starts with period, e.g. '.xml'
         raw_ext = posixpath.splitext(self)[1]
-        return raw_ext[1:] if raw_ext.startswith('.') else raw_ext
+        return raw_ext[1:] if raw_ext.startswith(".") else raw_ext
 
     @property
     def filename(self):
@@ -95,7 +96,7 @@ class PackURI(str):
         """
         # workaround for posixpath bug in 2.6, doesn't generate correct
         # relative path when *start* (second) parameter is root ('/')
-        if baseURI == '/':
+        if baseURI == "/":
             relpath = self[1:]
         else:
             relpath = posixpath.relpath(self, baseURI)
@@ -108,10 +109,10 @@ class PackURI(str):
         Only produces sensible output if the pack URI is a partname or the
         package pseudo-partname '/'.
         """
-        rels_filename = '%s.rels' % self.filename
-        rels_uri_str = posixpath.join(self.baseURI, '_rels', rels_filename)
+        rels_filename = "%s.rels" % self.filename
+        rels_uri_str = posixpath.join(self.baseURI, "_rels", rels_filename)
         return PackURI(rels_uri_str)
 
 
-PACKAGE_URI = PackURI('/')
-CONTENT_TYPES_URI = PackURI('/[Content_Types].xml')
+PACKAGE_URI = PackURI("/")
+CONTENT_TYPES_URI = PackURI("/[Content_Types].xml")

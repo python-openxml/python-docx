@@ -14,10 +14,9 @@ from ..unitutil.mock import ANY, initializer_mock
 
 
 class DescribeGif(object):
-
     def it_can_construct_from_a_gif_stream(self, Gif__init__):
         cx, cy = 42, 24
-        bytes_ = b'filler\x2A\x00\x18\x00'
+        bytes_ = b"filler\x2A\x00\x18\x00"
         stream = BytesIO(bytes_)
 
         gif = Gif.from_stream(stream)
@@ -31,7 +30,7 @@ class DescribeGif(object):
 
     def it_knows_its_default_ext(self):
         gif = Gif(None, None, None, None)
-        assert gif.default_ext == 'gif'
+        assert gif.default_ext == "gif"
 
     # fixture components ---------------------------------------------
 

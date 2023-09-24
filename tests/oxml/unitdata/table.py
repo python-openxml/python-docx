@@ -9,50 +9,50 @@ from .shared import CT_StringBuilder
 
 
 class CT_RowBuilder(BaseBuilder):
-    __tag__ = 'w:tr'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:w',)
+    __tag__ = "w:tr"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:w",)
 
 
 class CT_TblBuilder(BaseBuilder):
-    __tag__ = 'w:tbl'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:tbl"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_TblGridBuilder(BaseBuilder):
-    __tag__ = 'w:tblGrid'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:w',)
+    __tag__ = "w:tblGrid"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:w",)
 
 
 class CT_TblGridColBuilder(BaseBuilder):
-    __tag__ = 'w:gridCol'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:w',)
+    __tag__ = "w:gridCol"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:w",)
 
 
 class CT_TblPrBuilder(BaseBuilder):
-    __tag__ = 'w:tblPr'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:tblPr"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_TblWidthBuilder(BaseBuilder):
-    __tag__ = 'w:tblW'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:w', 'w:type')
+    __tag__ = "w:tblW"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:w", "w:type")
 
 
 class CT_TcBuilder(BaseBuilder):
-    __tag__ = 'w:tc'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:id',)
+    __tag__ = "w:tc"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:id",)
 
 
 class CT_TcPrBuilder(BaseBuilder):
-    __tag__ = 'w:tcPr'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:tcPr"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
@@ -73,7 +73,7 @@ def a_tblPr():
 
 
 def a_tblStyle():
-    return CT_StringBuilder('w:tblStyle')
+    return CT_StringBuilder("w:tblStyle")
 
 
 def a_tblW():

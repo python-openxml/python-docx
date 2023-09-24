@@ -7,8 +7,8 @@ from struct import Struct
 from .exceptions import UnexpectedEndOfFileError
 
 
-BIG_ENDIAN = '>'
-LITTLE_ENDIAN = '<'
+BIG_ENDIAN = ">"
+LITTLE_ENDIAN = "<"
 
 
 class StreamReader(object):
@@ -17,12 +17,11 @@ class StreamReader(object):
     binary file. Byte-order is configurable. *base_offset* is added to any
     base value provided to calculate actual location for reads.
     """
+
     def __init__(self, stream, byte_order, base_offset=0):
         super(StreamReader, self).__init__()
         self._stream = stream
-        self._byte_order = (
-            LITTLE_ENDIAN if byte_order == LITTLE_ENDIAN else BIG_ENDIAN
-        )
+        self._byte_order = LITTLE_ENDIAN if byte_order == LITTLE_ENDIAN else BIG_ENDIAN
         self._base_offset = base_offset
 
     def read(self, count):
@@ -37,7 +36,7 @@ class StreamReader(object):
         self._base_offset + *base* + *offset*. If *base* is None, the byte is
         read from the current position in the stream.
         """
-        fmt = 'B'
+        fmt = "B"
         return self._read_int(fmt, base, offset)
 
     def read_long(self, base, offset=0):
@@ -47,7 +46,7 @@ class StreamReader(object):
         read from the current position in the stream. The endian setting of
         this instance is used to interpret the byte layout of the long.
         """
-        fmt = '<L' if self._byte_order is LITTLE_ENDIAN else '>L'
+        fmt = "<L" if self._byte_order is LITTLE_ENDIAN else ">L"
         return self._read_int(fmt, base, offset)
 
     def read_short(self, base, offset=0):
@@ -55,7 +54,7 @@ class StreamReader(object):
         Return the int value of the two bytes at the file position determined
         by *base* and *offset*, similarly to ``read_long()`` above.
         """
-        fmt = b'<H' if self._byte_order is LITTLE_ENDIAN else b'>H'
+        fmt = b"<H" if self._byte_order is LITTLE_ENDIAN else b">H"
         return self._read_int(fmt, base, offset)
 
     def read_str(self, char_count, base, offset=0):
@@ -63,12 +62,14 @@ class StreamReader(object):
         Return a string containing the *char_count* bytes at the file
         position determined by self._base_offset + *base* + *offset*.
         """
+
         def str_struct(char_count):
-            format_ = '%ds' % char_count
+            format_ = "%ds" % char_count
             return Struct(format_)
+
         struct = str_struct(char_count)
         chars = self._unpack_item(struct, base, offset)
-        unicode_str = chars.decode('UTF-8')
+        unicode_str = chars.decode("UTF-8")
         return unicode_str
 
     def seek(self, base, offset=0):

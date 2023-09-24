@@ -8,30 +8,35 @@ from ...unitdata import BaseBuilder
 
 
 class CT_PageMarBuilder(BaseBuilder):
-    __tag__ = 'w:pgMar'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:pgMar"
+    __nspfxs__ = ("w",)
     __attrs__ = (
-        'w:top', 'w:right', 'w:bottom', 'w:left', 'w:header', 'w:footer',
-        'w:gutter'
+        "w:top",
+        "w:right",
+        "w:bottom",
+        "w:left",
+        "w:header",
+        "w:footer",
+        "w:gutter",
     )
 
 
 class CT_PageSzBuilder(BaseBuilder):
-    __tag__ = 'w:pgSz'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:w', 'w:h', 'w:orient', 'w:code')
+    __tag__ = "w:pgSz"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:w", "w:h", "w:orient", "w:code")
 
 
 class CT_SectPrBuilder(BaseBuilder):
-    __tag__ = 'w:sectPr'
-    __nspfxs__ = ('w',)
+    __tag__ = "w:sectPr"
+    __nspfxs__ = ("w",)
     __attrs__ = ()
 
 
 class CT_SectTypeBuilder(BaseBuilder):
-    __tag__ = 'w:type'
-    __nspfxs__ = ('w',)
-    __attrs__ = ('w:val',)
+    __tag__ = "w:type"
+    __nspfxs__ = ("w",)
+    __attrs__ = ("w:val",)
 
 
 def a_pgMar():

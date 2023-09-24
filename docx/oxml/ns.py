@@ -20,7 +20,7 @@ nsmap = {
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
     "sl": "http://schemas.openxmlformats.org/schemaLibrary/2006/main",
     "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-    'w14': "http://schemas.microsoft.com/office/word/2010/wordml",
+    "w14": "http://schemas.microsoft.com/office/word/2010/wordml",
     "wp": "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing",
     "xml": "http://www.w3.org/XML/1998/namespace",
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -34,21 +34,22 @@ class NamespacePrefixedTag(str):
     Value object that knows the semantics of an XML tag having a namespace
     prefix.
     """
+
     def __new__(cls, nstag, *args):
         return super(NamespacePrefixedTag, cls).__new__(cls, nstag)
 
     def __init__(self, nstag):
-        self._pfx, self._local_part = nstag.split(':')
+        self._pfx, self._local_part = nstag.split(":")
         self._ns_uri = nsmap[self._pfx]
 
     @property
     def clark_name(self):
-        return '{%s}%s' % (self._ns_uri, self._local_part)
+        return "{%s}%s" % (self._ns_uri, self._local_part)
 
     @classmethod
     def from_clark_name(cls, clark_name):
-        nsuri, local_name = clark_name[1:].split('}')
-        nstag = '%s:%s' % (pfxmap[nsuri], local_name)
+        nsuri, local_name = clark_name[1:].split("}")
+        nstag = "%s:%s" % (pfxmap[nsuri], local_name)
         return cls(nstag)
 
     @property
@@ -91,7 +92,7 @@ def nsdecls(*prefixes):
     Return a string containing a namespace declaration for each of the
     namespace prefix strings, e.g. 'p', 'ct', passed as *prefixes*.
     """
-    return ' '.join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
+    return " ".join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
 
 
 def nspfxmap(*nspfxs):
@@ -109,6 +110,6 @@ def qn(tag):
     prefixed tag name into a Clark-notation qualified tag name for lxml. For
     example, ``qn('p:cSld')`` returns ``'{http://schemas.../main}cSld'``.
     """
-    prefix, tagroot = tag.split(':')
+    prefix, tagroot = tag.split(":")
     uri = nsmap[prefix]
-    return '{%s}%s' % (uri, tagroot)
+    return "{%s}%s" % (uri, tagroot)

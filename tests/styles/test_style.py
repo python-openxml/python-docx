@@ -4,16 +4,18 @@
 Test suite for the docx.styles.style module
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.style import (
-    BaseStyle, _CharacterStyle, _ParagraphStyle, _NumberingStyle,
-    StyleFactory, _TableStyle
+    BaseStyle,
+    _CharacterStyle,
+    _ParagraphStyle,
+    _NumberingStyle,
+    StyleFactory,
+    _TableStyle,
 )
 from docx.text.font import Font
 from docx.text.parfmt import ParagraphFormat
@@ -23,7 +25,6 @@ from ..unitutil.mock import call, class_mock, function_mock, instance_mock
 
 
 class DescribeStyleFactory(object):
-
     def it_constructs_the_right_type_of_style(self, factory_fixture):
         style_elm, StyleCls_, style_ = factory_fixture
         style = StyleFactory(style_elm)
@@ -32,19 +33,27 @@ class DescribeStyleFactory(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=['paragraph', 'character', 'table', 'numbering'])
+    @pytest.fixture(params=["paragraph", "character", "table", "numbering"])
     def factory_fixture(
-            self, request, paragraph_style_, _ParagraphStyle_,
-            character_style_, _CharacterStyle_, table_style_, _TableStyle_,
-            numbering_style_, _NumberingStyle_):
+        self,
+        request,
+        paragraph_style_,
+        _ParagraphStyle_,
+        character_style_,
+        _CharacterStyle_,
+        table_style_,
+        _TableStyle_,
+        numbering_style_,
+        _NumberingStyle_,
+    ):
         type_attr_val = request.param
         StyleCls_, style_mock = {
-            'paragraph': (_ParagraphStyle_, paragraph_style_),
-            'character': (_CharacterStyle_, character_style_),
-            'table':     (_TableStyle_,     table_style_),
-            'numbering': (_NumberingStyle_, numbering_style_),
+            "paragraph": (_ParagraphStyle_, paragraph_style_),
+            "character": (_CharacterStyle_, character_style_),
+            "table": (_TableStyle_, table_style_),
+            "numbering": (_NumberingStyle_, numbering_style_),
         }[request.param]
-        style_cxml = 'w:style{w:type=%s}' % type_attr_val
+        style_cxml = "w:style{w:type=%s}" % type_attr_val
         style_elm = element(style_cxml)
         return style_elm, StyleCls_, style_mock
 
@@ -53,8 +62,7 @@ class DescribeStyleFactory(object):
     @pytest.fixture
     def _ParagraphStyle_(self, request, paragraph_style_):
         return class_mock(
-            request, 'docx.styles.style._ParagraphStyle',
-            return_value=paragraph_style_
+            request, "docx.styles.style._ParagraphStyle", return_value=paragraph_style_
         )
 
     @pytest.fixture
@@ -64,8 +72,7 @@ class DescribeStyleFactory(object):
     @pytest.fixture
     def _CharacterStyle_(self, request, character_style_):
         return class_mock(
-            request, 'docx.styles.style._CharacterStyle',
-            return_value=character_style_
+            request, "docx.styles.style._CharacterStyle", return_value=character_style_
         )
 
     @pytest.fixture
@@ -75,8 +82,7 @@ class DescribeStyleFactory(object):
     @pytest.fixture
     def _TableStyle_(self, request, table_style_):
         return class_mock(
-            request, 'docx.styles.style._TableStyle',
-            return_value=table_style_
+            request, "docx.styles.style._TableStyle", return_value=table_style_
         )
 
     @pytest.fixture
@@ -86,8 +92,7 @@ class DescribeStyleFactory(object):
     @pytest.fixture
     def _NumberingStyle_(self, request, numbering_style_):
         return class_mock(
-            request, 'docx.styles.style._NumberingStyle',
-            return_value=numbering_style_
+            request, "docx.styles.style._NumberingStyle", return_value=numbering_style_
         )
 
     @pytest.fixture
@@ -96,7 +101,6 @@ class DescribeStyleFactory(object):
 
 
 class DescribeBaseStyle(object):
-
     def it_knows_its_style_id(self, id_get_fixture):
         style, expected_value = id_get_fixture
         assert style.style_id == expected_value
@@ -176,11 +180,13 @@ class DescribeBaseStyle(object):
 
     # fixture --------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:style',                  True),
-        ('w:style{w:customStyle=0}', True),
-        ('w:style{w:customStyle=1}', False),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", True),
+            ("w:style{w:customStyle=0}", True),
+            ("w:style{w:customStyle=1}", False),
+        ]
+    )
     def builtin_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
@@ -188,186 +194,207 @@ class DescribeBaseStyle(object):
 
     @pytest.fixture
     def delete_fixture(self):
-        styles = element('w:styles/w:style')
+        styles = element("w:styles/w:style")
         style = BaseStyle(styles[0])
-        expected_xml = xml('w:styles')
+        expected_xml = xml("w:styles")
         return style, styles, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style',                       False),
-        ('w:style/w:semiHidden',          True),
-        ('w:style/w:semiHidden{w:val=0}', False),
-        ('w:style/w:semiHidden{w:val=1}', True),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", False),
+            ("w:style/w:semiHidden", True),
+            ("w:style/w:semiHidden{w:val=0}", False),
+            ("w:style/w:semiHidden{w:val=1}", True),
+        ]
+    )
     def hidden_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                       True,  'w:style/w:semiHidden'),
-        ('w:style/w:semiHidden{w:val=0}', True,  'w:style/w:semiHidden'),
-        ('w:style/w:semiHidden{w:val=1}', True,  'w:style/w:semiHidden'),
-        ('w:style',                       False, 'w:style'),
-        ('w:style/w:semiHidden',          False, 'w:style'),
-        ('w:style/w:semiHidden{w:val=1}', False, 'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", True, "w:style/w:semiHidden"),
+            ("w:style/w:semiHidden{w:val=0}", True, "w:style/w:semiHidden"),
+            ("w:style/w:semiHidden{w:val=1}", True, "w:style/w:semiHidden"),
+            ("w:style", False, "w:style"),
+            ("w:style/w:semiHidden", False, "w:style"),
+            ("w:style/w:semiHidden{w:val=1}", False, "w:style"),
+        ]
+    )
     def hidden_set_fixture(self, request):
         style_cxml, value, expected_cxml = request.param
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_cxml)
         return style, value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style',                   None),
-        ('w:style{w:styleId=Foobar}', 'Foobar'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", None),
+            ("w:style{w:styleId=Foobar}", "Foobar"),
+        ]
+    )
     def id_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                'Foo', 'w:style{w:styleId=Foo}'),
-        ('w:style{w:styleId=Foo}', 'Bar', 'w:style{w:styleId=Bar}'),
-        ('w:style{w:styleId=Bar}', None,  'w:style'),
-        ('w:style',                None,  'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", "Foo", "w:style{w:styleId=Foo}"),
+            ("w:style{w:styleId=Foo}", "Bar", "w:style{w:styleId=Bar}"),
+            ("w:style{w:styleId=Bar}", None, "w:style"),
+            ("w:style", None, "w:style"),
+        ]
+    )
     def id_set_fixture(self, request):
         style_cxml, new_value, expected_style_cxml = request.param
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_style_cxml)
         return style, new_value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style',                   False),
-        ('w:style/w:locked',          True),
-        ('w:style/w:locked{w:val=0}', False),
-        ('w:style/w:locked{w:val=1}', True),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", False),
+            ("w:style/w:locked", True),
+            ("w:style/w:locked{w:val=0}", False),
+            ("w:style/w:locked{w:val=1}", True),
+        ]
+    )
     def locked_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                   True,  'w:style/w:locked'),
-        ('w:style/w:locked{w:val=0}', True,  'w:style/w:locked'),
-        ('w:style/w:locked{w:val=1}', True,  'w:style/w:locked'),
-        ('w:style',                   False, 'w:style'),
-        ('w:style/w:locked',          False, 'w:style'),
-        ('w:style/w:locked{w:val=1}', False, 'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", True, "w:style/w:locked"),
+            ("w:style/w:locked{w:val=0}", True, "w:style/w:locked"),
+            ("w:style/w:locked{w:val=1}", True, "w:style/w:locked"),
+            ("w:style", False, "w:style"),
+            ("w:style/w:locked", False, "w:style"),
+            ("w:style/w:locked{w:val=1}", False, "w:style"),
+        ]
+    )
     def locked_set_fixture(self, request):
         style_cxml, value, expected_cxml = request.param
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_cxml)
         return style, value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style{w:type=table}',                         None),
-        ('w:style{w:type=table}/w:name{w:val=Boofar}',    'Boofar'),
-        ('w:style{w:type=table}/w:name{w:val=heading 1}', 'Heading 1'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style{w:type=table}", None),
+            ("w:style{w:type=table}/w:name{w:val=Boofar}", "Boofar"),
+            ("w:style{w:type=table}/w:name{w:val=heading 1}", "Heading 1"),
+        ]
+    )
     def name_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                   'Foo', 'w:style/w:name{w:val=Foo}'),
-        ('w:style/w:name{w:val=Foo}', 'Bar', 'w:style/w:name{w:val=Bar}'),
-        ('w:style/w:name{w:val=Bar}', None,  'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", "Foo", "w:style/w:name{w:val=Foo}"),
+            ("w:style/w:name{w:val=Foo}", "Bar", "w:style/w:name{w:val=Bar}"),
+            ("w:style/w:name{w:val=Bar}", None, "w:style"),
+        ]
+    )
     def name_set_fixture(self, request):
         style_cxml, new_value, expected_style_cxml = request.param
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_style_cxml)
         return style, new_value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style',                        None),
-        ('w:style/w:uiPriority{w:val=42}', 42),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", None),
+            ("w:style/w:uiPriority{w:val=42}", 42),
+        ]
+    )
     def priority_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                        42,
-         'w:style/w:uiPriority{w:val=42}'),
-        ('w:style/w:uiPriority{w:val=42}', 24,
-         'w:style/w:uiPriority{w:val=24}'),
-        ('w:style/w:uiPriority{w:val=24}', None,
-         'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", 42, "w:style/w:uiPriority{w:val=42}"),
+            ("w:style/w:uiPriority{w:val=42}", 24, "w:style/w:uiPriority{w:val=24}"),
+            ("w:style/w:uiPriority{w:val=24}", None, "w:style"),
+        ]
+    )
     def priority_set_fixture(self, request):
         style_cxml, value, expected_cxml = request.param
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_cxml)
         return style, value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style',                     False),
-        ('w:style/w:qFormat',           True),
-        ('w:style/w:qFormat{w:val=0}',  False),
-        ('w:style/w:qFormat{w:val=on}', True),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", False),
+            ("w:style/w:qFormat", True),
+            ("w:style/w:qFormat{w:val=0}", False),
+            ("w:style/w:qFormat{w:val=on}", True),
+        ]
+    )
     def quick_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                     True,  'w:style/w:qFormat'),
-        ('w:style/w:qFormat',           False, 'w:style'),
-        ('w:style/w:qFormat',           True,  'w:style/w:qFormat'),
-        ('w:style/w:qFormat{w:val=0}',  False, 'w:style'),
-        ('w:style/w:qFormat{w:val=on}', True,  'w:style/w:qFormat'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", True, "w:style/w:qFormat"),
+            ("w:style/w:qFormat", False, "w:style"),
+            ("w:style/w:qFormat", True, "w:style/w:qFormat"),
+            ("w:style/w:qFormat{w:val=0}", False, "w:style"),
+            ("w:style/w:qFormat{w:val=on}", True, "w:style/w:qFormat"),
+        ]
+    )
     def quick_set_fixture(self, request):
         style_cxml, new_value, expected_style_cxml = request.param
         style = BaseStyle(element(style_cxml))
         expected_xml = xml(expected_style_cxml)
         return style, new_value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:style',                   WD_STYLE_TYPE.PARAGRAPH),
-        ('w:style{w:type=paragraph}', WD_STYLE_TYPE.PARAGRAPH),
-        ('w:style{w:type=character}', WD_STYLE_TYPE.CHARACTER),
-        ('w:style{w:type=numbering}', WD_STYLE_TYPE.LIST),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", WD_STYLE_TYPE.PARAGRAPH),
+            ("w:style{w:type=paragraph}", WD_STYLE_TYPE.PARAGRAPH),
+            ("w:style{w:type=character}", WD_STYLE_TYPE.CHARACTER),
+            ("w:style{w:type=numbering}", WD_STYLE_TYPE.LIST),
+        ]
+    )
     def type_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                           False),
-        ('w:style/w:unhideWhenUsed',          True),
-        ('w:style/w:unhideWhenUsed{w:val=0}', False),
-        ('w:style/w:unhideWhenUsed{w:val=1}', True),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", False),
+            ("w:style/w:unhideWhenUsed", True),
+            ("w:style/w:unhideWhenUsed{w:val=0}", False),
+            ("w:style/w:unhideWhenUsed{w:val=1}", True),
+        ]
+    )
     def unhide_get_fixture(self, request):
         style_cxml, expected_value = request.param
         style = BaseStyle(element(style_cxml))
         return style, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                           True,
-         'w:style/w:unhideWhenUsed'),
-        ('w:style/w:unhideWhenUsed',          False,
-         'w:style'),
-        ('w:style/w:unhideWhenUsed{w:val=0}', True,
-         'w:style/w:unhideWhenUsed'),
-        ('w:style/w:unhideWhenUsed{w:val=1}', True,
-         'w:style/w:unhideWhenUsed'),
-        ('w:style/w:unhideWhenUsed{w:val=1}', False,
-         'w:style'),
-        ('w:style',                           False,
-         'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", True, "w:style/w:unhideWhenUsed"),
+            ("w:style/w:unhideWhenUsed", False, "w:style"),
+            ("w:style/w:unhideWhenUsed{w:val=0}", True, "w:style/w:unhideWhenUsed"),
+            ("w:style/w:unhideWhenUsed{w:val=1}", True, "w:style/w:unhideWhenUsed"),
+            ("w:style/w:unhideWhenUsed{w:val=1}", False, "w:style"),
+            ("w:style", False, "w:style"),
+        ]
+    )
     def unhide_set_fixture(self, request):
         style_cxml, value, expected_cxml = request.param
         style = BaseStyle(element(style_cxml))
@@ -376,11 +403,8 @@ class DescribeBaseStyle(object):
 
 
 class Describe_CharacterStyle(object):
-
     def it_knows_which_style_it_is_based_on(self, base_get_fixture):
-        style, StyleFactory_, StyleFactory_calls, base_style_ = (
-            base_get_fixture
-        )
+        style, StyleFactory_, StyleFactory_calls, base_style_ = base_get_fixture
         base_style = style.base_style
 
         assert StyleFactory_.call_args_list == StyleFactory_calls
@@ -399,14 +423,13 @@ class Describe_CharacterStyle(object):
 
     # fixture --------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:styles/(w:style{w:styleId=Foo},w:style/w:basedOn{w:val=Foo})',
-         1, 0),
-        ('w:styles/(w:style{w:styleId=Foo},w:style/w:basedOn{w:val=Bar})',
-         1, -1),
-        ('w:styles/w:style',
-         0, -1),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:styles/(w:style{w:styleId=Foo},w:style/w:basedOn{w:val=Foo})", 1, 0),
+            ("w:styles/(w:style{w:styleId=Foo},w:style/w:basedOn{w:val=Bar})", 1, -1),
+            ("w:styles/w:style", 0, -1),
+        ]
+    )
     def base_get_fixture(self, request, StyleFactory_):
         styles_cxml, style_idx, base_style_idx = request.param
         styles = element(styles_cxml)
@@ -420,14 +443,13 @@ class Describe_CharacterStyle(object):
             expected_value = None
         return style, StyleFactory_, StyleFactory_calls, expected_value
 
-    @pytest.fixture(params=[
-        ('w:style',                       'Foo',
-         'w:style/w:basedOn{w:val=Foo}'),
-        ('w:style/w:basedOn{w:val=Foo}',  'Bar',
-         'w:style/w:basedOn{w:val=Bar}'),
-        ('w:style/w:basedOn{w:val=Bar}',  None,
-         'w:style'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:style", "Foo", "w:style/w:basedOn{w:val=Foo}"),
+            ("w:style/w:basedOn{w:val=Foo}", "Bar", "w:style/w:basedOn{w:val=Bar}"),
+            ("w:style/w:basedOn{w:val=Bar}", None, "w:style"),
+        ]
+    )
     def base_set_fixture(self, request, style_):
         style_cxml, base_style_id, expected_style_cxml = request.param
         style = _CharacterStyle(element(style_cxml))
@@ -438,16 +460,14 @@ class Describe_CharacterStyle(object):
 
     @pytest.fixture
     def font_fixture(self, Font_, font_):
-        style = _CharacterStyle(element('w:style'))
+        style = _CharacterStyle(element("w:style"))
         return style, Font_, font_
 
     # fixture components ---------------------------------------------
 
     @pytest.fixture
     def Font_(self, request, font_):
-        return class_mock(
-            request, 'docx.styles.style.Font', return_value=font_
-        )
+        return class_mock(request, "docx.styles.style.Font", return_value=font_)
 
     @pytest.fixture
     def font_(self, request):
@@ -459,11 +479,10 @@ class Describe_CharacterStyle(object):
 
     @pytest.fixture
     def StyleFactory_(self, request):
-        return function_mock(request, 'docx.styles.style.StyleFactory')
+        return function_mock(request, "docx.styles.style.StyleFactory")
 
 
 class Describe_ParagraphStyle(object):
-
     def it_knows_its_next_paragraph_style(self, next_get_fixture):
         style, expected_value = next_get_fixture
         assert style.next_paragraph_style == expected_value
@@ -481,56 +500,61 @@ class Describe_ParagraphStyle(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('H1',   'Body'),
-        ('H2',   'H2'),
-        ('Body', 'Body'),
-        ('Foo',  'Foo'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("H1", "Body"),
+            ("H2", "H2"),
+            ("Body", "Body"),
+            ("Foo", "Foo"),
+        ]
+    )
     def next_get_fixture(self, request):
         style_name, next_style_name = request.param
         styles = element(
-            'w:styles/('
-            'w:style{w:type=paragraph,w:styleId=H1}/w:next{w:val=Body},'
-            'w:style{w:type=paragraph,w:styleId=H2}/w:next{w:val=Char},'
-            'w:style{w:type=paragraph,w:styleId=Body},'
-            'w:style{w:type=paragraph,w:styleId=Foo}/w:next{w:val=Bar},'
-            'w:style{w:type=character,w:styleId=Char})'
+            "w:styles/("
+            "w:style{w:type=paragraph,w:styleId=H1}/w:next{w:val=Body},"
+            "w:style{w:type=paragraph,w:styleId=H2}/w:next{w:val=Char},"
+            "w:style{w:type=paragraph,w:styleId=Body},"
+            "w:style{w:type=paragraph,w:styleId=Foo}/w:next{w:val=Bar},"
+            "w:style{w:type=character,w:styleId=Char})"
         )
-        style_names = ['H1', 'H2', 'Body', 'Foo', 'Char']
+        style_names = ["H1", "H2", "Body", "Foo", "Char"]
         style_elm = styles[style_names.index(style_name)]
         next_style_elm = styles[style_names.index(next_style_name)]
         style = _ParagraphStyle(style_elm)
-        if style_name == 'H1':
+        if style_name == "H1":
             next_style = _ParagraphStyle(next_style_elm)
         else:
             next_style = style
         return style, next_style
 
-    @pytest.fixture(params=[
-        ('H', 'B',  'w:style{w:type=paragraph,w:styleId=H}/w:next{w:val=B}'),
-        ('H', None, 'w:style{w:type=paragraph,w:styleId=H}'),
-        ('H', 'H',  'w:style{w:type=paragraph,w:styleId=H}'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("H", "B", "w:style{w:type=paragraph,w:styleId=H}/w:next{w:val=B}"),
+            ("H", None, "w:style{w:type=paragraph,w:styleId=H}"),
+            ("H", "H", "w:style{w:type=paragraph,w:styleId=H}"),
+        ]
+    )
     def next_set_fixture(self, request):
         style_name, next_style_name, style_cxml = request.param
         styles = element(
-            'w:styles/('
-            'w:style{w:type=paragraph,w:styleId=H},'
-            'w:style{w:type=paragraph,w:styleId=B})'
+            "w:styles/("
+            "w:style{w:type=paragraph,w:styleId=H},"
+            "w:style{w:type=paragraph,w:styleId=B})"
         )
-        style_elms = {'H': styles[0], 'B': styles[1]}
+        style_elms = {"H": styles[0], "B": styles[1]}
         style = _ParagraphStyle(style_elms[style_name])
         next_style = (
-            None if next_style_name is None else
-            _ParagraphStyle(style_elms[next_style_name])
+            None
+            if next_style_name is None
+            else _ParagraphStyle(style_elms[next_style_name])
         )
         expected_xml = xml(style_cxml)
         return style, next_style, expected_xml
 
     @pytest.fixture
     def parfmt_fixture(self, ParagraphFormat_, paragraph_format_):
-        style = _ParagraphStyle(element('w:style'))
+        style = _ParagraphStyle(element("w:style"))
         return style, ParagraphFormat_, paragraph_format_
 
     # fixture components ---------------------------------------------
@@ -538,8 +562,7 @@ class Describe_ParagraphStyle(object):
     @pytest.fixture
     def ParagraphFormat_(self, request, paragraph_format_):
         return class_mock(
-            request, 'docx.styles.style.ParagraphFormat',
-            return_value=paragraph_format_
+            request, "docx.styles.style.ParagraphFormat", return_value=paragraph_format_
         )
 
     @pytest.fixture

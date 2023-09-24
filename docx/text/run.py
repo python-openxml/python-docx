@@ -21,6 +21,7 @@ class Run(Parented):
     not specified directly on the run and its effective value is taken from
     the style hierarchy.
     """
+
     def __init__(self, r, parent):
         super(Run, self).__init__(parent)
         self._r = self._element = self.element = r
@@ -33,12 +34,12 @@ class Run(Parented):
         *break_type* defaults to `WD_BREAK.LINE`.
         """
         type_, clear = {
-            WD_BREAK.LINE:             (None,           None),
-            WD_BREAK.PAGE:             ('page',         None),
-            WD_BREAK.COLUMN:           ('column',       None),
-            WD_BREAK.LINE_CLEAR_LEFT:  ('textWrapping', 'left'),
-            WD_BREAK.LINE_CLEAR_RIGHT: ('textWrapping', 'right'),
-            WD_BREAK.LINE_CLEAR_ALL:   ('textWrapping', 'all'),
+            WD_BREAK.LINE: (None, None),
+            WD_BREAK.PAGE: ("page", None),
+            WD_BREAK.COLUMN: ("column", None),
+            WD_BREAK.LINE_CLEAR_LEFT: ("textWrapping", "left"),
+            WD_BREAK.LINE_CLEAR_RIGHT: ("textWrapping", "right"),
+            WD_BREAK.LINE_CLEAR_ALL: ("textWrapping", "all"),
         }[break_type]
         br = self._r.add_br()
         if type_ is not None:
@@ -133,9 +134,7 @@ class Run(Parented):
 
     @style.setter
     def style(self, style_or_name):
-        style_id = self.part.get_style_id(
-            style_or_name, WD_STYLE_TYPE.CHARACTER
-        )
+        style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.CHARACTER)
         self._r.style = style_id
 
     @property
@@ -186,6 +185,7 @@ class _Text(object):
     """
     Proxy object wrapping ``<w:t>`` element.
     """
+
     def __init__(self, t_elm):
         super(_Text, self).__init__()
         self._t = t_elm

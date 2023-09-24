@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .base import alias, XmlEnumeration, XmlMappedEnumMember
 
 
-@alias('WD_HEADER_FOOTER')
+@alias("WD_HEADER_FOOTER")
 class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
     """
     alias: **WD_HEADER_FOOTER**
@@ -36,7 +36,7 @@ class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
     )
 
 
-@alias('WD_ORIENT')
+@alias("WD_ORIENT")
 class WD_ORIENTATION(XmlEnumeration):
     """
     alias: **WD_ORIENT**
@@ -51,21 +51,17 @@ class WD_ORIENTATION(XmlEnumeration):
         section.orientation = WD_ORIENT.LANDSCAPE
     """
 
-    __ms_name__ = 'WdOrientation'
+    __ms_name__ = "WdOrientation"
 
-    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff837902.aspx'
+    __url__ = "http://msdn.microsoft.com/en-us/library/office/ff837902.aspx"
 
     __members__ = (
-        XmlMappedEnumMember(
-            'PORTRAIT', 0, 'portrait', 'Portrait orientation.'
-        ),
-        XmlMappedEnumMember(
-            'LANDSCAPE', 1, 'landscape', 'Landscape orientation.'
-        ),
+        XmlMappedEnumMember("PORTRAIT", 0, "portrait", "Portrait orientation."),
+        XmlMappedEnumMember("LANDSCAPE", 1, "landscape", "Landscape orientation."),
     )
 
 
-@alias('WD_SECTION')
+@alias("WD_SECTION")
 class WD_SECTION_START(XmlEnumeration):
     """
     alias: **WD_SECTION**
@@ -80,24 +76,16 @@ class WD_SECTION_START(XmlEnumeration):
         section.start_type = WD_SECTION.NEW_PAGE
     """
 
-    __ms_name__ = 'WdSectionStart'
+    __ms_name__ = "WdSectionStart"
 
-    __url__ = 'http://msdn.microsoft.com/en-us/library/office/ff840975.aspx'
+    __url__ = "http://msdn.microsoft.com/en-us/library/office/ff840975.aspx"
 
     __members__ = (
+        XmlMappedEnumMember("CONTINUOUS", 0, "continuous", "Continuous section break."),
+        XmlMappedEnumMember("NEW_COLUMN", 1, "nextColumn", "New column section break."),
+        XmlMappedEnumMember("NEW_PAGE", 2, "nextPage", "New page section break."),
+        XmlMappedEnumMember("EVEN_PAGE", 3, "evenPage", "Even pages section break."),
         XmlMappedEnumMember(
-            'CONTINUOUS', 0, 'continuous', 'Continuous section break.'
-        ),
-        XmlMappedEnumMember(
-            'NEW_COLUMN', 1, 'nextColumn', 'New column section break.'
-        ),
-        XmlMappedEnumMember(
-            'NEW_PAGE', 2, 'nextPage', 'New page section break.'
-        ),
-        XmlMappedEnumMember(
-            'EVEN_PAGE', 3, 'evenPage', 'Even pages section break.'
-        ),
-        XmlMappedEnumMember(
-            'ODD_PAGE', 4, 'oddPage', 'Section begins on next odd page.'
+            "ODD_PAGE", 4, "oddPage", "Section begins on next odd page."
         ),
     )

@@ -4,9 +4,7 @@
 Unit test suite for the docx.opc.parts.coreprops module
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from datetime import datetime, timedelta
 
@@ -20,7 +18,6 @@ from ...unitutil.mock import class_mock, instance_mock
 
 
 class DescribeCorePropertiesPart(object):
-
     def it_provides_access_to_its_core_props_object(self, coreprops_fixture):
         core_properties_part, CoreProperties_ = coreprops_fixture
         core_properties = core_properties_part.core_properties
@@ -31,8 +28,8 @@ class DescribeCorePropertiesPart(object):
         core_properties_part = CorePropertiesPart.default(None)
         assert isinstance(core_properties_part, CorePropertiesPart)
         core_properties = core_properties_part.core_properties
-        assert core_properties.title == 'Word Document'
-        assert core_properties.last_modified_by == 'python-docx'
+        assert core_properties.title == "Word Document"
+        assert core_properties.last_modified_by == "python-docx"
         assert core_properties.revision == 1
         delta = datetime.utcnow() - core_properties.modified
         max_expected_delta = timedelta(seconds=2)
@@ -49,7 +46,7 @@ class DescribeCorePropertiesPart(object):
 
     @pytest.fixture
     def CoreProperties_(self, request):
-        return class_mock(request, 'docx.opc.parts.coreprops.CoreProperties')
+        return class_mock(request, "docx.opc.parts.coreprops.CoreProperties")
 
     @pytest.fixture
     def element_(self, request):

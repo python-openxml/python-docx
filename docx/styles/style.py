@@ -4,9 +4,7 @@
 Style object hierarchy.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from . import BabelFish
 from ..enum.style import WD_STYLE_TYPE
@@ -23,8 +21,8 @@ def StyleFactory(style_elm):
     style_cls = {
         WD_STYLE_TYPE.PARAGRAPH: _ParagraphStyle,
         WD_STYLE_TYPE.CHARACTER: _CharacterStyle,
-        WD_STYLE_TYPE.TABLE:     _TableStyle,
-        WD_STYLE_TYPE.LIST:      _NumberingStyle
+        WD_STYLE_TYPE.TABLE: _TableStyle,
+        WD_STYLE_TYPE.LIST: _NumberingStyle,
     }[style_elm.type]
 
     return style_cls(style_elm)
@@ -211,7 +209,7 @@ class _ParagraphStyle(_CharacterStyle):
     __slots__ = ()
 
     def __repr__(self):
-        return '_ParagraphStyle(\'%s\') id: %s' % (self.name, id(self))
+        return "_ParagraphStyle('%s') id: %s" % (self.name, id(self))
 
     @property
     def next_paragraph_style(self):
@@ -254,7 +252,7 @@ class _TableStyle(_ParagraphStyle):
     __slots__ = ()
 
     def __repr__(self):
-        return '_TableStyle(\'%s\') id: %s' % (self.name, id(self))
+        return "_TableStyle('%s') id: %s" % (self.name, id(self))
 
 
 class _NumberingStyle(BaseStyle):

@@ -11,6 +11,7 @@ class Bmp(BaseImageHeader):
     """
     Image header parser for BMP images
     """
+
     @classmethod
     def from_stream(cls, stream):
         """
@@ -43,7 +44,7 @@ class Bmp(BaseImageHeader):
         """
         Default filename extension, always 'bmp' for BMP images.
         """
-        return 'bmp'
+        return "bmp"
 
     @staticmethod
     def _dpi(px_per_meter):

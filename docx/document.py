@@ -18,7 +18,7 @@ class Document(ElementProxy):
     a document.
     """
 
-    __slots__ = ('_part', '__body')
+    __slots__ = ("_part", "__body")
 
     def __init__(self, element, part):
         super(Document, self).__init__(element)
@@ -44,7 +44,7 @@ class Document(ElementProxy):
         paragraph.add_run().add_break(WD_BREAK.PAGE)
         return paragraph
 
-    def add_paragraph(self, text='', style=None):
+    def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the document, populated
         with *text* and having paragraph style *style*. *text* can contain
@@ -172,9 +172,7 @@ class Document(ElementProxy):
         space between the margins of the last section of this document.
         """
         section = self.sections[-1]
-        return Emu(
-            section.page_width - section.left_margin - section.right_margin
-        )
+        return Emu(section.page_width - section.left_margin - section.right_margin)
 
     @property
     def _body(self):
@@ -191,6 +189,7 @@ class _Body(BlockItemContainer):
     Proxy for ``<w:body>`` element in this document, having primarily a
     container role.
     """
+
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm

@@ -4,9 +4,7 @@
 Tabstop-related proxy types.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ..shared import ElementProxy
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
@@ -21,7 +19,7 @@ class TabStops(ElementProxy):
     directly.
     """
 
-    __slots__ = ('_pPr')
+    __slots__ = "_pPr"
 
     def __init__(self, element):
         super(TabStops, self).__init__(element, None)
@@ -35,7 +33,7 @@ class TabStops(ElementProxy):
         try:
             tabs.remove(tabs[idx])
         except (AttributeError, IndexError):
-            raise IndexError('tab index out of range')
+            raise IndexError("tab index out of range")
 
         if len(tabs) == 0:
             self._pPr.remove(tabs)
@@ -46,7 +44,7 @@ class TabStops(ElementProxy):
         """
         tabs = self._pPr.tabs
         if tabs is None:
-            raise IndexError('TabStops object is empty')
+            raise IndexError("TabStops object is empty")
         tab = tabs.tab_lst[idx]
         return TabStop(tab)
 
@@ -66,8 +64,9 @@ class TabStops(ElementProxy):
             return 0
         return len(tabs.tab_lst)
 
-    def add_tab_stop(self, position, alignment=WD_TAB_ALIGNMENT.LEFT,
-                     leader=WD_TAB_LEADER.SPACES):
+    def add_tab_stop(
+        self, position, alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES
+    ):
         """
         Add a new tab stop at *position*, a |Length| object specifying the
         location of the tab stop relative to the paragraph edge. A negative
@@ -94,7 +93,7 @@ class TabStop(ElementProxy):
     list semantics on its containing |TabStops| object.
     """
 
-    __slots__ = ('_tab')
+    __slots__ = "_tab"
 
     def __init__(self, element):
         super(TabStop, self).__init__(element, None)

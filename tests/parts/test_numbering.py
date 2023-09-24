@@ -16,11 +16,13 @@ from ..unitutil.mock import class_mock, instance_mock
 
 
 class DescribeNumberingPart(object):
-
-    def it_provides_access_to_the_numbering_definitions(
-            self, num_defs_fixture):
-        (numbering_part, _NumberingDefinitions_, numbering_elm_,
-         numbering_definitions_) = num_defs_fixture
+    def it_provides_access_to_the_numbering_definitions(self, num_defs_fixture):
+        (
+            numbering_part,
+            _NumberingDefinitions_,
+            numbering_elm_,
+            numbering_definitions_,
+        ) = num_defs_fixture
         numbering_definitions = numbering_part.numbering_definitions
         _NumberingDefinitions_.assert_called_once_with(numbering_elm_)
         assert numbering_definitions is numbering_definitions_
@@ -29,12 +31,14 @@ class DescribeNumberingPart(object):
 
     @pytest.fixture
     def num_defs_fixture(
-            self, _NumberingDefinitions_, numbering_elm_,
-            numbering_definitions_):
+        self, _NumberingDefinitions_, numbering_elm_, numbering_definitions_
+    ):
         numbering_part = NumberingPart(None, None, numbering_elm_, None)
         return (
-            numbering_part, _NumberingDefinitions_, numbering_elm_,
-            numbering_definitions_
+            numbering_part,
+            _NumberingDefinitions_,
+            numbering_elm_,
+            numbering_definitions_,
         )
 
     # fixture components ---------------------------------------------
@@ -42,8 +46,9 @@ class DescribeNumberingPart(object):
     @pytest.fixture
     def _NumberingDefinitions_(self, request, numbering_definitions_):
         return class_mock(
-            request, 'docx.parts.numbering._NumberingDefinitions',
-            return_value=numbering_definitions_
+            request,
+            "docx.parts.numbering._NumberingDefinitions",
+            return_value=numbering_definitions_,
         )
 
     @pytest.fixture
@@ -56,9 +61,7 @@ class DescribeNumberingPart(object):
 
 
 class Describe_NumberingDefinitions(object):
-
-    def it_knows_how_many_numbering_definitions_it_contains(
-            self, len_fixture):
+    def it_knows_how_many_numbering_definitions_it_contains(self, len_fixture):
         numbering_definitions, numbering_definition_count = len_fixture
         assert len(numbering_definitions) == numbering_definition_count
 

@@ -7,9 +7,7 @@ tests.
 
 import os
 
-scratch_dir = os.path.abspath(
-    os.path.join(os.path.split(__file__)[0], '_scratch')
-)
+scratch_dir = os.path.abspath(os.path.join(os.path.split(__file__)[0], "_scratch"))
 
 
 def before_all(context):

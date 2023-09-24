@@ -44,8 +44,8 @@ class Styles(ElementProxy):
         style_elm = self._element.get_by_id(key)
         if style_elm is not None:
             msg = (
-                'style lookup by style_id is deprecated. Use style name as '
-                'key instead.'
+                "style lookup by style_id is deprecated. Use style name as "
+                "key instead."
             )
             warn(msg, UserWarning, stacklevel=2)
             return StyleFactory(style_elm)
@@ -67,9 +67,7 @@ class Styles(ElementProxy):
         style_name = BabelFish.ui2internal(name)
         if style_name in self:
             raise ValueError("document already contains style '%s'" % name)
-        style = self._element.add_style_of_type(
-            style_name, style_type, builtin
-        )
+        style = self._element.add_style_of_type(style_name, style_type, builtin)
         return StyleFactory(style)
 
     def default(self, style_type):
@@ -145,8 +143,7 @@ class Styles(ElementProxy):
         """
         if style.type != style_type:
             raise ValueError(
-                "assigned style is type %s, need type %s" %
-                (style.type, style_type)
+                "assigned style is type %s, need type %s" % (style.type, style_type)
             )
         if style == self.default(style_type):
             return None

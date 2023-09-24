@@ -20,38 +20,40 @@ from docx.oxml.xmlchemy import (
 class CT_HdrFtr(BaseOxmlElement):
     """`w:hdr` and `w:ftr`, the root element for header and footer part respectively"""
 
-    p = ZeroOrMore('w:p', successors=())
-    tbl = ZeroOrMore('w:tbl', successors=())
+    p = ZeroOrMore("w:p", successors=())
+    tbl = ZeroOrMore("w:tbl", successors=())
 
 
 class CT_HdrFtrRef(BaseOxmlElement):
     """`w:headerReference` and `w:footerReference` elements"""
 
-    type_ = RequiredAttribute('w:type', WD_HEADER_FOOTER)
-    rId = RequiredAttribute('r:id', XsdString)
+    type_ = RequiredAttribute("w:type", WD_HEADER_FOOTER)
+    rId = RequiredAttribute("r:id", XsdString)
 
 
 class CT_PageMar(BaseOxmlElement):
     """
     ``<w:pgMar>`` element, defining page margins.
     """
-    top = OptionalAttribute('w:top', ST_SignedTwipsMeasure)
-    right = OptionalAttribute('w:right', ST_TwipsMeasure)
-    bottom = OptionalAttribute('w:bottom', ST_SignedTwipsMeasure)
-    left = OptionalAttribute('w:left', ST_TwipsMeasure)
-    header = OptionalAttribute('w:header', ST_TwipsMeasure)
-    footer = OptionalAttribute('w:footer', ST_TwipsMeasure)
-    gutter = OptionalAttribute('w:gutter', ST_TwipsMeasure)
+
+    top = OptionalAttribute("w:top", ST_SignedTwipsMeasure)
+    right = OptionalAttribute("w:right", ST_TwipsMeasure)
+    bottom = OptionalAttribute("w:bottom", ST_SignedTwipsMeasure)
+    left = OptionalAttribute("w:left", ST_TwipsMeasure)
+    header = OptionalAttribute("w:header", ST_TwipsMeasure)
+    footer = OptionalAttribute("w:footer", ST_TwipsMeasure)
+    gutter = OptionalAttribute("w:gutter", ST_TwipsMeasure)
 
 
 class CT_PageSz(BaseOxmlElement):
     """
     ``<w:pgSz>`` element, defining page dimensions and orientation.
     """
-    w = OptionalAttribute('w:w', ST_TwipsMeasure)
-    h = OptionalAttribute('w:h', ST_TwipsMeasure)
+
+    w = OptionalAttribute("w:w", ST_TwipsMeasure)
+    h = OptionalAttribute("w:h", ST_TwipsMeasure)
     orient = OptionalAttribute(
-        'w:orient', WD_ORIENTATION, default=WD_ORIENTATION.PORTRAIT
+        "w:orient", WD_ORIENTATION, default=WD_ORIENTATION.PORTRAIT
     )
 
 
@@ -59,10 +61,26 @@ class CT_SectPr(BaseOxmlElement):
     """`w:sectPr` element, the container element for section properties"""
 
     _tag_seq = (
-        'w:footnotePr', 'w:endnotePr', 'w:type', 'w:pgSz', 'w:pgMar', 'w:paperSrc',
-        'w:pgBorders', 'w:lnNumType', 'w:pgNumType', 'w:cols', 'w:formProt', 'w:vAlign',
-        'w:noEndnote', 'w:titlePg', 'w:textDirection', 'w:bidi', 'w:rtlGutter',
-        'w:docGrid', 'w:printerSettings', 'w:sectPrChange',
+        "w:footnotePr",
+        "w:endnotePr",
+        "w:type",
+        "w:pgSz",
+        "w:pgMar",
+        "w:paperSrc",
+        "w:pgBorders",
+        "w:lnNumType",
+        "w:pgNumType",
+        "w:cols",
+        "w:formProt",
+        "w:vAlign",
+        "w:noEndnote",
+        "w:titlePg",
+        "w:textDirection",
+        "w:bidi",
+        "w:rtlGutter",
+        "w:docGrid",
+        "w:printerSettings",
+        "w:sectPrChange",
     )
     headerReference = ZeroOrMore("w:headerReference", successors=_tag_seq)
     footerReference = ZeroOrMore("w:footerReference", successors=_tag_seq)
@@ -348,4 +366,5 @@ class CT_SectType(BaseOxmlElement):
     """
     ``<w:sectType>`` element, defining the section start type.
     """
-    val = OptionalAttribute('w:val', WD_SECTION_START)
+
+    val = OptionalAttribute("w:val", WD_SECTION_START)

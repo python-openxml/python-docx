@@ -12,6 +12,7 @@ class Png(BaseImageHeader):
     """
     Image header parser for PNG images
     """
+
     @property
     def content_type(self):
         """
@@ -25,7 +26,7 @@ class Png(BaseImageHeader):
         """
         Default filename extension, always 'png' for PNG images.
         """
-        return 'png'
+        return "png"
 
     @classmethod
     def from_stream(cls, stream):
@@ -48,6 +49,7 @@ class _PngParser(object):
     Parses a PNG image stream to extract the image properties found in its
     chunks.
     """
+
     def __init__(self, chunks):
         super(_PngParser, self).__init__()
         self._chunks = chunks
@@ -114,6 +116,7 @@ class _Chunks(object):
     """
     Collection of the chunks parsed from a PNG image stream
     """
+
     def __init__(self, chunk_iterable):
         super(_Chunks, self).__init__()
         self._chunks = list(chunk_iterable)
@@ -135,7 +138,7 @@ class _Chunks(object):
         match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.IHDR  # noqa
         IHDR = self._find_first(match)
         if IHDR is None:
-            raise InvalidImageStreamError('no IHDR chunk in PNG image')
+            raise InvalidImageStreamError("no IHDR chunk in PNG image")
         return IHDR
 
     @property
@@ -161,6 +164,7 @@ class _ChunkParser(object):
     """
     Extracts chunks from a PNG image stream
     """
+
     def __init__(self, stream_rdr):
         super(_ChunkParser, self).__init__()
         self._stream_rdr = stream_rdr
@@ -195,10 +199,10 @@ class _ChunkParser(object):
             chunk_type = self._stream_rdr.read_str(4, chunk_offset, 4)
             data_offset = chunk_offset + 8
             yield chunk_type, data_offset
-            if chunk_type == 'IEND':
+            if chunk_type == "IEND":
                 break
             # incr offset for chunk len long, chunk type, chunk data, and CRC
-            chunk_offset += (4 + 4 + chunk_data_len + 4)
+            chunk_offset += 4 + 4 + chunk_data_len + 4
 
 
 def _ChunkFactory(chunk_type, stream_rdr, offset):
@@ -219,6 +223,7 @@ class _Chunk(object):
     Base class for specific chunk types. Also serves as the default chunk
     type.
     """
+
     def __init__(self, chunk_type):
         super(_Chunk, self).__init__()
         self._chunk_type = chunk_type
@@ -242,6 +247,7 @@ class _IHDRChunk(_Chunk):
     """
     IHDR chunk, contains the image dimensions
     """
+
     def __init__(self, chunk_type, px_width, px_height):
         super(_IHDRChunk, self).__init__(chunk_type)
         self._px_width = px_width
@@ -270,8 +276,8 @@ class _pHYsChunk(_Chunk):
     """
     pYHs chunk, contains the image dpi information
     """
-    def __init__(self, chunk_type, horz_px_per_unit, vert_px_per_unit,
-                 units_specifier):
+
+    def __init__(self, chunk_type, horz_px_per_unit, vert_px_per_unit, units_specifier):
         super(_pHYsChunk, self).__init__(chunk_type)
         self._horz_px_per_unit = horz_px_per_unit
         self._vert_px_per_unit = vert_px_per_unit
@@ -286,9 +292,7 @@ class _pHYsChunk(_Chunk):
         horz_px_per_unit = stream_rdr.read_long(offset)
         vert_px_per_unit = stream_rdr.read_long(offset, 4)
         units_specifier = stream_rdr.read_byte(offset, 8)
-        return cls(
-            chunk_type, horz_px_per_unit, vert_px_per_unit, units_specifier
-        )
+        return cls(chunk_type, horz_px_per_unit, vert_px_per_unit, units_specifier)
 
     @property
     def horz_px_per_unit(self):

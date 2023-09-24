@@ -16,7 +16,6 @@ from ..unitutil.mock import call, instance_mock, method_mock, property_mock
 
 
 class DescribeCT_Row(object):
-
     def it_can_add_a_trPr(self, add_trPr_fixture):
         tr, expected_xml = add_trPr_fixture
         tr._add_trPr()
@@ -29,12 +28,14 @@ class DescribeCT_Row(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:tr',                    'w:tr/w:trPr'),
-        ('w:tr/w:tblPrEx',          'w:tr/(w:tblPrEx,w:trPr)'),
-        ('w:tr/w:tc',               'w:tr/(w:trPr,w:tc)'),
-        ('w:tr/(w:sdt,w:del,w:tc)', 'w:tr/(w:trPr,w:sdt,w:del,w:tc)'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tr", "w:tr/w:trPr"),
+            ("w:tr/w:tblPrEx", "w:tr/(w:tblPrEx,w:trPr)"),
+            ("w:tr/w:tc", "w:tr/(w:trPr,w:tc)"),
+            ("w:tr/(w:sdt,w:del,w:tc)", "w:tr/(w:trPr,w:sdt,w:del,w:tc)"),
+        ]
+    )
     def add_trPr_fixture(self, request):
         tr_cxml, expected_cxml = request.param
         tr = element(tr_cxml)
@@ -44,18 +45,17 @@ class DescribeCT_Row(object):
     @pytest.fixture(params=[(0, 0, 3), (1, 0, 1)])
     def tc_raise_fixture(self, request):
         snippet_idx, row_idx, col_idx = request.param
-        tbl = parse_xml(snippet_seq('tbl-cells')[snippet_idx])
+        tbl = parse_xml(snippet_seq("tbl-cells")[snippet_idx])
         tr = tbl.tr_lst[row_idx]
         return tr, col_idx
 
 
 class DescribeCT_Tc(object):
-
     def it_can_merge_to_another_tc(
         self, tr_, _span_dimensions_, _tbl_, _grow_to_, top_tc_
     ):
         top_tr_ = tr_
-        tc, other_tc = element('w:tc'), element('w:tc')
+        tc, other_tc = element("w:tc"), element("w:tc")
         top, left, height, width = 0, 1, 2, 3
         _span_dimensions_.return_value = top, left, height, width
         _tbl_.return_value.tr_lst = [tr_]
@@ -92,14 +92,15 @@ class DescribeCT_Tc(object):
         self, top_tc_, grid_span_, _move_content_to_, _swallow_next_tc_
     ):
         grid_span_.side_effect = [1, 3, 4]
-        grid_width, vMerge = 4, 'continue'
-        tc = element('w:tc')
+        grid_width, vMerge = 4, "continue"
+        tc = element("w:tc")
 
         tc._span_to_width(grid_width, top_tc_, vMerge)
 
         _move_content_to_.assert_called_once_with(tc, top_tc_)
         assert _swallow_next_tc_.call_args_list == [
-            call(tc, grid_width, top_tc_), call(tc, grid_width, top_tc_)
+            call(tc, grid_width, top_tc_),
+            call(tc, grid_width, top_tc_),
         ]
         assert tc.vMerge == vMerge
 
@@ -131,25 +132,41 @@ class DescribeCT_Tc(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        # both cells have a width
-        ('w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p),'
-         'w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))',      0, 2,
-         'w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=2880,w:type=dxa},'
-         'w:gridSpan{w:val=2}),w:p))'),
-        # neither have a width
-        ('w:tr/(w:tc/w:p,w:tc/w:p)',                           0, 2,
-         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
-        # only second one has a width
-        ('w:tr/(w:tc/w:p,'
-         'w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))',      0, 2,
-         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
-        # only first one has a width
-        ('w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p),'
-         'w:tc/w:p)',                                          0, 2,
-         'w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=1440,w:type=dxa},'
-         'w:gridSpan{w:val=2}),w:p))'),
-    ])
+    @pytest.fixture(
+        params=[
+            # both cells have a width
+            (
+                "w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p),"
+                "w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))",
+                0,
+                2,
+                "w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=2880,w:type=dxa},"
+                "w:gridSpan{w:val=2}),w:p))",
+            ),
+            # neither have a width
+            (
+                "w:tr/(w:tc/w:p,w:tc/w:p)",
+                0,
+                2,
+                "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))",
+            ),
+            # only second one has a width
+            (
+                "w:tr/(w:tc/w:p," "w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))",
+                0,
+                2,
+                "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))",
+            ),
+            # only first one has a width
+            (
+                "w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p)," "w:tc/w:p)",
+                0,
+                2,
+                "w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=1440,w:type=dxa},"
+                "w:gridSpan{w:val=2}),w:p))",
+            ),
+        ]
+    )
     def add_width_fixture(self, request):
         tr_cxml, tc_idx, grid_width, expected_tr_cxml = request.param
         tr = element(tr_cxml)
@@ -157,30 +174,42 @@ class DescribeCT_Tc(object):
         expected_tr_xml = xml(expected_tr_cxml)
         return tc, grid_width, top_tc, tr, expected_tr_xml
 
-    @pytest.fixture(params=[
-        (0, 0, 0, 'top',    0), (2, 0, 1, 'top',    0),
-        (2, 1, 1, 'top',    0), (4, 2, 1, 'top',    1),
-        (0, 0, 0, 'left',   0), (1, 0, 1, 'left',   2),
-        (3, 1, 0, 'left',   0), (3, 1, 1, 'left',   2),
-        (0, 0, 0, 'bottom', 1), (1, 0, 0, 'bottom', 1),
-        (2, 0, 1, 'bottom', 2), (4, 1, 1, 'bottom', 3),
-        (0, 0, 0, 'right',  1), (1, 0, 0, 'right',  2),
-        (0, 0, 0, 'right',  1), (4, 2, 1, 'right',  3),
-    ])
+    @pytest.fixture(
+        params=[
+            (0, 0, 0, "top", 0),
+            (2, 0, 1, "top", 0),
+            (2, 1, 1, "top", 0),
+            (4, 2, 1, "top", 1),
+            (0, 0, 0, "left", 0),
+            (1, 0, 1, "left", 2),
+            (3, 1, 0, "left", 0),
+            (3, 1, 1, "left", 2),
+            (0, 0, 0, "bottom", 1),
+            (1, 0, 0, "bottom", 1),
+            (2, 0, 1, "bottom", 2),
+            (4, 1, 1, "bottom", 3),
+            (0, 0, 0, "right", 1),
+            (1, 0, 0, "right", 2),
+            (0, 0, 0, "right", 1),
+            (4, 2, 1, "right", 3),
+        ]
+    )
     def extents_fixture(self, request):
         snippet_idx, row, col, attr_name, expected_value = request.param
         tbl = self._snippet_tbl(snippet_idx)
         tc = tbl.tr_lst[row].tc_lst[col]
         return tc, attr_name, expected_value
 
-    @pytest.fixture(params=[
-        (0, 0, 0, 2, 1),
-        (0, 0, 1, 1, 2),
-        (0, 1, 1, 2, 2),
-        (1, 0, 0, 2, 2),
-        (2, 0, 0, 2, 2),
-        (2, 1, 2, 1, 2),
-    ])
+    @pytest.fixture(
+        params=[
+            (0, 0, 0, 2, 1),
+            (0, 0, 1, 1, 2),
+            (0, 1, 1, 2, 2),
+            (1, 0, 0, 2, 2),
+            (2, 0, 0, 2, 2),
+            (2, 1, 2, 1, 2),
+        ]
+    )
     def grow_to_fixture(self, request, _span_to_width_):
         snippet_idx, row, col, width, height = request.param
         tbl = self._snippet_tbl(snippet_idx)
@@ -189,45 +218,47 @@ class DescribeCT_Tc(object):
         end = start + height
         expected_calls = [
             call(width, tc, None),
-            call(width, tc, 'restart'),
-            call(width, tc, 'continue'),
-            call(width, tc, 'continue'),
+            call(width, tc, "restart"),
+            call(width, tc, "continue"),
+            call(width, tc, "continue"),
         ][start:end]
         return tc, width, height, None, expected_calls
 
-    @pytest.fixture(params=[
-        ('w:tc/w:p',             'w:tc/w:p',
-         'w:tc/w:p',             'w:tc/w:p'),
-        ('w:tc/w:p',             'w:tc/w:p/w:r',
-         'w:tc/w:p',             'w:tc/w:p/w:r'),
-        ('w:tc/w:p/w:r',         'w:tc/w:p',
-         'w:tc/w:p',             'w:tc/w:p/w:r'),
-        ('w:tc/(w:p/w:r,w:sdt)', 'w:tc/w:p',
-         'w:tc/w:p',             'w:tc/(w:p/w:r,w:sdt)'),
-        ('w:tc/(w:p/w:r,w:sdt)', 'w:tc/(w:tbl,w:p)',
-         'w:tc/w:p',             'w:tc/(w:tbl,w:p/w:r,w:sdt)'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc/w:p", "w:tc/w:p", "w:tc/w:p", "w:tc/w:p"),
+            ("w:tc/w:p", "w:tc/w:p/w:r", "w:tc/w:p", "w:tc/w:p/w:r"),
+            ("w:tc/w:p/w:r", "w:tc/w:p", "w:tc/w:p", "w:tc/w:p/w:r"),
+            ("w:tc/(w:p/w:r,w:sdt)", "w:tc/w:p", "w:tc/w:p", "w:tc/(w:p/w:r,w:sdt)"),
+            (
+                "w:tc/(w:p/w:r,w:sdt)",
+                "w:tc/(w:tbl,w:p)",
+                "w:tc/w:p",
+                "w:tc/(w:tbl,w:p/w:r,w:sdt)",
+            ),
+        ]
+    )
     def move_fixture(self, request):
-        tc_cxml, tc_2_cxml, expected_tc_cxml, expected_tc_2_cxml = (
-            request.param
-        )
+        tc_cxml, tc_2_cxml, expected_tc_cxml, expected_tc_2_cxml = request.param
         tc, tc_2 = element(tc_cxml), element(tc_2_cxml)
         expected_tc_xml = xml(expected_tc_cxml)
         expected_tc_2_xml = xml(expected_tc_2_cxml)
         return tc, tc_2, expected_tc_xml, expected_tc_2_xml
 
-    @pytest.fixture(params=[
-        (0, 0, 0, 0, 1, (0, 0, 1, 2)),
-        (0, 0, 1, 2, 1, (0, 1, 3, 1)),
-        (0, 2, 2, 1, 1, (1, 1, 2, 2)),
-        (0, 1, 2, 1, 0, (1, 0, 1, 3)),
-        (1, 0, 0, 1, 1, (0, 0, 2, 2)),
-        (1, 0, 1, 0, 0, (0, 0, 1, 3)),
-        (2, 0, 1, 2, 1, (0, 1, 3, 1)),
-        (2, 0, 1, 1, 0, (0, 0, 2, 2)),
-        (2, 1, 2, 0, 1, (0, 1, 2, 2)),
-        (4, 0, 1, 0, 0, (0, 0, 1, 3)),
-    ])
+    @pytest.fixture(
+        params=[
+            (0, 0, 0, 0, 1, (0, 0, 1, 2)),
+            (0, 0, 1, 2, 1, (0, 1, 3, 1)),
+            (0, 2, 2, 1, 1, (1, 1, 2, 2)),
+            (0, 1, 2, 1, 0, (1, 0, 1, 3)),
+            (1, 0, 0, 1, 1, (0, 0, 2, 2)),
+            (1, 0, 1, 0, 0, (0, 0, 1, 3)),
+            (2, 0, 1, 2, 1, (0, 1, 3, 1)),
+            (2, 0, 1, 1, 0, (0, 0, 2, 2)),
+            (2, 1, 2, 0, 1, (0, 1, 2, 2)),
+            (4, 0, 1, 0, 0, (0, 0, 1, 3)),
+        ]
+    )
     def span_fixture(self, request):
         snippet_idx, row, col, row_2, col_2, expected_value = request.param
         tbl = self._snippet_tbl(snippet_idx)
@@ -235,15 +266,17 @@ class DescribeCT_Tc(object):
         tc_2 = tbl.tr_lst[row_2].tc_lst[col_2]
         return tc, tc_2, expected_value
 
-    @pytest.fixture(params=[
-        (1, 0, 0, 1, 0),  # inverted-L horz
-        (1, 1, 0, 0, 0),  # same in opposite order
-        (2, 0, 2, 0, 1),  # inverted-L vert
-        (5, 0, 1, 1, 0),  # tee-shape horz bar
-        (5, 1, 0, 2, 1),  # same, opposite side
-        (6, 1, 0, 0, 1),  # tee-shape vert bar
-        (6, 0, 1, 1, 2),  # same, opposite side
-    ])
+    @pytest.fixture(
+        params=[
+            (1, 0, 0, 1, 0),  # inverted-L horz
+            (1, 1, 0, 0, 0),  # same in opposite order
+            (2, 0, 2, 0, 1),  # inverted-L vert
+            (5, 0, 1, 1, 0),  # tee-shape horz bar
+            (5, 1, 0, 2, 1),  # same, opposite side
+            (6, 1, 0, 0, 1),  # tee-shape vert bar
+            (6, 0, 1, 1, 2),  # same, opposite side
+        ]
+    )
     def span_raise_fixture(self, request):
         snippet_idx, row, col, row_2, col_2 = request.param
         tbl = self._snippet_tbl(snippet_idx)
@@ -251,19 +284,41 @@ class DescribeCT_Tc(object):
         tc_2 = tbl.tr_lst[row_2].tc_lst[col_2]
         return tc, tc_2
 
-    @pytest.fixture(params=[
-        ('w:tr/(w:tc/w:p,w:tc/w:p)',                              0, 2,
-         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
-        ('w:tr/(w:tc/w:p,w:tc/w:p,w:tc/w:p)',                     1, 2,
-         'w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))'),
-        ('w:tr/(w:tc/w:p/w:r/w:t"a",w:tc/w:p/w:r/w:t"b")',        0, 2,
-         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p/w:r/w:t"a",'
-         'w:p/w:r/w:t"b"))'),
-        ('w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p),w:tc/w:p)', 0, 3,
-         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=3},w:p))'),
-        ('w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))', 0, 3,
-         'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=3},w:p))'),
-    ])
+    @pytest.fixture(
+        params=[
+            (
+                "w:tr/(w:tc/w:p,w:tc/w:p)",
+                0,
+                2,
+                "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))",
+            ),
+            (
+                "w:tr/(w:tc/w:p,w:tc/w:p,w:tc/w:p)",
+                1,
+                2,
+                "w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))",
+            ),
+            (
+                'w:tr/(w:tc/w:p/w:r/w:t"a",w:tc/w:p/w:r/w:t"b")',
+                0,
+                2,
+                'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p/w:r/w:t"a",'
+                'w:p/w:r/w:t"b"))',
+            ),
+            (
+                "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p),w:tc/w:p)",
+                0,
+                3,
+                "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=3},w:p))",
+            ),
+            (
+                "w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))",
+                0,
+                3,
+                "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=3},w:p))",
+            ),
+        ]
+    )
     def swallow_fixture(self, request):
         tr_cxml, tc_idx, grid_width, expected_tr_cxml = request.param
         tr = element(tr_cxml)
@@ -271,10 +326,12 @@ class DescribeCT_Tc(object):
         expected_tr_xml = xml(expected_tr_cxml)
         return tc, grid_width, top_tc, tr, expected_tr_xml
 
-    @pytest.fixture(params=[
-        ('w:tr/w:tc/w:p', 0, 2),
-        ('w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))', 0, 2),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tr/w:tc/w:p", 0, 2),
+            ("w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))", 0, 2),
+        ]
+    )
     def swallow_raise_fixture(self, request):
         tr_cxml, tc_idx, grid_width = request.param
         tr = element(tr_cxml)
@@ -284,7 +341,7 @@ class DescribeCT_Tc(object):
     @pytest.fixture(params=[(0, 0, 0), (4, 0, 0)])
     def tr_above_raise_fixture(self, request):
         snippet_idx, row_idx, col_idx = request.param
-        tbl = parse_xml(snippet_seq('tbl-cells')[snippet_idx])
+        tbl = parse_xml(snippet_seq("tbl-cells")[snippet_idx])
         tc = tbl.tr_lst[row_idx].tc_lst[col_idx]
         return tc
 
@@ -292,38 +349,38 @@ class DescribeCT_Tc(object):
 
     @pytest.fixture
     def grid_span_(self, request):
-        return property_mock(request, CT_Tc, 'grid_span')
+        return property_mock(request, CT_Tc, "grid_span")
 
     @pytest.fixture
     def _grow_to_(self, request):
-        return method_mock(request, CT_Tc, '_grow_to')
+        return method_mock(request, CT_Tc, "_grow_to")
 
     @pytest.fixture
     def _move_content_to_(self, request):
-        return method_mock(request, CT_Tc, '_move_content_to')
+        return method_mock(request, CT_Tc, "_move_content_to")
 
     @pytest.fixture
     def _span_dimensions_(self, request):
-        return method_mock(request, CT_Tc, '_span_dimensions')
+        return method_mock(request, CT_Tc, "_span_dimensions")
 
     @pytest.fixture
     def _span_to_width_(self, request):
-        return method_mock(request, CT_Tc, '_span_to_width', autospec=False)
+        return method_mock(request, CT_Tc, "_span_to_width", autospec=False)
 
     def _snippet_tbl(self, idx):
         """
         Return a <w:tbl> element for snippet at *idx* in 'tbl-cells' snippet
         file.
         """
-        return parse_xml(snippet_seq('tbl-cells')[idx])
+        return parse_xml(snippet_seq("tbl-cells")[idx])
 
     @pytest.fixture
     def _swallow_next_tc_(self, request):
-        return method_mock(request, CT_Tc, '_swallow_next_tc')
+        return method_mock(request, CT_Tc, "_swallow_next_tc")
 
     @pytest.fixture
     def _tbl_(self, request):
-        return property_mock(request, CT_Tc, '_tbl')
+        return property_mock(request, CT_Tc, "_tbl")
 
     @pytest.fixture
     def top_tc_(self, request):

@@ -20,6 +20,7 @@ class Image(object):
     Graphical image stream such as JPEG, PNG, or GIF with properties and
     methods required by ImagePart.
     """
+
     def __init__(self, blob, filename, image_header):
         super(Image, self).__init__()
         self._blob = blob
@@ -43,7 +44,7 @@ class Image(object):
         """
         if is_string(image_descriptor):
             path = image_descriptor
-            with open(path, 'rb') as f:
+            with open(path, "rb") as f:
                 blob = f.read()
                 stream = BytesIO(blob)
             filename = os.path.basename(path)
@@ -175,7 +176,7 @@ class Image(object):
         """
         image_header = _ImageHeaderFactory(stream)
         if filename is None:
-            filename = 'image.%s' % image_header.default_ext
+            filename = "image.%s" % image_header.default_ext
         return cls(blob, filename, image_header)
 
 
@@ -203,6 +204,7 @@ class BaseImageHeader(object):
     """
     Base class for image header subclasses like |Jpeg| and |Tiff|.
     """
+
     def __init__(self, px_width, px_height, horz_dpi, vert_dpi):
         self._px_width = px_width
         self._px_height = px_height
@@ -215,8 +217,8 @@ class BaseImageHeader(object):
         Abstract property definition, must be implemented by all subclasses.
         """
         msg = (
-            'content_type property must be implemented by all subclasses of '
-            'BaseImageHeader'
+            "content_type property must be implemented by all subclasses of "
+            "BaseImageHeader"
         )
         raise NotImplementedError(msg)
 
@@ -227,8 +229,8 @@ class BaseImageHeader(object):
         property definition, must be implemented by all subclasses.
         """
         msg = (
-            'default_ext property must be implemented by all subclasses of '
-            'BaseImageHeader'
+            "default_ext property must be implemented by all subclasses of "
+            "BaseImageHeader"
         )
         raise NotImplementedError(msg)
 

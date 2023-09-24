@@ -14,6 +14,7 @@ class Gif(BaseImageHeader):
     support resolution (DPI) information. Both horizontal and vertical DPI
     default to 72.
     """
+
     @classmethod
     def from_stream(cls, stream):
         """
@@ -36,12 +37,12 @@ class Gif(BaseImageHeader):
         """
         Default filename extension, always 'gif' for GIF images.
         """
-        return 'gif'
+        return "gif"
 
     @classmethod
     def _dimensions_from_stream(cls, stream):
         stream.seek(6)
         bytes_ = stream.read(4)
-        struct = Struct('<HH')
+        struct = Struct("<HH")
         px_width, px_height = struct.unpack(bytes_)
         return px_width, px_height

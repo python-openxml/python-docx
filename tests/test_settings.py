@@ -12,7 +12,6 @@ from .unitutil.cxml import element, xml
 
 
 class DescribeSettings(object):
-
     def it_knows_when_the_document_has_distinct_odd_and_even_headers(
         self, odd_and_even_get_fixture
     ):
@@ -56,7 +55,7 @@ class DescribeSettings(object):
             (
                 "w:settings/w:evenAndOddHeaders{w:val=1}",
                 True,
-                "w:settings/w:evenAndOddHeaders"
+                "w:settings/w:evenAndOddHeaders",
             ),
             ("w:settings/w:evenAndOddHeaders{w:val=off}", False, "w:settings"),
         ]

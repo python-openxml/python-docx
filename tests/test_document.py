@@ -25,7 +25,6 @@ from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocument(object):
-
     def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
         level, style = add_heading_fixture
         add_paragraph_.return_value = paragraph_
@@ -77,7 +76,7 @@ class DescribeDocument(object):
         section = document.add_section(start_type)
 
         assert document.element.xml == expected_xml
-        sectPr = document.element.xpath('w:body/w:sectPr')[0]
+        sectPr = document.element.xpath("w:body/w:sectPr")[0]
         Section_.assert_called_once_with(sectPr, document_part_)
         assert section is section_
 
@@ -108,7 +107,7 @@ class DescribeDocument(object):
         assert paragraphs is paragraphs_
 
     def it_provides_access_to_its_sections(self, document_part_, Sections_, sections_):
-        document_elm = element('w:document')
+        document_elm = element("w:document")
         Sections_.return_value = sections_
         document = Document(document_elm, document_part_)
 
@@ -148,21 +147,25 @@ class DescribeDocument(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        (0, 'Title'),
-        (1, 'Heading 1'),
-        (2, 'Heading 2'),
-        (9, 'Heading 9'),
-    ])
+    @pytest.fixture(
+        params=[
+            (0, "Title"),
+            (1, "Heading 1"),
+            (2, "Heading 2"),
+            (9, "Heading 9"),
+        ]
+    )
     def add_heading_fixture(self, request):
         level, style = request.param
         return level, style
 
-    @pytest.fixture(params=[
-        ('',         None),
-        ('',         'Heading 1'),
-        ('foo\rbar', 'Body Text'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("", None),
+            ("", "Heading 1"),
+            ("foo\rbar", "Body Text"),
+        ]
+    )
     def add_paragraph_fixture(self, request, body_prop_, paragraph_):
         text, style = request.param
         document = Document(None, None)
@@ -172,32 +175,34 @@ class DescribeDocument(object):
     @pytest.fixture
     def add_picture_fixture(self, request, add_paragraph_, run_, picture_):
         document = Document(None, None)
-        path, width, height = 'foobar.png', 100, 200
+        path, width, height = "foobar.png", 100, 200
         add_paragraph_.return_value.add_run.return_value = run_
         run_.add_picture.return_value = picture_
         return document, path, width, height, run_, picture_
 
-    @pytest.fixture(params=[
-        ('w:sectPr',                        WD_SECTION.EVEN_PAGE,
-         'w:sectPr/w:type{w:val=evenPage}'),
-        ('w:sectPr/w:type{w:val=evenPage}', WD_SECTION.ODD_PAGE,
-         'w:sectPr/w:type{w:val=oddPage}'),
-        ('w:sectPr/w:type{w:val=oddPage}',  WD_SECTION.NEW_PAGE,
-         'w:sectPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:sectPr", WD_SECTION.EVEN_PAGE, "w:sectPr/w:type{w:val=evenPage}"),
+            (
+                "w:sectPr/w:type{w:val=evenPage}",
+                WD_SECTION.ODD_PAGE,
+                "w:sectPr/w:type{w:val=oddPage}",
+            ),
+            ("w:sectPr/w:type{w:val=oddPage}", WD_SECTION.NEW_PAGE, "w:sectPr"),
+        ]
+    )
     def add_section_fixture(self, request):
         sentinel, start_type, new_sentinel = request.param
-        document_elm = element('w:document/w:body/(w:p,%s)' % sentinel)
+        document_elm = element("w:document/w:body/(w:p,%s)" % sentinel)
         expected_xml = xml(
-            'w:document/w:body/(w:p,w:p/w:pPr/%s,%s)' %
-            (sentinel, new_sentinel)
+            "w:document/w:body/(w:p,w:p/w:pPr/%s,%s)" % (sentinel, new_sentinel)
         )
         return document_elm, start_type, expected_xml
 
     @pytest.fixture
     def add_table_fixture(self, _block_width_prop_, body_prop_, table_):
         document = Document(None, None)
-        rows, cols, style = 4, 2, 'Light Shading Accent 1'
+        rows, cols, style = 4, 2, "Light Shading Accent 1"
         body_prop_.return_value.add_table.return_value = table_
         _block_width_prop_.return_value = width = 42
         return document, rows, cols, style, width, table_
@@ -214,7 +219,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def body_fixture(self, _Body_, body_):
-        document_elm = element('w:document/w:body')
+        document_elm = element("w:document/w:body")
         body_elm = document_elm[0]
         document = Document(document_elm, None)
         return document, body_elm, _Body_, body_
@@ -245,7 +250,7 @@ class DescribeDocument(object):
     @pytest.fixture
     def save_fixture(self, document_part_):
         document = Document(None, document_part_)
-        file_ = 'foobar.docx'
+        file_ = "foobar.docx"
         return document, file_
 
     @pytest.fixture
@@ -270,11 +275,11 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def add_paragraph_(self, request):
-        return method_mock(request, Document, 'add_paragraph')
+        return method_mock(request, Document, "add_paragraph")
 
     @pytest.fixture
     def _Body_(self, request, body_):
-        return class_mock(request, 'docx.document._Body', return_value=body_)
+        return class_mock(request, "docx.document._Body", return_value=body_)
 
     @pytest.fixture
     def body_(self, request):
@@ -282,11 +287,11 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def _block_width_prop_(self, request):
-        return property_mock(request, Document, '_block_width')
+        return property_mock(request, Document, "_block_width")
 
     @pytest.fixture
     def body_prop_(self, request, body_):
-        return property_mock(request, Document, '_body', return_value=body_)
+        return property_mock(request, Document, "_body", return_value=body_)
 
     @pytest.fixture
     def core_properties_(self, request):
@@ -318,7 +323,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def Section_(self, request):
-        return class_mock(request, 'docx.document.Section')
+        return class_mock(request, "docx.document.Section")
 
     @pytest.fixture
     def section_(self, request):
@@ -326,7 +331,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def Sections_(self, request):
-        return class_mock(request, 'docx.document.Sections')
+        return class_mock(request, "docx.document.Sections")
 
     @pytest.fixture
     def sections_(self, request):
@@ -334,7 +339,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def sections_prop_(self, request):
-        return property_mock(request, Document, 'sections')
+        return property_mock(request, Document, "sections")
 
     @pytest.fixture
     def settings_(self, request):
@@ -346,7 +351,7 @@ class DescribeDocument(object):
 
     @pytest.fixture
     def table_(self, request):
-        return instance_mock(request, Table, style='UNASSIGNED')
+        return instance_mock(request, Table, style="UNASSIGNED")
 
     @pytest.fixture
     def tables_(self, request):
@@ -354,7 +359,6 @@ class DescribeDocument(object):
 
 
 class Describe_Body(object):
-
     def it_can_clear_itself_of_all_content_it_holds(self, clear_fixture):
         body, expected_xml = clear_fixture
         _body = body.clear_content()
@@ -363,12 +367,14 @@ class Describe_Body(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:body',                 'w:body'),
-        ('w:body/w:p',             'w:body'),
-        ('w:body/w:sectPr',        'w:body/w:sectPr'),
-        ('w:body/(w:p, w:sectPr)', 'w:body/w:sectPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:body", "w:body"),
+            ("w:body/w:p", "w:body"),
+            ("w:body/w:sectPr", "w:body/w:sectPr"),
+            ("w:body/(w:p, w:sectPr)", "w:body/w:sectPr"),
+        ]
+    )
     def clear_fixture(self, request):
         before_cxml, after_cxml = request.param
         body = _Body(element(before_cxml), None)

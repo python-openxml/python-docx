@@ -18,7 +18,6 @@ from ..unitutil.mock import class_mock, instance_mock, property_mock
 
 
 class DescribeRun(object):
-
     def it_knows_its_bool_prop_states(self, bool_prop_get_fixture):
         run, prop_name, expected_state = bool_prop_get_fixture
         assert getattr(run, prop_name) == expected_state
@@ -31,17 +30,13 @@ class DescribeRun(object):
     def it_knows_its_character_style(self, style_get_fixture):
         run, style_id_, style_ = style_get_fixture
         style = run.style
-        run.part.get_style.assert_called_once_with(
-            style_id_, WD_STYLE_TYPE.CHARACTER
-        )
+        run.part.get_style.assert_called_once_with(style_id_, WD_STYLE_TYPE.CHARACTER)
         assert style is style_
 
     def it_can_change_its_character_style(self, style_set_fixture):
         run, value, expected_xml = style_set_fixture
         run.style = value
-        run.part.get_style_id.assert_called_once_with(
-            value, WD_STYLE_TYPE.CHARACTER
-        )
+        run.part.get_style_id.assert_called_once_with(value, WD_STYLE_TYPE.CHARACTER)
         assert run._r.xml == expected_xml
 
     def it_knows_its_underline_type(self, underline_get_fixture):
@@ -53,8 +48,7 @@ class DescribeRun(object):
         run.underline = underline
         assert run._r.xml == expected_xml
 
-    def it_raises_on_assign_invalid_underline_type(
-            self, underline_raise_fixture):
+    def it_raises_on_assign_invalid_underline_type(self, underline_raise_fixture):
         run, underline = underline_raise_fixture
         with pytest.raises(ValueError):
             run.underline = underline
@@ -112,105 +106,111 @@ class DescribeRun(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        (WD_BREAK.LINE,   'w:r/w:br'),
-        (WD_BREAK.PAGE,   'w:r/w:br{w:type=page}'),
-        (WD_BREAK.COLUMN, 'w:r/w:br{w:type=column}'),
-        (WD_BREAK.LINE_CLEAR_LEFT,
-         'w:r/w:br{w:type=textWrapping, w:clear=left}'),
-        (WD_BREAK.LINE_CLEAR_RIGHT,
-         'w:r/w:br{w:type=textWrapping, w:clear=right}'),
-        (WD_BREAK.LINE_CLEAR_ALL,
-         'w:r/w:br{w:type=textWrapping, w:clear=all}'),
-    ])
+    @pytest.fixture(
+        params=[
+            (WD_BREAK.LINE, "w:r/w:br"),
+            (WD_BREAK.PAGE, "w:r/w:br{w:type=page}"),
+            (WD_BREAK.COLUMN, "w:r/w:br{w:type=column}"),
+            (WD_BREAK.LINE_CLEAR_LEFT, "w:r/w:br{w:type=textWrapping, w:clear=left}"),
+            (WD_BREAK.LINE_CLEAR_RIGHT, "w:r/w:br{w:type=textWrapping, w:clear=right}"),
+            (WD_BREAK.LINE_CLEAR_ALL, "w:r/w:br{w:type=textWrapping, w:clear=all}"),
+        ]
+    )
     def add_break_fixture(self, request):
         break_type, expected_cxml = request.param
-        run = Run(element('w:r'), None)
+        run = Run(element("w:r"), None)
         expected_xml = xml(expected_cxml)
         return run, break_type, expected_xml
 
     @pytest.fixture
-    def add_picture_fixture(self, part_prop_, document_part_, InlineShape_,
-                            picture_):
-        run = Run(element('w:r/wp:x'), None)
-        image = 'foobar.png'
-        width, height, inline = 1111, 2222, element('wp:inline{id=42}')
-        expected_xml = xml('w:r/(wp:x,w:drawing/wp:inline{id=42})')
+    def add_picture_fixture(self, part_prop_, document_part_, InlineShape_, picture_):
+        run = Run(element("w:r/wp:x"), None)
+        image = "foobar.png"
+        width, height, inline = 1111, 2222, element("wp:inline{id=42}")
+        expected_xml = xml("w:r/(wp:x,w:drawing/wp:inline{id=42})")
         document_part_.new_pic_inline.return_value = inline
         InlineShape_.return_value = picture_
-        return (
-            run, image, width, height, inline, expected_xml, InlineShape_,
-            picture_
-        )
+        return (run, image, width, height, inline, expected_xml, InlineShape_, picture_)
 
-    @pytest.fixture(params=[
-        ('w:r/w:t"foo"', 'w:r/(w:t"foo", w:tab)'),
-    ])
+    @pytest.fixture(
+        params=[
+            ('w:r/w:t"foo"', 'w:r/(w:t"foo", w:tab)'),
+        ]
+    )
     def add_tab_fixture(self, request):
         r_cxml, expected_cxml = request.param
         run = Run(element(r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:r',          'foo', 'w:r/w:t"foo"'),
-        ('w:r/w:t"foo"', 'bar', 'w:r/(w:t"foo", w:t"bar")'),
-        ('w:r',          'fo ', 'w:r/w:t{xml:space=preserve}"fo "'),
-        ('w:r',          'f o', 'w:r/w:t"f o"'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r", "foo", 'w:r/w:t"foo"'),
+            ('w:r/w:t"foo"', "bar", 'w:r/(w:t"foo", w:t"bar")'),
+            ("w:r", "fo ", 'w:r/w:t{xml:space=preserve}"fo "'),
+            ("w:r", "f o", 'w:r/w:t"f o"'),
+        ]
+    )
     def add_text_fixture(self, request):
         r_cxml, text, expected_cxml = request.param
         r = element(r_cxml)
         expected_xml = xml(expected_cxml)
         return r, text, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:r/w:rPr',                  'bold',   None),
-        ('w:r/w:rPr/w:b',              'bold',   True),
-        ('w:r/w:rPr/w:b{w:val=on}',    'bold',   True),
-        ('w:r/w:rPr/w:b{w:val=off}',   'bold',   False),
-        ('w:r/w:rPr/w:b{w:val=1}',     'bold',   True),
-        ('w:r/w:rPr/w:i{w:val=0}',     'italic', False),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r/w:rPr", "bold", None),
+            ("w:r/w:rPr/w:b", "bold", True),
+            ("w:r/w:rPr/w:b{w:val=on}", "bold", True),
+            ("w:r/w:rPr/w:b{w:val=off}", "bold", False),
+            ("w:r/w:rPr/w:b{w:val=1}", "bold", True),
+            ("w:r/w:rPr/w:i{w:val=0}", "italic", False),
+        ]
+    )
     def bool_prop_get_fixture(self, request):
         r_cxml, bool_prop_name, expected_value = request.param
         run = Run(element(r_cxml), None)
         return run, bool_prop_name, expected_value
 
-    @pytest.fixture(params=[
-        # nothing to True, False, and None ---------------------------
-        ('w:r', 'bold',   True,  'w:r/w:rPr/w:b'),
-        ('w:r', 'bold',   False, 'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r', 'italic', None,  'w:r/w:rPr'),
-        # default to True, False, and None ---------------------------
-        ('w:r/w:rPr/w:b', 'bold',   True,  'w:r/w:rPr/w:b'),
-        ('w:r/w:rPr/w:b', 'bold',   False, 'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r/w:rPr/w:i', 'italic', None,  'w:r/w:rPr'),
-        # True to True, False, and None ------------------------------
-        ('w:r/w:rPr/w:b{w:val=on}', 'bold', True,  'w:r/w:rPr/w:b'),
-        ('w:r/w:rPr/w:b{w:val=1}',  'bold', False, 'w:r/w:rPr/w:b{w:val=0}'),
-        ('w:r/w:rPr/w:b{w:val=1}',  'bold', None,  'w:r/w:rPr'),
-        # False to True, False, and None -----------------------------
-        ('w:r/w:rPr/w:i{w:val=false}', 'italic', True,  'w:r/w:rPr/w:i'),
-        ('w:r/w:rPr/w:i{w:val=0}',     'italic', False,
-         'w:r/w:rPr/w:i{w:val=0}'),
-        ('w:r/w:rPr/w:i{w:val=off}',   'italic', None,  'w:r/w:rPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            # nothing to True, False, and None ---------------------------
+            ("w:r", "bold", True, "w:r/w:rPr/w:b"),
+            ("w:r", "bold", False, "w:r/w:rPr/w:b{w:val=0}"),
+            ("w:r", "italic", None, "w:r/w:rPr"),
+            # default to True, False, and None ---------------------------
+            ("w:r/w:rPr/w:b", "bold", True, "w:r/w:rPr/w:b"),
+            ("w:r/w:rPr/w:b", "bold", False, "w:r/w:rPr/w:b{w:val=0}"),
+            ("w:r/w:rPr/w:i", "italic", None, "w:r/w:rPr"),
+            # True to True, False, and None ------------------------------
+            ("w:r/w:rPr/w:b{w:val=on}", "bold", True, "w:r/w:rPr/w:b"),
+            ("w:r/w:rPr/w:b{w:val=1}", "bold", False, "w:r/w:rPr/w:b{w:val=0}"),
+            ("w:r/w:rPr/w:b{w:val=1}", "bold", None, "w:r/w:rPr"),
+            # False to True, False, and None -----------------------------
+            ("w:r/w:rPr/w:i{w:val=false}", "italic", True, "w:r/w:rPr/w:i"),
+            ("w:r/w:rPr/w:i{w:val=0}", "italic", False, "w:r/w:rPr/w:i{w:val=0}"),
+            ("w:r/w:rPr/w:i{w:val=off}", "italic", None, "w:r/w:rPr"),
+        ]
+    )
     def bool_prop_set_fixture(self, request):
         initial_r_cxml, bool_prop_name, value, expected_cxml = request.param
         run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, bool_prop_name, value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:r',                   'w:r'),
-        ('w:r/w:t"foo"',          'w:r'),
-        ('w:r/w:br',              'w:r'),
-        ('w:r/w:rPr',             'w:r/w:rPr'),
-        ('w:r/(w:rPr, w:t"foo")', 'w:r/w:rPr'),
-        ('w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
-         'w:r/w:rPr/(w:b, w:i)'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r", "w:r"),
+            ('w:r/w:t"foo"', "w:r"),
+            ("w:r/w:br", "w:r"),
+            ("w:r/w:rPr", "w:r/w:rPr"),
+            ('w:r/(w:rPr, w:t"foo")', "w:r/w:rPr"),
+            (
+                'w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
+                "w:r/w:rPr/(w:b, w:i)",
+            ),
+        ]
+    )
     def clear_fixture(self, request):
         initial_r_cxml, expected_cxml = request.param
         run = Run(element(initial_r_cxml), None)
@@ -219,29 +219,31 @@ class DescribeRun(object):
 
     @pytest.fixture
     def font_fixture(self, Font_, font_):
-        run = Run(element('w:r'), None)
+        run = Run(element("w:r"), None)
         return run, Font_, font_
 
     @pytest.fixture
     def style_get_fixture(self, part_prop_):
-        style_id = 'Barfoo'
-        r_cxml = 'w:r/w:rPr/w:rStyle{w:val=%s}' % style_id
+        style_id = "Barfoo"
+        r_cxml = "w:r/w:rPr/w:rStyle{w:val=%s}" % style_id
         run = Run(element(r_cxml), None)
         style_ = part_prop_.return_value.get_style.return_value
         return run, style_id, style_
 
-    @pytest.fixture(params=[
-        ('w:r',                                'Foo Font', 'FooFont',
-         'w:r/w:rPr/w:rStyle{w:val=FooFont}'),
-        ('w:r/w:rPr',                          'Foo Font', 'FooFont',
-         'w:r/w:rPr/w:rStyle{w:val=FooFont}'),
-        ('w:r/w:rPr/w:rStyle{w:val=FooFont}',  'Bar Font', 'BarFont',
-         'w:r/w:rPr/w:rStyle{w:val=BarFont}'),
-        ('w:r/w:rPr/w:rStyle{w:val=FooFont}',  None,       None,
-         'w:r/w:rPr'),
-        ('w:r',                                None,       None,
-         'w:r/w:rPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r", "Foo Font", "FooFont", "w:r/w:rPr/w:rStyle{w:val=FooFont}"),
+            ("w:r/w:rPr", "Foo Font", "FooFont", "w:r/w:rPr/w:rStyle{w:val=FooFont}"),
+            (
+                "w:r/w:rPr/w:rStyle{w:val=FooFont}",
+                "Bar Font",
+                "BarFont",
+                "w:r/w:rPr/w:rStyle{w:val=BarFont}",
+            ),
+            ("w:r/w:rPr/w:rStyle{w:val=FooFont}", None, None, "w:r/w:rPr"),
+            ("w:r", None, None, "w:r/w:rPr"),
+        ]
+    )
     def style_set_fixture(self, request, part_prop_):
         r_cxml, value, style_id, expected_cxml = request.param
         run = Run(element(r_cxml), None)
@@ -249,23 +251,27 @@ class DescribeRun(object):
         expected_xml = xml(expected_cxml)
         return run, value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:r', ''),
-        ('w:r/w:t"foobar"', 'foobar'),
-        ('w:r/(w:t"abc", w:tab, w:t"def", w:cr)', 'abc\tdef\n'),
-        ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', '\nabcdef\t'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r", ""),
+            ('w:r/w:t"foobar"', "foobar"),
+            ('w:r/(w:t"abc", w:tab, w:t"def", w:cr)', "abc\tdef\n"),
+            ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', "\nabcdef\t"),
+        ]
+    )
     def text_get_fixture(self, request):
         r_cxml, expected_text = request.param
         run = Run(element(r_cxml), None)
         return run, expected_text
 
-    @pytest.fixture(params=[
-        ('abc  def', 'w:r/w:t"abc  def"'),
-        ('abc\tdef', 'w:r/(w:t"abc", w:tab, w:t"def")'),
-        ('abc\ndef', 'w:r/(w:t"abc", w:br,  w:t"def")'),
-        ('abc\rdef', 'w:r/(w:t"abc", w:br,  w:t"def")'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("abc  def", 'w:r/w:t"abc  def"'),
+            ("abc\tdef", 'w:r/(w:t"abc", w:tab, w:t"def")'),
+            ("abc\ndef", 'w:r/(w:t"abc", w:br,  w:t"def")'),
+            ("abc\rdef", 'w:r/(w:t"abc", w:br,  w:t"def")'),
+        ]
+    )
     def text_set_fixture(self, request):
         new_text, expected_cxml = request.param
         initial_r_cxml = 'w:r/w:t"should get deleted"'
@@ -273,46 +279,53 @@ class DescribeRun(object):
         expected_xml = xml(expected_cxml)
         return run, new_text, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:r',                         None),
-        ('w:r/w:rPr/w:u',               None),
-        ('w:r/w:rPr/w:u{w:val=single}', True),
-        ('w:r/w:rPr/w:u{w:val=none}',   False),
-        ('w:r/w:rPr/w:u{w:val=double}', WD_UNDERLINE.DOUBLE),
-        ('w:r/w:rPr/w:u{w:val=wave}',   WD_UNDERLINE.WAVY),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r", None),
+            ("w:r/w:rPr/w:u", None),
+            ("w:r/w:rPr/w:u{w:val=single}", True),
+            ("w:r/w:rPr/w:u{w:val=none}", False),
+            ("w:r/w:rPr/w:u{w:val=double}", WD_UNDERLINE.DOUBLE),
+            ("w:r/w:rPr/w:u{w:val=wave}", WD_UNDERLINE.WAVY),
+        ]
+    )
     def underline_get_fixture(self, request):
         r_cxml, expected_underline = request.param
         run = Run(element(r_cxml), None)
         return run, expected_underline
 
-    @pytest.fixture(params=[
-        ('w:r', True,                'w:r/w:rPr/w:u{w:val=single}'),
-        ('w:r', False,               'w:r/w:rPr/w:u{w:val=none}'),
-        ('w:r', None,                'w:r/w:rPr'),
-        ('w:r', WD_UNDERLINE.SINGLE, 'w:r/w:rPr/w:u{w:val=single}'),
-        ('w:r', WD_UNDERLINE.THICK,  'w:r/w:rPr/w:u{w:val=thick}'),
-        ('w:r/w:rPr/w:u{w:val=single}', True,
-         'w:r/w:rPr/w:u{w:val=single}'),
-        ('w:r/w:rPr/w:u{w:val=single}', False,
-         'w:r/w:rPr/w:u{w:val=none}'),
-        ('w:r/w:rPr/w:u{w:val=single}', None,
-         'w:r/w:rPr'),
-        ('w:r/w:rPr/w:u{w:val=single}', WD_UNDERLINE.SINGLE,
-         'w:r/w:rPr/w:u{w:val=single}'),
-        ('w:r/w:rPr/w:u{w:val=single}', WD_UNDERLINE.DOTTED,
-         'w:r/w:rPr/w:u{w:val=dotted}'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:r", True, "w:r/w:rPr/w:u{w:val=single}"),
+            ("w:r", False, "w:r/w:rPr/w:u{w:val=none}"),
+            ("w:r", None, "w:r/w:rPr"),
+            ("w:r", WD_UNDERLINE.SINGLE, "w:r/w:rPr/w:u{w:val=single}"),
+            ("w:r", WD_UNDERLINE.THICK, "w:r/w:rPr/w:u{w:val=thick}"),
+            ("w:r/w:rPr/w:u{w:val=single}", True, "w:r/w:rPr/w:u{w:val=single}"),
+            ("w:r/w:rPr/w:u{w:val=single}", False, "w:r/w:rPr/w:u{w:val=none}"),
+            ("w:r/w:rPr/w:u{w:val=single}", None, "w:r/w:rPr"),
+            (
+                "w:r/w:rPr/w:u{w:val=single}",
+                WD_UNDERLINE.SINGLE,
+                "w:r/w:rPr/w:u{w:val=single}",
+            ),
+            (
+                "w:r/w:rPr/w:u{w:val=single}",
+                WD_UNDERLINE.DOTTED,
+                "w:r/w:rPr/w:u{w:val=dotted}",
+            ),
+        ]
+    )
     def underline_set_fixture(self, request):
         initial_r_cxml, new_underline, expected_cxml = request.param
         run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, new_underline, expected_xml
 
-    @pytest.fixture(params=['foobar', 42, 'single'])
+    @pytest.fixture(params=["foobar", 42, "single"])
     def underline_raise_fixture(self, request):
         invalid_underline_setting = request.param
-        run = Run(element('w:r/w:rPr'), None)
+        run = Run(element("w:r/w:rPr"), None)
         return run, invalid_underline_setting
 
     # fixture components ---------------------------------------------
@@ -323,7 +336,7 @@ class DescribeRun(object):
 
     @pytest.fixture
     def Font_(self, request, font_):
-        return class_mock(request, 'docx.text.run.Font', return_value=font_)
+        return class_mock(request, "docx.text.run.Font", return_value=font_)
 
     @pytest.fixture
     def font_(self, request):
@@ -331,13 +344,11 @@ class DescribeRun(object):
 
     @pytest.fixture
     def InlineShape_(self, request):
-        return class_mock(request, 'docx.text.run.InlineShape')
+        return class_mock(request, "docx.text.run.InlineShape")
 
     @pytest.fixture
     def part_prop_(self, request, document_part_):
-        return property_mock(
-            request, Run, 'part', return_value=document_part_
-        )
+        return property_mock(request, Run, "part", return_value=document_part_)
 
     @pytest.fixture
     def picture_(self, request):
@@ -345,4 +356,4 @@ class DescribeRun(object):
 
     @pytest.fixture
     def Text_(self, request):
-        return class_mock(request, 'docx.text.run._Text')
+        return class_mock(request, "docx.text.run._Text")

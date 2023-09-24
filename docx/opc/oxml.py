@@ -20,15 +20,16 @@ oxml_parser = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
 oxml_parser.set_element_class_lookup(element_class_lookup)
 
 nsmap = {
-    'ct': NS.OPC_CONTENT_TYPES,
-    'pr': NS.OPC_RELATIONSHIPS,
-    'r':  NS.OFC_RELATIONSHIPS,
+    "ct": NS.OPC_CONTENT_TYPES,
+    "pr": NS.OPC_RELATIONSHIPS,
+    "r": NS.OFC_RELATIONSHIPS,
 }
 
 
 # ===========================================================================
 # functions
 # ===========================================================================
+
 
 def parse_xml(text):
     """
@@ -43,9 +44,9 @@ def qn(tag):
     prefixed tag name into a Clark-notation qualified tag name for lxml. For
     example, ``qn('p:cSld')`` returns ``'{http://schemas.../main}cSld'``.
     """
-    prefix, tagroot = tag.split(':')
+    prefix, tagroot = tag.split(":")
     uri = nsmap[prefix]
-    return '{%s}%s' % (uri, tagroot)
+    return "{%s}%s" % (uri, tagroot)
 
 
 def serialize_part_xml(part_elm):
@@ -54,7 +55,7 @@ def serialize_part_xml(part_elm):
     part. That is to say, no insignificant whitespace added for readability,
     and an appropriate XML declaration added with UTF-8 encoding specified.
     """
-    return etree.tostring(part_elm, encoding='UTF-8', standalone=True)
+    return etree.tostring(part_elm, encoding="UTF-8", standalone=True)
 
 
 def serialize_for_reading(element):
@@ -62,18 +63,20 @@ def serialize_for_reading(element):
     Serialize *element* to human-readable XML suitable for tests. No XML
     declaration.
     """
-    return etree.tostring(element, encoding='unicode', pretty_print=True)
+    return etree.tostring(element, encoding="unicode", pretty_print=True)
 
 
 # ===========================================================================
 # Custom element classes
 # ===========================================================================
 
+
 class BaseOxmlElement(etree.ElementBase):
     """
     Base class for all custom element classes, to add standardized behavior
     to all classes in one place.
     """
+
     @property
     def xml(self):
         """
@@ -89,13 +92,14 @@ class CT_Default(BaseOxmlElement):
     ``<Default>`` element, specifying the default content type to be applied
     to a part with the specified extension.
     """
+
     @property
     def content_type(self):
         """
         String held in the ``ContentType`` attribute of this ``<Default>``
         element.
         """
-        return self.get('ContentType')
+        return self.get("ContentType")
 
     @property
     def extension(self):
@@ -103,7 +107,7 @@ class CT_Default(BaseOxmlElement):
         String held in the ``Extension`` attribute of this ``<Default>``
         element.
         """
-        return self.get('Extension')
+        return self.get("Extension")
 
     @staticmethod
     def new(ext, content_type):
@@ -111,10 +115,10 @@ class CT_Default(BaseOxmlElement):
         Return a new ``<Default>`` element with attributes set to parameter
         values.
         """
-        xml = '<Default xmlns="%s"/>' % nsmap['ct']
+        xml = '<Default xmlns="%s"/>' % nsmap["ct"]
         default = parse_xml(xml)
-        default.set('Extension', ext)
-        default.set('ContentType', content_type)
+        default.set("Extension", ext)
+        default.set("ContentType", content_type)
         return default
 
 
@@ -123,13 +127,14 @@ class CT_Override(BaseOxmlElement):
     ``<Override>`` element, specifying the content type to be applied for a
     part with the specified partname.
     """
+
     @property
     def content_type(self):
         """
         String held in the ``ContentType`` attribute of this ``<Override>``
         element.
         """
-        return self.get('ContentType')
+        return self.get("ContentType")
 
     @staticmethod
     def new(partname, content_type):
@@ -137,10 +142,10 @@ class CT_Override(BaseOxmlElement):
         Return a new ``<Override>`` element with attributes set to parameter
         values.
         """
-        xml = '<Override xmlns="%s"/>' % nsmap['ct']
+        xml = '<Override xmlns="%s"/>' % nsmap["ct"]
         override = parse_xml(xml)
-        override.set('PartName', partname)
-        override.set('ContentType', content_type)
+        override.set("PartName", partname)
+        override.set("ContentType", content_type)
         return override
 
     @property
@@ -149,7 +154,7 @@ class CT_Override(BaseOxmlElement):
         String held in the ``PartName`` attribute of this ``<Override>``
         element.
         """
-        return self.get('PartName')
+        return self.get("PartName")
 
 
 class CT_Relationship(BaseOxmlElement):
@@ -157,18 +162,19 @@ class CT_Relationship(BaseOxmlElement):
     ``<Relationship>`` element, representing a single relationship from a
     source to a target part.
     """
+
     @staticmethod
     def new(rId, reltype, target, target_mode=RTM.INTERNAL):
         """
         Return a new ``<Relationship>`` element.
         """
-        xml = '<Relationship xmlns="%s"/>' % nsmap['pr']
+        xml = '<Relationship xmlns="%s"/>' % nsmap["pr"]
         relationship = parse_xml(xml)
-        relationship.set('Id', rId)
-        relationship.set('Type', reltype)
-        relationship.set('Target', target)
+        relationship.set("Id", rId)
+        relationship.set("Type", reltype)
+        relationship.set("Target", target)
         if target_mode == RTM.EXTERNAL:
-            relationship.set('TargetMode', RTM.EXTERNAL)
+            relationship.set("TargetMode", RTM.EXTERNAL)
         return relationship
 
     @property
@@ -177,7 +183,7 @@ class CT_Relationship(BaseOxmlElement):
         String held in the ``Id`` attribute of this ``<Relationship>``
         element.
         """
-        return self.get('Id')
+        return self.get("Id")
 
     @property
     def reltype(self):
@@ -185,7 +191,7 @@ class CT_Relationship(BaseOxmlElement):
         String held in the ``Type`` attribute of this ``<Relationship>``
         element.
         """
-        return self.get('Type')
+        return self.get("Type")
 
     @property
     def target_ref(self):
@@ -193,7 +199,7 @@ class CT_Relationship(BaseOxmlElement):
         String held in the ``Target`` attribute of this ``<Relationship>``
         element.
         """
-        return self.get('Target')
+        return self.get("Target")
 
     @property
     def target_mode(self):
@@ -202,13 +208,14 @@ class CT_Relationship(BaseOxmlElement):
         ``<Relationship>`` element, either ``Internal`` or ``External``.
         Defaults to ``Internal``.
         """
-        return self.get('TargetMode', RTM.INTERNAL)
+        return self.get("TargetMode", RTM.INTERNAL)
 
 
 class CT_Relationships(BaseOxmlElement):
     """
     ``<Relationships>`` element, the root element in a .rels file.
     """
+
     def add_rel(self, rId, reltype, target, is_external=False):
         """
         Add a child ``<Relationship>`` element with attributes set according
@@ -223,7 +230,7 @@ class CT_Relationships(BaseOxmlElement):
         """
         Return a new ``<Relationships>`` element.
         """
-        xml = '<Relationships xmlns="%s"/>' % nsmap['pr']
+        xml = '<Relationships xmlns="%s"/>' % nsmap["pr"]
         relationships = parse_xml(xml)
         return relationships
 
@@ -232,7 +239,7 @@ class CT_Relationships(BaseOxmlElement):
         """
         Return a list containing all the ``<Relationship>`` child elements.
         """
-        return self.findall(qn('pr:Relationship'))
+        return self.findall(qn("pr:Relationship"))
 
     @property
     def xml(self):
@@ -248,6 +255,7 @@ class CT_Types(BaseOxmlElement):
     ``<Types>`` element, the container element for Default and Override
     elements in [Content_Types].xml.
     """
+
     def add_default(self, ext, content_type):
         """
         Add a child ``<Default>`` element with attributes set to parameter
@@ -266,27 +274,27 @@ class CT_Types(BaseOxmlElement):
 
     @property
     def defaults(self):
-        return self.findall(qn('ct:Default'))
+        return self.findall(qn("ct:Default"))
 
     @staticmethod
     def new():
         """
         Return a new ``<Types>`` element.
         """
-        xml = '<Types xmlns="%s"/>' % nsmap['ct']
+        xml = '<Types xmlns="%s"/>' % nsmap["ct"]
         types = parse_xml(xml)
         return types
 
     @property
     def overrides(self):
-        return self.findall(qn('ct:Override'))
+        return self.findall(qn("ct:Override"))
 
 
-ct_namespace = element_class_lookup.get_namespace(nsmap['ct'])
-ct_namespace['Default'] = CT_Default
-ct_namespace['Override'] = CT_Override
-ct_namespace['Types'] = CT_Types
+ct_namespace = element_class_lookup.get_namespace(nsmap["ct"])
+ct_namespace["Default"] = CT_Default
+ct_namespace["Override"] = CT_Override
+ct_namespace["Types"] = CT_Types
 
-pr_namespace = element_class_lookup.get_namespace(nsmap['pr'])
-pr_namespace['Relationship'] = CT_Relationship
-pr_namespace['Relationships'] = CT_Relationships
+pr_namespace = element_class_lookup.get_namespace(nsmap["pr"])
+pr_namespace["Relationship"] = CT_Relationship
+pr_namespace["Relationships"] = CT_Relationships

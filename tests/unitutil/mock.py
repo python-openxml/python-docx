@@ -70,9 +70,7 @@ def instance_mock(request, cls, name=None, spec_set=True, **kwargs):
     the Mock() call that creates the mock.
     """
     name = name if name is not None else request.fixturename
-    return create_autospec(
-        cls, _name=name, spec_set=spec_set, instance=True, **kwargs
-    )
+    return create_autospec(cls, _name=name, spec_set=spec_set, instance=True, **kwargs)
 
 
 def loose_mock(request, name=None, **kwargs):
@@ -100,7 +98,7 @@ def open_mock(request, module_name, **kwargs):
     """
     Return a mock for the builtin `open()` method in *module_name*.
     """
-    target = '%s.open' % module_name
+    target = "%s.open" % module_name
     _patch = patch(target, mock_open(), create=True, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()

@@ -22,6 +22,7 @@ class PackageWriter(object):
     API method, :meth:`write`, is static, so this class is not intended to
     be instantiated.
     """
+
     @staticmethod
     def write(pkg_file, pkg_rels, parts):
         """
@@ -71,6 +72,7 @@ class _ContentTypesItem(object):
     single interface method is xml_for(), e.g.
     ``_ContentTypesItem.xml_for(parts)``.
     """
+
     def __init__(self):
         self._defaults = CaseInsensitiveDict()
         self._overrides = dict()
@@ -91,8 +93,8 @@ class _ContentTypesItem(object):
         ``[Content_Types].xml`` in an OPC package.
         """
         cti = cls()
-        cti._defaults['rels'] = CT.OPC_RELATIONSHIPS
-        cti._defaults['xml'] = CT.XML
+        cti._defaults["rels"] = CT.OPC_RELATIONSHIPS
+        cti._defaults["xml"] = CT.XML
         for part in parts:
             cti._add_content_type(part.partname, part.content_type)
         return cti

@@ -12,6 +12,7 @@ class Tiff(BaseImageHeader):
     Image header parser for TIFF images. Handles both big and little endian
     byte ordering.
     """
+
     @property
     def content_type(self):
         """
@@ -25,7 +26,7 @@ class Tiff(BaseImageHeader):
         """
         Default filename extension, always 'tiff' for TIFF images.
         """
-        return 'tiff'
+        return "tiff"
 
     @classmethod
     def from_stream(cls, stream):
@@ -48,6 +49,7 @@ class _TiffParser(object):
     Parses a TIFF image stream to extract the image properties found in its
     main image file directory (IFD)
     """
+
     def __init__(self, ifd_entries):
         super(_TiffParser, self).__init__()
         self._ifd_entries = ifd_entries
@@ -107,7 +109,7 @@ class _TiffParser(object):
         """
         stream.seek(0)
         endian_str = stream.read(2)
-        return BIG_ENDIAN if endian_str == b'MM' else LITTLE_ENDIAN
+        return BIG_ENDIAN if endian_str == b"MM" else LITTLE_ENDIAN
 
     def _dpi(self, resolution_tag):
         """
@@ -124,7 +126,8 @@ class _TiffParser(object):
         # resolution unit defaults to inches (2)
         resolution_unit = (
             ifd_entries[TIFF_TAG.RESOLUTION_UNIT]
-            if TIFF_TAG.RESOLUTION_UNIT in ifd_entries else 2
+            if TIFF_TAG.RESOLUTION_UNIT in ifd_entries
+            else 2
         )
 
         if resolution_unit == 1:  # aspect ratio only
@@ -150,6 +153,7 @@ class _IfdEntries(object):
     Image File Directory for a TIFF image, having mapping (dict) semantics
     allowing "tag" values to be retrieved by tag code.
     """
+
     def __init__(self, entries):
         super(_IfdEntries, self).__init__()
         self._entries = entries
@@ -189,6 +193,7 @@ class _IfdParser(object):
     Service object that knows how to extract directory entries from an Image
     File Directory (IFD)
     """
+
     def __init__(self, stream_rdr, offset):
         super(_IfdParser, self).__init__()
         self._stream_rdr = stream_rdr
@@ -200,7 +205,7 @@ class _IfdParser(object):
         directory.
         """
         for idx in range(self._entry_count):
-            dir_entry_offset = self._offset + 2 + (idx*12)
+            dir_entry_offset = self._offset + 2 + (idx * 12)
             ifd_entry = _IfdEntryFactory(self._stream_rdr, dir_entry_offset)
             yield ifd_entry
 
@@ -218,9 +223,9 @@ def _IfdEntryFactory(stream_rdr, offset):
     directory entry at *offset* in *stream_rdr*.
     """
     ifd_entry_classes = {
-        TIFF_FLD.ASCII:    _AsciiIfdEntry,
-        TIFF_FLD.SHORT:    _ShortIfdEntry,
-        TIFF_FLD.LONG:     _LongIfdEntry,
+        TIFF_FLD.ASCII: _AsciiIfdEntry,
+        TIFF_FLD.SHORT: _ShortIfdEntry,
+        TIFF_FLD.LONG: _LongIfdEntry,
         TIFF_FLD.RATIONAL: _RationalIfdEntry,
     }
     field_type = stream_rdr.read_short(offset, 2)
@@ -236,6 +241,7 @@ class _IfdEntry(object):
     Base class for IFD entry classes. Subclasses are differentiated by value
     type, e.g. ASCII, long int, etc.
     """
+
     def __init__(self, tag_code, value):
         super(_IfdEntry, self).__init__()
         self._tag_code = tag_code
@@ -252,9 +258,7 @@ class _IfdEntry(object):
         tag_code = stream_rdr.read_short(offset, 0)
         value_count = stream_rdr.read_long(offset, 4)
         value_offset = stream_rdr.read_long(offset, 8)
-        value = cls._parse_value(
-            stream_rdr, offset, value_count, value_offset
-        )
+        value = cls._parse_value(stream_rdr, offset, value_count, value_offset)
         return cls(tag_code, value)
 
     @classmethod
@@ -263,7 +267,7 @@ class _IfdEntry(object):
         Return the value of this field parsed from *stream_rdr* at *offset*.
         Intended to be overridden by subclasses.
         """
-        return 'UNIMPLEMENTED FIELD TYPE'  # pragma: no cover
+        return "UNIMPLEMENTED FIELD TYPE"  # pragma: no cover
 
     @property
     def tag(self):
@@ -284,6 +288,7 @@ class _AsciiIfdEntry(_IfdEntry):
     """
     IFD entry having the form of a NULL-terminated ASCII string
     """
+
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
@@ -291,13 +296,14 @@ class _AsciiIfdEntry(_IfdEntry):
         The length of the string, including a terminating '\x00' (NUL)
         character, is in *value_count*.
         """
-        return stream_rdr.read_str(value_count-1, value_offset)
+        return stream_rdr.read_str(value_count - 1, value_offset)
 
 
 class _ShortIfdEntry(_IfdEntry):
     """
     IFD entry expressed as a short (2-byte) integer
     """
+
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
@@ -307,13 +313,14 @@ class _ShortIfdEntry(_IfdEntry):
         if value_count == 1:
             return stream_rdr.read_short(offset, 8)
         else:  # pragma: no cover
-            return 'Multi-value short integer NOT IMPLEMENTED'
+            return "Multi-value short integer NOT IMPLEMENTED"
 
 
 class _LongIfdEntry(_IfdEntry):
     """
     IFD entry expressed as a long (4-byte) integer
     """
+
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
@@ -323,13 +330,14 @@ class _LongIfdEntry(_IfdEntry):
         if value_count == 1:
             return stream_rdr.read_long(offset, 8)
         else:  # pragma: no cover
-            return 'Multi-value long integer NOT IMPLEMENTED'
+            return "Multi-value long integer NOT IMPLEMENTED"
 
 
 class _RationalIfdEntry(_IfdEntry):
     """
     IFD entry expressed as a numerator, denominator pair
     """
+
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
@@ -342,4 +350,4 @@ class _RationalIfdEntry(_IfdEntry):
             denominator = stream_rdr.read_long(value_offset, 4)
             return numerator / denominator
         else:  # pragma: no cover
-            return 'Multi-value Rational NOT IMPLEMENTED'
+            return "Multi-value Rational NOT IMPLEMENTED"

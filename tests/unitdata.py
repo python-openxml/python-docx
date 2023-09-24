@@ -14,17 +14,16 @@ class BaseBuilder(object):
     """
     Provides common behavior for all data builders.
     """
+
     def __init__(self):
         self._empty = False
-        self._nsdecls = ''
-        self._text = ''
+        self._nsdecls = ""
+        self._text = ""
         self._xmlattrs = []
         self._xmlattr_method_map = {}
         for attr_name in self.__attrs__:
-            base_name = (
-                attr_name.split(':')[1] if ':' in attr_name else attr_name
-            )
-            method_name = 'with_%s' % base_name
+            base_name = attr_name.split(":")[1] if ":" in attr_name else attr_name
+            method_name = "with_%s" % base_name
             self._xmlattr_method_map[method_name] = attr_name
         self._child_bldrs = []
 
@@ -34,10 +33,12 @@ class BaseBuilder(object):
         methods.
         """
         if name in self._xmlattr_method_map:
+
             def with_xmlattr(value):
                 xmlattr_name = self._xmlattr_method_map[name]
                 self._set_xmlattr(xmlattr_name, value)
                 return self
+
             return with_xmlattr
         else:
             tmpl = "'%s' object has no attribute '%s'"
@@ -85,45 +86,44 @@ class BaseBuilder(object):
         """
         if not nspfxs:
             nspfxs = self.__nspfxs__
-        self._nsdecls = ' %s' % nsdecls(*nspfxs)
+        self._nsdecls = " %s" % nsdecls(*nspfxs)
         return self
 
     def xml(self, indent=0):
         """
         Return element XML based on attribute settings
         """
-        indent_str = ' ' * indent
+        indent_str = " " * indent
         if self._is_empty:
-            xml = '%s%s\n' % (indent_str, self._empty_element_tag)
+            xml = "%s%s\n" % (indent_str, self._empty_element_tag)
         else:
-            xml = '%s\n' % self._non_empty_element_xml(indent)
+            xml = "%s\n" % self._non_empty_element_xml(indent)
         return xml
 
     def xml_bytes(self, indent=0):
-        return self.xml(indent=indent).encode('utf-8')
+        return self.xml(indent=indent).encode("utf-8")
 
     @property
     def _empty_element_tag(self):
-        return '<%s%s%s/>' % (self.__tag__, self._nsdecls, self._xmlattrs_str)
+        return "<%s%s%s/>" % (self.__tag__, self._nsdecls, self._xmlattrs_str)
 
     @property
     def _end_tag(self):
-        return '</%s>' % self.__tag__
+        return "</%s>" % self.__tag__
 
     @property
     def _is_empty(self):
         return len(self._child_bldrs) == 0 and len(self._text) == 0
 
     def _non_empty_element_xml(self, indent):
-        indent_str = ' ' * indent
+        indent_str = " " * indent
         if self._text:
-            xml = ('%s%s%s%s' %
-                   (indent_str, self._start_tag, self._text, self._end_tag))
+            xml = "%s%s%s%s" % (indent_str, self._start_tag, self._text, self._end_tag)
         else:
-            xml = '%s%s\n' % (indent_str, self._start_tag)
+            xml = "%s%s\n" % (indent_str, self._start_tag)
             for child_bldr in self._child_bldrs:
-                xml += child_bldr.xml(indent+2)
-            xml += '%s%s' % (indent_str, self._end_tag)
+                xml += child_bldr.xml(indent + 2)
+            xml += "%s%s" % (indent_str, self._end_tag)
         return xml
 
     def _set_xmlattr(self, xmlattr_name, value):
@@ -132,11 +132,11 @@ class BaseBuilder(object):
 
     @property
     def _start_tag(self):
-        return '<%s%s%s>' % (self.__tag__, self._nsdecls, self._xmlattrs_str)
+        return "<%s%s%s>" % (self.__tag__, self._nsdecls, self._xmlattrs_str)
 
     @property
     def _xmlattrs_str(self):
         """
         Return all element attributes as a string, like ' foo="bar" x="1"'.
         """
-        return ''.join(self._xmlattrs)
+        return "".join(self._xmlattrs)

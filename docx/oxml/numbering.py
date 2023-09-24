@@ -8,7 +8,11 @@ from . import OxmlElement
 from .shared import CT_DecimalNumber
 from .simpletypes import ST_DecimalNumber
 from .xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement,
+    OneAndOnlyOne,
+    RequiredAttribute,
+    ZeroOrMore,
+    ZeroOrOne,
 )
 
 
@@ -18,9 +22,10 @@ class CT_Num(BaseOxmlElement):
     instance, having a required child <w:abstractNumId> that references an
     abstract numbering definition that defines most of the formatting details.
     """
-    abstractNumId = OneAndOnlyOne('w:abstractNumId')
-    lvlOverride = ZeroOrMore('w:lvlOverride')
-    numId = RequiredAttribute('w:numId', ST_DecimalNumber)
+
+    abstractNumId = OneAndOnlyOne("w:abstractNumId")
+    lvlOverride = ZeroOrMore("w:lvlOverride")
+    numId = RequiredAttribute("w:numId", ST_DecimalNumber)
 
     def add_lvlOverride(self, ilvl):
         """
@@ -36,11 +41,9 @@ class CT_Num(BaseOxmlElement):
         a ``<w:abstractNumId>`` child with val attribute set to
         *abstractNum_id*.
         """
-        num = OxmlElement('w:num')
+        num = OxmlElement("w:num")
         num.numId = num_id
-        abstractNumId = CT_DecimalNumber.new(
-            'w:abstractNumId', abstractNum_id
-        )
+        abstractNumId = CT_DecimalNumber.new("w:abstractNumId", abstractNum_id)
         num.append(abstractNumId)
         return num
 
@@ -50,8 +53,9 @@ class CT_NumLvl(BaseOxmlElement):
     ``<w:lvlOverride>`` element, which identifies a level in a list
     definition to override with settings it contains.
     """
-    startOverride = ZeroOrOne('w:startOverride', successors=('w:lvl',))
-    ilvl = RequiredAttribute('w:ilvl', ST_DecimalNumber)
+
+    startOverride = ZeroOrOne("w:startOverride", successors=("w:lvl",))
+    ilvl = RequiredAttribute("w:ilvl", ST_DecimalNumber)
 
     def add_startOverride(self, val):
         """
@@ -66,10 +70,9 @@ class CT_NumPr(BaseOxmlElement):
     A ``<w:numPr>`` element, a container for numbering properties applied to
     a paragraph.
     """
-    ilvl = ZeroOrOne('w:ilvl', successors=(
-        'w:numId', 'w:numberingChange', 'w:ins'
-    ))
-    numId = ZeroOrOne('w:numId', successors=('w:numberingChange', 'w:ins'))
+
+    ilvl = ZeroOrOne("w:ilvl", successors=("w:numId", "w:numberingChange", "w:ins"))
+    numId = ZeroOrOne("w:numId", successors=("w:numberingChange", "w:ins"))
 
     # @ilvl.setter
     # def _set_ilvl(self, val):
@@ -94,7 +97,8 @@ class CT_Numbering(BaseOxmlElement):
     ``<w:numbering>`` element, the root element of a numbering part, i.e.
     numbering.xml
     """
-    num = ZeroOrMore('w:num', successors=('w:numIdMacAtCleanup',))
+
+    num = ZeroOrMore("w:num", successors=("w:numIdMacAtCleanup",))
 
     def add_num(self, abstractNum_id):
         """
@@ -114,7 +118,7 @@ class CT_Numbering(BaseOxmlElement):
         try:
             return self.xpath(xpath)[0]
         except IndexError:
-            raise KeyError('no <w:num> element with numId %d' % numId)
+            raise KeyError("no <w:num> element with numId %d" % numId)
 
     @property
     def _next_numId(self):
@@ -123,9 +127,9 @@ class CT_Numbering(BaseOxmlElement):
         1 and filling any gaps in numbering between existing ``<w:num>``
         elements.
         """
-        numId_strs = self.xpath('./w:num/@w:numId')
+        numId_strs = self.xpath("./w:num/@w:numId")
         num_ids = [int(numId_str) for numId_str in numId_strs]
-        for num in range(1, len(num_ids)+2):
+        for num in range(1, len(num_ids) + 2):
             if num not in num_ids:
                 break
         return num

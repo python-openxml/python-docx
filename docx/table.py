@@ -16,6 +16,7 @@ class Table(Parented):
     """
     Proxy class for a WordprocessingML ``<w:tbl>`` element.
     """
+
     def __init__(self, tbl, parent):
         super(Table, self).__init__(parent)
         self._element = self._tbl = tbl
@@ -130,9 +131,7 @@ class Table(Parented):
 
     @style.setter
     def style(self, style_or_name):
-        style_id = self.part.get_style_id(
-            style_or_name, WD_STYLE_TYPE.TABLE
-        )
+        style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.TABLE)
         self._tbl.tblStyle_val = style_id
 
     @property
@@ -196,7 +195,7 @@ class _Cell(BlockItemContainer):
         super(_Cell, self).__init__(tc, parent)
         self._tc = self._element = tc
 
-    def add_paragraph(self, text='', style=None):
+    def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the content in this
         cell. If present, *text* is added to the paragraph in a single run.
@@ -255,7 +254,7 @@ class _Cell(BlockItemContainer):
         a string to this property replaces all existing content with a single
         paragraph containing the assigned text in a single run.
         """
-        return '\n'.join(p.text for p in self.paragraphs)
+        return "\n".join(p.text for p in self.paragraphs)
 
     @text.setter
     def text(self, text):
@@ -303,6 +302,7 @@ class _Column(Parented):
     """
     Table column
     """
+
     def __init__(self, gridCol, parent):
         super(_Column, self).__init__(parent)
         self._gridCol = gridCol
@@ -346,6 +346,7 @@ class _Columns(Parented):
     Sequence of |_Column| instances corresponding to the columns in a table.
     Supports ``len()``, iteration and indexed access.
     """
+
     def __init__(self, tbl, parent):
         super(_Columns, self).__init__(parent)
         self._tbl = tbl
@@ -389,6 +390,7 @@ class _Row(Parented):
     """
     Table row
     """
+
     def __init__(self, tr, parent):
         super(_Row, self).__init__(parent)
         self._tr = self._element = tr
@@ -445,6 +447,7 @@ class _Rows(Parented):
     Sequence of |_Row| objects corresponding to the rows in a table.
     Supports ``len()``, iteration, indexed access, and slicing.
     """
+
     def __init__(self, tbl, parent):
         super(_Rows, self).__init__(parent)
         self._tbl = tbl

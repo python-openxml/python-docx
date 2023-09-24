@@ -8,7 +8,10 @@ import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import (
-    WD_ALIGN_VERTICAL, WD_ROW_HEIGHT, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+    WD_ALIGN_VERTICAL,
+    WD_ROW_HEIGHT,
+    WD_TABLE_ALIGNMENT,
+    WD_TABLE_DIRECTION,
 )
 from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
@@ -25,7 +28,6 @@ from .unitutil.mock import instance_mock, property_mock
 
 
 class DescribeTable(object):
-
     def it_can_add_a_row(self, add_row_fixture):
         table, expected_xml = add_row_fixture
         row = table.add_row()
@@ -103,17 +105,13 @@ class DescribeTable(object):
     def it_knows_its_table_style(self, style_get_fixture):
         table, style_id_, style_ = style_get_fixture
         style = table.style
-        table.part.get_style.assert_called_once_with(
-            style_id_, WD_STYLE_TYPE.TABLE
-        )
+        table.part.get_style.assert_called_once_with(style_id_, WD_STYLE_TYPE.TABLE)
         assert style is style_
 
     def it_can_change_its_table_style(self, style_set_fixture):
         table, value, expected_xml = style_set_fixture
         table.style = value
-        table.part.get_style_id.assert_called_once_with(
-            value, WD_STYLE_TYPE.TABLE
-        )
+        table.part.get_style_id.assert_called_once_with(value, WD_STYLE_TYPE.TABLE)
         assert table._tbl.xml == expected_xml
 
     def it_provides_access_to_its_cells_to_help(self, cells_fixture):
@@ -135,7 +133,7 @@ class DescribeTable(object):
 
     @pytest.fixture
     def add_column_fixture(self):
-        snippets = snippet_seq('add-row-col')
+        snippets = snippet_seq("add-row-col")
         tbl = parse_xml(snippets[0])
         table = Table(tbl, None)
         width = Inches(1.5)
@@ -144,76 +142,94 @@ class DescribeTable(object):
 
     @pytest.fixture
     def add_row_fixture(self):
-        snippets = snippet_seq('add-row-col')
+        snippets = snippet_seq("add-row-col")
         tbl = parse_xml(snippets[0])
         table = Table(tbl, None)
         expected_xml = snippets[1]
         return table, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr',                    None),
-        ('w:tbl/w:tblPr/w:jc{w:val=center}', WD_TABLE_ALIGNMENT.CENTER),
-        ('w:tbl/w:tblPr/w:jc{w:val=right}',  WD_TABLE_ALIGNMENT.RIGHT),
-        ('w:tbl/w:tblPr/w:jc{w:val=left}',   WD_TABLE_ALIGNMENT.LEFT),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tbl/w:tblPr", None),
+            ("w:tbl/w:tblPr/w:jc{w:val=center}", WD_TABLE_ALIGNMENT.CENTER),
+            ("w:tbl/w:tblPr/w:jc{w:val=right}", WD_TABLE_ALIGNMENT.RIGHT),
+            ("w:tbl/w:tblPr/w:jc{w:val=left}", WD_TABLE_ALIGNMENT.LEFT),
+        ]
+    )
     def alignment_get_fixture(self, request):
         tbl_cxml, expected_value = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_value
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr', WD_TABLE_ALIGNMENT.LEFT,
-         'w:tbl/w:tblPr/w:jc{w:val=left}'),
-        ('w:tbl/w:tblPr/w:jc{w:val=left}', WD_TABLE_ALIGNMENT.RIGHT,
-         'w:tbl/w:tblPr/w:jc{w:val=right}'),
-        ('w:tbl/w:tblPr/w:jc{w:val=right}', None,
-         'w:tbl/w:tblPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            (
+                "w:tbl/w:tblPr",
+                WD_TABLE_ALIGNMENT.LEFT,
+                "w:tbl/w:tblPr/w:jc{w:val=left}",
+            ),
+            (
+                "w:tbl/w:tblPr/w:jc{w:val=left}",
+                WD_TABLE_ALIGNMENT.RIGHT,
+                "w:tbl/w:tblPr/w:jc{w:val=right}",
+            ),
+            ("w:tbl/w:tblPr/w:jc{w:val=right}", None, "w:tbl/w:tblPr"),
+        ]
+    )
     def alignment_set_fixture(self, request):
         tbl_cxml, new_value, expected_tbl_cxml = request.param
         table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_tbl_cxml)
         return table, new_value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr',                             True),
-        ('w:tbl/w:tblPr/w:tblLayout',                 True),
-        ('w:tbl/w:tblPr/w:tblLayout{w:type=autofit}', True),
-        ('w:tbl/w:tblPr/w:tblLayout{w:type=fixed}',   False),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tbl/w:tblPr", True),
+            ("w:tbl/w:tblPr/w:tblLayout", True),
+            ("w:tbl/w:tblPr/w:tblLayout{w:type=autofit}", True),
+            ("w:tbl/w:tblPr/w:tblLayout{w:type=fixed}", False),
+        ]
+    )
     def autofit_get_fixture(self, request):
         tbl_cxml, expected_autofit = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_autofit
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr', True,
-         'w:tbl/w:tblPr/w:tblLayout{w:type=autofit}'),
-        ('w:tbl/w:tblPr', False,
-         'w:tbl/w:tblPr/w:tblLayout{w:type=fixed}'),
-        ('w:tbl/w:tblPr', None,
-         'w:tbl/w:tblPr/w:tblLayout{w:type=fixed}'),
-        ('w:tbl/w:tblPr/w:tblLayout{w:type=fixed}', True,
-         'w:tbl/w:tblPr/w:tblLayout{w:type=autofit}'),
-        ('w:tbl/w:tblPr/w:tblLayout{w:type=autofit}', False,
-         'w:tbl/w:tblPr/w:tblLayout{w:type=fixed}'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tbl/w:tblPr", True, "w:tbl/w:tblPr/w:tblLayout{w:type=autofit}"),
+            ("w:tbl/w:tblPr", False, "w:tbl/w:tblPr/w:tblLayout{w:type=fixed}"),
+            ("w:tbl/w:tblPr", None, "w:tbl/w:tblPr/w:tblLayout{w:type=fixed}"),
+            (
+                "w:tbl/w:tblPr/w:tblLayout{w:type=fixed}",
+                True,
+                "w:tbl/w:tblPr/w:tblLayout{w:type=autofit}",
+            ),
+            (
+                "w:tbl/w:tblPr/w:tblLayout{w:type=autofit}",
+                False,
+                "w:tbl/w:tblPr/w:tblLayout{w:type=fixed}",
+            ),
+        ]
+    )
     def autofit_set_fixture(self, request):
         tbl_cxml, new_value, expected_tbl_cxml = request.param
         table = Table(element(tbl_cxml), None)
         expected_xml = xml(expected_tbl_cxml)
         return table, new_value, expected_xml
 
-    @pytest.fixture(params=[
-        (0, 9, 9, ()),
-        (1, 9, 8, ((0, 1),)),
-        (2, 9, 8, ((1, 4),)),
-        (3, 9, 6, ((0, 1, 3, 4),)),
-        (4, 9, 4, ((0, 1), (3, 6), (4, 5, 7, 8))),
-    ])
+    @pytest.fixture(
+        params=[
+            (0, 9, 9, ()),
+            (1, 9, 8, ((0, 1),)),
+            (2, 9, 8, ((1, 4),)),
+            (3, 9, 6, ((0, 1, 3, 4),)),
+            (4, 9, 4, ((0, 1), (3, 6), (4, 5, 7, 8))),
+        ]
+    )
     def cells_fixture(self, request):
         snippet_idx, cell_count, unique_count, matches = request.param
-        tbl_xml = snippet_seq('tbl-cells')[snippet_idx]
+        tbl_xml = snippet_seq("tbl-cells")[snippet_idx]
         table = Table(parse_xml(tbl_xml), None)
         return table, cell_count, unique_count, matches
 
@@ -228,32 +244,40 @@ class DescribeTable(object):
 
     @pytest.fixture
     def column_count_fixture(self):
-        tbl_cxml = 'w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)'
+        tbl_cxml = "w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)"
         expected_value = 3
         table = Table(element(tbl_cxml), None)
         return table, expected_value
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr',                        None),
-        ('w:tbl/w:tblPr/w:bidiVisual',           WD_TABLE_DIRECTION.RTL),
-        ('w:tbl/w:tblPr/w:bidiVisual{w:val=0}',  WD_TABLE_DIRECTION.LTR),
-        ('w:tbl/w:tblPr/w:bidiVisual{w:val=on}', WD_TABLE_DIRECTION.RTL),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tbl/w:tblPr", None),
+            ("w:tbl/w:tblPr/w:bidiVisual", WD_TABLE_DIRECTION.RTL),
+            ("w:tbl/w:tblPr/w:bidiVisual{w:val=0}", WD_TABLE_DIRECTION.LTR),
+            ("w:tbl/w:tblPr/w:bidiVisual{w:val=on}", WD_TABLE_DIRECTION.RTL),
+        ]
+    )
     def direction_get_fixture(self, request):
         tbl_cxml, expected_value = request.param
         table = Table(element(tbl_cxml), None)
         return table, expected_value
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr',                       WD_TABLE_DIRECTION.RTL,
-         'w:tbl/w:tblPr/w:bidiVisual'),
-        ('w:tbl/w:tblPr/w:bidiVisual',          WD_TABLE_DIRECTION.LTR,
-         'w:tbl/w:tblPr/w:bidiVisual{w:val=0}'),
-        ('w:tbl/w:tblPr/w:bidiVisual{w:val=0}', WD_TABLE_DIRECTION.RTL,
-         'w:tbl/w:tblPr/w:bidiVisual'),
-        ('w:tbl/w:tblPr/w:bidiVisual{w:val=1}', None,
-         'w:tbl/w:tblPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tbl/w:tblPr", WD_TABLE_DIRECTION.RTL, "w:tbl/w:tblPr/w:bidiVisual"),
+            (
+                "w:tbl/w:tblPr/w:bidiVisual",
+                WD_TABLE_DIRECTION.LTR,
+                "w:tbl/w:tblPr/w:bidiVisual{w:val=0}",
+            ),
+            (
+                "w:tbl/w:tblPr/w:bidiVisual{w:val=0}",
+                WD_TABLE_DIRECTION.RTL,
+                "w:tbl/w:tblPr/w:bidiVisual",
+            ),
+            ("w:tbl/w:tblPr/w:bidiVisual{w:val=1}", None, "w:tbl/w:tblPr"),
+        ]
+    )
     def direction_set_fixture(self, request):
         tbl_cxml, new_value, expected_cxml = request.param
         table = Table(element(tbl_cxml), None)
@@ -271,20 +295,24 @@ class DescribeTable(object):
 
     @pytest.fixture
     def style_get_fixture(self, part_prop_):
-        style_id = 'Barbaz'
-        tbl_cxml = 'w:tbl/w:tblPr/w:tblStyle{w:val=%s}' % style_id
+        style_id = "Barbaz"
+        tbl_cxml = "w:tbl/w:tblPr/w:tblStyle{w:val=%s}" % style_id
         table = Table(element(tbl_cxml), None)
         style_ = part_prop_.return_value.get_style.return_value
         return table, style_id, style_
 
-    @pytest.fixture(params=[
-        ('w:tbl/w:tblPr',                         'Tbl A', 'TblA',
-         'w:tbl/w:tblPr/w:tblStyle{w:val=TblA}'),
-        ('w:tbl/w:tblPr/w:tblStyle{w:val=TblA}',  'Tbl B', 'TblB',
-         'w:tbl/w:tblPr/w:tblStyle{w:val=TblB}'),
-        ('w:tbl/w:tblPr/w:tblStyle{w:val=TblB}',  None,    None,
-         'w:tbl/w:tblPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tbl/w:tblPr", "Tbl A", "TblA", "w:tbl/w:tblPr/w:tblStyle{w:val=TblA}"),
+            (
+                "w:tbl/w:tblPr/w:tblStyle{w:val=TblA}",
+                "Tbl B",
+                "TblB",
+                "w:tbl/w:tblPr/w:tblStyle{w:val=TblB}",
+            ),
+            ("w:tbl/w:tblPr/w:tblStyle{w:val=TblB}", None, None, "w:tbl/w:tblPr"),
+        ]
+    )
     def style_set_fixture(self, request, part_prop_):
         tbl_cxml, value, style_id, expected_cxml = request.param
         table = Table(element(tbl_cxml), None)
@@ -301,11 +329,11 @@ class DescribeTable(object):
 
     @pytest.fixture
     def _cells_(self, request):
-        return property_mock(request, Table, '_cells')
+        return property_mock(request, Table, "_cells")
 
     @pytest.fixture
     def _column_count_(self, request):
-        return property_mock(request, Table, '_column_count')
+        return property_mock(request, Table, "_column_count")
 
     @pytest.fixture
     def document_part_(self, request):
@@ -313,9 +341,7 @@ class DescribeTable(object):
 
     @pytest.fixture
     def part_prop_(self, request, document_part_):
-        return property_mock(
-            request, Table, 'part', return_value=document_part_
-        )
+        return property_mock(request, Table, "part", return_value=document_part_)
 
     @pytest.fixture
     def table(self):
@@ -325,14 +351,12 @@ class DescribeTable(object):
 
 
 class Describe_Cell(object):
-
     def it_knows_what_text_it_contains(self, text_get_fixture):
         cell, expected_text = text_get_fixture
         text = cell.text
         assert text == expected_text
 
-    def it_can_replace_its_content_with_a_string_of_text(
-            self, text_set_fixture):
+    def it_can_replace_its_content_with_a_string_of_text(self, text_set_fixture):
         cell, text, expected_xml = text_set_fixture
         cell.text = text
         assert cell._tc.xml == expected_xml
@@ -357,8 +381,7 @@ class Describe_Cell(object):
         assert cell.width == value
         assert cell._tc.xml == expected_xml
 
-    def it_provides_access_to_the_paragraphs_it_contains(
-            self, paragraphs_fixture):
+    def it_provides_access_to_the_paragraphs_it_contains(self, paragraphs_fixture):
         cell = paragraphs_fixture
         paragraphs = cell.paragraphs
         assert len(paragraphs) == 2
@@ -403,11 +426,13 @@ class Describe_Cell(object):
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:tc',       'w:tc/w:p'),
-        ('w:tc/w:p',   'w:tc/(w:p, w:p)'),
-        ('w:tc/w:tbl', 'w:tc/(w:tbl, w:p)'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", "w:tc/w:p"),
+            ("w:tc/w:p", "w:tc/(w:p, w:p)"),
+            ("w:tc/w:tbl", "w:tc/(w:tbl, w:p)"),
+        ]
+    )
     def add_paragraph_fixture(self, request):
         tc_cxml, after_tc_cxml = request.param
         cell = _Cell(element(tc_cxml), None)
@@ -416,35 +441,41 @@ class Describe_Cell(object):
 
     @pytest.fixture
     def add_table_fixture(self, request):
-        cell = _Cell(element('w:tc/w:p'), None)
-        expected_xml = snippet_seq('new-tbl')[1]
+        cell = _Cell(element("w:tc/w:p"), None)
+        expected_xml = snippet_seq("new-tbl")[1]
         return cell, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:tc', None),
-        ('w:tc/w:tcPr', None),
-        ('w:tc/w:tcPr/w:vAlign{w:val=bottom}', WD_ALIGN_VERTICAL.BOTTOM),
-        ('w:tc/w:tcPr/w:vAlign{w:val=top}', WD_ALIGN_VERTICAL.TOP),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", None),
+            ("w:tc/w:tcPr", None),
+            ("w:tc/w:tcPr/w:vAlign{w:val=bottom}", WD_ALIGN_VERTICAL.BOTTOM),
+            ("w:tc/w:tcPr/w:vAlign{w:val=top}", WD_ALIGN_VERTICAL.TOP),
+        ]
+    )
     def alignment_get_fixture(self, request):
         tc_cxml, expected_value = request.param
         cell = _Cell(element(tc_cxml), None)
         return cell, expected_value
 
-    @pytest.fixture(params=[
-        ('w:tc', WD_ALIGN_VERTICAL.TOP,
-         'w:tc/w:tcPr/w:vAlign{w:val=top}'),
-        ('w:tc/w:tcPr', WD_ALIGN_VERTICAL.CENTER,
-         'w:tc/w:tcPr/w:vAlign{w:val=center}'),
-        ('w:tc/w:tcPr/w:vAlign{w:val=center}', WD_ALIGN_VERTICAL.BOTTOM,
-         'w:tc/w:tcPr/w:vAlign{w:val=bottom}'),
-        ('w:tc/w:tcPr/w:vAlign{w:val=center}', None,
-         'w:tc/w:tcPr'),
-        ('w:tc', None,
-         'w:tc/w:tcPr'),
-        ('w:tc/w:tcPr', None,
-         'w:tc/w:tcPr'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", WD_ALIGN_VERTICAL.TOP, "w:tc/w:tcPr/w:vAlign{w:val=top}"),
+            (
+                "w:tc/w:tcPr",
+                WD_ALIGN_VERTICAL.CENTER,
+                "w:tc/w:tcPr/w:vAlign{w:val=center}",
+            ),
+            (
+                "w:tc/w:tcPr/w:vAlign{w:val=center}",
+                WD_ALIGN_VERTICAL.BOTTOM,
+                "w:tc/w:tcPr/w:vAlign{w:val=bottom}",
+            ),
+            ("w:tc/w:tcPr/w:vAlign{w:val=center}", None, "w:tc/w:tcPr"),
+            ("w:tc", None, "w:tc/w:tcPr"),
+            ("w:tc/w:tcPr", None, "w:tc/w:tcPr"),
+        ]
+    )
     def alignment_set_fixture(self, request):
         cxml, new_value, expected_cxml = request.param
         cell = _Cell(element(cxml), None)
@@ -459,64 +490,80 @@ class Describe_Cell(object):
 
     @pytest.fixture
     def paragraphs_fixture(self):
-        return _Cell(element('w:tc/(w:p, w:p)'), None)
+        return _Cell(element("w:tc/(w:p, w:p)"), None)
 
-    @pytest.fixture(params=[
-        ('w:tc',                   0),
-        ('w:tc/w:tbl',             1),
-        ('w:tc/(w:tbl,w:tbl)',     2),
-        ('w:tc/(w:p,w:tbl)',       1),
-        ('w:tc/(w:tbl,w:tbl,w:p)', 2),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", 0),
+            ("w:tc/w:tbl", 1),
+            ("w:tc/(w:tbl,w:tbl)", 2),
+            ("w:tc/(w:p,w:tbl)", 1),
+            ("w:tc/(w:tbl,w:tbl,w:p)", 2),
+        ]
+    )
     def tables_fixture(self, request):
         cell_cxml, expected_count = request.param
         cell = _Cell(element(cell_cxml), None)
         return cell, expected_count
 
-    @pytest.fixture(params=[
-        ('w:tc',                                     ''),
-        ('w:tc/w:p/w:r/w:t"foobar"',                 'foobar'),
-        ('w:tc/(w:p/w:r/w:t"foo",w:p/w:r/w:t"bar")', 'foo\nbar'),
-        ('w:tc/(w:tcPr,w:p/w:r/w:t"foobar")',        'foobar'),
-        ('w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:br,w:t"ar",w:br)',
-         'fo\tob\nar\n'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", ""),
+            ('w:tc/w:p/w:r/w:t"foobar"', "foobar"),
+            ('w:tc/(w:p/w:r/w:t"foo",w:p/w:r/w:t"bar")', "foo\nbar"),
+            ('w:tc/(w:tcPr,w:p/w:r/w:t"foobar")', "foobar"),
+            ('w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:br,w:t"ar",w:br)', "fo\tob\nar\n"),
+        ]
+    )
     def text_get_fixture(self, request):
         tc_cxml, expected_text = request.param
         cell = _Cell(element(tc_cxml), None)
         return cell, expected_text
 
-    @pytest.fixture(params=[
-        ('w:tc/w:p', 'foobar',
-         'w:tc/w:p/w:r/w:t"foobar"'),
-        ('w:tc/w:p', 'fo\tob\rar\n',
-         'w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:br,w:t"ar",w:br)'),
-        ('w:tc/(w:tcPr, w:p, w:tbl, w:p)', 'foobar',
-         'w:tc/(w:tcPr, w:p/w:r/w:t"foobar")'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc/w:p", "foobar", 'w:tc/w:p/w:r/w:t"foobar"'),
+            (
+                "w:tc/w:p",
+                "fo\tob\rar\n",
+                'w:tc/w:p/w:r/(w:t"fo",w:tab,w:t"ob",w:br,w:t"ar",w:br)',
+            ),
+            (
+                "w:tc/(w:tcPr, w:p, w:tbl, w:p)",
+                "foobar",
+                'w:tc/(w:tcPr, w:p/w:r/w:t"foobar")',
+            ),
+        ]
+    )
     def text_set_fixture(self, request):
         tc_cxml, new_text, expected_cxml = request.param
         cell = _Cell(element(tc_cxml), None)
         expected_xml = xml(expected_cxml)
         return cell, new_text, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:tc',                                   None),
-        ('w:tc/w:tcPr',                            None),
-        ('w:tc/w:tcPr/w:tcW{w:w=25%,w:type=pct}',  None),
-        ('w:tc/w:tcPr/w:tcW{w:w=1440,w:type=dxa}', 914400),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", None),
+            ("w:tc/w:tcPr", None),
+            ("w:tc/w:tcPr/w:tcW{w:w=25%,w:type=pct}", None),
+            ("w:tc/w:tcPr/w:tcW{w:w=1440,w:type=dxa}", 914400),
+        ]
+    )
     def width_get_fixture(self, request):
         tc_cxml, expected_width = request.param
         cell = _Cell(element(tc_cxml), None)
         return cell, expected_width
 
-    @pytest.fixture(params=[
-        ('w:tc', Inches(1),
-         'w:tc/w:tcPr/w:tcW{w:w=1440,w:type=dxa}'),
-        ('w:tc/w:tcPr/w:tcW{w:w=25%,w:type=pct}', Inches(2),
-         'w:tc/w:tcPr/w:tcW{w:w=2880,w:type=dxa}'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tc", Inches(1), "w:tc/w:tcPr/w:tcW{w:w=1440,w:type=dxa}"),
+            (
+                "w:tc/w:tcPr/w:tcW{w:w=25%,w:type=pct}",
+                Inches(2),
+                "w:tc/w:tcPr/w:tcW{w:w=2880,w:type=dxa}",
+            ),
+        ]
+    )
     def width_set_fixture(self, request):
         tc_cxml, new_value, expected_cxml = request.param
         cell = _Cell(element(tc_cxml), None)
@@ -543,7 +590,6 @@ class Describe_Cell(object):
 
 
 class Describe_Column(object):
-
     def it_provides_access_to_its_cells(self, cells_fixture):
         column, column_idx, expected_cells = cells_fixture
         cells = column.cells
@@ -580,7 +626,7 @@ class Describe_Column(object):
 
     @pytest.fixture
     def index_fixture(self):
-        tbl = element('w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)')
+        tbl = element("w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)")
         gridCol, expected_idx = tbl.tblGrid[1], 1
         column = _Column(gridCol, None)
         return column, expected_idx
@@ -591,25 +637,29 @@ class Describe_Column(object):
         parent_.table = table_
         return column, table_
 
-    @pytest.fixture(params=[
-        ('w:gridCol{w:w=4242}',   2693670),
-        ('w:gridCol{w:w=1440}',    914400),
-        ('w:gridCol{w:w=2.54cm}',  914400),
-        ('w:gridCol{w:w=54mm}',   1944000),
-        ('w:gridCol{w:w=12.5pt}',  158750),
-        ('w:gridCol',                None),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:gridCol{w:w=4242}", 2693670),
+            ("w:gridCol{w:w=1440}", 914400),
+            ("w:gridCol{w:w=2.54cm}", 914400),
+            ("w:gridCol{w:w=54mm}", 1944000),
+            ("w:gridCol{w:w=12.5pt}", 158750),
+            ("w:gridCol", None),
+        ]
+    )
     def width_get_fixture(self, request):
         gridCol_cxml, expected_width = request.param
         column = _Column(element(gridCol_cxml), None)
         return column, expected_width
 
-    @pytest.fixture(params=[
-        ('w:gridCol',           914400, 'w:gridCol{w:w=1440}'),
-        ('w:gridCol{w:w=4242}', 457200, 'w:gridCol{w:w=720}'),
-        ('w:gridCol{w:w=4242}',   None, 'w:gridCol'),
-        ('w:gridCol',             None, 'w:gridCol'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:gridCol", 914400, "w:gridCol{w:w=1440}"),
+            ("w:gridCol{w:w=4242}", 457200, "w:gridCol{w:w=720}"),
+            ("w:gridCol{w:w=4242}", None, "w:gridCol"),
+            ("w:gridCol", None, "w:gridCol"),
+        ]
+    )
     def width_set_fixture(self, request):
         gridCol_cxml, new_value, expected_cxml = request.param
         column = _Column(element(gridCol_cxml), None)
@@ -620,7 +670,7 @@ class Describe_Column(object):
 
     @pytest.fixture
     def _index_(self, request):
-        return property_mock(request, _Column, '_index')
+        return property_mock(request, _Column, "_index")
 
     @pytest.fixture
     def parent_(self, request):
@@ -632,11 +682,10 @@ class Describe_Column(object):
 
     @pytest.fixture
     def table_prop_(self, request, table_):
-        return property_mock(request, _Column, 'table', return_value=table_)
+        return property_mock(request, _Column, "table", return_value=table_)
 
 
 class Describe_Columns(object):
-
     def it_knows_how_many_columns_it_contains(self, columns_fixture):
         columns, column_count = columns_fixture
         assert len(columns) == column_count
@@ -691,7 +740,6 @@ class Describe_Columns(object):
 
 
 class Describe_Row(object):
-
     def it_knows_its_height(self, height_get_fixture):
         row, expected_height = height_get_fixture
         assert row.height == expected_height
@@ -734,74 +782,90 @@ class Describe_Row(object):
         table_.row_cells.return_value = list(expected_cells)
         return row, row_idx, expected_cells
 
-    @pytest.fixture(params=[
-        ('w:tr',                               None),
-        ('w:tr/w:trPr',                        None),
-        ('w:tr/w:trPr/w:trHeight',             None),
-        ('w:tr/w:trPr/w:trHeight{w:val=0}',    0),
-        ('w:tr/w:trPr/w:trHeight{w:val=1440}', 914400),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tr", None),
+            ("w:tr/w:trPr", None),
+            ("w:tr/w:trPr/w:trHeight", None),
+            ("w:tr/w:trPr/w:trHeight{w:val=0}", 0),
+            ("w:tr/w:trPr/w:trHeight{w:val=1440}", 914400),
+        ]
+    )
     def height_get_fixture(self, request):
         tr_cxml, expected_height = request.param
         row = _Row(element(tr_cxml), None)
         return row, expected_height
 
-    @pytest.fixture(params=[
-        ('w:tr',                               Inches(1),
-         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
-        ('w:tr/w:trPr',                        Inches(1),
-         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
-        ('w:tr/w:trPr/w:trHeight',             Inches(1),
-         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
-        ('w:tr/w:trPr/w:trHeight{w:val=1440}', Inches(2),
-         'w:tr/w:trPr/w:trHeight{w:val=2880}'),
-        ('w:tr/w:trPr/w:trHeight{w:val=2880}', None,
-         'w:tr/w:trPr/w:trHeight'),
-        ('w:tr',                   None, 'w:tr/w:trPr'),
-        ('w:tr/w:trPr',            None, 'w:tr/w:trPr'),
-        ('w:tr/w:trPr/w:trHeight', None, 'w:tr/w:trPr/w:trHeight'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tr", Inches(1), "w:tr/w:trPr/w:trHeight{w:val=1440}"),
+            ("w:tr/w:trPr", Inches(1), "w:tr/w:trPr/w:trHeight{w:val=1440}"),
+            ("w:tr/w:trPr/w:trHeight", Inches(1), "w:tr/w:trPr/w:trHeight{w:val=1440}"),
+            (
+                "w:tr/w:trPr/w:trHeight{w:val=1440}",
+                Inches(2),
+                "w:tr/w:trPr/w:trHeight{w:val=2880}",
+            ),
+            ("w:tr/w:trPr/w:trHeight{w:val=2880}", None, "w:tr/w:trPr/w:trHeight"),
+            ("w:tr", None, "w:tr/w:trPr"),
+            ("w:tr/w:trPr", None, "w:tr/w:trPr"),
+            ("w:tr/w:trPr/w:trHeight", None, "w:tr/w:trPr/w:trHeight"),
+        ]
+    )
     def height_set_fixture(self, request):
         tr_cxml, new_value, expected_cxml = request.param
         row = _Row(element(tr_cxml), None)
         expected_xml = xml(expected_cxml)
         return row, new_value, expected_xml
 
-    @pytest.fixture(params=[
-        ('w:tr',        None),
-        ('w:tr/w:trPr', None),
-        ('w:tr/w:trPr/w:trHeight{w:val=0, w:hRule=auto}',
-         WD_ROW_HEIGHT.AUTO),
-        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}',
-         WD_ROW_HEIGHT.AT_LEAST),
-        ('w:tr/w:trPr/w:trHeight{w:val=2880, w:hRule=exact}',
-         WD_ROW_HEIGHT.EXACTLY),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tr", None),
+            ("w:tr/w:trPr", None),
+            ("w:tr/w:trPr/w:trHeight{w:val=0, w:hRule=auto}", WD_ROW_HEIGHT.AUTO),
+            (
+                "w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=atLeast}",
+                WD_ROW_HEIGHT.AT_LEAST,
+            ),
+            (
+                "w:tr/w:trPr/w:trHeight{w:val=2880, w:hRule=exact}",
+                WD_ROW_HEIGHT.EXACTLY,
+            ),
+        ]
+    )
     def height_rule_get_fixture(self, request):
         tr_cxml, expected_rule = request.param
         row = _Row(element(tr_cxml), None)
         return row, expected_rule
 
-    @pytest.fixture(params=[
-        ('w:tr',
-         WD_ROW_HEIGHT.AUTO,
-         'w:tr/w:trPr/w:trHeight{w:hRule=auto}'),
-        ('w:tr/w:trPr',
-         WD_ROW_HEIGHT.AT_LEAST,
-         'w:tr/w:trPr/w:trHeight{w:hRule=atLeast}'),
-        ('w:tr/w:trPr/w:trHeight',
-         WD_ROW_HEIGHT.EXACTLY,
-         'w:tr/w:trPr/w:trHeight{w:hRule=exact}'),
-        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=exact}',
-         WD_ROW_HEIGHT.AUTO,
-         'w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}'),
-        ('w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}',
-         None,
-         'w:tr/w:trPr/w:trHeight{w:val=1440}'),
-        ('w:tr',                   None, 'w:tr/w:trPr'),
-        ('w:tr/w:trPr',            None, 'w:tr/w:trPr'),
-        ('w:tr/w:trPr/w:trHeight', None, 'w:tr/w:trPr/w:trHeight'),
-    ])
+    @pytest.fixture(
+        params=[
+            ("w:tr", WD_ROW_HEIGHT.AUTO, "w:tr/w:trPr/w:trHeight{w:hRule=auto}"),
+            (
+                "w:tr/w:trPr",
+                WD_ROW_HEIGHT.AT_LEAST,
+                "w:tr/w:trPr/w:trHeight{w:hRule=atLeast}",
+            ),
+            (
+                "w:tr/w:trPr/w:trHeight",
+                WD_ROW_HEIGHT.EXACTLY,
+                "w:tr/w:trPr/w:trHeight{w:hRule=exact}",
+            ),
+            (
+                "w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=exact}",
+                WD_ROW_HEIGHT.AUTO,
+                "w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}",
+            ),
+            (
+                "w:tr/w:trPr/w:trHeight{w:val=1440, w:hRule=auto}",
+                None,
+                "w:tr/w:trPr/w:trHeight{w:val=1440}",
+            ),
+            ("w:tr", None, "w:tr/w:trPr"),
+            ("w:tr/w:trPr", None, "w:tr/w:trPr"),
+            ("w:tr/w:trPr/w:trHeight", None, "w:tr/w:trPr/w:trHeight"),
+        ]
+    )
     def height_rule_set_fixture(self, request):
         tr_cxml, new_rule, expected_cxml = request.param
         row = _Row(element(tr_cxml), None)
@@ -810,7 +874,7 @@ class Describe_Row(object):
 
     @pytest.fixture
     def idx_fixture(self):
-        tbl = element('w:tbl/(w:tr,w:tr,w:tr)')
+        tbl = element("w:tbl/(w:tr,w:tr,w:tr)")
         tr, expected_idx = tbl[1], 1
         row = _Row(tr, None)
         return row, expected_idx
@@ -825,7 +889,7 @@ class Describe_Row(object):
 
     @pytest.fixture
     def _index_(self, request):
-        return property_mock(request, _Row, '_index')
+        return property_mock(request, _Row, "_index")
 
     @pytest.fixture
     def parent_(self, request):
@@ -837,11 +901,10 @@ class Describe_Row(object):
 
     @pytest.fixture
     def table_prop_(self, request, table_):
-        return property_mock(request, _Row, 'table', return_value=table_)
+        return property_mock(request, _Row, "table", return_value=table_)
 
 
 class Describe_Rows(object):
-
     def it_knows_how_many_rows_it_contains(self, rows_fixture):
         rows, row_count = rows_fixture
         assert len(rows) == row_count
@@ -891,10 +954,12 @@ class Describe_Rows(object):
         rows = _Rows(tbl, None)
         return rows, row_count
 
-    @pytest.fixture(params=[
-        (3, 1,  3, 2),
-        (3, 0, -1, 2),
-    ])
+    @pytest.fixture(
+        params=[
+            (3, 1, 3, 2),
+            (3, 0, -1, 2),
+        ]
+    )
     def slice_fixture(self, request):
         row_count, start, end, expected_count = request.param
         tbl = _tbl_bldr(rows=row_count, cols=2).element
@@ -915,6 +980,7 @@ class Describe_Rows(object):
 
 
 # fixtures -----------------------------------------------------------
+
 
 def _tbl_bldr(rows, cols):
     tblGrid_bldr = a_tblGrid()
