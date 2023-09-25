@@ -1,7 +1,7 @@
 .. image:: https://travis-ci.org/python-openxml/python-docx.svg?branch=master
    :target: https://travis-ci.org/python-openxml/python-docx
 
-*python-docx* is a Python library for creating and updating Microsoft Word
+*python-docx* is a Python library for reading, creating, and updating Microsoft Word
 (.docx) files.
 
 More information is available in the `python-docx documentation`_.
