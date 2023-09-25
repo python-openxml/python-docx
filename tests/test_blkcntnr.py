@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Test suite for the docx.blkcntnr (block item container) module"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Test suite for the docx.blkcntnr (block item container) module."""
 
 import pytest
 

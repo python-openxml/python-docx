@@ -1,21 +1,18 @@
-# encoding: utf-8
-
-"""
-Step implementations for table-related features
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Step implementations for table-related features."""
 
 from behave import given, then, when
 
 from docx import Document
-from docx.enum.table import WD_ALIGN_VERTICAL  # noqa
-from docx.enum.table import WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+from docx.enum.table import (
+    WD_ALIGN_VERTICAL,
+    WD_ROW_HEIGHT_RULE,
+    WD_TABLE_ALIGNMENT,
+    WD_TABLE_DIRECTION,
+)
 from docx.shared import Inches
 from docx.table import _Column, _Columns, _Row, _Rows
 
 from helpers import test_docx
-
 
 # given ===================================================
 
@@ -263,7 +260,11 @@ def when_I_set_the_table_autofit_to_setting(context, setting):
 
 @then("cell.vertical_alignment is {value}")
 def then_cell_vertical_alignment_is_value(context, value):
-    expected_value = eval(value)
+    expected_value = {
+        "None": None,
+        "WD_ALIGN_VERTICAL.BOTTOM": WD_ALIGN_VERTICAL.BOTTOM,
+        "WD_ALIGN_VERTICAL.CENTER": WD_ALIGN_VERTICAL.CENTER,
+    }[value]
     actual_value = context.cell.vertical_alignment
     assert actual_value is expected_value, (
         "cell.vertical_alignment is %s" % actual_value

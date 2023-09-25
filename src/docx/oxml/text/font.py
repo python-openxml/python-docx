@@ -1,15 +1,21 @@
-# encoding: utf-8
+"""Custom element classes related to run properties (font)."""
 
-"""
-Custom element classes related to run properties (font).
-"""
-
-from .. import parse_xml
-from ...enum.dml import MSO_THEME_COLOR
-from ...enum.text import WD_COLOR, WD_UNDERLINE
-from ..ns import nsdecls, qn
-from ..simpletypes import ST_HexColor, ST_HpsMeasure, ST_String, ST_VerticalAlignRun
-from ..xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrOne
+from docx.enum.dml import MSO_THEME_COLOR
+from docx.enum.text import WD_COLOR, WD_UNDERLINE
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls, qn
+from docx.oxml.simpletypes import (
+    ST_HexColor,
+    ST_HpsMeasure,
+    ST_String,
+    ST_VerticalAlignRun,
+)
+from docx.oxml.xmlchemy import (
+    BaseOxmlElement,
+    OptionalAttribute,
+    RequiredAttribute,
+    ZeroOrOne,
+)
 
 
 class CT_Color(BaseOxmlElement):

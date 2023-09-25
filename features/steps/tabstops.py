@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for paragraph-related features
-"""
+"""Step implementations for paragraph-related features."""
 
 from behave import given, then, when
 
@@ -12,7 +8,6 @@ from docx.shared import Inches
 from docx.text.tabstops import TabStop
 
 from helpers import test_docx
-
 
 # given ===================================================
 

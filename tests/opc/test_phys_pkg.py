@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Test suite for docx.opc.phys_pkg module
-"""
-
-from __future__ import absolute_import
+"""Test suite for docx.opc.phys_pkg module."""
 
 try:
     from io import BytesIO  # Python 3
@@ -12,23 +6,22 @@ except ImportError:
     from StringIO import StringIO as BytesIO
 
 import hashlib
-import pytest
-
 from zipfile import ZIP_DEFLATED, ZipFile
+
+import pytest
 
 from docx.opc.exceptions import PackageNotFoundError
 from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.phys_pkg import (
-    _DirPkgReader,
     PhysPkgReader,
     PhysPkgWriter,
+    _DirPkgReader,
     _ZipPkgReader,
     _ZipPkgWriter,
 )
 
 from ..unitutil.file import absjoin, test_file_dir
-from ..unitutil.mock import class_mock, loose_mock, Mock
-
+from ..unitutil.mock import Mock, class_mock, loose_mock
 
 test_docx_path = absjoin(test_file_dir, "test.docx")
 dir_pkg_path = absjoin(test_file_dir, "expanded_docx")

@@ -1,25 +1,22 @@
-# encoding: utf-8
-
-"""Unit test suite for docx.opc.pkgreader module"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Unit test suite for docx.opc.pkgreader module."""
 
 import pytest
 
-from docx.opc.constants import CONTENT_TYPE as CT, RELATIONSHIP_TARGET_MODE as RTM
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from docx.opc.packuri import PackURI
 from docx.opc.phys_pkg import _ZipPkgReader
 from docx.opc.pkgreader import (
-    _ContentTypeMap,
     PackageReader,
+    _ContentTypeMap,
     _SerializedPart,
     _SerializedRelationship,
     _SerializedRelationships,
 )
 
-from .unitdata.types import a_Default, a_Types, an_Override
 from ..unitutil.mock import (
     ANY,
+    Mock,
     call,
     class_mock,
     function_mock,
@@ -27,9 +24,9 @@ from ..unitutil.mock import (
     instance_mock,
     loose_mock,
     method_mock,
-    Mock,
     patch,
 )
+from .unitdata.types import a_Default, a_Types, an_Override
 
 
 class DescribePackageReader(object):

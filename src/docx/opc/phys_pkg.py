@@ -1,18 +1,11 @@
-# encoding: utf-8
-
-"""
-Provides a general interface to a *physical* OPC package, such as a zip file.
-"""
-
-from __future__ import absolute_import
+"""Provides a general interface to a *physical* OPC package, such as a zip file."""
 
 import os
+from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
-from zipfile import ZipFile, is_zipfile, ZIP_DEFLATED
-
-from .compat import is_string
-from .exceptions import PackageNotFoundError
-from .packuri import CONTENT_TYPES_URI
+from docx.opc.compat import is_string
+from docx.opc.exceptions import PackageNotFoundError
+from docx.opc.packuri import CONTENT_TYPES_URI
 
 
 class PhysPkgReader(object):

@@ -1,20 +1,14 @@
-# encoding: utf-8
-
-"""
-Test suite for the docx.styles.style module
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Test suite for the docx.styles.style module."""
 
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.style import (
     BaseStyle,
-    _CharacterStyle,
-    _ParagraphStyle,
-    _NumberingStyle,
     StyleFactory,
+    _CharacterStyle,
+    _NumberingStyle,
+    _ParagraphStyle,
     _TableStyle,
 )
 from docx.text.font import Font

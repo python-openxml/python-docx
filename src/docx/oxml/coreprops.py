@@ -1,11 +1,6 @@
-# encoding: utf-8
-
-"""Custom element classes for core properties-related XML elements"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Custom element classes for core properties-related XML elements."""
 
 import re
-
 from datetime import datetime, timedelta
 
 from docx.compat import is_string

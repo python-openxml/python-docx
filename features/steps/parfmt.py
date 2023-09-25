@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for paragraph format-related features.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Step implementations for paragraph format-related features."""
 
 from behave import given, then, when
 
@@ -14,7 +8,6 @@ from docx.shared import Pt
 from docx.text.tabstops import TabStops
 
 from helpers import test_docx
-
 
 # given ===================================================
 

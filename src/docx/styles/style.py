@@ -1,16 +1,10 @@
-# encoding: utf-8
+"""Style object hierarchy."""
 
-"""
-Style object hierarchy.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from . import BabelFish
-from ..enum.style import WD_STYLE_TYPE
-from ..shared import ElementProxy
-from ..text.font import Font
-from ..text.parfmt import ParagraphFormat
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import ElementProxy
+from docx.styles import BabelFish
+from docx.text.font import Font
+from docx.text.parfmt import ParagraphFormat
 
 
 def StyleFactory(style_elm):

@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Unit test suite for docx.image.png module"""
-
-from __future__ import absolute_import, print_function
+"""Unit test suite for docx.image.png module."""
 
 import pytest
 
@@ -11,13 +7,13 @@ from docx.image.constants import MIME_TYPE, PNG_CHUNK_TYPE
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.png import (
+    Png,
     _Chunk,
-    _Chunks,
     _ChunkFactory,
     _ChunkParser,
+    _Chunks,
     _IHDRChunk,
     _pHYsChunk,
-    Png,
     _PngParser,
 )
 

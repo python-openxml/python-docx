@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test suite for the docx.opc.packuri module
-"""
+"""Test suite for the docx.opc.packuri module."""
 
 import pytest
 

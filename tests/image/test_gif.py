@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Unit test suite for docx.image.gif module"""
-
-from __future__ import absolute_import, print_function
+"""Unit test suite for docx.image.gif module."""
 
 import pytest
 

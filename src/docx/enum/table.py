@@ -1,12 +1,6 @@
-# encoding: utf-8
+"""Enumerations related to tables in WordprocessingML files."""
 
-"""
-Enumerations related to tables in WordprocessingML files
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from .base import alias, Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember
+from .base import Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
 
 
 @alias("WD_ALIGN_VERTICAL")

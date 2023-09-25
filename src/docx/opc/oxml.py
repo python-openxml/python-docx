@@ -1,18 +1,14 @@
-# encoding: utf-8
+"""Temporary stand-in for main oxml module.
 
+This module came across with the PackageReader transplant. Probably much will get
+replaced with objects from the pptx.oxml.core and then this module will either get
+deleted or only hold the package related custom element classes.
 """
-Temporary stand-in for main oxml module that came across with the
-PackageReader transplant. Probably much will get replaced with objects from
-the pptx.oxml.core and then this module will either get deleted or only hold
-the package related custom element classes.
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
 
 from lxml import etree
 
-from .constants import NAMESPACE as NS, RELATIONSHIP_TARGET_MODE as RTM
-
+from docx.opc.constants import NAMESPACE as NS
+from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()

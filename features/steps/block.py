@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for block content containers
-"""
+"""Step implementations for block content containers."""
 
 from behave import given, then, when
 
@@ -10,7 +6,6 @@ from docx import Document
 from docx.table import Table
 
 from helpers import test_docx
-
 
 # given ===================================================
 

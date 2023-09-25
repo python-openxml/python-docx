@@ -1,17 +1,11 @@
-# encoding: utf-8
+"""Test suite for the docx.text.run module."""
 
-"""
-Test suite for the docx.text.run module
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+import pytest
 
 from docx.dml.color import ColorFormat
 from docx.enum.text import WD_COLOR, WD_UNDERLINE
 from docx.shared import Pt
 from docx.text.font import Font
-
-import pytest
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import class_mock, instance_mock

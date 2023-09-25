@@ -1,11 +1,6 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, division, print_function
-
 from struct import Struct
 
 from .exceptions import UnexpectedEndOfFileError
-
 
 BIG_ENDIAN = ">"
 LITTLE_ENDIAN = "<"

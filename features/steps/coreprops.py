@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Gherkin step implementations for core properties-related features.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Gherkin step implementations for core properties-related features."""
 
 from datetime import datetime, timedelta
 
@@ -14,7 +8,6 @@ from docx import Document
 from docx.opc.coreprops import CoreProperties
 
 from helpers import test_docx
-
 
 # given ===================================================
 

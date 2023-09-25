@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for paragraph-related features
-"""
+"""Step implementations for paragraph-related features."""
 
 from behave import given, then, when
 
@@ -11,7 +7,6 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.text.parfmt import ParagraphFormat
 
 from helpers import saved_docx_path, test_docx, test_text
-
 
 # given ===================================================
 

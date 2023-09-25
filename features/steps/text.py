@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for text-related features
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Step implementations for text-related features."""
 
 import hashlib
 
@@ -18,7 +12,6 @@ from docx.text.font import Font
 from docx.text.run import Run
 
 from helpers import test_docx, test_file, test_text
-
 
 # given ===================================================
 

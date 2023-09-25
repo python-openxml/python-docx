@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-General-purpose step implementations
-"""
+"""General-purpose step implementations."""
 
 import os
 
@@ -11,7 +7,6 @@ from behave import given, when
 from docx import Document
 
 from helpers import saved_docx_path
-
 
 # given ===================================================
 

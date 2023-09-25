@@ -1,15 +1,10 @@
-# encoding: utf-8
-
-"""
-Step implementations for numbering-related features
-"""
+"""Step implementations for numbering-related features."""
 
 from behave import given, then, when
 
 from docx import Document
 
 from helpers import test_docx
-
 
 # given ===================================================
 

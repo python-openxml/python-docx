@@ -1,14 +1,10 @@
-# encoding: utf-8
-
-"""
-Step implementations for styles-related features
-"""
+"""Step implementations for styles-related features."""
 
 from behave import given, then, when
 
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
-from docx.styles.latent import _LatentStyle, LatentStyles
+from docx.styles.latent import LatentStyles, _LatentStyle
 from docx.styles.style import BaseStyle
 from docx.text.font import Font
 from docx.text.parfmt import ParagraphFormat

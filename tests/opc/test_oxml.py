@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test suite for opc.oxml module
-"""
+"""Test suite for opc.oxml module."""
 
 from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
 from docx.opc.oxml import (
@@ -16,10 +12,10 @@ from docx.oxml.xmlchemy import serialize_for_reading
 
 from .unitdata.rels import (
     a_Default,
-    an_Override,
     a_Relationship,
     a_Relationships,
     a_Types,
+    an_Override,
 )
 
 

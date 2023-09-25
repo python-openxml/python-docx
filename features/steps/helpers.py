@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Helper methods and variables for acceptance tests.
-"""
+"""Helper methods and variables for acceptance tests."""
 
 import os
 

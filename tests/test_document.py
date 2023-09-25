@@ -1,12 +1,8 @@
-# encoding: utf-8
-
-"""Unit test suite for the docx.document module"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Unit test suite for the docx.document module."""
 
 import pytest
 
-from docx.document import _Body, Document
+from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties

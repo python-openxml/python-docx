@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Unit test suite for the docx.opc.parts.coreprops module
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Unit test suite for the docx.opc.parts.coreprops module."""
 
 from datetime import datetime, timedelta
 

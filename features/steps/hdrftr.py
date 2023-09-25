@@ -1,15 +1,10 @@
-# encoding: utf-8
-
-"""Step implementations for header and footer-related features"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Step implementations for header and footer-related features."""
 
 from behave import given, then, when
 
 from docx import Document
 
 from helpers import test_docx, test_file
-
 
 # given ====================================================
 

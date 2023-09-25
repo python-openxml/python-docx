@@ -1,16 +1,11 @@
-# encoding: utf-8
+"""Initializes oxml sub-package.
 
+This including registering custom element classes corresponding to Open XML elements.
 """
-Initializes oxml sub-package, including registering custom element classes
-corresponding to Open XML elements.
-"""
-
-from __future__ import absolute_import
 
 from lxml import etree
 
-from .ns import NamespacePrefixedTag, nsmap
-
+from docx.oxml.ns import NamespacePrefixedTag, nsmap
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()

@@ -1,14 +1,8 @@
-# encoding: utf-8
-
-"""
-Unit test suite for the docx.styles.latent module
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Unit test suite for the docx.styles.latent module."""
 
 import pytest
 
-from docx.styles.latent import _LatentStyle, LatentStyles
+from docx.styles.latent import LatentStyles, _LatentStyle
 
 from ..unitutil.cxml import element, xml
 

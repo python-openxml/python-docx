@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Unit test suite for the docx.parts.document module"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Unit test suite for the docx.parts.document module."""
 
 import pytest
 

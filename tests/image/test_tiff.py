@@ -1,8 +1,4 @@
-# encoding: utf-8
-
 """Unit test suite for docx.image.tiff module"""
-
-from __future__ import absolute_import, print_function
 
 import pytest
 
@@ -10,6 +6,7 @@ from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
+    Tiff,
     _AsciiIfdEntry,
     _IfdEntries,
     _IfdEntry,
@@ -18,7 +15,6 @@ from docx.image.tiff import (
     _LongIfdEntry,
     _RationalIfdEntry,
     _ShortIfdEntry,
-    Tiff,
     _TiffParser,
 )
 

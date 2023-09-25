@@ -1,12 +1,6 @@
-# encoding: utf-8
+"""Enumerations used by DrawingML objects."""
 
-"""
-Enumerations used by DrawingML objects
-"""
-
-from __future__ import absolute_import
-
-from .base import alias, Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember
+from .base import Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
 
 
 class MSO_COLOR_TYPE(Enumeration):

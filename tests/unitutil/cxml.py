@@ -1,32 +1,27 @@
-# encoding: utf-8
-
 """Parser for Compact XML Expression Language (CXEL) ('see-ex-ell').
 
 CXEL is a compact XML specification language I made up that's useful for producing XML
 element trees suitable for unit testing.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from pyparsing import (
-    alphas,
-    alphanums,
     Combine,
-    dblQuotedString,
-    delimitedList,
     Forward,
     Group,
     Literal,
     Optional,
-    removeQuotes,
-    stringEnd,
     Suppress,
     Word,
+    alphanums,
+    alphas,
+    dblQuotedString,
+    delimitedList,
+    removeQuotes,
+    stringEnd,
 )
 
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsmap
-
 
 # ====================================================================
 # api functions

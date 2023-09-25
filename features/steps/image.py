@@ -1,17 +1,10 @@
-# encoding: utf-8
-
-"""
-Step implementations for image characterization features
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Step implementations for image characterization features."""
 
 from behave import given, then, when
 
 from docx.image.image import Image
 
 from helpers import test_file
-
 
 # given ===================================================
 

@@ -1,8 +1,4 @@
-# encoding: utf-8
-
 """Unit test suite for docx.image package"""
-
-from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
 

@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Step implementations for document settings-related features"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Step implementations for document settings-related features."""
 
 from behave import given, then, when
 
@@ -10,7 +6,6 @@ from docx import Document
 from docx.settings import Settings
 
 from helpers import test_docx
-
 
 # given ====================================================
 

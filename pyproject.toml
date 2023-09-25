@@ -64,7 +64,7 @@ select = [
     "COM",      # -- flake8-commas --
     "E",        # -- pycodestyle errors --
     "F",        # -- pyflakes --
-    # "I",        # -- isort (imports) --
+    "I",        # -- isort (imports) --
     "PLR0402",  # -- Name compared with itself like `foo == foo` --
     # "PT",       # -- flake8-pytest-style --
     # "SIM",      # -- flake8-simplify --
@@ -74,6 +74,10 @@ select = [
     "UP034",    # -- Avoid extraneous parentheses --
 ]
 target-version = "py37"
+
+[tool.ruff.isort]
+known-first-party = ["docx"]
+known-local-folder = ["helpers"]
 
 [tool.setuptools.dynamic]
 version = {attr = "docx.__version__"}

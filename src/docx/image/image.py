@@ -1,18 +1,15 @@
-# encoding: utf-8
+"""Provides objects that can characterize image streams.
 
+That characterization is as to content type and size, as a required step in including
+them in a document.
 """
-Provides objects that can characterize image streams as to content type and
-size, as a required step in including them in a document.
-"""
-
-from __future__ import absolute_import, division, print_function
 
 import hashlib
 import os
 
-from ..compat import BytesIO, is_string
-from .exceptions import UnrecognizedImageError
-from ..shared import Emu, Inches, lazyproperty
+from docx.compat import BytesIO, is_string
+from docx.image.exceptions import UnrecognizedImageError
+from docx.shared import Emu, Inches, lazyproperty
 
 
 class Image(object):

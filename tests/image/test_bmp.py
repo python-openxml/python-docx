@@ -1,16 +1,10 @@
-# encoding: utf-8
-
-"""
-Test suite for docx.image.bmp module
-"""
-
-from __future__ import absolute_import, print_function
+"""Test suite for docx.image.bmp module."""
 
 import pytest
 
 from docx.compat import BytesIO
-from docx.image.constants import MIME_TYPE
 from docx.image.bmp import Bmp
+from docx.image.constants import MIME_TYPE
 
 from ..unitutil.mock import ANY, initializer_mock
 

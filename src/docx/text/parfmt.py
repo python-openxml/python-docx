@@ -1,14 +1,8 @@
-# encoding: utf-8
+"""Paragraph-related proxy types."""
 
-"""
-Paragraph-related proxy types.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from ..enum.text import WD_LINE_SPACING
-from ..shared import ElementProxy, Emu, lazyproperty, Length, Pt, Twips
-from .tabstops import TabStops
+from docx.enum.text import WD_LINE_SPACING
+from docx.shared import ElementProxy, Emu, Length, Pt, Twips, lazyproperty
+from docx.text.tabstops import TabStops
 
 
 class ParagraphFormat(ElementProxy):

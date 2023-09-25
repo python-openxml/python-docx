@@ -1,13 +1,7 @@
-# encoding: utf-8
+"""Latent style-related objects."""
 
-"""
-Latent style-related objects.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from . import BabelFish
-from ..shared import ElementProxy
+from docx.shared import ElementProxy
+from docx.styles import BabelFish
 
 
 class LatentStyles(ElementProxy):

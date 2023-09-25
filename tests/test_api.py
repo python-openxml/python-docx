@@ -1,19 +1,12 @@
-# encoding: utf-8
-
-"""
-Test suite for the docx.api module
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Test suite for the docx.api module."""
 
 import pytest
 
 import docx
-
 from docx.api import Document
 from docx.opc.constants import CONTENT_TYPE as CT
 
-from .unitutil.mock import function_mock, instance_mock, class_mock
+from .unitutil.mock import class_mock, function_mock, instance_mock
 
 
 class DescribeDocument(object):

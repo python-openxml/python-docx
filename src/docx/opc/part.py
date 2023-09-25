@@ -1,17 +1,11 @@
-# encoding: utf-8
+"""Open Packaging Convention (OPC) objects related to package parts."""
 
-"""
-Open Packaging Convention (OPC) objects related to package parts.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from .compat import cls_method_fn
-from .oxml import serialize_part_xml
-from ..oxml import parse_xml
-from .packuri import PackURI
-from .rel import Relationships
-from .shared import lazyproperty
+from docx.opc.compat import cls_method_fn
+from docx.opc.oxml import serialize_part_xml
+from docx.opc.packuri import PackURI
+from docx.opc.rel import Relationships
+from docx.opc.shared import lazyproperty
+from docx.oxml import parse_xml
 
 
 class Part(object):

@@ -1,12 +1,6 @@
-# encoding: utf-8
+"""Enumerations related to the main document in WordprocessingML files."""
 
-"""
-Enumerations related to the main document in WordprocessingML files
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
-
-from .base import alias, XmlEnumeration, XmlMappedEnumMember
+from .base import XmlEnumeration, XmlMappedEnumMember, alias
 
 
 @alias("WD_HEADER_FOOTER")

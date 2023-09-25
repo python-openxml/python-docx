@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Test suite for the docx.table module"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Test suite for the docx.table module."""
 
 import pytest
 
@@ -17,7 +13,7 @@ from docx.oxml import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.parts.document import DocumentPart
 from docx.shared import Inches
-from docx.table import _Cell, _Column, _Columns, _Row, _Rows, Table
+from docx.table import Table, _Cell, _Column, _Columns, _Row, _Rows
 from docx.text.paragraph import Paragraph
 
 from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr

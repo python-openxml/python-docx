@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for font-related features.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Step implementations for font-related features."""
 
 from behave import given, then, when
 
@@ -15,7 +9,6 @@ from docx.enum.text import WD_COLOR_INDEX, WD_UNDERLINE
 from docx.shared import RGBColor
 
 from helpers import test_docx
-
 
 # given ===================================================
 

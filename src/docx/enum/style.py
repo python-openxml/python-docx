@@ -1,12 +1,6 @@
-# encoding: utf-8
+"""Enumerations related to styles."""
 
-"""
-Enumerations related to styles
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
-
-from .base import alias, EnumMember, XmlEnumeration, XmlMappedEnumMember
+from .base import EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
 
 
 @alias("WD_STYLE")

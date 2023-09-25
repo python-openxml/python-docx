@@ -1,11 +1,6 @@
-# encoding: utf-8
-
-"""
-Utility functions for loading files for unit testing
-"""
+"""Utility functions for loading files for unit testing."""
 
 import os
-
 
 _thisdir = os.path.split(__file__)[0]
 test_file_dir = os.path.abspath(os.path.join(_thisdir, "..", "test_files"))

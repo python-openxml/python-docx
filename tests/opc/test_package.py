@@ -1,8 +1,4 @@
-# encoding: utf-8
-
 """Unit test suite for docx.opc.package module"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
@@ -13,17 +9,17 @@ from docx.opc.packuri import PACKAGE_URI, PackURI
 from docx.opc.part import Part
 from docx.opc.parts.coreprops import CorePropertiesPart
 from docx.opc.pkgreader import PackageReader
-from docx.opc.rel import _Relationship, Relationships
+from docx.opc.rel import Relationships, _Relationship
 
 from ..unitutil.mock import (
+    Mock,
+    PropertyMock,
     call,
     class_mock,
     instance_mock,
     loose_mock,
     method_mock,
-    Mock,
     patch,
-    PropertyMock,
     property_mock,
 )
 

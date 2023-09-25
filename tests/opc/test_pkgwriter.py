@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test suite for opc.pkgwriter module
-"""
+"""Test suite for opc.pkgwriter module."""
 
 import pytest
 
@@ -10,18 +6,18 @@ from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.packuri import PackURI
 from docx.opc.part import Part
 from docx.opc.phys_pkg import _ZipPkgWriter
-from docx.opc.pkgwriter import _ContentTypesItem, PackageWriter
+from docx.opc.pkgwriter import PackageWriter, _ContentTypesItem
 
-from .unitdata.types import a_Default, a_Types, an_Override
 from ..unitutil.mock import (
+    MagicMock,
+    Mock,
     call,
     class_mock,
     instance_mock,
-    MagicMock,
     method_mock,
-    Mock,
     patch,
 )
+from .unitdata.types import a_Default, a_Types, an_Override
 
 
 class DescribePackageWriter(object):

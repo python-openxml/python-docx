@@ -1,11 +1,6 @@
-# encoding: utf-8
+"""Provides mappings that embody aspects of the Open XML spec ISO/IEC 29500."""
 
-"""
-Provides mappings that embody aspects of the Open XML spec ISO/IEC 29500.
-"""
-
-from .constants import CONTENT_TYPE as CT
-
+from docx.opc.constants import CONTENT_TYPE as CT
 
 default_content_types = (
     ("bin", CT.PML_PRINTER_SETTINGS),

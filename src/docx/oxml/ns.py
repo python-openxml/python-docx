@@ -1,11 +1,4 @@
-# encoding: utf-8
-
-"""
-Namespace-related objects.
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
-
+"""Namespace-related objects."""
 
 nsmap = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",

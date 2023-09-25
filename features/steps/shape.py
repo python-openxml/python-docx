@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Step implementations for graphical object (shape) related features
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Step implementations for graphical object (shape) related features."""
 
 import hashlib
 
@@ -16,7 +10,6 @@ from docx.shape import InlineShape
 from docx.shared import Inches
 
 from helpers import test_docx
-
 
 # given ===================================================
 

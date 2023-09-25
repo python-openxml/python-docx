@@ -1,13 +1,7 @@
-# encoding: utf-8
+"""Tabstop-related proxy types."""
 
-"""
-Tabstop-related proxy types.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from ..shared import ElementProxy
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
+from docx.shared import ElementProxy
 
 
 class TabStops(ElementProxy):

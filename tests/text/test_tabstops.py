@@ -1,17 +1,10 @@
-# encoding: utf-8
+"""Test suite for the docx.text.tabstops module."""
 
-"""
-Test suite for the docx.text.tabstops module, containing the TabStops and
-TabStop objects.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+import pytest
 
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.shared import Twips
 from docx.text.tabstops import TabStop, TabStops
-
-import pytest
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock

@@ -1,17 +1,10 @@
-# encoding: utf-8
-
-"""
-Step implementations for table cell-related features
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Step implementations for table cell-related features."""
 
 from behave import given, then, when
 
 from docx import Document
 
 from helpers import test_docx
-
 
 # given ===================================================
 

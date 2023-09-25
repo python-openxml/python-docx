@@ -1,18 +1,12 @@
-# encoding: utf-8
-
-"""
-Core properties part, corresponds to ``/docProps/core.xml`` part in package.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Core properties part, corresponds to ``/docProps/core.xml`` part in package."""
 
 from datetime import datetime
 
-from ..constants import CONTENT_TYPE as CT
-from ..coreprops import CoreProperties
-from ...oxml.coreprops import CT_CoreProperties
-from ..packuri import PackURI
-from ..part import XmlPart
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.coreprops import CoreProperties
+from docx.opc.packuri import PackURI
+from docx.opc.part import XmlPart
+from docx.oxml.coreprops import CT_CoreProperties
 
 
 class CorePropertiesPart(XmlPart):
