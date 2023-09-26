@@ -1,8 +1,9 @@
 """Unit test suite for docx.image.png module."""
 
+import io
+
 import pytest
 
-from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, PNG_CHUNK_TYPE
 from docx.image.exceptions import InvalidImageStreamError
 from docx.image.helpers import BIG_ENDIAN, StreamReader
@@ -72,7 +73,7 @@ class DescribePng(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_PngParser(object):
@@ -152,7 +153,7 @@ class Describe_PngParser(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_Chunks(object):
@@ -230,7 +231,7 @@ class Describe_Chunks(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_ChunkParser(object):
@@ -304,7 +305,7 @@ class Describe_ChunkParser(object):
     @pytest.fixture
     def iter_offsets_fixture(self):
         bytes_ = b"-filler-\x00\x00\x00\x00IHDRxxxx\x00\x00\x00\x00IEND"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         chunk_parser = _ChunkParser(stream_rdr)
         expected_chunk_offsets = [
             (PNG_CHUNK_TYPE.IHDR, 16),
@@ -320,7 +321,7 @@ class Describe_ChunkParser(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
     @pytest.fixture
     def stream_rdr_(self, request):
@@ -409,7 +410,7 @@ class Describe_IHDRChunk(object):
     @pytest.fixture
     def from_offset_fixture(self):
         bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x18"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, px_width, px_height = 0, 42, 24
         return stream_rdr, offset, px_width, px_height
 
@@ -430,6 +431,6 @@ class Describe_pHYsChunk(object):
     @pytest.fixture
     def from_offset_fixture(self):
         bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x18\x01"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, horz_px_per_unit, vert_px_per_unit, units_specifier = (0, 42, 24, 1)
         return (stream_rdr, offset, horz_px_per_unit, vert_px_per_unit, units_specifier)

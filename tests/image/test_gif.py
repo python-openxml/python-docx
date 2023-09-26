@@ -1,8 +1,9 @@
 """Unit test suite for docx.image.gif module."""
 
+import io
+
 import pytest
 
-from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE
 from docx.image.gif import Gif
 
@@ -13,7 +14,7 @@ class DescribeGif(object):
     def it_can_construct_from_a_gif_stream(self, Gif__init__):
         cx, cy = 42, 24
         bytes_ = b"filler\x2A\x00\x18\x00"
-        stream = BytesIO(bytes_)
+        stream = io.BytesIO(bytes_)
 
         gif = Gif.from_stream(stream)
 

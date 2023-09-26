@@ -1,8 +1,9 @@
 """Unit test suite for docx.image.tiff module"""
 
+import io
+
 import pytest
 
-from docx.compat import BytesIO
 from docx.image.constants import MIME_TYPE, TIFF_TAG
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from docx.image.tiff import (
@@ -75,7 +76,7 @@ class DescribeTiff(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_TiffParser(object):
@@ -176,12 +177,12 @@ class Describe_TiffParser(object):
     )
     def mk_stream_rdr_fixture(self, request, StreamReader_, stream_rdr_):
         bytes_, endian = request.param
-        stream = BytesIO(bytes_)
+        stream = io.BytesIO(bytes_)
         return stream, StreamReader_, endian, stream_rdr_
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
     @pytest.fixture
     def StreamReader_(self, request, stream_rdr_):
@@ -257,7 +258,7 @@ class Describe_IfdEntries(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_IfdParser(object):
@@ -296,7 +297,7 @@ class Describe_IfdParser(object):
 
     @pytest.fixture
     def iter_fixture(self, _IfdEntryFactory_, ifd_entry_, ifd_entry_2_):
-        stream_rdr = StreamReader(BytesIO(b"\x00\x02"), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(b"\x00\x02"), BIG_ENDIAN)
         offsets = [2, 14]
         ifd_parser = _IfdParser(stream_rdr, offset=0)
         expected_entries = [ifd_entry_, ifd_entry_2_]
@@ -341,7 +342,7 @@ class Describe_IfdEntryFactory(object):
             "RATIONAL": _RationalIfdEntry_,
             "CUSTOM": _IfdEntry_,
         }[entry_type]
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset = 0
         return stream_rdr, offset, entry_cls_, ifd_entry_
 
@@ -389,7 +390,7 @@ class Describe_IfdEntry(object):
         self, _parse_value_, _IfdEntry__init_, value_
     ):
         bytes_ = b"\x00\x01\x66\x66\x00\x00\x00\x02\x00\x00\x00\x03"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, tag_code, value_count, value_offset = 0, 1, 2, 3
         _parse_value_.return_value = value_
 
@@ -424,7 +425,7 @@ class Describe_IfdEntry(object):
 class Describe_AsciiIfdEntry(object):
     def it_can_parse_an_ascii_string_IFD_entry(self):
         bytes_ = b"foobar\x00"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _AsciiIfdEntry._parse_value(stream_rdr, None, 7, 0)
         assert val == "foobar"
 
@@ -432,7 +433,7 @@ class Describe_AsciiIfdEntry(object):
 class Describe_ShortIfdEntry(object):
     def it_can_parse_a_short_int_IFD_entry(self):
         bytes_ = b"foobaroo\x00\x2A"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _ShortIfdEntry._parse_value(stream_rdr, 0, 1, None)
         assert val == 42
 
@@ -440,7 +441,7 @@ class Describe_ShortIfdEntry(object):
 class Describe_LongIfdEntry(object):
     def it_can_parse_a_long_int_IFD_entry(self):
         bytes_ = b"foobaroo\x00\x00\x00\x2A"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _LongIfdEntry._parse_value(stream_rdr, 0, 1, None)
         assert val == 42
 
@@ -448,6 +449,6 @@ class Describe_LongIfdEntry(object):
 class Describe_RationalIfdEntry(object):
     def it_can_parse_a_rational_IFD_entry(self):
         bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x54"
-        stream_rdr = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _RationalIfdEntry._parse_value(stream_rdr, None, 1, 0)
         assert val == 0.5

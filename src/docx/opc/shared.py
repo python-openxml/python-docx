@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Objects shared by opc modules.
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Objects shared by opc modules."""
 
 
 class CaseInsensitiveDict(dict):
@@ -24,6 +18,11 @@ class CaseInsensitiveDict(dict):
 
     def __setitem__(self, key, value):
         return super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
+
+
+def cls_method_fn(cls: type, method_name: str):
+    """Return method of `cls` having `method_name`."""
+    return getattr(cls, method_name)
 
 
 def lazyproperty(f):

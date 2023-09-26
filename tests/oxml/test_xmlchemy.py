@@ -2,7 +2,6 @@
 
 import pytest
 
-from docx.compat import Unicode
 from docx.oxml import parse_xml, register_element_cls
 from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import qn
@@ -126,7 +125,7 @@ class DescribeSerializeForReading(object):
     def it_returns_unicode_text(self, type_fixture):
         element = type_fixture
         xml_text = serialize_for_reading(element)
-        assert isinstance(xml_text, Unicode)
+        assert isinstance(xml_text, str)
 
     # fixtures ---------------------------------------------
 

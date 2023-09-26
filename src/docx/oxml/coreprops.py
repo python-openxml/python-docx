@@ -3,7 +3,6 @@
 import re
 from datetime import datetime, timedelta
 
-from docx.compat import is_string
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
@@ -281,7 +280,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     def _set_element_text(self, prop_name, value):
         """Set string value of *name* property to *value*."""
-        if not is_string(value):
+        if not isinstance(value, str):
             value = str(value)
 
         if len(value) > 255:

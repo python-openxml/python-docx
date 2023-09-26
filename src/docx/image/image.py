@@ -5,9 +5,9 @@ them in a document.
 """
 
 import hashlib
+import io
 import os
 
-from docx.compat import BytesIO, is_string
 from docx.image.exceptions import UnrecognizedImageError
 from docx.shared import Emu, Inches, lazyproperty
 
@@ -30,7 +30,7 @@ class Image(object):
         Return a new |Image| subclass instance parsed from the image binary
         contained in *blob*.
         """
-        stream = BytesIO(blob)
+        stream = io.BytesIO(blob)
         return cls._from_stream(stream, blob)
 
     @classmethod
@@ -39,11 +39,11 @@ class Image(object):
         Return a new |Image| subclass instance loaded from the image file
         identified by *image_descriptor*, a path or file-like object.
         """
-        if is_string(image_descriptor):
+        if isinstance(image_descriptor, str):
             path = image_descriptor
             with open(path, "rb") as f:
                 blob = f.read()
-                stream = BytesIO(blob)
+                stream = io.BytesIO(blob)
             filename = os.path.basename(path)
         else:
             stream = image_descriptor

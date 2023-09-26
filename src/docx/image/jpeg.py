@@ -1,17 +1,14 @@
-# encoding: utf-8
+"""Objects related to parsing headers of JPEG image streams.
 
-"""
-Objects related to parsing headers of JPEG image streams, both JFIF and Exif
-sub-formats.
+Includes both JFIF and Exif sub-formats.
 """
 
-from __future__ import absolute_import, division, print_function
+import io
 
-from ..compat import BytesIO
-from .constants import JPEG_MARKER_CODE, MIME_TYPE
-from .helpers import BIG_ENDIAN, StreamReader
-from .image import BaseImageHeader
-from .tiff import Tiff
+from docx.image.constants import JPEG_MARKER_CODE, MIME_TYPE
+from docx.image.helpers import BIG_ENDIAN, StreamReader
+from docx.image.image import BaseImageHeader
+from docx.image.tiff import Tiff
 
 
 class Jpeg(BaseImageHeader):
@@ -460,7 +457,7 @@ class _App1Marker(_Marker):
         # wrap full segment in its own stream and feed to Tiff()
         stream.seek(offset + 8)
         segment_bytes = stream.read(segment_length - 8)
-        substream = BytesIO(segment_bytes)
+        substream = io.BytesIO(segment_bytes)
         return Tiff.from_stream(substream)
 
 

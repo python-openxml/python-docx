@@ -1,8 +1,9 @@
 """Test suite for docx.image.bmp module."""
 
+import io
+
 import pytest
 
-from docx.compat import BytesIO
 from docx.image.bmp import Bmp
 from docx.image.constants import MIME_TYPE
 
@@ -16,7 +17,7 @@ class DescribeBmp(object):
             b"fillerfillerfiller\x1A\x00\x00\x00\x2B\x00\x00\x00"
             b"fillerfiller\xB8\x1E\x00\x00\x00\x00\x00\x00"
         )
-        stream = BytesIO(bytes_)
+        stream = io.BytesIO(bytes_)
 
         bmp = Bmp.from_stream(stream)
 

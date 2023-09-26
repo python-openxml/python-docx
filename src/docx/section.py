@@ -1,11 +1,8 @@
-# encoding: utf-8
+"""The |Section| object and related proxy classes."""
 
-"""The |Section| object and related proxy classes"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+from collections.abc import Sequence
 
 from docx.blkcntnr import BlockItemContainer
-from docx.compat import Sequence
 from docx.enum.section import WD_HEADER_FOOTER
 from docx.shared import lazyproperty
 

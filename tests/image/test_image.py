@@ -1,8 +1,9 @@
 """Unit test suite for docx.image package"""
 
+import io
+
 import pytest
 
-from docx.compat import BytesIO
 from docx.image.bmp import Bmp
 from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
@@ -148,7 +149,7 @@ class DescribeImage(object):
         image_path = test_file("python-icon.png")
         with open(image_path, "rb") as f:
             blob = f.read()
-        image_stream = BytesIO(blob)
+        image_stream = io.BytesIO(blob)
         return image_stream, _from_stream_, blob, image_
 
     @pytest.fixture
@@ -222,7 +223,7 @@ class DescribeImage(object):
 
     @pytest.fixture
     def BytesIO_(self, request, stream_):
-        return class_mock(request, "docx.image.image.BytesIO", return_value=stream_)
+        return class_mock(request, "docx.image.image.io.BytesIO", return_value=stream_)
 
     @pytest.fixture
     def filename_(self, request):
@@ -258,7 +259,7 @@ class DescribeImage(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
     @pytest.fixture
     def width_prop_(self, request):
@@ -272,7 +273,7 @@ class Describe_ImageHeaderFactory(object):
         assert isinstance(image_header, expected_class)
 
     def it_raises_on_unrecognized_image_stream(self):
-        stream = BytesIO(b"foobar 666 not an image stream")
+        stream = io.BytesIO(b"foobar 666 not an image stream")
         with pytest.raises(UnrecognizedImageError):
             _ImageHeaderFactory(stream)
 
@@ -294,7 +295,7 @@ class Describe_ImageHeaderFactory(object):
         image_path = test_file(image_filename)
         with open(image_path, "rb") as f:
             blob = f.read()
-        image_stream = BytesIO(blob)
+        image_stream = io.BytesIO(blob)
         image_stream.seek(666)
         return image_stream, expected_class
 

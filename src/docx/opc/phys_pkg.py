@@ -3,7 +3,6 @@
 import os
 from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
-from docx.opc.compat import is_string
 from docx.opc.exceptions import PackageNotFoundError
 from docx.opc.packuri import CONTENT_TYPES_URI
 
@@ -15,7 +14,7 @@ class PhysPkgReader(object):
 
     def __new__(cls, pkg_file):
         # if *pkg_file* is a string, treat it as a path
-        if is_string(pkg_file):
+        if isinstance(pkg_file, str):
             if os.path.isdir(pkg_file):
                 reader_cls = _DirPkgReader
             elif is_zipfile(pkg_file):

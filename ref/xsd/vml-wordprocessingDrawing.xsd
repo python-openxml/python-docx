@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+<xsd:schema
   xmlns="urn:schemas-microsoft-com:office:word"
-  targetNamespace="urn:schemas-microsoft-com:office:word" elementFormDefault="qualified"
-  attributeFormDefault="unqualified">
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  attributeFormDefault="unqualified"
+  elementFormDefault="qualified"
+  targetNamespace="urn:schemas-microsoft-com:office:word"
+>
   <xsd:element name="bordertop" type="CT_Border"/>
   <xsd:element name="borderleft" type="CT_Border"/>
   <xsd:element name="borderright" type="CT_Border"/>

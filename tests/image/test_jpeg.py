@@ -1,8 +1,9 @@
 """Unit test suite for docx.image.jpeg module"""
 
+import io
+
 import pytest
 
-from docx.compat import BytesIO
 from docx.image.constants import JPEG_MARKER_CODE, MIME_TYPE
 from docx.image.helpers import BIG_ENDIAN, StreamReader
 from docx.image.jpeg import (
@@ -98,7 +99,7 @@ class DescribeJpeg(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_JfifMarkers(object):
@@ -224,7 +225,7 @@ class Describe_JfifMarkers(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_Marker(object):
@@ -247,7 +248,7 @@ class Describe_Marker(object):
     def from_stream_fixture(self, request, _Marker__init_):
         marker_code, offset, length = request.param
         bytes_ = b"\xFF\xD8\xFF\xE0\x00\x10"
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_reader = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         return stream_reader, marker_code, offset, _Marker__init_, length
 
     @pytest.fixture
@@ -260,7 +261,7 @@ class Describe_App0Marker(object):
         bytes_ = b"\x00\x10JFIF\x00\x01\x01\x01\x00\x2A\x00\x18"
         marker_code, offset, length = JPEG_MARKER_CODE.APP0, 0, 16
         density_units, x_density, y_density = 1, 42, 24
-        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
 
         app0_marker = _App0Marker.from_stream(stream, marker_code, offset)
 
@@ -300,7 +301,7 @@ class Describe_App1Marker(object):
         bytes_ = b"\x00\x42Exif\x00\x00"
         marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
         horz_dpi, vert_dpi = 42, 24
-        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
 
         app1_marker = _App1Marker.from_stream(stream, marker_code, offset)
 
@@ -313,7 +314,7 @@ class Describe_App1Marker(object):
     def it_can_construct_from_non_Exif_APP1_segment(self, _App1Marker__init_):
         bytes_ = b"\x00\x42Foobar"
         marker_code, offset, length = JPEG_MARKER_CODE.APP1, 0, 66
-        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
 
         app1_marker = _App1Marker.from_stream(stream, marker_code, offset)
 
@@ -344,13 +345,12 @@ class Describe_App1Marker(object):
         return initializer_mock(request, _App1Marker)
 
     @pytest.fixture
-    def BytesIO_(self, request, substream_):
-        return class_mock(request, "docx.image.jpeg.BytesIO", return_value=substream_)
-
-    @pytest.fixture
-    def get_tiff_fixture(self, request, BytesIO_, substream_, Tiff_, tiff_):
+    def get_tiff_fixture(self, request, substream_, Tiff_, tiff_):
         bytes_ = b"xfillerxMM\x00*\x00\x00\x00\x42"
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_reader = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
+        BytesIO_ = class_mock(
+            request, "docx.image.jpeg.io.BytesIO", return_value=substream_
+        )
         offset, segment_length, segment_bytes = 0, 16, bytes_[8:]
         return (
             stream_reader,
@@ -365,7 +365,7 @@ class Describe_App1Marker(object):
 
     @pytest.fixture
     def substream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
     @pytest.fixture
     def Tiff_(self, request, tiff_):
@@ -393,7 +393,7 @@ class Describe_SofMarker(object):
         bytes_ = b"\x00\x11\x00\x00\x2A\x00\x18"
         marker_code, offset, length = JPEG_MARKER_CODE.SOF0, 0, 17
         px_width, px_height = 24, 42
-        stream = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
 
         sof_marker = _SofMarker.from_stream(stream, marker_code, offset)
 
@@ -475,7 +475,7 @@ class Describe_MarkerFactory(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_MarkerFinder(object):
@@ -510,14 +510,14 @@ class Describe_MarkerFinder(object):
     def next_fixture(self, request):
         start, marker_code, segment_offset = request.param
         bytes_ = b"\xFF\xD8\xFF\xE0\x00\x01\xFF\x00\xFF\xFF\xFF\xD9"
-        stream_reader = StreamReader(BytesIO(bytes_), BIG_ENDIAN)
+        stream_reader = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         marker_finder = _MarkerFinder(stream_reader)
         expected_code_and_offset = (marker_code, segment_offset)
         return marker_finder, start, expected_code_and_offset
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
 
 class Describe_MarkerParser(object):
@@ -622,7 +622,7 @@ class Describe_MarkerParser(object):
 
     @pytest.fixture
     def stream_(self, request):
-        return instance_mock(request, BytesIO)
+        return instance_mock(request, io.BytesIO)
 
     @pytest.fixture
     def StreamReader_(self, request, stream_reader_):

@@ -4,7 +4,6 @@ import re
 
 from lxml import etree
 
-from docx.compat import Unicode
 from docx.oxml import OxmlElement
 from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import NamespacePrefixedTag, nsmap, qn
@@ -20,7 +19,7 @@ def serialize_for_reading(element):
     return XmlString(xml)
 
 
-class XmlString(Unicode):
+class XmlString(str):
     """
     Provides string comparison override suitable for serialized XML that is
     useful for tests.
