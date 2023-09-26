@@ -318,14 +318,14 @@ def then_I_can_access_a_style_by_style_id(context):
 
 @then("I can iterate over its styles")
 def then_I_can_iterate_over_its_styles(context):
-    styles = [s for s in context.document.styles]
+    styles = list(context.document.styles)
     assert len(styles) > 0
     assert all(isinstance(s, BaseStyle) for s in styles)
 
 
 @then("I can iterate over the latent styles")
 def then_I_can_iterate_over_the_latent_styles(context):
-    latent_styles = [ls for ls in context.latent_styles]
+    latent_styles = list(context.latent_styles)
     assert len(latent_styles) == 137
     assert all(isinstance(ls, _LatentStyle) for ls in latent_styles)
 

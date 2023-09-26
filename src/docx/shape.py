@@ -1,15 +1,11 @@
-# encoding: utf-8
+"""Objects related to shapes.
 
-"""
-Objects related to shapes, visual objects that appear on the drawing layer of
-a document.
+A shape is a visual object that appears on the drawing layer of a document.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from .enum.shape import WD_INLINE_SHAPE
-from .oxml.ns import nsmap
-from .shared import Parented
+from docx.enum.shape import WD_INLINE_SHAPE
+from docx.oxml.ns import nsmap
+from docx.shared import Parented
 
 
 class InlineShapes(Parented):

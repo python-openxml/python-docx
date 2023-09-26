@@ -145,7 +145,7 @@ class DescribeLatentStyles(object):
 
     def it_can_iterate_over_its_latent_styles(self, iter_fixture):
         latent_styles, expected_count = iter_fixture
-        lst = [ls for ls in latent_styles]
+        lst = list(latent_styles)
         assert len(lst) == expected_count
         for latent_style in lst:
             assert isinstance(latent_style, _LatentStyle)

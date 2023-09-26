@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, division, print_function
-
 from .constants import MIME_TYPE, PNG_CHUNK_TYPE
 from .exceptions import InvalidImageStreamError
 from .helpers import BIG_ENDIAN, StreamReader
@@ -127,7 +123,7 @@ class _Chunks(object):
         Return a |_Chunks| instance containing the PNG chunks in *stream*.
         """
         chunk_parser = _ChunkParser.from_stream(stream)
-        chunks = [chunk for chunk in chunk_parser.iter_chunks()]
+        chunks = list(chunk_parser.iter_chunks())
         return cls(chunks)
 
     @property

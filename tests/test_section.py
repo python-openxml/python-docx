@@ -27,7 +27,7 @@ class DescribeSections(object):
         Section_.return_value = section_
         sections = Sections(document_elm, document_part_)
 
-        section_lst = [s for s in sections]
+        section_lst = list(sections)
 
         assert Section_.call_args_list == [
             call(sectPrs[0], document_part_),

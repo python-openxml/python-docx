@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, division, print_function
-
 from .constants import MIME_TYPE, TIFF_FLD, TIFF_TAG
 from .helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 from .image import BaseImageHeader
@@ -177,7 +173,7 @@ class _IfdEntries(object):
         *offset*.
         """
         ifd_parser = _IfdParser(stream, offset)
-        entries = dict((e.tag, e.value) for e in ifd_parser.iter_entries())
+        entries = {e.tag: e.value for e in ifd_parser.iter_entries()}
         return cls(entries)
 
     def get(self, tag_code, default=None):

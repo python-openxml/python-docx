@@ -250,7 +250,7 @@ class Describe_ChunkParser(object):
         chunk_lst = [chunk_, chunk_2_]
         chunk_parser = _ChunkParser(stream_rdr_)
 
-        chunks = [chunk for chunk in chunk_parser.iter_chunks()]
+        chunks = list(chunk_parser.iter_chunks())
 
         _iter_chunk_offsets_.assert_called_once_with(chunk_parser)
         assert _ChunkFactory_.call_args_list == [
@@ -261,7 +261,7 @@ class Describe_ChunkParser(object):
 
     def it_iterates_over_the_chunk_offsets_to_help_parse(self, iter_offsets_fixture):
         chunk_parser, expected_chunk_offsets = iter_offsets_fixture
-        chunk_offsets = [co for co in chunk_parser._iter_chunk_offsets()]
+        chunk_offsets = list(chunk_parser._iter_chunk_offsets())
         assert chunk_offsets == expected_chunk_offsets
 
     # fixtures -------------------------------------------------------

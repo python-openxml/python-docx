@@ -60,7 +60,7 @@ ignore = [
     "COM812",   # -- over-aggressively insists on trailing commas where not desired --
 ]
 select = [
-    # "C4",       # -- flake8-comprehensions --
+    "C4",       # -- flake8-comprehensions --
     "COM",      # -- flake8-commas --
     "E",        # -- pycodestyle errors --
     "F",        # -- pyflakes --

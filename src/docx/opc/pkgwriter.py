@@ -1,18 +1,15 @@
-# encoding: utf-8
+"""Provides low-level, write-only API to serialized (OPC) package.
 
+OPC stands for Open Packaging Convention. This is e, essentially an implementation of
+OpcPackage.save().
 """
-Provides a low-level, write-only API to a serialized Open Packaging
-Convention (OPC) package, essentially an implementation of OpcPackage.save()
-"""
 
-from __future__ import absolute_import
-
-from .constants import CONTENT_TYPE as CT
-from .oxml import CT_Types, serialize_part_xml
-from .packuri import CONTENT_TYPES_URI, PACKAGE_URI
-from .phys_pkg import PhysPkgWriter
-from .shared import CaseInsensitiveDict
-from .spec import default_content_types
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.oxml import CT_Types, serialize_part_xml
+from docx.opc.packuri import CONTENT_TYPES_URI, PACKAGE_URI
+from docx.opc.phys_pkg import PhysPkgWriter
+from docx.opc.shared import CaseInsensitiveDict
+from docx.opc.spec import default_content_types
 
 
 class PackageWriter(object):
@@ -75,7 +72,7 @@ class _ContentTypesItem(object):
 
     def __init__(self):
         self._defaults = CaseInsensitiveDict()
-        self._overrides = dict()
+        self._overrides = {}
 
     @property
     def blob(self):

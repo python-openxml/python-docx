@@ -84,7 +84,7 @@ class DescribeOpcPackage(object):
         # verify -----------------------
         assert part1 in pkg.iter_parts()
         assert part2 in pkg.iter_parts()
-        assert len([p for p in pkg.iter_parts()]) == 2
+        assert len(list(pkg.iter_parts())) == 2
 
     def it_can_find_the_next_available_vector_partname(
         self, next_partname_fixture, iter_parts_, PackURI_, packuri_

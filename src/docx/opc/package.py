@@ -1,8 +1,4 @@
-# encoding: utf-8
-
 """Objects that implement reading and writing OPC packages."""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.packuri import PACKAGE_URI, PackURI
@@ -70,7 +66,7 @@ class OpcPackage(object):
         performing a depth-first traversal of the rels graph.
         """
 
-        def walk_parts(source, visited=list()):
+        def walk_parts(source, visited=[]):
             for rel in source.rels.values():
                 if rel.is_external:
                     continue
@@ -146,7 +142,7 @@ class OpcPackage(object):
         Return a list containing a reference to each of the parts in this
         package.
         """
-        return [part for part in self.iter_parts()]
+        return list(self.iter_parts())
 
     def relate_to(self, part, reltype):
         """

@@ -65,7 +65,7 @@ class DescribePackageReader(object):
         ]
         pkg_reader = PackageReader(None, pkg_srels, sparts)
         # exercise ---------------------
-        generated_tuples = [t for t in pkg_reader.iter_srels()]
+        generated_tuples = list(pkg_reader.iter_srels())
         # verify -----------------------
         expected_tuples = [
             ("/", "srel1"),
@@ -84,7 +84,7 @@ class DescribePackageReader(object):
             ("/part/name2.xml", "app/vnd.type_2", "reltype2", "<Part_2/>", "srels_2"),
         )
         iter_vals = [(t[0], t[2], t[3], t[4]) for t in test_data]
-        content_types = dict((t[0], t[1]) for t in test_data)
+        content_types = {t[0]: t[1] for t in test_data}
         # mockery ----------------------
         phys_reader = Mock(name="phys_reader")
         pkg_srels = Mock(name="pkg_srels")

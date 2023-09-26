@@ -269,7 +269,7 @@ class Describe_IfdParser(object):
             offsets,
             expected_entries,
         ) = iter_fixture
-        entries = [e for e in ifd_parser.iter_entries()]
+        entries = list(ifd_parser.iter_entries())
         assert _IfdEntryFactory_.call_args_list == [
             call(stream_rdr, offsets[0]),
             call(stream_rdr, offsets[1]),

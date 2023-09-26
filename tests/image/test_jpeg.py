@@ -541,7 +541,7 @@ class Describe_MarkerParser(object):
             offsets,
             marker_lst,
         ) = iter_markers_fixture
-        markers = [marker for marker in marker_parser.iter_markers()]
+        markers = list(marker_parser.iter_markers())
         _MarkerFinder_.from_stream.assert_called_once_with(stream_)
         assert marker_finder_.next.call_args_list == [call(0), call(2), call(20)]
         assert _MarkerFactory_.call_args_list == [

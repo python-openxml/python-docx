@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Base classes and other objects used by enumerations
-"""
-
-from __future__ import absolute_import, print_function
+"""Base classes and other objects used by enumerations."""
 
 import sys
 import textwrap
@@ -358,7 +352,7 @@ class XmlMappedEnumMember(EnumMember):
         Add the enum -> xml value mapping to the enumeration class state
         """
         if "_member_to_xml" not in clsdict:
-            clsdict["_member_to_xml"] = dict()
+            clsdict["_member_to_xml"] = {}
         return clsdict["_member_to_xml"]
 
     @staticmethod
@@ -367,5 +361,5 @@ class XmlMappedEnumMember(EnumMember):
         Add the xml -> enum value mapping to the enumeration class state
         """
         if "_xml_to_member" not in clsdict:
-            clsdict["_xml_to_member"] = dict()
+            clsdict["_xml_to_member"] = {}
         return clsdict["_xml_to_member"]
