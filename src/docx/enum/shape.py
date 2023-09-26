@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Enumerations related to DrawingML shapes in WordprocessingML files
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Enumerations related to DrawingML shapes in WordprocessingML files."""
 
 
 class WD_INLINE_SHAPE_TYPE(object):

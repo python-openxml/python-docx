@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Header and footer part objects"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Header and footer part objects."""
 
 import os
 

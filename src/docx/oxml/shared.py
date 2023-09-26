@@ -1,15 +1,9 @@
-# encoding: utf-8
+"""Objects shared by modules in the docx.oxml subpackage."""
 
-"""
-Objects shared by modules in the docx.oxml subpackage.
-"""
-
-from __future__ import absolute_import
-
-from . import OxmlElement
-from .ns import qn
-from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
-from .xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.oxml.simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
+from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute
 
 
 class CT_DecimalNumber(BaseOxmlElement):

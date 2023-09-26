@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Enumerations used in python-docx
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Enumerations used in python-docx."""
 
 
 class Enumeration(object):

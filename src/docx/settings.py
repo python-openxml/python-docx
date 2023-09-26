@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Settings object, providing access to document-level settings"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Settings object, providing access to document-level settings."""
 
 from docx.shared import ElementProxy
 

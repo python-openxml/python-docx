@@ -7,9 +7,7 @@ from docx.text.run import Run
 
 
 class Paragraph(Parented):
-    """
-    Proxy object wrapping ``<w:p>`` element.
-    """
+    """Proxy object wrapping a `<w:p>` element."""
 
     def __init__(self, p, parent):
         super(Paragraph, self).__init__(parent)
@@ -104,18 +102,17 @@ class Paragraph(Parented):
         self._p.style = style_id
 
     @property
-    def text(self):
-        """
-        String formed by concatenating the text of each run in the paragraph.
-        Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n``
-        characters respectively.
+    def text(self) -> str:
+        """String formed by concatenating the text of each run in the paragraph.
 
-        Assigning text to this property causes all existing paragraph content
-        to be replaced with a single run containing the assigned text.
-        A ``\\t`` character in the text is mapped to a ``<w:tab/>`` element
-        and each ``\\n`` or ``\\r`` character is mapped to a line break.
-        Paragraph-level formatting, such as style, is preserved. All
-        run-level formatting, such as bold or italic, is removed.
+        Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n`` characters
+        respectively.
+
+        Assigning text to this property causes all existing paragraph content to be
+        replaced with a single run containing the assigned text. A ``\\t`` character in
+        the text is mapped to a ``<w:tab/>`` element and each ``\\n`` or ``\\r``
+        character is mapped to a line break. Paragraph-level formatting, such as style,
+        is preserved. All run-level formatting, such as bold or italic, is removed.
         """
         text = ""
         for run in self.runs:

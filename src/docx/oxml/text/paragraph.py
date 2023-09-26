@@ -1,17 +1,11 @@
-# encoding: utf-8
+"""Custom element classes related to paragraphs (CT_P)."""
 
-"""
-Custom element classes related to paragraphs (CT_P).
-"""
-
-from ..ns import qn
-from ..xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
+from docx.oxml.ns import qn
+from docx.oxml.xmlchemy import BaseOxmlElement, OxmlElement, ZeroOrMore, ZeroOrOne
 
 
 class CT_P(BaseOxmlElement):
-    """
-    ``<w:p>`` element, containing the properties and text for a paragraph.
-    """
+    """`<w:p>` element, containing the properties and text for a paragraph."""
 
     pPr = ZeroOrOne("w:pPr")
     r = ZeroOrMore("w:r")
@@ -21,19 +15,14 @@ class CT_P(BaseOxmlElement):
         return pPr
 
     def add_p_before(self):
-        """
-        Return a new ``<w:p>`` element inserted directly prior to this one.
-        """
+        """Return a new `<w:p>` element inserted directly prior to this one."""
         new_p = OxmlElement("w:p")
         self.addprevious(new_p)
         return new_p
 
     @property
     def alignment(self):
-        """
-        The value of the ``<w:jc>`` grandchild element or |None| if not
-        present.
-        """
+        """The value of the `<w:jc>` grandchild element or |None| if not present."""
         pPr = self.pPr
         if pPr is None:
             return None
@@ -45,28 +34,23 @@ class CT_P(BaseOxmlElement):
         pPr.jc_val = value
 
     def clear_content(self):
-        """
-        Remove all child elements, except the ``<w:pPr>`` element if present.
-        """
+        """Remove all child elements, except the `<w:pPr>` element if present."""
         for child in self[:]:
             if child.tag == qn("w:pPr"):
                 continue
             self.remove(child)
 
     def set_sectPr(self, sectPr):
-        """
-        Unconditionally replace or add *sectPr* as a grandchild in the
-        correct sequence.
-        """
+        """Unconditionally replace or add `sectPr` as grandchild in correct sequence."""
         pPr = self.get_or_add_pPr()
         pPr._remove_sectPr()
         pPr._insert_sectPr(sectPr)
 
     @property
     def style(self):
-        """
-        String contained in w:val attribute of ./w:pPr/w:pStyle grandchild,
-        or |None| if not present.
+        """String contained in `w:val` attribute of `./w:pPr/w:pStyle` grandchild.
+
+        |None| if not present.
         """
         pPr = self.pPr
         if pPr is None:

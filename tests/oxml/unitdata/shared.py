@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test data builders shared by more than one other module
-"""
+"""Test data builders shared by more than one other module."""
 
 from ...unitdata import BaseBuilder
 

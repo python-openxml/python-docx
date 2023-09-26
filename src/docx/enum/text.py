@@ -5,17 +5,15 @@ from .base import EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
 
 @alias("WD_ALIGN_PARAGRAPH")
 class WD_PARAGRAPH_ALIGNMENT(XmlEnumeration):
-    """
-    alias: **WD_ALIGN_PARAGRAPH**
+    """Alias: **WD_ALIGN_PARAGRAPH**
 
     Specifies paragraph justification type.
 
     Example::
 
-        from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-        paragraph = document.add_paragraph()
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph = document.add_paragraph() paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     """
 
     __ms_name__ = "WdParagraphAlignment"
@@ -38,34 +36,32 @@ class WD_PARAGRAPH_ALIGNMENT(XmlEnumeration):
             "JUSTIFY_MED",
             5,
             "mediumKashida",
-            "Justified with a medium char" "acter compression ratio.",
+            "Justified with a medium character compression ratio.",
         ),
         XmlMappedEnumMember(
             "JUSTIFY_HI",
             7,
             "highKashida",
-            "Justified with a high character" " compression ratio.",
+            "Justified with a high character compression ratio.",
         ),
         XmlMappedEnumMember(
             "JUSTIFY_LOW",
             8,
             "lowKashida",
-            "Justified with a low character " "compression ratio.",
+            "Justified with a low character compression ratio.",
         ),
         XmlMappedEnumMember(
             "THAI_JUSTIFY",
             9,
             "thaiDistribute",
-            "Justified according to Tha" "i formatting layout.",
+            "Justified according to Thai formatting layout.",
         ),
     )
 
 
 class WD_BREAK_TYPE(object):
-    """
-    Corresponds to WdBreakType enumeration
-    http://msdn.microsoft.com/en-us/library/office/ff195905.aspx
-    """
+    """Corresponds to WdBreakType enumeration http://msdn.microsoft.com/en-
+    us/library/office/ff195905.aspx."""
 
     COLUMN = 8
     LINE = 6
@@ -85,9 +81,9 @@ WD_BREAK = WD_BREAK_TYPE
 
 @alias("WD_COLOR")
 class WD_COLOR_INDEX(XmlEnumeration):
-    """
-    Specifies a standard preset color to apply. Used for font highlighting and
-    perhaps other applications.
+    """Specifies a standard preset color to apply.
+
+    Used for font highlighting and perhaps other applications.
     """
 
     __ms_name__ = "WdColorIndex"
@@ -121,15 +117,14 @@ class WD_COLOR_INDEX(XmlEnumeration):
 
 
 class WD_LINE_SPACING(XmlEnumeration):
-    """
-    Specifies a line spacing format to be applied to a paragraph.
+    """Specifies a line spacing format to be applied to a paragraph.
 
     Example::
 
-        from docx.enum.text import WD_LINE_SPACING
+    from docx.enum.text import WD_LINE_SPACING
 
-        paragraph = document.add_paragraph()
-        paragraph.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+    paragraph = document.add_paragraph() paragraph.line_spacing_rule =
+    WD_LINE_SPACING.EXACTLY
     """
 
     __ms_name__ = "WdLineSpacing"
@@ -166,9 +161,7 @@ class WD_LINE_SPACING(XmlEnumeration):
 
 
 class WD_TAB_ALIGNMENT(XmlEnumeration):
-    """
-    Specifies the tab stop alignment to apply.
-    """
+    """Specifies the tab stop alignment to apply."""
 
     __ms_name__ = "WdTabAlignment"
 
@@ -189,9 +182,7 @@ class WD_TAB_ALIGNMENT(XmlEnumeration):
 
 
 class WD_TAB_LEADER(XmlEnumeration):
-    """
-    Specifies the character to use as the leader with formatted tabs.
-    """
+    """Specifies the character to use as the leader with formatted tabs."""
 
     __ms_name__ = "WdTabLeader"
 
@@ -208,9 +199,7 @@ class WD_TAB_LEADER(XmlEnumeration):
 
 
 class WD_UNDERLINE(XmlEnumeration):
-    """
-    Specifies the style of underline applied to a run of characters.
-    """
+    """Specifies the style of underline applied to a run of characters."""
 
     __ms_name__ = "WdUnderline"
 

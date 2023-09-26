@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""WordprocessingML Package class and related objects"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""WordprocessingML Package class and related objects."""
 
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT

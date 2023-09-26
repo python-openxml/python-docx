@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test data builders for text XML elements
-"""
+"""Test data builders for text XML elements."""
 
 from ...unitdata import BaseBuilder
 from .shared import CT_OnOffBuilder, CT_StringBuilder

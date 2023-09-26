@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Shared code for unit test data builders
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Shared code for unit test data builders."""
 
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls

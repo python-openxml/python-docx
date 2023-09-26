@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-XML test data builders for [Content_Types].xml elements
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""XML test data builders for [Content_Types].xml elements."""
 
 from docx.opc.oxml import nsmap
 

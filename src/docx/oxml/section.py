@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Section-related custom element classes"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Section-related custom element classes."""
 
 from copy import deepcopy
 

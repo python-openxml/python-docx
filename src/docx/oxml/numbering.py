@@ -1,13 +1,9 @@
-# encoding: utf-8
+"""Custom element classes related to the numbering part."""
 
-"""
-Custom element classes related to the numbering part
-"""
-
-from . import OxmlElement
-from .shared import CT_DecimalNumber
-from .simpletypes import ST_DecimalNumber
-from .xmlchemy import (
+from docx.oxml import OxmlElement
+from docx.oxml.shared import CT_DecimalNumber
+from docx.oxml.simpletypes import ST_DecimalNumber
+from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OneAndOnlyOne,
     RequiredAttribute,

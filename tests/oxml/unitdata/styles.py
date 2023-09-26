@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test data builders for styles part XML elements
-"""
+"""Test data builders for styles part XML elements."""
 
 from ...unitdata import BaseBuilder
 

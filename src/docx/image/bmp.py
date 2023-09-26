@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, division, print_function
-
 from .constants import MIME_TYPE
 from .helpers import LITTLE_ENDIAN, StreamReader
 from .image import BaseImageHeader

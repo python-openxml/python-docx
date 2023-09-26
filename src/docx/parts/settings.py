@@ -1,18 +1,12 @@
-# encoding: utf-8
-
-"""
-|SettingsPart| and closely related objects
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""|SettingsPart| and closely related objects."""
 
 import os
 
-from ..opc.constants import CONTENT_TYPE as CT
-from ..opc.packuri import PackURI
-from ..opc.part import XmlPart
-from ..oxml import parse_xml
-from ..settings import Settings
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.packuri import PackURI
+from docx.opc.part import XmlPart
+from docx.oxml import parse_xml
+from docx.settings import Settings
 
 
 class SettingsPart(XmlPart):

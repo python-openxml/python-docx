@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Font-related proxy objects.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Font-related proxy objects."""
 
 from ..dml.color import ColorFormat
 from ..shared import ElementProxy

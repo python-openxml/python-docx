@@ -1,9 +1,4 @@
-# encoding: utf-8
-
-"""
-Used by behave to set testing environment before and after running acceptance
-tests.
-"""
+"""Set testing environment before and after behave acceptance test runs."""
 
 import os
 

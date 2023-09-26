@@ -1,7 +1,4 @@
-# encoding: utf-8
-
-"""
-Exceptions specific to python-opc
+"""Exceptions specific to python-opc.
 
 The base exception class is OpcError.
 """

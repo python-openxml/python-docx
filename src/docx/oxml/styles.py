@@ -1,12 +1,8 @@
-# encoding: utf-8
+"""Custom element classes related to the styles part."""
 
-"""
-Custom element classes related to the styles part
-"""
-
-from ..enum.style import WD_STYLE_TYPE
-from .simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
-from .xmlchemy import (
+from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
+from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OptionalAttribute,
     RequiredAttribute,

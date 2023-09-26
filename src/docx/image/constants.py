@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Constants specific the the image sub-package
-"""
+"""Constants specific the the image sub-package."""
 
 
 class JPEG_MARKER_CODE(object):

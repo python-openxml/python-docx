@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Exceptions specific the the image sub-package
-"""
+"""Exceptions specific the the image sub-package."""
 
 
 class InvalidImageStreamError(Exception):

@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-The proxy class for an image part, and related objects.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""The proxy class for an image part, and related objects."""
 
 import hashlib
 

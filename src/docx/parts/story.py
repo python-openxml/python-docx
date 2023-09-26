@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""|BaseStoryPart| and related objects"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""|BaseStoryPart| and related objects."""
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart

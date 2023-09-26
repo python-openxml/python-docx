@@ -1,12 +1,8 @@
-# encoding: utf-8
-
 """Block item container, used by body, cell, header, etc.
 
 Block level items are things like paragraph and table, although there are a few other
 specialized ones like structured document tags.
 """
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 from docx.oxml.table import CT_Tbl
 from docx.shared import Parented

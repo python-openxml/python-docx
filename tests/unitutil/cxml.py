@@ -29,17 +29,13 @@ from docx.oxml.ns import nsmap
 
 
 def element(cxel_str):
-    """
-    Return an oxml element parsed from the XML generated from *cxel_str*.
-    """
+    """Return an oxml element parsed from the XML generated from *cxel_str*."""
     _xml = xml(cxel_str)
     return parse_xml(_xml)
 
 
 def xml(cxel_str):
-    """
-    Return the XML generated from *cxel_str*.
-    """
+    """Return the XML generated from *cxel_str*."""
     root_token = root_node.parseString(cxel_str)
     xml = root_token.element.xml
     return xml
@@ -51,10 +47,7 @@ def xml(cxel_str):
 
 
 def nsdecls(*nspfxs):
-    """
-    Return a string containing a namespace declaration for each of *nspfxs*,
-    in the order they are specified.
-    """
+    """Namespace-declaration including each of *nspfxs*, in the order specified."""
     nsdecls = ""
     for nspfx in nspfxs:
         nsdecls += ' xmlns:%s="%s"' % (nspfx, nsmap[nspfx])

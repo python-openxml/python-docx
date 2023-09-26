@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Relationship-related objects.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Relationship-related objects."""
 
 from .oxml import CT_Relationships
 

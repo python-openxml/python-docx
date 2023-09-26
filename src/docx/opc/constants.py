@@ -1,32 +1,28 @@
-# encoding: utf-8
+"""Constant values related to the Open Packaging Convention.
 
-"""
-Constant values related to the Open Packaging Convention, in particular,
-content types and relationship types.
+In particular it includes content types and relationship types.
 """
 
 
 class CONTENT_TYPE(object):
-    """
-    Content type URIs (like MIME-types) that specify a part's format
-    """
+    """Content type URIs (like MIME-types) that specify a part's format."""
 
     BMP = "image/bmp"
     DML_CHART = "application/vnd.openxmlformats-officedocument.drawingml.chart+xml"
     DML_CHARTSHAPES = (
-        "application/vnd.openxmlformats-officedocument.drawingml.chartshapes" "+xml"
+        "application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml"
     )
     DML_DIAGRAM_COLORS = (
-        "application/vnd.openxmlformats-officedocument.drawingml.diagramColo" "rs+xml"
+        "application/vnd.openxmlformats-officedocument.drawingml.diagramColors+xml"
     )
     DML_DIAGRAM_DATA = (
-        "application/vnd.openxmlformats-officedocument.drawingml.diagramData" "+xml"
+        "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml"
     )
     DML_DIAGRAM_LAYOUT = (
-        "application/vnd.openxmlformats-officedocument.drawingml.diagramLayo" "ut+xml"
+        "application/vnd.openxmlformats-officedocument.drawingml.diagramLayout+xml"
     )
     DML_DIAGRAM_STYLE = (
-        "application/vnd.openxmlformats-officedocument.drawingml.diagramStyl" "e+xml"
+        "application/vnd.openxmlformats-officedocument.drawingml.diagramStyle+xml"
     )
     GIF = "image/gif"
     JPEG = "image/jpeg"
@@ -35,11 +31,11 @@ class CONTENT_TYPE(object):
         "application/vnd.openxmlformats-officedocument.custom-properties+xml"
     )
     OFC_CUSTOM_XML_PROPERTIES = (
-        "application/vnd.openxmlformats-officedocument.customXmlProperties+x" "ml"
+        "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
     )
     OFC_DRAWING = "application/vnd.openxmlformats-officedocument.drawing+xml"
     OFC_EXTENDED_PROPERTIES = (
-        "application/vnd.openxmlformats-officedocument.extended-properties+x" "ml"
+        "application/vnd.openxmlformats-officedocument.extended-properties+xml"
     )
     OFC_OLE_OBJECT = "application/vnd.openxmlformats-officedocument.oleObject"
     OFC_PACKAGE = "application/vnd.openxmlformats-officedocument.package"
@@ -50,17 +46,17 @@ class CONTENT_TYPE(object):
     OFC_VML_DRAWING = "application/vnd.openxmlformats-officedocument.vmlDrawing"
     OPC_CORE_PROPERTIES = "application/vnd.openxmlformats-package.core-properties+xml"
     OPC_DIGITAL_SIGNATURE_CERTIFICATE = (
-        "application/vnd.openxmlformats-package.digital-signature-certificat" "e"
+        "application/vnd.openxmlformats-package.digital-signature-certificate"
     )
     OPC_DIGITAL_SIGNATURE_ORIGIN = (
         "application/vnd.openxmlformats-package.digital-signature-origin"
     )
     OPC_DIGITAL_SIGNATURE_XMLSIGNATURE = (
-        "application/vnd.openxmlformats-package.digital-signature-xmlsignatu" "re+xml"
+        "application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml"
     )
     OPC_RELATIONSHIPS = "application/vnd.openxmlformats-package.relationships+xml"
     PML_COMMENTS = (
-        "application/vnd.openxmlformats-officedocument.presentationml.commen" "ts+xml"
+        "application/vnd.openxmlformats-officedocument.presentationml.comments+xml"
     )
     PML_COMMENT_AUTHORS = (
         "application/vnd.openxmlformats-officedocument.presentationml.commen"
@@ -75,22 +71,20 @@ class CONTENT_TYPE(object):
         "aster+xml"
     )
     PML_NOTES_SLIDE = (
-        "application/vnd.openxmlformats-officedocument.presentationml.notesS" "lide+xml"
+        "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml"
     )
     PML_PRESENTATION_MAIN = (
         "application/vnd.openxmlformats-officedocument.presentationml.presen"
         "tation.main+xml"
     )
     PML_PRES_PROPS = (
-        "application/vnd.openxmlformats-officedocument.presentationml.presPr" "ops+xml"
+        "application/vnd.openxmlformats-officedocument.presentationml.presProps+xml"
     )
     PML_PRINTER_SETTINGS = (
         "application/vnd.openxmlformats-officedocument.presentationml.printe"
         "rSettings"
     )
-    PML_SLIDE = (
-        "application/vnd.openxmlformats-officedocument.presentationml.slide+" "xml"
-    )
+    PML_SLIDE = "application/vnd.openxmlformats-officedocument.presentationml.slide+xml"
     PML_SLIDESHOW_MAIN = (
         "application/vnd.openxmlformats-officedocument.presentationml.slides"
         "how.main+xml"
@@ -111,34 +105,32 @@ class CONTENT_TYPE(object):
         "application/vnd.openxmlformats-officedocument.presentationml.tableS"
         "tyles+xml"
     )
-    PML_TAGS = (
-        "application/vnd.openxmlformats-officedocument.presentationml.tags+x" "ml"
-    )
+    PML_TAGS = "application/vnd.openxmlformats-officedocument.presentationml.tags+xml"
     PML_TEMPLATE_MAIN = (
         "application/vnd.openxmlformats-officedocument.presentationml.templa"
         "te.main+xml"
     )
     PML_VIEW_PROPS = (
-        "application/vnd.openxmlformats-officedocument.presentationml.viewPr" "ops+xml"
+        "application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml"
     )
     PNG = "image/png"
     SML_CALC_CHAIN = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.calcCha" "in+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml"
     )
     SML_CHARTSHEET = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.chartsh" "eet+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml"
     )
     SML_COMMENTS = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.comment" "s+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml"
     )
     SML_CONNECTIONS = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.connect" "ions+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml"
     )
     SML_CUSTOM_PROPERTY = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.customP" "roperty"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.customProperty"
     )
     SML_DIALOGSHEET = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.dialogs" "heet+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.dialogsheet+xml"
     )
     SML_EXTERNAL_LINK = (
         "application/vnd.openxmlformats-officedocument.spreadsheetml.externa"
@@ -153,20 +145,20 @@ class CONTENT_TYPE(object):
         "cheRecords+xml"
     )
     SML_PIVOT_TABLE = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTa" "ble+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml"
     )
     SML_PRINTER_SETTINGS = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.printer" "Settings"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.printerSettings"
     )
     SML_QUERY_TABLE = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.queryTa" "ble+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.queryTable+xml"
     )
     SML_REVISION_HEADERS = (
         "application/vnd.openxmlformats-officedocument.spreadsheetml.revisio"
         "nHeaders+xml"
     )
     SML_REVISION_LOG = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.revisio" "nLog+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.revisionLog+xml"
     )
     SML_SHARED_STRINGS = (
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedS"
@@ -174,18 +166,16 @@ class CONTENT_TYPE(object):
     )
     SML_SHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     SML_SHEET_MAIN = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.m" "ain+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"
     )
     SML_SHEET_METADATA = (
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheetMe"
         "tadata+xml"
     )
     SML_STYLES = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+" "xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"
     )
-    SML_TABLE = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.table+x" "ml"
-    )
+    SML_TABLE = "application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"
     SML_TABLE_SINGLE_CELLS = (
         "application/vnd.openxmlformats-officedocument.spreadsheetml.tableSi"
         "ngleCells+xml"
@@ -195,21 +185,21 @@ class CONTENT_TYPE(object):
         "e.main+xml"
     )
     SML_USER_NAMES = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.userNam" "es+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.userNames+xml"
     )
     SML_VOLATILE_DEPENDENCIES = (
         "application/vnd.openxmlformats-officedocument.spreadsheetml.volatil"
         "eDependencies+xml"
     )
     SML_WORKSHEET = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.workshe" "et+xml"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"
     )
     TIFF = "image/tiff"
     WML_COMMENTS = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.comm" "ents+xml"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml"
     )
     WML_DOCUMENT = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.docu" "ment"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
     WML_DOCUMENT_GLOSSARY = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.docu"
@@ -220,21 +210,21 @@ class CONTENT_TYPE(object):
         "ment.main+xml"
     )
     WML_ENDNOTES = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.endn" "otes+xml"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml"
     )
     WML_FONT_TABLE = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.font"
         "Table+xml"
     )
     WML_FOOTER = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.foot" "er+xml"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"
     )
     WML_FOOTNOTES = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.foot"
         "notes+xml"
     )
     WML_HEADER = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.head" "er+xml"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"
     )
     WML_NUMBERING = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.numb"
@@ -245,10 +235,10 @@ class CONTENT_TYPE(object):
         "terSettings"
     )
     WML_SETTINGS = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.sett" "ings+xml"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"
     )
     WML_STYLES = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.styl" "es+xml"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"
     )
     WML_WEB_SETTINGS = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.webS"
@@ -262,10 +252,10 @@ class CONTENT_TYPE(object):
 
 
 class NAMESPACE(object):
-    """Constant values for OPC XML namespaces"""
+    """Constant values for OPC XML namespaces."""
 
     DML_WORDPROCESSING_DRAWING = (
-        "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDraw" "ing"
+        "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
     )
     OFC_RELATIONSHIPS = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -276,18 +266,16 @@ class NAMESPACE(object):
 
 
 class RELATIONSHIP_TARGET_MODE(object):
-    """Open XML relationship target modes"""
+    """Open XML relationship target modes."""
 
     EXTERNAL = "External"
     INTERNAL = "Internal"
 
 
 class RELATIONSHIP_TYPE(object):
-    AUDIO = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/audio"
-    )
+    AUDIO = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/audio"
     A_F_CHUNK = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/aFChunk"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk"
     )
     CALC_CHAIN = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -297,9 +285,7 @@ class RELATIONSHIP_TYPE(object):
         "http://schemas.openxmlformats.org/package/2006/relationships/digita"
         "l-signature/certificate"
     )
-    CHART = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/chart"
-    )
+    CHART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart"
     CHARTSHEET = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/chartsheet"
@@ -321,7 +307,7 @@ class RELATIONSHIP_TYPE(object):
         "/connections"
     )
     CONTROL = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/control"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/control"
     )
     CORE_PROPERTIES = (
         "http://schemas.openxmlformats.org/package/2006/relationships/metada"
@@ -364,7 +350,7 @@ class RELATIONSHIP_TYPE(object):
         "/dialogsheet"
     )
     DRAWING = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/drawing"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing"
     )
     ENDNOTES = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -378,13 +364,13 @@ class RELATIONSHIP_TYPE(object):
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/externalLink"
     )
-    FONT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/font"
+    FONT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/font"
     FONT_TABLE = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/fontTable"
     )
     FOOTER = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/footer"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer"
     )
     FOOTNOTES = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -399,15 +385,13 @@ class RELATIONSHIP_TYPE(object):
         "/handoutMaster"
     )
     HEADER = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/header"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header"
     )
     HYPERLINK = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/hyperlink"
     )
-    IMAGE = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/image"
-    )
+    IMAGE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"
     NOTES_MASTER = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/notesMaster"
@@ -433,7 +417,7 @@ class RELATIONSHIP_TYPE(object):
         "l-signature/origin"
     )
     PACKAGE = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/package"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/package"
     )
     PIVOT_CACHE_DEFINITION = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -483,9 +467,7 @@ class RELATIONSHIP_TYPE(object):
         "http://schemas.openxmlformats.org/package/2006/relationships/digita"
         "l-signature/signature"
     )
-    SLIDE = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/slide"
-    )
+    SLIDE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide"
     SLIDE_LAYOUT = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/slideLayout"
@@ -499,11 +481,9 @@ class RELATIONSHIP_TYPE(object):
         "/slideUpdateInfo"
     )
     STYLES = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/styles"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
     )
-    TABLE = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/table"
-    )
+    TABLE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/table"
     TABLE_SINGLE_CELLS = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/tableSingleCells"
@@ -512,10 +492,8 @@ class RELATIONSHIP_TYPE(object):
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/tableStyles"
     )
-    TAGS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/tags"
-    THEME = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/theme"
-    )
+    TAGS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/tags"
+    THEME = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme"
     THEME_OVERRIDE = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/themeOverride"
@@ -528,9 +506,7 @@ class RELATIONSHIP_TYPE(object):
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/usernames"
     )
-    VIDEO = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/video"
-    )
+    VIDEO = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video"
     VIEW_PROPS = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/viewProps"
@@ -552,5 +528,5 @@ class RELATIONSHIP_TYPE(object):
         "/worksheetSource"
     )
     XML_MAPS = (
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships" "/xmlMaps"
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/xmlMaps"
     )

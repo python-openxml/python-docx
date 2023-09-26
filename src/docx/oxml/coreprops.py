@@ -9,12 +9,11 @@ from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
 class CT_CoreProperties(BaseOxmlElement):
-    """
-    ``<cp:coreProperties>`` element, the root element of the Core Properties
-    part stored as ``/docProps/core.xml``. Implements many of the Dublin Core
-    document metadata elements. String elements resolve to an empty string
-    ('') if the element is not present in the XML. String elements are
-    limited in length to 255 unicode characters.
+    """`<cp:coreProperties>` element, the root element of the Core Properties part.
+
+    Stored as `/docProps/core.xml`. Implements many of the Dublin Core document metadata
+    elements. String elements resolve to an empty string ("") if the element is not
+    present in the XML. String elements are limited in length to 255 unicode characters.
     """
 
     category = ZeroOrOne("cp:category", successors=())
@@ -37,9 +36,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     @classmethod
     def new(cls):
-        """
-        Return a new ``<cp:coreProperties>`` element
-        """
+        """Return a new `<cp:coreProperties>` element."""
         xml = cls._coreProperties_tmpl
         coreProperties = parse_xml(xml)
         return coreProperties
@@ -157,7 +154,7 @@ class CT_CoreProperties(BaseOxmlElement):
     @revision_number.setter
     def revision_number(self, value):
         """
-        Set revision property to string value of integer *value*.
+        Set revision property to string value of integer `value`.
         """
         if not isinstance(value, int) or value < 1:
             tmpl = "revision property requires positive int, got '%s'"
@@ -202,7 +199,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     def _get_or_add(self, prop_name):
         """
-        Return element returned by 'get_or_add_' method for *prop_name*.
+        Return element returned by "get_or_add_" method for `prop_name`.
         """
         get_or_add_method_name = "get_or_add_%s" % prop_name
         get_or_add_method = getattr(self, get_or_add_method_name)
@@ -211,10 +208,9 @@ class CT_CoreProperties(BaseOxmlElement):
 
     @classmethod
     def _offset_dt(cls, dt, offset_str):
-        """
-        Return a |datetime| instance that is offset from datetime *dt* by
-        the timezone offset specified in *offset_str*, a string like
-        ``'-07:00'``.
+        """A |datetime| instance offset from `dt` by timezone offset in `offset_str`.
+
+        `offset_str` is like `"-07:00"`.
         """
         match = cls._offset_pattern.match(offset_str)
         if match is None:
@@ -231,11 +227,11 @@ class CT_CoreProperties(BaseOxmlElement):
     @classmethod
     def _parse_W3CDTF_to_datetime(cls, w3cdtf_str):
         # valid W3CDTF date cases:
-        # yyyy e.g. '2003'
-        # yyyy-mm e.g. '2003-12'
-        # yyyy-mm-dd e.g. '2003-12-31'
-        # UTC timezone e.g. '2003-12-31T10:14:55Z'
-        # numeric timezone e.g. '2003-12-31T10:14:55-08:00'
+        # yyyy e.g. "2003"
+        # yyyy-mm e.g. "2003-12"
+        # yyyy-mm-dd e.g. "2003-12-31"
+        # UTC timezone e.g. "2003-12-31T10:14:55Z"
+        # numeric timezone e.g. "2003-12-31T10:14:55-08:00"
         templates = (
             "%Y-%m-%dT%H:%M:%S",
             "%Y-%m-%d",
@@ -243,7 +239,7 @@ class CT_CoreProperties(BaseOxmlElement):
             "%Y",
         )
         # strptime isn't smart enough to parse literal timezone offsets like
-        # '-07:30', so we have to do it ourselves
+        # "-07:30", so we have to do it ourselves
         parseable_part = w3cdtf_str[:19]
         offset_str = w3cdtf_str[19:]
         dt = None
@@ -261,7 +257,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     def _set_element_datetime(self, prop_name, value):
         """
-        Set date/time value of child element having *prop_name* to *value*.
+        Set date/time value of child element having `prop_name` to `value`.
         """
         if not isinstance(value, datetime):
             tmpl = "property requires <type 'datetime.datetime'> object, got %s"
@@ -270,7 +266,7 @@ class CT_CoreProperties(BaseOxmlElement):
         dt_str = value.strftime("%Y-%m-%dT%H:%M:%SZ")
         element.text = dt_str
         if prop_name in ("created", "modified"):
-            # These two require an explicit 'xsi:type="dcterms:W3CDTF"'
+            # These two require an explicit "xsi:type="dcterms:W3CDTF""
             # attribute. The first and last line are a hack required to add
             # the xsi namespace to the root element rather than each child
             # element in which it is referenced
@@ -279,7 +275,7 @@ class CT_CoreProperties(BaseOxmlElement):
             del self.attrib[qn("xsi:foo")]
 
     def _set_element_text(self, prop_name, value):
-        """Set string value of *name* property to *value*."""
+        """Set string value of `name` property to `value`."""
         if not isinstance(value, str):
             value = str(value)
 
@@ -290,9 +286,9 @@ class CT_CoreProperties(BaseOxmlElement):
         element.text = value
 
     def _text_of_element(self, property_name):
-        """
-        Return the text in the element matching *property_name*, or an empty
-        string if the element is not present or contains no text.
+        """The text in the element matching `property_name`.
+
+        The empty string if the element is not present or contains no text.
         """
         element = getattr(self, property_name)
         if element is None:

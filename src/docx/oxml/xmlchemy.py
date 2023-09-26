@@ -84,9 +84,7 @@ class XmlString(str):
 
 
 class MetaOxmlElement(type):
-    """
-    Metaclass for BaseOxmlElement
-    """
+    """Metaclass for BaseOxmlElement."""
 
     def __init__(cls, clsname, bases, clsdict):
         dispatchable = (
@@ -698,9 +696,9 @@ class ZeroOrOneChoice(_BaseChildElement):
 
 
 class _OxmlElementBase(etree.ElementBase):
-    """
-    Effective base class for all custom element classes, to add standardized
-    behavior to all classes in one place. Actual inheritance is from
+    """Effective base class for all custom element classes.
+
+    Adds standardized behavior to all classes in one place. Actual inheritance is from
     BaseOxmlElement below, needed to manage Python 2-3 metaclass declaration
     compatibility.
     """
@@ -715,10 +713,7 @@ class _OxmlElementBase(etree.ElementBase):
         )
 
     def first_child_found_in(self, *tagnames):
-        """
-        Return the first child found with tag in *tagnames*, or None if
-        not found.
-        """
+        """First child with tag in `tagnames`, or None if not found."""
         for tagname in tagnames:
             child = self.find(qn(tagname))
             if child is not None:
@@ -734,10 +729,7 @@ class _OxmlElementBase(etree.ElementBase):
         return elm
 
     def remove_all(self, *tagnames):
-        """
-        Remove all child elements whose tagname (e.g. 'a:p') appears in
-        *tagnames*.
-        """
+        """Remove child elements with tagname (e.g. "a:p") in `tagnames`."""
         for tagname in tagnames:
             matching = self.findall(qn(tagname))
             for child in matching:
@@ -745,17 +737,16 @@ class _OxmlElementBase(etree.ElementBase):
 
     @property
     def xml(self):
-        """
-        Return XML string for this element, suitable for testing purposes.
-        Pretty printed for readability and without an XML declaration at the
-        top.
+        """XML string for this element, suitable for testing purposes.
+
+        Pretty printed for readability and without an XML declaration at the top.
         """
         return serialize_for_reading(self)
 
     def xpath(self, xpath_str):
-        """
-        Override of ``lxml`` _Element.xpath() method to provide standard Open
-        XML namespace mapping (``nsmap``) in centralized location.
+        """Override of `lxml` _Element.xpath() method.
+
+        Provides standard Open XML namespace mapping (`nsmap`) in centralized location.
         """
         return super(BaseOxmlElement, self).xpath(xpath_str, namespaces=nsmap)
 

@@ -1,17 +1,10 @@
-# encoding: utf-8
+"""Low-level, read-only API to a serialized Open Packaging Convention (OPC) package."""
 
-"""
-Provides a low-level, read-only API to a serialized Open Packaging Convention
-(OPC) package.
-"""
-
-from __future__ import absolute_import
-
-from .constants import RELATIONSHIP_TARGET_MODE as RTM
-from .oxml import parse_xml
-from .packuri import PACKAGE_URI, PackURI
-from .phys_pkg import PhysPkgReader
-from .shared import CaseInsensitiveDict
+from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
+from docx.opc.oxml import parse_xml
+from docx.opc.packuri import PACKAGE_URI, PackURI
+from docx.opc.phys_pkg import PhysPkgReader
+from docx.opc.shared import CaseInsensitiveDict
 
 
 class PackageReader(object):

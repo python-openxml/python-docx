@@ -1,12 +1,8 @@
-# encoding: utf-8
+"""Directly exposed API functions and classes, :func:`Document` for now.
 
-"""
-Directly exposed API functions and classes, :func:`Document` for now.
 Provides a syntactically more convenient API for interacting with the
 OpcPackage graph.
 """
-
-from __future__ import absolute_import, division, print_function
 
 import os
 

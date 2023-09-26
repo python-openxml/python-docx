@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""|DocumentPart| and closely related objects"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""|DocumentPart| and closely related objects."""
 
 from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT

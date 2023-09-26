@@ -1,11 +1,7 @@
-# encoding: utf-8
+"""Provides CoreProperties, Dublin-Core attributes of the document.
 
+These are broadly-standardized attributes like author, last-modified, etc.
 """
-The :mod:`pptx.packaging` module coheres around the concerns of reading and
-writing presentations to and from a .pptx file.
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 
 class CoreProperties(object):

@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-|NumberingPart| and closely related objects
-"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""|NumberingPart| and closely related objects."""
 
 from ..opc.part import XmlPart
 from ..shared import lazyproperty

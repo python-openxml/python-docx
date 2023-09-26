@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Exceptions for oxml sub-package
-"""
+"""Exceptions for oxml sub-package."""
 
 
 class XmlchemyError(Exception):

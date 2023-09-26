@@ -1,12 +1,8 @@
-# encoding: utf-8
+"""Custom element classes for shape-related elements like `<w:inline>`."""
 
-"""
-Custom element classes for shape-related elements like ``<w:inline>``
-"""
-
-from . import parse_xml
-from .ns import nsdecls
-from .simpletypes import (
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
+from docx.oxml.simpletypes import (
     ST_Coordinate,
     ST_DrawingElementId,
     ST_PositiveCoordinate,
@@ -14,7 +10,7 @@ from .simpletypes import (
     XsdString,
     XsdToken,
 )
-from .xmlchemy import (
+from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OneAndOnlyOne,
     OptionalAttribute,

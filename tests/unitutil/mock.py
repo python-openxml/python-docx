@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Utility functions wrapping the excellent *mock* library"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Utility functions wrapping the excellent *mock* library."""
 
 import sys
 

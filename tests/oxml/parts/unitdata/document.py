@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test data builders for parts XML.
-"""
+"""Test data builders for parts XML."""
 
 from ....unitdata import BaseBuilder
 

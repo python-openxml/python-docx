@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""Styles object, container for all objects in the styles part"""
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+"""Styles object, container for all objects in the styles part."""
 
 from warnings import warn
 

@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Test data builders for numbering part XML elements
-"""
+"""Test data builders for numbering part XML elements."""
 
 from ...unitdata import BaseBuilder
 

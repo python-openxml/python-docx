@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Objects shared by docx modules.
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Objects shared by docx modules."""
 
 
 class Length(int):

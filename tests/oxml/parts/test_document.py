@@ -1,10 +1,4 @@
-# encoding: utf-8
-
-"""
-Test suite for the docx.oxml.parts module.
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
+"""Test suite for the docx.oxml.parts module."""
 
 import pytest
 

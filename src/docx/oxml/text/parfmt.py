@@ -1,8 +1,4 @@
-# encoding: utf-8
-
-"""
-Custom element classes related to paragraph properties (CT_PPr).
-"""
+"""Custom element classes related to paragraph properties (CT_PPr)."""
 
 from ...enum.text import (
     WD_ALIGN_PARAGRAPH,
@@ -355,9 +351,7 @@ class CT_Spacing(BaseOxmlElement):
 
 
 class CT_TabStop(BaseOxmlElement):
-    """
-    ``<w:tab>`` element, representing an individual tab stop.
-    """
+    """`<w:tab>` element, representing an individual tab stop."""
 
     val = RequiredAttribute("w:val", WD_TAB_ALIGNMENT)
     leader = OptionalAttribute("w:leader", WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES)
