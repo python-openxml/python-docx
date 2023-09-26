@@ -58,6 +58,8 @@ python_functions = ["it_", "they_", "and_it_", "but_it_"]
 exclude = []
 ignore = [
     "COM812",   # -- over-aggressively insists on trailing commas where not desired --
+    "PT001",    # -- wants @pytest.fixture() instead of @pytest.fixture --
+    "PT005",    # -- wants @pytest.fixture() instead of @pytest.fixture --
 ]
 select = [
     "C4",       # -- flake8-comprehensions --
@@ -66,7 +68,7 @@ select = [
     "F",        # -- pyflakes --
     "I",        # -- isort (imports) --
     "PLR0402",  # -- Name compared with itself like `foo == foo` --
-    # "PT",       # -- flake8-pytest-style --
+    "PT",       # -- flake8-pytest-style --
     # "SIM",      # -- flake8-simplify --
     "UP015",    # -- redundant `open()` mode parameter (like "r" is default) --
     "UP018",    # -- Unnecessary {literal_type} call like `str("abc")`. (rewrite as a literal) --

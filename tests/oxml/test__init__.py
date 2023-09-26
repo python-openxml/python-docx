@@ -63,7 +63,7 @@ class DescribeParseXml(object):
         parse_xml(xml_text)
         # but adding encoding in the declaration raises ValueError
         xml_text = "%s\n%s" % (enc_decl, xml_body)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Unicode strings with encoding declara"):
             parse_xml(xml_text)
 
     def it_uses_registered_element_classes(self, xml_bytes):

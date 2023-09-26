@@ -29,7 +29,7 @@ class DescribePackURI(object):
         assert pack_uri == "/ppt/slideLayouts/slideLayout1.xml"
 
     def it_should_raise_on_construct_with_bad_pack_uri_str(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="PackURI must begin with slash"):
             PackURI("foobar")
 
     def it_can_calculate_baseURI(self):

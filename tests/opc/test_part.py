@@ -326,24 +326,20 @@ class DescribePartFactory(object):
     @pytest.fixture
     def cls_selector_fixture(
         self,
-        request,
         cls_selector_fn_,
         cls_method_fn_,
         part_load_params,
         CustomPartClass_,
         part_of_custom_type_,
     ):
-        def reset_part_class_selector():
-            PartFactory.part_class_selector = original_part_class_selector
-
         original_part_class_selector = PartFactory.part_class_selector
-        request.addfinalizer(reset_part_class_selector)
-        return (
+        yield (
             cls_selector_fn_,
             part_load_params,
             CustomPartClass_,
             part_of_custom_type_,
         )
+        PartFactory.part_class_selector = original_part_class_selector
 
     @pytest.fixture
     def cls_selector_fn_(self, request, CustomPartClass_):

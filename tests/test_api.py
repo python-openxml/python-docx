@@ -24,7 +24,7 @@ class DescribeDocument(object):
 
     def it_raises_on_not_a_Word_file(self, raise_fixture):
         not_a_docx = raise_fixture
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="file 'foobar.xlsx' is not a Word file,"):
             Document(not_a_docx)
 
     # fixtures -------------------------------------------------------

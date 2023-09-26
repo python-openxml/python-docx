@@ -112,11 +112,11 @@ class DescribeLength(object):
 class DescribeRGBColor(object):
     def it_is_natively_constructed_using_three_ints_0_to_255(self):
         RGBColor(0x12, 0x34, 0x56)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"RGBColor\(\) takes three integer valu"):
             RGBColor("12", "34", "56")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"\(\) takes three integer values 0-255"):
             RGBColor(-1, 34, 56)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"RGBColor\(\) takes three integer valu"):
             RGBColor(12, 256, 56)
 
     def it_can_construct_from_a_hex_string_rgb_value(self):

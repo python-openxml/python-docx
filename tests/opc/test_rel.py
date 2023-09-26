@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Unit test suite for the docx.opc.rel module."""
 
 import pytest
@@ -27,7 +29,7 @@ class Describe_Relationship(object):
 
     def it_should_raise_on_target_part_access_on_external_rel(self):
         rel = _Relationship(None, None, None, None, external=True)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="target_part property on _Relat"):
             rel.target_part
 
     def it_should_have_target_ref_for_external_rel(self):
@@ -172,7 +174,7 @@ class DescribeRelationships(object):
         return rels
 
     @pytest.fixture
-    def rels_elm(self, request):
+    def rels_elm(self):
         """
         Return a rels_elm mock that will be returned from
         CT_Relationships.new()
@@ -186,8 +188,8 @@ class DescribeRelationships(object):
         # patch CT_Relationships to return that rels_elm
         patch_ = patch.object(CT_Relationships, "new", return_value=rels_elm)
         patch_.start()
-        request.addfinalizer(patch_.stop)
-        return rels_elm
+        yield rels_elm
+        patch_.stop()
 
     @pytest.fixture
     def _rel_with_known_target_part(self, _rId, reltype, _target_part, _baseURI):

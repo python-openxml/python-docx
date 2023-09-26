@@ -19,7 +19,7 @@ class DescribeCT_Row(object):
 
     def it_raises_on_tc_at_grid_col(self, tc_raise_fixture):
         tr, idx = tc_raise_fixture
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError):  # noqa: PT011
             tr.tc_at_grid_col(idx)
 
     # fixtures -------------------------------------------------------
@@ -123,7 +123,7 @@ class DescribeCT_Tc(object):
 
     def it_raises_on_tr_above(self, tr_above_raise_fixture):
         tc = tr_above_raise_fixture
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="no tr above topmost tr"):
             tc._tr_above
 
     # fixtures -------------------------------------------------------

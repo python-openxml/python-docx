@@ -231,10 +231,10 @@ class DescribePackageReader(object):
         return partname_, partname_2_
 
     @pytest.fixture
-    def PhysPkgReader_(self, request):
-        _patch = patch("docx.opc.pkgreader.PhysPkgReader", spec_set=_ZipPkgReader)
-        request.addfinalizer(_patch.stop)
-        return _patch.start()
+    def PhysPkgReader_(self):
+        p = patch("docx.opc.pkgreader.PhysPkgReader", spec_set=_ZipPkgReader)
+        yield p.start()
+        p.stop()
 
     @pytest.fixture
     def reltypes_(self, request):
@@ -464,7 +464,7 @@ class Describe_SerializedRelationship(object):
             target_mode=RTM.EXTERNAL,
         )
         srel = _SerializedRelationship("/", rel_elm)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="target_partname attribute on Relat"):
             srel.target_partname
 
 

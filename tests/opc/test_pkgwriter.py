@@ -92,10 +92,10 @@ class DescribePackageWriter(object):
         return instance_mock(request, list)
 
     @pytest.fixture
-    def PhysPkgWriter_(self, request):
-        _patch = patch("docx.opc.pkgwriter.PhysPkgWriter")
-        request.addfinalizer(_patch.stop)
-        return _patch.start()
+    def PhysPkgWriter_(self):
+        p = patch("docx.opc.pkgwriter.PhysPkgWriter")
+        yield p.start()
+        p.stop()
 
     @pytest.fixture
     def phys_pkg_writer_(self, request):
@@ -106,7 +106,7 @@ class DescribePackageWriter(object):
         return _ContentTypesItem_, parts_, phys_pkg_writer_, blob_
 
     @pytest.fixture
-    def _write_methods(self, request):
+    def _write_methods(self):
         """Mock that patches all the _write_* methods of PackageWriter"""
         root_mock = Mock(name="PackageWriter")
         patch1 = patch.object(PackageWriter, "_write_content_types_stream")
@@ -116,13 +116,11 @@ class DescribePackageWriter(object):
         root_mock.attach_mock(patch2.start(), "_write_pkg_rels")
         root_mock.attach_mock(patch3.start(), "_write_parts")
 
-        def fin():
-            patch1.stop()
-            patch2.stop()
-            patch3.stop()
+        yield root_mock
 
-        request.addfinalizer(fin)
-        return root_mock
+        patch1.stop()
+        patch2.stop()
+        patch3.stop()
 
     @pytest.fixture
     def xml_for_(self, request):

@@ -68,9 +68,9 @@ class DescribeEnumeration(object):
     def it_knows_if_a_setting_is_valid(self):
         FOOBAR.validate(None)
         FOOBAR.validate(FOOBAR.READ_WRITE)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="foobar not a member of FOOBAR enumerat"):
             FOOBAR.validate("foobar")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"READ_ONLY \(-2\) not a member of FOOB"):
             FOOBAR.validate(FOOBAR.READ_ONLY)
 
     def it_can_be_referred_to_by_a_convenience_alias_if_defined(self):
@@ -89,7 +89,7 @@ class DescribeXmlEnumeration(object):
     def it_knows_the_XML_value_for_each_of_its_xml_members(self):
         assert XMLFOO.to_xml(XMLFOO.XML_RW) == "attrVal"
         assert XMLFOO.to_xml(42) == "attrVal"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"value 'RO \(-2\)' not in enumeration "):
             XMLFOO.to_xml(XMLFOO.RO)
 
     def it_can_map_each_of_its_xml_members_from_the_XML_value(self):

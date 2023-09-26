@@ -930,11 +930,12 @@ class Describe_Rows(object):
 
     def it_raises_on_indexed_access_out_of_range(self, rows_fixture):
         rows, row_count = rows_fixture
-        with pytest.raises(IndexError):
-            too_low = -1 - row_count
+        too_low = -1 - row_count
+        too_high = row_count
+
+        with pytest.raises(IndexError, match="list index out of range"):
             rows[too_low]
-        with pytest.raises(IndexError):
-            too_high = row_count
+        with pytest.raises(IndexError, match="list index out of range"):
             rows[too_high]
 
     def it_provides_access_to_the_table_it_belongs_to(self, table_fixture):

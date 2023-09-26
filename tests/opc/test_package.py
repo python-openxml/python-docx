@@ -233,16 +233,16 @@ class DescribeOpcPackage(object):
         return method_mock(request, OpcPackage, "part_related_by")
 
     @pytest.fixture
-    def parts(self, request, parts_):
+    def parts(self, parts_):
         """
         Return a mock patching property OpcPackage.parts, reversing the
         patch after each use.
         """
-        _patch = patch.object(
+        p = patch.object(
             OpcPackage, "parts", new_callable=PropertyMock, return_value=parts_
         )
-        request.addfinalizer(_patch.stop)
-        return _patch.start()
+        yield p.start()
+        p.stop()
 
     @pytest.fixture
     def parts_(self, request):

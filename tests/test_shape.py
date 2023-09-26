@@ -40,11 +40,11 @@ class DescribeInlineShapes(object):
 
     def it_raises_on_indexed_access_out_of_range(self, inline_shapes_fixture):
         inline_shapes, inline_shape_count = inline_shapes_fixture
-        with pytest.raises(IndexError):
-            too_low = -1 - inline_shape_count
+        too_low = -1 - inline_shape_count
+        with pytest.raises(IndexError, match=r"inline shape index \[-3\] out of rang"):
             inline_shapes[too_low]
-        with pytest.raises(IndexError):
-            too_high = inline_shape_count
+        too_high = inline_shape_count
+        with pytest.raises(IndexError, match=r"inline shape index \[2\] out of range"):
             inline_shapes[too_high]
 
     def it_knows_the_part_it_belongs_to(self, inline_shapes_with_parent_):

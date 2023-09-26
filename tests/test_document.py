@@ -33,9 +33,9 @@ class DescribeDocument(object):
 
     def it_raises_on_heading_level_out_of_range(self):
         document = Document(None, None)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="level must be in range 0-9, got -1"):
             document.add_heading(level=-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="level must be in range 0-9, got 10"):
             document.add_heading(level=10)
 
     def it_can_add_a_page_break(self, add_paragraph_, paragraph_, run_):

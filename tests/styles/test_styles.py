@@ -60,7 +60,7 @@ class DescribeStyles(object):
 
     def it_raises_when_style_name_already_used(self, add_raises_fixture):
         styles, name = add_raises_fixture
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="document already contains style 'Hea"):
             styles.add_style(name, None)
 
     def it_can_get_the_default_style_for_a_type(self, default_fixture):
@@ -156,7 +156,7 @@ class DescribeStyles(object):
 
     def it_raises_on_style_type_mismatch(self, id_style_raises_fixture):
         styles, style_, style_type = id_style_raises_fixture
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="assigned style is type 1, need type 2"):
             styles._get_style_id_from_style(style_, style_type)
 
     def it_provides_access_to_the_latent_styles(self, latent_styles_fixture):

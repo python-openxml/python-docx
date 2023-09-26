@@ -1,11 +1,7 @@
 """Test suite for docx.opc.phys_pkg module."""
 
-try:
-    from io import BytesIO  # Python 3
-except ImportError:
-    from StringIO import StringIO as BytesIO
-
 import hashlib
+import io
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import pytest
@@ -119,10 +115,10 @@ class DescribeZipPkgReader(object):
     # fixtures ---------------------------------------------
 
     @pytest.fixture(scope="class")
-    def phys_reader(self, request):
+    def phys_reader(self):
         phys_reader = _ZipPkgReader(zip_pkg_path)
-        request.addfinalizer(phys_reader.close)
-        return phys_reader
+        yield phys_reader
+        phys_reader.close()
 
     @pytest.fixture
     def pkg_file_(self, request):
@@ -167,10 +163,10 @@ class DescribeZipPkgWriter(object):
     # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def pkg_file(self, request):
-        pkg_file = BytesIO()
-        request.addfinalizer(pkg_file.close)
-        return pkg_file
+    def pkg_file(self):
+        pkg_file = io.BytesIO()
+        yield pkg_file
+        pkg_file.close()
 
 
 # fixtures -------------------------------------------------
