@@ -1,5 +1,7 @@
 """Custom element classes for shape-related elements like `<w:inline>`."""
 
+from __future__ import annotations
+
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.oxml.simpletypes import (

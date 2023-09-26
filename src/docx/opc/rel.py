@@ -1,17 +1,23 @@
 """Relationship-related objects."""
 
-from .oxml import CT_Relationships
+from __future__ import annotations
+
+from typing import Any, Dict
+
+from docx.opc.oxml import CT_Relationships
 
 
-class Relationships(dict):
+class Relationships(Dict[str, "_Relationship"]):
     """Collection object for |_Relationship| instances, having list semantics."""
 
-    def __init__(self, baseURI):
+    def __init__(self, baseURI: str):
         super(Relationships, self).__init__()
         self._baseURI = baseURI
-        self._target_parts_by_rId = {}
+        self._target_parts_by_rId: Dict[str, Any] = {}
 
-    def add_relationship(self, reltype, target, rId, is_external=False):
+    def add_relationship(
+        self, reltype: str, target: str | Any, rId: str, is_external: bool = False
+    ) -> "_Relationship":
         """Return a newly added |_Relationship| instance."""
         rel = _Relationship(rId, reltype, target, self._baseURI, is_external)
         self[rId] = rel
@@ -105,7 +111,7 @@ class Relationships(dict):
 class _Relationship(object):
     """Value object for relationship to part."""
 
-    def __init__(self, rId, reltype, target, baseURI, external=False):
+    def __init__(self, rId: str, reltype, target, baseURI, external=False):
         super(_Relationship, self).__init__()
         self._rId = rId
         self._reltype = reltype
@@ -135,7 +141,7 @@ class _Relationship(object):
         return self._target
 
     @property
-    def target_ref(self):
+    def target_ref(self) -> str:
         if self._is_external:
             return self._target
         else:

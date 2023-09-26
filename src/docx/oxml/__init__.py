@@ -3,6 +3,8 @@
 This including registering custom element classes corresponding to Open XML elements.
 """
 
+from __future__ import annotations
+
 from lxml import etree
 
 from docx.oxml.ns import NamespacePrefixedTag, nsmap

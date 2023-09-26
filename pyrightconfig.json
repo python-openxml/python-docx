@@ -1,0 +1,19 @@
+{
+    "exclude": [
+        "**/__pycache__",
+        "**/.*"
+    ],
+    "ignore":  [
+    ],
+    "include": [
+        "src/docx/",
+        "tests"
+    ],
+    "pythonPlatform": "All",
+    "pythonVersion": "3.7",
+    "reportImportCycles": true,
+    "reportUnnecessaryCast": true,
+    "typeCheckingMode": "strict",
+    "useLibraryCodeForTypes": false,
+    "verboseOutput": true
+}

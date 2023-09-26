@@ -20,7 +20,7 @@ class Run(Parented):
         super(Run, self).__init__(parent)
         self._r = self._element = self.element = r
 
-    def add_break(self, break_type=WD_BREAK.LINE):
+    def add_break(self, break_type: WD_BREAK = WD_BREAK.LINE):
         """Add a break element of `break_type` to this run.
 
         `break_type` can take the values `WD_BREAK.LINE`, `WD_BREAK.PAGE`, and
@@ -170,7 +170,7 @@ class Run(Parented):
 
 
 class _Text(object):
-    """Proxy object wrapping ``<w:t>`` element."""
+    """Proxy object wrapping `<w:t>` element."""
 
     def __init__(self, t_elm):
         super(_Text, self).__init__()

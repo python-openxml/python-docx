@@ -2,6 +2,7 @@
 
 import re
 from datetime import datetime, timedelta
+from typing import Any
 
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
@@ -47,23 +48,23 @@ class CT_CoreProperties(BaseOxmlElement):
         return self._text_of_element("creator")
 
     @author_text.setter
-    def author_text(self, value):
+    def author_text(self, value: str):
         self._set_element_text("creator", value)
 
     @property
-    def category_text(self):
+    def category_text(self) -> str:
         return self._text_of_element("category")
 
     @category_text.setter
-    def category_text(self, value):
+    def category_text(self, value: str):
         self._set_element_text("category", value)
 
     @property
-    def comments_text(self):
+    def comments_text(self) -> str:
         return self._text_of_element("description")
 
     @comments_text.setter
-    def comments_text(self, value):
+    def comments_text(self, value: str):
         self._set_element_text("description", value)
 
     @property
@@ -71,7 +72,7 @@ class CT_CoreProperties(BaseOxmlElement):
         return self._text_of_element("contentStatus")
 
     @contentStatus_text.setter
-    def contentStatus_text(self, value):
+    def contentStatus_text(self, value: str):
         self._set_element_text("contentStatus", value)
 
     @property
@@ -264,7 +265,7 @@ class CT_CoreProperties(BaseOxmlElement):
             element.set(qn("xsi:type"), "dcterms:W3CDTF")
             del self.attrib[qn("xsi:foo")]
 
-    def _set_element_text(self, prop_name, value):
+    def _set_element_text(self, prop_name: str, value: Any) -> None:
         """Set string value of `name` property to `value`."""
         if not isinstance(value, str):
             value = str(value)
@@ -275,7 +276,7 @@ class CT_CoreProperties(BaseOxmlElement):
         element = self._get_or_add(prop_name)
         element.text = value
 
-    def _text_of_element(self, property_name):
+    def _text_of_element(self, property_name: str) -> str:
         """The text in the element matching `property_name`.
 
         The empty string if the element is not present or contains no text.

@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import functools
-from typing import Any, Callable, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, cast
+
+if TYPE_CHECKING:
+    from docx.oxml.xmlchemy import BaseOxmlElement
 
 
 class Length(int):
@@ -264,7 +267,7 @@ class ElementProxy(object):
     common type of class in python-docx other than custom element (oxml) classes.
     """
 
-    def __init__(self, element, parent=None):
+    def __init__(self, element: "BaseOxmlElement", parent=None):
         self._element = element
         self._parent = parent
 

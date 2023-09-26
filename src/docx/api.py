@@ -3,13 +3,16 @@
 Provides a syntactically more convenient API for interacting with the OpcPackage graph.
 """
 
+from __future__ import annotations
+
 import os
+from typing import IO
 
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 
 
-def Document(docx=None):
+def Document(docx: str | IO[bytes] | None = None):
     """Return a |Document| object loaded from `docx`, where `docx` can be either a path
     to a ``.docx`` file (a string) or a file-like object.
 

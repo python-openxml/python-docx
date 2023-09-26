@@ -1,20 +1,22 @@
 """Custom element classes related to paragraph properties (CT_PPr)."""
 
-from ...enum.text import (
+from __future__ import annotations
+
+from docx.enum.text import (
     WD_ALIGN_PARAGRAPH,
     WD_LINE_SPACING,
     WD_TAB_ALIGNMENT,
     WD_TAB_LEADER,
 )
-from ...shared import Length
-from ..simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
-from ..xmlchemy import (
+from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
+from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OneOrMore,
     OptionalAttribute,
     RequiredAttribute,
     ZeroOrOne,
 )
+from docx.shared import Length
 
 
 class CT_Ind(BaseOxmlElement):
@@ -148,12 +150,9 @@ class CT_PPr(BaseOxmlElement):
         ind.right = value
 
     @property
-    def jc_val(self):
-        """The value of the ``<w:jc>`` child element or |None| if not present."""
-        jc = self.jc
-        if jc is None:
-            return None
-        return jc.val
+    def jc_val(self) -> WD_ALIGN_PARAGRAPH | None:
+        """Value of the `<w:jc>` child element or |None| if not present."""
+        return self.jc.val if self.jc is not None else None
 
     @jc_val.setter
     def jc_val(self, value):

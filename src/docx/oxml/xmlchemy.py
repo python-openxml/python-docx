@@ -1,8 +1,12 @@
 """Enabling declarative definition of lxml custom element classes."""
 
+from __future__ import annotations
+
 import re
+from typing import Any, Callable, List
 
 from lxml import etree
+from lxml.etree import ElementBase
 
 from docx.oxml import OxmlElement
 from docx.oxml.exceptions import InvalidXmlError
@@ -615,6 +619,12 @@ class _OxmlElementBase(etree.ElementBase):
 
     __metaclass__ = MetaOxmlElement
 
+    append: Callable[[ElementBase], None]
+    find: Callable[[str], ElementBase | None]
+    findall: Callable[[str], List[ElementBase]]
+    remove: Callable[[ElementBase], None]
+    tag: str
+
     def __repr__(self):
         return "<%s '<%s>' at 0x%0x>" % (
             self.__class__.__name__,
@@ -622,7 +632,7 @@ class _OxmlElementBase(etree.ElementBase):
             id(self),
         )
 
-    def first_child_found_in(self, *tagnames):
+    def first_child_found_in(self, *tagnames: str) -> ElementBase | None:
         """First child with tag in `tagnames`, or None if not found."""
         for tagname in tagnames:
             child = self.find(qn(tagname))
@@ -630,7 +640,7 @@ class _OxmlElementBase(etree.ElementBase):
                 return child
         return None
 
-    def insert_element_before(self, elm, *tagnames):
+    def insert_element_before(self, elm: ElementBase, *tagnames: str):
         successor = self.first_child_found_in(*tagnames)
         if successor is not None:
             successor.addprevious(elm)
@@ -638,7 +648,7 @@ class _OxmlElementBase(etree.ElementBase):
             self.append(elm)
         return elm
 
-    def remove_all(self, *tagnames):
+    def remove_all(self, *tagnames: str) -> None:
         """Remove child elements with tagname (e.g. "a:p") in `tagnames`."""
         for tagname in tagnames:
             matching = self.findall(qn(tagname))
@@ -646,14 +656,16 @@ class _OxmlElementBase(etree.ElementBase):
                 self.remove(child)
 
     @property
-    def xml(self):
+    def xml(self) -> str:
         """XML string for this element, suitable for testing purposes.
 
         Pretty printed for readability and without an XML declaration at the top.
         """
         return serialize_for_reading(self)
 
-    def xpath(self, xpath_str):
+    def xpath(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self, xpath_str: str
+    ) -> Any:
         """Override of `lxml` _Element.xpath() method.
 
         Provides standard Open XML namespace mapping (`nsmap`) in centralized location.
@@ -661,7 +673,7 @@ class _OxmlElementBase(etree.ElementBase):
         return super(BaseOxmlElement, self).xpath(xpath_str, namespaces=nsmap)
 
     @property
-    def _nsptag(self):
+    def _nsptag(self) -> str:
         return NamespacePrefixedTag.from_clark_name(self.tag)
 
 

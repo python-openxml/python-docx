@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import ST_BrClear, ST_BrType
+from docx.oxml.text.font import CT_RPr
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 
 # ------------------------------------------------------------------------------------
@@ -85,7 +86,7 @@ class CT_R(BaseOxmlElement):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
 
-    def _insert_rPr(self, rPr):
+    def _insert_rPr(self, rPr: CT_RPr) -> CT_RPr:
         self.insert(0, rPr)
         return rPr
 

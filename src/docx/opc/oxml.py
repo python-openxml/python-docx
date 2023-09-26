@@ -27,8 +27,8 @@ nsmap = {
 # ===========================================================================
 
 
-def parse_xml(text):
-    """``etree.fromstring()`` replacement that uses oxml parser."""
+def parse_xml(text: str) -> etree._Element:  # pyright: ignore[reportPrivateUsage]
+    """`etree.fromstring()` replacement that uses oxml parser."""
     return etree.fromstring(text, oxml_parser)
 
 
