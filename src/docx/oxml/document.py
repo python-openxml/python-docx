@@ -52,13 +52,10 @@ class CT_Body(BaseOxmlElement):
         return sentinel_sectPr
 
     def clear_content(self):
+        """Remove all content child elements from this <w:body> element.
+
+        Leave the <w:sectPr> element if it is present.
         """
-        Remove all content child elements from this <w:body> element. Leave
-        the <w:sectPr> element if it is present.
-        """
-        if self.sectPr is not None:
-            content_elms = self[:-1]
-        else:
-            content_elms = self[:]
+        content_elms = self[:-1] if self.sectPr is not None else self[:]
         for content_elm in content_elms:
             self.remove(content_elm)

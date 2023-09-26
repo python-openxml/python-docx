@@ -516,10 +516,7 @@ class Describe_ParagraphStyle(object):
         style_elm = styles[style_names.index(style_name)]
         next_style_elm = styles[style_names.index(next_style_name)]
         style = _ParagraphStyle(style_elm)
-        if style_name == "H1":
-            next_style = _ParagraphStyle(next_style_elm)
-        else:
-            next_style = style
+        next_style = _ParagraphStyle(next_style_elm) if style_name == "H1" else style
         return style, next_style
 
     @pytest.fixture(

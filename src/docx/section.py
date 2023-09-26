@@ -383,10 +383,10 @@ class _Footer(_BaseHeaderFooter):
         self._document_part.drop_rel(rId)
 
     @property
-    def _has_definition(self):
+    def _has_definition(self) -> bool:
         """True if a footer is defined for this section."""
         footerReference = self._sectPr.get_footerReference(self._hdrftr_index)
-        return False if footerReference is None else True
+        return footerReference is not None
 
     @property
     def _prior_headerfooter(self):
@@ -427,10 +427,10 @@ class _Header(_BaseHeaderFooter):
         self._document_part.drop_header_part(rId)
 
     @property
-    def _has_definition(self):
+    def _has_definition(self) -> bool:
         """True if a header is explicitly defined for this section."""
         headerReference = self._sectPr.get_headerReference(self._hdrftr_index)
-        return False if headerReference is None else True
+        return headerReference is not None
 
     @property
     def _prior_headerfooter(self):

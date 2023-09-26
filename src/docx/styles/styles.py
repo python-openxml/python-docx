@@ -26,10 +26,7 @@ class Styles(ElementProxy):
         Enables `in` operator on style name.
         """
         internal_name = BabelFish.ui2internal(name)
-        for style in self._element.style_lst:
-            if style.name_val == internal_name:
-                return True
-        return False
+        return any(style.name_val == internal_name for style in self._element.style_lst)
 
     def __getitem__(self, key):
         """

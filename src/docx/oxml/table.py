@@ -327,14 +327,12 @@ class CT_TblPr(BaseOxmlElement):
 
     @property
     def autofit(self):
-        """
-        Return |False| if there is a ``<w:tblLayout>`` child with ``w:type``
-        attribute set to ``'fixed'``. Otherwise return |True|.
+        """|False| when there is a `w:tblLayout` child with `@w:type="fixed"`.
+
+        Otherwise |True|.
         """
         tblLayout = self.tblLayout
-        if tblLayout is None:
-            return True
-        return False if tblLayout.type == "fixed" else True
+        return True if tblLayout is None else tblLayout.type != "fixed"
 
     @autofit.setter
     def autofit(self, value):

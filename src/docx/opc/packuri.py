@@ -1,8 +1,6 @@
-# encoding: utf-8
+"""Provides the PackURI value type.
 
-"""
-Provides the PackURI value type along with some useful known pack URI strings
-such as PACKAGE_URI.
+Also some useful known pack URI strings such as PACKAGE_URI.
 """
 
 import posixpath
@@ -18,7 +16,7 @@ class PackURI(str):
     _filename_re = re.compile("([a-zA-Z]+)([1-9][0-9]*)?")
 
     def __new__(cls, pack_uri_str):
-        if not pack_uri_str[0] == "/":
+        if pack_uri_str[0] != "/":
             tmpl = "PackURI must begin with slash, got '%s'"
             raise ValueError(tmpl % pack_uri_str)
         return str.__new__(cls, pack_uri_str)
@@ -96,11 +94,7 @@ class PackURI(str):
         """
         # workaround for posixpath bug in 2.6, doesn't generate correct
         # relative path when *start* (second) parameter is root ('/')
-        if baseURI == "/":
-            relpath = self[1:]
-        else:
-            relpath = posixpath.relpath(self, baseURI)
-        return relpath
+        return self[1:] if baseURI == "/" else posixpath.relpath(self, baseURI)
 
     @property
     def rels_uri(self):

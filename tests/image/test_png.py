@@ -171,7 +171,7 @@ class Describe_Chunks(object):
 
     def it_provides_access_to_the_IHDR_chunk(self, IHDR_fixture):
         chunks, IHDR_chunk_ = IHDR_fixture
-        assert chunks.IHDR == IHDR_chunk_
+        assert IHDR_chunk_ == chunks.IHDR
 
     def it_provides_access_to_the_pHYs_chunk(self, pHYs_fixture):
         chunks, expected_chunk = pHYs_fixture

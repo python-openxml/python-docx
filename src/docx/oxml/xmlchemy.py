@@ -482,13 +482,8 @@ class Choice(_BaseChildElement):
 
     @property
     def _prop_name(self):
-        """
-        Calculate property name from tag name, e.g. a:schemeClr -> schemeClr.
-        """
-        if ":" in self._nsptagname:
-            start = self._nsptagname.index(":") + 1
-        else:
-            start = 0
+        """property name computed from tag name, e.g. a:schemeClr -> schemeClr."""
+        start = self._nsptagname.index(":") + 1 if ":" in self._nsptagname else 0
         return self._nsptagname[start:]
 
     @lazyproperty

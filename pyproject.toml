@@ -69,7 +69,7 @@ select = [
     "I",        # -- isort (imports) --
     "PLR0402",  # -- Name compared with itself like `foo == foo` --
     "PT",       # -- flake8-pytest-style --
-    # "SIM",      # -- flake8-simplify --
+    "SIM",      # -- flake8-simplify --
     "UP015",    # -- redundant `open()` mode parameter (like "r" is default) --
     "UP018",    # -- Unnecessary {literal_type} call like `str("abc")`. (rewrite as a literal) --
     "UP032",    # -- Use f-string instead of `.format()` call --

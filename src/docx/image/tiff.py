@@ -225,11 +225,8 @@ def _IfdEntryFactory(stream_rdr, offset):
         TIFF_FLD.RATIONAL: _RationalIfdEntry,
     }
     field_type = stream_rdr.read_short(offset, 2)
-    if field_type in ifd_entry_classes:
-        entry_cls = ifd_entry_classes[field_type]
-    else:
-        entry_cls = _IfdEntry
-    return entry_cls.from_stream(stream_rdr, offset)
+    EntryCls = ifd_entry_classes.get(field_type, _IfdEntry)
+    return EntryCls.from_stream(stream_rdr, offset)
 
 
 class _IfdEntry(object):
