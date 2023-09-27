@@ -3,8 +3,8 @@
 import pytest
 from lxml import etree
 
-from docx.oxml import OxmlElement, oxml_parser, parse_xml, register_element_cls
 from docx.oxml.ns import qn
+from docx.oxml.parser import OxmlElement, oxml_parser, parse_xml, register_element_cls
 from docx.oxml.shared import BaseOxmlElement
 
 

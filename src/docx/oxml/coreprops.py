@@ -4,8 +4,8 @@ import re
 from datetime import datetime, timedelta
 from typing import Any
 
-from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
+from docx.oxml.parser import parse_xml
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
 
 

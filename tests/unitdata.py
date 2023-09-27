@@ -1,7 +1,7 @@
 """Shared code for unit test data builders."""
 
-from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
+from docx.oxml.parser import parse_xml
 
 
 class BaseBuilder(object):

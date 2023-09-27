@@ -1,7 +1,7 @@
 """Objects shared by modules in the docx.oxml subpackage."""
 
-from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+from docx.oxml.parser import OxmlElement
 from docx.oxml.simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute
 

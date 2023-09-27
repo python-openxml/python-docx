@@ -8,9 +8,9 @@ from typing import Any, Callable, List
 from lxml import etree
 from lxml.etree import ElementBase
 
-from docx.oxml import OxmlElement
 from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import NamespacePrefixedTag, nsmap, qn
+from docx.oxml.parser import OxmlElement
 from docx.shared import lazyproperty
 
 

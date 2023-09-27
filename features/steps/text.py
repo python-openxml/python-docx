@@ -6,8 +6,8 @@ from behave import given, then, when
 
 from docx import Document
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
-from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
+from docx.oxml.parser import parse_xml
 from docx.text.font import Font
 from docx.text.run import Run
 

@@ -2,8 +2,8 @@
 
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from docx.exceptions import InvalidSpanError
-from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
+from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
     ST_Merge,
     ST_TblLayoutType,

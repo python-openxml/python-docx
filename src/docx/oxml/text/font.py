@@ -2,8 +2,8 @@
 
 from docx.enum.dml import MSO_THEME_COLOR
 from docx.enum.text import WD_COLOR, WD_UNDERLINE
-from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
+from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
     ST_HexColor,
     ST_HpsMeasure,

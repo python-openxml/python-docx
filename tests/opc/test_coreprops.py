@@ -5,7 +5,7 @@ from datetime import datetime
 import pytest
 
 from docx.opc.coreprops import CoreProperties
-from docx.oxml import parse_xml
+from docx.oxml.parser import parse_xml
 
 
 class DescribeCoreProperties(object):

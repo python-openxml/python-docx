@@ -9,7 +9,7 @@ from docx.enum.table import (
     WD_TABLE_ALIGNMENT,
     WD_TABLE_DIRECTION,
 )
-from docx.oxml import parse_xml
+from docx.oxml.parser import parse_xml
 from docx.oxml.table import CT_Tc
 from docx.parts.document import DocumentPart
 from docx.shared import Inches

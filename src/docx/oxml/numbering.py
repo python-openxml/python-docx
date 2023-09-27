@@ -1,6 +1,6 @@
 """Custom element classes related to the numbering part."""
 
-from docx.oxml import OxmlElement
+from docx.oxml.parser import OxmlElement
 from docx.oxml.shared import CT_DecimalNumber
 from docx.oxml.simpletypes import ST_DecimalNumber
 from docx.oxml.xmlchemy import (

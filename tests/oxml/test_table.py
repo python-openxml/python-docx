@@ -3,7 +3,7 @@
 import pytest
 
 from docx.exceptions import InvalidSpanError
-from docx.oxml import parse_xml
+from docx.oxml.parser import parse_xml
 from docx.oxml.table import CT_Row, CT_Tc
 
 from ..unitutil.cxml import element, xml

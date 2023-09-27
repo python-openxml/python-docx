@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
+from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
     ST_Coordinate,
     ST_DrawingElementId,

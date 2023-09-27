@@ -3,7 +3,7 @@
 import os
 
 from docx.opc.constants import CONTENT_TYPE as CT
-from docx.oxml import parse_xml
+from docx.oxml.parser import parse_xml
 from docx.parts.story import StoryPart
 
 

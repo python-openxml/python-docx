@@ -4,7 +4,7 @@ from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
 from docx.opc.rel import Relationships
 from docx.opc.shared import cls_method_fn, lazyproperty
-from docx.oxml import parse_xml
+from docx.oxml.parser import parse_xml
 
 
 class Part(object):
