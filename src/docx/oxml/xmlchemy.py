@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Callable, List
+from typing import Any, Callable, Dict, List, Tuple
 
 from lxml import etree
 from lxml.etree import ElementBase
 
 from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import NamespacePrefixedTag, nsmap, qn
-from docx.oxml.parser import OxmlElement
 from docx.shared import lazyproperty
 
 
@@ -84,7 +83,11 @@ class XmlString(str):
 class MetaOxmlElement(type):
     """Metaclass for BaseOxmlElement."""
 
-    def __init__(cls, clsname, bases, clsdict):
+    def __new__(cls, clsname: str, bases: Tuple[type, ...], clsdict: Dict[str, Any]):
+        bases = (*bases, etree.ElementBase)
+        return super().__new__(cls, clsname, bases, clsdict)
+
+    def __init__(cls, clsname: str, bases: Tuple[type, ...], clsdict: Dict[str, Any]):
         dispatchable = (
             OneAndOnlyOne,
             OneOrMore,
@@ -326,8 +329,8 @@ class _BaseChildElement(object):
 
     @property
     def _creator(self):
-        """Return a function object that creates a new, empty element of the right type,
-        having no attributes."""
+        """Callable that creates an empty element of the right type, with no attrs."""
+        from docx.oxml.parser import OxmlElement
 
         def new_child_element(obj):
             return OxmlElement(self._nsptagname)
@@ -609,21 +612,20 @@ class ZeroOrOneChoice(_BaseChildElement):
         return "_remove_%s" % self._prop_name
 
 
-class _OxmlElementBase(etree.ElementBase):
+class BaseOxmlElement(metaclass=MetaOxmlElement):
     """Effective base class for all custom element classes.
 
-    Adds standardized behavior to all classes in one place. Actual inheritance is from
-    BaseOxmlElement below, needed to manage Python 2-3 metaclass declaration
-    compatibility.
+    Adds standardized behavior to all classes in one place.
     """
-
-    __metaclass__ = MetaOxmlElement
 
     append: Callable[[ElementBase], None]
     find: Callable[[str], ElementBase | None]
     findall: Callable[[str], List[ElementBase]]
-    remove: Callable[[ElementBase], None]
+    getparent: Callable[[], BaseOxmlElement]
+    insert: Callable[[int, BaseOxmlElement], None]
+    remove: Callable[[BaseOxmlElement], None]
     tag: str
+    text: str | None
 
     def __repr__(self):
         return "<%s '<%s>' at 0x%0x>" % (
@@ -670,13 +672,8 @@ class _OxmlElementBase(etree.ElementBase):
 
         Provides standard Open XML namespace mapping (`nsmap`) in centralized location.
         """
-        return super(BaseOxmlElement, self).xpath(xpath_str, namespaces=nsmap)
+        return super().xpath(xpath_str, namespaces=nsmap)
 
     @property
     def _nsptag(self) -> str:
         return NamespacePrefixedTag.from_clark_name(self.tag)
-
-
-BaseOxmlElement = MetaOxmlElement(
-    "BaseOxmlElement", (etree.ElementBase,), dict(_OxmlElementBase.__dict__)
-)
