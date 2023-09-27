@@ -1,5 +1,7 @@
 """Custom element classes related to text runs (CT_R)."""
 
+from __future__ import annotations
+
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import ST_BrClear, ST_BrType
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
@@ -18,7 +20,7 @@ class CT_R(BaseOxmlElement):
     tab = ZeroOrMore("w:tab")
     drawing = ZeroOrMore("w:drawing")
 
-    def add_t(self, text):
+    def add_t(self, text: str) -> CT_Text:
         """Return a newly added `<w:t>` element containing `text`."""
         t = self._add_t(text=text)
         if len(text.strip()) < len(text):

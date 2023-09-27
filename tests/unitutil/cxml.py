@@ -28,13 +28,13 @@ from docx.oxml.ns import nsmap
 # ====================================================================
 
 
-def element(cxel_str):
+def element(cxel_str: str):
     """Return an oxml element parsed from the XML generated from `cxel_str`."""
     _xml = xml(cxel_str)
     return parse_xml(_xml)
 
 
-def xml(cxel_str):
+def xml(cxel_str: str) -> str:
     """Return the XML generated from `cxel_str`."""
     root_token = root_node.parseString(cxel_str)
     xml = root_token.element.xml

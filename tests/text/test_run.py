@@ -1,9 +1,14 @@
 """Test suite for the docx.text.run module."""
 
+from __future__ import annotations
+
+from typing import cast
+
 import pytest
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
 from docx.shape import InlineShape
 from docx.text.font import Font
@@ -64,9 +69,23 @@ class DescribeRun(object):
         assert run._r.xml == expected_xml
         assert _text is Text_.return_value
 
-    def it_can_add_a_break(self, add_break_fixture):
-        run, break_type, expected_xml = add_break_fixture
+    @pytest.mark.parametrize(
+        ("break_type", "expected_cxml"),
+        [
+            (WD_BREAK.LINE, "w:r/w:br"),
+            (WD_BREAK.PAGE, "w:r/w:br{w:type=page}"),
+            (WD_BREAK.COLUMN, "w:r/w:br{w:type=column}"),
+            (WD_BREAK.LINE_CLEAR_LEFT, "w:r/w:br{w:type=textWrapping, w:clear=left}"),
+            (WD_BREAK.LINE_CLEAR_RIGHT, "w:r/w:br{w:type=textWrapping, w:clear=right}"),
+            (WD_BREAK.LINE_CLEAR_ALL, "w:r/w:br{w:type=textWrapping, w:clear=all}"),
+        ],
+    )
+    def it_can_add_a_break(self, break_type: WD_BREAK, expected_cxml: str):
+        run = Run(element("w:r"), None)
+        expected_xml = xml(expected_cxml)
+
         run.add_break(break_type)
+
         assert run._r.xml == expected_xml
 
     def it_can_add_a_tab(self, add_tab_fixture):
@@ -91,8 +110,18 @@ class DescribeRun(object):
         assert run._r.xml == expected_xml
         assert _run is run
 
-    def it_knows_the_text_it_contains(self, text_get_fixture):
-        run, expected_text = text_get_fixture
+    @pytest.mark.parametrize(
+        ("r_cxml", "expected_text"),
+        [
+            ("w:r", ""),
+            ('w:r/w:t"foobar"', "foobar"),
+            ('w:r/(w:t"abc", w:tab, w:t"def", w:cr)', "abc\tdef\n"),
+            ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', "\nabcdef\t"),
+        ],
+    )
+    def it_knows_the_text_it_contains(self, r_cxml: str, expected_text: str):
+        r = cast(CT_R, element(r_cxml))
+        run = Run(r, None)  # pyright: ignore[reportGeneralTypeIssues]
         assert run.text == expected_text
 
     def it_can_replace_the_text_it_contains(self, text_set_fixture):
@@ -101,22 +130,6 @@ class DescribeRun(object):
         assert run._r.xml == expected_xml
 
     # fixtures -------------------------------------------------------
-
-    @pytest.fixture(
-        params=[
-            (WD_BREAK.LINE, "w:r/w:br"),
-            (WD_BREAK.PAGE, "w:r/w:br{w:type=page}"),
-            (WD_BREAK.COLUMN, "w:r/w:br{w:type=column}"),
-            (WD_BREAK.LINE_CLEAR_LEFT, "w:r/w:br{w:type=textWrapping, w:clear=left}"),
-            (WD_BREAK.LINE_CLEAR_RIGHT, "w:r/w:br{w:type=textWrapping, w:clear=right}"),
-            (WD_BREAK.LINE_CLEAR_ALL, "w:r/w:br{w:type=textWrapping, w:clear=all}"),
-        ]
-    )
-    def add_break_fixture(self, request):
-        break_type, expected_cxml = request.param
-        run = Run(element("w:r"), None)
-        expected_xml = xml(expected_cxml)
-        return run, break_type, expected_xml
 
     @pytest.fixture
     def add_picture_fixture(self, part_prop_, document_part_, InlineShape_, picture_):
@@ -246,19 +259,6 @@ class DescribeRun(object):
         part_prop_.return_value.get_style_id.return_value = style_id
         expected_xml = xml(expected_cxml)
         return run, value, expected_xml
-
-    @pytest.fixture(
-        params=[
-            ("w:r", ""),
-            ('w:r/w:t"foobar"', "foobar"),
-            ('w:r/(w:t"abc", w:tab, w:t"def", w:cr)', "abc\tdef\n"),
-            ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', "\nabcdef\t"),
-        ]
-    )
-    def text_get_fixture(self, request):
-        r_cxml, expected_text = request.param
-        run = Run(element(r_cxml), None)
-        return run, expected_text
 
     @pytest.fixture(
         params=[

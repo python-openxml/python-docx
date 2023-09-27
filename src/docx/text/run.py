@@ -128,18 +128,19 @@ class Run(Parented):
         self._r.style = style_id
 
     @property
-    def text(self):
-        """String formed by concatenating the text equivalent of each run content child
-        element into a Python string. Each ``<w:t>`` element adds the text characters it
-        contains. A ``<w:tab/>`` element adds a ``\\t`` character. A ``<w:cr/>`` or
-        ``<w:br>`` element each add a ``\\n`` character. Note that a ``<w:br>`` element
-        can indicate a page break or column break as well as a line break. All
-        ``<w:br>`` elements translate to a single ``\\n`` character regardless of their
-        type. All other content child elements, such as ``<w:drawing>``, are ignored.
+    def text(self) -> str:
+        """String formed by concatenating the text equivalent of each run.
 
-        Assigning text to this property has the reverse effect, translating each ``\\t``
-        character to a ``<w:tab/>`` element and each ``\\n`` or ``\\r`` character to a
-        ``<w:cr/>`` element. Any existing run content is replaced. Run formatting is
+        Each `<w:t>` element adds the text characters it contains. A `<w:tab/>` element
+        adds a `\\t` character. A `<w:cr/>` or `<w:br>` element each add a `\\n`
+        character. Note that a `<w:br>` element can indicate a page break or column
+        break as well as a line break. Only line-break `<w:br>` elements translate to
+        a `\\n` character. Others are ignored. All other content child elements, such as
+        `<w:drawing>`, are ignored.
+
+        Assigning text to this property has the reverse effect, translating each `\\t`
+        character to a `<w:tab/>` element and each `\\n` or `\\r` character to a
+        `<w:cr/>` element. Any existing run content is replaced. Run formatting is
         preserved.
         """
         return self._r.text

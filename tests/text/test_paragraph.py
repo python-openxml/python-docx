@@ -34,9 +34,23 @@ class DescribeParagraph(object):
         )
         assert paragraph._p.xml == expected_xml
 
-    def it_knows_the_text_it_contains(self, text_get_fixture):
-        paragraph, expected_text = text_get_fixture
-        assert paragraph.text == expected_text
+    @pytest.mark.parametrize(
+        ("p_cxml", "expected_value"),
+        [
+            ("w:p", ""),
+            ("w:p/w:r", ""),
+            ("w:p/w:r/w:t", ""),
+            ('w:p/w:r/w:t"foo"', "foo"),
+            ('w:p/w:r/(w:t"foo", w:t"bar")', "foobar"),
+            ('w:p/w:r/(w:t"fo ", w:t"bar")', "fo bar"),
+            ('w:p/w:r/(w:t"foo", w:tab, w:t"bar")', "foo\tbar"),
+            ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', "foo\nbar"),
+            ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', "foo\nbar"),
+        ],
+    )
+    def it_knows_the_text_it_contains(self, p_cxml: str, expected_value: str):
+        paragraph = Paragraph(element(p_cxml), None)
+        assert paragraph.text == expected_value
 
     def it_can_replace_the_text_it_contains(self, text_set_fixture):
         paragraph, text, expected_text = text_set_fixture
@@ -222,24 +236,6 @@ class DescribeParagraph(object):
         part_prop_.return_value.get_style_id.return_value = style_id
         expected_xml = xml(expected_cxml)
         return paragraph, value, expected_xml
-
-    @pytest.fixture(
-        params=[
-            ("w:p", ""),
-            ("w:p/w:r", ""),
-            ("w:p/w:r/w:t", ""),
-            ('w:p/w:r/w:t"foo"', "foo"),
-            ('w:p/w:r/(w:t"foo", w:t"bar")', "foobar"),
-            ('w:p/w:r/(w:t"fo ", w:t"bar")', "fo bar"),
-            ('w:p/w:r/(w:t"foo", w:tab, w:t"bar")', "foo\tbar"),
-            ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', "foo\nbar"),
-            ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', "foo\nbar"),
-        ]
-    )
-    def text_get_fixture(self, request):
-        p_cxml, expected_text_value = request.param
-        paragraph = Paragraph(element(p_cxml), None)
-        return paragraph, expected_text_value
 
     @pytest.fixture
     def text_set_fixture(self):
