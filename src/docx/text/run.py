@@ -22,10 +22,10 @@ class Run(Parented):
 
     def add_break(self, break_type=WD_BREAK.LINE):
         """
-        Add a break element of *break_type* to this run. *break_type* can
+        Add a break element of `break_type` to this run. `break_type` can
         take the values `WD_BREAK.LINE`, `WD_BREAK.PAGE`, and
         `WD_BREAK.COLUMN` where `WD_BREAK` is imported from `docx.enum.text`.
-        *break_type* defaults to `WD_BREAK.LINE`.
+        `break_type` defaults to `WD_BREAK.LINE`.
         """
         type_, clear = {
             WD_BREAK.LINE: (None, None),
@@ -44,8 +44,8 @@ class Run(Parented):
     def add_picture(self, image_path_or_stream, width=None, height=None):
         """
         Return an |InlineShape| instance containing the image identified by
-        *image_path_or_stream*, added to the end of this run.
-        *image_path_or_stream* can be a path (a string) or a file-like object
+        `image_path_or_stream`, added to the end of this run.
+        `image_path_or_stream` can be a path (a string) or a file-like object
         containing a binary image. If neither width nor height is specified,
         the picture appears at its native size. If only one is specified, it
         is used to compute a scaling factor that is then applied to the
@@ -68,7 +68,7 @@ class Run(Parented):
     def add_text(self, text):
         """
         Returns a newly appended |_Text| object (corresponding to a new
-        ``<w:t>`` child element) to the run, containing *text*. Compare with
+        ``<w:t>`` child element) to the run, containing `text`. Compare with
         the possibly more friendly approach of assigning text to the
         :attr:`Run.text` property.
         """

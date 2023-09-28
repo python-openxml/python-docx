@@ -125,7 +125,7 @@ access purposes.
 A style's :attr:`style_id` is used internally to key a content object such as
 a paragraph to its style. However this value is generated automatically by
 Word and is not guaranteed to be stable across saves. In general, the style
-id is formed simply by removing spaces from the *localized* style name,
+id is formed simply by removing spaces from the `localized` style name,
 however there are exceptions. Users of |docx| should generally avoid using
 the style id unless they are confident with the internals involved.
 
@@ -155,13 +155,13 @@ Style Behavior
 --------------
 
 In addition to collecting a set of formatting properties, a style has five
-properties that specify its *behavior*. This behavior is relatively simple,
+properties that specify its `behavior`. This behavior is relatively simple,
 basically amounting to when and where the style appears in the Word or
 LibreOffice UI.
 
 The key notion to understanding style behavior is the recommended list. In
 the style pane in Word, the user can select which list of styles they want to
-see. One of these is named *Recommended* and is known as the *recommended
+see. One of these is named `Recommended` and is known as the *recommended
 list*. All five behavior properties affect some aspect of the style’s
 appearance in this list and in the style gallery.
 

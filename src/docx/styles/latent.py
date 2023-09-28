@@ -33,7 +33,7 @@ class LatentStyles(ElementProxy):
         """
         Return a newly added |_LatentStyle| object to override the inherited
         defaults defined in this latent styles object for the built-in style
-        having *name*.
+        having `name`.
         """
         lsdException = self._element.add_lsdException()
         lsdException.name = BabelFish.ui2internal(name)

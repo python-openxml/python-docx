@@ -19,7 +19,7 @@ class Package(OpcPackage):
         self._gather_image_parts()
 
     def get_or_add_image_part(self, image_descriptor):
-        """Return |ImagePart| containing image specified by *image_descriptor*.
+        """Return |ImagePart| containing image specified by `image_descriptor`.
 
         The image-part is newly created if a matching one is not already present in the
         collection.
@@ -62,7 +62,7 @@ class ImageParts(object):
         self._image_parts.append(item)
 
     def get_or_add_image_part(self, image_descriptor):
-        """Return |ImagePart| object containing image identified by *image_descriptor*.
+        """Return |ImagePart| object containing image identified by `image_descriptor`.
 
         The image-part is newly created if a matching one is not present in the
         collection.
@@ -86,7 +86,7 @@ class ImageParts(object):
     def _get_by_sha1(self, sha1):
         """
         Return the image part in this collection having a SHA1 hash matching
-        *sha1*, or |None| if not found.
+        `sha1`, or |None| if not found.
         """
         for image_part in self._image_parts:
             if image_part.sha1 == sha1:
@@ -97,7 +97,7 @@ class ImageParts(object):
         """
         The next available image partname, starting from
         ``/word/media/image1.{ext}`` where unused numbers are reused. The
-        partname is unique by number, without regard to the extension. *ext*
+        partname is unique by number, without regard to the extension. `ext`
         does not include the leading period.
         """
 

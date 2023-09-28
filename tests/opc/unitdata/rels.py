@@ -17,7 +17,7 @@ class BaseBuilder(object):
         return parse_xml(self.xml)
 
     def with_indent(self, indent):
-        """Add integer *indent* spaces at beginning of element XML"""
+        """Add integer `indent` spaces at beginning of element XML"""
         self._indent = indent
         return self
 
@@ -74,12 +74,12 @@ class CT_DefaultBuilder(BaseBuilder):
         self._namespace = ' xmlns="%s"' % NS.OPC_CONTENT_TYPES
 
     def with_content_type(self, content_type):
-        """Set ContentType attribute to *content_type*"""
+        """Set ContentType attribute to `content_type`"""
         self._content_type = content_type
         return self
 
     def with_extension(self, extension):
-        """Set Extension attribute to *extension*"""
+        """Set Extension attribute to `extension`"""
         self._extension = extension
         return self
 
@@ -110,12 +110,12 @@ class CT_OverrideBuilder(BaseBuilder):
         self._partname = "/part/name.xml"
 
     def with_content_type(self, content_type):
-        """Set ContentType attribute to *content_type*"""
+        """Set ContentType attribute to `content_type`"""
         self._content_type = content_type
         return self
 
     def with_partname(self, partname):
-        """Set PartName attribute to *partname*"""
+        """Set PartName attribute to `partname`"""
         self._partname = partname
         return self
 
@@ -148,22 +148,22 @@ class CT_RelationshipBuilder(BaseBuilder):
         self._namespace = ' xmlns="%s"' % NS.OPC_RELATIONSHIPS
 
     def with_rId(self, rId):
-        """Set Id attribute to *rId*"""
+        """Set Id attribute to `rId`"""
         self._rId = rId
         return self
 
     def with_reltype(self, reltype):
-        """Set Type attribute to *reltype*"""
+        """Set Type attribute to `reltype`"""
         self._reltype = reltype
         return self
 
     def with_target(self, target):
-        """Set XXX attribute to *target*"""
+        """Set XXX attribute to `target`"""
         self._target = target
         return self
 
     def with_target_mode(self, target_mode):
-        """Set TargetMode attribute to *target_mode*"""
+        """Set TargetMode attribute to `target_mode`"""
         self._target_mode = None if target_mode == "Internal" else target_mode
         return self
 

@@ -17,7 +17,7 @@ class Table(Parented):
 
     def add_column(self, width):
         """
-        Return a |_Column| object of *width*, newly added rightmost to the
+        Return a |_Column| object of `width`, newly added rightmost to the
         table.
         """
         tblGrid = self._tbl.tblGrid
@@ -69,15 +69,15 @@ class Table(Parented):
 
     def cell(self, row_idx, col_idx):
         """
-        Return |_Cell| instance correponding to table cell at *row_idx*,
-        *col_idx* intersection, where (0, 0) is the top, left-most cell.
+        Return |_Cell| instance correponding to table cell at `row_idx`,
+        `col_idx` intersection, where (0, 0) is the top, left-most cell.
         """
         cell_idx = col_idx + (row_idx * self._column_count)
         return self._cells[cell_idx]
 
     def column_cells(self, column_idx):
         """
-        Sequence of cells in the column at *column_idx* in this table.
+        Sequence of cells in the column at `column_idx` in this table.
         """
         cells = self._cells
         idxs = range(column_idx, len(cells), self._column_count)
@@ -93,7 +93,7 @@ class Table(Parented):
 
     def row_cells(self, row_idx):
         """
-        Sequence of cells in the row at *row_idx* in this table.
+        Sequence of cells in the row at `row_idx` in this table.
         """
         column_count = self._column_count
         start = row_idx * column_count
@@ -192,13 +192,13 @@ class _Cell(BlockItemContainer):
     def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the content in this
-        cell. If present, *text* is added to the paragraph in a single run.
-        If specified, the paragraph style *style* is applied. If *style* is
+        cell. If present, `text` is added to the paragraph in a single run.
+        If specified, the paragraph style `style` is applied. If `style` is
         not specified or is |None|, the result is as though the 'Normal'
         style was applied. Note that the formatting of text in a cell can be
-        influenced by the table style. *text* can contain tab (``\\t``)
+        influenced by the table style. `text` can contain tab (``\\t``)
         characters, which are converted to the appropriate XML form for
-        a tab. *text* can also include newline (``\\n``) or carriage return
+        a tab. `text` can also include newline (``\\n``) or carriage return
         (``\\r``) characters, each of which is converted to a line break.
         """
         return super(_Cell, self).add_paragraph(text, style)
@@ -206,7 +206,7 @@ class _Cell(BlockItemContainer):
     def add_table(self, rows, cols):
         """
         Return a table newly added to this cell after any existing cell
-        content, having *rows* rows and *cols* columns. An empty paragraph is
+        content, having `rows` rows and `cols` columns. An empty paragraph is
         added after the table because Word requires a paragraph element as
         the last element in every cell.
         """
@@ -218,7 +218,7 @@ class _Cell(BlockItemContainer):
     def merge(self, other_cell):
         """
         Return a merged cell created by spanning the rectangular region
-        having this cell and *other_cell* as diagonal corners. Raises
+        having this cell and `other_cell` as diagonal corners. Raises
         |InvalidSpanError| if the cells do not define a rectangular region.
         """
         tc, tc_2 = self._tc, other_cell._tc
@@ -253,7 +253,7 @@ class _Cell(BlockItemContainer):
     @text.setter
     def text(self, text):
         """
-        Write-only. Set entire contents of cell to the string *text*. Any
+        Write-only. Set entire contents of cell to the string `text`. Any
         existing content or revisions are replaced.
         """
         tc = self._tc

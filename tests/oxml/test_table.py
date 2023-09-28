@@ -365,7 +365,7 @@ class DescribeCT_Tc(object):
 
     def _snippet_tbl(self, idx):
         """
-        Return a <w:tbl> element for snippet at *idx* in 'tbl-cells' snippet
+        Return a <w:tbl> element for snippet at `idx` in 'tbl-cells' snippet
         file.
         """
         return parse_xml(snippet_seq("tbl-cells")[idx])

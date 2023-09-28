@@ -310,8 +310,8 @@ class CT_PPr(BaseOxmlElement):
     @style.setter
     def style(self, style):
         """
-        Set val attribute of <w:pStyle> child element to *style*, adding a
-        new element if necessary. If *style* is |None|, remove the <w:pStyle>
+        Set val attribute of <w:pStyle> child element to `style`, adding a
+        new element if necessary. If `style` is |None|, remove the <w:pStyle>
         element if present.
         """
         if style is None:
@@ -367,7 +367,7 @@ class CT_TabStops(BaseOxmlElement):
 
     def insert_tab_in_order(self, pos, align, leader):
         """
-        Insert a newly created `w:tab` child element in *pos* order.
+        Insert a newly created `w:tab` child element in `pos` order.
         """
         new_tab = self._new_tab()
         new_tab.pos, new_tab.val, new_tab.leader = pos, align, leader

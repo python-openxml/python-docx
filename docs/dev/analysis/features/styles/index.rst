@@ -11,7 +11,7 @@ Styles
    character-style
    latent-styles
 
-Word supports the definition of *styles* to allow a group of formatting
+Word supports the definition of `styles` to allow a group of formatting
 properties to be easily and consistently applied to a paragraph, run, table,
 or numbering scheme, all at once. The mechanism is similar to how Cascading
 Style Sheets (CSS) works with HTML.

@@ -28,7 +28,7 @@ class Image(object):
     def from_blob(cls, blob):
         """
         Return a new |Image| subclass instance parsed from the image binary
-        contained in *blob*.
+        contained in `blob`.
         """
         stream = io.BytesIO(blob)
         return cls._from_stream(stream, blob)
@@ -37,7 +37,7 @@ class Image(object):
     def from_file(cls, image_descriptor):
         """
         Return a new |Image| subclass instance loaded from the image file
-        identified by *image_descriptor*, a path or file-like object.
+        identified by `image_descriptor`, a path or file-like object.
         """
         if isinstance(image_descriptor, str):
             path = image_descriptor
@@ -134,12 +134,12 @@ class Image(object):
     def scaled_dimensions(self, width=None, height=None):
         """
         Return a (cx, cy) 2-tuple representing the native dimensions of this
-        image scaled by applying the following rules to *width* and *height*.
-        If both *width* and *height* are specified, the return value is
-        (*width*, *height*); no scaling is performed. If only one is
+        image scaled by applying the following rules to `width` and `height`.
+        If both `width` and `height` are specified, the return value is
+        (`width`, `height`); no scaling is performed. If only one is
         specified, it is used to compute a scaling factor that is then
         applied to the unspecified dimension, preserving the aspect ratio of
-        the image. If both *width* and *height* are |None|, the native
+        the image. If both `width` and `height` are |None|, the native
         dimensions are returned. The native dimensions are calculated using
         the dots-per-inch (dpi) value embedded in the image, defaulting to 72
         dpi if no value is specified, as is often the case. The returned
@@ -169,7 +169,7 @@ class Image(object):
     def _from_stream(cls, stream, blob, filename=None):
         """
         Return an instance of the |Image| subclass corresponding to the
-        format of the image in *stream*.
+        format of the image in `stream`.
         """
         image_header = _ImageHeaderFactory(stream)
         if filename is None:
@@ -180,7 +180,7 @@ class Image(object):
 def _ImageHeaderFactory(stream):
     """
     Return a |BaseImageHeader| subclass instance that knows how to parse the
-    headers of the image in *stream*.
+    headers of the image in `stream`.
     """
     from docx.image import SIGNATURES
 

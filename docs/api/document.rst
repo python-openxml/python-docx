@@ -50,68 +50,68 @@ if that behavior is desired.
 
    .. attribute:: author
 
-      *string* -- An entity primarily responsible for making the content of the
+      `string` -- An entity primarily responsible for making the content of the
       resource.
 
    .. attribute:: category
 
-      *string* -- A categorization of the content of this package. Example
+      `string` -- A categorization of the content of this package. Example
       values might include: Resume, Letter, Financial Forecast, Proposal,
       or Technical Presentation.
 
    .. attribute:: comments
 
-      *string* -- An account of the content of the resource.
+      `string` -- An account of the content of the resource.
 
    .. attribute:: content_status
 
-      *string* -- completion status of the document, e.g. 'draft'
+      `string` -- completion status of the document, e.g. 'draft'
 
    .. attribute:: created
 
-      *datetime* -- time of intial creation of the document
+      `datetime` -- time of intial creation of the document
 
    .. attribute:: identifier
 
-      *string* -- An unambiguous reference to the resource within a given
+      `string` -- An unambiguous reference to the resource within a given
       context, e.g. ISBN.
 
    .. attribute:: keywords
 
-      *string* -- descriptive words or short phrases likely to be used as
+      `string` -- descriptive words or short phrases likely to be used as
       search terms for this document
 
    .. attribute:: language
 
-      *string* -- language the document is written in
+      `string` -- language the document is written in
 
    .. attribute:: last_modified_by
 
-      *string* -- name or other identifier (such as email address) of person
+      `string` -- name or other identifier (such as email address) of person
       who last modified the document
 
    .. attribute:: last_printed
 
-      *datetime* -- time the document was last printed
+      `datetime` -- time the document was last printed
 
    .. attribute:: modified
 
-      *datetime* -- time the document was last modified
+      `datetime` -- time the document was last modified
 
    .. attribute:: revision
 
-      *int* -- number of this revision, incremented by Word each time the
+      `int` -- number of this revision, incremented by Word each time the
       document is saved. Note however |docx| does not automatically increment
       the revision number when it saves a document.
 
    .. attribute:: subject
 
-      *string* -- The topic of the content of the resource.
+      `string` -- The topic of the content of the resource.
 
    .. attribute:: title
 
-      *string* -- The name given to the resource.
+      `string` -- The name given to the resource.
 
    .. attribute:: version
 
-      *string* -- free-form version string
+      `string` -- free-form version string

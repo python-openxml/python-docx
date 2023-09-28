@@ -16,7 +16,7 @@ There are six behavior properties:
 
 hidden
     Style operates to assign formatting properties, but does not appear in
-    the UI under any circumstances. Used for *internal* styles assigned by an
+    the UI under any circumstances. Used for `internal` styles assigned by an
     application that should not be under the control of an end-user.
 
 priority
@@ -98,10 +98,10 @@ semi-hidden
 -----------
 
 The `w:semiHidden` element specifies visibility of the style in the so-called
-*main* user interface. For Word, this means the style gallery and the
+`main` user interface. For Word, this means the style gallery and the
 recommended, styles-in-use, and in-current-document lists. The all-styles
 list and current-style dropdown in the styles pane would then be considered
-part of an *advanced* user interface.
+part of an `advanced` user interface.
 
 Behavior
 ~~~~~~~~

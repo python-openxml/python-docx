@@ -189,7 +189,7 @@ or over a network and don't want to get the filesystem involved.
 Image size
 ~~~~~~~~~~
 
-By default, the added image appears at *native* size. This is often bigger than
+By default, the added image appears at `native` size. This is often bigger than
 you want. Native size is calculated as ``pixels / dpi``. So a 300x300 pixel
 image having 300 dpi resolution appears in a one inch square. The problem is
 most images don't contain a dpi property and it defaults to 72 dpi. This would
@@ -250,7 +250,7 @@ a little about what goes on inside a paragraph. The short version is this:
    height, tabs, and so forth.
 
 #. Character-level formatting, such as bold and italic, are applied at the
-   *run* level. All content within a paragraph must be within a run, but there
+   `run` level. All content within a paragraph must be within a run, but there
    can be more than one. So a paragraph with a bold word in the middle would
    need three runs, a normal one, a bold one containing the word, and another
    normal one for the text after.
@@ -310,7 +310,7 @@ settings. In general you can think of a character style as specifying a font,
 including its typeface, size, color, bold, italic, etc.
 
 Like paragraph styles, a character style must already be defined in the
-document you open with the ``Document()`` call (*see*
+document you open with the ``Document()`` call (`see`
 :ref:`understanding_styles`).
 
 A character style can be specified when adding a new run::

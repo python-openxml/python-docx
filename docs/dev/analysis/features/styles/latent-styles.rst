@@ -132,7 +132,7 @@ The `w:latentStyles` element used in the default Word 2011 template::
 Latent style behavior
 ---------------------
 
-* A style has two categories of attribute, *behavioral* and *formatting*.
+* A style has two categories of attribute, `behavioral` and `formatting`.
   Behavioral attributes specify where and when the style should appear in the
   user interface. Behavioral attributes can be specified for latent styles
   using the ``<w:latentStyles>`` element and its ``<w:lsdException>`` child
@@ -157,14 +157,14 @@ Latent style behavior
   value is 0 if not specified.
 
 * **semiHidden**. The `semiHidden` attribute causes the style to be excluded
-  from the recommended list. The notion of *semi* in this context is that
+  from the recommended list. The notion of `semi` in this context is that
   while the style is hidden from the recommended list, it still appears in
   the "All Styles" list. This attribute is removed on first application of
   the style if an `unhideWhenUsed` attribute set |True| is also present.
 
 * **unhideWhenUsed**. The `unhideWhenUsed` attribute causes any `semiHidden`
   attribute to be removed when the style is first applied to content. Word
-  does *not* remove the `semiHidden` attribute just because there exists an
+  does `not` remove the `semiHidden` attribute just because there exists an
   object in the document having that style. The `unhideWhenUsed` attribute is
   not removed along with the `semiHidden` attribute when the style is
   applied.

@@ -62,7 +62,7 @@ A baseline regular run::
     </w:r>
   </w:p>
 
-Adding *Emphasis* character style::
+Adding `Emphasis` character style::
 
   <w:p>
     <w:r>

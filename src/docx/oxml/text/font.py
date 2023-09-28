@@ -208,8 +208,8 @@ class CT_RPr(BaseOxmlElement):
     @style.setter
     def style(self, style):
         """
-        Set val attribute of <w:rStyle> child element to *style*, adding a
-        new element if necessary. If *style* is |None|, remove the <w:rStyle>
+        Set val attribute of <w:rStyle> child element to `style`, adding a
+        new element if necessary. If `style` is |None|, remove the <w:rStyle>
         element if present.
         """
         if style is None:
@@ -305,7 +305,7 @@ class CT_RPr(BaseOxmlElement):
 
     def _get_bool_val(self, name):
         """
-        Return the value of the boolean child element having *name*, e.g.
+        Return the value of the boolean child element having `name`, e.g.
         'b', 'i', and 'smallCaps'.
         """
         element = getattr(self, name)

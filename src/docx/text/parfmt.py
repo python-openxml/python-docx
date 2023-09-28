@@ -264,10 +264,10 @@ class ParagraphFormat(ElementProxy):
     def _line_spacing(spacing_line, spacing_lineRule):
         """
         Return the line spacing value calculated from the combination of
-        *spacing_line* and *spacing_lineRule*. Returns a |float| number of
-        lines when *spacing_lineRule* is ``WD_LINE_SPACING.MULTIPLE``,
+        `spacing_line` and `spacing_lineRule`. Returns a |float| number of
+        lines when `spacing_lineRule` is ``WD_LINE_SPACING.MULTIPLE``,
         otherwise a |Length| object of absolute line height is returned.
-        Returns |None| when *spacing_line* is |None|.
+        Returns |None| when `spacing_line` is |None|.
         """
         if spacing_line is None:
             return None
@@ -279,7 +279,7 @@ class ParagraphFormat(ElementProxy):
     def _line_spacing_rule(line, lineRule):
         """
         Return the line spacing rule value calculated from the combination of
-        *line* and *lineRule*. Returns special members of the
+        `line` and `lineRule`. Returns special members of the
         :ref:`WdLineSpacing` enumeration when line spacing is single, double,
         or 1.5 lines.
         """

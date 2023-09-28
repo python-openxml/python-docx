@@ -41,7 +41,7 @@ class Exif(Jpeg):
     def from_stream(cls, stream):
         """
         Return |Exif| instance having header properties parsed from Exif
-        image in *stream*.
+        image in `stream`.
         """
         markers = _JfifMarkers.from_stream(stream)
         # print('\n%s' % markers)
@@ -63,7 +63,7 @@ class Jfif(Jpeg):
     def from_stream(cls, stream):
         """
         Return a |Jfif| instance having header properties parsed from image
-        in *stream*.
+        in `stream`.
         """
         markers = _JfifMarkers.from_stream(stream)
 
@@ -110,7 +110,7 @@ class _JfifMarkers(object):
     def from_stream(cls, stream):
         """
         Return a |_JfifMarkers| instance containing a |_JfifMarker| subclass
-        instance for each marker in *stream*.
+        instance for each marker in `stream`.
         """
         marker_parser = _MarkerParser.from_stream(stream)
         markers = []
@@ -165,7 +165,7 @@ class _MarkerParser(object):
     def from_stream(cls, stream):
         """
         Return a |_MarkerParser| instance to parse JFIF markers from
-        *stream*.
+        `stream`.
         """
         stream_reader = StreamReader(stream, BIG_ENDIAN)
         return cls(stream_reader)
@@ -173,7 +173,7 @@ class _MarkerParser(object):
     def iter_markers(self):
         """
         Generate a (marker_code, segment_offset) 2-tuple for each marker in
-        the JPEG *stream*, in the order they occur in the stream.
+        the JPEG `stream`, in the order they occur in the stream.
         """
         marker_finder = _MarkerFinder.from_stream(self._stream)
         start = 0
@@ -197,15 +197,15 @@ class _MarkerFinder(object):
     @classmethod
     def from_stream(cls, stream):
         """
-        Return a |_MarkerFinder| instance to find JFIF markers in *stream*.
+        Return a |_MarkerFinder| instance to find JFIF markers in `stream`.
         """
         return cls(stream)
 
     def next(self, start):
         """
         Return a (marker_code, segment_offset) 2-tuple identifying and
-        locating the first marker in *stream* occuring after offset *start*.
-        The returned *segment_offset* points to the position immediately
+        locating the first marker in `stream` occuring after offset `start`.
+        The returned `segment_offset` points to the position immediately
         following the 2-byte marker code, the start of the marker segment,
         for those markers that have a segment.
         """
@@ -225,9 +225,9 @@ class _MarkerFinder(object):
 
     def _next_non_ff_byte(self, start):
         """
-        Return an offset, byte 2-tuple for the next byte in *stream* that is
-        not '\xFF', starting with the byte at offset *start*. If the byte at
-        offset *start* is not '\xFF', *start* and the returned *offset* will
+        Return an offset, byte 2-tuple for the next byte in `stream` that is
+        not '\xFF', starting with the byte at offset `start`. If the byte at
+        offset `start` is not '\xFF', `start` and the returned `offset` will
         be the same.
         """
         self._stream.seek(start)
@@ -239,8 +239,8 @@ class _MarkerFinder(object):
 
     def _offset_of_next_ff_byte(self, start):
         """
-        Return the offset of the next '\xFF' byte in *stream* starting with
-        the byte at offset *start*. Returns *start* if the byte at that
+        Return the offset of the next '\xFF' byte in `stream` starting with
+        the byte at offset `start`. Returns `start` if the byte at that
         offset is a hex 255; it does not necessarily advance in the stream.
         """
         self._stream.seek(start)
@@ -263,8 +263,8 @@ class _MarkerFinder(object):
 
 def _MarkerFactory(marker_code, stream, offset):
     """
-    Return |_Marker| or subclass instance appropriate for marker at *offset*
-    in *stream* having *marker_code*.
+    Return |_Marker| or subclass instance appropriate for marker at `offset`
+    in `stream` having `marker_code`.
     """
     if marker_code == JPEG_MARKER_CODE.APP0:
         marker_cls = _App0Marker
@@ -292,8 +292,8 @@ class _Marker(object):
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
-        Return a generic |_Marker| instance for the marker at *offset* in
-        *stream* having *marker_code*.
+        Return a generic |_Marker| instance for the marker at `offset` in
+        `stream` having `marker_code`.
         """
         if JPEG_MARKER_CODE.is_standalone(marker_code):
             segment_length = 0
@@ -356,7 +356,7 @@ class _App0Marker(_Marker):
 
     def _dpi(self, density):
         """
-        Return dots per inch corresponding to *density* value.
+        Return dots per inch corresponding to `density` value.
         """
         if self._density_units == 1:
             dpi = density
@@ -369,8 +369,8 @@ class _App0Marker(_Marker):
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
-        Return an |_App0Marker| instance for the APP0 marker at *offset* in
-        *stream*.
+        Return an |_App0Marker| instance for the APP0 marker at `offset` in
+        `stream`.
         """
         # field               off  type   notes
         # ------------------  ---  -----  -------------------
@@ -405,7 +405,7 @@ class _App1Marker(_Marker):
     def from_stream(cls, stream, marker_code, offset):
         """
         Extract the horizontal and vertical dots-per-inch value from the APP1
-        header at *offset* in *stream*.
+        header at `offset` in `stream`.
         """
         # field                 off  len  type   notes
         # --------------------  ---  ---  -----  ----------------------------
@@ -440,7 +440,7 @@ class _App1Marker(_Marker):
     @classmethod
     def _is_non_Exif_APP1_segment(cls, stream, offset):
         """
-        Return True if the APP1 segment at *offset* in *stream* is NOT an
+        Return True if the APP1 segment at `offset` in `stream` is NOT an
         Exif segment, as determined by the ``'Exif\x00\x00'`` signature at
         offset 2 in the segment.
         """
@@ -452,7 +452,7 @@ class _App1Marker(_Marker):
     def _tiff_from_exif_segment(cls, stream, offset, segment_length):
         """
         Return a |Tiff| instance parsed from the Exif APP1 segment of
-        *segment_length* at *offset* in *stream*.
+        `segment_length` at `offset` in `stream`.
         """
         # wrap full segment in its own stream and feed to Tiff()
         stream.seek(offset + 8)
@@ -474,7 +474,7 @@ class _SofMarker(_Marker):
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
         """
-        Return an |_SofMarker| instance for the SOFn marker at *offset* in
+        Return an |_SofMarker| instance for the SOFn marker at `offset` in
         stream.
         """
         # field                 off  type   notes

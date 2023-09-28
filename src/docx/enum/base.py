@@ -163,7 +163,7 @@ class EnumerationBase(object):
     @classmethod
     def validate(cls, value):
         """
-        Raise |ValueError| if *value* is not an assignable value.
+        Raise |ValueError| if `value` is not an assignable value.
         """
         if value not in cls._valid_settings:
             raise ValueError(
@@ -187,7 +187,7 @@ class XmlEnumeration(Enumeration):
     def from_xml(cls, xml_val):
         """
         Return the enumeration member corresponding to the XML value
-        *xml_val*.
+        `xml_val`.
         """
         if xml_val not in cls._xml_to_member:
             raise InvalidXmlError(
@@ -198,7 +198,7 @@ class XmlEnumeration(Enumeration):
     @classmethod
     def to_xml(cls, enum_val):
         """
-        Return the XML value of the enumeration value *enum_val*.
+        Return the XML value of the enumeration value `enum_val`.
         """
         if enum_val not in cls._member_to_xml:
             raise ValueError(
@@ -222,7 +222,7 @@ class EnumMember(object):
 
     def add_to_enum(self, clsdict):
         """
-        Add a name to *clsdict* for this member.
+        Add a name to `clsdict` for this member.
         """
         self.register_name(clsdict)
 
@@ -245,7 +245,7 @@ class EnumMember(object):
 
     def register_name(self, clsdict):
         """
-        Add a member name to the class dict *clsdict* containing the value of
+        Add a member name to the class dict `clsdict` containing the value of
         this member object. Where the name of this object is None, do
         nothing; this allows out-of-band values to be defined without adding
         a name to the class dict.

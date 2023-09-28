@@ -361,7 +361,7 @@ class Describe_ContentTypeMap(object):
 
     def _xml_from(self, entries):
         """
-        Return XML for a [Content_Types].xml based on items in *entries*.
+        Return XML for a [Content_Types].xml based on items in `entries`.
         """
         types_bldr = a_Types().with_nsdecls()
         for entry in entries:

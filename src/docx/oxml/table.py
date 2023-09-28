@@ -43,7 +43,7 @@ class CT_Row(BaseOxmlElement):
 
     def tc_at_grid_col(self, idx):
         """
-        The ``<w:tc>`` element appearing at grid column *idx*. Raises
+        The ``<w:tc>`` element appearing at grid column `idx`. Raises
         |ValueError| if no ``w:tc`` element begins at that grid column.
         """
         grid_col = 0
@@ -158,8 +158,8 @@ class CT_Tbl(BaseOxmlElement):
     @classmethod
     def new_tbl(cls, rows, cols, width):
         """
-        Return a new `w:tbl` element having *rows* rows and *cols* columns
-        with *width* distributed evenly between the columns.
+        Return a new `w:tbl` element having `rows` rows and `cols` columns
+        with `width` distributed evenly between the columns.
         """
         return parse_xml(cls._tbl_xml(rows, cols, width))
 
@@ -178,7 +178,7 @@ class CT_Tbl(BaseOxmlElement):
     def tblStyle_val(self, styleId):
         """
         Set the value of `w:tblPr/w:tblStyle/@w:val` (a table style id) to
-        *styleId*. If *styleId* is None, remove the `w:tblStyle` element.
+        `styleId`. If `styleId` is None, remove the `w:tblStyle` element.
         """
         tblPr = self.tblPr
         tblPr._remove_tblStyle()
@@ -458,7 +458,7 @@ class CT_Tc(BaseOxmlElement):
         """
         Return the top-left ``<w:tc>`` element of a new span formed by
         merging the rectangular region defined by using this tc element and
-        *other_tc* as diagonal corners.
+        `other_tc` as diagonal corners.
         """
         top, left, height, width = self._span_dimensions(other_tc)
         top_tc = self._tbl.tr_lst[top].tc_at_grid_col(left)
@@ -526,8 +526,8 @@ class CT_Tc(BaseOxmlElement):
 
     def _add_width_of(self, other_tc):
         """
-        Add the width of *other_tc* to this cell. Does nothing if either this
-        tc or *other_tc* does not have a specified width.
+        Add the width of `other_tc` to this cell. Does nothing if either this
+        tc or `other_tc` does not have a specified width.
         """
         if self.width and other_tc.width:
             self.width += other_tc.width
@@ -544,7 +544,7 @@ class CT_Tc(BaseOxmlElement):
 
     def _grow_to(self, width, height, top_tc=None):
         """
-        Grow this cell to *width* grid columns and *height* rows by expanding
+        Grow this cell to `width` grid columns and `height` rows by expanding
         horizontal spans and creating continuation cells to form vertical
         spans.
         """
@@ -585,7 +585,7 @@ class CT_Tc(BaseOxmlElement):
 
     def _move_content_to(self, other_tc):
         """
-        Append the content of this cell to *other_tc*, leaving this cell with
+        Append the content of this cell to `other_tc`, leaving this cell with
         a single empty ``<w:p>`` element.
         """
         if other_tc is self:
@@ -634,7 +634,7 @@ class CT_Tc(BaseOxmlElement):
     def _span_dimensions(self, other_tc):
         """
         Return a (top, left, height, width) 4-tuple specifying the extents of
-        the merged cell formed by using this tc and *other_tc* as opposite
+        the merged cell formed by using this tc and `other_tc` as opposite
         corner extents.
         """
 
@@ -666,13 +666,13 @@ class CT_Tc(BaseOxmlElement):
     def _span_to_width(self, grid_width, top_tc, vMerge):
         """
         Incorporate and then remove `w:tc` elements to the right of this one
-        until this cell spans *grid_width*. Raises |ValueError| if
-        *grid_width* cannot be exactly achieved, such as when a merged cell
-        would drive the span width greater than *grid_width* or if not enough
+        until this cell spans `grid_width`. Raises |ValueError| if
+        `grid_width` cannot be exactly achieved, such as when a merged cell
+        would drive the span width greater than `grid_width` or if not enough
         grid columns are available to make this cell that wide. All content
-        from incorporated cells is appended to *top_tc*. The val attribute of
-        the vMerge element on the single remaining cell is set to *vMerge*.
-        If *vMerge* is |None|, the vMerge element is removed if present.
+        from incorporated cells is appended to `top_tc`. The val attribute of
+        the vMerge element on the single remaining cell is set to `vMerge`.
+        If `vMerge` is |None|, the vMerge element is removed if present.
         """
         self._move_content_to(top_tc)
         while self.grid_span < grid_width:
@@ -684,10 +684,10 @@ class CT_Tc(BaseOxmlElement):
         Extend the horizontal span of this `w:tc` element to incorporate the
         following `w:tc` element in the row and then delete that following
         `w:tc` element. Any content in the following `w:tc` element is
-        appended to the content of *top_tc*. The width of the following
+        appended to the content of `top_tc`. The width of the following
         `w:tc` element is added to this one, if present. Raises
         |InvalidSpanError| if the width of the resulting cell is greater than
-        *grid_width* or if there is no next `<w:tc>` element in the row.
+        `grid_width` or if there is no next `<w:tc>` element in the row.
         """
 
         def raise_on_invalid_swallow(next_tc):

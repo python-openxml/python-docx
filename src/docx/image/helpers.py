@@ -9,7 +9,7 @@ LITTLE_ENDIAN = "<"
 class StreamReader(object):
     """
     Wraps a file-like object to provide access to structured data from a
-    binary file. Byte-order is configurable. *base_offset* is added to any
+    binary file. Byte-order is configurable. `base_offset` is added to any
     base value provided to calculate actual location for reads.
     """
 
@@ -28,7 +28,7 @@ class StreamReader(object):
     def read_byte(self, base, offset=0):
         """
         Return the int value of the byte at the file position defined by
-        self._base_offset + *base* + *offset*. If *base* is None, the byte is
+        self._base_offset + `base` + `offset`. If `base` is None, the byte is
         read from the current position in the stream.
         """
         fmt = "B"
@@ -37,7 +37,7 @@ class StreamReader(object):
     def read_long(self, base, offset=0):
         """
         Return the int value of the four bytes at the file position defined by
-        self._base_offset + *base* + *offset*. If *base* is None, the long is
+        self._base_offset + `base` + `offset`. If `base` is None, the long is
         read from the current position in the stream. The endian setting of
         this instance is used to interpret the byte layout of the long.
         """
@@ -47,15 +47,15 @@ class StreamReader(object):
     def read_short(self, base, offset=0):
         """
         Return the int value of the two bytes at the file position determined
-        by *base* and *offset*, similarly to ``read_long()`` above.
+        by `base` and `offset`, similarly to ``read_long()`` above.
         """
         fmt = b"<H" if self._byte_order is LITTLE_ENDIAN else b">H"
         return self._read_int(fmt, base, offset)
 
     def read_str(self, char_count, base, offset=0):
         """
-        Return a string containing the *char_count* bytes at the file
-        position determined by self._base_offset + *base* + *offset*.
+        Return a string containing the `char_count` bytes at the file
+        position determined by self._base_offset + `base` + `offset`.
         """
 
         def str_struct(char_count):

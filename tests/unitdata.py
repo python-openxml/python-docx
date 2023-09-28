@@ -56,7 +56,7 @@ class BaseBuilder(object):
 
     def with_child(self, child_bldr):
         """
-        Cause new child element specified by *child_bldr* to be appended to
+        Cause new child element specified by `child_bldr` to be appended to
         the children of this element.
         """
         self._child_bldrs.append(child_bldr)
@@ -64,7 +64,7 @@ class BaseBuilder(object):
 
     def with_text(self, text):
         """
-        Cause *text* to be placed between the start and end tags of this
+        Cause `text` to be placed between the start and end tags of this
         element. Not robust enough for mixed elements, intended only for
         elements having no child elements.
         """

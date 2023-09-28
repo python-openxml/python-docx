@@ -26,16 +26,16 @@ class CT_Num(BaseOxmlElement):
     def add_lvlOverride(self, ilvl):
         """
         Return a newly added CT_NumLvl (<w:lvlOverride>) element having its
-        ``ilvl`` attribute set to *ilvl*.
+        ``ilvl`` attribute set to `ilvl`.
         """
         return self._add_lvlOverride(ilvl=ilvl)
 
     @classmethod
     def new(cls, num_id, abstractNum_id):
         """
-        Return a new ``<w:num>`` element having numId of *num_id* and having
+        Return a new ``<w:num>`` element having numId of `num_id` and having
         a ``<w:abstractNumId>`` child with val attribute set to
-        *abstractNum_id*.
+        `abstractNum_id`.
         """
         num = OxmlElement("w:num")
         num.numId = num_id
@@ -56,7 +56,7 @@ class CT_NumLvl(BaseOxmlElement):
     def add_startOverride(self, val):
         """
         Return a newly added CT_DecimalNumber element having tagname
-        ``w:startOverride`` and ``val`` attribute set to *val*.
+        ``w:startOverride`` and ``val`` attribute set to `val`.
         """
         return self._add_startOverride(val=val)
 
@@ -73,7 +73,7 @@ class CT_NumPr(BaseOxmlElement):
     # @ilvl.setter
     # def _set_ilvl(self, val):
     #     """
-    #     Get or add a <w:ilvl> child and set its ``w:val`` attribute to *val*.
+    #     Get or add a <w:ilvl> child and set its ``w:val`` attribute to `val`.
     #     """
     #     ilvl = self.get_or_add_ilvl()
     #     ilvl.val = val
@@ -82,7 +82,7 @@ class CT_NumPr(BaseOxmlElement):
     # def numId(self, val):
     #     """
     #     Get or add a <w:numId> child and set its ``w:val`` attribute to
-    #     *val*.
+    #     `val`.
     #     """
     #     numId = self.get_or_add_numId()
     #     numId.val = val
@@ -99,7 +99,7 @@ class CT_Numbering(BaseOxmlElement):
     def add_num(self, abstractNum_id):
         """
         Return a newly added CT_Num (<w:num>) element referencing the
-        abstract numbering definition identified by *abstractNum_id*.
+        abstract numbering definition identified by `abstractNum_id`.
         """
         next_num_id = self._next_numId
         num = CT_Num.new(next_num_id, abstractNum_id)
@@ -108,7 +108,7 @@ class CT_Numbering(BaseOxmlElement):
     def num_having_numId(self, numId):
         """
         Return the ``<w:num>`` child element having ``numId`` attribute
-        matching *numId*.
+        matching `numId`.
         """
         xpath = './w:num[@w:numId="%d"]' % numId
         try:

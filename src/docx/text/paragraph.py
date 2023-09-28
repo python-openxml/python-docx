@@ -15,10 +15,10 @@ class Paragraph(Parented):
 
     def add_run(self, text=None, style=None):
         """
-        Append a run to this paragraph containing *text* and having character
-        style identified by style ID *style*. *text* can contain tab
+        Append a run to this paragraph containing `text` and having character
+        style identified by style ID `style`. `text` can contain tab
         (``\\t``) characters, which are converted to the appropriate XML form
-        for a tab. *text* can also include newline (``\\n``) or carriage
+        for a tab. `text` can also include newline (``\\n``) or carriage
         return (``\\r``) characters, each of which is converted to a line
         break.
         """
@@ -56,8 +56,8 @@ class Paragraph(Parented):
     def insert_paragraph_before(self, text=None, style=None):
         """
         Return a newly created paragraph, inserted directly before this
-        paragraph. If *text* is supplied, the new paragraph contains that
-        text in a single run. If *style* is provided, that style is assigned
+        paragraph. If `text` is supplied, the new paragraph contains that
+        text in a single run. If `style` is provided, that style is assigned
         to the new paragraph.
         """
         paragraph = self._insert_paragraph_before()

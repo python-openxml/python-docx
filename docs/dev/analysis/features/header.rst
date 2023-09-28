@@ -10,15 +10,15 @@ a section title or page number. Such a header is also known as a running head.
 
 A page footer is analogous in every way to a page header except that it appears at the
 bottom of a page. It should not be confused with a footnote, which is not uniform
-between pages. For brevity's sake, the term *header* is often used here to refer to what
+between pages. For brevity's sake, the term `header` is often used here to refer to what
 may be either a header or footer object, trusting the reader to understand its
 applicability to both object types.
 
 In book-printed documents, where pages are printed on both sides, when opened, the front
-or *recto* side of each page appears to the right of the bound edge and the back or
-*verso* side of each page appears on the left. The first printed page receives the
+or `recto` side of each page appears to the right of the bound edge and the back or
+`verso` side of each page appears on the left. The first printed page receives the
 page-number "1", and is always a recto page. Because pages are numbered consecutively,
-each recto page receives an *odd* page number and each verso page receives an *even*
+each recto page receives an `odd` page number and each verso page receives an `even`
 page number.
 
 The header appearing on a recto page often differs from that on a verso page. Supporting

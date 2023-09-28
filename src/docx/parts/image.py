@@ -55,8 +55,8 @@ class ImagePart(Part):
     @classmethod
     def from_image(cls, image, partname):
         """
-        Return an |ImagePart| instance newly created from *image* and
-        assigned *partname*.
+        Return an |ImagePart| instance newly created from `image` and
+        assigned `partname`.
         """
         return ImagePart(partname, image.content_type, image.blob, image)
 

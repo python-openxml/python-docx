@@ -25,7 +25,7 @@ class PackURI(str):
     def from_rel_ref(baseURI, relative_ref):
         """
         Return a |PackURI| instance containing the absolute pack URI formed by
-        translating *relative_ref* onto *baseURI*.
+        translating `relative_ref` onto `baseURI`.
         """
         joined_uri = posixpath.join(baseURI, relative_ref)
         abs_uri = posixpath.abspath(joined_uri)
@@ -89,11 +89,11 @@ class PackURI(str):
     def relative_ref(self, baseURI):
         """
         Return string containing relative reference to package item from
-        *baseURI*. E.g. PackURI('/ppt/slideLayouts/slideLayout1.xml') would
+        `baseURI`. E.g. PackURI('/ppt/slideLayouts/slideLayout1.xml') would
         return '../slideLayouts/slideLayout1.xml' for baseURI '/ppt/slides'.
         """
         # workaround for posixpath bug in 2.6, doesn't generate correct
-        # relative path when *start* (second) parameter is root ('/')
+        # relative path when `start` (second) parameter is root ('/')
         return self[1:] if baseURI == "/" else posixpath.relpath(self, baseURI)
 
     @property

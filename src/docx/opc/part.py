@@ -59,7 +59,7 @@ class Part(object):
 
     def drop_rel(self, rId):
         """
-        Remove the relationship identified by *rId* if its reference count
+        Remove the relationship identified by `rId` if its reference count
         is less than 2. Relationships with a reference count of 0 are
         implicit relationships.
         """
@@ -72,9 +72,9 @@ class Part(object):
 
     def load_rel(self, reltype, target, rId, is_external=False):
         """
-        Return newly added |_Relationship| instance of *reltype* between this
-        part and *target* with key *rId*. Target mode is set to
-        ``RTM.EXTERNAL`` if *is_external* is |True|. Intended for use during
+        Return newly added |_Relationship| instance of `reltype` between this
+        part and `target` with key `rId`. Target mode is set to
+        ``RTM.EXTERNAL`` if `is_external` is |True|. Intended for use during
         load from a serialized package, where the rId is well-known. Other
         methods exist for adding a new relationship to a part when
         manipulating a part.
@@ -105,7 +105,7 @@ class Part(object):
 
     def part_related_by(self, reltype):
         """
-        Return part to which this part has a relationship of *reltype*.
+        Return part to which this part has a relationship of `reltype`.
         Raises |KeyError| if no such relationship is found and |ValueError|
         if more than one such relationship is found. Provides ability to
         resolve implicitly related part, such as Slide -> SlideLayout.
@@ -114,7 +114,7 @@ class Part(object):
 
     def relate_to(self, target, reltype, is_external=False):
         """
-        Return rId key of relationship of *reltype* to *target*, from an
+        Return rId key of relationship of `reltype` to `target`, from an
         existing relationship if there is one, otherwise a newly created one.
         """
         if is_external:
@@ -142,7 +142,7 @@ class Part(object):
     def target_ref(self, rId):
         """
         Return URL contained in target ref of relationship identified by
-        *rId*.
+        `rId`.
         """
         rel = self.rels[rId]
         return rel.target_ref
@@ -150,7 +150,7 @@ class Part(object):
     def _rel_ref_count(self, rId):
         """
         Return the count of references in this part's XML to the relationship
-        identified by *rId*.
+        identified by `rId`.
         """
         rIds = self._element.xpath("//@r:id")
         return len([_rId for _rId in rIds if _rId == rId])
@@ -186,9 +186,9 @@ class PartFactory(object):
     @classmethod
     def _part_cls_for(cls, content_type):
         """
-        Return the custom part class registered for *content_type*, or the
+        Return the custom part class registered for `content_type`, or the
         default part class if no custom class is registered for
-        *content_type*.
+        `content_type`.
         """
         if content_type in cls.part_type_for:
             return cls.part_type_for[content_type]

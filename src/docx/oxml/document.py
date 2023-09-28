@@ -38,7 +38,7 @@ class CT_Body(BaseOxmlElement):
 
         A copy of the previously-last `w:sectPr` will now appear in a new `w:p` at the
         end of the document. The returned `w:sectPr` is the sentinel `w:sectPr` for the
-        document (and as implemented, *is* the prior sentinel `w:sectPr` with headers
+        document (and as implemented, `is` the prior sentinel `w:sectPr` with headers
         and footers removed).
         """
         # ---get the sectPr at file-end, which controls last section (sections[-1])---

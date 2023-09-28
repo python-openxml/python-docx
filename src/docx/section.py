@@ -133,7 +133,7 @@ class Section(object):
         """
         |Length| object representing the page gutter size in English Metric
         Units for all pages in this section. The page gutter is extra spacing
-        added to the *inner* margin to ensure even margins after page
+        added to the `inner` margin to ensure even margins after page
         binding.
         """
         return self._sectPr.gutter

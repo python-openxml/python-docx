@@ -53,9 +53,9 @@ class Styles(ElementProxy):
 
     def add_style(self, name, style_type, builtin=False):
         """
-        Return a newly added style object of *style_type* and identified
-        by *name*. A builtin style can be defined by passing True for the
-        optional *builtin* argument.
+        Return a newly added style object of `style_type` and identified
+        by `name`. A builtin style can be defined by passing True for the
+        optional `builtin` argument.
         """
         style_name = BabelFish.ui2internal(name)
         if style_name in self:
@@ -65,7 +65,7 @@ class Styles(ElementProxy):
 
     def default(self, style_type):
         """
-        Return the default style for *style_type* or |None| if no default is
+        Return the default style for `style_type` or |None| if no default is
         defined for that type (not common).
         """
         style = self._element.default_for(style_type)
@@ -74,10 +74,10 @@ class Styles(ElementProxy):
         return StyleFactory(style)
 
     def get_by_id(self, style_id, style_type):
-        """Return the style of *style_type* matching *style_id*.
+        """Return the style of `style_type` matching `style_id`.
 
-        Returns the default for *style_type* if *style_id* is not found or is |None|, or
-        if the style having *style_id* is not of *style_type*.
+        Returns the default for `style_type` if `style_id` is not found or is |None|, or
+        if the style having `style_id` is not of `style_type`.
         """
         if style_id is None:
             return self.default(style_type)
@@ -85,12 +85,12 @@ class Styles(ElementProxy):
 
     def get_style_id(self, style_or_name, style_type):
         """
-        Return the id of the style corresponding to *style_or_name*, or
-        |None| if *style_or_name* is |None|. If *style_or_name* is not
-        a style object, the style is looked up using *style_or_name* as
+        Return the id of the style corresponding to `style_or_name`, or
+        |None| if `style_or_name` is |None|. If `style_or_name` is not
+        a style object, the style is looked up using `style_or_name` as
         a style name, raising |ValueError| if no style with that name is
         defined. Raises |ValueError| if the target style is not of
-        *style_type*.
+        `style_type`.
         """
         if style_or_name is None:
             return None
@@ -111,9 +111,9 @@ class Styles(ElementProxy):
 
     def _get_by_id(self, style_id, style_type):
         """
-        Return the style of *style_type* matching *style_id*. Returns the
-        default for *style_type* if *style_id* is not found or if the style
-        having *style_id* is not of *style_type*.
+        Return the style of `style_type` matching `style_id`. Returns the
+        default for `style_type` if `style_id` is not found or if the style
+        having `style_id` is not of `style_type`.
         """
         style = self._element.get_by_id(style_id)
         if style is None or style.type != style_type:
@@ -122,17 +122,17 @@ class Styles(ElementProxy):
 
     def _get_style_id_from_name(self, style_name, style_type):
         """
-        Return the id of the style of *style_type* corresponding to
-        *style_name*. Returns |None| if that style is the default style for
-        *style_type*. Raises |ValueError| if the named style is not found in
-        the document or does not match *style_type*.
+        Return the id of the style of `style_type` corresponding to
+        `style_name`. Returns |None| if that style is the default style for
+        `style_type`. Raises |ValueError| if the named style is not found in
+        the document or does not match `style_type`.
         """
         return self._get_style_id_from_style(self[style_name], style_type)
 
     def _get_style_id_from_style(self, style, style_type):
         """
-        Return the id of *style*, or |None| if it is the default style of
-        *style_type*. Raises |ValueError| if style is not of *style_type*.
+        Return the id of `style`, or |None| if it is the default style of
+        `style_type`. Raises |ValueError| if style is not of `style_type`.
         """
         if style.type != style_type:
             raise ValueError(

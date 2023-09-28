@@ -28,7 +28,7 @@ class Tiff(BaseImageHeader):
     def from_stream(cls, stream):
         """
         Return a |Tiff| instance containing the properties of the TIFF image
-        in *stream*.
+        in `stream`.
         """
         parser = _TiffParser.parse(stream)
 
@@ -54,7 +54,7 @@ class _TiffParser(object):
     def parse(cls, stream):
         """
         Return an instance of |_TiffParser| containing the properties parsed
-        from the TIFF image in *stream*.
+        from the TIFF image in `stream`.
         """
         stream_rdr = cls._make_stream_reader(stream)
         ifd0_offset = stream_rdr.read_long(4)
@@ -101,7 +101,7 @@ class _TiffParser(object):
     def _detect_endian(cls, stream):
         """
         Return either BIG_ENDIAN or LITTLE_ENDIAN depending on the endian
-        indicator found in the TIFF *stream* header, either 'MM' or 'II'.
+        indicator found in the TIFF `stream` header, either 'MM' or 'II'.
         """
         stream.seek(0)
         endian_str = stream.read(2)
@@ -109,7 +109,7 @@ class _TiffParser(object):
 
     def _dpi(self, resolution_tag):
         """
-        Return the dpi value calculated for *resolution_tag*, which can be
+        Return the dpi value calculated for `resolution_tag`, which can be
         either TIFF_TAG.X_RESOLUTION or TIFF_TAG.Y_RESOLUTION. The
         calculation is based on the values of both that tag and the
         TIFF_TAG.RESOLUTION_UNIT tag in this parser's |_IfdEntries| instance.
@@ -136,7 +136,7 @@ class _TiffParser(object):
     @classmethod
     def _make_stream_reader(cls, stream):
         """
-        Return a |StreamReader| instance with wrapping *stream* and having
+        Return a |StreamReader| instance with wrapping `stream` and having
         "endian-ness" determined by the 'MM' or 'II' indicator in the TIFF
         stream header.
         """
@@ -169,8 +169,8 @@ class _IfdEntries(object):
     @classmethod
     def from_stream(cls, stream, offset):
         """
-        Return a new |_IfdEntries| instance parsed from *stream* starting at
-        *offset*.
+        Return a new |_IfdEntries| instance parsed from `stream` starting at
+        `offset`.
         """
         ifd_parser = _IfdParser(stream, offset)
         entries = {e.tag: e.value for e in ifd_parser.iter_entries()}
@@ -178,8 +178,8 @@ class _IfdEntries(object):
 
     def get(self, tag_code, default=None):
         """
-        Return value of IFD entry having tag matching *tag_code*, or
-        *default* if no matching tag found.
+        Return value of IFD entry having tag matching `tag_code`, or
+        `default` if no matching tag found.
         """
         return self._entries.get(tag_code, default)
 
@@ -216,7 +216,7 @@ class _IfdParser(object):
 def _IfdEntryFactory(stream_rdr, offset):
     """
     Return an |_IfdEntry| subclass instance containing the value of the
-    directory entry at *offset* in *stream_rdr*.
+    directory entry at `offset` in `stream_rdr`.
     """
     ifd_entry_classes = {
         TIFF_FLD.ASCII: _AsciiIfdEntry,
@@ -244,7 +244,7 @@ class _IfdEntry(object):
     def from_stream(cls, stream_rdr, offset):
         """
         Return an |_IfdEntry| subclass instance containing the tag and value
-        of the tag parsed from *stream_rdr* at *offset*. Note this method is
+        of the tag parsed from `stream_rdr` at `offset`. Note this method is
         common to all subclasses. Override the ``_parse_value()`` method to
         provide distinctive behavior based on field type.
         """
@@ -257,7 +257,7 @@ class _IfdEntry(object):
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
-        Return the value of this field parsed from *stream_rdr* at *offset*.
+        Return the value of this field parsed from `stream_rdr` at `offset`.
         Intended to be overridden by subclasses.
         """
         return "UNIMPLEMENTED FIELD TYPE"  # pragma: no cover
@@ -285,9 +285,9 @@ class _AsciiIfdEntry(_IfdEntry):
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
-        Return the ASCII string parsed from *stream_rdr* at *value_offset*.
+        Return the ASCII string parsed from `stream_rdr` at `value_offset`.
         The length of the string, including a terminating '\x00' (NUL)
-        character, is in *value_count*.
+        character, is in `value_count`.
         """
         return stream_rdr.read_str(value_count - 1, value_offset)
 
@@ -300,7 +300,7 @@ class _ShortIfdEntry(_IfdEntry):
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
-        Return the short int value contained in the *value_offset* field of
+        Return the short int value contained in the `value_offset` field of
         this entry. Only supports single values at present.
         """
         if value_count == 1:
@@ -317,7 +317,7 @@ class _LongIfdEntry(_IfdEntry):
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
-        Return the long int value contained in the *value_offset* field of
+        Return the long int value contained in the `value_offset` field of
         this entry. Only supports single values at present.
         """
         if value_count == 1:
@@ -334,8 +334,8 @@ class _RationalIfdEntry(_IfdEntry):
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
         """
-        Return the rational (numerator / denominator) value at *value_offset*
-        in *stream_rdr* as a floating-point number. Only supports single
+        Return the rational (numerator / denominator) value at `value_offset`
+        in `stream_rdr` as a floating-point number. Only supports single
         values at present.
         """
         if value_count == 1:

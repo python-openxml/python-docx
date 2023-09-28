@@ -2,8 +2,8 @@
 Shapes (in general)
 ===================
 
-A graphical object that appears in a Word document is known as a *shape*.
-A shape can be *inline* or *floating*. An inline shape appears on a text
+A graphical object that appears in a Word document is known as a `shape`.
+A shape can be `inline` or `floating`. An inline shape appears on a text
 baseline as though it were a character glyph and affects the line height.
 A floating shape appears at an arbitrary location on the document and text may
 wrap around it. Several types of shape can be placed, including a picture, a

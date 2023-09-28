@@ -28,7 +28,7 @@ class Png(BaseImageHeader):
     def from_stream(cls, stream):
         """
         Return a |Png| instance having header properties parsed from image in
-        *stream*.
+        `stream`.
         """
         parser = _PngParser.parse(stream)
 
@@ -54,7 +54,7 @@ class _PngParser(object):
     def parse(cls, stream):
         """
         Return a |_PngParser| instance containing the header properties
-        parsed from the PNG image in *stream*.
+        parsed from the PNG image in `stream`.
         """
         chunks = _Chunks.from_stream(stream)
         return cls(chunks)
@@ -100,8 +100,8 @@ class _PngParser(object):
     @staticmethod
     def _dpi(units_specifier, px_per_unit):
         """
-        Return dots per inch value calculated from *units_specifier* and
-        *px_per_unit*.
+        Return dots per inch value calculated from `units_specifier` and
+        `px_per_unit`.
         """
         if units_specifier == 1 and px_per_unit:
             return int(round(px_per_unit * 0.0254))
@@ -120,7 +120,7 @@ class _Chunks(object):
     @classmethod
     def from_stream(cls, stream):
         """
-        Return a |_Chunks| instance containing the PNG chunks in *stream*.
+        Return a |_Chunks| instance containing the PNG chunks in `stream`.
         """
         chunk_parser = _ChunkParser.from_stream(stream)
         chunks = list(chunk_parser.iter_chunks())
@@ -148,7 +148,7 @@ class _Chunks(object):
     def _find_first(self, match):
         """
         Return first chunk in stream order returning True for function
-        *match*.
+        `match`.
         """
         for chunk in self._chunks:
             if match(chunk):
@@ -169,7 +169,7 @@ class _ChunkParser(object):
     def from_stream(cls, stream):
         """
         Return a |_ChunkParser| instance that can extract the chunks from the
-        PNG image in *stream*.
+        PNG image in `stream`.
         """
         stream_rdr = StreamReader(stream, BIG_ENDIAN)
         return cls(stream_rdr)
@@ -203,8 +203,8 @@ class _ChunkParser(object):
 
 def _ChunkFactory(chunk_type, stream_rdr, offset):
     """
-    Return a |_Chunk| subclass instance appropriate to *chunk_type* parsed
-    from *stream_rdr* at *offset*.
+    Return a |_Chunk| subclass instance appropriate to `chunk_type` parsed
+    from `stream_rdr` at `offset`.
     """
     chunk_cls_map = {
         PNG_CHUNK_TYPE.IHDR: _IHDRChunk,
@@ -253,7 +253,7 @@ class _IHDRChunk(_Chunk):
     def from_offset(cls, chunk_type, stream_rdr, offset):
         """
         Return an _IHDRChunk instance containing the image dimensions
-        extracted from the IHDR chunk in *stream* at *offset*.
+        extracted from the IHDR chunk in `stream` at `offset`.
         """
         px_width = stream_rdr.read_long(offset)
         px_height = stream_rdr.read_long(offset, 4)
@@ -283,7 +283,7 @@ class _pHYsChunk(_Chunk):
     def from_offset(cls, chunk_type, stream_rdr, offset):
         """
         Return a _pHYsChunk instance containing the image resolution
-        extracted from the pHYs chunk in *stream* at *offset*.
+        extracted from the pHYs chunk in `stream` at `offset`.
         """
         horz_px_per_unit = stream_rdr.read_long(offset)
         vert_px_per_unit = stream_rdr.read_long(offset, 4)

@@ -388,7 +388,7 @@ class Font(ElementProxy):
 
     def _get_bool_prop(self, name):
         """
-        Return the value of boolean child of `w:rPr` having *name*.
+        Return the value of boolean child of `w:rPr` having `name`.
         """
         rPr = self._element.rPr
         if rPr is None:
@@ -397,7 +397,7 @@ class Font(ElementProxy):
 
     def _set_bool_prop(self, name, value):
         """
-        Assign *value* to the boolean child *name* of `w:rPr`.
+        Assign `value` to the boolean child `name` of `w:rPr`.
         """
         rPr = self._element.get_or_add_rPr()
         rPr._set_bool_val(name, value)

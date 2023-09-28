@@ -10,7 +10,7 @@ spacing, space before and after, and widow/orphan control.
 Alignment (justification)
 -------------------------
 
-In Word, each paragraph has an *alignment* attribute that specifies how to
+In Word, each paragraph has an `alignment` attribute that specifies how to
 justify the lines of the paragraph when the paragraph is laid out on the
 page. Common values are left, right, centered, and justified.
 
@@ -45,7 +45,7 @@ Paragraph spacing
 
 Spacing between subsequent paragraphs is controlled by the paragraph spacing
 attributes. Spacing can be applied either before the paragraph, after it, or
-both. The concept is similar to that of *padding* or *margin* in CSS.
+both. The concept is similar to that of `padding` or `margin` in CSS.
 WordprocessingML supports paragraph spacing specified as either a length
 value or as a multiple of the line height; however only a length value is
 supported via the Word UI. Inter-paragraph spacing "overlaps", such that the

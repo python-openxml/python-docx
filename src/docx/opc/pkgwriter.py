@@ -14,7 +14,7 @@ from docx.opc.spec import default_content_types
 
 class PackageWriter(object):
     """
-    Writes a zip-format OPC package to *pkg_file*, where *pkg_file* can be
+    Writes a zip-format OPC package to `pkg_file`, where `pkg_file` can be
     either a path to a zip file (a string) or a file-like object. Its single
     API method, :meth:`write`, is static, so this class is not intended to
     be instantiated.
@@ -23,8 +23,8 @@ class PackageWriter(object):
     @staticmethod
     def write(pkg_file, pkg_rels, parts):
         """
-        Write a physical package (.pptx file) to *pkg_file* containing
-        *pkg_rels* and *parts* and a content types stream based on the
+        Write a physical package (.pptx file) to `pkg_file` containing
+        `pkg_rels` and `parts` and a content types stream based on the
         content types of the parts.
         """
         phys_writer = PhysPkgWriter(pkg_file)
@@ -37,7 +37,7 @@ class PackageWriter(object):
     def _write_content_types_stream(phys_writer, parts):
         """
         Write ``[Content_Types].xml`` part to the physical package with an
-        appropriate content type lookup target for each part in *parts*.
+        appropriate content type lookup target for each part in `parts`.
         """
         cti = _ContentTypesItem.from_parts(parts)
         phys_writer.write(CONTENT_TYPES_URI, cti.blob)
@@ -45,7 +45,7 @@ class PackageWriter(object):
     @staticmethod
     def _write_parts(phys_writer, parts):
         """
-        Write the blob of each part in *parts* to the package, along with a
+        Write the blob of each part in `parts` to the package, along with a
         rels item for its relationships if and only if it has any.
         """
         for part in parts:
@@ -56,7 +56,7 @@ class PackageWriter(object):
     @staticmethod
     def _write_pkg_rels(phys_writer, pkg_rels):
         """
-        Write the XML rels item for *pkg_rels* ('/_rels/.rels') to the
+        Write the XML rels item for `pkg_rels` ('/_rels/.rels') to the
         package.
         """
         phys_writer.write(PACKAGE_URI.rels_uri, pkg_rels.xml)
@@ -85,7 +85,7 @@ class _ContentTypesItem(object):
     @classmethod
     def from_parts(cls, parts):
         """
-        Return content types XML mapping each part in *parts* to the
+        Return content types XML mapping each part in `parts` to the
         appropriate content type and suitable for storage as
         ``[Content_Types].xml`` in an OPC package.
         """
@@ -98,7 +98,7 @@ class _ContentTypesItem(object):
 
     def _add_content_type(self, partname, content_type):
         """
-        Add a content type for the part with *partname* and *content_type*,
+        Add a content type for the part with `partname` and `content_type`,
         using a default or override as appropriate.
         """
         ext = partname.ext

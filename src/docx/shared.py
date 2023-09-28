@@ -204,7 +204,7 @@ class ElementProxy(object):
     def __eq__(self, other):
         """
         Return |True| if this proxy object refers to the same oxml element as
-        does *other*. ElementProxy objects are value objects and should
+        does `other`. ElementProxy objects are value objects and should
         maintain no mutable local state. Equality for proxy objects is
         defined as referring to the same XML element, whether or not they are
         the same proxy object instance.

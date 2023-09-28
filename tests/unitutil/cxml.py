@@ -29,13 +29,13 @@ from docx.oxml.ns import nsmap
 
 
 def element(cxel_str):
-    """Return an oxml element parsed from the XML generated from *cxel_str*."""
+    """Return an oxml element parsed from the XML generated from `cxel_str`."""
     _xml = xml(cxel_str)
     return parse_xml(_xml)
 
 
 def xml(cxel_str):
-    """Return the XML generated from *cxel_str*."""
+    """Return the XML generated from `cxel_str`."""
     root_token = root_node.parseString(cxel_str)
     xml = root_token.element.xml
     return xml
@@ -47,7 +47,7 @@ def xml(cxel_str):
 
 
 def nsdecls(*nspfxs):
-    """Namespace-declaration including each of *nspfxs*, in the order specified."""
+    """Namespace-declaration including each of `nspfxs`, in the order specified."""
     nsdecls = ""
     for nspfx in nspfxs:
         nsdecls += ' xmlns:%s="%s"' % (nspfx, nsmap[nspfx])
@@ -76,7 +76,7 @@ class Element(object):
 
     def connect_children(self, child_node_list):
         """
-        Make each of the elements appearing in *child_node_list* a child of
+        Make each of the elements appearing in `child_node_list` a child of
         this element.
         """
         for node in child_node_list:
@@ -158,7 +158,7 @@ class Element(object):
     def _xml(self, indent):
         """
         Return a string containing the XML of this element and all its
-        children with a starting indent of *indent* spaces.
+        children with a starting indent of `indent` spaces.
         """
         self._indent_str = " " * indent
         xml = self._start_tag

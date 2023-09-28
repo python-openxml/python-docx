@@ -21,7 +21,7 @@ class TabStops(ElementProxy):
 
     def __delitem__(self, idx):
         """
-        Remove the tab at offset *idx* in this sequence.
+        Remove the tab at offset `idx` in this sequence.
         """
         tabs = self._pPr.tabs
         try:
@@ -62,13 +62,13 @@ class TabStops(ElementProxy):
         self, position, alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES
     ):
         """
-        Add a new tab stop at *position*, a |Length| object specifying the
+        Add a new tab stop at `position`, a |Length| object specifying the
         location of the tab stop relative to the paragraph edge. A negative
-        *position* value is valid and appears in hanging indentation. Tab
+        `position` value is valid and appears in hanging indentation. Tab
         alignment defaults to left, but may be specified by passing a member
-        of the :ref:`WdTabAlignment` enumeration as *alignment*. An optional
+        of the :ref:`WdTabAlignment` enumeration as `alignment`. An optional
         leader character can be specified by passing a member of the
-        :ref:`WdTabLeader` enumeration as *leader*.
+        :ref:`WdTabLeader` enumeration as `leader`.
         """
         tabs = self._pPr.get_or_add_tabs()
         tab = tabs.insert_tab_in_order(position, alignment, leader)

@@ -12,7 +12,7 @@ header is also known as a *running head*.
 
 A *page footer* is analogous in every way to a page header except that it appears at the
 bottom of a page. It should not be confused with a footnote, which is not uniform
-between pages. For brevity's sake, the term *header* is often used here to refer to what
+between pages. For brevity's sake, the term `header` is often used here to refer to what
 may be either a header or footer object, trusting the reader to understand its
 applicability to both object types.
 
@@ -20,7 +20,7 @@ applicability to both object types.
 Accessing the header for a section
 ----------------------------------
 
-Headers and footers are linked to a *section*; this allows each section to have
+Headers and footers are linked to a `section`; this allows each section to have
 a distinct header and/or footer. For example, a landscape section might have a wider
 header than a portrait section.
 
@@ -33,7 +33,7 @@ for that section::
     >>> header
     <docx.section._Header object at 0x...>
 
-A |_Header| object is *always* present on ``Section.header``, even when no header is
+A |_Header| object is `always` present on ``Section.header``, even when no header is
 defined for that section. The presence of an actual header definition is indicated by
 ``_Header.is_linked_to_previous``::
 
@@ -129,7 +129,7 @@ Here they are in a nutshell:
    ``True`` in both those cases.
 
 4. The content of a ``_Header`` object is its own content if it has a header definition.
-   If not, its content is that of the first prior section that *does* have a header
+   If not, its content is that of the first prior section that `does` have a header
    definition. If no sections have a header definition, a new one is added on the first
    section and all other sections inherit that one. This adding of a header definition
    happens the first time header content is accessed, perhaps by referencing
@@ -159,7 +159,7 @@ definition does nothing.
 Inherited content is automatically located
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Editing the content of a header edits the content of the *source* header, taking into
+Editing the content of a header edits the content of the `source` header, taking into
 account any "inheritance". So for example, if the section 2 header inherits from section
 1 and you edit the section 2 header, you actually change the contents of the section
 1 header. A new header definition is not added for section 2 unless you first explicitly

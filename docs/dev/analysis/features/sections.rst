@@ -2,7 +2,7 @@
 Sections
 ========
 
-Word supports the notion of a *section*, having distinct page layout settings.
+Word supports the notion of a `section`, having distinct page layout settings.
 This is how, for example, a document can contain some pages in portrait layout
 and others in landscape. Section breaks are implemented completely differently
 from line, page, and column breaks. The former adds a ``<w:pPr><w:sectPr>``

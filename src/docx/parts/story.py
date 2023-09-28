@@ -15,11 +15,11 @@ class BaseStoryPart(XmlPart):
     """
 
     def get_or_add_image(self, image_descriptor):
-        """Return (rId, image) pair for image identified by *image_descriptor*.
+        """Return (rId, image) pair for image identified by `image_descriptor`.
 
-        *rId* is the str key (often like "rId7") for the relationship between this story
+        `rId` is the str key (often like "rId7") for the relationship between this story
         part and the image part, reused if already present, newly created if not.
-        *image* is an |Image| instance providing access to the properties of the image,
+        `image` is an |Image| instance providing access to the properties of the image,
         such as dimensions and image type.
         """
         image_part = self._package.get_or_add_image_part(image_descriptor)
@@ -27,18 +27,18 @@ class BaseStoryPart(XmlPart):
         return rId, image_part.image
 
     def get_style(self, style_id, style_type):
-        """Return the style in this document matching *style_id*.
+        """Return the style in this document matching `style_id`.
 
-        Returns the default style for *style_type* if *style_id* is |None| or does not
-        match a defined style of *style_type*.
+        Returns the default style for `style_type` if `style_id` is |None| or does not
+        match a defined style of `style_type`.
         """
         return self._document_part.get_style(style_id, style_type)
 
     def get_style_id(self, style_or_name, style_type):
-        """Return str style_id for *style_or_name* of *style_type*.
+        """Return str style_id for `style_or_name` of `style_type`.
 
-        Returns |None| if the style resolves to the default style for *style_type* or if
-        *style_or_name* is itself |None|. Raises if *style_or_name* is a style of the
+        Returns |None| if the style resolves to the default style for `style_type` or if
+        `style_or_name` is itself |None|. Raises if `style_or_name` is a style of the
         wrong type or names a style not present in the document.
         """
         return self._document_part.get_style_id(style_or_name, style_type)
@@ -46,8 +46,8 @@ class BaseStoryPart(XmlPart):
     def new_pic_inline(self, image_descriptor, width, height):
         """Return a newly-created `w:inline` element.
 
-        The element contains the image specified by *image_descriptor* and is scaled
-        based on the values of *width* and *height*.
+        The element contains the image specified by `image_descriptor` and is scaled
+        based on the values of `width` and `height`.
         """
         rId, image = self.get_or_add_image(image_descriptor)
         cx, cy = image.scaled_dimensions(width, height)

@@ -83,7 +83,7 @@ class NamespacePrefixedTag(str):
 def nsdecls(*prefixes):
     """
     Return a string containing a namespace declaration for each of the
-    namespace prefix strings, e.g. 'p', 'ct', passed as *prefixes*.
+    namespace prefix strings, e.g. 'p', 'ct', passed as `prefixes`.
     """
     return " ".join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
 
@@ -91,7 +91,7 @@ def nsdecls(*prefixes):
 def nspfxmap(*nspfxs):
     """
     Return a dict containing the subset namespace prefix mappings specified by
-    *nspfxs*. Any number of namespace prefixes can be supplied, e.g.
+    `nspfxs`. Any number of namespace prefixes can be supplied, e.g.
     namespaces('a', 'r', 'p').
     """
     return {pfx: nsmap[pfx] for pfx in nspfxs}

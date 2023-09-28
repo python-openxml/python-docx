@@ -23,7 +23,7 @@ a table::
 Autofit
 -------
 
-Word has two algorithms for laying out a table, *fixed-width* or *autofit*.
+Word has two algorithms for laying out a table, *fixed-width* or `autofit`.
 The default is autofit. Word will adjust column widths in an autofit table
 based on cell contents. A fixed-width table retains its column widths
 regardless of the contents. Either algorithm will adjust column widths

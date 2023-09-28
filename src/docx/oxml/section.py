@@ -87,7 +87,7 @@ class CT_SectPr(BaseOxmlElement):
     del _tag_seq
 
     def add_footerReference(self, type_, rId):
-        """Return newly added CT_HdrFtrRef element of *type_* with *rId*.
+        """Return newly added CT_HdrFtrRef element of `type_` with `rId`.
 
         The element tag is `w:footerReference`.
         """
@@ -97,7 +97,7 @@ class CT_SectPr(BaseOxmlElement):
         return footerReference
 
     def add_headerReference(self, type_, rId):
-        """Return newly added CT_HdrFtrRef element of *type_* with *rId*.
+        """Return newly added CT_HdrFtrRef element of `type_` with `rId`.
 
         The element tag is `w:headerReference`.
         """
@@ -151,7 +151,7 @@ class CT_SectPr(BaseOxmlElement):
         pgMar.footer = value
 
     def get_footerReference(self, type_):
-        """Return footerReference element of *type_* or None if not present."""
+        """Return footerReference element of `type_` or None if not present."""
         path = "./w:footerReference[@w:type='%s']" % WD_HEADER_FOOTER.to_xml(type_)
         footerReferences = self.xpath(path)
         if not footerReferences:
@@ -159,7 +159,7 @@ class CT_SectPr(BaseOxmlElement):
         return footerReferences[0]
 
     def get_headerReference(self, type_):
-        """Return headerReference element of *type_* or None if not present."""
+        """Return headerReference element of `type_` or None if not present."""
         matching_headerReferences = self.xpath(
             "./w:headerReference[@w:type='%s']" % WD_HEADER_FOOTER.to_xml(type_)
         )
@@ -275,14 +275,14 @@ class CT_SectPr(BaseOxmlElement):
         return preceding_sectPrs[0] if len(preceding_sectPrs) > 0 else None
 
     def remove_footerReference(self, type_):
-        """Return rId of w:footerReference child of *type_* after removing it."""
+        """Return rId of w:footerReference child of `type_` after removing it."""
         footerReference = self.get_footerReference(type_)
         rId = footerReference.rId
         self.remove(footerReference)
         return rId
 
     def remove_headerReference(self, type_):
-        """Return rId of w:headerReference child of *type_* after removing it."""
+        """Return rId of w:headerReference child of `type_` after removing it."""
         headerReference = self.get_headerReference(type_)
         rId = headerReference.rId
         self.remove(headerReference)

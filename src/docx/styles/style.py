@@ -10,7 +10,7 @@ from docx.text.parfmt import ParagraphFormat
 def StyleFactory(style_elm):
     """
     Return a style object of the appropriate |BaseStyle| subclass, according
-    to the type of *style_elm*.
+    to the type of `style_elm`.
     """
     style_cls = {
         WD_STYLE_TYPE.PARAGRAPH: _ParagraphStyle,
@@ -211,7 +211,7 @@ class _ParagraphStyle(_CharacterStyle):
         |_ParagraphStyle| object representing the style to be applied
         automatically to a new paragraph inserted after a paragraph of this
         style. Returns self if no next paragraph style is defined. Assigning
-        |None| or *self* removes the setting such that new paragraphs are
+        |None| or `self` removes the setting such that new paragraphs are
         created using this same style.
         """
         next_style_elm = self._element.next_style

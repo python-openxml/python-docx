@@ -9,7 +9,7 @@ class DescribePackURI(object):
     def cases(self, expected_values):
         """
         Return list of tuples zipped from uri_str cases and
-        *expected_values*. Raise if lengths don't match.
+        `expected_values`. Raise if lengths don't match.
         """
         uri_str_cases = [
             "/",

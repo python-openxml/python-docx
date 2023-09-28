@@ -12,7 +12,7 @@ class Bmp(BaseImageHeader):
     def from_stream(cls, stream):
         """
         Return |Bmp| instance having header properties parsed from the BMP
-        image in *stream*.
+        image in `stream`.
         """
         stream_rdr = StreamReader(stream, LITTLE_ENDIAN)
 
@@ -45,8 +45,8 @@ class Bmp(BaseImageHeader):
     @staticmethod
     def _dpi(px_per_meter):
         """
-        Return the integer pixels per inch from *px_per_meter*, defaulting to
-        96 if *px_per_meter* is zero.
+        Return the integer pixels per inch from `px_per_meter`, defaulting to
+        96 if `px_per_meter` is zero.
         """
         if px_per_meter == 0:
             return 96

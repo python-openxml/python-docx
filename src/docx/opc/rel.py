@@ -25,7 +25,7 @@ class Relationships(dict):
 
     def get_or_add(self, reltype, target_part):
         """
-        Return relationship of *reltype* to *target_part*, newly added if not
+        Return relationship of `reltype` to `target_part`, newly added if not
         already present in collection.
         """
         rel = self._get_matching(reltype, target_part)
@@ -36,7 +36,7 @@ class Relationships(dict):
 
     def get_or_add_ext_rel(self, reltype, target_ref):
         """
-        Return rId of external relationship of *reltype* to *target_ref*,
+        Return rId of external relationship of `reltype` to `target_ref`,
         newly added if not already present in collection.
         """
         rel = self._get_matching(reltype, target_ref, is_external=True)
@@ -47,7 +47,7 @@ class Relationships(dict):
 
     def part_with_reltype(self, reltype):
         """
-        Return target part of rel with matching *reltype*, raising |KeyError|
+        Return target part of rel with matching `reltype`, raising |KeyError|
         if not found and |ValueError| if more than one matching relationship
         is found.
         """
@@ -75,8 +75,8 @@ class Relationships(dict):
 
     def _get_matching(self, reltype, target, is_external=False):
         """
-        Return relationship of matching *reltype*, *target*, and
-        *is_external* from collection, or None if not found.
+        Return relationship of matching `reltype`, `target`, and
+        `is_external` from collection, or None if not found.
         """
 
         def matches(rel, reltype, target, is_external):
@@ -96,7 +96,7 @@ class Relationships(dict):
 
     def _get_rel_of_type(self, reltype):
         """
-        Return single relationship of type *reltype* from the collection.
+        Return single relationship of type `reltype` from the collection.
         Raises |KeyError| if no matching relationship is found. Raises
         |ValueError| if more than one matching relationship is found.
         """

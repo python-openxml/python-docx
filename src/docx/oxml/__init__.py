@@ -16,9 +16,9 @@ oxml_parser.set_element_class_lookup(element_class_lookup)
 def parse_xml(xml):
     """
     Return root lxml element obtained by parsing XML character string in
-    *xml*, which can be either a Python 2.x string or unicode. The custom
+    `xml`, which can be either a Python 2.x string or unicode. The custom
     parser is used, so custom element classes are produced for elements in
-    *xml* that have them.
+    `xml` that have them.
     """
     root_element = etree.fromstring(xml, oxml_parser)
     return root_element
@@ -26,8 +26,8 @@ def parse_xml(xml):
 
 def register_element_cls(tag, cls):
     """
-    Register *cls* to be constructed when the oxml parser encounters an
-    element with matching *tag*. *tag* is a string of the form
+    Register `cls` to be constructed when the oxml parser encounters an
+    element with matching `tag`. `tag` is a string of the form
     ``nspfx:tagroot``, e.g. ``'w:document'``.
     """
     nspfx, tagroot = tag.split(":")
@@ -37,15 +37,15 @@ def register_element_cls(tag, cls):
 
 def OxmlElement(nsptag_str, attrs=None, nsdecls=None):
     """
-    Return a 'loose' lxml element having the tag specified by *nsptag_str*.
-    *nsptag_str* must contain the standard namespace prefix, e.g. 'a:tbl'.
+    Return a 'loose' lxml element having the tag specified by `nsptag_str`.
+    `nsptag_str` must contain the standard namespace prefix, e.g. 'a:tbl'.
     The resulting element is an instance of the custom element class for this
     tag name if one is defined. A dictionary of attribute values may be
-    provided as *attrs*; they are set if present. All namespaces defined in
-    the dict *nsdecls* are declared in the element using the key as the
-    prefix and the value as the namespace name. If *nsdecls* is not provided,
+    provided as `attrs`; they are set if present. All namespaces defined in
+    the dict `nsdecls` are declared in the element using the key as the
+    prefix and the value as the namespace name. If `nsdecls` is not provided,
     a single namespace declaration is added based on the prefix on
-    *nsptag_str*.
+    `nsptag_str`.
     """
     nsptag = NamespacePrefixedTag(nsptag_str)
     if nsdecls is None:

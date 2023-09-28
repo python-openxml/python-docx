@@ -22,7 +22,7 @@ A table is also a block-level object.
 
 An inline object is a portion of the content that occurs inside a block-level
 item. An example would be a word that appears in bold or a sentence in
-all-caps. The most common inline object is a *run*. All content within
+all-caps. The most common inline object is a `run`. All content within
 a block container is inside of an inline object. Typically, a paragraph
 contains one or more runs, each of which contain some part of the paragraph's
 text.
@@ -55,7 +55,7 @@ The formatting properties of a paragraph are accessed using the
 Horizontal alignment (justification)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Also known as *justification*, the horizontal alignment of a paragraph can be
+Also known as `justification`, the horizontal alignment of a paragraph can be
 set to left, centered, right, or fully justified (aligned on both the left
 and right sides) using values from the enumeration
 :ref:`WdParagraphAlignment`::
@@ -180,7 +180,7 @@ Paragraph spacing
 The :attr:`~.ParagraphFormat.space_before` and
 :attr:`~.ParagraphFormat.space_after` properties control the spacing between
 subsequent paragraphs, controlling the spacing before and after a paragraph,
-respectively. Inter-paragraph spacing is *collapsed* during page layout,
+respectively. Inter-paragraph spacing is `collapsed` during page layout,
 meaning the spacing between two paragraphs is the maximum of the
 `space_after` for the first paragraph and the `space_before` of the second
 paragraph. Paragraph spacing is specified as a |Length| value, often using

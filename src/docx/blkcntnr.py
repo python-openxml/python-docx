@@ -24,8 +24,8 @@ class BlockItemContainer(Parented):
     def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the content in this
-        container, having *text* in a single run if present, and having
-        paragraph style *style*. If *style* is |None|, no paragraph style is
+        container, having `text` in a single run if present, and having
+        paragraph style `style`. If `style` is |None|, no paragraph style is
         applied, which has the same effect as applying the 'Normal' style.
         """
         paragraph = self._add_paragraph()
@@ -37,8 +37,8 @@ class BlockItemContainer(Parented):
 
     def add_table(self, rows, cols, width):
         """
-        Return a table of *width* having *rows* rows and *cols* columns,
-        newly appended to the content in this container. *width* is evenly
+        Return a table of `width` having `rows` rows and `cols` columns,
+        newly appended to the content in this container. `width` is evenly
         distributed between the table columns.
         """
         from .table import Table

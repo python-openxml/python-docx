@@ -12,7 +12,7 @@ from docx.shared import lazyproperty
 
 def serialize_for_reading(element):
     """
-    Serialize *element* to human-readable XML suitable for tests. No XML
+    Serialize `element` to human-readable XML suitable for tests. No XML
     declaration.
     """
     xml = etree.tostring(element, encoding="unicode", pretty_print=True)
@@ -48,7 +48,7 @@ class XmlString(str):
 
     def _attr_seq(self, attrs):
         """
-        Return a sequence of attribute strings parsed from *attrs*. Each
+        Return a sequence of attribute strings parsed from `attrs`. Each
         attribute string is stripped of whitespace on both ends.
         """
         attrs = attrs.strip()
@@ -57,8 +57,8 @@ class XmlString(str):
 
     def _eq_elm_strs(self, line, line_2):
         """
-        Return True if the element in *line_2* is XML equivalent to the
-        element in *line*.
+        Return True if the element in `line_2` is XML equivalent to the
+        element in `line`.
         """
         front, attrs, close, text = self._parse_line(line)
         front_2, attrs_2, close_2, text_2 = self._parse_line(line_2)
@@ -76,7 +76,7 @@ class XmlString(str):
     def _parse_line(cls, line):
         """
         Return front, attrs, close, text 4-tuple result of parsing XML element
-        string *line*.
+        string `line`.
         """
         match = cls._xml_elm_line_patt.match(line)
         front, attrs, close, text = [match.group(n) for n in range(1, 5)]
@@ -114,7 +114,7 @@ class BaseAttribute(object):
 
     def populate_class_members(self, element_cls, prop_name):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         self._element_cls = element_cls
         self._prop_name = prop_name
@@ -264,7 +264,7 @@ class _BaseChildElement(object):
     def populate_class_members(self, element_cls, prop_name):
         """
         Baseline behavior for adding the appropriate methods to
-        *element_cls*.
+        `element_cls`.
         """
         self._element_cls = element_cls
         self._prop_name = prop_name
@@ -358,7 +358,7 @@ class _BaseChildElement(object):
 
     def _add_to_class(self, name, method):
         """
-        Add *method* to the target class as *name*, unless *name* is already
+        Add `method` to the target class as `name`, unless `name` is already
         defined on the class.
         """
         if hasattr(self._element_cls, name):
@@ -444,7 +444,7 @@ class Choice(_BaseChildElement):
 
     def populate_class_members(self, element_cls, group_prop_name, successors):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         self._element_cls = element_cls
         self._group_prop_name = group_prop_name
@@ -502,7 +502,7 @@ class OneAndOnlyOne(_BaseChildElement):
 
     def populate_class_members(self, element_cls, prop_name):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         super(OneAndOnlyOne, self).populate_class_members(element_cls, prop_name)
         self._add_getter()
@@ -536,7 +536,7 @@ class OneOrMore(_BaseChildElement):
 
     def populate_class_members(self, element_cls, prop_name):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         super(OneOrMore, self).populate_class_members(element_cls, prop_name)
         self._add_list_getter()
@@ -554,7 +554,7 @@ class ZeroOrMore(_BaseChildElement):
 
     def populate_class_members(self, element_cls, prop_name):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         super(ZeroOrMore, self).populate_class_members(element_cls, prop_name)
         self._add_list_getter()
@@ -572,7 +572,7 @@ class ZeroOrOne(_BaseChildElement):
 
     def populate_class_members(self, element_cls, prop_name):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         super(ZeroOrOne, self).populate_class_members(element_cls, prop_name)
         self._add_getter()
@@ -631,7 +631,7 @@ class ZeroOrOneChoice(_BaseChildElement):
 
     def populate_class_members(self, element_cls, prop_name):
         """
-        Add the appropriate methods to *element_cls*.
+        Add the appropriate methods to `element_cls`.
         """
         super(ZeroOrOneChoice, self).populate_class_members(element_cls, prop_name)
         self._add_choice_getter()

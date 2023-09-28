@@ -17,7 +17,7 @@ def absjoin(*paths):
 
 def docx_path(name):
     """
-    Return the absolute path to test .docx file with root name *name*.
+    Return the absolute path to test .docx file with root name `name`.
     """
     return absjoin(test_file_dir, "%s.docx" % name)
 
@@ -25,8 +25,8 @@ def docx_path(name):
 def snippet_seq(name, offset=0, count=1024):
     """
     Return a tuple containing the unicode text snippets read from the snippet
-    file having *name*. Snippets are delimited by a blank line. If specified,
-    *count* snippets starting at *offset* are returned.
+    file having `name`. Snippets are delimited by a blank line. If specified,
+    `count` snippets starting at `offset` are returned.
     """
     path = os.path.join(test_file_dir, "snippets", "%s.txt" % name)
     with open(path, "rb") as f:
@@ -39,7 +39,7 @@ def snippet_seq(name, offset=0, count=1024):
 def snippet_text(snippet_file_name):
     """
     Return the unicode text read from the test snippet file having
-    *snippet_file_name*.
+    `snippet_file_name`.
     """
     snippet_file_path = os.path.join(
         test_file_dir, "snippets", "%s.txt" % snippet_file_name
@@ -51,6 +51,6 @@ def snippet_text(snippet_file_name):
 
 def test_file(name):
     """
-    Return the absolute path to test file having *name*.
+    Return the absolute path to test file having `name`.
     """
     return absjoin(test_file_dir, name)

@@ -18,8 +18,8 @@ class CT_DecimalNumber(BaseOxmlElement):
     @classmethod
     def new(cls, nsptagname, val):
         """
-        Return a new ``CT_DecimalNumber`` element having tagname *nsptagname*
-        and ``val`` attribute set to *val*.
+        Return a new ``CT_DecimalNumber`` element having tagname `nsptagname`
+        and ``val`` attribute set to `val`.
         """
         return OxmlElement(nsptagname, attrs={qn("w:val"): str(val)})
 
@@ -44,8 +44,8 @@ class CT_String(BaseOxmlElement):
     @classmethod
     def new(cls, nsptagname, val):
         """
-        Return a new ``CT_String`` element with tagname *nsptagname* and
-        ``val`` attribute set to *val*.
+        Return a new ``CT_String`` element with tagname `nsptagname` and
+        ``val`` attribute set to `val`.
         """
         elm = OxmlElement(nsptagname)
         elm.val = val

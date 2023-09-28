@@ -21,7 +21,7 @@ class PackageReader(object):
     @staticmethod
     def from_file(pkg_file):
         """
-        Return a |PackageReader| instance loaded with contents of *pkg_file*.
+        Return a |PackageReader| instance loaded with contents of `pkg_file`.
         """
         phys_reader = PhysPkgReader(pkg_file)
         content_types = _ContentTypeMap.from_xml(phys_reader.content_types_xml)
@@ -55,8 +55,8 @@ class PackageReader(object):
     def _load_serialized_parts(phys_reader, pkg_srels, content_types):
         """
         Return a list of |_SerializedPart| instances corresponding to the
-        parts in *phys_reader* accessible by walking the relationship graph
-        starting with *pkg_srels*.
+        parts in `phys_reader` accessible by walking the relationship graph
+        starting with `pkg_srels`.
         """
         sparts = []
         part_walker = PackageReader._walk_phys_parts(phys_reader, pkg_srels)
@@ -70,7 +70,7 @@ class PackageReader(object):
     def _srels_for(phys_reader, source_uri):
         """
         Return |_SerializedRelationships| instance populated with
-        relationships for source identified by *source_uri*.
+        relationships for source identified by `source_uri`.
         """
         rels_xml = phys_reader.rels_xml_for(source_uri)
         return _SerializedRelationships.load_from_xml(source_uri.baseURI, rels_xml)
@@ -79,7 +79,7 @@ class PackageReader(object):
     def _walk_phys_parts(phys_reader, srels, visited_partnames=None):
         """
         Generate a 4-tuple `(partname, blob, reltype, srels)` for each of the
-        parts in *phys_reader* by walking the relationship graph rooted at
+        parts in `phys_reader` by walking the relationship graph rooted at
         srels.
         """
         if visited_partnames is None:
@@ -115,7 +115,7 @@ class _ContentTypeMap(object):
 
     def __getitem__(self, partname):
         """
-        Return content type for part identified by *partname*.
+        Return content type for part identified by `partname`.
         """
         if not isinstance(partname, PackURI):
             tmpl = "_ContentTypeMap key must be <type 'PackURI'>, got %s"
@@ -131,7 +131,7 @@ class _ContentTypeMap(object):
     def from_xml(content_types_xml):
         """
         Return a new |_ContentTypeMap| instance populated with the contents
-        of *content_types_xml*.
+        of `content_types_xml`.
         """
         types_elm = parse_xml(content_types_xml)
         ct_map = _ContentTypeMap()
@@ -143,14 +143,14 @@ class _ContentTypeMap(object):
 
     def _add_default(self, extension, content_type):
         """
-        Add the default mapping of *extension* to *content_type* to this
+        Add the default mapping of `extension` to `content_type` to this
         content type mapping.
         """
         self._defaults[extension] = content_type
 
     def _add_override(self, partname, content_type):
         """
-        Add the default mapping of *partname* to *content_type* to this
+        Add the default mapping of `partname` to `content_type` to this
         content type mapping.
         """
         self._overrides[partname] = content_type
@@ -283,8 +283,8 @@ class _SerializedRelationships(object):
     def load_from_xml(baseURI, rels_item_xml):
         """
         Return |_SerializedRelationships| instance loaded with the
-        relationships contained in *rels_item_xml*. Returns an empty
-        collection if *rels_item_xml* is |None|.
+        relationships contained in `rels_item_xml`. Returns an empty
+        collection if `rels_item_xml` is |None|.
         """
         srels = _SerializedRelationships()
         if rels_item_xml is not None:

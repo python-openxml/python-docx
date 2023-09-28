@@ -13,7 +13,7 @@ from docx.oxml.xmlchemy import (
 
 def styleId_from_name(name):
     """
-    Return the style id corresponding to *name*, taking into account
+    Return the style id corresponding to `name`, taking into account
     special-case names such as 'Heading 1'.
     """
     return {
@@ -48,7 +48,7 @@ class CT_LatentStyles(BaseOxmlElement):
 
     def bool_prop(self, attr_name):
         """
-        Return the boolean value of the attribute having *attr_name*, or
+        Return the boolean value of the attribute having `attr_name`, or
         |False| if not present.
         """
         value = getattr(self, attr_name)
@@ -58,7 +58,7 @@ class CT_LatentStyles(BaseOxmlElement):
 
     def get_by_name(self, name):
         """
-        Return the `w:lsdException` child having *name*, or |None| if not
+        Return the `w:lsdException` child having `name`, or |None| if not
         found.
         """
         found = self.xpath('w:lsdException[@w:name="%s"]' % name)
@@ -68,7 +68,7 @@ class CT_LatentStyles(BaseOxmlElement):
 
     def set_bool_prop(self, attr_name, value):
         """
-        Set the on/off attribute having *attr_name* to *value*.
+        Set the on/off attribute having `attr_name` to `value`.
         """
         setattr(self, attr_name, bool(value))
 
@@ -94,14 +94,14 @@ class CT_LsdException(BaseOxmlElement):
 
     def on_off_prop(self, attr_name):
         """
-        Return the boolean value of the attribute having *attr_name*, or
+        Return the boolean value of the attribute having `attr_name`, or
         |None| if not present.
         """
         return getattr(self, attr_name)
 
     def set_on_off_prop(self, attr_name, value):
         """
-        Set the on/off attribute having *attr_name* to *value*.
+        Set the on/off attribute having `attr_name` to `value`.
         """
         setattr(self, attr_name, value)
 
@@ -318,9 +318,9 @@ class CT_Styles(BaseOxmlElement):
 
     def add_style_of_type(self, name, style_type, builtin):
         """
-        Return a newly added `w:style` element having *name* and
-        *style_type*. `w:style/@customStyle` is set based on the value of
-        *builtin*.
+        Return a newly added `w:style` element having `name` and
+        `style_type`. `w:style/@customStyle` is set based on the value of
+        `builtin`.
         """
         style = self.add_style()
         style.type = style_type
@@ -344,7 +344,7 @@ class CT_Styles(BaseOxmlElement):
     def get_by_id(self, styleId):
         """
         Return the ``<w:style>`` child element having ``styleId`` attribute
-        matching *styleId*, or |None| if not found.
+        matching `styleId`, or |None| if not found.
         """
         xpath = 'w:style[@w:styleId="%s"]' % styleId
         try:
@@ -355,7 +355,7 @@ class CT_Styles(BaseOxmlElement):
     def get_by_name(self, name):
         """
         Return the ``<w:style>`` child element having ``<w:name>`` child
-        element with value *name*, or |None| if not found.
+        element with value `name`, or |None| if not found.
         """
         xpath = 'w:style[w:name/@w:val="%s"]' % name
         try:

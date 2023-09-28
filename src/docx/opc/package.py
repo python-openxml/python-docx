@@ -84,9 +84,9 @@ class OpcPackage(object):
 
     def load_rel(self, reltype, target, rId, is_external=False):
         """
-        Return newly added |_Relationship| instance of *reltype* between this
-        part and *target* with key *rId*. Target mode is set to
-        ``RTM.EXTERNAL`` if *is_external* is |True|. Intended for use during
+        Return newly added |_Relationship| instance of `reltype` between this
+        part and `target` with key `rId`. Target mode is set to
+        ``RTM.EXTERNAL`` if `is_external` is |True|. Intended for use during
         load from a serialized package, where the rId is well known. Other
         methods exist for adding a new relationship to the package during
         processing.
@@ -104,10 +104,10 @@ class OpcPackage(object):
         return self.part_related_by(RT.OFFICE_DOCUMENT)
 
     def next_partname(self, template):
-        """Return a |PackURI| instance representing partname matching *template*.
+        """Return a |PackURI| instance representing partname matching `template`.
 
         The returned part-name has the next available numeric suffix to distinguish it
-        from other parts of its type. *template* is a printf (%)-style template string
+        from other parts of its type. `template` is a printf (%)-style template string
         containing a single replacement item, a '%d' to be used to insert the integer
         portion of the partname. Example: "/word/header%d.xml"
         """
@@ -121,7 +121,7 @@ class OpcPackage(object):
     def open(cls, pkg_file):
         """
         Return an |OpcPackage| instance loaded with the contents of
-        *pkg_file*.
+        `pkg_file`.
         """
         pkg_reader = PackageReader.from_file(pkg_file)
         package = cls()
@@ -130,7 +130,7 @@ class OpcPackage(object):
 
     def part_related_by(self, reltype):
         """
-        Return part to which this package has a relationship of *reltype*.
+        Return part to which this package has a relationship of `reltype`.
         Raises |KeyError| if no such relationship is found and |ValueError|
         if more than one such relationship is found.
         """
@@ -146,7 +146,7 @@ class OpcPackage(object):
 
     def relate_to(self, part, reltype):
         """
-        Return rId key of relationship to *part*, from the existing
+        Return rId key of relationship to `part`, from the existing
         relationship if there is one, otherwise a newly created one.
         """
         rel = self.rels.get_or_add(reltype, part)
@@ -162,7 +162,7 @@ class OpcPackage(object):
 
     def save(self, pkg_file):
         """
-        Save this package to *pkg_file*, where *file* can be either a path to
+        Save this package to `pkg_file`, where `file` can be either a path to
         a file (a string) or a file-like object.
         """
         for part in self.parts:
@@ -190,8 +190,8 @@ class Unmarshaller(object):
     def unmarshal(pkg_reader, package, part_factory):
         """
         Construct graph of parts and realized relationships based on the
-        contents of *pkg_reader*, delegating construction of each part to
-        *part_factory*. Package relationships are added to *pkg*.
+        contents of `pkg_reader`, delegating construction of each part to
+        `part_factory`. Package relationships are added to `pkg`.
         """
         parts = Unmarshaller._unmarshal_parts(pkg_reader, package, part_factory)
         Unmarshaller._unmarshal_relationships(pkg_reader, package, parts)
@@ -203,8 +203,8 @@ class Unmarshaller(object):
     def _unmarshal_parts(pkg_reader, package, part_factory):
         """
         Return a dictionary of |Part| instances unmarshalled from
-        *pkg_reader*, keyed by partname. Side-effect is that each part in
-        *pkg_reader* is constructed using *part_factory*.
+        `pkg_reader`, keyed by partname. Side-effect is that each part in
+        `pkg_reader` is constructed using `part_factory`.
         """
         parts = {}
         for partname, content_type, reltype, blob in pkg_reader.iter_sparts():
@@ -217,8 +217,8 @@ class Unmarshaller(object):
     def _unmarshal_relationships(pkg_reader, package, parts):
         """
         Add a relationship to the source object corresponding to each of the
-        relationships in *pkg_reader* with its target_part set to the actual
-        target part in *parts*.
+        relationships in `pkg_reader` with its target_part set to the actual
+        target part in `parts`.
         """
         for source_uri, srel in pkg_reader.iter_srels():
             source = package if source_uri == "/" else parts[source_uri]

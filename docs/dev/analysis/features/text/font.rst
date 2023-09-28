@@ -138,16 +138,16 @@ The semantics of the three values are as follows:
 +-------+---------------------------------------------------------------+
 | value | meaning                                                       |
 +=======+===============================================================+
-| True  | The effective value of the property is unconditionally *on*.  |
+| True  | The effective value of the property is unconditionally `on`.  |
 |       | Contrary settings in the style hierarchy have no effect.      |
 +-------+---------------------------------------------------------------+
-| False | The effective value of the property is unconditionally *off*. |
+| False | The effective value of the property is unconditionally `off`. |
 |       | Contrary settings in the style hierarchy have no effect.      |
 +-------+---------------------------------------------------------------+
 | None  | The element is not present. The effective value is            |
 |       | inherited from the style hierarchy. If no value for this      |
 |       | property is present in the style hierarchy, the effective     |
-|       | value is *off*.                                               |
+|       | value is `off`.                                               |
 +-------+---------------------------------------------------------------+
 
 
@@ -155,7 +155,7 @@ Toggle properties
 -----------------
 
 Certain of the boolean run properties are *toggle properties*. A toggle
-property is one that behaves like a *toggle* at certain places in the style
+property is one that behaves like a `toggle` at certain places in the style
 hierarchy. Toggle here means that setting the property on has the effect of
 reversing the prior setting rather than unconditionally setting the property
 on.

@@ -15,7 +15,7 @@ class Gif(BaseImageHeader):
     def from_stream(cls, stream):
         """
         Return |Gif| instance having header properties parsed from GIF image
-        in *stream*.
+        in `stream`.
         """
         px_width, px_height = cls._dimensions_from_stream(stream)
         return cls(px_width, px_height, 72, 72)

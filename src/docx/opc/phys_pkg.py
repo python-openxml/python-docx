@@ -1,4 +1,4 @@
-"""Provides a general interface to a *physical* OPC package, such as a zip file."""
+"""Provides a general interface to a `physical` OPC package, such as a zip file."""
 
 import os
 from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
@@ -13,7 +13,7 @@ class PhysPkgReader(object):
     """
 
     def __new__(cls, pkg_file):
-        # if *pkg_file* is a string, treat it as a path
+        # if `pkg_file` is a string, treat it as a path
         if isinstance(pkg_file, str):
             if os.path.isdir(pkg_file):
                 reader_cls = _DirPkgReader
@@ -44,14 +44,14 @@ class _DirPkgReader(PhysPkgReader):
 
     def __init__(self, path):
         """
-        *path* is the path to a directory containing an expanded package.
+        `path` is the path to a directory containing an expanded package.
         """
         super(_DirPkgReader, self).__init__()
         self._path = os.path.abspath(path)
 
     def blob_for(self, pack_uri):
         """
-        Return contents of file corresponding to *pack_uri* in package
+        Return contents of file corresponding to `pack_uri` in package
         directory.
         """
         path = os.path.join(self._path, pack_uri.membername)
@@ -75,7 +75,7 @@ class _DirPkgReader(PhysPkgReader):
 
     def rels_xml_for(self, source_uri):
         """
-        Return rels item XML for source with *source_uri*, or None if the
+        Return rels item XML for source with `source_uri`, or None if the
         item has no rels item.
         """
         try:
@@ -96,7 +96,7 @@ class _ZipPkgReader(PhysPkgReader):
 
     def blob_for(self, pack_uri):
         """
-        Return blob corresponding to *pack_uri*. Raises |ValueError| if no
+        Return blob corresponding to `pack_uri`. Raises |ValueError| if no
         matching member is present in zip archive.
         """
         return self._zipf.read(pack_uri.membername)
@@ -116,7 +116,7 @@ class _ZipPkgReader(PhysPkgReader):
 
     def rels_xml_for(self, source_uri):
         """
-        Return rels item XML for source with *source_uri* or None if no rels
+        Return rels item XML for source with `source_uri` or None if no rels
         item is present.
         """
         try:
@@ -144,7 +144,7 @@ class _ZipPkgWriter(PhysPkgWriter):
 
     def write(self, pack_uri, blob):
         """
-        Write *blob* to this zip package with the membername corresponding to
-        *pack_uri*.
+        Write `blob` to this zip package with the membername corresponding to
+        `pack_uri`.
         """
         self._zipf.writestr(pack_uri.membername, blob)

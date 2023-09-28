@@ -47,7 +47,7 @@ def qn(tag):
 
 def serialize_part_xml(part_elm):
     """
-    Serialize *part_elm* etree element to XML suitable for storage as an XML
+    Serialize `part_elm` etree element to XML suitable for storage as an XML
     part. That is to say, no insignificant whitespace added for readability,
     and an appropriate XML declaration added with UTF-8 encoding specified.
     """
@@ -56,7 +56,7 @@ def serialize_part_xml(part_elm):
 
 def serialize_for_reading(element):
     """
-    Serialize *element* to human-readable XML suitable for tests. No XML
+    Serialize `element` to human-readable XML suitable for tests. No XML
     declaration.
     """
     return etree.tostring(element, encoding="unicode", pretty_print=True)

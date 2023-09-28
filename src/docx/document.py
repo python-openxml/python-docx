@@ -24,10 +24,10 @@ class Document(ElementProxy):
     def add_heading(self, text="", level=1):
         """Return a heading paragraph newly added to the end of the document.
 
-        The heading paragraph will contain *text* and have its paragraph style
-        determined by *level*. If *level* is 0, the style is set to `Title`. If *level*
+        The heading paragraph will contain `text` and have its paragraph style
+        determined by `level`. If `level` is 0, the style is set to `Title`. If `level`
         is 1 (or omitted), `Heading 1` is used. Otherwise the style is set to `Heading
-        {level}`. Raises |ValueError| if *level* is outside the range 0-9.
+        {level}`. Raises |ValueError| if `level` is outside the range 0-9.
         """
         if not 0 <= level <= 9:
             raise ValueError("level must be in range 0-9, got %d" % level)
@@ -43,9 +43,9 @@ class Document(ElementProxy):
     def add_paragraph(self, text="", style=None):
         """
         Return a paragraph newly added to the end of the document, populated
-        with *text* and having paragraph style *style*. *text* can contain
+        with `text` and having paragraph style `style`. `text` can contain
         tab (``\\t``) characters, which are converted to the appropriate XML
-        form for a tab. *text* can also include newline (``\\n``) or carriage
+        form for a tab. `text` can also include newline (``\\n``) or carriage
         return (``\\r``) characters, each of which is converted to a line
         break.
         """
@@ -55,7 +55,7 @@ class Document(ElementProxy):
         """
         Return a new picture shape added in its own paragraph at the end of
         the document. The picture contains the image at
-        *image_path_or_stream*, scaled based on *width* and *height*. If
+        `image_path_or_stream`, scaled based on `width` and `height`. If
         neither width nor height is specified, the picture appears at its
         native size. If only one is specified, it is used to compute
         a scaling factor that is then applied to the unspecified dimension,
@@ -70,7 +70,7 @@ class Document(ElementProxy):
     def add_section(self, start_type=WD_SECTION.NEW_PAGE):
         """
         Return a |Section| object representing a new section added at the end
-        of the document. The optional *start_type* argument must be a member
+        of the document. The optional `start_type` argument must be a member
         of the :ref:`WdSectionStart` enumeration, and defaults to
         ``WD_SECTION.NEW_PAGE`` if not provided.
         """
@@ -80,9 +80,9 @@ class Document(ElementProxy):
 
     def add_table(self, rows, cols, style=None):
         """
-        Add a table having row and column counts of *rows* and *cols*
-        respectively and table style of *style*. *style* may be a paragraph
-        style object or a paragraph style name. If *style* is |None|, the
+        Add a table having row and column counts of `rows` and `cols`
+        respectively and table style of `style`. `style` may be a paragraph
+        style object or a paragraph style name. If `style` is |None|, the
         table inherits the default table style of the document.
         """
         table = self._body.add_table(rows, cols, self._block_width)
@@ -125,7 +125,7 @@ class Document(ElementProxy):
 
     def save(self, path_or_stream):
         """
-        Save this document to *path_or_stream*, which can be either a path to
+        Save this document to `path_or_stream`, which can be either a path to
         a filesystem location (a string) or a file-like object.
         """
         self._part.save(path_or_stream)

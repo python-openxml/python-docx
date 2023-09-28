@@ -48,33 +48,33 @@ class DocumentPart(BaseStoryPart):
         return Document(self._element, self)
 
     def drop_header_part(self, rId):
-        """Remove related header part identified by *rId*."""
+        """Remove related header part identified by `rId`."""
         self.drop_rel(rId)
 
     def footer_part(self, rId):
-        """Return |FooterPart| related by *rId*."""
+        """Return |FooterPart| related by `rId`."""
         return self.related_parts[rId]
 
     def get_style(self, style_id, style_type):
         """
-        Return the style in this document matching *style_id*. Returns the
-        default style for *style_type* if *style_id* is |None| or does not
-        match a defined style of *style_type*.
+        Return the style in this document matching `style_id`. Returns the
+        default style for `style_type` if `style_id` is |None| or does not
+        match a defined style of `style_type`.
         """
         return self.styles.get_by_id(style_id, style_type)
 
     def get_style_id(self, style_or_name, style_type):
         """
-        Return the style_id (|str|) of the style of *style_type* matching
-        *style_or_name*. Returns |None| if the style resolves to the default
-        style for *style_type* or if *style_or_name* is itself |None|. Raises
-        if *style_or_name* is a style of the wrong type or names a style not
+        Return the style_id (|str|) of the style of `style_type` matching
+        `style_or_name`. Returns |None| if the style resolves to the default
+        style for `style_type` or if `style_or_name` is itself |None|. Raises
+        if `style_or_name` is a style of the wrong type or names a style not
         present in the document.
         """
         return self.styles.get_style_id(style_or_name, style_type)
 
     def header_part(self, rId):
-        """Return |HeaderPart| related by *rId*."""
+        """Return |HeaderPart| related by `rId`."""
         return self.related_parts[rId]
 
     @lazyproperty
@@ -101,7 +101,7 @@ class DocumentPart(BaseStoryPart):
 
     def save(self, path_or_stream):
         """
-        Save this document to *path_or_stream*, which can be either a path to
+        Save this document to `path_or_stream`, which can be either a path to
         a filesystem location (a string) or a file-like object.
         """
         self.package.save(path_or_stream)
