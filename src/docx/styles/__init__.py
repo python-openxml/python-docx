@@ -2,10 +2,8 @@
 
 
 class BabelFish(object):
-    """
-    Translates special-case style names from UI name (e.g. Heading 1) to
-    internal/styles.xml name (e.g. heading 1) and back.
-    """
+    """Translates special-case style names from UI name (e.g. Heading 1) to
+    internal/styles.xml name (e.g. heading 1) and back."""
 
     style_aliases = (
         ("Caption", "caption"),
@@ -27,16 +25,12 @@ class BabelFish(object):
 
     @classmethod
     def ui2internal(cls, ui_style_name):
-        """
-        Return the internal style name corresponding to `ui_style_name`, such
-        as 'heading 1' for 'Heading 1'.
-        """
+        """Return the internal style name corresponding to `ui_style_name`, such as
+        'heading 1' for 'Heading 1'."""
         return cls.internal_style_names.get(ui_style_name, ui_style_name)
 
     @classmethod
     def internal2ui(cls, internal_style_name):
-        """
-        Return the user interface style name corresponding to
-        `internal_style_name`, such as 'Heading 1' for 'heading 1'.
-        """
+        """Return the user interface style name corresponding to `internal_style_name`,
+        such as 'Heading 1' for 'heading 1'."""
         return cls.ui_style_names.get(internal_style_name, internal_style_name)

@@ -2,9 +2,7 @@
 
 
 class JPEG_MARKER_CODE(object):
-    """
-    JPEG marker codes
-    """
+    """JPEG marker codes."""
 
     TEM = b"\x01"
     DHT = b"\xC4"
@@ -100,9 +98,7 @@ class JPEG_MARKER_CODE(object):
 
 
 class MIME_TYPE(object):
-    """
-    Image content types
-    """
+    """Image content types."""
 
     BMP = "image/bmp"
     GIF = "image/gif"
@@ -112,9 +108,7 @@ class MIME_TYPE(object):
 
 
 class PNG_CHUNK_TYPE(object):
-    """
-    PNG chunk type names
-    """
+    """PNG chunk type names."""
 
     IHDR = "IHDR"
     pHYs = "pHYs"
@@ -122,9 +116,7 @@ class PNG_CHUNK_TYPE(object):
 
 
 class TIFF_FLD_TYPE(object):
-    """
-    Tag codes for TIFF Image File Directory (IFD) entries.
-    """
+    """Tag codes for TIFF Image File Directory (IFD) entries."""
 
     BYTE = 1
     ASCII = 2
@@ -145,9 +137,7 @@ TIFF_FLD = TIFF_FLD_TYPE
 
 
 class TIFF_TAG(object):
-    """
-    Tag codes for TIFF Image File Directory (IFD) entries.
-    """
+    """Tag codes for TIFF Image File Directory (IFD) entries."""
 
     IMAGE_WIDTH = 0x0100
     IMAGE_LENGTH = 0x0101

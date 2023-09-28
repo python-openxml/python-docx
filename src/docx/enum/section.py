@@ -5,8 +5,7 @@ from .base import XmlEnumeration, XmlMappedEnumMember, alias
 
 @alias("WD_HEADER_FOOTER")
 class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
-    """
-    alias: **WD_HEADER_FOOTER**
+    """Alias: **WD_HEADER_FOOTER**
 
     Specifies one of the three possible header/footer definitions for a section.
 
@@ -32,17 +31,15 @@ class WD_HEADER_FOOTER_INDEX(XmlEnumeration):
 
 @alias("WD_ORIENT")
 class WD_ORIENTATION(XmlEnumeration):
-    """
-    alias: **WD_ORIENT**
+    """Alias: **WD_ORIENT**
 
     Specifies the page layout orientation.
 
     Example::
 
-        from docx.enum.section import WD_ORIENT
+    from docx.enum.section import WD_ORIENT
 
-        section = document.sections[-1]
-        section.orientation = WD_ORIENT.LANDSCAPE
+    section = document.sections[-1] section.orientation = WD_ORIENT.LANDSCAPE
     """
 
     __ms_name__ = "WdOrientation"
@@ -57,17 +54,15 @@ class WD_ORIENTATION(XmlEnumeration):
 
 @alias("WD_SECTION")
 class WD_SECTION_START(XmlEnumeration):
-    """
-    alias: **WD_SECTION**
+    """Alias: **WD_SECTION**
 
     Specifies the start type of a section break.
 
     Example::
 
-        from docx.enum.section import WD_SECTION
+    from docx.enum.section import WD_SECTION
 
-        section = document.sections[0]
-        section.start_type = WD_SECTION.NEW_PAGE
+    section = document.sections[0] section.start_type = WD_SECTION.NEW_PAGE
     """
 
     __ms_name__ = "WdSectionStart"

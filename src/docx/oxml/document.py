@@ -4,26 +4,20 @@ from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 
 class CT_Document(BaseOxmlElement):
-    """
-    ``<w:document>`` element, the root element of a document.xml file.
-    """
+    """``<w:document>`` element, the root element of a document.xml file."""
 
     body = ZeroOrOne("w:body")
 
     @property
     def sectPr_lst(self):
-        """
-        Return a list containing a reference to each ``<w:sectPr>`` element
-        in the document, in the order encountered.
-        """
+        """Return a list containing a reference to each ``<w:sectPr>`` element in the
+        document, in the order encountered."""
         return self.xpath(".//w:sectPr")
 
 
 class CT_Body(BaseOxmlElement):
-    """
-    ``<w:body>``, the container element for the main document story in
-    ``document.xml``.
-    """
+    """``<w:body>``, the container element for the main document story in
+    ``document.xml``."""
 
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))

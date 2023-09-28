@@ -1,10 +1,10 @@
-"""Custom element classes related to document settings"""
+"""Custom element classes related to document settings."""
 
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
 
 
 class CT_Settings(BaseOxmlElement):
-    """`w:settings` element, root element for the settings part"""
+    """`w:settings` element, root element for the settings part."""
 
     _tag_seq = (
         "w:writeProtection",
@@ -111,7 +111,7 @@ class CT_Settings(BaseOxmlElement):
 
     @property
     def evenAndOddHeaders_val(self):
-        """value of `w:evenAndOddHeaders/@w:val` or |None| if not present."""
+        """Value of `w:evenAndOddHeaders/@w:val` or |None| if not present."""
         evenAndOddHeaders = self.evenAndOddHeaders
         if evenAndOddHeaders is None:
             return False

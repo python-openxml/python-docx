@@ -11,19 +11,17 @@ from docx.shared import lazyproperty
 
 
 def serialize_for_reading(element):
-    """
-    Serialize `element` to human-readable XML suitable for tests. No XML
-    declaration.
+    """Serialize `element` to human-readable XML suitable for tests.
+
+    No XML declaration.
     """
     xml = etree.tostring(element, encoding="unicode", pretty_print=True)
     return XmlString(xml)
 
 
 class XmlString(str):
-    """
-    Provides string comparison override suitable for serialized XML that is
-    useful for tests.
-    """
+    """Provides string comparison override suitable for serialized XML that is useful
+    for tests."""
 
     # '    <w:xyz xmlns:a="http://ns/decl/a" attr_name="val">text</w:xyz>'
     # |          |                                          ||           |
@@ -47,19 +45,17 @@ class XmlString(str):
         return not self.__eq__(other)
 
     def _attr_seq(self, attrs):
-        """
-        Return a sequence of attribute strings parsed from `attrs`. Each
-        attribute string is stripped of whitespace on both ends.
+        """Return a sequence of attribute strings parsed from `attrs`.
+
+        Each attribute string is stripped of whitespace on both ends.
         """
         attrs = attrs.strip()
         attr_lst = attrs.split()
         return sorted(attr_lst)
 
     def _eq_elm_strs(self, line, line_2):
-        """
-        Return True if the element in `line_2` is XML equivalent to the
-        element in `line`.
-        """
+        """Return True if the element in `line_2` is XML equivalent to the element in
+        `line`."""
         front, attrs, close, text = self._parse_line(line)
         front_2, attrs_2, close_2, text_2 = self._parse_line(line_2)
         if front != front_2:
@@ -74,10 +70,8 @@ class XmlString(str):
 
     @classmethod
     def _parse_line(cls, line):
-        """
-        Return front, attrs, close, text 4-tuple result of parsing XML element
-        string `line`.
-        """
+        """Return front, attrs, close, text 4-tuple result of parsing XML element string
+        `line`."""
         match = cls._xml_elm_line_patt.match(line)
         front, attrs, close, text = [match.group(n) for n in range(1, 5)]
         return front, attrs, close, text
@@ -102,10 +96,8 @@ class MetaOxmlElement(type):
 
 
 class BaseAttribute(object):
-    """
-    Base class for OptionalAttribute and RequiredAttribute, providing common
-    methods.
-    """
+    """Base class for OptionalAttribute and RequiredAttribute, providing common
+    methods."""
 
     def __init__(self, attr_name, simple_type):
         super(BaseAttribute, self).__init__()
@@ -113,20 +105,16 @@ class BaseAttribute(object):
         self._simple_type = simple_type
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
         self._prop_name = prop_name
 
         self._add_attr_property()
 
     def _add_attr_property(self):
-        """
-        Add a read/write ``{prop_name}`` property to the element class that
-        returns the interpreted value of this attribute on access and changes
-        the attribute value to its ST_* counterpart on assignment.
-        """
+        """Add a read/write ``{prop_name}`` property to the element class that returns
+        the interpreted value of this attribute on access and changes the attribute
+        value to its ST_* counterpart on assignment."""
         property_ = property(self._getter, self._setter, None)
         # assign unconditionally to overwrite element name definition
         setattr(self._element_cls, self._prop_name, property_)
@@ -139,9 +127,9 @@ class BaseAttribute(object):
 
 
 class OptionalAttribute(BaseAttribute):
-    """
-    Defines an optional attribute on a custom element class. An optional
-    attribute returns a default value when not present for reading. When
+    """Defines an optional attribute on a custom element class.
+
+    An optional attribute returns a default value when not present for reading. When
     assigned |None|, the attribute is removed.
     """
 
@@ -151,10 +139,8 @@ class OptionalAttribute(BaseAttribute):
 
     @property
     def _getter(self):
-        """
-        Return a function object suitable for the "get" side of the attribute
-        property descriptor.
-        """
+        """Return a function object suitable for the "get" side of the attribute
+        property descriptor."""
 
         def get_attr_value(obj):
             attr_str_value = obj.get(self._clark_name)
@@ -167,10 +153,8 @@ class OptionalAttribute(BaseAttribute):
 
     @property
     def _docstring(self):
-        """
-        Return the string to use as the ``__doc__`` attribute of the property
-        for this attribute.
-        """
+        """Return the string to use as the ``__doc__`` attribute of the property for
+        this attribute."""
         return (
             "%s type-converted value of ``%s`` attribute, or |None| (or spec"
             "ified default value) if not present. Assigning the default valu"
@@ -180,10 +164,8 @@ class OptionalAttribute(BaseAttribute):
 
     @property
     def _setter(self):
-        """
-        Return a function object suitable for the "set" side of the attribute
-        property descriptor.
-        """
+        """Return a function object suitable for the "set" side of the attribute
+        property descriptor."""
 
         def set_attr_value(obj, value):
             if value is None or value == self._default:
@@ -197,21 +179,19 @@ class OptionalAttribute(BaseAttribute):
 
 
 class RequiredAttribute(BaseAttribute):
-    """
-    Defines a required attribute on a custom element class. A required
-    attribute is assumed to be present for reading, so does not have
-    a default value; its actual value is always used. If missing on read,
-    an |InvalidXmlError| is raised. It also does not remove the attribute if
-    |None| is assigned. Assigning |None| raises |TypeError| or |ValueError|,
-    depending on the simple type of the attribute.
+    """Defines a required attribute on a custom element class.
+
+    A required attribute is assumed to be present for reading, so does not have a
+    default value; its actual value is always used. If missing on read, an
+    |InvalidXmlError| is raised. It also does not remove the attribute if |None| is
+    assigned. Assigning |None| raises |TypeError| or |ValueError|, depending on the
+    simple type of the attribute.
     """
 
     @property
     def _getter(self):
-        """
-        Return a function object suitable for the "get" side of the attribute
-        property descriptor.
-        """
+        """Return a function object suitable for the "get" side of the attribute
+        property descriptor."""
 
         def get_attr_value(obj):
             attr_str_value = obj.get(self._clark_name)
@@ -227,10 +207,8 @@ class RequiredAttribute(BaseAttribute):
 
     @property
     def _docstring(self):
-        """
-        Return the string to use as the ``__doc__`` attribute of the property
-        for this attribute.
-        """
+        """Return the string to use as the ``__doc__`` attribute of the property for
+        this attribute."""
         return "%s type-converted value of ``%s`` attribute." % (
             self._simple_type.__name__,
             self._attr_name,
@@ -238,10 +216,8 @@ class RequiredAttribute(BaseAttribute):
 
     @property
     def _setter(self):
-        """
-        Return a function object suitable for the "set" side of the attribute
-        property descriptor.
-        """
+        """Return a function object suitable for the "set" side of the attribute
+        property descriptor."""
 
         def set_attr_value(obj, value):
             str_value = self._simple_type.to_xml(value)
@@ -251,10 +227,8 @@ class RequiredAttribute(BaseAttribute):
 
 
 class _BaseChildElement(object):
-    """
-    Base class for the child element classes corresponding to varying
-    cardinalities, such as ZeroOrOne and ZeroOrMore.
-    """
+    """Base class for the child element classes corresponding to varying cardinalities,
+    such as ZeroOrOne and ZeroOrMore."""
 
     def __init__(self, nsptagname, successors=()):
         super(_BaseChildElement, self).__init__()
@@ -262,18 +236,12 @@ class _BaseChildElement(object):
         self._successors = successors
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Baseline behavior for adding the appropriate methods to
-        `element_cls`.
-        """
+        """Baseline behavior for adding the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
         self._prop_name = prop_name
 
     def _add_adder(self):
-        """
-        Add an ``_add_x()`` method to the element class for this child
-        element.
-        """
+        """Add an ``_add_x()`` method to the element class for this child element."""
 
         def _add_child(obj, **attrs):
             new_method = getattr(obj, self._new_method_name)
@@ -291,10 +259,8 @@ class _BaseChildElement(object):
         self._add_to_class(self._add_method_name, _add_child)
 
     def _add_creator(self):
-        """
-        Add a ``_new_{prop_name}()`` method to the element class that creates
-        a new, empty element of the correct type, having no attributes.
-        """
+        """Add a ``_new_{prop_name}()`` method to the element class that creates a new,
+        empty element of the correct type, having no attributes."""
         creator = self._creator
         creator.__doc__ = (
             'Return a "loose", newly created ``<%s>`` element having no attri'
@@ -303,19 +269,14 @@ class _BaseChildElement(object):
         self._add_to_class(self._new_method_name, creator)
 
     def _add_getter(self):
-        """
-        Add a read-only ``{prop_name}`` property to the element class for
-        this child element.
-        """
+        """Add a read-only ``{prop_name}`` property to the element class for this child
+        element."""
         property_ = property(self._getter, None, None)
         # assign unconditionally to overwrite element name definition
         setattr(self._element_cls, self._prop_name, property_)
 
     def _add_inserter(self):
-        """
-        Add an ``_insert_x()`` method to the element class for this child
-        element.
-        """
+        """Add an ``_insert_x()`` method to the element class for this child element."""
 
         def _insert_child(obj, child):
             obj.insert_element_before(child, *self._successors)
@@ -328,10 +289,8 @@ class _BaseChildElement(object):
         self._add_to_class(self._insert_method_name, _insert_child)
 
     def _add_list_getter(self):
-        """
-        Add a read-only ``{prop_name}_lst`` property to the element class to
-        retrieve a list of child elements matching this type.
-        """
+        """Add a read-only ``{prop_name}_lst`` property to the element class to retrieve
+        a list of child elements matching this type."""
         prop_name = "%s_lst" % self._prop_name
         property_ = property(self._list_getter, None, None)
         setattr(self._element_cls, prop_name, property_)
@@ -341,9 +300,7 @@ class _BaseChildElement(object):
         return "_add_%s" % self._prop_name
 
     def _add_public_adder(self):
-        """
-        Add a public ``add_x()`` method to the parent element class.
-        """
+        """Add a public ``add_x()`` method to the parent element class."""
 
         def add_child(obj):
             private_add_method = getattr(obj, self._add_method_name)
@@ -357,20 +314,16 @@ class _BaseChildElement(object):
         self._add_to_class(self._public_add_method_name, add_child)
 
     def _add_to_class(self, name, method):
-        """
-        Add `method` to the target class as `name`, unless `name` is already
-        defined on the class.
-        """
+        """Add `method` to the target class as `name`, unless `name` is already defined
+        on the class."""
         if hasattr(self._element_cls, name):
             return
         setattr(self._element_cls, name, method)
 
     @property
     def _creator(self):
-        """
-        Return a function object that creates a new, empty element of the
-        right type, having no attributes.
-        """
+        """Return a function object that creates a new, empty element of the right type,
+        having no attributes."""
 
         def new_child_element(obj):
             return OxmlElement(self._nsptagname)
@@ -379,10 +332,11 @@ class _BaseChildElement(object):
 
     @property
     def _getter(self):
-        """
-        Return a function object suitable for the "get" side of the property
-        descriptor. This default getter returns the child element with
-        matching tag name or |None| if not present.
+        """Return a function object suitable for the "get" side of the property
+        descriptor.
+
+        This default getter returns the child element with matching tag name or |None|
+        if not present.
         """
 
         def get_child_element(obj):
@@ -399,10 +353,8 @@ class _BaseChildElement(object):
 
     @property
     def _list_getter(self):
-        """
-        Return a function object suitable for the "get" side of a list
-        property descriptor.
-        """
+        """Return a function object suitable for the "get" side of a list property
+        descriptor."""
 
         def get_child_element_list(obj):
             return obj.findall(qn(self._nsptagname))
@@ -415,11 +367,11 @@ class _BaseChildElement(object):
 
     @lazyproperty
     def _public_add_method_name(self):
-        """
-        add_childElement() is public API for a repeating element, allowing
-        new elements to be added to the sequence. May be overridden to
-        provide a friendlier API to clients having domain appropriate
-        parameter names for required attributes.
+        """add_childElement() is public API for a repeating element, allowing new
+        elements to be added to the sequence.
+
+        May be overridden to provide a friendlier API to clients having domain
+        appropriate parameter names for required attributes.
         """
         return "add_%s" % self._prop_name
 
@@ -433,19 +385,15 @@ class _BaseChildElement(object):
 
 
 class Choice(_BaseChildElement):
-    """
-    Defines a child element belonging to a group, only one of which may
-    appear as a child.
-    """
+    """Defines a child element belonging to a group, only one of which may appear as a
+    child."""
 
     @property
     def nsptagname(self):
         return self._nsptagname
 
     def populate_class_members(self, element_cls, group_prop_name, successors):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
         self._group_prop_name = group_prop_name
         self._successors = successors
@@ -457,10 +405,8 @@ class Choice(_BaseChildElement):
         self._add_get_or_change_to_method()
 
     def _add_get_or_change_to_method(self):
-        """
-        Add a ``get_or_change_to_x()`` method to the element class for this
-        child element.
-        """
+        """Add a ``get_or_change_to_x()`` method to the element class for this child
+        element."""
 
         def get_or_change_to_child(obj):
             child = getattr(obj, self._prop_name)
@@ -479,7 +425,7 @@ class Choice(_BaseChildElement):
 
     @property
     def _prop_name(self):
-        """property name computed from tag name, e.g. a:schemeClr -> schemeClr."""
+        """Property name computed from tag name, e.g. a:schemeClr -> schemeClr."""
         start = self._nsptagname.index(":") + 1 if ":" in self._nsptagname else 0
         return self._nsptagname[start:]
 
@@ -493,26 +439,20 @@ class Choice(_BaseChildElement):
 
 
 class OneAndOnlyOne(_BaseChildElement):
-    """
-    Defines a required child element for MetaOxmlElement.
-    """
+    """Defines a required child element for MetaOxmlElement."""
 
     def __init__(self, nsptagname):
         super(OneAndOnlyOne, self).__init__(nsptagname, None)
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         super(OneAndOnlyOne, self).populate_class_members(element_cls, prop_name)
         self._add_getter()
 
     @property
     def _getter(self):
-        """
-        Return a function object suitable for the "get" side of the property
-        descriptor.
-        """
+        """Return a function object suitable for the "get" side of the property
+        descriptor."""
 
         def get_child_element(obj):
             child = obj.find(qn(self._nsptagname))
@@ -529,15 +469,11 @@ class OneAndOnlyOne(_BaseChildElement):
 
 
 class OneOrMore(_BaseChildElement):
-    """
-    Defines a repeating child element for MetaOxmlElement that must appear at
-    least once.
-    """
+    """Defines a repeating child element for MetaOxmlElement that must appear at least
+    once."""
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         super(OneOrMore, self).populate_class_members(element_cls, prop_name)
         self._add_list_getter()
         self._add_creator()
@@ -548,14 +484,10 @@ class OneOrMore(_BaseChildElement):
 
 
 class ZeroOrMore(_BaseChildElement):
-    """
-    Defines an optional repeating child element for MetaOxmlElement.
-    """
+    """Defines an optional repeating child element for MetaOxmlElement."""
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         super(ZeroOrMore, self).populate_class_members(element_cls, prop_name)
         self._add_list_getter()
         self._add_creator()
@@ -566,14 +498,10 @@ class ZeroOrMore(_BaseChildElement):
 
 
 class ZeroOrOne(_BaseChildElement):
-    """
-    Defines an optional child element for MetaOxmlElement.
-    """
+    """Defines an optional child element for MetaOxmlElement."""
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         super(ZeroOrOne, self).populate_class_members(element_cls, prop_name)
         self._add_getter()
         self._add_creator()
@@ -583,10 +511,8 @@ class ZeroOrOne(_BaseChildElement):
         self._add_remover()
 
     def _add_get_or_adder(self):
-        """
-        Add a ``get_or_add_x()`` method to the element class for this
-        child element.
-        """
+        """Add a ``get_or_add_x()`` method to the element class for this child
+        element."""
 
         def get_or_add_child(obj):
             child = getattr(obj, self._prop_name)
@@ -601,10 +527,7 @@ class ZeroOrOne(_BaseChildElement):
         self._add_to_class(self._get_or_add_method_name, get_or_add_child)
 
     def _add_remover(self):
-        """
-        Add a ``_remove_x()`` method to the element class for this child
-        element.
-        """
+        """Add a ``_remove_x()`` method to the element class for this child element."""
 
         def _remove_child(obj):
             obj.remove_all(self._nsptagname)
@@ -620,19 +543,15 @@ class ZeroOrOne(_BaseChildElement):
 
 
 class ZeroOrOneChoice(_BaseChildElement):
-    """
-    Correspondes to an ``EG_*`` element group where at most one of its
-    members may appear as a child.
-    """
+    """Correspondes to an ``EG_*`` element group where at most one of its members may
+    appear as a child."""
 
     def __init__(self, choices, successors=()):
         self._choices = choices
         self._successors = successors
 
     def populate_class_members(self, element_cls, prop_name):
-        """
-        Add the appropriate methods to `element_cls`.
-        """
+        """Add the appropriate methods to `element_cls`."""
         super(ZeroOrOneChoice, self).populate_class_members(element_cls, prop_name)
         self._add_choice_getter()
         for choice in self._choices:
@@ -642,20 +561,15 @@ class ZeroOrOneChoice(_BaseChildElement):
         self._add_group_remover()
 
     def _add_choice_getter(self):
-        """
-        Add a read-only ``{prop_name}`` property to the element class that
-        returns the present member of this group, or |None| if none are
-        present.
-        """
+        """Add a read-only ``{prop_name}`` property to the element class that returns
+        the present member of this group, or |None| if none are present."""
         property_ = property(self._choice_getter, None, None)
         # assign unconditionally to overwrite element name definition
         setattr(self._element_cls, self._prop_name, property_)
 
     def _add_group_remover(self):
-        """
-        Add a ``_remove_eg_x()`` method to the element class for this choice
-        group.
-        """
+        """Add a ``_remove_eg_x()`` method to the element class for this choice
+        group."""
 
         def _remove_choice_group(obj):
             for tagname in self._member_nsptagnames:
@@ -668,10 +582,8 @@ class ZeroOrOneChoice(_BaseChildElement):
 
     @property
     def _choice_getter(self):
-        """
-        Return a function object suitable for the "get" side of the property
-        descriptor.
-        """
+        """Return a function object suitable for the "get" side of the property
+        descriptor."""
 
         def get_group_member_element(obj):
             return obj.first_child_found_in(*self._member_nsptagnames)
@@ -684,10 +596,8 @@ class ZeroOrOneChoice(_BaseChildElement):
 
     @lazyproperty
     def _member_nsptagnames(self):
-        """
-        Sequence of namespace-prefixed tagnames, one for each of the member
-        elements of this choice group.
-        """
+        """Sequence of namespace-prefixed tagnames, one for each of the member elements
+        of this choice group."""
         return [choice.nsptagname for choice in self._choices]
 
     @lazyproperty

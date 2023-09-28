@@ -4,14 +4,13 @@ from .base import Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember, 
 
 
 class MSO_COLOR_TYPE(Enumeration):
-    """
-    Specifies the color specification scheme
+    """Specifies the color specification scheme.
 
     Example::
 
-        from docx.enum.dml import MSO_COLOR_TYPE
+    from docx.enum.dml import MSO_COLOR_TYPE
 
-        assert font.color.type == MSO_COLOR_TYPE.SCHEME
+    assert font.color.type == MSO_COLOR_TYPE.SCHEME
     """
 
     __ms_name__ = "MsoColorType"
@@ -31,17 +30,16 @@ class MSO_COLOR_TYPE(Enumeration):
 
 @alias("MSO_THEME_COLOR")
 class MSO_THEME_COLOR_INDEX(XmlEnumeration):
-    """
-    Indicates the Office theme color, one of those shown in the color gallery
-    on the formatting ribbon.
+    """Indicates the Office theme color, one of those shown in the color gallery on the
+    formatting ribbon.
 
     Alias: ``MSO_THEME_COLOR``
 
     Example::
 
-        from docx.enum.dml import MSO_THEME_COLOR
+    from docx.enum.dml import MSO_THEME_COLOR
 
-        font.color.theme_color = MSO_THEME_COLOR.ACCENT_1
+    font.color.theme_color = MSO_THEME_COLOR.ACCENT_1
     """
 
     __ms_name__ = "MsoThemeColorIndex"

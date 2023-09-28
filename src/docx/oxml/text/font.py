@@ -19,46 +19,34 @@ from docx.oxml.xmlchemy import (
 
 
 class CT_Color(BaseOxmlElement):
-    """
-    `w:color` element, specifying the color of a font and perhaps other
-    objects.
-    """
+    """`w:color` element, specifying the color of a font and perhaps other objects."""
 
     val = RequiredAttribute("w:val", ST_HexColor)
     themeColor = OptionalAttribute("w:themeColor", MSO_THEME_COLOR)
 
 
 class CT_Fonts(BaseOxmlElement):
-    """
-    ``<w:rFonts>`` element, specifying typeface name for the various language
-    types.
-    """
+    """``<w:rFonts>`` element, specifying typeface name for the various language
+    types."""
 
     ascii = OptionalAttribute("w:ascii", ST_String)
     hAnsi = OptionalAttribute("w:hAnsi", ST_String)
 
 
 class CT_Highlight(BaseOxmlElement):
-    """
-    `w:highlight` element, specifying font highlighting/background color.
-    """
+    """`w:highlight` element, specifying font highlighting/background color."""
 
     val = RequiredAttribute("w:val", WD_COLOR)
 
 
 class CT_HpsMeasure(BaseOxmlElement):
-    """
-    Used for ``<w:sz>`` element and others, specifying font size in
-    half-points.
-    """
+    """Used for ``<w:sz>`` element and others, specifying font size in half-points."""
 
     val = RequiredAttribute("w:val", ST_HpsMeasure)
 
 
 class CT_RPr(BaseOxmlElement):
-    """
-    ``<w:rPr>`` element, containing the properties for a run.
-    """
+    """``<w:rPr>`` element, containing the properties for a run."""
 
     _tag_seq = (
         "w:rStyle",
@@ -131,18 +119,13 @@ class CT_RPr(BaseOxmlElement):
     del _tag_seq
 
     def _new_color(self):
-        """
-        Override metaclass method to set `w:color/@val` to RGB black on
-        create.
-        """
+        """Override metaclass method to set `w:color/@val` to RGB black on create."""
         return parse_xml('<w:color %s w:val="000000"/>' % nsdecls("w"))
 
     @property
     def highlight_val(self):
-        """
-        Value of `w:highlight/@val` attribute, specifying a font's highlight
-        color, or `None` if the text is not highlighted.
-        """
+        """Value of `w:highlight/@val` attribute, specifying a font's highlight color,
+        or `None` if the text is not highlighted."""
         highlight = self.highlight
         if highlight is None:
             return None
@@ -158,11 +141,11 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def rFonts_ascii(self):
-        """
-        The value of `w:rFonts/@w:ascii` or |None| if not present. Represents
-        the assigned typeface name. The rFonts element also specifies other
-        special-case typeface names; this method handles the case where just
-        the common name is required.
+        """The value of `w:rFonts/@w:ascii` or |None| if not present.
+
+        Represents the assigned typeface name. The rFonts element also specifies other
+        special-case typeface names; this method handles the case where just the common
+        name is required.
         """
         rFonts = self.rFonts
         if rFonts is None:
@@ -179,9 +162,7 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def rFonts_hAnsi(self):
-        """
-        The value of `w:rFonts/@w:hAnsi` or |None| if not present.
-        """
+        """The value of `w:rFonts/@w:hAnsi` or |None| if not present."""
         rFonts = self.rFonts
         if rFonts is None:
             return None
@@ -196,10 +177,8 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def style(self):
-        """
-        String contained in <w:rStyle> child, or None if that element is not
-        present.
-        """
+        """String contained in <w:rStyle> child, or None if that element is not
+        present."""
         rStyle = self.rStyle
         if rStyle is None:
             return None
@@ -207,10 +186,10 @@ class CT_RPr(BaseOxmlElement):
 
     @style.setter
     def style(self, style):
-        """
-        Set val attribute of <w:rStyle> child element to `style`, adding a
-        new element if necessary. If `style` is |None|, remove the <w:rStyle>
-        element if present.
+        """Set val attribute of <w:rStyle> child element to `style`, adding a new
+        element if necessary.
+
+        If `style` is |None|, remove the <w:rStyle> element if present.
         """
         if style is None:
             self._remove_rStyle()
@@ -221,9 +200,9 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def subscript(self):
-        """
-        |True| if `w:vertAlign/@w:val` is 'subscript'. |False| if
-        `w:vertAlign/@w:val` contains any other value. |None| if
+        """|True| if `w:vertAlign/@w:val` is 'subscript'.
+
+        |False| if `w:vertAlign/@w:val` contains any other value. |None| if
         `w:vertAlign` is not present.
         """
         vertAlign = self.vertAlign
@@ -246,9 +225,9 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def superscript(self):
-        """
-        |True| if `w:vertAlign/@w:val` is 'superscript'. |False| if
-        `w:vertAlign/@w:val` contains any other value. |None| if
+        """|True| if `w:vertAlign/@w:val` is 'superscript'.
+
+        |False| if `w:vertAlign/@w:val` contains any other value. |None| if
         `w:vertAlign` is not present.
         """
         vertAlign = self.vertAlign
@@ -271,9 +250,7 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def sz_val(self):
-        """
-        The value of `w:sz/@w:val` or |None| if not present.
-        """
+        """The value of `w:sz/@w:val` or |None| if not present."""
         sz = self.sz
         if sz is None:
             return None
@@ -289,9 +266,7 @@ class CT_RPr(BaseOxmlElement):
 
     @property
     def u_val(self):
-        """
-        Value of `w:u/@val`, or None if not present.
-        """
+        """Value of `w:u/@val`, or None if not present."""
         u = self.u
         if u is None:
             return None
@@ -304,10 +279,8 @@ class CT_RPr(BaseOxmlElement):
             self._add_u().val = value
 
     def _get_bool_val(self, name):
-        """
-        Return the value of the boolean child element having `name`, e.g.
-        'b', 'i', and 'smallCaps'.
-        """
+        """Return the value of the boolean child element having `name`, e.g. 'b', 'i',
+        and 'smallCaps'."""
         element = getattr(self, name)
         if element is None:
             return None
@@ -322,15 +295,11 @@ class CT_RPr(BaseOxmlElement):
 
 
 class CT_Underline(BaseOxmlElement):
-    """
-    ``<w:u>`` element, specifying the underlining style for a run.
-    """
+    """``<w:u>`` element, specifying the underlining style for a run."""
 
     @property
     def val(self):
-        """
-        The underline type corresponding to the ``w:val`` attribute value.
-        """
+        """The underline type corresponding to the ``w:val`` attribute value."""
         val = self.get(qn("w:val"))
         underline = WD_UNDERLINE.from_xml(val)
         if underline == WD_UNDERLINE.SINGLE:
@@ -354,8 +323,6 @@ class CT_Underline(BaseOxmlElement):
 
 
 class CT_VerticalAlignRun(BaseOxmlElement):
-    """
-    ``<w:vertAlign>`` element, specifying subscript or superscript.
-    """
+    """``<w:vertAlign>`` element, specifying subscript or superscript."""
 
     val = RequiredAttribute("w:val", ST_VerticalAlignRun)

@@ -13,8 +13,8 @@ class BlockItemContainer(Parented):
     """Base class for proxy objects that can contain block items.
 
     These containers include _Body, _Cell, header, footer, footnote, endnote, comment,
-    and text box objects. Provides the shared functionality to add a block item like
-    a paragraph or table.
+    and text box objects. Provides the shared functionality to add a block item like a
+    paragraph or table.
     """
 
     def __init__(self, element, parent):
@@ -22,11 +22,13 @@ class BlockItemContainer(Parented):
         self._element = element
 
     def add_paragraph(self, text="", style=None):
-        """
-        Return a paragraph newly added to the end of the content in this
-        container, having `text` in a single run if present, and having
-        paragraph style `style`. If `style` is |None|, no paragraph style is
-        applied, which has the same effect as applying the 'Normal' style.
+        """Return paragraph newly added to the end of the content in this container.
+
+        The paragraph has `text` in a single run if present, and is given paragraph
+        style `style`.
+
+        If `style` is |None|, no paragraph style is applied, which has the same effect
+        as applying the 'Normal' style.
         """
         paragraph = self._add_paragraph()
         if text:
@@ -36,12 +38,13 @@ class BlockItemContainer(Parented):
         return paragraph
 
     def add_table(self, rows, cols, width):
+        """Return table of `width` having `rows` rows and `cols` columns.
+
+        The table is appended appended at the end of the content in this container.
+
+        `width` is evenly distributed between the table columns.
         """
-        Return a table of `width` having `rows` rows and `cols` columns,
-        newly appended to the content in this container. `width` is evenly
-        distributed between the table columns.
-        """
-        from .table import Table
+        from docx.table import Table
 
         tbl = CT_Tbl.new_tbl(rows, cols, width)
         self._element._insert_tbl(tbl)
@@ -49,16 +52,16 @@ class BlockItemContainer(Parented):
 
     @property
     def paragraphs(self):
-        """
-        A list containing the paragraphs in this container, in document
-        order. Read-only.
+        """A list containing the paragraphs in this container, in document order.
+
+        Read-only.
         """
         return [Paragraph(p, self) for p in self._element.p_lst]
 
     @property
     def tables(self):
-        """
-        A list containing the tables in this container, in document order.
+        """A list containing the tables in this container, in document order.
+
         Read-only.
         """
         from .table import Table
@@ -66,8 +69,5 @@ class BlockItemContainer(Parented):
         return [Table(tbl, self) for tbl in self._element.tbl_lst]
 
     def _add_paragraph(self):
-        """
-        Return a paragraph newly added to the end of the content in this
-        container.
-        """
+        """Return paragraph newly added to the end of the content in this container."""
         return Paragraph(self._element.add_p(), self)

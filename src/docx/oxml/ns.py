@@ -23,10 +23,7 @@ pfxmap = {value: key for key, value in nsmap.items()}
 
 
 class NamespacePrefixedTag(str):
-    """
-    Value object that knows the semantics of an XML tag having a namespace
-    prefix.
-    """
+    """Value object that knows the semantics of an XML tag having a namespace prefix."""
 
     def __new__(cls, nstag, *args):
         return super(NamespacePrefixedTag, cls).__new__(cls, nstag)
@@ -47,60 +44,54 @@ class NamespacePrefixedTag(str):
 
     @property
     def local_part(self):
-        """
-        Return the local part of the tag as a string. E.g. 'foobar' is
-        returned for tag 'f:foobar'.
+        """Return the local part of the tag as a string.
+
+        E.g. 'foobar' is returned for tag 'f:foobar'.
         """
         return self._local_part
 
     @property
     def nsmap(self):
-        """
-        Return a dict having a single member, mapping the namespace prefix of
-        this tag to it's namespace name (e.g. {'f': 'http://foo/bar'}). This
-        is handy for passing to xpath calls and other uses.
+        """Return a dict having a single member, mapping the namespace prefix of this
+        tag to it's namespace name (e.g. {'f': 'http://foo/bar'}).
+
+        This is handy for passing to xpath calls and other uses.
         """
         return {self._pfx: self._ns_uri}
 
     @property
     def nspfx(self):
-        """
-        Return the string namespace prefix for the tag, e.g. 'f' is returned
-        for tag 'f:foobar'.
-        """
+        """Return the string namespace prefix for the tag, e.g. 'f' is returned for tag
+        'f:foobar'."""
         return self._pfx
 
     @property
     def nsuri(self):
-        """
-        Return the namespace URI for the tag, e.g. 'http://foo/bar' would be
-        returned for tag 'f:foobar' if the 'f' prefix maps to
-        'http://foo/bar' in nsmap.
-        """
+        """Return the namespace URI for the tag, e.g. 'http://foo/bar' would be returned
+        for tag 'f:foobar' if the 'f' prefix maps to 'http://foo/bar' in nsmap."""
         return self._ns_uri
 
 
 def nsdecls(*prefixes):
-    """
-    Return a string containing a namespace declaration for each of the
-    namespace prefix strings, e.g. 'p', 'ct', passed as `prefixes`.
-    """
+    """Return a string containing a namespace declaration for each of the namespace
+    prefix strings, e.g. 'p', 'ct', passed as `prefixes`."""
     return " ".join(['xmlns:%s="%s"' % (pfx, nsmap[pfx]) for pfx in prefixes])
 
 
 def nspfxmap(*nspfxs):
-    """
-    Return a dict containing the subset namespace prefix mappings specified by
-    `nspfxs`. Any number of namespace prefixes can be supplied, e.g.
-    namespaces('a', 'r', 'p').
+    """Return a dict containing the subset namespace prefix mappings specified by
+    `nspfxs`.
+
+    Any number of namespace prefixes can be supplied, e.g. namespaces('a', 'r', 'p').
     """
     return {pfx: nsmap[pfx] for pfx in nspfxs}
 
 
 def qn(tag):
-    """
-    Stands for "qualified name", a utility function to turn a namespace
-    prefixed tag name into a Clark-notation qualified tag name for lxml. For
+    """Stands for "qualified name", a utility function to turn a namespace prefixed tag
+    name into a Clark-notation qualified tag name for lxml.
+
+    For
     example, ``qn('p:cSld')`` returns ``'{http://schemas.../main}cSld'``.
     """
     prefix, tagroot = tag.split(":")

@@ -18,9 +18,7 @@ from ..xmlchemy import (
 
 
 class CT_Ind(BaseOxmlElement):
-    """
-    ``<w:ind>`` element, specifying paragraph indentation.
-    """
+    """``<w:ind>`` element, specifying paragraph indentation."""
 
     left = OptionalAttribute("w:left", ST_SignedTwipsMeasure)
     right = OptionalAttribute("w:right", ST_SignedTwipsMeasure)
@@ -29,17 +27,13 @@ class CT_Ind(BaseOxmlElement):
 
 
 class CT_Jc(BaseOxmlElement):
-    """
-    ``<w:jc>`` element, specifying paragraph justification.
-    """
+    """``<w:jc>`` element, specifying paragraph justification."""
 
     val = RequiredAttribute("w:val", WD_ALIGN_PARAGRAPH)
 
 
 class CT_PPr(BaseOxmlElement):
-    """
-    ``<w:pPr>`` element, containing the properties for a paragraph.
-    """
+    """``<w:pPr>`` element, containing the properties for a paragraph."""
 
     _tag_seq = (
         "w:pStyle",
@@ -94,10 +88,10 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def first_line_indent(self):
-        """
-        A |Length| value calculated from the values of `w:ind/@w:firstLine`
-        and `w:ind/@w:hanging`. Returns |None| if the `w:ind` child is not
-        present.
+        """A |Length| value calculated from the values of `w:ind/@w:firstLine` and
+        `w:ind/@w:hanging`.
+
+        Returns |None| if the `w:ind` child is not present.
         """
         ind = self.ind
         if ind is None:
@@ -125,9 +119,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def ind_left(self):
-        """
-        The value of `w:ind/@w:left` or |None| if not present.
-        """
+        """The value of `w:ind/@w:left` or |None| if not present."""
         ind = self.ind
         if ind is None:
             return None
@@ -142,9 +134,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def ind_right(self):
-        """
-        The value of `w:ind/@w:right` or |None| if not present.
-        """
+        """The value of `w:ind/@w:right` or |None| if not present."""
         ind = self.ind
         if ind is None:
             return None
@@ -159,9 +149,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def jc_val(self):
-        """
-        The value of the ``<w:jc>`` child element or |None| if not present.
-        """
+        """The value of the ``<w:jc>`` child element or |None| if not present."""
         jc = self.jc
         if jc is None:
             return None
@@ -176,9 +164,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def keepLines_val(self):
-        """
-        The value of `keepLines/@val` or |None| if not present.
-        """
+        """The value of `keepLines/@val` or |None| if not present."""
         keepLines = self.keepLines
         if keepLines is None:
             return None
@@ -193,9 +179,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def keepNext_val(self):
-        """
-        The value of `keepNext/@val` or |None| if not present.
-        """
+        """The value of `keepNext/@val` or |None| if not present."""
         keepNext = self.keepNext
         if keepNext is None:
             return None
@@ -210,9 +194,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def pageBreakBefore_val(self):
-        """
-        The value of `pageBreakBefore/@val` or |None| if not present.
-        """
+        """The value of `pageBreakBefore/@val` or |None| if not present."""
         pageBreakBefore = self.pageBreakBefore
         if pageBreakBefore is None:
             return None
@@ -227,9 +209,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def spacing_after(self):
-        """
-        The value of `w:spacing/@w:after` or |None| if not present.
-        """
+        """The value of `w:spacing/@w:after` or |None| if not present."""
         spacing = self.spacing
         if spacing is None:
             return None
@@ -243,9 +223,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def spacing_before(self):
-        """
-        The value of `w:spacing/@w:before` or |None| if not present.
-        """
+        """The value of `w:spacing/@w:before` or |None| if not present."""
         spacing = self.spacing
         if spacing is None:
             return None
@@ -259,9 +237,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def spacing_line(self):
-        """
-        The value of `w:spacing/@w:line` or |None| if not present.
-        """
+        """The value of `w:spacing/@w:line` or |None| if not present."""
         spacing = self.spacing
         if spacing is None:
             return None
@@ -275,12 +251,13 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def spacing_lineRule(self):
-        """
-        The value of `w:spacing/@w:lineRule` as a member of the
-        :ref:`WdLineSpacing` enumeration. Only the `MULTIPLE`, `EXACTLY`, and
-        `AT_LEAST` members are used. It is the responsibility of the client
-        to calculate the use of `SINGLE`, `DOUBLE`, and `MULTIPLE` based on
-        the value of `w:spacing/@w:line` if that behavior is desired.
+        """The value of `w:spacing/@w:lineRule` as a member of the :ref:`WdLineSpacing`
+        enumeration.
+
+        Only the `MULTIPLE`, `EXACTLY`, and `AT_LEAST` members are used. It is the
+        responsibility of the client to calculate the use of `SINGLE`, `DOUBLE`, and
+        `MULTIPLE` based on the value of `w:spacing/@w:line` if that behavior is
+        desired.
         """
         spacing = self.spacing
         if spacing is None:
@@ -298,10 +275,8 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def style(self):
-        """
-        String contained in <w:pStyle> child, or None if that element is not
-        present.
-        """
+        """String contained in <w:pStyle> child, or None if that element is not
+        present."""
         pStyle = self.pStyle
         if pStyle is None:
             return None
@@ -309,10 +284,10 @@ class CT_PPr(BaseOxmlElement):
 
     @style.setter
     def style(self, style):
-        """
-        Set val attribute of <w:pStyle> child element to `style`, adding a
-        new element if necessary. If `style` is |None|, remove the <w:pStyle>
-        element if present.
+        """Set val attribute of <w:pStyle> child element to `style`, adding a new
+        element if necessary.
+
+        If `style` is |None|, remove the <w:pStyle> element if present.
         """
         if style is None:
             self._remove_pStyle()
@@ -322,9 +297,7 @@ class CT_PPr(BaseOxmlElement):
 
     @property
     def widowControl_val(self):
-        """
-        The value of `widowControl/@val` or |None| if not present.
-        """
+        """The value of `widowControl/@val` or |None| if not present."""
         widowControl = self.widowControl
         if widowControl is None:
             return None
@@ -339,10 +312,8 @@ class CT_PPr(BaseOxmlElement):
 
 
 class CT_Spacing(BaseOxmlElement):
-    """
-    ``<w:spacing>`` element, specifying paragraph spacing attributes such as
-    space before and line spacing.
-    """
+    """``<w:spacing>`` element, specifying paragraph spacing attributes such as space
+    before and line spacing."""
 
     after = OptionalAttribute("w:after", ST_TwipsMeasure)
     before = OptionalAttribute("w:before", ST_TwipsMeasure)
@@ -359,16 +330,12 @@ class CT_TabStop(BaseOxmlElement):
 
 
 class CT_TabStops(BaseOxmlElement):
-    """
-    ``<w:tabs>`` element, container for a sorted sequence of tab stops.
-    """
+    """``<w:tabs>`` element, container for a sorted sequence of tab stops."""
 
     tab = OneOrMore("w:tab", successors=())
 
     def insert_tab_in_order(self, pos, align, leader):
-        """
-        Insert a newly created `w:tab` child element in `pos` order.
-        """
+        """Insert a newly created `w:tab` child element in `pos` order."""
         new_tab = self._new_tab()
         new_tab.pos, new_tab.val, new_tab.leader = pos, align, leader
         for tab in self.tab_lst:

@@ -2,12 +2,12 @@
 
 
 class CaseInsensitiveDict(dict):
-    """
-    Mapping type that behaves like dict except that it matches without respect
-    to the case of the key. E.g. cid['A'] == cid['a']. Note this is not
-    general-purpose, just complete enough to satisfy opc package needs. It
-    assumes str keys, and that it is created empty; keys passed in constructor
-    are not accounted for
+    """Mapping type that behaves like dict except that it matches without respect to the
+    case of the key.
+
+    E.g. cid['A'] == cid['a']. Note this is not general-purpose, just complete enough to
+    satisfy opc package needs. It assumes str keys, and that it is created empty; keys
+    passed in constructor are not accounted for
     """
 
     def __contains__(self, key):
@@ -26,10 +26,10 @@ def cls_method_fn(cls: type, method_name: str):
 
 
 def lazyproperty(f):
-    """
-    @lazyprop decorator. Decorated method will be called only on first access
-    to calculate a cached property value. After that, the cached value is
-    returned.
+    """@lazyprop decorator.
+
+    Decorated method will be called only on first access to calculate a cached property
+    value. After that, the cached value is returned.
     """
     cache_attr_name = "_%s" % f.__name__  # like '_foobar' for prop 'foobar'
     docstring = f.__doc__

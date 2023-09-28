@@ -7,10 +7,8 @@ from ..exceptions import InvalidXmlError
 
 
 def alias(*aliases):
-    """
-    Decorating a class with @alias('FOO', 'BAR', ..) allows the class to
-    be referenced by each of the names provided as arguments.
-    """
+    """Decorating a class with @alias('FOO', 'BAR', ..) allows the class to be
+    referenced by each of the names provided as arguments."""
 
     def decorator(cls):
         # alias must be set in globals from caller's frame
@@ -26,9 +24,8 @@ def alias(*aliases):
 class _DocsPageFormatter(object):
     """Generate an .rst doc page for an enumeration.
 
-    Formats a RestructuredText documention page (string) for the enumeration
-    class parts passed to the constructor. An immutable one-shot service
-    object.
+    Formats a RestructuredText documention page (string) for the enumeration class parts
+    passed to the constructor. An immutable one-shot service object.
     """
 
     def __init__(self, clsname, clsdict):
@@ -37,9 +34,9 @@ class _DocsPageFormatter(object):
 
     @property
     def page_str(self):
-        """
-        The RestructuredText documentation page for the enumeration. This is
-        the only API member for the class.
+        """The RestructuredText documentation page for the enumeration.
+
+        This is the only API member for the class.
         """
         tmpl = ".. _%s:\n\n%s\n\n%s\n\n----\n\n%s"
         components = (
@@ -64,10 +61,8 @@ class _DocsPageFormatter(object):
         return textwrap.dedent(cls_docstring).strip()
 
     def _member_def(self, member):
-        """
-        Return an individual member definition formatted as an RST glossary
-        entry, wrapped to fit within 78 columns.
-        """
+        """Return an individual member definition formatted as an RST glossary entry,
+        wrapped to fit within 78 columns."""
         member_docstring = textwrap.dedent(member.docstring).strip()
         member_docstring = textwrap.fill(
             member_docstring,
@@ -79,10 +74,8 @@ class _DocsPageFormatter(object):
 
     @property
     def _member_defs(self):
-        """
-        A single string containing the aggregated member definitions section
-        of the documentation page
-        """
+        """A single string containing the aggregated member definitions section of the
+        documentation page."""
         members = self._clsdict["__members__"]
         member_defs = [
             self._member_def(member) for member in members if member.name is not None
@@ -91,26 +84,22 @@ class _DocsPageFormatter(object):
 
     @property
     def _ms_name(self):
-        """
-        The Microsoft API name for this enumeration
-        """
+        """The Microsoft API name for this enumeration."""
         return self._clsdict["__ms_name__"]
 
     @property
     def _page_title(self):
-        """
-        The title for the documentation page, formatted as code (surrounded
-        in double-backtics) and underlined with '=' characters
-        """
+        """The title for the documentation page, formatted as code (surrounded in
+        double-backtics) and underlined with '=' characters."""
         title_underscore = "=" * (len(self._clsname) + 4)
         return "``%s``\n%s" % (self._clsname, title_underscore)
 
 
 class MetaEnumeration(type):
-    """
-    The metaclass for Enumeration and its subclasses. Adds a name for each
-    named member and compiles state needed by the enumeration class to
-    respond to other attribute gets
+    """The metaclass for Enumeration and its subclasses.
+
+    Adds a name for each named member and compiles state needed by the enumeration class
+    to respond to other attribute gets
     """
 
     def __new__(meta, clsname, bases, clsdict):
@@ -121,10 +110,10 @@ class MetaEnumeration(type):
 
     @classmethod
     def _add_enum_members(meta, clsdict):
-        """
-        Dispatch ``.add_to_enum()`` call to each member so it can do its
-        thing to properly add itself to the enumeration class. This
-        delegation allows member sub-classes to add specialized behaviors.
+        """Dispatch ``.add_to_enum()`` call to each member so it can do its thing to
+        properly add itself to the enumeration class.
+
+        This delegation allows member sub-classes to add specialized behaviors.
         """
         enum_members = clsdict["__members__"]
         for member in enum_members:
@@ -132,9 +121,10 @@ class MetaEnumeration(type):
 
     @classmethod
     def _collect_valid_settings(meta, clsdict):
-        """
-        Return a sequence containing the enumeration values that are valid
-        assignment values. Return-only values are excluded.
+        """Return a sequence containing the enumeration values that are valid assignment
+        values.
+
+        Return-only values are excluded.
         """
         enum_members = clsdict["__members__"]
         valid_settings = []
@@ -144,17 +134,15 @@ class MetaEnumeration(type):
 
     @classmethod
     def _generate_docs_page(meta, clsname, clsdict):
-        """
-        Return the RST documentation page for the enumeration.
-        """
+        """Return the RST documentation page for the enumeration."""
         clsdict["__docs_rst__"] = _DocsPageFormatter(clsname, clsdict).page_str
 
 
 class EnumerationBase(object):
-    """
-    Base class for all enumerations, used directly for enumerations requiring
-    only basic behavior. It's __dict__ is used below in the Python 2+3
-    compatible metaclass definition.
+    """Base class for all enumerations, used directly for enumerations requiring only
+    basic behavior.
+
+    It's __dict__ is used below in the Python 2+3 compatible metaclass definition.
     """
 
     __members__ = ()
@@ -162,9 +150,7 @@ class EnumerationBase(object):
 
     @classmethod
     def validate(cls, value):
-        """
-        Raise |ValueError| if `value` is not an assignable value.
-        """
+        """Raise |ValueError| if `value` is not an assignable value."""
         if value not in cls._valid_settings:
             raise ValueError(
                 "%s not a member of %s enumeration" % (value, cls.__name__)
@@ -175,20 +161,15 @@ Enumeration = MetaEnumeration("Enumeration", (object,), dict(EnumerationBase.__d
 
 
 class XmlEnumeration(Enumeration):
-    """
-    Provides ``to_xml()`` and ``from_xml()`` methods in addition to base
-    enumeration features
-    """
+    """Provides ``to_xml()`` and ``from_xml()`` methods in addition to base enumeration
+    features."""
 
     __members__ = ()
     __ms_name__ = ""
 
     @classmethod
     def from_xml(cls, xml_val):
-        """
-        Return the enumeration member corresponding to the XML value
-        `xml_val`.
-        """
+        """Return the enumeration member corresponding to the XML value `xml_val`."""
         if xml_val not in cls._xml_to_member:
             raise InvalidXmlError(
                 "attribute value '%s' not valid for this type" % xml_val
@@ -197,9 +178,7 @@ class XmlEnumeration(Enumeration):
 
     @classmethod
     def to_xml(cls, enum_val):
-        """
-        Return the XML value of the enumeration value `enum_val`.
-        """
+        """Return the XML value of the enumeration value `enum_val`."""
         if enum_val not in cls._member_to_xml:
             raise ValueError(
                 "value '%s' not in enumeration %s" % (enum_val, cls.__name__)
@@ -208,10 +187,8 @@ class XmlEnumeration(Enumeration):
 
 
 class EnumMember(object):
-    """
-    Used in the enumeration class definition to define a member value and its
-    mappings
-    """
+    """Used in the enumeration class definition to define a member value and its
+    mappings."""
 
     def __init__(self, name, value, docstring):
         self._name = name
@@ -221,34 +198,29 @@ class EnumMember(object):
         self._docstring = docstring
 
     def add_to_enum(self, clsdict):
-        """
-        Add a name to `clsdict` for this member.
-        """
+        """Add a name to `clsdict` for this member."""
         self.register_name(clsdict)
 
     @property
     def docstring(self):
-        """
-        The description of this member
-        """
+        """The description of this member."""
         return self._docstring
 
     @property
     def name(self):
-        """
-        The distinguishing name of this member within the enumeration class,
-        e.g. 'MIDDLE' for MSO_VERTICAL_ANCHOR.MIDDLE, if this is a named
-        member. Otherwise the primitive value such as |None|, |True| or
-        |False|.
+        """The distinguishing name of this member within the enumeration class, e.g.
+        'MIDDLE' for MSO_VERTICAL_ANCHOR.MIDDLE, if this is a named member.
+
+        Otherwise the primitive value such as |None|, |True| or |False|.
         """
         return self._name
 
     def register_name(self, clsdict):
-        """
-        Add a member name to the class dict `clsdict` containing the value of
-        this member object. Where the name of this object is None, do
-        nothing; this allows out-of-band values to be defined without adding
-        a name to the class dict.
+        """Add a member name to the class dict `clsdict` containing the value of this
+        member object.
+
+        Where the name of this object is None, do nothing; this allows out-of-band
+        values to be defined without adding a name to the class dict.
         """
         if self.name is None:
             return
@@ -256,26 +228,24 @@ class EnumMember(object):
 
     @property
     def valid_settings(self):
-        """
-        A sequence containing the values valid for assignment for this
-        member. May be zero, one, or more in number.
+        """A sequence containing the values valid for assignment for this member.
+
+        May be zero, one, or more in number.
         """
         return (self._value,)
 
     @property
     def value(self):
-        """
-        The enumeration value for this member, often an instance of
-        EnumValue, but may be a primitive value such as |None|.
-        """
+        """The enumeration value for this member, often an instance of EnumValue, but
+        may be a primitive value such as |None|."""
         return self._value
 
 
 class EnumValue(int):
-    """
-    A named enumeration value, providing __str__ and __doc__ string values
-    for its symbolic name and description, respectively. Subclasses int, so
-    behaves as a regular int unless the strings are asked for.
+    """A named enumeration value, providing __str__ and __doc__ string values for its
+    symbolic name and description, respectively.
+
+    Subclasses int, so behaves as a regular int unless the strings are asked for.
     """
 
     def __new__(cls, member_name, int_value, docstring):
@@ -288,52 +258,38 @@ class EnumValue(int):
 
     @property
     def __doc__(self):
-        """
-        The description of this enumeration member
-        """
+        """The description of this enumeration member."""
         return self._docstring.strip()
 
     def __str__(self):
-        """
-        The symbolic name and string value of this member, e.g. 'MIDDLE (3)'
-        """
+        """The symbolic name and string value of this member, e.g. 'MIDDLE (3)'."""
         return "%s (%d)" % (self._member_name, int(self))
 
 
 class ReturnValueOnlyEnumMember(EnumMember):
-    """
-    Used to define a member of an enumeration that is only valid as a query
-    result and is not valid as a setting, e.g. MSO_VERTICAL_ANCHOR.MIXED (-2)
-    """
+    """Used to define a member of an enumeration that is only valid as a query result
+    and is not valid as a setting, e.g. MSO_VERTICAL_ANCHOR.MIXED (-2)"""
 
     @property
     def valid_settings(self):
-        """
-        No settings are valid for a return-only value.
-        """
+        """No settings are valid for a return-only value."""
         return ()
 
 
 class XmlMappedEnumMember(EnumMember):
-    """
-    Used to define a member whose value maps to an XML attribute value.
-    """
+    """Used to define a member whose value maps to an XML attribute value."""
 
     def __init__(self, name, value, xml_value, docstring):
         super(XmlMappedEnumMember, self).__init__(name, value, docstring)
         self._xml_value = xml_value
 
     def add_to_enum(self, clsdict):
-        """
-        Compile XML mappings in addition to base add behavior.
-        """
+        """Compile XML mappings in addition to base add behavior."""
         super(XmlMappedEnumMember, self).add_to_enum(clsdict)
         self.register_xml_mapping(clsdict)
 
     def register_xml_mapping(self, clsdict):
-        """
-        Add XML mappings to the enumeration class state for this member.
-        """
+        """Add XML mappings to the enumeration class state for this member."""
         member_to_xml = self._get_or_add_member_to_xml(clsdict)
         member_to_xml[self.value] = self.xml_value
         xml_to_member = self._get_or_add_xml_to_member(clsdict)
@@ -341,25 +297,19 @@ class XmlMappedEnumMember(EnumMember):
 
     @property
     def xml_value(self):
-        """
-        The XML attribute value that corresponds to this enumeration value
-        """
+        """The XML attribute value that corresponds to this enumeration value."""
         return self._xml_value
 
     @staticmethod
     def _get_or_add_member_to_xml(clsdict):
-        """
-        Add the enum -> xml value mapping to the enumeration class state
-        """
+        """Add the enum -> xml value mapping to the enumeration class state."""
         if "_member_to_xml" not in clsdict:
             clsdict["_member_to_xml"] = {}
         return clsdict["_member_to_xml"]
 
     @staticmethod
     def _get_or_add_xml_to_member(clsdict):
-        """
-        Add the xml -> enum value mapping to the enumeration class state
-        """
+        """Add the xml -> enum value mapping to the enumeration class state."""
         if "_xml_to_member" not in clsdict:
             clsdict["_xml_to_member"] = {}
         return clsdict["_xml_to_member"]

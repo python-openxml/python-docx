@@ -83,11 +83,9 @@ class BaseStringEnumerationType(BaseStringType):
 
 
 class XsdAnyUri(BaseStringType):
-    """
-    There's a regular expression this is supposed to meet but so far thinking
-    spending cycles on validating wouldn't be worth it for the number of
-    programming errors it would catch.
-    """
+    """There's a regular expression this is supposed to meet but so far thinking
+    spending cycles on validating wouldn't be worth it for the number of programming
+    errors it would catch."""
 
 
 class XsdBoolean(BaseSimpleType):
@@ -113,9 +111,9 @@ class XsdBoolean(BaseSimpleType):
 
 
 class XsdId(BaseStringType):
-    """
-    String that must begin with a letter or underscore and cannot contain any
-    colons. Not fully validated because not used in external API.
+    """String that must begin with a letter or underscore and cannot contain any colons.
+
+    Not fully validated because not used in external API.
     """
 
     pass
@@ -138,16 +136,12 @@ class XsdString(BaseStringType):
 
 
 class XsdStringEnumeration(BaseStringEnumerationType):
-    """
-    Set of enumerated xsd:string values.
-    """
+    """Set of enumerated xsd:string values."""
 
 
 class XsdToken(BaseStringType):
-    """
-    xsd:string with whitespace collapsing, e.g. multiple spaces reduced to
-    one, leading and trailing space stripped.
-    """
+    """Xsd:string with whitespace collapsing, e.g. multiple spaces reduced to one,
+    leading and trailing space stripped."""
 
     pass
 
@@ -217,9 +211,7 @@ class ST_HexColor(BaseStringType):
 
     @classmethod
     def convert_to_xml(cls, value):
-        """
-        Keep alpha hex numerals all uppercase just for consistency.
-        """
+        """Keep alpha hex numerals all uppercase just for consistency."""
         # expecting 3-tuple of ints in range 0-255
         return "%02X%02X%02X" % value
 
@@ -234,9 +226,7 @@ class ST_HexColor(BaseStringType):
 
 
 class ST_HexColorAuto(XsdStringEnumeration):
-    """
-    Value for `w:color/[@val="auto"] attribute setting
-    """
+    """Value for `w:color/[@val="auto"] attribute setting."""
 
     AUTO = "auto"
 
@@ -244,9 +234,7 @@ class ST_HexColorAuto(XsdStringEnumeration):
 
 
 class ST_HpsMeasure(XsdUnsignedLong):
-    """
-    Half-point measure, e.g. 24.0 represents 12.0 points.
-    """
+    """Half-point measure, e.g. 24.0 represents 12.0 points."""
 
     @classmethod
     def convert_from_xml(cls, str_value):
@@ -262,9 +250,7 @@ class ST_HpsMeasure(XsdUnsignedLong):
 
 
 class ST_Merge(XsdStringEnumeration):
-    """
-    Valid values for <w:xMerge val=""> attribute
-    """
+    """Valid values for <w:xMerge val=""> attribute."""
 
     CONTINUE = "continue"
     RESTART = "restart"
@@ -365,9 +351,7 @@ class ST_UniversalMeasure(BaseSimpleType):
 
 
 class ST_VerticalAlignRun(XsdStringEnumeration):
-    """
-    Valid values for `w:vertAlign/@val`.
-    """
+    """Valid values for `w:vertAlign/@val`."""
 
     BASELINE = "baseline"
     SUPERSCRIPT = "superscript"

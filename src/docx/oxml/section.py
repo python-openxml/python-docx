@@ -14,23 +14,21 @@ from docx.oxml.xmlchemy import (
 
 
 class CT_HdrFtr(BaseOxmlElement):
-    """`w:hdr` and `w:ftr`, the root element for header and footer part respectively"""
+    """`w:hdr` and `w:ftr`, the root element for header and footer part respectively."""
 
     p = ZeroOrMore("w:p", successors=())
     tbl = ZeroOrMore("w:tbl", successors=())
 
 
 class CT_HdrFtrRef(BaseOxmlElement):
-    """`w:headerReference` and `w:footerReference` elements"""
+    """`w:headerReference` and `w:footerReference` elements."""
 
     type_ = RequiredAttribute("w:type", WD_HEADER_FOOTER)
     rId = RequiredAttribute("r:id", XsdString)
 
 
 class CT_PageMar(BaseOxmlElement):
-    """
-    ``<w:pgMar>`` element, defining page margins.
-    """
+    """``<w:pgMar>`` element, defining page margins."""
 
     top = OptionalAttribute("w:top", ST_SignedTwipsMeasure)
     right = OptionalAttribute("w:right", ST_TwipsMeasure)
@@ -42,9 +40,7 @@ class CT_PageMar(BaseOxmlElement):
 
 
 class CT_PageSz(BaseOxmlElement):
-    """
-    ``<w:pgSz>`` element, defining page dimensions and orientation.
-    """
+    """``<w:pgSz>`` element, defining page dimensions and orientation."""
 
     w = OptionalAttribute("w:w", ST_TwipsMeasure)
     h = OptionalAttribute("w:h", ST_TwipsMeasure)
@@ -54,7 +50,7 @@ class CT_PageSz(BaseOxmlElement):
 
 
 class CT_SectPr(BaseOxmlElement):
-    """`w:sectPr` element, the container element for section properties"""
+    """`w:sectPr` element, the container element for section properties."""
 
     _tag_seq = (
         "w:footnotePr",
@@ -108,11 +104,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def bottom_margin(self):
-        """
-        The value of the ``w:bottom`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:bottom`` attribute in the ``<w:pgMar>`` child element,
+        as a |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -124,10 +118,10 @@ class CT_SectPr(BaseOxmlElement):
         pgMar.bottom = value
 
     def clone(self):
-        """
-        Return an exact duplicate of this ``<w:sectPr>`` element tree
-        suitable for use in adding a section break. All rsid* attributes are
-        removed from the root ``<w:sectPr>`` element.
+        """Return an exact duplicate of this ``<w:sectPr>`` element tree suitable for
+        use in adding a section break.
+
+        All rsid* attributes are removed from the root ``<w:sectPr>`` element.
         """
         clone_sectPr = deepcopy(self)
         clone_sectPr.attrib.clear()
@@ -135,11 +129,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def footer(self):
-        """
-        The value of the ``w:footer`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:footer`` attribute in the ``<w:pgMar>`` child element,
+        as a |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -169,11 +161,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def gutter(self):
-        """
-        The value of the ``w:gutter`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:gutter`` attribute in the ``<w:pgMar>`` child element,
+        as a |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -186,11 +176,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def header(self):
-        """
-        The value of the ``w:header`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:header`` attribute in the ``<w:pgMar>`` child element,
+        as a |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -203,11 +191,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def left_margin(self):
-        """
-        The value of the ``w:left`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:left`` attribute in the ``<w:pgMar>`` child element, as
+        a |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -220,11 +206,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def orientation(self):
-        """
-        The member of the ``WD_ORIENTATION`` enumeration corresponding to the
-        value of the ``orient`` attribute of the ``<w:pgSz>`` child element,
-        or ``WD_ORIENTATION.PORTRAIT`` if not present.
-        """
+        """The member of the ``WD_ORIENTATION`` enumeration corresponding to the value
+        of the ``orient`` attribute of the ``<w:pgSz>`` child element, or
+        ``WD_ORIENTATION.PORTRAIT`` if not present."""
         pgSz = self.pgSz
         if pgSz is None:
             return WD_ORIENTATION.PORTRAIT
@@ -237,10 +221,8 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def page_height(self):
-        """
-        Value in EMU of the ``h`` attribute of the ``<w:pgSz>`` child
-        element, or |None| if not present.
-        """
+        """Value in EMU of the ``h`` attribute of the ``<w:pgSz>`` child element, or
+        |None| if not present."""
         pgSz = self.pgSz
         if pgSz is None:
             return None
@@ -253,10 +235,8 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def page_width(self):
-        """
-        Value in EMU of the ``w`` attribute of the ``<w:pgSz>`` child
-        element, or |None| if not present.
-        """
+        """Value in EMU of the ``w`` attribute of the ``<w:pgSz>`` child element, or
+        |None| if not present."""
         pgSz = self.pgSz
         if pgSz is None:
             return None
@@ -269,7 +249,7 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def preceding_sectPr(self):
-        """sectPr immediately preceding this one or None if this is the first."""
+        """SectPr immediately preceding this one or None if this is the first."""
         # ---[1] predicate returns list of zero or one value---
         preceding_sectPrs = self.xpath("./preceding::w:sectPr[1]")
         return preceding_sectPrs[0] if len(preceding_sectPrs) > 0 else None
@@ -290,11 +270,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def right_margin(self):
-        """
-        The value of the ``w:right`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:right`` attribute in the ``<w:pgMar>`` child element, as
+        a |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -307,11 +285,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def start_type(self):
-        """
-        The member of the ``WD_SECTION_START`` enumeration corresponding to
-        the value of the ``val`` attribute of the ``<w:type>`` child element,
-        or ``WD_SECTION_START.NEW_PAGE`` if not present.
-        """
+        """The member of the ``WD_SECTION_START`` enumeration corresponding to the value
+        of the ``val`` attribute of the ``<w:type>`` child element, or
+        ``WD_SECTION_START.NEW_PAGE`` if not present."""
         type = self.type
         if type is None or type.val is None:
             return WD_SECTION_START.NEW_PAGE
@@ -327,7 +303,7 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def titlePg_val(self):
-        """Value of `w:titlePg/@val` or |None| if not present"""
+        """Value of `w:titlePg/@val` or |None| if not present."""
         titlePg = self.titlePg
         if titlePg is None:
             return False
@@ -342,11 +318,9 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def top_margin(self):
-        """
-        The value of the ``w:top`` attribute in the ``<w:pgMar>`` child
-        element, as a |Length| object, or |None| if either the element or the
-        attribute is not present.
-        """
+        """The value of the ``w:top`` attribute in the ``<w:pgMar>`` child element, as a
+        |Length| object, or |None| if either the element or the attribute is not
+        present."""
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -359,8 +333,6 @@ class CT_SectPr(BaseOxmlElement):
 
 
 class CT_SectType(BaseOxmlElement):
-    """
-    ``<w:sectType>`` element, defining the section start type.
-    """
+    """``<w:sectType>`` element, defining the section start type."""
 
     val = OptionalAttribute("w:val", WD_SECTION_START)

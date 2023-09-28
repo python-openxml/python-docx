@@ -9,19 +9,15 @@ from docx.shared import Parented
 
 
 class InlineShapes(Parented):
-    """
-    Sequence of |InlineShape| instances, supporting len(), iteration, and
-    indexed access.
-    """
+    """Sequence of |InlineShape| instances, supporting len(), iteration, and indexed
+    access."""
 
     def __init__(self, body_elm, parent):
         super(InlineShapes, self).__init__(parent)
         self._body = body_elm
 
     def __getitem__(self, idx):
-        """
-        Provide indexed access, e.g. 'inline_shapes[idx]'
-        """
+        """Provide indexed access, e.g. 'inline_shapes[idx]'."""
         try:
             inline = self._inline_lst[idx]
         except IndexError:
@@ -43,10 +39,8 @@ class InlineShapes(Parented):
 
 
 class InlineShape(object):
-    """
-    Proxy for an ``<wp:inline>`` element, representing the container for an
-    inline graphical object.
-    """
+    """Proxy for an ``<wp:inline>`` element, representing the container for an inline
+    graphical object."""
 
     def __init__(self, inline):
         super(InlineShape, self).__init__()
@@ -54,9 +48,9 @@ class InlineShape(object):
 
     @property
     def height(self):
-        """
-        Read/write. The display height of this inline shape as an |Emu|
-        instance.
+        """Read/write.
+
+        The display height of this inline shape as an |Emu| instance.
         """
         return self._inline.extent.cy
 
@@ -67,9 +61,9 @@ class InlineShape(object):
 
     @property
     def type(self):
-        """
-        The type of this inline shape as a member of
+        """The type of this inline shape as a member of
         ``docx.enum.shape.WD_INLINE_SHAPE``, e.g. ``LINKED_PICTURE``.
+
         Read-only.
         """
         graphicData = self._inline.graphic.graphicData
@@ -87,9 +81,9 @@ class InlineShape(object):
 
     @property
     def width(self):
-        """
-        Read/write. The display width of this inline shape as an |Emu|
-        instance.
+        """Read/write.
+
+        The display width of this inline shape as an |Emu| instance.
         """
         return self._inline.extent.cx
 

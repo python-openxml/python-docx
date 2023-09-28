@@ -5,19 +5,15 @@ from .base import EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
 
 @alias("WD_STYLE")
 class WD_BUILTIN_STYLE(XmlEnumeration):
-    """
-    alias: **WD_STYLE**
+    """Alias: **WD_STYLE**
 
     Specifies a built-in Microsoft Word style.
 
     Example::
 
-        from docx import Document
-        from docx.enum.style import WD_STYLE
+    from docx import Document from docx.enum.style import WD_STYLE
 
-        document = Document()
-        styles = document.styles
-        style = styles[WD_STYLE.BODY_TEXT]
+    document = Document() styles = document.styles style = styles[WD_STYLE.BODY_TEXT]
     """
 
     __ms_name__ = "WdBuiltinStyle"
@@ -165,17 +161,13 @@ class WD_BUILTIN_STYLE(XmlEnumeration):
 
 
 class WD_STYLE_TYPE(XmlEnumeration):
-    """
-    Specifies one of the four style types: paragraph, character, list, or
-    table.
+    """Specifies one of the four style types: paragraph, character, list, or table.
 
     Example::
 
-        from docx import Document
-        from docx.enum.style import WD_STYLE_TYPE
+    from docx import Document from docx.enum.style import WD_STYLE_TYPE
 
-        styles = Document().styles
-        assert styles[0].type == WD_STYLE_TYPE.PARAGRAPH
+    styles = Document().styles assert styles[0].type == WD_STYLE_TYPE.PARAGRAPH
     """
 
     __ms_name__ = "WdStyleType"

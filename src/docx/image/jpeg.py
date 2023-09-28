@@ -12,37 +12,27 @@ from docx.image.tiff import Tiff
 
 
 class Jpeg(BaseImageHeader):
-    """
-    Base class for JFIF and EXIF subclasses.
-    """
+    """Base class for JFIF and EXIF subclasses."""
 
     @property
     def content_type(self):
-        """
-        MIME content type for this image, unconditionally `image/jpeg` for
-        JPEG images.
-        """
+        """MIME content type for this image, unconditionally `image/jpeg` for JPEG
+        images."""
         return MIME_TYPE.JPEG
 
     @property
     def default_ext(self):
-        """
-        Default filename extension, always 'jpg' for JPG images.
-        """
+        """Default filename extension, always 'jpg' for JPG images."""
         return "jpg"
 
 
 class Exif(Jpeg):
-    """
-    Image header parser for Exif image format
-    """
+    """Image header parser for Exif image format."""
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return |Exif| instance having header properties parsed from Exif
-        image in `stream`.
-        """
+        """Return |Exif| instance having header properties parsed from Exif image in
+        `stream`."""
         markers = _JfifMarkers.from_stream(stream)
         # print('\n%s' % markers)
 
@@ -55,16 +45,12 @@ class Exif(Jpeg):
 
 
 class Jfif(Jpeg):
-    """
-    Image header parser for JFIF image format
-    """
+    """Image header parser for JFIF image format."""
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return a |Jfif| instance having header properties parsed from image
-        in `stream`.
-        """
+        """Return a |Jfif| instance having header properties parsed from image in
+        `stream`."""
         markers = _JfifMarkers.from_stream(stream)
 
         px_width = markers.sof.px_width
@@ -76,20 +62,16 @@ class Jfif(Jpeg):
 
 
 class _JfifMarkers(object):
-    """
-    Sequence of markers in a JPEG file, perhaps truncated at first SOS marker
-    for performance reasons.
-    """
+    """Sequence of markers in a JPEG file, perhaps truncated at first SOS marker for
+    performance reasons."""
 
     def __init__(self, markers):
         super(_JfifMarkers, self).__init__()
         self._markers = list(markers)
 
     def __str__(self):  # pragma: no cover
-        """
-        Returns a tabular listing of the markers in this instance, which can
-        be handy for debugging and perhaps other uses.
-        """
+        """Returns a tabular listing of the markers in this instance, which can be handy
+        for debugging and perhaps other uses."""
         header = " offset  seglen  mc  name\n=======  ======  ==  ====="
         tmpl = "%7d  %6d  %02X  %s"
         rows = []
@@ -108,10 +90,8 @@ class _JfifMarkers(object):
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return a |_JfifMarkers| instance containing a |_JfifMarker| subclass
-        instance for each marker in `stream`.
-        """
+        """Return a |_JfifMarkers| instance containing a |_JfifMarker| subclass instance
+        for each marker in `stream`."""
         marker_parser = _MarkerParser.from_stream(stream)
         markers = []
         for marker in marker_parser.iter_markers():
@@ -122,9 +102,7 @@ class _JfifMarkers(object):
 
     @property
     def app0(self):
-        """
-        First APP0 marker in image markers.
-        """
+        """First APP0 marker in image markers."""
         for m in self._markers:
             if m.marker_code == JPEG_MARKER_CODE.APP0:
                 return m
@@ -132,9 +110,7 @@ class _JfifMarkers(object):
 
     @property
     def app1(self):
-        """
-        First APP1 marker in image markers.
-        """
+        """First APP1 marker in image markers."""
         for m in self._markers:
             if m.marker_code == JPEG_MARKER_CODE.APP1:
                 return m
@@ -142,9 +118,7 @@ class _JfifMarkers(object):
 
     @property
     def sof(self):
-        """
-        First start of frame (SOFn) marker in this sequence.
-        """
+        """First start of frame (SOFn) marker in this sequence."""
         for m in self._markers:
             if m.marker_code in JPEG_MARKER_CODE.SOF_MARKER_CODES:
                 return m
@@ -152,10 +126,8 @@ class _JfifMarkers(object):
 
 
 class _MarkerParser(object):
-    """
-    Service class that knows how to parse a JFIF stream and iterate over its
-    markers.
-    """
+    """Service class that knows how to parse a JFIF stream and iterate over its
+    markers."""
 
     def __init__(self, stream_reader):
         super(_MarkerParser, self).__init__()
@@ -163,18 +135,13 @@ class _MarkerParser(object):
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return a |_MarkerParser| instance to parse JFIF markers from
-        `stream`.
-        """
+        """Return a |_MarkerParser| instance to parse JFIF markers from `stream`."""
         stream_reader = StreamReader(stream, BIG_ENDIAN)
         return cls(stream_reader)
 
     def iter_markers(self):
-        """
-        Generate a (marker_code, segment_offset) 2-tuple for each marker in
-        the JPEG `stream`, in the order they occur in the stream.
-        """
+        """Generate a (marker_code, segment_offset) 2-tuple for each marker in the JPEG
+        `stream`, in the order they occur in the stream."""
         marker_finder = _MarkerFinder.from_stream(self._stream)
         start = 0
         marker_code = None
@@ -186,9 +153,7 @@ class _MarkerParser(object):
 
 
 class _MarkerFinder(object):
-    """
-    Service class that knows how to find the next JFIF marker in a stream.
-    """
+    """Service class that knows how to find the next JFIF marker in a stream."""
 
     def __init__(self, stream):
         super(_MarkerFinder, self).__init__()
@@ -196,18 +161,16 @@ class _MarkerFinder(object):
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return a |_MarkerFinder| instance to find JFIF markers in `stream`.
-        """
+        """Return a |_MarkerFinder| instance to find JFIF markers in `stream`."""
         return cls(stream)
 
     def next(self, start):
-        """
-        Return a (marker_code, segment_offset) 2-tuple identifying and
-        locating the first marker in `stream` occuring after offset `start`.
-        The returned `segment_offset` points to the position immediately
-        following the 2-byte marker code, the start of the marker segment,
-        for those markers that have a segment.
+        """Return a (marker_code, segment_offset) 2-tuple identifying and locating the
+        first marker in `stream` occuring after offset `start`.
+
+        The returned `segment_offset` points to the position immediately following the
+        2-byte marker code, the start of the marker segment, for those markers that have
+        a segment.
         """
         position = start
         while True:
@@ -224,11 +187,11 @@ class _MarkerFinder(object):
         return marker_code, segment_offset
 
     def _next_non_ff_byte(self, start):
-        """
-        Return an offset, byte 2-tuple for the next byte in `stream` that is
-        not '\xFF', starting with the byte at offset `start`. If the byte at
-        offset `start` is not '\xFF', `start` and the returned `offset` will
-        be the same.
+        """Return an offset, byte 2-tuple for the next byte in `stream` that is not
+        '\xFF', starting with the byte at offset `start`.
+
+        If the byte at offset `start` is not '\xFF', `start` and the returned `offset`
+        will be the same.
         """
         self._stream.seek(start)
         byte_ = self._read_byte()
@@ -238,10 +201,11 @@ class _MarkerFinder(object):
         return offset_of_non_ff_byte, byte_
 
     def _offset_of_next_ff_byte(self, start):
-        """
-        Return the offset of the next '\xFF' byte in `stream` starting with
-        the byte at offset `start`. Returns `start` if the byte at that
-        offset is a hex 255; it does not necessarily advance in the stream.
+        """Return the offset of the next '\xFF' byte in `stream` starting with the byte
+        at offset `start`.
+
+        Returns `start` if the byte at that offset is a hex 255; it does not necessarily
+        advance in the stream.
         """
         self._stream.seek(start)
         byte_ = self._read_byte()
@@ -251,9 +215,9 @@ class _MarkerFinder(object):
         return offset_of_ff_byte
 
     def _read_byte(self):
-        """
-        Return the next byte read from stream. Raise Exception if stream is
-        at end of file.
+        """Return the next byte read from stream.
+
+        Raise Exception if stream is at end of file.
         """
         byte_ = self._stream.read(1)
         if not byte_:  # pragma: no cover
@@ -262,10 +226,8 @@ class _MarkerFinder(object):
 
 
 def _MarkerFactory(marker_code, stream, offset):
-    """
-    Return |_Marker| or subclass instance appropriate for marker at `offset`
-    in `stream` having `marker_code`.
-    """
+    """Return |_Marker| or subclass instance appropriate for marker at `offset` in
+    `stream` having `marker_code`."""
     if marker_code == JPEG_MARKER_CODE.APP0:
         marker_cls = _App0Marker
     elif marker_code == JPEG_MARKER_CODE.APP1:
@@ -278,9 +240,9 @@ def _MarkerFactory(marker_code, stream, offset):
 
 
 class _Marker(object):
-    """
-    Base class for JFIF marker classes. Represents a marker and its segment
-    occuring in a JPEG byte stream.
+    """Base class for JFIF marker classes.
+
+    Represents a marker and its segment occuring in a JPEG byte stream.
     """
 
     def __init__(self, marker_code, offset, segment_length):
@@ -291,10 +253,8 @@ class _Marker(object):
 
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
-        """
-        Return a generic |_Marker| instance for the marker at `offset` in
-        `stream` having `marker_code`.
-        """
+        """Return a generic |_Marker| instance for the marker at `offset` in `stream`
+        having `marker_code`."""
         if JPEG_MARKER_CODE.is_standalone(marker_code):
             segment_length = 0
         else:
@@ -303,10 +263,8 @@ class _Marker(object):
 
     @property
     def marker_code(self):
-        """
-        The single-byte code that identifies the type of this marker, e.g.
-        ``'\xE0'`` for start of image (SOI).
-        """
+        """The single-byte code that identifies the type of this marker, e.g. ``'\xE0'``
+        for start of image (SOI)."""
         return self._marker_code
 
     @property
@@ -319,16 +277,12 @@ class _Marker(object):
 
     @property
     def segment_length(self):
-        """
-        The length in bytes of this marker's segment
-        """
+        """The length in bytes of this marker's segment."""
         return self._segment_length
 
 
 class _App0Marker(_Marker):
-    """
-    Represents a JFIF APP0 marker segment.
-    """
+    """Represents a JFIF APP0 marker segment."""
 
     def __init__(
         self, marker_code, offset, length, density_units, x_density, y_density
@@ -340,24 +294,18 @@ class _App0Marker(_Marker):
 
     @property
     def horz_dpi(self):
-        """
-        Horizontal dots per inch specified in this marker, defaults to 72 if
-        not specified.
-        """
+        """Horizontal dots per inch specified in this marker, defaults to 72 if not
+        specified."""
         return self._dpi(self._x_density)
 
     @property
     def vert_dpi(self):
-        """
-        Vertical dots per inch specified in this marker, defaults to 72 if
-        not specified.
-        """
+        """Vertical dots per inch specified in this marker, defaults to 72 if not
+        specified."""
         return self._dpi(self._y_density)
 
     def _dpi(self, density):
-        """
-        Return dots per inch corresponding to `density` value.
-        """
+        """Return dots per inch corresponding to `density` value."""
         if self._density_units == 1:
             dpi = density
         elif self._density_units == 2:
@@ -368,10 +316,8 @@ class _App0Marker(_Marker):
 
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
-        """
-        Return an |_App0Marker| instance for the APP0 marker at `offset` in
-        `stream`.
-        """
+        """Return an |_App0Marker| instance for the APP0 marker at `offset` in
+        `stream`."""
         # field               off  type   notes
         # ------------------  ---  -----  -------------------
         # segment length       0   short
@@ -392,9 +338,7 @@ class _App0Marker(_Marker):
 
 
 class _App1Marker(_Marker):
-    """
-    Represents a JFIF APP1 (Exif) marker segment.
-    """
+    """Represents a JFIF APP1 (Exif) marker segment."""
 
     def __init__(self, marker_code, offset, length, horz_dpi, vert_dpi):
         super(_App1Marker, self).__init__(marker_code, offset, length)
@@ -403,10 +347,8 @@ class _App1Marker(_Marker):
 
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
-        """
-        Extract the horizontal and vertical dots-per-inch value from the APP1
-        header at `offset` in `stream`.
-        """
+        """Extract the horizontal and vertical dots-per-inch value from the APP1 header
+        at `offset` in `stream`."""
         # field                 off  len  type   notes
         # --------------------  ---  ---  -----  ----------------------------
         # segment length         0    2   short
@@ -423,37 +365,29 @@ class _App1Marker(_Marker):
 
     @property
     def horz_dpi(self):
-        """
-        Horizontal dots per inch specified in this marker, defaults to 72 if
-        not specified.
-        """
+        """Horizontal dots per inch specified in this marker, defaults to 72 if not
+        specified."""
         return self._horz_dpi
 
     @property
     def vert_dpi(self):
-        """
-        Vertical dots per inch specified in this marker, defaults to 72 if
-        not specified.
-        """
+        """Vertical dots per inch specified in this marker, defaults to 72 if not
+        specified."""
         return self._vert_dpi
 
     @classmethod
     def _is_non_Exif_APP1_segment(cls, stream, offset):
-        """
-        Return True if the APP1 segment at `offset` in `stream` is NOT an
-        Exif segment, as determined by the ``'Exif\x00\x00'`` signature at
-        offset 2 in the segment.
-        """
+        """Return True if the APP1 segment at `offset` in `stream` is NOT an Exif
+        segment, as determined by the ``'Exif\x00\x00'`` signature at offset 2 in the
+        segment."""
         stream.seek(offset + 2)
         exif_signature = stream.read(6)
         return exif_signature != b"Exif\x00\x00"
 
     @classmethod
     def _tiff_from_exif_segment(cls, stream, offset, segment_length):
-        """
-        Return a |Tiff| instance parsed from the Exif APP1 segment of
-        `segment_length` at `offset` in `stream`.
-        """
+        """Return a |Tiff| instance parsed from the Exif APP1 segment of
+        `segment_length` at `offset` in `stream`."""
         # wrap full segment in its own stream and feed to Tiff()
         stream.seek(offset + 8)
         segment_bytes = stream.read(segment_length - 8)
@@ -462,9 +396,7 @@ class _App1Marker(_Marker):
 
 
 class _SofMarker(_Marker):
-    """
-    Represents a JFIF start of frame (SOFx) marker segment.
-    """
+    """Represents a JFIF start of frame (SOFx) marker segment."""
 
     def __init__(self, marker_code, offset, segment_length, px_width, px_height):
         super(_SofMarker, self).__init__(marker_code, offset, segment_length)
@@ -473,10 +405,7 @@ class _SofMarker(_Marker):
 
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
-        """
-        Return an |_SofMarker| instance for the SOFn marker at `offset` in
-        stream.
-        """
+        """Return an |_SofMarker| instance for the SOFn marker at `offset` in stream."""
         # field                 off  type   notes
         # ------------------  ---  -----  ----------------------------
         # segment length       0   short
@@ -491,14 +420,10 @@ class _SofMarker(_Marker):
 
     @property
     def px_height(self):
-        """
-        Image height in pixels
-        """
+        """Image height in pixels."""
         return self._px_height
 
     @property
     def px_width(self):
-        """
-        Image width in pixels
-        """
+        """Image width in pixels."""
         return self._px_width

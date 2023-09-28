@@ -9,7 +9,7 @@ from docx.shared import lazyproperty
 
 
 class Package(OpcPackage):
-    """Customizations specific to a WordprocessingML package"""
+    """Customizations specific to a WordprocessingML package."""
 
     def after_unmarshal(self):
         """Called by loading code after all parts and relationships have been loaded.
@@ -44,7 +44,7 @@ class Package(OpcPackage):
 
 
 class ImageParts(object):
-    """Collection of |ImagePart| objects corresponding to images in the package"""
+    """Collection of |ImagePart| objects corresponding to images in the package."""
 
     def __init__(self):
         self._image_parts = []
@@ -74,31 +74,27 @@ class ImageParts(object):
         return self._add_image_part(image)
 
     def _add_image_part(self, image):
-        """
-        Return an |ImagePart| instance newly created from image and appended
-        to the collection.
-        """
+        """Return an |ImagePart| instance newly created from image and appended to the
+        collection."""
         partname = self._next_image_partname(image.ext)
         image_part = ImagePart.from_image(image, partname)
         self.append(image_part)
         return image_part
 
     def _get_by_sha1(self, sha1):
-        """
-        Return the image part in this collection having a SHA1 hash matching
-        `sha1`, or |None| if not found.
-        """
+        """Return the image part in this collection having a SHA1 hash matching `sha1`,
+        or |None| if not found."""
         for image_part in self._image_parts:
             if image_part.sha1 == sha1:
                 return image_part
         return None
 
     def _next_image_partname(self, ext):
-        """
-        The next available image partname, starting from
-        ``/word/media/image1.{ext}`` where unused numbers are reused. The
-        partname is unique by number, without regard to the extension. `ext`
-        does not include the leading period.
+        """The next available image partname, starting from ``/word/media/image1.{ext}``
+        where unused numbers are reused.
+
+        The partname is unique by number, without regard to the extension. `ext` does
+        not include the leading period.
         """
 
         def image_partname(n):

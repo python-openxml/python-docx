@@ -4,16 +4,12 @@ from .image import BaseImageHeader
 
 
 class Bmp(BaseImageHeader):
-    """
-    Image header parser for BMP images
-    """
+    """Image header parser for BMP images."""
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return |Bmp| instance having header properties parsed from the BMP
-        image in `stream`.
-        """
+        """Return |Bmp| instance having header properties parsed from the BMP image in
+        `stream`."""
         stream_rdr = StreamReader(stream, LITTLE_ENDIAN)
 
         px_width = stream_rdr.read_long(0x12)
@@ -29,25 +25,19 @@ class Bmp(BaseImageHeader):
 
     @property
     def content_type(self):
-        """
-        MIME content type for this image, unconditionally `image/bmp` for
-        BMP images.
-        """
+        """MIME content type for this image, unconditionally `image/bmp` for BMP
+        images."""
         return MIME_TYPE.BMP
 
     @property
     def default_ext(self):
-        """
-        Default filename extension, always 'bmp' for BMP images.
-        """
+        """Default filename extension, always 'bmp' for BMP images."""
         return "bmp"
 
     @staticmethod
     def _dpi(px_per_meter):
-        """
-        Return the integer pixels per inch from `px_per_meter`, defaulting to
-        96 if `px_per_meter` is zero.
-        """
+        """Return the integer pixels per inch from `px_per_meter`, defaulting to 96 if
+        `px_per_meter` is zero."""
         if px_per_meter == 0:
             return 96
         return int(round(px_per_meter * 0.0254))

@@ -12,10 +12,8 @@ from docx.oxml.xmlchemy import (
 
 
 def styleId_from_name(name):
-    """
-    Return the style id corresponding to `name`, taking into account
-    special-case names such as 'Heading 1'.
-    """
+    """Return the style id corresponding to `name`, taking into account special-case
+    names such as 'Heading 1'."""
     return {
         "caption": "Caption",
         "heading 1": "Heading1",
@@ -31,11 +29,9 @@ def styleId_from_name(name):
 
 
 class CT_LatentStyles(BaseOxmlElement):
-    """
-    `w:latentStyles` element, defining behavior defaults for latent styles
-    and containing `w:lsdException` child elements that each override those
-    defaults for a named latent style.
-    """
+    """`w:latentStyles` element, defining behavior defaults for latent styles and
+    containing `w:lsdException` child elements that each override those defaults for a
+    named latent style."""
 
     lsdException = ZeroOrMore("w:lsdException", successors=())
 
@@ -47,37 +43,28 @@ class CT_LatentStyles(BaseOxmlElement):
     defUnhideWhenUsed = OptionalAttribute("w:defUnhideWhenUsed", ST_OnOff)
 
     def bool_prop(self, attr_name):
-        """
-        Return the boolean value of the attribute having `attr_name`, or
-        |False| if not present.
-        """
+        """Return the boolean value of the attribute having `attr_name`, or |False| if
+        not present."""
         value = getattr(self, attr_name)
         if value is None:
             return False
         return value
 
     def get_by_name(self, name):
-        """
-        Return the `w:lsdException` child having `name`, or |None| if not
-        found.
-        """
+        """Return the `w:lsdException` child having `name`, or |None| if not found."""
         found = self.xpath('w:lsdException[@w:name="%s"]' % name)
         if not found:
             return None
         return found[0]
 
     def set_bool_prop(self, attr_name, value):
-        """
-        Set the on/off attribute having `attr_name` to `value`.
-        """
+        """Set the on/off attribute having `attr_name` to `value`."""
         setattr(self, attr_name, bool(value))
 
 
 class CT_LsdException(BaseOxmlElement):
-    """
-    ``<w:lsdException>`` element, defining override visibility behaviors for
-    a named latent style.
-    """
+    """``<w:lsdException>`` element, defining override visibility behaviors for a named
+    latent style."""
 
     locked = OptionalAttribute("w:locked", ST_OnOff)
     name = RequiredAttribute("w:name", ST_String)
@@ -87,29 +74,21 @@ class CT_LsdException(BaseOxmlElement):
     unhideWhenUsed = OptionalAttribute("w:unhideWhenUsed", ST_OnOff)
 
     def delete(self):
-        """
-        Remove this `w:lsdException` element from the XML document.
-        """
+        """Remove this `w:lsdException` element from the XML document."""
         self.getparent().remove(self)
 
     def on_off_prop(self, attr_name):
-        """
-        Return the boolean value of the attribute having `attr_name`, or
-        |None| if not present.
-        """
+        """Return the boolean value of the attribute having `attr_name`, or |None| if
+        not present."""
         return getattr(self, attr_name)
 
     def set_on_off_prop(self, attr_name, value):
-        """
-        Set the on/off attribute having `attr_name` to `value`.
-        """
+        """Set the on/off attribute having `attr_name` to `value`."""
         setattr(self, attr_name, value)
 
 
 class CT_Style(BaseOxmlElement):
-    """
-    A ``<w:style>`` element, representing a style definition
-    """
+    """A ``<w:style>`` element, representing a style definition."""
 
     _tag_seq = (
         "w:name",
@@ -154,9 +133,7 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def basedOn_val(self):
-        """
-        Value of `w:basedOn/@w:val` or |None| if not present.
-        """
+        """Value of `w:basedOn/@w:val` or |None| if not present."""
         basedOn = self.basedOn
         if basedOn is None:
             return None
@@ -171,10 +148,8 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def base_style(self):
-        """
-        Sibling CT_Style element this style is based on or |None| if no base
-        style or base style not found.
-        """
+        """Sibling CT_Style element this style is based on or |None| if no base style or
+        base style not found."""
         basedOn = self.basedOn
         if basedOn is None:
             return None
@@ -185,16 +160,12 @@ class CT_Style(BaseOxmlElement):
         return base_style
 
     def delete(self):
-        """
-        Remove this `w:style` element from its parent `w:styles` element.
-        """
+        """Remove this `w:style` element from its parent `w:styles` element."""
         self.getparent().remove(self)
 
     @property
     def locked_val(self):
-        """
-        Value of `w:locked/@w:val` or |False| if not present.
-        """
+        """Value of `w:locked/@w:val` or |False| if not present."""
         locked = self.locked
         if locked is None:
             return False
@@ -209,9 +180,7 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def name_val(self):
-        """
-        Value of ``<w:name>`` child or |None| if not present.
-        """
+        """Value of ``<w:name>`` child or |None| if not present."""
         name = self.name
         if name is None:
             return None
@@ -226,11 +195,8 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def next_style(self):
-        """
-        Sibling CT_Style element identified by the value of `w:name/@w:val`
-        or |None| if no value is present or no style with that style id
-        is found.
-        """
+        """Sibling CT_Style element identified by the value of `w:name/@w:val` or |None|
+        if no value is present or no style with that style id is found."""
         next = self.next
         if next is None:
             return None
@@ -239,9 +205,7 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def qFormat_val(self):
-        """
-        Value of `w:qFormat/@w:val` or |False| if not present.
-        """
+        """Value of `w:qFormat/@w:val` or |False| if not present."""
         qFormat = self.qFormat
         if qFormat is None:
             return False
@@ -255,9 +219,7 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def semiHidden_val(self):
-        """
-        Value of ``<w:semiHidden>`` child or |False| if not present.
-        """
+        """Value of ``<w:semiHidden>`` child or |False| if not present."""
         semiHidden = self.semiHidden
         if semiHidden is None:
             return False
@@ -272,9 +234,7 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def uiPriority_val(self):
-        """
-        Value of ``<w:uiPriority>`` child or |None| if not present.
-        """
+        """Value of ``<w:uiPriority>`` child or |None| if not present."""
         uiPriority = self.uiPriority
         if uiPriority is None:
             return None
@@ -289,9 +249,7 @@ class CT_Style(BaseOxmlElement):
 
     @property
     def unhideWhenUsed_val(self):
-        """
-        Value of `w:unhideWhenUsed/@w:val` or |False| if not present.
-        """
+        """Value of `w:unhideWhenUsed/@w:val` or |False| if not present."""
         unhideWhenUsed = self.unhideWhenUsed
         if unhideWhenUsed is None:
             return False
@@ -306,10 +264,7 @@ class CT_Style(BaseOxmlElement):
 
 
 class CT_Styles(BaseOxmlElement):
-    """
-    ``<w:styles>`` element, the root element of a styles part, i.e.
-    styles.xml
-    """
+    """``<w:styles>`` element, the root element of a styles part, i.e. styles.xml."""
 
     _tag_seq = ("w:docDefaults", "w:latentStyles", "w:style")
     latentStyles = ZeroOrOne("w:latentStyles", successors=_tag_seq[2:])
@@ -317,10 +272,9 @@ class CT_Styles(BaseOxmlElement):
     del _tag_seq
 
     def add_style_of_type(self, name, style_type, builtin):
-        """
-        Return a newly added `w:style` element having `name` and
-        `style_type`. `w:style/@customStyle` is set based on the value of
-        `builtin`.
+        """Return a newly added `w:style` element having `name` and `style_type`.
+
+        `w:style/@customStyle` is set based on the value of `builtin`.
         """
         style = self.add_style()
         style.type = style_type
@@ -330,9 +284,7 @@ class CT_Styles(BaseOxmlElement):
         return style
 
     def default_for(self, style_type):
-        """
-        Return `w:style[@w:type="*{style_type}*][-1]` or |None| if not found.
-        """
+        """Return `w:style[@w:type="*{style_type}*][-1]` or |None| if not found."""
         default_styles_for_type = [
             s for s in self._iter_styles() if s.type == style_type and s.default
         ]
@@ -342,10 +294,8 @@ class CT_Styles(BaseOxmlElement):
         return default_styles_for_type[-1]
 
     def get_by_id(self, styleId):
-        """
-        Return the ``<w:style>`` child element having ``styleId`` attribute
-        matching `styleId`, or |None| if not found.
-        """
+        """Return the ``<w:style>`` child element having ``styleId`` attribute matching
+        `styleId`, or |None| if not found."""
         xpath = 'w:style[@w:styleId="%s"]' % styleId
         try:
             return self.xpath(xpath)[0]
@@ -353,10 +303,8 @@ class CT_Styles(BaseOxmlElement):
             return None
 
     def get_by_name(self, name):
-        """
-        Return the ``<w:style>`` child element having ``<w:name>`` child
-        element with value `name`, or |None| if not found.
-        """
+        """Return the ``<w:style>`` child element having ``<w:name>`` child element with
+        value `name`, or |None| if not found."""
         xpath = 'w:style[w:name/@w:val="%s"]' % name
         try:
             return self.xpath(xpath)[0]
@@ -364,7 +312,5 @@ class CT_Styles(BaseOxmlElement):
             return None
 
     def _iter_styles(self):
-        """
-        Generate each of the `w:style` child elements in document order.
-        """
+        """Generate each of the `w:style` child elements in document order."""
         return (style for style in self.xpath("w:style"))

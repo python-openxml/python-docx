@@ -4,32 +4,26 @@ from .image import BaseImageHeader
 
 
 class Tiff(BaseImageHeader):
-    """
-    Image header parser for TIFF images. Handles both big and little endian
-    byte ordering.
+    """Image header parser for TIFF images.
+
+    Handles both big and little endian byte ordering.
     """
 
     @property
     def content_type(self):
-        """
-        Return the MIME type of this TIFF image, unconditionally the string
-        ``image/tiff``.
-        """
+        """Return the MIME type of this TIFF image, unconditionally the string
+        ``image/tiff``."""
         return MIME_TYPE.TIFF
 
     @property
     def default_ext(self):
-        """
-        Default filename extension, always 'tiff' for TIFF images.
-        """
+        """Default filename extension, always 'tiff' for TIFF images."""
         return "tiff"
 
     @classmethod
     def from_stream(cls, stream):
-        """
-        Return a |Tiff| instance containing the properties of the TIFF image
-        in `stream`.
-        """
+        """Return a |Tiff| instance containing the properties of the TIFF image in
+        `stream`."""
         parser = _TiffParser.parse(stream)
 
         px_width = parser.px_width
@@ -41,10 +35,8 @@ class Tiff(BaseImageHeader):
 
 
 class _TiffParser(object):
-    """
-    Parses a TIFF image stream to extract the image properties found in its
-    main image file directory (IFD)
-    """
+    """Parses a TIFF image stream to extract the image properties found in its main
+    image file directory (IFD)"""
 
     def __init__(self, ifd_entries):
         super(_TiffParser, self).__init__()
@@ -52,10 +44,8 @@ class _TiffParser(object):
 
     @classmethod
     def parse(cls, stream):
-        """
-        Return an instance of |_TiffParser| containing the properties parsed
-        from the TIFF image in `stream`.
-        """
+        """Return an instance of |_TiffParser| containing the properties parsed from the
+        TIFF image in `stream`."""
         stream_rdr = cls._make_stream_reader(stream)
         ifd0_offset = stream_rdr.read_long(4)
         ifd_entries = _IfdEntries.from_stream(stream_rdr, ifd0_offset)
@@ -63,55 +53,43 @@ class _TiffParser(object):
 
     @property
     def horz_dpi(self):
-        """
-        The horizontal dots per inch value calculated from the XResolution
-        and ResolutionUnit tags of the IFD; defaults to 72 if those tags are
-        not present.
-        """
+        """The horizontal dots per inch value calculated from the XResolution and
+        ResolutionUnit tags of the IFD; defaults to 72 if those tags are not present."""
         return self._dpi(TIFF_TAG.X_RESOLUTION)
 
     @property
     def vert_dpi(self):
-        """
-        The vertical dots per inch value calculated from the XResolution and
-        ResolutionUnit tags of the IFD; defaults to 72 if those tags are not
-        present.
-        """
+        """The vertical dots per inch value calculated from the XResolution and
+        ResolutionUnit tags of the IFD; defaults to 72 if those tags are not present."""
         return self._dpi(TIFF_TAG.Y_RESOLUTION)
 
     @property
     def px_height(self):
-        """
-        The number of stacked rows of pixels in the image, |None| if the IFD
-        contains no ``ImageLength`` tag, the expected case when the TIFF is
-        embeded in an Exif image.
-        """
+        """The number of stacked rows of pixels in the image, |None| if the IFD contains
+        no ``ImageLength`` tag, the expected case when the TIFF is embeded in an Exif
+        image."""
         return self._ifd_entries.get(TIFF_TAG.IMAGE_LENGTH)
 
     @property
     def px_width(self):
-        """
-        The number of pixels in each row in the image, |None| if the IFD
-        contains no ``ImageWidth`` tag, the expected case when the TIFF is
-        embeded in an Exif image.
-        """
+        """The number of pixels in each row in the image, |None| if the IFD contains no
+        ``ImageWidth`` tag, the expected case when the TIFF is embeded in an Exif
+        image."""
         return self._ifd_entries.get(TIFF_TAG.IMAGE_WIDTH)
 
     @classmethod
     def _detect_endian(cls, stream):
-        """
-        Return either BIG_ENDIAN or LITTLE_ENDIAN depending on the endian
-        indicator found in the TIFF `stream` header, either 'MM' or 'II'.
-        """
+        """Return either BIG_ENDIAN or LITTLE_ENDIAN depending on the endian indicator
+        found in the TIFF `stream` header, either 'MM' or 'II'."""
         stream.seek(0)
         endian_str = stream.read(2)
         return BIG_ENDIAN if endian_str == b"MM" else LITTLE_ENDIAN
 
     def _dpi(self, resolution_tag):
-        """
-        Return the dpi value calculated for `resolution_tag`, which can be
-        either TIFF_TAG.X_RESOLUTION or TIFF_TAG.Y_RESOLUTION. The
-        calculation is based on the values of both that tag and the
+        """Return the dpi value calculated for `resolution_tag`, which can be either
+        TIFF_TAG.X_RESOLUTION or TIFF_TAG.Y_RESOLUTION.
+
+        The calculation is based on the values of both that tag and the
         TIFF_TAG.RESOLUTION_UNIT tag in this parser's |_IfdEntries| instance.
         """
         ifd_entries = self._ifd_entries
@@ -135,60 +113,45 @@ class _TiffParser(object):
 
     @classmethod
     def _make_stream_reader(cls, stream):
-        """
-        Return a |StreamReader| instance with wrapping `stream` and having
-        "endian-ness" determined by the 'MM' or 'II' indicator in the TIFF
-        stream header.
-        """
+        """Return a |StreamReader| instance with wrapping `stream` and having "endian-
+        ness" determined by the 'MM' or 'II' indicator in the TIFF stream header."""
         endian = cls._detect_endian(stream)
         return StreamReader(stream, endian)
 
 
 class _IfdEntries(object):
-    """
-    Image File Directory for a TIFF image, having mapping (dict) semantics
-    allowing "tag" values to be retrieved by tag code.
-    """
+    """Image File Directory for a TIFF image, having mapping (dict) semantics allowing
+    "tag" values to be retrieved by tag code."""
 
     def __init__(self, entries):
         super(_IfdEntries, self).__init__()
         self._entries = entries
 
     def __contains__(self, key):
-        """
-        Provides ``in`` operator, e.g. ``tag in ifd_entries``
-        """
+        """Provides ``in`` operator, e.g. ``tag in ifd_entries``"""
         return self._entries.__contains__(key)
 
     def __getitem__(self, key):
-        """
-        Provides indexed access, e.g. ``tag_value = ifd_entries[tag_code]``
-        """
+        """Provides indexed access, e.g. ``tag_value = ifd_entries[tag_code]``"""
         return self._entries.__getitem__(key)
 
     @classmethod
     def from_stream(cls, stream, offset):
-        """
-        Return a new |_IfdEntries| instance parsed from `stream` starting at
-        `offset`.
-        """
+        """Return a new |_IfdEntries| instance parsed from `stream` starting at
+        `offset`."""
         ifd_parser = _IfdParser(stream, offset)
         entries = {e.tag: e.value for e in ifd_parser.iter_entries()}
         return cls(entries)
 
     def get(self, tag_code, default=None):
-        """
-        Return value of IFD entry having tag matching `tag_code`, or
-        `default` if no matching tag found.
-        """
+        """Return value of IFD entry having tag matching `tag_code`, or `default` if no
+        matching tag found."""
         return self._entries.get(tag_code, default)
 
 
 class _IfdParser(object):
-    """
-    Service object that knows how to extract directory entries from an Image
-    File Directory (IFD)
-    """
+    """Service object that knows how to extract directory entries from an Image File
+    Directory (IFD)"""
 
     def __init__(self, stream_rdr, offset):
         super(_IfdParser, self).__init__()
@@ -196,10 +159,8 @@ class _IfdParser(object):
         self._offset = offset
 
     def iter_entries(self):
-        """
-        Generate an |_IfdEntry| instance corresponding to each entry in the
-        directory.
-        """
+        """Generate an |_IfdEntry| instance corresponding to each entry in the
+        directory."""
         for idx in range(self._entry_count):
             dir_entry_offset = self._offset + 2 + (idx * 12)
             ifd_entry = _IfdEntryFactory(self._stream_rdr, dir_entry_offset)
@@ -207,17 +168,13 @@ class _IfdParser(object):
 
     @property
     def _entry_count(self):
-        """
-        The count of directory entries, read from the top of the IFD header
-        """
+        """The count of directory entries, read from the top of the IFD header."""
         return self._stream_rdr.read_short(self._offset)
 
 
 def _IfdEntryFactory(stream_rdr, offset):
-    """
-    Return an |_IfdEntry| subclass instance containing the value of the
-    directory entry at `offset` in `stream_rdr`.
-    """
+    """Return an |_IfdEntry| subclass instance containing the value of the directory
+    entry at `offset` in `stream_rdr`."""
     ifd_entry_classes = {
         TIFF_FLD.ASCII: _AsciiIfdEntry,
         TIFF_FLD.SHORT: _ShortIfdEntry,
@@ -230,9 +187,9 @@ def _IfdEntryFactory(stream_rdr, offset):
 
 
 class _IfdEntry(object):
-    """
-    Base class for IFD entry classes. Subclasses are differentiated by value
-    type, e.g. ASCII, long int, etc.
+    """Base class for IFD entry classes.
+
+    Subclasses are differentiated by value type, e.g. ASCII, long int, etc.
     """
 
     def __init__(self, tag_code, value):
@@ -242,11 +199,11 @@ class _IfdEntry(object):
 
     @classmethod
     def from_stream(cls, stream_rdr, offset):
-        """
-        Return an |_IfdEntry| subclass instance containing the tag and value
-        of the tag parsed from `stream_rdr` at `offset`. Note this method is
-        common to all subclasses. Override the ``_parse_value()`` method to
-        provide distinctive behavior based on field type.
+        """Return an |_IfdEntry| subclass instance containing the tag and value of the
+        tag parsed from `stream_rdr` at `offset`.
+
+        Note this method is common to all subclasses. Override the ``_parse_value()``
+        method to provide distinctive behavior based on field type.
         """
         tag_code = stream_rdr.read_short(offset, 0)
         value_count = stream_rdr.read_long(offset, 4)
@@ -256,52 +213,45 @@ class _IfdEntry(object):
 
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
-        """
-        Return the value of this field parsed from `stream_rdr` at `offset`.
+        """Return the value of this field parsed from `stream_rdr` at `offset`.
+
         Intended to be overridden by subclasses.
         """
         return "UNIMPLEMENTED FIELD TYPE"  # pragma: no cover
 
     @property
     def tag(self):
-        """
-        Short int code that identifies this IFD entry
-        """
+        """Short int code that identifies this IFD entry."""
         return self._tag_code
 
     @property
     def value(self):
-        """
-        Value of this tag, its type being dependent on the tag.
-        """
+        """Value of this tag, its type being dependent on the tag."""
         return self._value
 
 
 class _AsciiIfdEntry(_IfdEntry):
-    """
-    IFD entry having the form of a NULL-terminated ASCII string
-    """
+    """IFD entry having the form of a NULL-terminated ASCII string."""
 
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
-        """
-        Return the ASCII string parsed from `stream_rdr` at `value_offset`.
-        The length of the string, including a terminating '\x00' (NUL)
-        character, is in `value_count`.
+        """Return the ASCII string parsed from `stream_rdr` at `value_offset`.
+
+        The length of the string, including a terminating '\x00' (NUL) character, is in
+        `value_count`.
         """
         return stream_rdr.read_str(value_count - 1, value_offset)
 
 
 class _ShortIfdEntry(_IfdEntry):
-    """
-    IFD entry expressed as a short (2-byte) integer
-    """
+    """IFD entry expressed as a short (2-byte) integer."""
 
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
-        """
-        Return the short int value contained in the `value_offset` field of
-        this entry. Only supports single values at present.
+        """Return the short int value contained in the `value_offset` field of this
+        entry.
+
+        Only supports single values at present.
         """
         if value_count == 1:
             return stream_rdr.read_short(offset, 8)
@@ -310,15 +260,14 @@ class _ShortIfdEntry(_IfdEntry):
 
 
 class _LongIfdEntry(_IfdEntry):
-    """
-    IFD entry expressed as a long (4-byte) integer
-    """
+    """IFD entry expressed as a long (4-byte) integer."""
 
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
-        """
-        Return the long int value contained in the `value_offset` field of
-        this entry. Only supports single values at present.
+        """Return the long int value contained in the `value_offset` field of this
+        entry.
+
+        Only supports single values at present.
         """
         if value_count == 1:
             return stream_rdr.read_long(offset, 8)
@@ -327,16 +276,14 @@ class _LongIfdEntry(_IfdEntry):
 
 
 class _RationalIfdEntry(_IfdEntry):
-    """
-    IFD entry expressed as a numerator, denominator pair
-    """
+    """IFD entry expressed as a numerator, denominator pair."""
 
     @classmethod
     def _parse_value(cls, stream_rdr, offset, value_count, value_offset):
-        """
-        Return the rational (numerator / denominator) value at `value_offset`
-        in `stream_rdr` as a floating-point number. Only supports single
-        values at present.
+        """Return the rational (numerator / denominator) value at `value_offset` in
+        `stream_rdr` as a floating-point number.
+
+        Only supports single values at present.
         """
         if value_count == 1:
             numerator = stream_rdr.read_long(value_offset)

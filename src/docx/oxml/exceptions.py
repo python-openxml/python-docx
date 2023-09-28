@@ -6,7 +6,5 @@ class XmlchemyError(Exception):
 
 
 class InvalidXmlError(XmlchemyError):
-    """
-    Raised when invalid XML is encountered, such as on attempt to access a
-    missing required child element
-    """
+    """Raised when invalid XML is encountered, such as on attempt to access a missing
+    required child element."""

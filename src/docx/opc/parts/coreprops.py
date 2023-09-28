@@ -10,17 +10,13 @@ from docx.oxml.coreprops import CT_CoreProperties
 
 
 class CorePropertiesPart(XmlPart):
-    """
-    Corresponds to part named ``/docProps/core.xml``, containing the core
-    document properties for this document package.
-    """
+    """Corresponds to part named ``/docProps/core.xml``, containing the core document
+    properties for this document package."""
 
     @classmethod
     def default(cls, package):
-        """
-        Return a new |CorePropertiesPart| object initialized with default
-        values for its base properties.
-        """
+        """Return a new |CorePropertiesPart| object initialized with default values for
+        its base properties."""
         core_properties_part = cls._new(package)
         core_properties = core_properties_part.core_properties
         core_properties.title = "Word Document"
@@ -31,10 +27,8 @@ class CorePropertiesPart(XmlPart):
 
     @property
     def core_properties(self):
-        """
-        A |CoreProperties| object providing read/write access to the core
-        properties contained in this core properties part.
-        """
+        """A |CoreProperties| object providing read/write access to the core properties
+        contained in this core properties part."""
         return CoreProperties(self.element)
 
     @classmethod

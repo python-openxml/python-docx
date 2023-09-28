@@ -5,10 +5,8 @@ These are broadly-standardized attributes like author, last-modified, etc.
 
 
 class CoreProperties(object):
-    """
-    Corresponds to part named ``/docProps/core.xml``, containing the core
-    document properties for this document package.
-    """
+    """Corresponds to part named ``/docProps/core.xml``, containing the core document
+    properties for this document package."""
 
     def __init__(self, element):
         self._element = element

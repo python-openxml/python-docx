@@ -43,9 +43,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     @property
     def author_text(self):
-        """
-        The text in the `dc:creator` child element.
-        """
+        """The text in the `dc:creator` child element."""
         return self._text_of_element("creator")
 
     @author_text.setter
@@ -134,9 +132,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     @property
     def revision_number(self):
-        """
-        Integer value of revision property.
-        """
+        """Integer value of revision property."""
         revision = self.revision
         if revision is None:
             return 0
@@ -153,9 +149,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
     @revision_number.setter
     def revision_number(self, value):
-        """
-        Set revision property to string value of integer `value`.
-        """
+        """Set revision property to string value of integer `value`."""
         if not isinstance(value, int) or value < 1:
             tmpl = "revision property requires positive int, got '%s'"
             raise ValueError(tmpl % value)
@@ -198,9 +192,7 @@ class CT_CoreProperties(BaseOxmlElement):
             return None
 
     def _get_or_add(self, prop_name):
-        """
-        Return element returned by "get_or_add_" method for `prop_name`.
-        """
+        """Return element returned by "get_or_add_" method for `prop_name`."""
         get_or_add_method_name = "get_or_add_%s" % prop_name
         get_or_add_method = getattr(self, get_or_add_method_name)
         element = get_or_add_method()
@@ -256,9 +248,7 @@ class CT_CoreProperties(BaseOxmlElement):
         return dt
 
     def _set_element_datetime(self, prop_name, value):
-        """
-        Set date/time value of child element having `prop_name` to `value`.
-        """
+        """Set date/time value of child element having `prop_name` to `value`."""
         if not isinstance(value, datetime):
             tmpl = "property requires <type 'datetime.datetime'> object, got %s"
             raise ValueError(tmpl % type(value))

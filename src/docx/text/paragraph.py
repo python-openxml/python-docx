@@ -14,12 +14,12 @@ class Paragraph(Parented):
         self._p = self._element = p
 
     def add_run(self, text=None, style=None):
-        """
-        Append a run to this paragraph containing `text` and having character
-        style identified by style ID `style`. `text` can contain tab
-        (``\\t``) characters, which are converted to the appropriate XML form
-        for a tab. `text` can also include newline (``\\n``) or carriage
-        return (``\\r``) characters, each of which is converted to a line
+        """Append a run to this paragraph containing `text` and having character style
+        identified by style ID `style`.
+
+        `text` can contain tab (``\\t``) characters, which are converted to the
+        appropriate XML form for a tab. `text` can also include newline (``\\n``) or
+        carriage return (``\\r``) characters, each of which is converted to a line
         break.
         """
         r = self._p.add_r()
@@ -32,11 +32,11 @@ class Paragraph(Parented):
 
     @property
     def alignment(self):
-        """
-        A member of the :ref:`WdParagraphAlignment` enumeration specifying
-        the justification setting for this paragraph. A value of |None|
-        indicates the paragraph has no directly-applied alignment value and
-        will inherit its alignment value from its style hierarchy. Assigning
+        """A member of the :ref:`WdParagraphAlignment` enumeration specifying the
+        justification setting for this paragraph.
+
+        A value of |None| indicates the paragraph has no directly-applied alignment
+        value and will inherit its alignment value from its style hierarchy. Assigning
         |None| to this property removes any directly-applied alignment value.
         """
         return self._p.alignment
@@ -46,19 +46,18 @@ class Paragraph(Parented):
         self._p.alignment = value
 
     def clear(self):
-        """
-        Return this same paragraph after removing all its content.
+        """Return this same paragraph after removing all its content.
+
         Paragraph-level formatting, such as style, is preserved.
         """
         self._p.clear_content()
         return self
 
     def insert_paragraph_before(self, text=None, style=None):
-        """
-        Return a newly created paragraph, inserted directly before this
-        paragraph. If `text` is supplied, the new paragraph contains that
-        text in a single run. If `style` is provided, that style is assigned
-        to the new paragraph.
+        """Return a newly created paragraph, inserted directly before this paragraph.
+
+        If `text` is supplied, the new paragraph contains that text in a single run. If
+        `style` is provided, that style is assigned to the new paragraph.
         """
         paragraph = self._insert_paragraph_before()
         if text:
@@ -69,29 +68,25 @@ class Paragraph(Parented):
 
     @property
     def paragraph_format(self):
-        """
-        The |ParagraphFormat| object providing access to the formatting
-        properties for this paragraph, such as line spacing and indentation.
-        """
+        """The |ParagraphFormat| object providing access to the formatting properties
+        for this paragraph, such as line spacing and indentation."""
         return ParagraphFormat(self._element)
 
     @property
     def runs(self):
-        """
-        Sequence of |Run| instances corresponding to the <w:r> elements in
-        this paragraph.
-        """
+        """Sequence of |Run| instances corresponding to the <w:r> elements in this
+        paragraph."""
         return [Run(r, self) for r in self._p.r_lst]
 
     @property
     def style(self):
-        """
-        Read/Write. |_ParagraphStyle| object representing the style assigned
-        to this paragraph. If no explicit style is assigned to this
-        paragraph, its value is the default paragraph style for the document.
-        A paragraph style name can be assigned in lieu of a paragraph style
-        object. Assigning |None| removes any applied style, making its
-        effective value the default paragraph style for the document.
+        """Read/Write.
+
+        |_ParagraphStyle| object representing the style assigned to this paragraph. If
+        no explicit style is assigned to this paragraph, its value is the default
+        paragraph style for the document. A paragraph style name can be assigned in lieu
+        of a paragraph style object. Assigning |None| removes any applied style, making
+        its effective value the default paragraph style for the document.
         """
         style_id = self._p.style
         return self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
@@ -125,9 +120,6 @@ class Paragraph(Parented):
         self.add_run(text)
 
     def _insert_paragraph_before(self):
-        """
-        Return a newly created paragraph, inserted directly before this
-        paragraph.
-        """
+        """Return a newly created paragraph, inserted directly before this paragraph."""
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)

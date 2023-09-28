@@ -5,17 +5,16 @@ from .base import Enumeration, EnumMember, XmlEnumeration, XmlMappedEnumMember, 
 
 @alias("WD_ALIGN_VERTICAL")
 class WD_CELL_VERTICAL_ALIGNMENT(XmlEnumeration):
-    """
-    alias: **WD_ALIGN_VERTICAL**
+    """Alias: **WD_ALIGN_VERTICAL**
 
     Specifies the vertical alignment of text in one or more cells of a table.
 
     Example::
 
-        from docx.enum.table import WD_ALIGN_VERTICAL
+    from docx.enum.table import WD_ALIGN_VERTICAL
 
-        table = document.add_table(3, 3)
-        table.cell(0, 0).vertical_alignment = WD_ALIGN_VERTICAL.BOTTOM
+    table = document.add_table(3, 3) table.cell(0, 0).vertical_alignment =
+    WD_ALIGN_VERTICAL.BOTTOM
     """
 
     __ms_name__ = "WdCellVerticalAlignment"
@@ -50,17 +49,16 @@ class WD_CELL_VERTICAL_ALIGNMENT(XmlEnumeration):
 
 @alias("WD_ROW_HEIGHT")
 class WD_ROW_HEIGHT_RULE(XmlEnumeration):
-    """
-    alias: **WD_ROW_HEIGHT**
+    """Alias: **WD_ROW_HEIGHT**
 
     Specifies the rule for determining the height of a table row
 
     Example::
 
-        from docx.enum.table import WD_ROW_HEIGHT_RULE
+    from docx.enum.table import WD_ROW_HEIGHT_RULE
 
-        table = document.add_table(3, 3)
-        table.rows[0].height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
+    table = document.add_table(3, 3) table.rows[0].height_rule =
+    WD_ROW_HEIGHT_RULE.EXACTLY
     """
 
     __ms_name__ = "WdRowHeightRule"
@@ -86,15 +84,13 @@ class WD_ROW_HEIGHT_RULE(XmlEnumeration):
 
 
 class WD_TABLE_ALIGNMENT(XmlEnumeration):
-    """
-    Specifies table justification type.
+    """Specifies table justification type.
 
     Example::
 
-        from docx.enum.table import WD_TABLE_ALIGNMENT
+    from docx.enum.table import WD_TABLE_ALIGNMENT
 
-        table = document.add_table(3, 3)
-        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table = document.add_table(3, 3) table.alignment = WD_TABLE_ALIGNMENT.CENTER
     """
 
     __ms_name__ = "WdRowAlignment"
@@ -109,16 +105,14 @@ class WD_TABLE_ALIGNMENT(XmlEnumeration):
 
 
 class WD_TABLE_DIRECTION(Enumeration):
-    """
-    Specifies the direction in which an application orders cells in the
-    specified table or row.
+    """Specifies the direction in which an application orders cells in the specified
+    table or row.
 
     Example::
 
-        from docx.enum.table import WD_TABLE_DIRECTION
+    from docx.enum.table import WD_TABLE_DIRECTION
 
-        table = document.add_table(3, 3)
-        table.direction = WD_TABLE_DIRECTION.RTL
+    table = document.add_table(3, 3) table.direction = WD_TABLE_DIRECTION.RTL
     """
 
     __ms_name__ = "WdTableDirection"

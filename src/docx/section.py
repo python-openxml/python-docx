@@ -47,10 +47,8 @@ class Section(object):
 
     @property
     def bottom_margin(self):
-        """
-        |Length| object representing the bottom margin for all pages in this
-        section in English Metric Units.
-        """
+        """|Length| object representing the bottom margin for all pages in this section
+        in English Metric Units."""
         return self._sectPr.bottom_margin
 
     @bottom_margin.setter
@@ -117,10 +115,10 @@ class Section(object):
 
     @property
     def footer_distance(self):
-        """
-        |Length| object representing the distance from the bottom edge of the
-        page to the bottom edge of the footer. |None| if no setting is present
-        in the XML.
+        """|Length| object representing the distance from the bottom edge of the page to
+        the bottom edge of the footer.
+
+        |None| if no setting is present in the XML.
         """
         return self._sectPr.footer
 
@@ -130,11 +128,11 @@ class Section(object):
 
     @property
     def gutter(self):
-        """
-        |Length| object representing the page gutter size in English Metric
-        Units for all pages in this section. The page gutter is extra spacing
-        added to the `inner` margin to ensure even margins after page
-        binding.
+        """|Length| object representing the page gutter size in English Metric Units for
+        all pages in this section.
+
+        The page gutter is extra spacing added to the `inner` margin to ensure even
+        margins after page binding.
         """
         return self._sectPr.gutter
 
@@ -153,10 +151,10 @@ class Section(object):
 
     @property
     def header_distance(self):
-        """
-        |Length| object representing the distance from the top edge of the
-        page to the top edge of the header. |None| if no setting is present
-        in the XML.
+        """|Length| object representing the distance from the top edge of the page to
+        the top edge of the header.
+
+        |None| if no setting is present in the XML.
         """
         return self._sectPr.header
 
@@ -166,10 +164,8 @@ class Section(object):
 
     @property
     def left_margin(self):
-        """
-        |Length| object representing the left margin for all pages in this
-        section in English Metric Units.
-        """
+        """|Length| object representing the left margin for all pages in this section in
+        English Metric Units."""
         return self._sectPr.left_margin
 
     @left_margin.setter
@@ -178,11 +174,9 @@ class Section(object):
 
     @property
     def orientation(self):
-        """
-        Member of the :ref:`WdOrientation` enumeration specifying the page
+        """Member of the :ref:`WdOrientation` enumeration specifying the page
         orientation for this section, one of ``WD_ORIENT.PORTRAIT`` or
-        ``WD_ORIENT.LANDSCAPE``.
-        """
+        ``WD_ORIENT.LANDSCAPE``."""
         return self._sectPr.orientation
 
     @orientation.setter
@@ -191,11 +185,11 @@ class Section(object):
 
     @property
     def page_height(self):
-        """
-        Total page height used for this section, inclusive of all edge spacing
-        values such as margins. Page orientation is taken into account, so
-        for example, its expected value would be ``Inches(8.5)`` for
-        letter-sized paper when orientation is landscape.
+        """Total page height used for this section, inclusive of all edge spacing values
+        such as margins.
+
+        Page orientation is taken into account, so for example, its expected value would
+        be ``Inches(8.5)`` for letter-sized paper when orientation is landscape.
         """
         return self._sectPr.page_height
 
@@ -205,11 +199,11 @@ class Section(object):
 
     @property
     def page_width(self):
-        """
-        Total page width used for this section, inclusive of all edge spacing
-        values such as margins. Page orientation is taken into account, so
-        for example, its expected value would be ``Inches(11)`` for
-        letter-sized paper when orientation is landscape.
+        """Total page width used for this section, inclusive of all edge spacing values
+        such as margins.
+
+        Page orientation is taken into account, so for example, its expected value would
+        be ``Inches(11)`` for letter-sized paper when orientation is landscape.
         """
         return self._sectPr.page_width
 
@@ -219,10 +213,8 @@ class Section(object):
 
     @property
     def right_margin(self):
-        """
-        |Length| object representing the right margin for all pages in this
-        section in English Metric Units.
-        """
+        """|Length| object representing the right margin for all pages in this section
+        in English Metric Units."""
         return self._sectPr.right_margin
 
     @right_margin.setter
@@ -231,12 +223,9 @@ class Section(object):
 
     @property
     def start_type(self):
-        """
-        The member of the :ref:`WdSectionStart` enumeration corresponding to
-        the initial break behavior of this section, e.g.
-        ``WD_SECTION.ODD_PAGE`` if the section should begin on the next odd
-        page.
-        """
+        """The member of the :ref:`WdSectionStart` enumeration corresponding to the
+        initial break behavior of this section, e.g. ``WD_SECTION.ODD_PAGE`` if the
+        section should begin on the next odd page."""
         return self._sectPr.start_type
 
     @start_type.setter
@@ -245,10 +234,8 @@ class Section(object):
 
     @property
     def top_margin(self):
-        """
-        |Length| object representing the top margin for all pages in this
-        section in English Metric Units.
-        """
+        """|Length| object representing the top margin for all pages in this section in
+        English Metric Units."""
         return self._sectPr.top_margin
 
     @top_margin.setter
@@ -257,7 +244,7 @@ class Section(object):
 
 
 class _BaseHeaderFooter(BlockItemContainer):
-    """Base class for header and footer classes"""
+    """Base class for header and footer classes."""
 
     def __init__(self, sectPr, document_part, header_footer_index):
         self._sectPr = sectPr
