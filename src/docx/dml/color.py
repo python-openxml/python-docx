@@ -9,8 +9,6 @@ class ColorFormat(ElementProxy):
     """Provides access to color settings such as RGB color, theme color, and luminance
     adjustments."""
 
-    __slots__ = ()
-
     def __init__(self, rPr_parent):
         super(ColorFormat, self).__init__(rPr_parent)
 

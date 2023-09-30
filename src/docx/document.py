@@ -15,8 +15,6 @@ class Document(ElementProxy):
     a document.
     """
 
-    __slots__ = ("_part", "__body")
-
     def __init__(self, element, part):
         super(Document, self).__init__(element)
         self._part = part

@@ -13,8 +13,6 @@ class TabStops(ElementProxy):
     to be constructed directly.
     """
 
-    __slots__ = "_pPr"
-
     def __init__(self, element):
         super(TabStops, self).__init__(element, None)
         self._pPr = element
@@ -78,8 +76,6 @@ class TabStop(ElementProxy):
 
     Accessed using list semantics on its containing |TabStops| object.
     """
-
-    __slots__ = "_tab"
 
     def __init__(self, element):
         super(TabStop, self).__init__(element, None)

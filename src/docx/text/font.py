@@ -8,8 +8,6 @@ class Font(ElementProxy):
     """Proxy object wrapping the parent of a ``<w:rPr>`` element and providing access to
     character properties such as font name, font size, bold, and subscript."""
 
-    __slots__ = ()
-
     @property
     def all_caps(self):
         """Read/write.

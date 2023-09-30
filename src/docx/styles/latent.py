@@ -9,8 +9,6 @@ class LatentStyles(ElementProxy):
     to the collection of |_LatentStyle| objects that define overrides of those defaults
     for a particular named latent style."""
 
-    __slots__ = ()
-
     def __getitem__(self, key):
         """Enables dictionary-style access to a latent style by name."""
         style_name = BabelFish.ui2internal(key)
@@ -117,8 +115,6 @@ class _LatentStyle(ElementProxy):
     The values in this element override the defaults specified in the parent
     `w:latentStyles` element.
     """
-
-    __slots__ = ()
 
     def delete(self):
         """Remove this latent style definition such that the defaults defined in the

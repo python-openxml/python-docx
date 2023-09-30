@@ -9,8 +9,6 @@ class Settings(ElementProxy):
     Accessed using the :attr:`.Document.settings` property.
     """
 
-    __slots__ = ()
-
     @property
     def odd_and_even_pages_header_footer(self):
         """True if this document has distinct odd and even page headers and footers.

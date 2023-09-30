@@ -165,8 +165,6 @@ class ElementProxy(object):
     common type of class in python-docx other than custom element (oxml) classes.
     """
 
-    __slots__ = ("_element", "_parent")
-
     def __init__(self, element, parent=None):
         self._element = element
         self._parent = parent

@@ -27,8 +27,6 @@ class BaseStyle(ElementProxy):
     These properties and methods are inherited by all style objects.
     """
 
-    __slots__ = ()
-
     @property
     def builtin(self):
         """Read-only.
@@ -162,8 +160,6 @@ class _CharacterStyle(BaseStyle):
     level formatting via the |Font| object in its :attr:`.font` property.
     """
 
-    __slots__ = ()
-
     @property
     def base_style(self):
         """Style object this style inherits from or |None| if this style is not based on
@@ -191,8 +187,6 @@ class _ParagraphStyle(_CharacterStyle):
     A paragraph style provides both character formatting and paragraph formatting such
     as indentation and line-spacing.
     """
-
-    __slots__ = ()
 
     def __repr__(self):
         return "_ParagraphStyle('%s') id: %s" % (self.name, id(self))
@@ -233,8 +227,6 @@ class _TableStyle(_ParagraphStyle):
     as special table formatting properties.
     """
 
-    __slots__ = ()
-
     def __repr__(self):
         return "_TableStyle('%s') id: %s" % (self.name, id(self))
 
@@ -244,5 +236,3 @@ class _NumberingStyle(BaseStyle):
 
     Not yet implemented.
     """
-
-    __slots__ = ()

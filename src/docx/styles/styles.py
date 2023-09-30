@@ -15,8 +15,6 @@ class Styles(ElementProxy):
     and dictionary-style access by style name.
     """
 
-    __slots__ = ()
-
     def __contains__(self, name):
         """Enables `in` operator on style name."""
         internal_name = BabelFish.ui2internal(name)

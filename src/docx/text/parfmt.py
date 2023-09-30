@@ -9,8 +9,6 @@ class ParagraphFormat(ElementProxy):
     """Provides access to paragraph formatting such as justification, indentation, line
     spacing, space before and after, and widow/orphan control."""
 
-    __slots__ = ("_tab_stops",)
-
     @property
     def alignment(self):
         """A member of the :ref:`WdParagraphAlignment` enumeration specifying the
