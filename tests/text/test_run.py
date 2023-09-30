@@ -117,7 +117,7 @@ class DescribeRun(object):
             ("w:r", ""),
             ('w:r/w:t"foobar"', "foobar"),
             ('w:r/(w:t"abc", w:tab, w:t"def", w:cr)', "abc\tdef\n"),
-            ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', "\nabcdef\t"),
+            ('w:r/(w:br{w:type=page}, w:t"abc", w:t"def", w:tab)', "abcdef\t"),
         ],
     )
     def it_knows_the_text_it_contains(self, r_cxml: str, expected_text: str):

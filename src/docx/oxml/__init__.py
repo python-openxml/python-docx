@@ -6,10 +6,28 @@ This including registering custom element classes corresponding to Open XML elem
 from __future__ import annotations
 
 from docx.oxml.parser import register_element_cls
+from docx.oxml.text.run import (
+    CT_R,
+    CT_Br,
+    CT_Cr,
+    CT_NoBreakHyphen,
+    CT_PTab,
+    CT_Text,
+)
 
-# ===========================================================================
-# custom element class mappings
-# ===========================================================================
+# ---------------------------------------------------------------------------
+# text-related elements
+
+register_element_cls("w:br", CT_Br)
+register_element_cls("w:cr", CT_Cr)
+register_element_cls("w:noBreakHyphen", CT_NoBreakHyphen)
+register_element_cls("w:ptab", CT_PTab)
+register_element_cls("w:r", CT_R)
+register_element_cls("w:t", CT_Text)
+
+# ---------------------------------------------------------------------------
+# other custom element class mappings
+
 from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
 
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
@@ -199,9 +217,3 @@ register_element_cls("w:spacing", CT_Spacing)
 register_element_cls("w:tab", CT_TabStop)
 register_element_cls("w:tabs", CT_TabStops)
 register_element_cls("w:widowControl", CT_OnOff)
-
-from .text.run import CT_Br, CT_R, CT_Text  # noqa
-
-register_element_cls("w:br", CT_Br)
-register_element_cls("w:r", CT_R)
-register_element_cls("w:t", CT_Text)

@@ -1,6 +1,9 @@
 """Enumerations related to text in WordprocessingML files."""
 
-from .base import EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
+import enum
+from typing import ClassVar
+
+from docx.enum.base import EnumMember, XmlEnumeration, XmlMappedEnumMember, alias
 
 
 @alias("WD_ALIGN_PARAGRAPH")
@@ -57,6 +60,9 @@ class WD_PARAGRAPH_ALIGNMENT(XmlEnumeration):
             "Justified according to Thai formatting layout.",
         ),
     )
+
+
+WD_ALIGN_PARAGRAPH = WD_PARAGRAPH_ALIGNMENT
 
 
 class WD_BREAK_TYPE(object):
@@ -183,6 +189,8 @@ class WD_TAB_ALIGNMENT(XmlEnumeration):
 
 class WD_TAB_LEADER(XmlEnumeration):
     """Specifies the character to use as the leader with formatted tabs."""
+
+    SPACES: ClassVar[enum.Enum]
 
     __ms_name__ = "WdTabLeader"
 

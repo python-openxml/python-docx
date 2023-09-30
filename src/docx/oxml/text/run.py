@@ -76,16 +76,10 @@ class CT_R(BaseOxmlElement):
         Inner-content child elements like `w:tab` are translated to their text
         equivalent.
         """
-        text = ""
-        for child in self:
-            if child.tag == qn("w:t"):
-                t_text = child.text
-                text += t_text if t_text is not None else ""
-            elif child.tag == qn("w:tab"):
-                text += "\t"
-            elif child.tag in (qn("w:br"), qn("w:cr")):
-                text += "\n"
-        return text
+        return "".join(
+            str(e)
+            for e in self.xpath("w:br | w:cr | w:noBreakHyphen | w:ptab | w:t | w:tab")
+        )
 
     @text.setter
     def text(self, text: str):
@@ -104,12 +98,88 @@ class CT_R(BaseOxmlElement):
 class CT_Br(BaseOxmlElement):
     """`<w:br>` element, indicating a line, page, or column break in a run."""
 
-    type = OptionalAttribute("w:type", ST_BrType, default="textWrapping")
+    type: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:type", ST_BrType, default="textWrapping"
+    )
     clear = OptionalAttribute("w:clear", ST_BrClear)
+
+    def __str__(self) -> str:
+        """Text equivalent of this element. Actual value depends on break type.
+
+        A line break is translated as "\n". Column and page breaks produce the empty
+        string ("").
+
+        This allows the text of run inner-content to be accessed in a consistent way
+        for all run inner-context text elements.
+        """
+        return "\n" if self.type == "textWrapping" else ""
+
+
+class CT_Cr(BaseOxmlElement):
+    """`<w:cr>` element, representing a carriage-return (0x0D) character within a run.
+
+    In Word, this represents a "soft carriage-return" in the sense that it does not end
+    the paragraph the way pressing Enter (aka. Return) on the keyboard does. Here the
+    text equivalent is considered to be newline ("\n") since in plain-text that's the
+    closest Python equivalent.
+
+    NOTE: this complex-type name does not exist in the schema, where `w:tab` maps to
+    `CT_Empty`. This name was added to give it distinguished behavior. CT_Empty is used
+    for many elements.
+    """
+
+    def __str__(self) -> str:
+        """Text equivalent of this element, a single newline ("\n")."""
+        return "\n"
+
+
+class CT_NoBreakHyphen(BaseOxmlElement):
+    """`<w:noBreakHyphen>` element, a hyphen ineligible for a line-wrap position.
+
+    This maps to a plain-text dash ("-").
+
+    NOTE: this complex-type name does not exist in the schema, where `w:noBreakHyphen`
+    maps to `CT_Empty`. This name was added to give it behavior distinguished from the
+    many other elements represented in the schema by CT_Empty.
+    """
+
+    def __str__(self) -> str:
+        """Text equivalent of this element, a single dash character ("-")."""
+        return "-"
+
+
+class CT_PTab(BaseOxmlElement):
+    """`<w:ptab>` element, representing an absolute-position tab character within a run.
+
+    This character advances the rendering position to the specified position regardless
+    of any tab-stops, perhaps for layout of a table-of-contents (TOC) or similar.
+    """
+
+    def __str__(self) -> str:
+        """Text equivalent of this element, a single tab ("\t") character.
+
+        This allows the text of run inner-content to be accessed in a consistent way
+        for all run inner-context text elements.
+        """
+        return "\t"
+
+
+# -- CT_Tab functionality is provided by CT_TabStop which also uses `w:tab` tag. That
+# -- element class provides the __str__() method for this empty element, unconditionally
+# -- returning "\t".
 
 
 class CT_Text(BaseOxmlElement):
     """`<w:t>` element, containing a sequence of characters within a run."""
+
+    def __str__(self) -> str:
+        """Text contained in this element, the empty string if it has no content.
+
+        This property allows this run inner-content element to be queried for its text
+        the same way as other run-content elements are. In particular, this never
+        returns None, as etree._Element does when there is no content.
+        """
+        return self.text or ""
 
 
 # ------------------------------------------------------------------------------------

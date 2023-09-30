@@ -1,14 +1,21 @@
 """Base classes and other objects used by enumerations."""
 
+from __future__ import annotations
+
+import enum
 import sys
 import textwrap
+from typing import Callable, Type
 
-from ..exceptions import InvalidXmlError
+from docx.exceptions import InvalidXmlError
 
 
-def alias(*aliases):
-    """Decorating a class with @alias('FOO', 'BAR', ..) allows the class to be
-    referenced by each of the names provided as arguments."""
+def alias(*aliases: str) -> Callable[..., Type[enum.Enum]]:
+    """Adds alternate name for an enumeration.
+
+    Decorating a class with @alias('FOO', 'BAR', ..) allows the class to be referenced
+    by each of the names provided as arguments.
+    """
 
     def decorator(cls):
         # alias must be set in globals from caller's frame

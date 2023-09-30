@@ -118,9 +118,11 @@ def then_the_document_contains_four_paragraphs(context):
 def then_document_contains_text_I_added(context):
     document = Document(saved_docx_path)
     paragraphs = document.paragraphs
-    p = paragraphs[-1]
-    r = p.runs[0]
-    assert r.text == test_text
+    paragraph = paragraphs[-1]
+    run = paragraph.runs[0]
+    actual = run.text
+    expected = test_text
+    assert actual == expected, f"expected: {expected}, got: {actual}"
 
 
 @then("the paragraph alignment property value is {align_value}")
@@ -153,7 +155,9 @@ def then_the_paragraph_has_the_style_I_set(context):
 
 @then("the paragraph has the text I set")
 def then_the_paragraph_has_the_text_I_set(context):
-    assert context.paragraph.text == "bar\tfoo\n"
+    actual = context.paragraph.text
+    expected = "bar\tfoo\n"
+    assert actual == expected, f"expected: {expected}, got: {actual}"
 
 
 @then("the style of the second paragraph matches the style I set")

@@ -321,11 +321,23 @@ class CT_Spacing(BaseOxmlElement):
 
 
 class CT_TabStop(BaseOxmlElement):
-    """`<w:tab>` element, representing an individual tab stop."""
+    """`<w:tab>` element, representing an individual tab stop.
+
+    Overloaded to use for a tab-character in a run, which also uses the w:tab tag but
+    only needs a __str__ method.
+    """
 
     val = RequiredAttribute("w:val", WD_TAB_ALIGNMENT)
     leader = OptionalAttribute("w:leader", WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES)
     pos = RequiredAttribute("w:pos", ST_SignedTwipsMeasure)
+
+    def __str__(self) -> str:
+        """Text equivalent of a `w:tab` element appearing in a run.
+
+        Allows text of run inner-content to be accessed consistently across all text
+        inner-content.
+        """
+        return "\t"
 
 
 class CT_TabStops(BaseOxmlElement):

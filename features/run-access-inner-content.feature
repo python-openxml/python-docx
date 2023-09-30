@@ -22,7 +22,6 @@ Feature: Access run inner-content including rendered page-breaks
      Then run.iter_inner_content() generates the run text and rendered page-breaks
 
 
-  @wip
   Scenario: Run.text contains the text content of the run
     Given a run having mixed text content
      Then run.text contains the text content of the run

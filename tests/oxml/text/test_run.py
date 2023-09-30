@@ -33,3 +33,9 @@ class DescribeCT_R:
         r.add_t(text)
 
         assert r.xml == expected_xml
+
+    def it_can_assemble_the_text_in_the_run(self):
+        cxml = 'w:r/(w:br,w:cr,w:noBreakHyphen,w:ptab,w:t"foobar",w:tab)'
+        r = cast(CT_R, element(cxml))
+
+        assert r.text == "\n\n-\tfoobar\t"
