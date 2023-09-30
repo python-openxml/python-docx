@@ -3,15 +3,15 @@
 import os
 
 
-def absjoin(*paths):
+def absjoin(*paths: str) -> str:
     return os.path.abspath(os.path.join(*paths))
 
 
-thisdir = os.path.split(__file__)[0]
-scratch_dir = absjoin(thisdir, "../_scratch")
+thisdir: str = os.path.split(__file__)[0]
+scratch_dir: str = absjoin(thisdir, "../_scratch")
 
 # scratch output docx file -------------
-saved_docx_path = absjoin(scratch_dir, "test_out.docx")
+saved_docx_path: str = absjoin(scratch_dir, "test_out.docx")
 
 bool_vals = {"True": True, "False": False}
 
@@ -24,15 +24,11 @@ tri_state_vals = {
 }
 
 
-def test_docx(name):
-    """
-    Return the absolute path to test .docx file with root name `name`.
-    """
+def test_docx(name: str):
+    """Return the absolute path to test .docx file with root name `name`."""
     return absjoin(thisdir, "test_files", "%s.docx" % name)
 
 
-def test_file(name):
-    """
-    Return the absolute path to file with `name` in test_files directory
-    """
+def test_file(name: str):
+    """Return the absolute path to file with `name` in test_files directory"""
     return absjoin(thisdir, "test_files", "%s" % name)

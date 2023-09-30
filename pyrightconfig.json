@@ -13,6 +13,8 @@
     "pythonVersion": "3.7",
     "reportImportCycles": true,
     "reportUnnecessaryCast": true,
+    "reportUnnecessaryTypeIgnoreComment": true,
+    "stubPath": "./typings",
     "typeCheckingMode": "strict",
     "useLibraryCodeForTypes": false,
     "verboseOutput": true

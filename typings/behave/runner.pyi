@@ -1,0 +1,3 @@
+from types import SimpleNamespace
+
+class Context(SimpleNamespace): ...
