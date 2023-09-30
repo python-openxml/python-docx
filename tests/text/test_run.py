@@ -75,13 +75,14 @@ class DescribeRun(object):
             (WD_BREAK.LINE, "w:r/w:br"),
             (WD_BREAK.PAGE, "w:r/w:br{w:type=page}"),
             (WD_BREAK.COLUMN, "w:r/w:br{w:type=column}"),
-            (WD_BREAK.LINE_CLEAR_LEFT, "w:r/w:br{w:type=textWrapping, w:clear=left}"),
-            (WD_BREAK.LINE_CLEAR_RIGHT, "w:r/w:br{w:type=textWrapping, w:clear=right}"),
-            (WD_BREAK.LINE_CLEAR_ALL, "w:r/w:br{w:type=textWrapping, w:clear=all}"),
+            (WD_BREAK.LINE_CLEAR_LEFT, "w:r/w:br{w:clear=left}"),
+            (WD_BREAK.LINE_CLEAR_RIGHT, "w:r/w:br{w:clear=right}"),
+            (WD_BREAK.LINE_CLEAR_ALL, "w:r/w:br{w:clear=all}"),
         ],
     )
     def it_can_add_a_break(self, break_type: WD_BREAK, expected_cxml: str):
-        run = Run(element("w:r"), None)
+        r = cast(CT_R, element("w:r"))
+        run = Run(r, None)  # pyright:ignore[reportGeneralTypeIssues]
         expected_xml = xml(expected_cxml)
 
         run.add_break(break_type)

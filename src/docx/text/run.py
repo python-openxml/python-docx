@@ -1,14 +1,21 @@
 """Run-related proxy objects for python-docx, Run in particular."""
 
+from __future__ import annotations
+
+from typing import IO
+
+from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
+from docx.oxml.text.run import CT_R, CT_Text
 from docx.shape import InlineShape
-from docx.shared import Parented
+from docx.shared import Length, Parented
+from docx.styles.style import CharacterStyle
 from docx.text.font import Font
 
 
 class Run(Parented):
-    """Proxy object wrapping ``<w:r>`` element.
+    """Proxy object wrapping `<w:r>` element.
 
     Several of the properties on Run take a tri-state value, |True|, |False|, or |None|.
     |True| and |False| correspond to on and off respectively. |None| indicates the
@@ -16,11 +23,11 @@ class Run(Parented):
     the style hierarchy.
     """
 
-    def __init__(self, r, parent):
+    def __init__(self, r: CT_R, parent: t.StoryChild):
         super(Run, self).__init__(parent)
         self._r = self._element = self.element = r
 
-    def add_break(self, break_type: WD_BREAK = WD_BREAK.LINE):
+    def add_break(self, break_type: WD_BREAK = WD_BREAK.LINE):  # pyright: ignore
         """Add a break element of `break_type` to this run.
 
         `break_type` can take the values `WD_BREAK.LINE`, `WD_BREAK.PAGE`, and
@@ -41,7 +48,12 @@ class Run(Parented):
         if clear is not None:
             br.clear = clear
 
-    def add_picture(self, image_path_or_stream, width=None, height=None):
+    def add_picture(
+        self,
+        image_path_or_stream: str | IO[bytes],
+        width: Length | None = None,
+        height: Length | None = None,
+    ) -> InlineShape:
         """Return an |InlineShape| instance containing the image identified by
         `image_path_or_stream`, added to the end of this run.
 
@@ -62,7 +74,7 @@ class Run(Parented):
         tab character."""
         self._r._add_tab()
 
-    def add_text(self, text):
+    def add_text(self, text: str):
         """Returns a newly appended |_Text| object (corresponding to a new ``<w:t>``
         child element) to the run, containing `text`.
 
@@ -73,7 +85,7 @@ class Run(Parented):
         return _Text(t)
 
     @property
-    def bold(self):
+    def bold(self) -> bool:
         """Read/write.
 
         Causes the text of the run to appear in bold.
@@ -81,7 +93,7 @@ class Run(Parented):
         return self.font.bold
 
     @bold.setter
-    def bold(self, value):
+    def bold(self, value: bool):
         self.font.bold = value
 
     def clear(self):
@@ -99,7 +111,7 @@ class Run(Parented):
         return Font(self._element)
 
     @property
-    def italic(self):
+    def italic(self) -> bool:
         """Read/write tri-state value.
 
         When |True|, causes the text of the run to appear in italics.
@@ -107,11 +119,11 @@ class Run(Parented):
         return self.font.italic
 
     @italic.setter
-    def italic(self, value):
+    def italic(self, value: bool):
         self.font.italic = value
 
     @property
-    def style(self):
+    def style(self) -> CharacterStyle | None:
         """Read/write.
 
         A |_CharacterStyle| object representing the character style applied to this run.
@@ -123,7 +135,7 @@ class Run(Parented):
         return self.part.get_style(style_id, WD_STYLE_TYPE.CHARACTER)
 
     @style.setter
-    def style(self, style_or_name):
+    def style(self, style_or_name: str | CharacterStyle | None):
         style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.CHARACTER)
         self._r.style = style_id
 
@@ -146,11 +158,11 @@ class Run(Parented):
         return self._r.text
 
     @text.setter
-    def text(self, text):
+    def text(self, text: str):
         self._r.text = text
 
     @property
-    def underline(self):
+    def underline(self) -> bool:
         """The underline style for this |Run|, one of |None|, |True|, |False|, or a
         value from :ref:`WdUnderline`.
 
@@ -165,13 +177,13 @@ class Run(Parented):
         return self.font.underline
 
     @underline.setter
-    def underline(self, value):
+    def underline(self, value: bool):
         self.font.underline = value
 
 
 class _Text(object):
     """Proxy object wrapping `<w:t>` element."""
 
-    def __init__(self, t_elm):
+    def __init__(self, t_elm: CT_Text):
         super(_Text, self).__init__()
         self._t = t_elm

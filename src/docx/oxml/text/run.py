@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Callable
+
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import ST_BrClear, ST_BrType
 from docx.oxml.text.font import CT_RPr
@@ -14,12 +16,16 @@ from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, Z
 class CT_R(BaseOxmlElement):
     """`<w:r>` element, containing the properties and text for a run."""
 
+    add_br: Callable[[], CT_Br]
+    get_or_add_rPr: Callable[[], CT_RPr]
+    _add_t: Callable[..., CT_Text]
+
     rPr = ZeroOrOne("w:rPr")
-    t = ZeroOrMore("w:t")
     br = ZeroOrMore("w:br")
     cr = ZeroOrMore("w:cr")
-    tab = ZeroOrMore("w:tab")
     drawing = ZeroOrMore("w:drawing")
+    t = ZeroOrMore("w:t")
+    tab = ZeroOrMore("w:tab")
 
     def add_t(self, text: str) -> CT_Text:
         """Return a newly added `<w:t>` element containing `text`."""
@@ -44,7 +50,7 @@ class CT_R(BaseOxmlElement):
             self.remove(child)
 
     @property
-    def style(self):
+    def style(self) -> str | None:
         """String contained in `w:val` attribute of `w:rStyle` grandchild.
 
         |None| if that element is not present.
@@ -64,7 +70,7 @@ class CT_R(BaseOxmlElement):
         rPr.style = style
 
     @property
-    def text(self):
+    def text(self) -> str:
         """The textual content of this run.
 
         Inner-content child elements like `w:tab` are translated to their text
@@ -82,7 +88,7 @@ class CT_R(BaseOxmlElement):
         return text
 
     @text.setter
-    def text(self, text):
+    def text(self, text: str):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
 
@@ -98,7 +104,7 @@ class CT_R(BaseOxmlElement):
 class CT_Br(BaseOxmlElement):
     """`<w:br>` element, indicating a line, page, or column break in a run."""
 
-    type = OptionalAttribute("w:type", ST_BrType)
+    type = OptionalAttribute("w:type", ST_BrType, default="textWrapping")
     clear = OptionalAttribute("w:clear", ST_BrClear)
 
 
@@ -119,23 +125,23 @@ class _RunContentAppender(object):
     appended.
     """
 
-    def __init__(self, r):
+    def __init__(self, r: CT_R):
         self._r = r
         self._bfr = []
 
     @classmethod
-    def append_to_run_from_text(cls, r, text):
+    def append_to_run_from_text(cls, r: CT_R, text: str):
         """Append inner-content elements for `text` to `r` element."""
         appender = cls(r)
         appender.add_text(text)
 
-    def add_text(self, text):
+    def add_text(self, text: str):
         """Append inner-content elements for `text` to the `w:r` element."""
         for char in text:
             self.add_char(char)
         self.flush()
 
-    def add_char(self, char):
+    def add_char(self, char: str):
         """Process next character of input through finite state maching (FSM).
 
         There are two possible states, buffer pending and not pending, but those are
