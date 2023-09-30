@@ -4,10 +4,10 @@ import os
 
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.oxml import parse_xml
-from docx.parts.story import BaseStoryPart
+from docx.parts.story import StoryPart
 
 
-class FooterPart(BaseStoryPart):
+class FooterPart(StoryPart):
     """Definition of a section footer."""
 
     @classmethod
@@ -29,7 +29,7 @@ class FooterPart(BaseStoryPart):
         return xml_bytes
 
 
-class HeaderPart(BaseStoryPart):
+class HeaderPart(StoryPart):
     """Definition of a section header."""
 
     @classmethod

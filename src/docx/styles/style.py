@@ -11,8 +11,8 @@ def StyleFactory(style_elm):
     """Return a style object of the appropriate |BaseStyle| subclass, according to the
     type of `style_elm`."""
     style_cls = {
-        WD_STYLE_TYPE.PARAGRAPH: _ParagraphStyle,
-        WD_STYLE_TYPE.CHARACTER: _CharacterStyle,
+        WD_STYLE_TYPE.PARAGRAPH: ParagraphStyle,
+        WD_STYLE_TYPE.CHARACTER: CharacterStyle,
         WD_STYLE_TYPE.TABLE: _TableStyle,
         WD_STYLE_TYPE.LIST: _NumberingStyle,
     }[style_elm.type]
@@ -153,7 +153,7 @@ class BaseStyle(ElementProxy):
         self._element.unhideWhenUsed_val = value
 
 
-class _CharacterStyle(BaseStyle):
+class CharacterStyle(BaseStyle):
     """A character style.
 
     A character style is applied to a |Run| object and primarily provides character-
@@ -181,7 +181,11 @@ class _CharacterStyle(BaseStyle):
         return Font(self._element)
 
 
-class _ParagraphStyle(_CharacterStyle):
+# -- just in case someone uses the old name in an extension function --
+_CharacterStyle = CharacterStyle
+
+
+class ParagraphStyle(CharacterStyle):
     """A paragraph style.
 
     A paragraph style provides both character formatting and paragraph formatting such
@@ -220,7 +224,11 @@ class _ParagraphStyle(_CharacterStyle):
         return ParagraphFormat(self._element)
 
 
-class _TableStyle(_ParagraphStyle):
+# -- just in case someone uses the old name in an extension function --
+_ParagraphStyle = ParagraphStyle
+
+
+class _TableStyle(ParagraphStyle):
     """A table style.
 
     A table style provides character and paragraph formatting for its contents as well

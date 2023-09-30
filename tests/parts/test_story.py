@@ -8,7 +8,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.package import Package
 from docx.parts.document import DocumentPart
 from docx.parts.image import ImagePart
-from docx.parts.story import BaseStoryPart
+from docx.parts.story import StoryPart
 from docx.styles.style import BaseStyle
 
 from ..unitutil.cxml import element
@@ -16,12 +16,12 @@ from ..unitutil.file import snippet_text
 from ..unitutil.mock import instance_mock, method_mock, property_mock
 
 
-class DescribeBaseStoryPart(object):
+class DescribeStoryPart(object):
     def it_can_get_or_add_an_image(self, package_, image_part_, image_, relate_to_):
         package_.get_or_add_image_part.return_value = image_part_
         relate_to_.return_value = "rId42"
         image_part_.image = image_
-        story_part = BaseStoryPart(None, None, None, package_)
+        story_part = StoryPart(None, None, None, package_)
 
         rId, image = story_part.get_or_add_image("image.png")
 
@@ -37,7 +37,7 @@ class DescribeBaseStoryPart(object):
         style_type = WD_STYLE_TYPE.PARAGRAPH
         _document_part_prop_.return_value = document_part_
         document_part_.get_style.return_value = style_
-        story_part = BaseStoryPart(None, None, None, None)
+        story_part = StoryPart(None, None, None, None)
 
         style = story_part.get_style(style_id, style_type)
 
@@ -50,7 +50,7 @@ class DescribeBaseStoryPart(object):
         style_type = WD_STYLE_TYPE.PARAGRAPH
         _document_part_prop_.return_value = document_part_
         document_part_.get_style_id.return_value = "BodyText"
-        story_part = BaseStoryPart(None, None, None, None)
+        story_part = StoryPart(None, None, None, None)
 
         style_id = story_part.get_style_id(style_, style_type)
 
@@ -63,7 +63,7 @@ class DescribeBaseStoryPart(object):
         image_.filename = "bar.png"
         next_id_prop_.return_value = 24
         expected_xml = snippet_text("inline")
-        story_part = BaseStoryPart(None, None, None, None)
+        story_part = StoryPart(None, None, None, None)
 
         inline = story_part.new_pic_inline("foo/bar.png", width=100, height=200)
 
@@ -73,7 +73,7 @@ class DescribeBaseStoryPart(object):
 
     def it_knows_the_next_available_xml_id(self, next_id_fixture):
         story_element, expected_value = next_id_fixture
-        story_part = BaseStoryPart(None, None, story_element, None)
+        story_part = StoryPart(None, None, story_element, None)
 
         next_id = story_part.next_id
 
@@ -81,7 +81,7 @@ class DescribeBaseStoryPart(object):
 
     def it_knows_the_main_document_part_to_help(self, package_, document_part_):
         package_.main_document_part = document_part_
-        story_part = BaseStoryPart(None, None, None, package_)
+        story_part = StoryPart(None, None, None, package_)
 
         document_part = story_part._document_part
 
@@ -115,11 +115,11 @@ class DescribeBaseStoryPart(object):
 
     @pytest.fixture
     def _document_part_prop_(self, request):
-        return property_mock(request, BaseStoryPart, "_document_part")
+        return property_mock(request, StoryPart, "_document_part")
 
     @pytest.fixture
     def get_or_add_image_(self, request):
-        return method_mock(request, BaseStoryPart, "get_or_add_image")
+        return method_mock(request, StoryPart, "get_or_add_image")
 
     @pytest.fixture
     def image_(self, request):
@@ -131,7 +131,7 @@ class DescribeBaseStoryPart(object):
 
     @pytest.fixture
     def next_id_prop_(self, request):
-        return property_mock(request, BaseStoryPart, "next_id")
+        return property_mock(request, StoryPart, "next_id")
 
     @pytest.fixture
     def package_(self, request):
@@ -139,7 +139,7 @@ class DescribeBaseStoryPart(object):
 
     @pytest.fixture
     def relate_to_(self, request):
-        return method_mock(request, BaseStoryPart, "relate_to")
+        return method_mock(request, StoryPart, "relate_to")
 
     @pytest.fixture
     def style_(self, request):

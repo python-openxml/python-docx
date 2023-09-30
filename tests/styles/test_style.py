@@ -5,10 +5,10 @@ import pytest
 from docx.enum.style import WD_STYLE_TYPE
 from docx.styles.style import (
     BaseStyle,
+    CharacterStyle,
+    ParagraphStyle,
     StyleFactory,
-    _CharacterStyle,
     _NumberingStyle,
-    _ParagraphStyle,
     _TableStyle,
 )
 from docx.text.font import Font
@@ -32,9 +32,9 @@ class DescribeStyleFactory(object):
         self,
         request,
         paragraph_style_,
-        _ParagraphStyle_,
+        ParagraphStyle_,
         character_style_,
-        _CharacterStyle_,
+        CharacterStyle_,
         table_style_,
         _TableStyle_,
         numbering_style_,
@@ -42,8 +42,8 @@ class DescribeStyleFactory(object):
     ):
         type_attr_val = request.param
         StyleCls_, style_mock = {
-            "paragraph": (_ParagraphStyle_, paragraph_style_),
-            "character": (_CharacterStyle_, character_style_),
+            "paragraph": (ParagraphStyle_, paragraph_style_),
+            "character": (CharacterStyle_, character_style_),
             "table": (_TableStyle_, table_style_),
             "numbering": (_NumberingStyle_, numbering_style_),
         }[request.param]
@@ -54,24 +54,24 @@ class DescribeStyleFactory(object):
     # fixture components -----------------------------------
 
     @pytest.fixture
-    def _ParagraphStyle_(self, request, paragraph_style_):
+    def ParagraphStyle_(self, request, paragraph_style_):
         return class_mock(
-            request, "docx.styles.style._ParagraphStyle", return_value=paragraph_style_
+            request, "docx.styles.style.ParagraphStyle", return_value=paragraph_style_
         )
 
     @pytest.fixture
     def paragraph_style_(self, request):
-        return instance_mock(request, _ParagraphStyle)
+        return instance_mock(request, ParagraphStyle)
 
     @pytest.fixture
-    def _CharacterStyle_(self, request, character_style_):
+    def CharacterStyle_(self, request, character_style_):
         return class_mock(
-            request, "docx.styles.style._CharacterStyle", return_value=character_style_
+            request, "docx.styles.style.CharacterStyle", return_value=character_style_
         )
 
     @pytest.fixture
     def character_style_(self, request):
-        return instance_mock(request, _CharacterStyle)
+        return instance_mock(request, CharacterStyle)
 
     @pytest.fixture
     def _TableStyle_(self, request, table_style_):
@@ -396,7 +396,7 @@ class DescribeBaseStyle(object):
         return style, value, expected_xml
 
 
-class Describe_CharacterStyle(object):
+class DescribeCharacterStyle(object):
     def it_knows_which_style_it_is_based_on(self, base_get_fixture):
         style, StyleFactory_, StyleFactory_calls, base_style_ = base_get_fixture
         base_style = style.base_style
@@ -427,7 +427,7 @@ class Describe_CharacterStyle(object):
     def base_get_fixture(self, request, StyleFactory_):
         styles_cxml, style_idx, base_style_idx = request.param
         styles = element(styles_cxml)
-        style = _CharacterStyle(styles[style_idx])
+        style = CharacterStyle(styles[style_idx])
         if base_style_idx >= 0:
             base_style = styles[base_style_idx]
             StyleFactory_calls = [call(base_style)]
@@ -446,7 +446,7 @@ class Describe_CharacterStyle(object):
     )
     def base_set_fixture(self, request, style_):
         style_cxml, base_style_id, expected_style_cxml = request.param
-        style = _CharacterStyle(element(style_cxml))
+        style = CharacterStyle(element(style_cxml))
         style_.style_id = base_style_id
         base_style = style_ if base_style_id is not None else None
         expected_xml = xml(expected_style_cxml)
@@ -454,7 +454,7 @@ class Describe_CharacterStyle(object):
 
     @pytest.fixture
     def font_fixture(self, Font_, font_):
-        style = _CharacterStyle(element("w:style"))
+        style = CharacterStyle(element("w:style"))
         return style, Font_, font_
 
     # fixture components ---------------------------------------------
@@ -476,7 +476,7 @@ class Describe_CharacterStyle(object):
         return function_mock(request, "docx.styles.style.StyleFactory")
 
 
-class Describe_ParagraphStyle(object):
+class DescribeParagraphStyle(object):
     def it_knows_its_next_paragraph_style(self, next_get_fixture):
         style, expected_value = next_get_fixture
         assert style.next_paragraph_style == expected_value
@@ -515,8 +515,8 @@ class Describe_ParagraphStyle(object):
         style_names = ["H1", "H2", "Body", "Foo", "Char"]
         style_elm = styles[style_names.index(style_name)]
         next_style_elm = styles[style_names.index(next_style_name)]
-        style = _ParagraphStyle(style_elm)
-        next_style = _ParagraphStyle(next_style_elm) if style_name == "H1" else style
+        style = ParagraphStyle(style_elm)
+        next_style = ParagraphStyle(next_style_elm) if style_name == "H1" else style
         return style, next_style
 
     @pytest.fixture(
@@ -534,18 +534,18 @@ class Describe_ParagraphStyle(object):
             "w:style{w:type=paragraph,w:styleId=B})"
         )
         style_elms = {"H": styles[0], "B": styles[1]}
-        style = _ParagraphStyle(style_elms[style_name])
+        style = ParagraphStyle(style_elms[style_name])
         next_style = (
             None
             if next_style_name is None
-            else _ParagraphStyle(style_elms[next_style_name])
+            else ParagraphStyle(style_elms[next_style_name])
         )
         expected_xml = xml(style_cxml)
         return style, next_style, expected_xml
 
     @pytest.fixture
     def parfmt_fixture(self, ParagraphFormat_, paragraph_format_):
-        style = _ParagraphStyle(element("w:style"))
+        style = ParagraphStyle(element("w:style"))
         return style, ParagraphFormat_, paragraph_format_
 
     # fixture components ---------------------------------------------

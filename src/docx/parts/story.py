@@ -1,4 +1,4 @@
-"""|BaseStoryPart| and related objects."""
+"""|StoryPart| and related objects."""
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
@@ -6,7 +6,7 @@ from docx.oxml.shape import CT_Inline
 from docx.shared import lazyproperty
 
 
-class BaseStoryPart(XmlPart):
+class StoryPart(XmlPart):
     """Base class for story parts.
 
     A story part is one that can contain textual content, such as the document-part and

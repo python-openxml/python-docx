@@ -5,13 +5,13 @@ from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
-from docx.parts.story import BaseStoryPart
+from docx.parts.story import StoryPart
 from docx.parts.styles import StylesPart
 from docx.shape import InlineShapes
 from docx.shared import lazyproperty
 
 
-class DocumentPart(BaseStoryPart):
+class DocumentPart(StoryPart):
     """Main document part of a WordprocessingML (WML) package, aka a .docx file.
 
     Acts as broker to other parts such as image, core properties, and style parts. It
