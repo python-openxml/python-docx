@@ -11,4 +11,4 @@ Feature: Add content to a run
   Scenario: Assign mixed text to text property
     Given a run
      When I assign mixed text to the text property
-     Then the text of the run represents the textual run content
+     Then run.text contains the text content of the run
