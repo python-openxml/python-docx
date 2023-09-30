@@ -28,6 +28,23 @@ class DescribeRun(object):
         setattr(run, prop_name, value)
         assert run._r.xml == expected_xml
 
+    @pytest.mark.parametrize(
+        ("r_cxml", "expected_value"),
+        [
+            ("w:r", False),
+            ('w:r/w:t"foobar"', False),
+            ('w:r/(w:t"abc", w:lastRenderedPageBreak, w:t"def")', True),
+            ("w:r/(w:lastRenderedPageBreak, w:lastRenderedPageBreak)", True),
+        ],
+    )
+    def it_knows_whether_it_contains_a_page_break(
+        self, r_cxml: str, expected_value: bool
+    ):
+        r = cast(CT_R, element(r_cxml))
+        run = Run(r, None)  # pyright: ignore[reportGeneralTypeIssues]
+
+        assert run.contains_page_break == expected_value
+
     def it_knows_its_character_style(self, style_get_fixture):
         run, style_id_, style_ = style_get_fixture
         style = run.style

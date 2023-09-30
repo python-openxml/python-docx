@@ -105,6 +105,19 @@ class Run(Parented):
         return self
 
     @property
+    def contains_page_break(self) -> bool:
+        """`True` when one or more rendered page-breaks occur in this run.
+
+        Note that "hard" page-breaks inserted by the author are not included. A hard
+        page-break gives rise to a rendered page-break in the right position so if those
+        were included that page-break would be "double-counted".
+
+        It would be very rare for multiple rendered page-breaks to occur in a single
+        run, but it is possible.
+        """
+        return bool(self._r.lastRenderedPageBreaks)
+
+    @property
     def font(self):
         """The |Font| object providing access to the character formatting properties for
         this run, such as font name and size."""

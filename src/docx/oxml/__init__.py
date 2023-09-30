@@ -6,6 +6,7 @@ This including registering custom element classes corresponding to Open XML elem
 from __future__ import annotations
 
 from docx.oxml.parser import register_element_cls
+from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.oxml.text.run import (
     CT_R,
     CT_Br,
@@ -20,6 +21,7 @@ from docx.oxml.text.run import (
 
 register_element_cls("w:br", CT_Br)
 register_element_cls("w:cr", CT_Cr)
+register_element_cls("w:lastRenderedPageBreak", CT_LastRenderedPageBreak)
 register_element_cls("w:noBreakHyphen", CT_NoBreakHyphen)
 register_element_cls("w:ptab", CT_PTab)
 register_element_cls("w:r", CT_R)

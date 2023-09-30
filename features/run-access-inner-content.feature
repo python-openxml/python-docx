@@ -4,7 +4,6 @@ Feature: Access run inner-content including rendered page-breaks
   I need to access differentiated run content in document order
 
 
-  @wip
   Scenario Outline: Run.contains_page_break reports presence of page-break
     Given a run having <zero-or-more> rendered page breaks
      Then run.contains_page_break is <value>

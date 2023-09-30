@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING, Callable, List
 
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import ST_BrClear, ST_BrType
 from docx.oxml.text.font import CT_RPr
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+
+if TYPE_CHECKING:
+    from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 
 # ------------------------------------------------------------------------------------
 # Run-level elements
@@ -48,6 +51,11 @@ class CT_R(BaseOxmlElement):
         content_child_elms = self[1:] if self.rPr is not None else self[:]
         for child in content_child_elms:
             self.remove(child)
+
+    @property
+    def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
+        """All `w:lastRenderedPageBreaks` descendants of this run."""
+        return self.xpath("./w:lastRenderedPageBreak")
 
     @property
     def style(self) -> str | None:
