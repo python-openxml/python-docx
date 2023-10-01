@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from docx import types as t
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.shared import Parented
+
+if TYPE_CHECKING:
+    from docx.text.paragraph import Paragraph
 
 
 class RenderedPageBreak(Parented):
@@ -27,3 +32,35 @@ class RenderedPageBreak(Parented):
         super().__init__(parent)
         self._element = lastRenderedPageBreak
         self._lastRenderedPageBreak = lastRenderedPageBreak
+
+    @property
+    def preceding_paragraph_fragment(self) -> Paragraph | None:
+        """A "loose" paragraph containing the content preceding this page-break.
+
+        Compare `.following_paragraph_fragment` as these two are intended to be used
+        together.
+
+        This value is `None` when no content precedes this page-break. This case is
+        common and occurs whenever a page breaks on an even paragraph boundary.
+        Returning `None` for this case avoids "inserting" a non-existent paragraph into
+        the content stream. Note that content can include DrawingML items like images or
+        charts.
+
+        Note the returned paragraph *is divorced from the document body*. Any changes
+        made to it will not be reflected in the document. It is intended to provide a
+        familiar container (`Paragraph`) to interrogate for the content preceding this
+        page-break in the paragraph in which it occured.
+
+        Also note that a rendered page-break can occur within a hyperlink; consider a
+        multi-word hyperlink like "excellent Wikipedia article on LLMs" that happens to
+        fall at the end of the last line on a page. THIS METHOD WILL "MOVE" the
+        page-break to occur after such a hyperlink. While this places the "tail" text of
+        the hyperlink on the "wrong" page, it avoids having two hyperlinks each with a
+        fragment of the actual text and pointing to the same address.
+        """
+        if self._lastRenderedPageBreak.precedes_all_content:
+            return None
+
+        from docx.text.paragraph import Paragraph
+
+        return Paragraph(self._lastRenderedPageBreak.preceding_fragment_p, self._parent)

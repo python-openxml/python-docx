@@ -4,13 +4,11 @@ Feature: Split paragraph on rendered page-breaks
   I need to a way to split a paragraph on its first rendered page break
 
 
-  @wip
   Scenario: RenderedPageBreak.preceding_paragraph_fragment is the content before break
     Given a rendered_page_break in a paragraph
      Then rendered_page_break.preceding_paragraph_fragment is the content before break
 
 
-  @wip
   Scenario: RenderedPageBreak.preceding_paragraph_fragment includes the hyperlink
     Given a rendered_page_break in a hyperlink
      Then rendered_page_break.preceding_paragraph_fragment includes the hyperlink
