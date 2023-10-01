@@ -42,3 +42,8 @@ Feature: Access paragraph inner-content including hyperlinks
       | no           |   0   |
       | one          |   1   |
       | two          |   2   |
+
+
+  Scenario: Paragraph.text contains both run-text and hyperlink-text
+    Given a paragraph having three hyperlinks
+     Then paragraph.text contains the text of both the runs and the hyperlinks

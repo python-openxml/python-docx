@@ -150,8 +150,9 @@ class Paragraph(Parented):
 
     @property
     def text(self) -> str:
-        """String formed by concatenating the text of each run in the paragraph.
+        """The textual content of this paragraph.
 
+        The text includes the visible-text portion of any hyperlinks in the paragraph.
         Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n`` characters
         respectively.
 
@@ -161,10 +162,7 @@ class Paragraph(Parented):
         character is mapped to a line break. Paragraph-level formatting, such as style,
         is preserved. All run-level formatting, such as bold or italic, is removed.
         """
-        text = ""
-        for run in self.runs:
-            text += run.text
-        return text
+        return self._p.text
 
     @text.setter
     def text(self, text: str | None):

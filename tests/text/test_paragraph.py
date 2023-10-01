@@ -143,9 +143,15 @@ class DescribeParagraph(object):
             ('w:p/w:r/(w:t"foo", w:tab, w:t"bar")', "foo\tbar"),
             ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', "foo\nbar"),
             ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', "foo\nbar"),
+            (
+                'w:p/(w:r/w:t"click ",w:hyperlink{r:id=rId6}/w:r/w:t"here",'
+                'w:r/w:t" for more")',
+                "click here for more",
+            ),
         ],
     )
     def it_knows_the_text_it_contains(self, p_cxml: str, expected_value: str):
+        """Including the text of embedded hyperlinks."""
         paragraph = Paragraph(element(p_cxml), None)
         assert paragraph.text == expected_value
 

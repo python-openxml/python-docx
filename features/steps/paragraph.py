@@ -190,6 +190,15 @@ def then_paragraph_style_is_value(context: Context, value_key: str):
     assert paragraph.style == expected_value
 
 
+@then("paragraph.text contains the text of both the runs and the hyperlinks")
+def then_paragraph_text_contains_the_text_of_both_the_runs_and_the_hyperlinks(
+    context: Context,
+):
+    actual = context.paragraph.text
+    expected = "Three hyperlinks: the first one here, the second one, and the third."
+    assert actual == expected, f"expected:\n'{expected}'\n\ngot:\n'{actual}'"
+
+
 @then("the document contains four paragraphs")
 def then_the_document_contains_four_paragraphs(context: Context):
     assert len(context.document.paragraphs) == 4
