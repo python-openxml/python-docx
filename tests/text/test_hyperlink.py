@@ -42,6 +42,29 @@ class DescribeHyperlink:
 
         assert hyperlink.contains_page_break is expected_value
 
+    @pytest.mark.parametrize(
+        ("hlink_cxml", "count"),
+        [
+            ("w:hyperlink", 0),
+            ("w:hyperlink/w:r", 1),
+            ("w:hyperlink/(w:r,w:r)", 2),
+            ("w:hyperlink/(w:r,w:lastRenderedPageBreak)", 1),
+            ("w:hyperlink/(w:lastRenderedPageBreak,w:r)", 1),
+            ("w:hyperlink/(w:r,w:lastRenderedPageBreak,w:r)", 2),
+        ],
+    )
+    def it_provides_access_to_the_runs_it_contains(
+        self, hlink_cxml: str, count: int, fake_parent: t.StoryChild
+    ):
+        hlink = cast(CT_Hyperlink, element(hlink_cxml))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        runs = hyperlink.runs
+
+        actual = [type(item).__name__ for item in runs]
+        expected = ["Run" for _ in range(count)]
+        assert actual == expected, f"expected: {expected}, got: {actual}"
+
     # -- fixtures --------------------------------------------------------------------
 
     @pytest.fixture

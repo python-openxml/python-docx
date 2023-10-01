@@ -19,7 +19,6 @@ Feature: Access hyperlink properties
       | one          | True  |
 
 
-  @wip
   Scenario Outline: Hyperlink.runs contains Run for each run in hyperlink
     Given a hyperlink having <zero-or-more> runs
      Then hyperlink.runs has length <value>
