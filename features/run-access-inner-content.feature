@@ -15,7 +15,6 @@ Feature: Access run inner-content including rendered page-breaks
       | two          | True  |
 
 
-  @wip
   Scenario: Run.iter_inner_content() generates the run's text and rendered page-breaks
     Given a run having two rendered page breaks
      Then run.iter_inner_content() generates the run text and rendered page-breaks

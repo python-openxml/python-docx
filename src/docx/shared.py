@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterator, List, TypeVar, cast
 
 if TYPE_CHECKING:
     from docx.oxml.xmlchemy import BaseOxmlElement
@@ -315,3 +315,32 @@ class Parented(object):
     def part(self):
         """The package part containing this object."""
         return self._parent.part
+
+
+class TextAccumulator:
+    """Accepts `str` fragments and joins them together, in order, on `.pop().
+
+    Handy when text in a stream is broken up arbitrarily and you want to join it back
+    together within certain bounds. The optional `separator` argument determines how
+    the text fragments are punctuated, defaulting to the empty string.
+    """
+
+    def __init__(self, separator: str = ""):
+        self._separator = separator
+        self._texts: List[str] = []
+
+    def push(self, text: str) -> None:
+        """Add a text fragment to the accumulator."""
+        self._texts.append(text)
+
+    def pop(self) -> Iterator[str]:
+        """Generate sero-or-one str from those accumulated.
+
+        Using `yield from accum.pop()` in a generator setting avoids producing an empty
+        string when no text is in the accumulator.
+        """
+        if not self._texts:
+            return
+        text = self._separator.join(self._texts)
+        self._texts.clear()
+        yield text

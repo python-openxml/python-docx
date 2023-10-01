@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from typing import cast
+from typing import List, cast
 
 import pytest
 
+from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
+from docx.parts.story import StoryPart
 from docx.shape import InlineShape
 from docx.text.font import Font
 from docx.text.run import Run
@@ -19,6 +21,8 @@ from ..unitutil.mock import class_mock, instance_mock, property_mock
 
 
 class DescribeRun(object):
+    """Unit-test suite for `docx.text.run.Run`."""
+
     def it_knows_its_bool_prop_states(self, bool_prop_get_fixture):
         run, prop_name, expected_state = bool_prop_get_fixture
         assert getattr(run, prop_name) == expected_state
@@ -44,6 +48,36 @@ class DescribeRun(object):
         run = Run(r, None)  # pyright: ignore[reportGeneralTypeIssues]
 
         assert run.contains_page_break == expected_value
+
+    @pytest.mark.parametrize(
+        ("r_cxml", "expected"),
+        [
+            # -- no content produces an empty iterator --
+            ("w:r", []),
+            # -- contiguous text content is condensed into a single str --
+            ('w:r/(w:t"foo",w:cr,w:t"bar")', ["str"]),
+            # -- page-breaks are a form of inner-content --
+            (
+                'w:r/(w:t"abc",w:br,w:lastRenderedPageBreak,w:noBreakHyphen,w:t"def")',
+                ["str", "RenderedPageBreak", "str"],
+            ),
+            # -- as are drawings --
+            (
+                'w:r/(w:t"abc", w:lastRenderedPageBreak, w:drawing)',
+                ["str", "RenderedPageBreak", "Drawing"],
+            ),
+        ],
+    )
+    def it_can_iterate_its_inner_content_items(
+        self, r_cxml: str, expected: List[str], fake_parent: t.StoryChild
+    ):
+        r = cast(CT_R, element(r_cxml))
+        run = Run(r, fake_parent)
+
+        inner_content = run.iter_inner_content()
+
+        actual = [type(item).__name__ for item in inner_content]
+        assert actual == expected, f"expected: {expected}, got: {actual}"
 
     def it_knows_its_character_style(self, style_get_fixture):
         run, style_id_, style_ = style_get_fixture
@@ -243,6 +277,15 @@ class DescribeRun(object):
         run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, expected_xml
+
+    @pytest.fixture
+    def fake_parent(self) -> t.StoryChild:
+        class StoryChild:
+            @property
+            def part(self) -> StoryPart:
+                raise NotImplementedError
+
+        return StoryChild()
 
     @pytest.fixture
     def font_fixture(self, Font_, font_):

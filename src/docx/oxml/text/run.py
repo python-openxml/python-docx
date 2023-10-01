@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, List
+from typing import TYPE_CHECKING, Callable, Iterator, List
 
+from docx.oxml.drawing import CT_Drawing
 from docx.oxml.ns import qn
 from docx.oxml.simpletypes import ST_BrClear, ST_BrType
 from docx.oxml.text.font import CT_RPr
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
+from docx.shared import TextAccumulator
 
 if TYPE_CHECKING:
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
@@ -51,6 +53,35 @@ class CT_R(BaseOxmlElement):
         content_child_elms = self[1:] if self.rPr is not None else self[:]
         for child in content_child_elms:
             self.remove(child)
+
+    @property
+    def inner_content_items(self) -> List[str | CT_Drawing | CT_LastRenderedPageBreak]:
+        """Text of run, possibly punctuated by `w:lastRenderedPageBreak` elements."""
+        from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
+
+        accum = TextAccumulator()
+
+        def iter_items() -> Iterator[str | CT_Drawing | CT_LastRenderedPageBreak]:
+            for e in self.xpath(
+                "w:br"
+                " | w:cr"
+                " | w:drawing"
+                " | w:lastRenderedPageBreak"
+                " | w:noBreakHyphen"
+                " | w:ptab"
+                " | w:t"
+                " | w:tab"
+            ):
+                if isinstance(e, (CT_Drawing, CT_LastRenderedPageBreak)):
+                    yield from accum.pop()
+                    yield e
+                else:
+                    accum.push(str(e))
+
+            # -- don't forget the "tail" string --
+            yield from accum.pop()
+
+        return list(iter_items())
 
     @property
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:

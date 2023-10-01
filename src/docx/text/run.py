@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-from typing import IO
+from typing import IO, Iterator
 
 from docx import types as t
+from docx.drawing import Drawing
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
+from docx.oxml.drawing import CT_Drawing
+from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.oxml.text.run import CT_R, CT_Text
 from docx.shape import InlineShape
 from docx.shared import Length, Parented
 from docx.styles.style import CharacterStyle
 from docx.text.font import Font
+from docx.text.pagebreak import RenderedPageBreak
 
 
 class Run(Parented):
@@ -134,6 +138,31 @@ class Run(Parented):
     @italic.setter
     def italic(self, value: bool):
         self.font.italic = value
+
+    def iter_inner_content(self) -> Iterator[str | Drawing | RenderedPageBreak]:
+        """Generate the content-items in this run in the order they appear.
+
+        NOTE: only content-types currently supported by `python-docx` are generated. In
+        this version, that is text and rendered page-breaks. Drawing is included but
+        currently only provides access to its XML element (CT_Drawing) on its
+        `._drawing` attribute. `Drawing` attributes and methods may be expanded in
+        future releases.
+
+        There are a number of element-types that can appear inside a run, but most of
+        those (w:br, w:cr, w:noBreakHyphen, w:t, w:tab) have a clear plain-text
+        equivalent. Any contiguous range of such elements is generated as a single
+        `str`. Rendered page-break and drawing elements are generated individually. Any
+        other elements are ignored.
+        """
+        for item in self._r.inner_content_items:
+            if isinstance(item, str):
+                yield item
+            elif isinstance(item, CT_LastRenderedPageBreak):
+                yield RenderedPageBreak(item, self)
+            elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                item, CT_Drawing
+            ):
+                yield Drawing(item, self)
 
     @property
     def style(self) -> CharacterStyle | None:
