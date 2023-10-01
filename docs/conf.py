@@ -157,6 +157,8 @@ rst_epilog = """
 
 .. |Relationships| replace:: :class:`._Relationships`
 
+.. |RenderedPageBreak| replace:: :class:`.RenderedPageBreak`
+
 .. |RGBColor| replace:: :class:`.RGBColor`
 
 .. |_Row| replace:: :class:`._Row`

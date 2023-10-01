@@ -19,6 +19,13 @@ Text-related objects
    :members:
 
 
+|Hyperlink| objects
+-------------------
+
+.. autoclass:: docx.text.hyperlink.Hyperlink()
+   :members:
+
+
 |Run| objects
 -------------
 
@@ -30,6 +37,13 @@ Text-related objects
 --------------
 
 .. autoclass:: docx.text.run.Font()
+   :members:
+
+
+|RenderedPageBreak| objects
+---------------------------
+
+.. autoclass:: docx.text.pagebreak.RenderedPageBreak()
    :members:
 
 
