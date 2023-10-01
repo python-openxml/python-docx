@@ -31,3 +31,11 @@ class CT_Hyperlink(BaseOxmlElement):
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
         """All `w:lastRenderedPageBreak` descendants of this hyperlink."""
         return self.xpath("./w:r/w:lastRenderedPageBreak")
+
+    @property  # pyright: ignore[reportIncompatibleVariableOverride]
+    def text(self) -> str:
+        """The textual content of this hyperlink.
+
+        `CT_Hyperlink` stores the hyperlink-text as one or more `w:r` children.
+        """
+        return "".join(r.text for r in self.xpath("w:r"))

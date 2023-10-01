@@ -63,7 +63,27 @@ class DescribeHyperlink:
 
         actual = [type(item).__name__ for item in runs]
         expected = ["Run" for _ in range(count)]
-        assert actual == expected, f"expected: {expected}, got: {actual}"
+        assert actual == expected
+
+    @pytest.mark.parametrize(
+        ("hlink_cxml", "expected_text"),
+        [
+            ("w:hyperlink", ""),
+            ("w:hyperlink/w:r", ""),
+            ('w:hyperlink/w:r/w:t"foobar"', "foobar"),
+            ('w:hyperlink/w:r/(w:t"foo",w:lastRenderedPageBreak,w:t"bar")', "foobar"),
+            ('w:hyperlink/w:r/(w:t"abc",w:tab,w:t"def",w:noBreakHyphen)', "abc\tdef-"),
+        ],
+    )
+    def it_knows_the_visible_text_of_the_link(
+        self, hlink_cxml: str, expected_text: str, fake_parent: t.StoryChild
+    ):
+        hlink = cast(CT_Hyperlink, element(hlink_cxml))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        text = hyperlink.text
+
+        assert text == expected_text
 
     # -- fixtures --------------------------------------------------------------------
 

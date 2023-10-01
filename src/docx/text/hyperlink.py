@@ -60,3 +60,13 @@ class Hyperlink(Parented):
         was saved.
         """
         return [Run(r, self) for r in self._hyperlink.r_lst]
+
+    @property
+    def text(self) -> str:
+        """String formed by concatenating the text of each run in the hyperlink.
+
+        Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n`` characters
+        respectively. Note that rendered page-breaks can occur within a hyperlink but
+        they are not reflected in this text.
+        """
+        return self._hyperlink.text

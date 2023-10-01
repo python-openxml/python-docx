@@ -30,7 +30,6 @@ Feature: Access hyperlink properties
       | two          |   2   |
 
 
-  @wip
   Scenario: Hyperlink.text has the visible text of the hyperlink
     Given a hyperlink
      Then hyperlink.text is the visible text of the hyperlink
