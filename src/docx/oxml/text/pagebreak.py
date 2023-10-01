@@ -26,6 +26,57 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
     """
 
     @property
+    def following_fragment_p(self) -> CT_P:
+        """A "loose" `CT_P` containing only the paragraph content before this break.
+
+        Raises `ValueError` if this `w:lastRenderedPageBreak` is not the first rendered
+        page-break in its paragraph.
+
+        The returned `CT_P` is a "clone" (deepcopy) of the `w:p` ancestor of this
+        page-break with this `w:lastRenderedPageBreak` element and all content preceding
+        it removed.
+
+        NOTE: this `w:p` can itself contain one or more `w:renderedPageBreak` elements
+        (when the paragraph contained more than one). While this is rare, the caller
+        should treat this paragraph the same as other paragraphs and split it if
+        necessary in a folloing step or recursion.
+        """
+        if not self == self._first_lrpb_in_p(self._enclosing_p):
+            raise ValueError("only defined on first rendered page-break in paragraph")
+
+        # -- splitting approach is different when break is inside a hyperlink --
+        return (
+            self._following_frag_in_hlink
+            if self._is_in_hyperlink
+            else self._following_frag_in_run
+        )
+
+    @property
+    def follows_all_content(self) -> bool:
+        """True when this page-break element is the last "content" in the paragraph.
+
+        This is very uncommon case and may only occur in contrived or cases where the
+        XML is edited by hand, but it is not precluded by the spec.
+        """
+        # -- a page-break inside a hyperlink never meets these criteria (for our
+        # -- purposes at least) because it is considered "atomic" and always associated
+        # -- with the page it starts on.
+        if self._is_in_hyperlink:
+            return False
+
+        return bool(
+            # -- XPath will match zero-or-one w:lastRenderedPageBreak element --
+            self._enclosing_p.xpath(
+                # -- in first run of paragraph --
+                f"(./w:r)[last()]"
+                # -- all page-breaks --
+                f"/w:lastRenderedPageBreak"
+                # -- that are not preceded by any content-bearing elements --
+                f"[not(following-sibling::*[{self._run_inner_content_xpath}])]"
+            )
+        )
+
+    @property
     def precedes_all_content(self) -> bool:
         """True when a `w:lastRenderedPageBreak` precedes all paragraph content.
 
@@ -94,6 +145,65 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
         if not lrpbs:
             raise ValueError("no rendered page-breaks in paragraph element")
         return lrpbs[0]
+
+    @lazyproperty
+    def _following_frag_in_hlink(self) -> CT_P:
+        """Following CT_P fragment when break occurs within a hyperlink.
+
+        Note this is a *partial-function* and raises when `lrpb` is not inside a
+        hyperlink.
+        """
+        if not self._is_in_hyperlink:
+            raise ValueError("only defined on a rendered page-break in a hyperlink")
+
+        # -- work on a clone `w:p` so our mutations don't persist --
+        p = copy.deepcopy(self._enclosing_p)
+
+        # -- get this `w:lastRenderedPageBreak` in the cloned `w:p` (not self) --
+        lrpb = self._first_lrpb_in_p(p)
+
+        # -- locate `w:hyperlink` in which this `w:lastRenderedPageBreak` is found --
+        hyperlink = lrpb._enclosing_hyperlink(lrpb)
+
+        # -- delete all w:p inner-content preceding the hyperlink --
+        for e in hyperlink.xpath("./preceding-sibling::*[not(self::w:pPr)]"):
+            p.remove(e)
+
+        # -- remove the whole hyperlink, it belongs to the preceding-fragment-p --
+        hyperlink.getparent().remove(hyperlink)
+
+        # -- that's it, return the remaining fragment of `w:p` clone --
+        return p
+
+    @lazyproperty
+    def _following_frag_in_run(self) -> CT_P:
+        """following CT_P fragment when break does not occur in a hyperlink.
+
+        Note this is a *partial-function* and raises when `lrpb` is inside a hyperlink.
+        """
+        if self._is_in_hyperlink:
+            raise ValueError("only defined on a rendered page-break not in a hyperlink")
+
+        # -- work on a clone `w:p` so our mutations don't persist --
+        p = copy.deepcopy(self._enclosing_p)
+
+        # -- get this `w:lastRenderedPageBreak` in the cloned `w:p` (not self) --
+        lrpb = self._first_lrpb_in_p(p)
+
+        # -- locate `w:r` in which this `w:lastRenderedPageBreak` is found --
+        enclosing_r = lrpb.xpath("./parent::w:r")[0]
+
+        # -- delete all w:p inner-content preceding that run (but not w:pPr) --
+        for e in enclosing_r.xpath("./preceding-sibling::*[not(self::w:pPr)]"):
+            p.remove(e)
+
+        # -- then remove all run inner-content preceding this lrpb in its run (but not
+        # -- the `w:rPr`) and also remove the page-break itself
+        for e in lrpb.xpath("./preceding-sibling::*[not(self::w:rPr)]"):
+            enclosing_r.remove(e)
+        enclosing_r.remove(lrpb)
+
+        return p
 
     @lazyproperty
     def _is_in_hyperlink(self) -> bool:
