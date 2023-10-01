@@ -1,7 +1,10 @@
 """Unit test suite for the docx.text.paragraph module."""
 
+from typing import cast
+
 import pytest
 
+from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.text.paragraph import CT_P
@@ -16,6 +19,25 @@ from ..unitutil.mock import call, class_mock, instance_mock, method_mock, proper
 
 
 class DescribeParagraph(object):
+    """Unit-test suite for `docx.text.run.Paragraph`."""
+
+    @pytest.mark.parametrize(
+        ("p_cxml", "expected_value"),
+        [
+            ("w:p/w:r", False),
+            ('w:p/w:r/w:t"foobar"', False),
+            ('w:p/w:hyperlink/w:r/(w:t"abc",w:lastRenderedPageBreak,w:t"def")', True),
+            ("w:p/w:r/(w:lastRenderedPageBreak, w:lastRenderedPageBreak)", True),
+        ],
+    )
+    def it_knows_whether_it_contains_a_page_break(
+        self, p_cxml: str, expected_value: bool, fake_parent: t.StoryChild
+    ):
+        p = cast(CT_P, element(p_cxml))
+        paragraph = Paragraph(p, fake_parent)
+
+        assert paragraph.contains_page_break == expected_value
+
     def it_knows_its_paragraph_style(self, style_get_fixture):
         paragraph, style_id_, style_ = style_get_fixture
         style = paragraph.style

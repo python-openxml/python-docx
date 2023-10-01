@@ -4,7 +4,6 @@ Feature: Access paragraph inner-content including hyperlinks
   I need to access differentiated paragraph content in document order
 
 
-  @wip
   Scenario Outline: Paragraph.contains_page_break reports presence of page-break
     Given a paragraph having <zero-or-more> rendered page breaks
      Then paragraph.contains_page_break is <value>

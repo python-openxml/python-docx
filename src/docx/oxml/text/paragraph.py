@@ -9,6 +9,7 @@ from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 if TYPE_CHECKING:
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+    from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
     from docx.oxml.text.parfmt import CT_PPr
     from docx.oxml.text.run import CT_R
 
@@ -45,6 +46,17 @@ class CT_P(BaseOxmlElement):
         """Remove all child elements, except the `<w:pPr>` element if present."""
         for child in self.xpath("./*[not(self::w:pPr)]"):
             self.remove(child)
+
+    @property
+    def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
+        """All `w:lastRenderedPageBreak` descendants of this paragraph.
+
+        Rendered page-breaks commonly occur in a run but can also occur in a run inside
+        a hyperlink. This returns both.
+        """
+        return self.xpath(
+            "./w:r/w:lastRenderedPageBreak | ./w:hyperlink/w:r/w:lastRenderedPageBreak"
+        )
 
     def set_sectPr(self, sectPr):
         """Unconditionally replace or add `sectPr` as grandchild in correct sequence."""

@@ -64,6 +64,11 @@ class Paragraph(Parented):
         self._p.clear_content()
         return self
 
+    @property
+    def contains_page_break(self) -> bool:
+        """`True` when one or more rendered page-breaks occur in this paragraph."""
+        return bool(self._p.lastRenderedPageBreaks)
+
     def insert_paragraph_before(
         self, text: str | None = None, style: str | ParagraphStyle | None = None
     ) -> Self:

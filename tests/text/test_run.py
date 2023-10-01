@@ -11,7 +11,6 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
-from docx.parts.story import StoryPart
 from docx.shape import InlineShape
 from docx.text.font import Font
 from docx.text.run import Run
@@ -277,15 +276,6 @@ class DescribeRun(object):
         run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, expected_xml
-
-    @pytest.fixture
-    def fake_parent(self) -> t.StoryChild:
-        class StoryChild:
-            @property
-            def part(self) -> StoryPart:
-                raise NotImplementedError
-
-        return StoryChild()
 
     @pytest.fixture
     def font_fixture(self, Font_, font_):
