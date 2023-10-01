@@ -24,3 +24,13 @@ class Hyperlink(Parented):
         super().__init__(parent)
         self._parent = parent
         self._hyperlink = self._element = hyperlink
+
+    @property
+    def address(self) -> str:
+        """The "URL" of the hyperlink (but not necessarily a web link).
+
+        While commonly a web link like "https://google.com" the hyperlink address can
+        take a variety of forms including "internal links" to bookmarked locations
+        within the document.
+        """
+        return self._parent.part.rels[self._hyperlink.rId].target_ref

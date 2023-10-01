@@ -4,7 +4,6 @@ Feature: Access hyperlink properties
   I need properties on Hyperlink
 
 
-  @wip
   Scenario: Hyperlink.address has the URL of the hyperlink
     Given a hyperlink
      Then hyperlink.address is the URL of the hyperlink
