@@ -9,7 +9,6 @@ Feature: Access hyperlink properties
      Then hyperlink.address is the URL of the hyperlink
 
 
-  @wip
   Scenario Outline: Hyperlink.contains_page_break reports presence of page-break
     Given a hyperlink having <zero-or-more> rendered page breaks
      Then hyperlink.contains_page_break is <value>

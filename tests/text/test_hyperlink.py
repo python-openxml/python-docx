@@ -24,6 +24,24 @@ class DescribeHyperlink:
 
         assert hyperlink.address == "https://google.com/"
 
+    @pytest.mark.parametrize(
+        ("hlink_cxml", "expected_value"),
+        [
+            ("w:hyperlink", False),
+            ("w:hyperlink/w:r", False),
+            ('w:hyperlink/w:r/(w:t"abc",w:lastRenderedPageBreak,w:t"def")', True),
+            ('w:hyperlink/w:r/(w:lastRenderedPageBreak,w:t"abc",w:t"def")', True),
+            ('w:hyperlink/w:r/(w:t"abc",w:t"def",w:lastRenderedPageBreak)', True),
+        ],
+    )
+    def it_knows_whether_it_contains_a_page_break(
+        self, hlink_cxml: str, expected_value: bool, fake_parent: t.StoryChild
+    ):
+        hlink = cast(CT_Hyperlink, element(hlink_cxml))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        assert hyperlink.contains_page_break is expected_value
+
     # -- fixtures --------------------------------------------------------------------
 
     @pytest.fixture

@@ -34,3 +34,15 @@ class Hyperlink(Parented):
         within the document.
         """
         return self._parent.part.rels[self._hyperlink.rId].target_ref
+
+    @property
+    def contains_page_break(self) -> bool:
+        """True when the text of this hyperlink is broken across page boundaries.
+
+        This is not uncommon and can happen for example when the hyperlink text is
+        multiple words and occurs in the last line of a page. Theoretically, a hyperlink
+        can contain more than one page break but that would be extremely uncommon in
+        practice. Still, this value should be understood to mean that "one-or-more"
+        rendered page breaks are present.
+        """
+        return bool(self._hyperlink.lastRenderedPageBreaks)

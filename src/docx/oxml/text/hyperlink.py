@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from docx.oxml.simpletypes import ST_OnOff, XsdString
 from docx.oxml.text.run import CT_R
@@ -12,6 +12,9 @@ from docx.oxml.xmlchemy import (
     RequiredAttribute,
     ZeroOrMore,
 )
+
+if TYPE_CHECKING:
+    from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 
 
 class CT_Hyperlink(BaseOxmlElement):
@@ -23,3 +26,8 @@ class CT_Hyperlink(BaseOxmlElement):
     history = OptionalAttribute("w:history", ST_OnOff, default=True)
 
     r = ZeroOrMore("w:r")
+
+    @property
+    def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
+        """All `w:lastRenderedPageBreak` descendants of this hyperlink."""
+        return self.xpath("./w:r/w:lastRenderedPageBreak")
