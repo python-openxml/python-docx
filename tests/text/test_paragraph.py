@@ -101,6 +101,37 @@ class DescribeParagraph(object):
         assert paragraph._p.xml == expected_xml
 
     @pytest.mark.parametrize(
+        ("p_cxml", "count"),
+        [
+            ("w:p", 0),
+            ("w:p/w:r", 0),
+            ("w:p/w:r/w:lastRenderedPageBreak", 1),
+            ("w:p/w:hyperlink/w:r/w:lastRenderedPageBreak", 1),
+            (
+                "w:p/(w:r/w:lastRenderedPageBreak,"
+                "w:hyperlink/w:r/w:lastRenderedPageBreak)",
+                2,
+            ),
+            (
+                "w:p/(w:hyperlink/w:r/w:lastRenderedPageBreak,w:r,"
+                "w:r/w:lastRenderedPageBreak,w:r,w:hyperlink)",
+                2,
+            ),
+        ],
+    )
+    def it_provides_access_to_the_rendered_page_breaks_it_contains(
+        self, p_cxml: str, count: int, fake_parent: t.StoryChild
+    ):
+        p = cast(CT_P, element(p_cxml))
+        paragraph = Paragraph(p, fake_parent)
+
+        rendered_page_breaks = paragraph.rendered_page_breaks
+
+        actual = [type(item).__name__ for item in rendered_page_breaks]
+        expected = ["RenderedPageBreak" for _ in range(count)]
+        assert actual == expected, f"expected: {expected}, got: {actual}"
+
+    @pytest.mark.parametrize(
         ("p_cxml", "expected_value"),
         [
             ("w:p", ""),

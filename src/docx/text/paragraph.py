@@ -14,6 +14,7 @@ from docx.oxml.text.run import CT_R
 from docx.shared import Parented
 from docx.styles.style import CharacterStyle, ParagraphStyle
 from docx.text.hyperlink import Hyperlink
+from docx.text.pagebreak import RenderedPageBreak
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
@@ -111,6 +112,17 @@ class Paragraph(Parented):
         """The |ParagraphFormat| object providing access to the formatting properties
         for this paragraph, such as line spacing and indentation."""
         return ParagraphFormat(self._element)
+
+    @property
+    def rendered_page_breaks(self) -> List[RenderedPageBreak]:
+        """All rendered page-breaks in this paragraph.
+
+        Most often an empty list, sometimes contains one page-break, but can contain
+        more than one is rare or contrived cases.
+        """
+        return [
+            RenderedPageBreak(lrpb, self) for lrpb in self._p.lastRenderedPageBreaks
+        ]
 
     @property
     def runs(self) -> List[Run]:

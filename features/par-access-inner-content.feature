@@ -32,7 +32,6 @@ Feature: Access paragraph inner-content including hyperlinks
      Then paragraph.iter_inner_content() generates the paragraph runs and hyperlinks
 
 
-  @wip
   Scenario Outline: Paragraph.rendered_page_breaks contains paragraph RenderedPageBreaks
     Given a paragraph having <zero-or-more> rendered page breaks
      Then paragraph.rendered_page_breaks has length <value>
