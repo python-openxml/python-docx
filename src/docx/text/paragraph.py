@@ -1,7 +1,17 @@
 """Paragraph-related proxy types."""
 
+from __future__ import annotations
+
+from typing import List
+
+from typing_extensions import Self
+
+from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.oxml.text.paragraph import CT_P
 from docx.shared import Parented
+from docx.styles.style import CharacterStyle, ParagraphStyle
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
@@ -9,18 +19,19 @@ from docx.text.run import Run
 class Paragraph(Parented):
     """Proxy object wrapping a `<w:p>` element."""
 
-    def __init__(self, p, parent):
+    def __init__(self, p: CT_P, parent: t.StoryChild):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
 
-    def add_run(self, text=None, style=None):
-        """Append a run to this paragraph containing `text` and having character style
-        identified by style ID `style`.
+    def add_run(
+        self, text: str | None = None, style: str | CharacterStyle | None = None
+    ) -> Run:
+        """Append run containing `text` and having character-style `style`.
 
         `text` can contain tab (``\\t``) characters, which are converted to the
         appropriate XML form for a tab. `text` can also include newline (``\\n``) or
         carriage return (``\\r``) characters, each of which is converted to a line
-        break.
+        break. When `text` is `None`, the new run is empty.
         """
         r = self._p.add_r()
         run = Run(r, self)
@@ -31,7 +42,7 @@ class Paragraph(Parented):
         return run
 
     @property
-    def alignment(self):
+    def alignment(self) -> WD_PARAGRAPH_ALIGNMENT | None:
         """A member of the :ref:`WdParagraphAlignment` enumeration specifying the
         justification setting for this paragraph.
 
@@ -42,7 +53,7 @@ class Paragraph(Parented):
         return self._p.alignment
 
     @alignment.setter
-    def alignment(self, value):
+    def alignment(self, value: WD_PARAGRAPH_ALIGNMENT):
         self._p.alignment = value
 
     def clear(self):
@@ -53,7 +64,9 @@ class Paragraph(Parented):
         self._p.clear_content()
         return self
 
-    def insert_paragraph_before(self, text=None, style=None):
+    def insert_paragraph_before(
+        self, text: str | None = None, style: str | ParagraphStyle | None = None
+    ) -> Self:
         """Return a newly created paragraph, inserted directly before this paragraph.
 
         If `text` is supplied, the new paragraph contains that text in a single run. If
@@ -73,13 +86,13 @@ class Paragraph(Parented):
         return ParagraphFormat(self._element)
 
     @property
-    def runs(self):
+    def runs(self) -> List[Run]:
         """Sequence of |Run| instances corresponding to the <w:r> elements in this
         paragraph."""
         return [Run(r, self) for r in self._p.r_lst]
 
     @property
-    def style(self):
+    def style(self) -> ParagraphStyle | None:
         """Read/Write.
 
         |_ParagraphStyle| object representing the style assigned to this paragraph. If
@@ -92,7 +105,7 @@ class Paragraph(Parented):
         return self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
 
     @style.setter
-    def style(self, style_or_name):
+    def style(self, style_or_name: str | ParagraphStyle | None):
         style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.PARAGRAPH)
         self._p.style = style_id
 
@@ -115,7 +128,7 @@ class Paragraph(Parented):
         return text
 
     @text.setter
-    def text(self, text):
+    def text(self, text: str | None):
         self.clear()
         self.add_run(text)
 
