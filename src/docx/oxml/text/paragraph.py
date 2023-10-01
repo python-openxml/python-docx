@@ -9,6 +9,7 @@ from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 if TYPE_CHECKING:
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+    from docx.oxml.text.hyperlink import CT_Hyperlink
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
     from docx.oxml.text.parfmt import CT_PPr
     from docx.oxml.text.run import CT_R
@@ -18,9 +19,11 @@ class CT_P(BaseOxmlElement):
     """`<w:p>` element, containing the properties and text for a paragraph."""
 
     get_or_add_pPr: Callable[[], CT_PPr]
+    hyperlink_lst: List[CT_Hyperlink]
     r_lst: List[CT_R]
 
     pPr: CT_PPr | None = ZeroOrOne("w:pPr")  # pyright: ignore[reportGeneralTypeIssues]
+    hyperlink = ZeroOrMore("w:hyperlink")
     r = ZeroOrMore("w:r")
 
     def add_p_before(self) -> CT_P:

@@ -12,6 +12,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml.text.paragraph import CT_P
 from docx.shared import Parented
 from docx.styles.style import CharacterStyle, ParagraphStyle
+from docx.text.hyperlink import Hyperlink
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
@@ -68,6 +69,11 @@ class Paragraph(Parented):
     def contains_page_break(self) -> bool:
         """`True` when one or more rendered page-breaks occur in this paragraph."""
         return bool(self._p.lastRenderedPageBreaks)
+
+    @property
+    def hyperlinks(self) -> List[Hyperlink]:
+        """A |Hyperlink| instance for each hyperlink in this paragraph."""
+        return [Hyperlink(hyperlink, self) for hyperlink in self._p.hyperlink_lst]
 
     def insert_paragraph_before(
         self, text: str | None = None, style: str | ParagraphStyle | None = None

@@ -21,6 +21,7 @@ from docx.oxml.shape import (
     CT_ShapeProperties,
     CT_Transform2D,
 )
+from docx.oxml.text.hyperlink import CT_Hyperlink
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.oxml.text.run import (
     CT_R,
@@ -49,6 +50,11 @@ register_element_cls("w:drawing", CT_Drawing)
 register_element_cls("wp:docPr", CT_NonVisualDrawingProps)
 register_element_cls("wp:extent", CT_PositiveSize2D)
 register_element_cls("wp:inline", CT_Inline)
+
+# ---------------------------------------------------------------------------
+# hyperlink-related elements
+
+register_element_cls("w:hyperlink", CT_Hyperlink)
 
 # ---------------------------------------------------------------------------
 # text-related elements

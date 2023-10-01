@@ -15,7 +15,6 @@ Feature: Access paragraph inner-content including hyperlinks
       | two          | True  |
 
 
-  @wip
   Scenario Outline: Paragraph.hyperlinks contains Hyperlink for each link in paragraph
     Given a paragraph having <zero-or-more> hyperlinks
      Then paragraph.hyperlinks has length <value>
