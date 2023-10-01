@@ -51,6 +51,11 @@ class CT_P(BaseOxmlElement):
             self.remove(child)
 
     @property
+    def inner_content_elements(self) -> List[CT_R | CT_Hyperlink]:
+        """Run and hyperlink children of the `w:p` element, in document order."""
+        return self.xpath("./w:r | ./w:hyperlink")
+
+    @property
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
         """All `w:lastRenderedPageBreak` descendants of this paragraph.
 

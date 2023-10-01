@@ -27,7 +27,6 @@ Feature: Access paragraph inner-content including hyperlinks
       | three        |   3   |
 
 
-  @wip
   Scenario: Paragraph.iter_inner_content() generates the paragraph's runs and hyperlinks
     Given a paragraph having three hyperlinks
      Then paragraph.iter_inner_content() generates the paragraph runs and hyperlinks

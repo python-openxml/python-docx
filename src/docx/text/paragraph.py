@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import Iterator, List
 
 from typing_extensions import Self
 
@@ -10,6 +10,7 @@ from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml.text.paragraph import CT_P
+from docx.oxml.text.run import CT_R
 from docx.shared import Parented
 from docx.styles.style import CharacterStyle, ParagraphStyle
 from docx.text.hyperlink import Hyperlink
@@ -89,6 +90,21 @@ class Paragraph(Parented):
         if style is not None:
             paragraph.style = style
         return paragraph
+
+    def iter_inner_content(self) -> Iterator[Run | Hyperlink]:
+        """Generate the runs and hyperlinks in this paragraph, in the order they appear.
+
+        The content in a paragraph consists of both runs and hyperlinks. This method
+        allows accessing each of those separately, in document order, for when the
+        precise position of the hyperlink within the paragraph text is important. Note
+        that a hyperlink itself contains runs.
+        """
+        for r_or_hlink in self._p.inner_content_elements:
+            yield (
+                Run(r_or_hlink, self)
+                if isinstance(r_or_hlink, CT_R)
+                else Hyperlink(r_or_hlink, self)
+            )
 
     @property
     def paragraph_format(self):

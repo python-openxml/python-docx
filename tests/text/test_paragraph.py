@@ -1,6 +1,6 @@
 """Unit test suite for the docx.text.paragraph module."""
 
-from typing import cast
+from typing import List, cast
 
 import pytest
 
@@ -59,6 +59,27 @@ class DescribeParagraph(object):
 
         actual = [type(item).__name__ for item in hyperlinks]
         expected = ["Hyperlink" for _ in range(count)]
+        assert actual == expected, f"expected: {expected}, got: {actual}"
+
+    @pytest.mark.parametrize(
+        ("p_cxml", "expected"),
+        [
+            ("w:p", []),
+            ("w:p/w:r", ["Run"]),
+            ("w:p/w:hyperlink", ["Hyperlink"]),
+            ("w:p/(w:r,w:hyperlink,w:r)", ["Run", "Hyperlink", "Run"]),
+            ("w:p/(w:hyperlink,w:r,w:hyperlink)", ["Hyperlink", "Run", "Hyperlink"]),
+        ],
+    )
+    def it_can_iterate_its_inner_content_items(
+        self, p_cxml: str, expected: List[str], fake_parent: t.StoryChild
+    ):
+        p = cast(CT_P, element(p_cxml))
+        paragraph = Paragraph(p, fake_parent)
+
+        inner_content = paragraph.iter_inner_content()
+
+        actual = [type(item).__name__ for item in inner_content]
         assert actual == expected, f"expected: {expected}, got: {actual}"
 
     def it_knows_its_paragraph_style(self, style_get_fixture):
