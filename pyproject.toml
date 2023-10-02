@@ -21,13 +21,14 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
-    "lxml>=2.3.2",
+    "lxml>=3.1.0",
+    "typing_extensions",
 ]
 description = "Create, read, and update Microsoft Word .docx files."
 dynamic = ["version"]
 keywords = ["docx", "office", "openxml", "word"]
 license = { text = "MIT" }
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.7"
 
 [project.urls]
