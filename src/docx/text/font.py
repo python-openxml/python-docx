@@ -1,7 +1,8 @@
 """Font-related proxy objects."""
 
-from ..dml.color import ColorFormat
-from ..shared import ElementProxy
+from docx.dml.color import ColorFormat
+from docx.enum.text import WD_UNDERLINE
+from docx.shared import ElementProxy
 
 
 class Font(ElementProxy):
@@ -359,7 +360,8 @@ class Font(ElementProxy):
         rPr = self._element.rPr
         if rPr is None:
             return None
-        return rPr.u_val
+        val = rPr.u_val
+        return None if val == WD_UNDERLINE.INHERITED else val
 
     @underline.setter
     def underline(self, value):

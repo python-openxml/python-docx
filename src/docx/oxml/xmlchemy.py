@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
 
 from lxml import etree
 from lxml.etree import ElementBase
@@ -80,14 +80,19 @@ class XmlString(str):
         return front, attrs, close, text
 
 
+_T = TypeVar("_T")
+
+
 class MetaOxmlElement(type):
     """Metaclass for BaseOxmlElement."""
 
-    def __new__(cls, clsname: str, bases: Tuple[type, ...], clsdict: Dict[str, Any]):
+    def __new__(
+        cls: Type[_T],clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]
+    ) -> _T:
         bases = (*bases, etree.ElementBase)
-        return super().__new__(cls, clsname, bases, clsdict)
+        return super().__new__(cls, clsname, bases, namespace)
 
-    def __init__(cls, clsname: str, bases: Tuple[type, ...], clsdict: Dict[str, Any]):
+    def __init__(cls, clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]):
         dispatchable = (
             OneAndOnlyOne,
             OneOrMore,
@@ -97,7 +102,7 @@ class MetaOxmlElement(type):
             ZeroOrOne,
             ZeroOrOneChoice,
         )
-        for key, value in clsdict.items():
+        for key, value in namespace.items():
             if isinstance(value, dispatchable):
                 value.populate_class_members(cls, key)
 
@@ -665,9 +670,7 @@ class BaseOxmlElement(metaclass=MetaOxmlElement):
         """
         return serialize_for_reading(self)
 
-    def xpath(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, xpath_str: str
-    ) -> Any:
+    def xpath(self, xpath_str: str) -> Any:
         """Override of `lxml` _Element.xpath() method.
 
         Provides standard Open XML namespace mapping (`nsmap`) in centralized location.

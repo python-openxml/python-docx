@@ -5,94 +5,90 @@ classes at the top constitute the entire fixture and the tests themselves just m
 assertions on those.
 """
 
+import enum
+
 import pytest
 
-from docx.enum.base import (
-    Enumeration,
-    EnumMember,
-    ReturnValueOnlyEnumMember,
-    XmlEnumeration,
-    XmlMappedEnumMember,
-    alias,
-)
+from docx.enum.base import BaseXmlEnum
 
 
-@alias("BARFOO")
-class FOOBAR(Enumeration):
-    """
-    Enumeration docstring
-    """
+class SomeXmlAttr(BaseXmlEnum):
+    """SomeXmlAttr docstring."""
 
-    __ms_name__ = "MsoFoobar"
+    FOO = (1, "foo", "Do foo instead of bar.")
+    """Do foo instead of bar."""
 
-    __url__ = "http://msdn.microsoft.com/foobar.aspx"
+    BAR = (2, "bar", "Do bar instead of foo.")
+    """Do bar instead of foo."""
 
-    __members__ = (
-        EnumMember(None, None, "No setting/remove setting"),
-        EnumMember("READ_WRITE", 1, "Readable and settable"),
-        ReturnValueOnlyEnumMember("READ_ONLY", -2, "Return value only"),
-    )
+    BAZ = (3, None, "Maps to the value assumed when the attribute is omitted.")
+    """Maps to the value assumed when the attribute is omitted."""
 
 
-@alias("XML-FU")
-class XMLFOO(XmlEnumeration):
-    """
-    XmlEnumeration docstring
-    """
+class DescribeBaseXmlEnum:
+    """Unit-test suite for `docx.enum.base.BaseXmlEnum`."""
 
-    __ms_name__ = "MsoXmlFoobar"
+    def it_is_an_instance_of_EnumMeta_just_like_a_regular_Enum(self):
+        assert type(SomeXmlAttr) is enum.EnumMeta
 
-    __url__ = "http://msdn.microsoft.com/msoxmlfoobar.aspx"
+    def it_has_the_same_repr_as_a_regular_Enum(self):
+        assert repr(SomeXmlAttr) == "<enum 'SomeXmlAttr'>"
 
-    __members__ = (
-        XmlMappedEnumMember(None, None, None, "No setting"),
-        XmlMappedEnumMember("XML_RW", 42, "attrVal", "Read/write setting"),
-        ReturnValueOnlyEnumMember("RO", -2, "Return value only;"),
-    )
+    def it_has_an_MRO_that_goes_through_the_base_class_int_and_Enum(self):
+        assert SomeXmlAttr.__mro__ == (
+            SomeXmlAttr,
+            BaseXmlEnum,
+            int,
+            enum.Enum,
+            object,
+        ), f"got: {SomeXmlAttr.__mro__}"
 
+    def it_knows_the_XML_value_for_each_member_by_the_member_instance(self):
+        assert SomeXmlAttr.to_xml(SomeXmlAttr.FOO) == "foo"
 
-class DescribeEnumeration(object):
-    def it_has_the_right_metaclass(self):
-        assert type(FOOBAR).__name__ == "MetaEnumeration"
+    def it_knows_the_XML_value_for_each_member_by_the_member_value(self):
+        assert SomeXmlAttr.to_xml(2) == "bar"
 
-    def it_provides_an_EnumValue_instance_for_each_named_member(self):
-        with pytest.raises(AttributeError):
-            getattr(FOOBAR, "None")
-        for obj in (FOOBAR.READ_WRITE, FOOBAR.READ_ONLY):
-            assert type(obj).__name__ == "EnumValue"
+    def but_it_raises_when_there_is_no_such_member(self):
+        with pytest.raises(ValueError, match="42 is not a valid SomeXmlAttr"):
+            SomeXmlAttr.to_xml(42)
 
-    def it_provides_the_enumeration_value_for_each_named_member(self):
-        assert FOOBAR.READ_WRITE == 1
-        assert FOOBAR.READ_ONLY == -2
+    def it_can_find_the_member_from_the_XML_attr_value(self):
+        assert SomeXmlAttr.from_xml("bar") == SomeXmlAttr.BAR
 
-    def it_knows_if_a_setting_is_valid(self):
-        FOOBAR.validate(None)
-        FOOBAR.validate(FOOBAR.READ_WRITE)
-        with pytest.raises(ValueError, match="foobar not a member of FOOBAR enumerat"):
-            FOOBAR.validate("foobar")
-        with pytest.raises(ValueError, match=r"READ_ONLY \(-2\) not a member of FOOB"):
-            FOOBAR.validate(FOOBAR.READ_ONLY)
+    def and_it_can_find_the_member_from_None_when_a_member_maps_that(self):
+        assert SomeXmlAttr.from_xml(None) == SomeXmlAttr.BAZ
 
-    def it_can_be_referred_to_by_a_convenience_alias_if_defined(self):
-        assert BARFOO is FOOBAR  # noqa
+    def but_it_raises_when_there_is_no_such_mapped_XML_value(self):
+        with pytest.raises(
+            ValueError, match="SomeXmlAttr has no XML mapping for 'baz'"
+        ):
+            SomeXmlAttr.from_xml("baz")
 
 
-class DescribeEnumValue(object):
-    def it_provides_its_symbolic_name_as_its_string_value(self):
-        assert ("%s" % FOOBAR.READ_WRITE) == "READ_WRITE (1)"
+class DescribeBaseXmlEnumMembers:
+    """Unit-test suite for `docx.enum.base.BaseXmlEnum`."""
 
-    def it_provides_its_description_as_its_docstring(self):
-        assert FOOBAR.READ_ONLY.__doc__ == "Return value only"
+    def it_is_an_instance_of_its_XmlEnum_subtype_class(self):
+        assert type(SomeXmlAttr.FOO) is SomeXmlAttr
 
+    def it_has_the_default_Enum_repr(self):
+        assert repr(SomeXmlAttr.BAR) == "<SomeXmlAttr.BAR: 2>"
 
-class DescribeXmlEnumeration(object):
-    def it_knows_the_XML_value_for_each_of_its_xml_members(self):
-        assert XMLFOO.to_xml(XMLFOO.XML_RW) == "attrVal"
-        assert XMLFOO.to_xml(42) == "attrVal"
-        with pytest.raises(ValueError, match=r"value 'RO \(-2\)' not in enumeration "):
-            XMLFOO.to_xml(XMLFOO.RO)
+    def but_its_str_value_is_customized(self):
+        assert str(SomeXmlAttr.FOO) == "FOO (1)"
 
-    def it_can_map_each_of_its_xml_members_from_the_XML_value(self):
-        assert XMLFOO.from_xml(None) is None
-        assert XMLFOO.from_xml("attrVal") == XMLFOO.XML_RW
-        assert str(XMLFOO.from_xml("attrVal")) == "XML_RW (42)"
+    def its_value_is_the_same_int_as_its_corresponding_MS_API_enum_member(self):
+        assert SomeXmlAttr.FOO.value == 1
+
+    def its_name_is_its_member_name_the_same_as_a_regular_Enum(self):
+        assert SomeXmlAttr.FOO.name == "FOO"
+
+    def it_has_an_individual_member_specific_docstring(self):
+        assert SomeXmlAttr.FOO.__doc__ == "Do foo instead of bar."
+
+    def it_is_equivalent_to_its_int_value(self):
+        assert SomeXmlAttr.FOO == 1
+        assert SomeXmlAttr.FOO != 2
+        assert SomeXmlAttr.BAR == 2
+        assert SomeXmlAttr.BAR != 1

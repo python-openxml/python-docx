@@ -1,6 +1,9 @@
 """Section-related custom element classes."""
 
+from __future__ import annotations
+
 from copy import deepcopy
+from typing import TYPE_CHECKING
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
@@ -11,6 +14,9 @@ from docx.oxml.xmlchemy import (
     ZeroOrMore,
     ZeroOrOne,
 )
+
+if TYPE_CHECKING:
+    from docx.shared import Length
 
 
 class CT_HdrFtr(BaseOxmlElement):
@@ -78,7 +84,9 @@ class CT_SectPr(BaseOxmlElement):
     footerReference = ZeroOrMore("w:footerReference", successors=_tag_seq)
     type = ZeroOrOne("w:type", successors=_tag_seq[3:])
     pgSz = ZeroOrOne("w:pgSz", successors=_tag_seq[4:])
-    pgMar = ZeroOrOne("w:pgMar", successors=_tag_seq[5:])
+    pgMar: CT_PageMar | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:pgMar", successors=_tag_seq[5:]
+    )
     titlePg = ZeroOrOne("w:titlePg", successors=_tag_seq[14:])
     del _tag_seq
 
@@ -103,10 +111,11 @@ class CT_SectPr(BaseOxmlElement):
         return headerReference
 
     @property
-    def bottom_margin(self):
-        """The value of the ``w:bottom`` attribute in the ``<w:pgMar>`` child element,
-        as a |Length| object, or |None| if either the element or the attribute is not
-        present."""
+    def bottom_margin(self) -> Length | None:
+        """Value of the `w:bottom` attr of `<w:pgMar>` child element, as |Length|.
+
+        |None| when either the element or the attribute is not present.
+        """
         pgMar = self.pgMar
         if pgMar is None:
             return None
@@ -160,7 +169,7 @@ class CT_SectPr(BaseOxmlElement):
         return matching_headerReferences[0]
 
     @property
-    def gutter(self):
+    def gutter(self) -> Length | None:
         """The value of the ``w:gutter`` attribute in the ``<w:pgMar>`` child element,
         as a |Length| object, or |None| if either the element or the attribute is not
         present."""
@@ -175,7 +184,7 @@ class CT_SectPr(BaseOxmlElement):
         pgMar.gutter = value
 
     @property
-    def header(self):
+    def header(self) -> Length | None:
         """The value of the ``w:header`` attribute in the ``<w:pgMar>`` child element,
         as a |Length| object, or |None| if either the element or the attribute is not
         present."""
@@ -190,7 +199,7 @@ class CT_SectPr(BaseOxmlElement):
         pgMar.header = value
 
     @property
-    def left_margin(self):
+    def left_margin(self) -> Length | None:
         """The value of the ``w:left`` attribute in the ``<w:pgMar>`` child element, as
         a |Length| object, or |None| if either the element or the attribute is not
         present."""
@@ -302,7 +311,7 @@ class CT_SectPr(BaseOxmlElement):
         type.val = value
 
     @property
-    def titlePg_val(self):
+    def titlePg_val(self) -> bool:
         """Value of `w:titlePg/@val` or |None| if not present."""
         titlePg = self.titlePg
         if titlePg is None:

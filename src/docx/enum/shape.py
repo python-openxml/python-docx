@@ -1,9 +1,13 @@
 """Enumerations related to DrawingML shapes in WordprocessingML files."""
 
+import enum
 
-class WD_INLINE_SHAPE_TYPE(object):
-    """Corresponds to WdInlineShapeType enumeration http://msdn.microsoft.com/en-
-    us/library/office/ff192587.aspx."""
+
+class WD_INLINE_SHAPE_TYPE(enum.Enum):
+    """Corresponds to WdInlineShapeType enumeration.
+
+    http://msdn.microsoft.com/en-us/library/office/ff192587.aspx.
+    """
 
     CHART = 12
     LINKED_PICTURE = 4

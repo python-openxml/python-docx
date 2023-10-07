@@ -101,7 +101,7 @@ class DescribeRun(object):
 
     def it_raises_on_assign_invalid_underline_type(self, underline_raise_fixture):
         run, underline = underline_raise_fixture
-        with pytest.raises(ValueError, match="' not in enumeration WD_UNDERLINE"):
+        with pytest.raises(ValueError, match=" is not a valid WD_UNDERLINE"):
             run.underline = underline
 
     def it_provides_access_to_its_font(self, font_fixture):

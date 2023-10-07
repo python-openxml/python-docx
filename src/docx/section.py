@@ -1,37 +1,17 @@
 """The |Section| object and related proxy classes."""
 
-from collections.abc import Sequence
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Sequence
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_HEADER_FOOTER
 from docx.shared import lazyproperty
 
-
-class Sections(Sequence):
-    """Sequence of |Section| objects corresponding to the sections in the document.
-
-    Supports ``len()``, iteration, and indexed access.
-    """
-
-    def __init__(self, document_elm, document_part):
-        super(Sections, self).__init__()
-        self._document_elm = document_elm
-        self._document_part = document_part
-
-    def __getitem__(self, key):
-        if isinstance(key, slice):
-            return [
-                Section(sectPr, self._document_part)
-                for sectPr in self._document_elm.sectPr_lst[key]
-            ]
-        return Section(self._document_elm.sectPr_lst[key], self._document_part)
-
-    def __iter__(self):
-        for sectPr in self._document_elm.sectPr_lst:
-            yield Section(sectPr, self._document_part)
-
-    def __len__(self):
-        return len(self._document_elm.sectPr_lst)
+if TYPE_CHECKING:
+    from docx.oxml.section import CT_SectPr
+    from docx.parts.document import DocumentPart
+    from docx.shared import Length
 
 
 class Section(object):
@@ -40,23 +20,26 @@ class Section(object):
     Also provides access to headers and footers.
     """
 
-    def __init__(self, sectPr, document_part):
+    def __init__(self, sectPr: CT_SectPr, document_part: DocumentPart):
         super(Section, self).__init__()
         self._sectPr = sectPr
         self._document_part = document_part
 
     @property
-    def bottom_margin(self):
-        """|Length| object representing the bottom margin for all pages in this section
-        in English Metric Units."""
+    def bottom_margin(self) -> Length | None:
+        """Read/write. Bottom margin for pages in this section, in EMU.
+
+        `None` when no bottom margin has been specified. Assigning |None| removes any
+        bottom-margin setting.
+        """
         return self._sectPr.bottom_margin
 
     @bottom_margin.setter
-    def bottom_margin(self, value):
+    def bottom_margin(self, value: int | Length | None):
         self._sectPr.bottom_margin = value
 
     @property
-    def different_first_page_header_footer(self):
+    def different_first_page_header_footer(self) -> bool:
         """True if this section displays a distinct first-page header and footer.
 
         Read/write. The definition of the first-page header and footer are accessed
@@ -65,7 +48,7 @@ class Section(object):
         return self._sectPr.titlePg_val
 
     @different_first_page_header_footer.setter
-    def different_first_page_header_footer(self, value):
+    def different_first_page_header_footer(self, value: bool):
         self._sectPr.titlePg_val = value
 
     @property
@@ -114,30 +97,32 @@ class Section(object):
         return _Footer(self._sectPr, self._document_part, WD_HEADER_FOOTER.PRIMARY)
 
     @property
-    def footer_distance(self):
-        """|Length| object representing the distance from the bottom edge of the page to
-        the bottom edge of the footer.
+    def footer_distance(self) -> Length | None:
+        """Distance from bottom edge of page to bottom edge of the footer.
 
-        |None| if no setting is present in the XML.
+        Read/write. |None| if no setting is present in the XML.
         """
         return self._sectPr.footer
 
     @footer_distance.setter
-    def footer_distance(self, value):
+    def footer_distance(self, value: int | Length | None):
         self._sectPr.footer = value
 
     @property
-    def gutter(self):
-        """|Length| object representing the page gutter size in English Metric Units for
-        all pages in this section.
+    def gutter(self) -> Length | None:
+        """|Length| object representing page gutter size in English Metric Units.
 
-        The page gutter is extra spacing added to the `inner` margin to ensure even
-        margins after page binding.
+        Read/write. The page gutter is extra spacing added to the `inner` margin to
+        ensure even margins after page binding. Generally only used in book-bound
+        documents with double-sided and facing pages.
+
+        This setting applies to all pages in this section.
+
         """
         return self._sectPr.gutter
 
     @gutter.setter
-    def gutter(self, value):
+    def gutter(self, value: int | Length | None):
         self._sectPr.gutter = value
 
     @lazyproperty
@@ -150,7 +135,7 @@ class Section(object):
         return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.PRIMARY)
 
     @property
-    def header_distance(self):
+    def header_distance(self) -> Length | None:
         """|Length| object representing the distance from the top edge of the page to
         the top edge of the header.
 
@@ -159,17 +144,17 @@ class Section(object):
         return self._sectPr.header
 
     @header_distance.setter
-    def header_distance(self, value):
+    def header_distance(self, value: int | Length | None):
         self._sectPr.header = value
 
     @property
-    def left_margin(self):
+    def left_margin(self) -> Length | None:
         """|Length| object representing the left margin for all pages in this section in
         English Metric Units."""
         return self._sectPr.left_margin
 
     @left_margin.setter
-    def left_margin(self, value):
+    def left_margin(self, value: int | Length | None):
         self._sectPr.left_margin = value
 
     @property
@@ -184,9 +169,10 @@ class Section(object):
         self._sectPr.orientation = value
 
     @property
-    def page_height(self):
-        """Total page height used for this section, inclusive of all edge spacing values
-        such as margins.
+    def page_height(self) -> Length | None:
+        """Total page height used for this section.
+
+        This value is inclusive of all edge spacing values such as margins.
 
         Page orientation is taken into account, so for example, its expected value would
         be ``Inches(8.5)`` for letter-sized paper when orientation is landscape.
@@ -241,6 +227,33 @@ class Section(object):
     @top_margin.setter
     def top_margin(self, value):
         self._sectPr.top_margin = value
+
+
+class Sections(Sequence[Section]):
+    """Sequence of |Section| objects corresponding to the sections in the document.
+
+    Supports ``len()``, iteration, and indexed access.
+    """
+
+    def __init__(self, document_elm, document_part):
+        super(Sections, self).__init__()
+        self._document_elm = document_elm
+        self._document_part = document_part
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return [
+                Section(sectPr, self._document_part)
+                for sectPr in self._document_elm.sectPr_lst[key]
+            ]
+        return Section(self._document_elm.sectPr_lst[key], self._document_part)
+
+    def __iter__(self):
+        for sectPr in self._document_elm.sectPr_lst:
+            yield Section(sectPr, self._document_part)
+
+    def __len__(self):
+        return len(self._document_elm.sectPr_lst)
 
 
 class _BaseHeaderFooter(BlockItemContainer):
