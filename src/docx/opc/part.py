@@ -1,10 +1,17 @@
 """Open Packaging Convention (OPC) objects related to package parts."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
 from docx.opc.rel import Relationships
 from docx.opc.shared import cls_method_fn, lazyproperty
 from docx.oxml.parser import parse_xml
+
+if TYPE_CHECKING:
+    from docx.opc.package import OpcPackage
 
 
 class Part(object):
@@ -14,7 +21,13 @@ class Part(object):
     to implement specific part behaviors.
     """
 
-    def __init__(self, partname, content_type, blob=None, package=None):
+    def __init__(
+        self,
+        partname: str,
+        content_type: str,
+        blob: bytes | None = None,
+        package: OpcPackage | None = None,
+    ):
         super(Part, self).__init__()
         self._partname = partname
         self._content_type = content_type
@@ -96,7 +109,7 @@ class Part(object):
             raise TypeError(tmpl % type(partname).__name__)
         self._partname = partname
 
-    def part_related_by(self, reltype):
+    def part_related_by(self, reltype: str) -> Part:
         """Return part to which this part has a relationship of `reltype`.
 
         Raises |KeyError| if no such relationship is found and |ValueError| if more than
@@ -105,9 +118,12 @@ class Part(object):
         """
         return self.rels.part_with_reltype(reltype)
 
-    def relate_to(self, target, reltype, is_external=False):
-        """Return rId key of relationship of `reltype` to `target`, from an existing
-        relationship if there is one, otherwise a newly created one."""
+    def relate_to(self, target: Part, reltype: str, is_external: bool = False) -> str:
+        """Return rId key of relationship of `reltype` to `target`.
+
+        The returned `rId` is from an existing relationship if there is one, otherwise a
+        new relationship is created.
+        """
         if is_external:
             return self.rels.get_or_add_ext_rel(reltype, target)
         else:

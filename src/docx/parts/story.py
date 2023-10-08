@@ -1,9 +1,18 @@
 """|StoryPart| and related objects."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
 from docx.shared import lazyproperty
+
+if TYPE_CHECKING:
+    from docx.enum.style import WD_STYLE_TYPE
+    from docx.parts.document import DocumentPart
+    from docx.styles.style import BaseStyle
 
 
 class StoryPart(XmlPart):
@@ -26,7 +35,7 @@ class StoryPart(XmlPart):
         rId = self.relate_to(image_part, RT.IMAGE)
         return rId, image_part.image
 
-    def get_style(self, style_id, style_type):
+    def get_style(self, style_id: str | None, style_type: WD_STYLE_TYPE) -> BaseStyle:
         """Return the style in this document matching `style_id`.
 
         Returns the default style for `style_type` if `style_id` is |None| or does not
@@ -34,7 +43,9 @@ class StoryPart(XmlPart):
         """
         return self._document_part.get_style(style_id, style_type)
 
-    def get_style_id(self, style_or_name, style_type):
+    def get_style_id(
+        self, style_or_name: BaseStyle | str | None, style_type: WD_STYLE_TYPE
+    ) -> str | None:
         """Return str style_id for `style_or_name` of `style_type`.
 
         Returns |None| if the style resolves to the default style for `style_type` or if
@@ -69,6 +80,8 @@ class StoryPart(XmlPart):
         return max(used_ids) + 1
 
     @lazyproperty
-    def _document_part(self):
+    def _document_part(self) -> DocumentPart:
         """|DocumentPart| object for this package."""
-        return self.package.main_document_part
+        package = self.package
+        assert package is not None
+        return package.main_document_part

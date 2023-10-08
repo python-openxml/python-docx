@@ -1,5 +1,9 @@
 """Sub-package module for docx.styles sub-package."""
 
+from __future__ import annotations
+
+from typing import Dict
+
 
 class BabelFish(object):
     """Translates special-case style names from UI name (e.g. Heading 1) to
@@ -20,17 +24,17 @@ class BabelFish(object):
         ("Heading 9", "heading 9"),
     )
 
-    internal_style_names = dict(style_aliases)
+    internal_style_names: Dict[str, str] = dict(style_aliases)
     ui_style_names = {item[1]: item[0] for item in style_aliases}
 
     @classmethod
-    def ui2internal(cls, ui_style_name):
+    def ui2internal(cls, ui_style_name: str) -> str:
         """Return the internal style name corresponding to `ui_style_name`, such as
         'heading 1' for 'Heading 1'."""
         return cls.internal_style_names.get(ui_style_name, ui_style_name)
 
     @classmethod
-    def internal2ui(cls, internal_style_name):
+    def internal2ui(cls, internal_style_name: str) -> str:
         """Return the user interface style name corresponding to `internal_style_name`,
         such as 'Heading 1' for 'heading 1'."""
         return cls.ui_style_names.get(internal_style_name, internal_style_name)

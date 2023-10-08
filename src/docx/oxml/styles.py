@@ -1,5 +1,7 @@
 """Custom element classes related to the styles part."""
 
+from __future__ import annotations
+
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from docx.oxml.xmlchemy import (
@@ -126,8 +128,14 @@ class CT_Style(BaseOxmlElement):
     rPr = ZeroOrOne("w:rPr", successors=_tag_seq[18:])
     del _tag_seq
 
-    type = OptionalAttribute("w:type", WD_STYLE_TYPE)
-    styleId = OptionalAttribute("w:styleId", ST_String)
+    type: WD_STYLE_TYPE | None = (
+        OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:type", WD_STYLE_TYPE
+        )
+    )
+    styleId: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:styleId", ST_String
+    )
     default = OptionalAttribute("w:default", ST_OnOff)
     customStyle = OptionalAttribute("w:customStyle", ST_OnOff)
 
@@ -293,23 +301,21 @@ class CT_Styles(BaseOxmlElement):
         # spec calls for last default in document order
         return default_styles_for_type[-1]
 
-    def get_by_id(self, styleId):
-        """Return the ``<w:style>`` child element having ``styleId`` attribute matching
-        `styleId`, or |None| if not found."""
-        xpath = 'w:style[@w:styleId="%s"]' % styleId
-        try:
-            return self.xpath(xpath)[0]
-        except IndexError:
-            return None
+    def get_by_id(self, styleId: str) -> CT_Style | None:
+        """`w:style` child where @styleId = `styleId`.
 
-    def get_by_name(self, name):
-        """Return the ``<w:style>`` child element having ``<w:name>`` child element with
-        value `name`, or |None| if not found."""
+        |None| if not found.
+        """
+        xpath = f'w:style[@w:styleId="{styleId}"]'
+        return next(iter(self.xpath(xpath)), None)
+
+    def get_by_name(self, name: str) -> CT_Style | None:
+        """`w:style` child with `w:name` grandchild having value `name`.
+
+        |None| if not found.
+        """
         xpath = 'w:style[w:name/@w:val="%s"]' % name
-        try:
-            return self.xpath(xpath)[0]
-        except IndexError:
-            return None
+        return next(iter(self.xpath(xpath)), None)
 
     def _iter_styles(self):
         """Generate each of the `w:style` child elements in document order."""

@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Iterator, List
+from typing import Iterator, List, cast
 
 from typing_extensions import Self
 
-from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
-from docx.shared import Parented
+from docx.shared import StoryChild
 from docx.styles.style import CharacterStyle, ParagraphStyle
 from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
@@ -19,10 +18,10 @@ from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
 
-class Paragraph(Parented):
+class Paragraph(StoryChild):
     """Proxy object wrapping a `<w:p>` element."""
 
-    def __init__(self, p: CT_P, parent: t.StoryChild):
+    def __init__(self, p: CT_P, parent: StoryChild):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
 
@@ -141,7 +140,8 @@ class Paragraph(Parented):
         its effective value the default paragraph style for the document.
         """
         style_id = self._p.style
-        return self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
+        style = self.part.get_style(style_id, WD_STYLE_TYPE.PARAGRAPH)
+        return cast(ParagraphStyle, style)
 
     @style.setter
     def style(self, style_or_name: str | ParagraphStyle | None):

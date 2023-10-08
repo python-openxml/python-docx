@@ -623,6 +623,7 @@ class BaseOxmlElement(metaclass=MetaOxmlElement):
     Adds standardized behavior to all classes in one place.
     """
 
+    addprevious: Callable[[BaseOxmlElement], None]
     attrib: Dict[str, str]
     append: Callable[[ElementBase], None]
     find: Callable[[str], ElementBase | None]

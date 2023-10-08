@@ -1,5 +1,9 @@
 """Objects shared by modules in the docx.oxml subpackage."""
 
+from __future__ import annotations
+
+from typing import cast
+
 from docx.oxml.ns import qn
 from docx.oxml.parser import OxmlElement
 from docx.oxml.simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
@@ -33,15 +37,19 @@ class CT_OnOff(BaseOxmlElement):
 
 
 class CT_String(BaseOxmlElement):
-    """Used for ``<w:pStyle>`` and ``<w:tblStyle>`` elements and others, containing a
-    style name in its ``val`` attribute."""
+    """Used for `w:pStyle` and `w:tblStyle` elements and others.
 
-    val = RequiredAttribute("w:val", ST_String)
+    In those cases, it containing a style name in its `val` attribute.
+    """
+
+    val: str = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:val", ST_String
+    )
 
     @classmethod
-    def new(cls, nsptagname, val):
+    def new(cls, nsptagname: str, val: str):
         """Return a new ``CT_String`` element with tagname `nsptagname` and ``val``
         attribute set to `val`."""
-        elm = OxmlElement(nsptagname)
+        elm = cast(CT_String, OxmlElement(nsptagname))
         elm.val = val
         return elm

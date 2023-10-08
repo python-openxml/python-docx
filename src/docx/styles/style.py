@@ -1,16 +1,20 @@
 """Style object hierarchy."""
 
+from __future__ import annotations
+
+from typing import Type
+
 from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.styles import CT_Style
 from docx.shared import ElementProxy
 from docx.styles import BabelFish
 from docx.text.font import Font
 from docx.text.parfmt import ParagraphFormat
 
 
-def StyleFactory(style_elm):
-    """Return a style object of the appropriate |BaseStyle| subclass, according to the
-    type of `style_elm`."""
-    style_cls = {
+def StyleFactory(style_elm: CT_Style) -> BaseStyle:
+    """Return `Style` object of appropriate |BaseStyle| subclass for `style_elm`."""
+    style_cls: Type[BaseStyle] = {
         WD_STYLE_TYPE.PARAGRAPH: ParagraphStyle,
         WD_STYLE_TYPE.CHARACTER: CharacterStyle,
         WD_STYLE_TYPE.TABLE: _TableStyle,
@@ -26,6 +30,10 @@ class BaseStyle(ElementProxy):
 
     These properties and methods are inherited by all style objects.
     """
+
+    def __init__(self, style_elm: CT_Style):
+        super().__init__(style_elm)
+        self._style_elm = style_elm
 
     @property
     def builtin(self):
@@ -117,13 +125,13 @@ class BaseStyle(ElementProxy):
         self._element.qFormat_val = value
 
     @property
-    def style_id(self):
+    def style_id(self) -> str:
         """The unique key name (string) for this style.
 
         This value is subject to rewriting by Word and should generally not be changed
         unless you are familiar with the internals involved.
         """
-        return self._element.styleId
+        return self._style_elm.styleId
 
     @style_id.setter
     def style_id(self, value):
@@ -133,7 +141,7 @@ class BaseStyle(ElementProxy):
     def type(self):
         """Member of :ref:`WdStyleType` corresponding to the type of this style, e.g.
         ``WD_STYLE_TYPE.PARAGRAPH``."""
-        type = self._element.type
+        type = self._style_elm.type
         if type is None:
             return WD_STYLE_TYPE.PARAGRAPH
         return type

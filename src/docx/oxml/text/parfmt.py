@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Callable
+
 from docx.enum.text import (
     WD_ALIGN_PARAGRAPH,
     WD_LINE_SPACING,
@@ -17,6 +19,10 @@ from docx.oxml.xmlchemy import (
     ZeroOrOne,
 )
 from docx.shared import Length
+
+if TYPE_CHECKING:
+    from docx.oxml.section import CT_SectPr
+    from docx.oxml.shared import CT_String
 
 
 class CT_Ind(BaseOxmlElement):
@@ -36,6 +42,11 @@ class CT_Jc(BaseOxmlElement):
 
 class CT_PPr(BaseOxmlElement):
     """``<w:pPr>`` element, containing the properties for a paragraph."""
+
+    get_or_add_pStyle: Callable[[], CT_String]
+    _insert_sectPr: Callable[[CT_SectPr], None]
+    _remove_pStyle: Callable[[], None]
+    _remove_sectPr: Callable[[], None]
 
     _tag_seq = (
         "w:pStyle",
@@ -75,7 +86,9 @@ class CT_PPr(BaseOxmlElement):
         "w:sectPr",
         "w:pPrChange",
     )
-    pStyle = ZeroOrOne("w:pStyle", successors=_tag_seq[1:])
+    pStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:pStyle", successors=_tag_seq[1:]
+    )
     keepNext = ZeroOrOne("w:keepNext", successors=_tag_seq[2:])
     keepLines = ZeroOrOne("w:keepLines", successors=_tag_seq[3:])
     pageBreakBefore = ZeroOrOne("w:pageBreakBefore", successors=_tag_seq[4:])
@@ -273,20 +286,18 @@ class CT_PPr(BaseOxmlElement):
         self.get_or_add_spacing().lineRule = value
 
     @property
-    def style(self):
-        """String contained in <w:pStyle> child, or None if that element is not
-        present."""
+    def style(self) -> str | None:
+        """String contained in `./w:pStyle/@val`, or None if child is not present."""
         pStyle = self.pStyle
         if pStyle is None:
             return None
         return pStyle.val
 
     @style.setter
-    def style(self, style):
-        """Set val attribute of <w:pStyle> child element to `style`, adding a new
-        element if necessary.
+    def style(self, style: str | None):
+        """Set `./w:pStyle/@val` `style`, adding a new element if necessary.
 
-        If `style` is |None|, remove the <w:pStyle> element if present.
+        If `style` is |None|, remove `./w:pStyle` when present.
         """
         if style is None:
             self._remove_pStyle()

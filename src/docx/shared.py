@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, Iterator, List, TypeVa
 
 if TYPE_CHECKING:
     from docx.oxml.xmlchemy import BaseOxmlElement
+    from docx.parts.story import StoryPart
 
 
 class Length(int):
@@ -267,7 +268,7 @@ class ElementProxy(object):
     common type of class in python-docx other than custom element (oxml) classes.
     """
 
-    def __init__(self, element: "BaseOxmlElement", parent=None):
+    def __init__(self, element: BaseOxmlElement, parent=None):
         self._element = element
         self._parent = parent
 
@@ -299,7 +300,7 @@ class ElementProxy(object):
         return self._parent.part
 
 
-class Parented(object):
+class Parented:
     """Provides common services for document elements that occur below a part but may
     occasionally require an ancestor object to provide a service, such as add or drop a
     relationship.
@@ -308,11 +309,30 @@ class Parented(object):
     """
 
     def __init__(self, parent):
-        super(Parented, self).__init__()
         self._parent = parent
 
     @property
     def part(self):
+        """The package part containing this object."""
+        return self._parent.part
+
+
+class StoryChild:
+    """A document element within a story part.
+
+    Story parts include DocumentPart and Header/FooterPart and can contain block items
+    (paragraphs and tables). These occasionally require an ancestor object to provide
+    access to part-level or package-level items like styles or images or to add or drop
+    a relationship.
+
+    Provides `self._parent` attribute to subclasses.
+    """
+
+    def __init__(self, parent: StoryChild):
+        self._parent = parent
+
+    @property
+    def part(self) -> StoryPart:
         """The package part containing this object."""
         return self._parent.part
 

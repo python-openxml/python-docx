@@ -21,6 +21,7 @@ from docx.oxml.shape import (
     CT_ShapeProperties,
     CT_Transform2D,
 )
+from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
 from docx.oxml.text.hyperlink import CT_Hyperlink
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.oxml.text.run import (
@@ -68,13 +69,13 @@ register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
 
 # ---------------------------------------------------------------------------
-# other custom element class mappings
-
-from .shared import CT_DecimalNumber, CT_OnOff, CT_String  # noqa
+# header/footer-related mappings
 
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 register_element_cls("w:titlePg", CT_OnOff)
 
+# ---------------------------------------------------------------------------
+# other custom element class mappings
 
 from .coreprops import CT_CoreProperties  # noqa
 

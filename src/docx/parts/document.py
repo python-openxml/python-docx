@@ -1,6 +1,11 @@
 """|DocumentPart| and closely related objects."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, cast
+
 from docx.document import Document
+from docx.enum.style import WD_STYLE_TYPE
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
@@ -9,6 +14,9 @@ from docx.parts.story import StoryPart
 from docx.parts.styles import StylesPart
 from docx.shape import InlineShapes
 from docx.shared import lazyproperty
+
+if TYPE_CHECKING:
+    from docx.styles.style import BaseStyle
 
 
 class DocumentPart(StoryPart):
@@ -51,7 +59,7 @@ class DocumentPart(StoryPart):
         """Return |FooterPart| related by `rId`."""
         return self.related_parts[rId]
 
-    def get_style(self, style_id, style_type):
+    def get_style(self, style_id: str | None, style_type: WD_STYLE_TYPE) -> BaseStyle:
         """Return the style in this document matching `style_id`.
 
         Returns the default style for `style_type` if `style_id` is |None| or does not
@@ -124,14 +132,16 @@ class DocumentPart(StoryPart):
             return settings_part
 
     @property
-    def _styles_part(self):
+    def _styles_part(self) -> StylesPart:
         """Instance of |StylesPart| for this document.
 
         Creates an empty styles part if one is not present.
         """
         try:
-            return self.part_related_by(RT.STYLES)
+            return cast(StylesPart, self.part_related_by(RT.STYLES))
         except KeyError:
-            styles_part = StylesPart.default(self.package)
+            package = self.package
+            assert package is not None
+            styles_part = StylesPart.default(package)
             self.relate_to(styles_part, RT.STYLES)
             return styles_part

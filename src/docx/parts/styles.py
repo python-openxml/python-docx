@@ -1,6 +1,9 @@
 """Provides StylesPart and related objects."""
 
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING
 
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.packuri import PackURI
@@ -8,13 +11,16 @@ from docx.opc.part import XmlPart
 from docx.oxml.parser import parse_xml
 from docx.styles.styles import Styles
 
+if TYPE_CHECKING:
+    from docx.opc.package import OpcPackage
+
 
 class StylesPart(XmlPart):
     """Proxy for the styles.xml part containing style definitions for a document or
     glossary."""
 
     @classmethod
-    def default(cls, package):
+    def default(cls, package: OpcPackage) -> StylesPart:
         """Return a newly created styles part, containing a default set of elements."""
         partname = PackURI("/word/styles.xml")
         content_type = CT.WML_STYLES
