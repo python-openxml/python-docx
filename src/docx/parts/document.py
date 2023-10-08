@@ -43,11 +43,11 @@ class DocumentPart(StoryPart):
         """A |Document| object providing access to the content of this document."""
         return Document(self._element, self)
 
-    def drop_header_part(self, rId):
+    def drop_header_part(self, rId: str) -> None:
         """Remove related header part identified by `rId`."""
         self.drop_rel(rId)
 
-    def footer_part(self, rId):
+    def footer_part(self, rId: str):
         """Return |FooterPart| related by `rId`."""
         return self.related_parts[rId]
 
@@ -69,7 +69,7 @@ class DocumentPart(StoryPart):
         """
         return self.styles.get_style_id(style_or_name, style_type)
 
-    def header_part(self, rId):
+    def header_part(self, rId: str):
         """Return |HeaderPart| related by `rId`."""
         return self.related_parts[rId]
 

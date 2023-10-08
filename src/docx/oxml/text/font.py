@@ -1,5 +1,9 @@
 """Custom element classes related to run properties (font)."""
 
+from __future__ import annotations
+
+from typing import Callable
+
 from docx.enum.dml import MSO_THEME_COLOR
 from docx.enum.text import WD_COLOR, WD_UNDERLINE
 from docx.oxml.ns import nsdecls, qn
@@ -47,6 +51,9 @@ class CT_HpsMeasure(BaseOxmlElement):
 
 class CT_RPr(BaseOxmlElement):
     """``<w:rPr>`` element, containing the properties for a run."""
+
+    _add_u: Callable[[], CT_Underline]
+    _remove_u: Callable[[], None]
 
     _tag_seq = (
         "w:rStyle",
@@ -110,7 +117,9 @@ class CT_RPr(BaseOxmlElement):
     color = ZeroOrOne("w:color", successors=_tag_seq[19:])
     sz = ZeroOrOne("w:sz", successors=_tag_seq[24:])
     highlight = ZeroOrOne("w:highlight", successors=_tag_seq[26:])
-    u = ZeroOrOne("w:u", successors=_tag_seq[27:])
+    u: CT_Underline | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:u", successors=_tag_seq[27:]
+    )
     vertAlign = ZeroOrOne("w:vertAlign", successors=_tag_seq[32:])
     rtl = ZeroOrOne("w:rtl", successors=_tag_seq[33:])
     cs = ZeroOrOne("w:cs", successors=_tag_seq[34:])
@@ -265,15 +274,19 @@ class CT_RPr(BaseOxmlElement):
         sz.val = value
 
     @property
-    def u_val(self):
-        """Value of `w:u/@val`, or None if not present."""
+    def u_val(self) -> bool | WD_UNDERLINE | None:
+        """Value of `w:u/@val`, or None if not present.
+
+        Values `WD_UNDERLINE.SINGLE` and `WD_UNDERLINE.NONE` are mapped to `True` and
+        `False` respectively.
+        """
         u = self.u
         if u is None:
             return None
         return u.val
 
     @u_val.setter
-    def u_val(self, value):
+    def u_val(self, value: bool | WD_UNDERLINE | None):
         self._remove_u()
         if value is not None:
             self._add_u().val = value
@@ -298,18 +311,22 @@ class CT_Underline(BaseOxmlElement):
     """``<w:u>`` element, specifying the underlining style for a run."""
 
     @property
-    def val(self):
+    def val(self) -> bool | WD_UNDERLINE | None:
         """The underline type corresponding to the ``w:val`` attribute value."""
         val = self.get(qn("w:val"))
         underline = WD_UNDERLINE.from_xml(val)
-        if underline == WD_UNDERLINE.SINGLE:
-            return True
-        if underline == WD_UNDERLINE.NONE:
-            return False
-        return underline
+        return (
+            None
+            if underline == WD_UNDERLINE.INHERITED
+            else True
+            if underline == WD_UNDERLINE.SINGLE
+            else False
+            if underline == WD_UNDERLINE.NONE
+            else underline
+        )
 
     @val.setter
-    def val(self, value):
+    def val(self, value: bool | WD_UNDERLINE | None):
         # works fine without these two mappings, but only because True == 1
         # and False == 0, which happen to match the mapping for WD_UNDERLINE
         # .SINGLE and .NONE respectively.

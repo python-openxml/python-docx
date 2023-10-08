@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Callable
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
+from docx.oxml.shared import CT_OnOff
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
 from docx.oxml.xmlchemy import (
     BaseOxmlElement,
@@ -14,9 +15,7 @@ from docx.oxml.xmlchemy import (
     ZeroOrMore,
     ZeroOrOne,
 )
-
-if TYPE_CHECKING:
-    from docx.shared import Length
+from docx.shared import Length
 
 
 class CT_HdrFtr(BaseOxmlElement):
@@ -29,34 +28,69 @@ class CT_HdrFtr(BaseOxmlElement):
 class CT_HdrFtrRef(BaseOxmlElement):
     """`w:headerReference` and `w:footerReference` elements."""
 
-    type_ = RequiredAttribute("w:type", WD_HEADER_FOOTER)
-    rId = RequiredAttribute("r:id", XsdString)
+    type_: WD_HEADER_FOOTER = (
+        RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:type", WD_HEADER_FOOTER
+        )
+    )
+    rId: str = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "r:id", XsdString
+    )
 
 
 class CT_PageMar(BaseOxmlElement):
     """``<w:pgMar>`` element, defining page margins."""
 
-    top = OptionalAttribute("w:top", ST_SignedTwipsMeasure)
-    right = OptionalAttribute("w:right", ST_TwipsMeasure)
-    bottom = OptionalAttribute("w:bottom", ST_SignedTwipsMeasure)
-    left = OptionalAttribute("w:left", ST_TwipsMeasure)
-    header = OptionalAttribute("w:header", ST_TwipsMeasure)
-    footer = OptionalAttribute("w:footer", ST_TwipsMeasure)
-    gutter = OptionalAttribute("w:gutter", ST_TwipsMeasure)
+    top: Length | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:top", ST_SignedTwipsMeasure
+    )
+    right: Length | None = OptionalAttribute(  # pyright: ignore
+        "w:right", ST_TwipsMeasure
+    )
+    bottom: Length | None = OptionalAttribute(  # pyright: ignore
+        "w:bottom", ST_SignedTwipsMeasure
+    )
+    left: Length | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:left", ST_TwipsMeasure
+    )
+    header: Length | None = OptionalAttribute(  # pyright: ignore
+        "w:header", ST_TwipsMeasure
+    )
+    footer: Length | None = OptionalAttribute(  # pyright: ignore
+        "w:footer", ST_TwipsMeasure
+    )
+    gutter: Length | None = OptionalAttribute(  # pyright: ignore
+        "w:gutter", ST_TwipsMeasure
+    )
 
 
 class CT_PageSz(BaseOxmlElement):
     """``<w:pgSz>`` element, defining page dimensions and orientation."""
 
-    w = OptionalAttribute("w:w", ST_TwipsMeasure)
-    h = OptionalAttribute("w:h", ST_TwipsMeasure)
-    orient = OptionalAttribute(
-        "w:orient", WD_ORIENTATION, default=WD_ORIENTATION.PORTRAIT
+    w: Length | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:w", ST_TwipsMeasure
+    )
+    h: Length | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:h", ST_TwipsMeasure
+    )
+    orient: WD_ORIENTATION = (
+        OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:orient", WD_ORIENTATION, default=WD_ORIENTATION.PORTRAIT
+        )
     )
 
 
 class CT_SectPr(BaseOxmlElement):
     """`w:sectPr` element, the container element for section properties."""
+
+    get_or_add_pgMar: Callable[[], CT_PageMar]
+    get_or_add_pgSz: Callable[[], CT_PageSz]
+    get_or_add_titlePg: Callable[[], CT_OnOff]
+    get_or_add_type: Callable[[], CT_SectType]
+    _add_footerReference: Callable[[], CT_HdrFtrRef]
+    _add_headerReference: Callable[[], CT_HdrFtrRef]
+    _remove_titlePg: Callable[[], None]
+    _remove_type: Callable[[], None]
 
     _tag_seq = (
         "w:footnotePr",
@@ -82,15 +116,21 @@ class CT_SectPr(BaseOxmlElement):
     )
     headerReference = ZeroOrMore("w:headerReference", successors=_tag_seq)
     footerReference = ZeroOrMore("w:footerReference", successors=_tag_seq)
-    type = ZeroOrOne("w:type", successors=_tag_seq[3:])
-    pgSz = ZeroOrOne("w:pgSz", successors=_tag_seq[4:])
+    type: CT_SectType | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:type", successors=_tag_seq[3:]
+    )
+    pgSz: CT_PageSz | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:pgSz", successors=_tag_seq[4:]
+    )
     pgMar: CT_PageMar | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:pgMar", successors=_tag_seq[5:]
     )
-    titlePg = ZeroOrOne("w:titlePg", successors=_tag_seq[14:])
+    titlePg: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:titlePg", successors=_tag_seq[14:]
+    )
     del _tag_seq
 
-    def add_footerReference(self, type_, rId):
+    def add_footerReference(self, type_: WD_HEADER_FOOTER, rId: str) -> CT_HdrFtrRef:
         """Return newly added CT_HdrFtrRef element of `type_` with `rId`.
 
         The element tag is `w:footerReference`.
@@ -100,7 +140,7 @@ class CT_SectPr(BaseOxmlElement):
         footerReference.rId = rId
         return footerReference
 
-    def add_headerReference(self, type_, rId):
+    def add_headerReference(self, type_: WD_HEADER_FOOTER, rId: str) -> CT_HdrFtrRef:
         """Return newly added CT_HdrFtrRef element of `type_` with `rId`.
 
         The element tag is `w:headerReference`.
@@ -122,36 +162,43 @@ class CT_SectPr(BaseOxmlElement):
         return pgMar.bottom
 
     @bottom_margin.setter
-    def bottom_margin(self, value):
+    def bottom_margin(self, value: int | Length | None):
         pgMar = self.get_or_add_pgMar()
-        pgMar.bottom = value
+        pgMar.bottom = (
+            value if value is None or isinstance(value, Length) else Length(value)
+        )
 
-    def clone(self):
+    def clone(self) -> CT_SectPr:
         """Return an exact duplicate of this ``<w:sectPr>`` element tree suitable for
         use in adding a section break.
 
         All rsid* attributes are removed from the root ``<w:sectPr>`` element.
         """
-        clone_sectPr = deepcopy(self)
-        clone_sectPr.attrib.clear()
-        return clone_sectPr
+        cloned_sectPr = deepcopy(self)
+        cloned_sectPr.attrib.clear()
+        return cloned_sectPr
 
     @property
-    def footer(self):
-        """The value of the ``w:footer`` attribute in the ``<w:pgMar>`` child element,
+    def footer(self) -> Length | None:
+        """Distance from bottom edge of page to bottom edge of the footer.
+
+        This is the value of the `w:footer` attribute in the `w:pgMar` child element,
         as a |Length| object, or |None| if either the element or the attribute is not
-        present."""
+        present.
+        """
         pgMar = self.pgMar
         if pgMar is None:
             return None
         return pgMar.footer
 
     @footer.setter
-    def footer(self, value):
+    def footer(self, value: int | Length | None):
         pgMar = self.get_or_add_pgMar()
-        pgMar.footer = value
+        pgMar.footer = (
+            value if value is None or isinstance(value, Length) else Length(value)
+        )
 
-    def get_footerReference(self, type_):
+    def get_footerReference(self, type_: WD_HEADER_FOOTER) -> CT_HdrFtrRef | None:
         """Return footerReference element of `type_` or None if not present."""
         path = "./w:footerReference[@w:type='%s']" % WD_HEADER_FOOTER.to_xml(type_)
         footerReferences = self.xpath(path)
@@ -159,7 +206,7 @@ class CT_SectPr(BaseOxmlElement):
             return None
         return footerReferences[0]
 
-    def get_headerReference(self, type_):
+    def get_headerReference(self, type_: WD_HEADER_FOOTER) -> CT_HdrFtrRef | None:
         """Return headerReference element of `type_` or None if not present."""
         matching_headerReferences = self.xpath(
             "./w:headerReference[@w:type='%s']" % WD_HEADER_FOOTER.to_xml(type_)
@@ -179,24 +226,30 @@ class CT_SectPr(BaseOxmlElement):
         return pgMar.gutter
 
     @gutter.setter
-    def gutter(self, value):
+    def gutter(self, value: int | Length | None):
         pgMar = self.get_or_add_pgMar()
-        pgMar.gutter = value
+        pgMar.gutter = (
+            value if value is None or isinstance(value, Length) else Length(value)
+        )
 
     @property
     def header(self) -> Length | None:
-        """The value of the ``w:header`` attribute in the ``<w:pgMar>`` child element,
-        as a |Length| object, or |None| if either the element or the attribute is not
-        present."""
+        """Distance from top edge of page to top edge of header.
+
+        This value comes from the `w:header` attribute on the `w:pgMar` child element.
+        |None| if either the element or the attribute is not present.
+        """
         pgMar = self.pgMar
         if pgMar is None:
             return None
         return pgMar.header
 
     @header.setter
-    def header(self, value):
+    def header(self, value: int | Length | None):
         pgMar = self.get_or_add_pgMar()
-        pgMar.header = value
+        pgMar.header = (
+            value if value is None or isinstance(value, Length) else Length(value)
+        )
 
     @property
     def left_margin(self) -> Length | None:
@@ -209,76 +262,90 @@ class CT_SectPr(BaseOxmlElement):
         return pgMar.left
 
     @left_margin.setter
-    def left_margin(self, value):
+    def left_margin(self, value: int | Length | None):
         pgMar = self.get_or_add_pgMar()
-        pgMar.left = value
+        pgMar.left = (
+            value if value is None or isinstance(value, Length) else Length(value)
+        )
 
     @property
-    def orientation(self):
-        """The member of the ``WD_ORIENTATION`` enumeration corresponding to the value
-        of the ``orient`` attribute of the ``<w:pgSz>`` child element, or
-        ``WD_ORIENTATION.PORTRAIT`` if not present."""
+    def orientation(self) -> WD_ORIENTATION:
+        """`WD_ORIENTATION` member indicating page-orientation for this section.
+
+        This is the value of the `orient` attribute on the `w:pgSz` child, or
+        `WD_ORIENTATION.PORTRAIT` if not present.
+        """
         pgSz = self.pgSz
         if pgSz is None:
             return WD_ORIENTATION.PORTRAIT
         return pgSz.orient
 
     @orientation.setter
-    def orientation(self, value):
+    def orientation(self, value: WD_ORIENTATION | None):
         pgSz = self.get_or_add_pgSz()
-        pgSz.orient = value
+        pgSz.orient = value if value else WD_ORIENTATION.PORTRAIT
 
     @property
-    def page_height(self):
-        """Value in EMU of the ``h`` attribute of the ``<w:pgSz>`` child element, or
-        |None| if not present."""
+    def page_height(self) -> Length | None:
+        """Value in EMU of the `h` attribute of the `w:pgSz` child element.
+
+        |None| if not present.
+        """
         pgSz = self.pgSz
         if pgSz is None:
             return None
         return pgSz.h
 
     @page_height.setter
-    def page_height(self, value):
+    def page_height(self, value: Length | None):
         pgSz = self.get_or_add_pgSz()
         pgSz.h = value
 
     @property
-    def page_width(self):
-        """Value in EMU of the ``w`` attribute of the ``<w:pgSz>`` child element, or
-        |None| if not present."""
+    def page_width(self) -> Length | None:
+        """Value in EMU of the ``w`` attribute of the ``<w:pgSz>`` child element.
+
+        |None| if not present.
+        """
         pgSz = self.pgSz
         if pgSz is None:
             return None
         return pgSz.w
 
     @page_width.setter
-    def page_width(self, value):
+    def page_width(self, value: Length | None):
         pgSz = self.get_or_add_pgSz()
         pgSz.w = value
 
     @property
-    def preceding_sectPr(self):
+    def preceding_sectPr(self) -> CT_SectPr | None:
         """SectPr immediately preceding this one or None if this is the first."""
-        # ---[1] predicate returns list of zero or one value---
+        # -- [1] predicate returns list of zero or one value --
         preceding_sectPrs = self.xpath("./preceding::w:sectPr[1]")
         return preceding_sectPrs[0] if len(preceding_sectPrs) > 0 else None
 
-    def remove_footerReference(self, type_):
+    def remove_footerReference(self, type_: WD_HEADER_FOOTER) -> str:
         """Return rId of w:footerReference child of `type_` after removing it."""
         footerReference = self.get_footerReference(type_)
+        if footerReference is None:
+            # -- should never happen, but to satisfy type-check and just in case --
+            raise ValueError("CT_SectPr has no footer reference")
         rId = footerReference.rId
         self.remove(footerReference)
         return rId
 
-    def remove_headerReference(self, type_):
+    def remove_headerReference(self, type_: WD_HEADER_FOOTER):
         """Return rId of w:headerReference child of `type_` after removing it."""
         headerReference = self.get_headerReference(type_)
+        if headerReference is None:
+            # -- should never happen, but to satisfy type-check and just in case --
+            raise ValueError("CT_SectPr has no header reference")
         rId = headerReference.rId
         self.remove(headerReference)
         return rId
 
     @property
-    def right_margin(self):
+    def right_margin(self) -> Length | None:
         """The value of the ``w:right`` attribute in the ``<w:pgMar>`` child element, as
         a |Length| object, or |None| if either the element or the attribute is not
         present."""
@@ -288,12 +355,12 @@ class CT_SectPr(BaseOxmlElement):
         return pgMar.right
 
     @right_margin.setter
-    def right_margin(self, value):
+    def right_margin(self, value: Length | None):
         pgMar = self.get_or_add_pgMar()
         pgMar.right = value
 
     @property
-    def start_type(self):
+    def start_type(self) -> WD_SECTION_START:
         """The member of the ``WD_SECTION_START`` enumeration corresponding to the value
         of the ``val`` attribute of the ``<w:type>`` child element, or
         ``WD_SECTION_START.NEW_PAGE`` if not present."""
@@ -303,7 +370,7 @@ class CT_SectPr(BaseOxmlElement):
         return type.val
 
     @start_type.setter
-    def start_type(self, value):
+    def start_type(self, value: WD_SECTION_START | None):
         if value is None or value is WD_SECTION_START.NEW_PAGE:
             self._remove_type()
             return
@@ -312,21 +379,21 @@ class CT_SectPr(BaseOxmlElement):
 
     @property
     def titlePg_val(self) -> bool:
-        """Value of `w:titlePg/@val` or |None| if not present."""
+        """Value of `w:titlePg/@val` or |False| if `./w:titlePg` is not present."""
         titlePg = self.titlePg
         if titlePg is None:
             return False
         return titlePg.val
 
     @titlePg_val.setter
-    def titlePg_val(self, value):
+    def titlePg_val(self, value: bool | None):
         if value in [None, False]:
             self._remove_titlePg()
         else:
-            self.get_or_add_titlePg().val = value
+            self.get_or_add_titlePg().val = True
 
     @property
-    def top_margin(self):
+    def top_margin(self) -> Length | None:
         """The value of the ``w:top`` attribute in the ``<w:pgMar>`` child element, as a
         |Length| object, or |None| if either the element or the attribute is not
         present."""
@@ -336,7 +403,7 @@ class CT_SectPr(BaseOxmlElement):
         return pgMar.top
 
     @top_margin.setter
-    def top_margin(self, value):
+    def top_margin(self, value: Length | None):
         pgMar = self.get_or_add_pgMar()
         pgMar.top = value
 
@@ -344,4 +411,6 @@ class CT_SectPr(BaseOxmlElement):
 class CT_SectType(BaseOxmlElement):
     """``<w:sectType>`` element, defining the section start type."""
 
-    val = OptionalAttribute("w:val", WD_SECTION_START)
+    val: WD_SECTION_START | None = (  # pyright: ignore[reportGeneralTypeIssues]
+        OptionalAttribute("w:val", WD_SECTION_START)
+    )

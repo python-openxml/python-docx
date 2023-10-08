@@ -87,7 +87,7 @@ class MetaOxmlElement(type):
     """Metaclass for BaseOxmlElement."""
 
     def __new__(
-        cls: Type[_T],clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]
+        cls: Type[_T], clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]
     ) -> _T:
         bases = (*bases, etree.ElementBase)
         return super().__new__(cls, clsname, bases, namespace)
@@ -623,9 +623,11 @@ class BaseOxmlElement(metaclass=MetaOxmlElement):
     Adds standardized behavior to all classes in one place.
     """
 
+    attrib: Dict[str, str]
     append: Callable[[ElementBase], None]
     find: Callable[[str], ElementBase | None]
     findall: Callable[[str], List[ElementBase]]
+    get: Callable[[str], str | None]
     getparent: Callable[[], BaseOxmlElement]
     insert: Callable[[int, BaseOxmlElement], None]
     remove: Callable[[BaseOxmlElement], None]

@@ -55,7 +55,7 @@ class Part(object):
         """Content type of this part."""
         return self._content_type
 
-    def drop_rel(self, rId):
+    def drop_rel(self, rId: str):
         """Remove the relationship identified by `rId` if its reference count is less
         than 2.
 

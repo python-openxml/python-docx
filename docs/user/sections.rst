@@ -3,15 +3,14 @@
 Working with Sections
 =====================
 
-Word supports the notion of a `section`, a division of a document having the
-same page layout settings, such as margins and page orientation. This is how,
-for example, a document can contain some pages in portrait layout and others in
-landscape.
+Word supports the notion of a `section`, a division of a document having the same page
+layout settings, such as margins and page orientation. This is how, for example, a
+document can contain some pages in portrait layout and others in landscape. Each section
+also defines the headers and footers that apply to the pages of that section.
 
-Most Word documents have only the single section that comes by default and
-further, most of those have no reason to change the default margins or other
-page layout. But when you `do` need to change the page layout, you'll need
-to understand sections to get it done.
+Most Word documents have only the single section that comes by default and further, most
+of those have no reason to change the default margins or other page layout. But when you
+`do` need to change the page layout, you'll need to understand sections to get it done.
 
 
 Accessing sections

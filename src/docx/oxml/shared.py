@@ -21,10 +21,15 @@ class CT_DecimalNumber(BaseOxmlElement):
 
 
 class CT_OnOff(BaseOxmlElement):
-    """Used for ``<w:b>``, ``<w:i>`` elements and others, containing a bool-ish string
-    in its ``val`` attribute, xsd:boolean plus 'on' and 'off'."""
+    """Used for `w:b`, `w:i` elements and others.
 
-    val = OptionalAttribute("w:val", ST_OnOff, default=True)
+    Contains a bool-ish string in its `val` attribute, xsd:boolean plus "on" and
+    "off". Defaults to `True`, so `<w:b>` for example means "bold is turned on".
+    """
+
+    val: bool = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:val", ST_OnOff, default=True
+    )
 
 
 class CT_String(BaseOxmlElement):

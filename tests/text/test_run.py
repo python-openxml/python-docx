@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, cast
+from typing import Any, List, cast
 
 import pytest
 
@@ -99,10 +99,12 @@ class DescribeRun(object):
         run.underline = underline
         assert run._r.xml == expected_xml
 
-    def it_raises_on_assign_invalid_underline_type(self, underline_raise_fixture):
-        run, underline = underline_raise_fixture
+    @pytest.mark.parametrize("invalid_value", ["foobar", 42, "single"])
+    def it_raises_on_assign_invalid_underline_value(self, invalid_value: Any):
+        r = cast(CT_R, element("w:r/w:rPr"))
+        run = Run(r, None)
         with pytest.raises(ValueError, match=" is not a valid WD_UNDERLINE"):
-            run.underline = underline
+            run.underline = invalid_value
 
     def it_provides_access_to_its_font(self, font_fixture):
         run, Font_, font_ = font_fixture
@@ -368,12 +370,6 @@ class DescribeRun(object):
         run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, new_underline, expected_xml
-
-    @pytest.fixture(params=["foobar", 42, "single"])
-    def underline_raise_fixture(self, request):
-        invalid_underline_setting = request.param
-        run = Run(element("w:r/w:rPr"), None)
-        return run, invalid_underline_setting
 
     # fixture components ---------------------------------------------
 

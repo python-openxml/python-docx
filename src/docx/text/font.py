@@ -1,5 +1,7 @@
 """Font-related proxy objects."""
 
+from __future__ import annotations
+
 from docx.dml.color import ColorFormat
 from docx.enum.text import WD_UNDERLINE
 from docx.shared import ElementProxy
@@ -348,9 +350,10 @@ class Font(ElementProxy):
         rPr.superscript = value
 
     @property
-    def underline(self):
-        """The underline style for this |Font|, one of |None|, |True|, |False|, or a
-        value from :ref:`WdUnderline`.
+    def underline(self) -> bool | WD_UNDERLINE | None:
+        """The underline style for this |Font|.
+
+        The value is one of |None|, |True|, |False|, or a member of :ref:`WdUnderline`.
 
         |None| indicates the font inherits its underline value from the style hierarchy.
         |False| indicates no underline. |True| indicates single underline. The values
@@ -364,7 +367,7 @@ class Font(ElementProxy):
         return None if val == WD_UNDERLINE.INHERITED else val
 
     @underline.setter
-    def underline(self, value):
+    def underline(self, value: bool | WD_UNDERLINE | None):
         rPr = self._element.get_or_add_rPr()
         rPr.u_val = value
 

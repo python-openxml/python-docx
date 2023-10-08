@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Iterator, List, Sequence, overload
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_HEADER_FOOTER
+from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.enum.section import WD_ORIENTATION, WD_SECTION_START
+    from docx.oxml.document import CT_Document
     from docx.oxml.section import CT_SectPr
     from docx.parts.document import DocumentPart
     from docx.shared import Length
@@ -52,7 +55,7 @@ class Section(object):
         self._sectPr.titlePg_val = value
 
     @property
-    def even_page_footer(self):
+    def even_page_footer(self) -> _Footer:
         """|_Footer| object defining footer content for even pages.
 
         The content of this footer definition is ignored unless the document setting
@@ -61,7 +64,7 @@ class Section(object):
         return _Footer(self._sectPr, self._document_part, WD_HEADER_FOOTER.EVEN_PAGE)
 
     @property
-    def even_page_header(self):
+    def even_page_header(self) -> _Header:
         """|_Header| object defining header content for even pages.
 
         The content of this header definition is ignored unless the document setting
@@ -70,7 +73,7 @@ class Section(object):
         return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.EVEN_PAGE)
 
     @property
-    def first_page_footer(self):
+    def first_page_footer(self) -> _Footer:
         """|_Footer| object defining footer content for the first page of this section.
 
         The content of this footer definition is ignored unless the property
@@ -79,7 +82,7 @@ class Section(object):
         return _Footer(self._sectPr, self._document_part, WD_HEADER_FOOTER.FIRST_PAGE)
 
     @property
-    def first_page_header(self):
+    def first_page_header(self) -> _Header:
         """|_Header| object defining header content for the first page of this section.
 
         The content of this header definition is ignored unless the property
@@ -88,7 +91,7 @@ class Section(object):
         return _Header(self._sectPr, self._document_part, WD_HEADER_FOOTER.FIRST_PAGE)
 
     @lazyproperty
-    def footer(self):
+    def footer(self) -> _Footer:
         """|_Footer| object representing default page footer for this section.
 
         The default footer is used for odd-numbered pages when separate odd/even footers
@@ -126,7 +129,7 @@ class Section(object):
         self._sectPr.gutter = value
 
     @lazyproperty
-    def header(self):
+    def header(self) -> _Header:
         """|_Header| object representing default page header for this section.
 
         The default header is used for odd-numbered pages when separate odd/even headers
@@ -136,10 +139,10 @@ class Section(object):
 
     @property
     def header_distance(self) -> Length | None:
-        """|Length| object representing the distance from the top edge of the page to
-        the top edge of the header.
+        """Distance from top edge of page to top edge of header.
 
-        |None| if no setting is present in the XML.
+        Read/write. |None| if no setting is present in the XML. Assigning |None| causes
+        default value to be used.
         """
         return self._sectPr.header
 
@@ -158,14 +161,15 @@ class Section(object):
         self._sectPr.left_margin = value
 
     @property
-    def orientation(self):
-        """Member of the :ref:`WdOrientation` enumeration specifying the page
-        orientation for this section, one of ``WD_ORIENT.PORTRAIT`` or
-        ``WD_ORIENT.LANDSCAPE``."""
+    def orientation(self) -> WD_ORIENTATION:
+        """:ref:`WdOrientation` member specifying page orientation for this section.
+
+        One of ``WD_ORIENT.PORTRAIT`` or ``WD_ORIENT.LANDSCAPE``.
+        """
         return self._sectPr.orientation
 
     @orientation.setter
-    def orientation(self, value):
+    def orientation(self, value: WD_ORIENTATION | None):
         self._sectPr.orientation = value
 
     @property
@@ -174,58 +178,62 @@ class Section(object):
 
         This value is inclusive of all edge spacing values such as margins.
 
-        Page orientation is taken into account, so for example, its expected value would
-        be ``Inches(8.5)`` for letter-sized paper when orientation is landscape.
+        Page orientation is taken into account, so for example, its expected value
+        would be ``Inches(8.5)`` for letter-sized paper when orientation is landscape.
         """
         return self._sectPr.page_height
 
     @page_height.setter
-    def page_height(self, value):
+    def page_height(self, value: Length | None):
         self._sectPr.page_height = value
 
     @property
-    def page_width(self):
-        """Total page width used for this section, inclusive of all edge spacing values
-        such as margins.
+    def page_width(self) -> Length | None:
+        """Total page width used for this section.
 
-        Page orientation is taken into account, so for example, its expected value would
-        be ``Inches(11)`` for letter-sized paper when orientation is landscape.
+        This value is like "paper size" and includes all edge spacing values such as
+        margins.
+
+        Page orientation is taken into account, so for example, its expected value
+        would be ``Inches(11)`` for letter-sized paper when orientation is landscape.
         """
         return self._sectPr.page_width
 
     @page_width.setter
-    def page_width(self, value):
+    def page_width(self, value: Length | None):
         self._sectPr.page_width = value
 
     @property
-    def right_margin(self):
+    def right_margin(self) -> Length | None:
         """|Length| object representing the right margin for all pages in this section
         in English Metric Units."""
         return self._sectPr.right_margin
 
     @right_margin.setter
-    def right_margin(self, value):
+    def right_margin(self, value: Length | None):
         self._sectPr.right_margin = value
 
     @property
-    def start_type(self):
-        """The member of the :ref:`WdSectionStart` enumeration corresponding to the
-        initial break behavior of this section, e.g. ``WD_SECTION.ODD_PAGE`` if the
-        section should begin on the next odd page."""
+    def start_type(self) -> WD_SECTION_START:
+        """Type of page-break (if any) inserted at the start of this section.
+
+        For exmple, ``WD_SECTION_START.ODD_PAGE`` if the section should begin on the
+        next odd page, possibly inserting two page-breaks instead of one.
+        """
         return self._sectPr.start_type
 
     @start_type.setter
-    def start_type(self, value):
+    def start_type(self, value: WD_SECTION_START | None):
         self._sectPr.start_type = value
 
     @property
-    def top_margin(self):
+    def top_margin(self) -> Length | None:
         """|Length| object representing the top margin for all pages in this section in
         English Metric Units."""
         return self._sectPr.top_margin
 
     @top_margin.setter
-    def top_margin(self, value):
+    def top_margin(self, value: Length | None):
         self._sectPr.top_margin = value
 
 
@@ -235,12 +243,20 @@ class Sections(Sequence[Section]):
     Supports ``len()``, iteration, and indexed access.
     """
 
-    def __init__(self, document_elm, document_part):
+    def __init__(self, document_elm: CT_Document, document_part: DocumentPart):
         super(Sections, self).__init__()
         self._document_elm = document_elm
         self._document_part = document_part
 
-    def __getitem__(self, key):
+    @overload
+    def __getitem__(self, key: int) -> Section:
+        ...
+
+    @overload
+    def __getitem__(self, key: slice) -> List[Section]:
+        ...
+
+    def __getitem__(self, key: int | slice) -> Section | List[Section]:
         if isinstance(key, slice):
             return [
                 Section(sectPr, self._document_part)
@@ -248,24 +264,29 @@ class Sections(Sequence[Section]):
             ]
         return Section(self._document_elm.sectPr_lst[key], self._document_part)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Section]:
         for sectPr in self._document_elm.sectPr_lst:
             yield Section(sectPr, self._document_part)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._document_elm.sectPr_lst)
 
 
 class _BaseHeaderFooter(BlockItemContainer):
     """Base class for header and footer classes."""
 
-    def __init__(self, sectPr, document_part, header_footer_index):
+    def __init__(
+        self,
+        sectPr: CT_SectPr,
+        document_part: DocumentPart,
+        header_footer_index: WD_HEADER_FOOTER,
+    ):
         self._sectPr = sectPr
         self._document_part = document_part
         self._hdrftr_index = header_footer_index
 
     @property
-    def is_linked_to_previous(self):
+    def is_linked_to_previous(self) -> bool:
         """``True`` if this header/footer uses the definition from the prior section.
 
         ``False`` if this header/footer has an explicit definition.
@@ -279,7 +300,7 @@ class _BaseHeaderFooter(BlockItemContainer):
         return not self._has_definition
 
     @is_linked_to_previous.setter
-    def is_linked_to_previous(self, value):
+    def is_linked_to_previous(self, value: bool) -> None:
         new_state = bool(value)
         # ---do nothing when value is not being changed---
         if new_state == self.is_linked_to_previous:
@@ -290,7 +311,7 @@ class _BaseHeaderFooter(BlockItemContainer):
             self._add_definition()
 
     @property
-    def part(self):
+    def part(self) -> HeaderPart | FooterPart:
         """The |HeaderPart| or |FooterPart| for this header/footer.
 
         This overrides `BlockItemContainer.part` and is required to support image
@@ -300,16 +321,16 @@ class _BaseHeaderFooter(BlockItemContainer):
         # ---not an interface property, even though public
         return self._get_or_add_definition()
 
-    def _add_definition(self):
+    def _add_definition(self) -> HeaderPart | FooterPart:
         """Return newly-added header/footer part."""
         raise NotImplementedError("must be implemented by each subclass")
 
     @property
-    def _definition(self):
+    def _definition(self) -> HeaderPart | FooterPart:
         """|HeaderPart| or |FooterPart| object containing header/footer content."""
         raise NotImplementedError("must be implemented by each subclass")
 
-    def _drop_definition(self):
+    def _drop_definition(self) -> None:
         """Remove header/footer part containing the definition of this header/footer."""
         raise NotImplementedError("must be implemented by each subclass")
 
@@ -318,7 +339,7 @@ class _BaseHeaderFooter(BlockItemContainer):
         """`w:hdr` or `w:ftr` element, root of header/footer part."""
         return self._get_or_add_definition().element
 
-    def _get_or_add_definition(self):
+    def _get_or_add_definition(self) -> HeaderPart | FooterPart:
         """Return HeaderPart or FooterPart object for this section.
 
         If this header/footer inherits its content, the part for the prior header/footer
@@ -339,12 +360,12 @@ class _BaseHeaderFooter(BlockItemContainer):
         return self._add_definition()
 
     @property
-    def _has_definition(self):
+    def _has_definition(self) -> bool:
         """True if this header/footer has a related part containing its definition."""
         raise NotImplementedError("must be implemented by each subclass")
 
     @property
-    def _prior_headerfooter(self):
+    def _prior_headerfooter(self) -> _Header | _Footer | None:
         """|_Header| or |_Footer| proxy on prior sectPr element.
 
         Returns None if this is first section.
@@ -362,7 +383,7 @@ class _Footer(_BaseHeaderFooter):
     leave an empty paragraph above the newly added one.
     """
 
-    def _add_definition(self):
+    def _add_definition(self) -> FooterPart:
         """Return newly-added footer part."""
         footer_part, rId = self._document_part.add_footer_part()
         self._sectPr.add_footerReference(self._hdrftr_index, rId)
@@ -372,6 +393,8 @@ class _Footer(_BaseHeaderFooter):
     def _definition(self):
         """|FooterPart| object containing content of this footer."""
         footerReference = self._sectPr.get_footerReference(self._hdrftr_index)
+        # -- currently this is never called when `._has_definition` evaluates False --
+        assert footerReference is not None
         return self._document_part.footer_part(footerReference.rId)
 
     def _drop_definition(self):
@@ -416,6 +439,8 @@ class _Header(_BaseHeaderFooter):
     def _definition(self):
         """|HeaderPart| object containing content of this header."""
         headerReference = self._sectPr.get_headerReference(self._hdrftr_index)
+        # -- currently this is never called when `._has_definition` evaluates False --
+        assert headerReference is not None
         return self._document_part.header_part(headerReference.rId)
 
     def _drop_definition(self):

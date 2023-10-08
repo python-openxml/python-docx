@@ -1,5 +1,7 @@
 """Test suite for the docx.text.run module."""
 
+from __future__ import annotations
+
 import pytest
 
 from docx.dml.color import ColorFormat
@@ -63,8 +65,21 @@ class DescribeFont(object):
         font.superscript = value
         assert font._element.xml == expected_xml
 
-    def it_knows_its_underline_type(self, underline_get_fixture):
-        font, expected_value = underline_get_fixture
+    @pytest.mark.parametrize(
+        ("r_cxml", "expected_value"),
+        [
+            ("w:r", None),
+            ("w:r/w:rPr/w:u", None),
+            ("w:r/w:rPr/w:u{w:val=single}", True),
+            ("w:r/w:rPr/w:u{w:val=none}", False),
+            ("w:r/w:rPr/w:u{w:val=double}", WD_UNDERLINE.DOUBLE),
+            ("w:r/w:rPr/w:u{w:val=wave}", WD_UNDERLINE.WAVY),
+        ],
+    )
+    def it_knows_its_underline_type(
+        self, r_cxml: str, expected_value: WD_UNDERLINE | bool | None
+    ):
+        font = Font(element(r_cxml), None)
         assert font.underline is expected_value
 
     def it_can_change_its_underline_type(self, underline_set_fixture):
@@ -380,21 +395,6 @@ class DescribeFont(object):
         font = Font(element(r_cxml))
         expected_xml = xml(expected_r_cxml)
         return font, value, expected_xml
-
-    @pytest.fixture(
-        params=[
-            ("w:r", None),
-            ("w:r/w:rPr/w:u", None),
-            ("w:r/w:rPr/w:u{w:val=single}", True),
-            ("w:r/w:rPr/w:u{w:val=none}", False),
-            ("w:r/w:rPr/w:u{w:val=double}", WD_UNDERLINE.DOUBLE),
-            ("w:r/w:rPr/w:u{w:val=wave}", WD_UNDERLINE.WAVY),
-        ]
-    )
-    def underline_get_fixture(self, request):
-        r_cxml, expected_value = request.param
-        run = Font(element(r_cxml), None)
-        return run, expected_value
 
     @pytest.fixture(
         params=[

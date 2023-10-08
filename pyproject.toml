@@ -53,7 +53,7 @@ norecursedirs = [
 ]
 python_files = ["test_*.py"]
 python_classes = ["Test", "Describe"]
-python_functions = ["it_", "they_", "and_it_", "but_it_"]
+python_functions = ["it_", "its_", "they_", "and_", "but_"]
 
 [tool.ruff]
 exclude = []
