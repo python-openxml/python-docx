@@ -32,7 +32,7 @@ class Png(BaseImageHeader):
         return cls(px_width, px_height, horz_dpi, vert_dpi)
 
 
-class _PngParser(object):
+class _PngParser:
     """Parses a PNG image stream to extract the image properties found in its chunks."""
 
     def __init__(self, chunks):
@@ -89,7 +89,7 @@ class _PngParser(object):
         return 72
 
 
-class _Chunks(object):
+class _Chunks:
     """Collection of the chunks parsed from a PNG image stream."""
 
     def __init__(self, chunk_iterable):
@@ -126,7 +126,7 @@ class _Chunks(object):
         return None
 
 
-class _ChunkParser(object):
+class _ChunkParser:
     """Extracts chunks from a PNG image stream."""
 
     def __init__(self, stream_rdr):
@@ -176,7 +176,7 @@ def _ChunkFactory(chunk_type, stream_rdr, offset):
     return chunk_cls.from_offset(chunk_type, stream_rdr, offset)
 
 
-class _Chunk(object):
+class _Chunk:
     """Base class for specific chunk types.
 
     Also serves as the default chunk type.

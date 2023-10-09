@@ -12,7 +12,7 @@ from .unitutil.file import snippet_seq
 from .unitutil.mock import call, instance_mock, method_mock
 
 
-class DescribeBlockItemContainer(object):
+class DescribeBlockItemContainer:
     def it_can_add_a_paragraph(self, add_paragraph_fixture, _add_paragraph_):
         text, style, paragraph_, add_run_calls = add_paragraph_fixture
         _add_paragraph_.return_value = paragraph_

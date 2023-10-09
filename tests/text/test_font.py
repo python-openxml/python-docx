@@ -19,7 +19,7 @@ from ..unitutil.cxml import element, xml
 from ..unitutil.mock import Mock, class_mock, instance_mock
 
 
-class DescribeFont(object):
+class DescribeFont:
     """Unit-test suite for `docx.text.font.Font`."""
 
     def it_provides_access_to_its_color_object(self, ColorFormat_: Mock, color_: Mock):

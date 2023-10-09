@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from docx.shared import Length
 
 
-class BaseSimpleType(object):
+class BaseSimpleType:
     """Base class for simple-types."""
 
     @classmethod

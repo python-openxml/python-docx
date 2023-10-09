@@ -9,7 +9,7 @@ from docx.opc.constants import CONTENT_TYPE as CT
 from .unitutil.mock import class_mock, function_mock, instance_mock
 
 
-class DescribeDocument(object):
+class DescribeDocument:
     def it_opens_a_docx_file(self, open_fixture):
         docx, Package_, document_ = open_fixture
         document = Document(docx)

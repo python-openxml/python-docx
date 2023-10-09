@@ -11,7 +11,7 @@ from ..unitutil.file import snippet_seq
 from ..unitutil.mock import call, instance_mock, method_mock, property_mock
 
 
-class DescribeCT_Row(object):
+class DescribeCT_Row:
     def it_can_add_a_trPr(self, add_trPr_fixture):
         tr, expected_xml = add_trPr_fixture
         tr._add_trPr()
@@ -46,7 +46,7 @@ class DescribeCT_Row(object):
         return tr, col_idx
 
 
-class DescribeCT_Tc(object):
+class DescribeCT_Tc:
     def it_can_merge_to_another_tc(
         self, tr_, _span_dimensions_, _tbl_, _grow_to_, top_tc_
     ):

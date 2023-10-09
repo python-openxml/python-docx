@@ -8,7 +8,7 @@ from docx.opc.coreprops import CoreProperties
 from docx.oxml.parser import parse_xml
 
 
-class DescribeCoreProperties(object):
+class DescribeCoreProperties:
     def it_knows_the_string_property_values(self, text_prop_get_fixture):
         core_properties, prop_name, expected_value = text_prop_get_fixture
         actual_value = getattr(core_properties, prop_name)

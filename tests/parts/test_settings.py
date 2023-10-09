@@ -13,7 +13,7 @@ from ..unitutil.cxml import element
 from ..unitutil.mock import class_mock, instance_mock, method_mock
 
 
-class DescribeSettingsPart(object):
+class DescribeSettingsPart:
     def it_is_used_by_loader_to_construct_settings_part(
         self, load_, package_, settings_part_
     ):

@@ -24,7 +24,7 @@ from ..unitdata import BaseBuilder
 from .unitdata.text import a_b, a_u, an_i, an_rPr
 
 
-class DescribeBaseOxmlElement(object):
+class DescribeBaseOxmlElement:
     def it_can_find_the_first_of_its_children_named_in_a_sequence(self, first_fixture):
         element, tagnames, matching_child = first_fixture
         assert element.first_child_found_in(*tagnames) is matching_child
@@ -116,7 +116,7 @@ class DescribeBaseOxmlElement(object):
         return rPr_bldr
 
 
-class DescribeSerializeForReading(object):
+class DescribeSerializeForReading:
     def it_pretty_prints_an_lxml_element(self, pretty_fixture):
         element, expected_xml_text = pretty_fixture
         xml_text = serialize_for_reading(element)
@@ -145,7 +145,7 @@ class DescribeSerializeForReading(object):
         return parse_xml("<foø><bår>text</bår></foø>")
 
 
-class DescribeXmlString(object):
+class DescribeXmlString:
     def it_parses_a_line_to_help_compare(self, parse_fixture):
         """
         This internal function is important to test separately because if it
@@ -236,7 +236,7 @@ class DescribeXmlString(object):
         return line, other, differs
 
 
-class DescribeChoice(object):
+class DescribeChoice:
     def it_adds_a_getter_property_for_the_choice_element(self, getter_fixture):
         parent, expected_choice = getter_fixture
         assert parent.choice is expected_choice
@@ -334,7 +334,7 @@ class DescribeChoice(object):
         return parent_bldr
 
 
-class DescribeOneAndOnlyOne(object):
+class DescribeOneAndOnlyOne:
     def it_adds_a_getter_property_for_the_child_element(self, getter_fixture):
         parent, oooChild = getter_fixture
         assert parent.oooChild is oooChild
@@ -348,7 +348,7 @@ class DescribeOneAndOnlyOne(object):
         return parent, oooChild
 
 
-class DescribeOneOrMore(object):
+class DescribeOneOrMore:
     def it_adds_a_getter_property_for_the_child_element_list(self, getter_fixture):
         parent, oomChild = getter_fixture
         assert parent.oomChild_lst[0] is oomChild
@@ -433,7 +433,7 @@ class DescribeOneOrMore(object):
         return parent_bldr
 
 
-class DescribeOptionalAttribute(object):
+class DescribeOptionalAttribute:
     def it_adds_a_getter_property_for_the_attr_value(self, getter_fixture):
         parent, optAttr_python_value = getter_fixture
         assert parent.optAttr == optAttr_python_value
@@ -466,7 +466,7 @@ class DescribeOptionalAttribute(object):
         return parent, value, expected_xml
 
 
-class DescribeRequiredAttribute(object):
+class DescribeRequiredAttribute:
     def it_adds_a_getter_property_for_the_attr_value(self, getter_fixture):
         parent, reqAttr_python_value = getter_fixture
         assert parent.reqAttr == reqAttr_python_value
@@ -518,7 +518,7 @@ class DescribeRequiredAttribute(object):
         return parent, value, expected_xml
 
 
-class DescribeZeroOrMore(object):
+class DescribeZeroOrMore:
     def it_adds_a_getter_property_for_the_child_element_list(self, getter_fixture):
         parent, zomChild = getter_fixture
         assert parent.zomChild_lst[0] is zomChild
@@ -604,7 +604,7 @@ class DescribeZeroOrMore(object):
         return parent_bldr
 
 
-class DescribeZeroOrOne(object):
+class DescribeZeroOrOne:
     def it_adds_a_getter_property_for_the_child_element(self, getter_fixture):
         parent, zooChild = getter_fixture
         assert parent.zooChild is zooChild
@@ -695,7 +695,7 @@ class DescribeZeroOrOne(object):
         return parent_bldr
 
 
-class DescribeZeroOrOneChoice(object):
+class DescribeZeroOrOneChoice:
     def it_adds_a_getter_for_the_current_choice(self, getter_fixture):
         parent, expected_choice = getter_fixture
         assert parent.eg_zooChoice is expected_choice

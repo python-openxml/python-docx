@@ -11,7 +11,7 @@ from docx.styles.styles import Styles
 from ..unitutil.mock import class_mock, instance_mock
 
 
-class DescribeStylesPart(object):
+class DescribeStylesPart:
     def it_provides_access_to_its_styles(self, styles_fixture):
         styles_part, Styles_, styles_ = styles_fixture
         styles = styles_part.styles

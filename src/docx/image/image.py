@@ -185,7 +185,7 @@ def _ImageHeaderFactory(stream):
     raise UnrecognizedImageError
 
 
-class BaseImageHeader(object):
+class BaseImageHeader:
     """Base class for image header subclasses like |Jpeg| and |Tiff|."""
 
     def __init__(self, px_width, px_height, horz_dpi, vert_dpi):

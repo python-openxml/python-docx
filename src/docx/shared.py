@@ -260,7 +260,7 @@ def write_only_property(f):
     return property(fset=f, doc=docstring)
 
 
-class ElementProxy(object):
+class ElementProxy:
     """Base class for lxml element proxy classes.
 
     An element proxy class is one whose primary responsibilities are fulfilled by

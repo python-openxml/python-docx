@@ -108,7 +108,7 @@ class Relationships(Dict[str, "_Relationship"]):
                 return rId_candidate
 
 
-class _Relationship(object):
+class _Relationship:
     """Value object for relationship to part."""
 
     def __init__(self, rId: str, reltype, target, baseURI, external=False):

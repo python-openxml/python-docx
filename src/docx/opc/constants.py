@@ -4,7 +4,7 @@ In particular it includes content types and relationship types.
 """
 
 
-class CONTENT_TYPE(object):
+class CONTENT_TYPE:
     """Content type URIs (like MIME-types) that specify a part's format."""
 
     BMP = "image/bmp"
@@ -251,7 +251,7 @@ class CONTENT_TYPE(object):
     X_WMF = "image/x-wmf"
 
 
-class NAMESPACE(object):
+class NAMESPACE:
     """Constant values for OPC XML namespaces."""
 
     DML_WORDPROCESSING_DRAWING = (
@@ -265,14 +265,14 @@ class NAMESPACE(object):
     WML_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 
-class RELATIONSHIP_TARGET_MODE(object):
+class RELATIONSHIP_TARGET_MODE:
     """Open XML relationship target modes."""
 
     EXTERNAL = "External"
     INTERNAL = "Internal"
 
 
-class RELATIONSHIP_TYPE(object):
+class RELATIONSHIP_TYPE:
     AUDIO = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/audio"
     A_F_CHUNK = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk"

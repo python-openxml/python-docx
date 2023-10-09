@@ -29,7 +29,7 @@ from ..unitutil.mock import (
 from .unitdata.types import a_Default, a_Types, an_Override
 
 
-class DescribePackageReader(object):
+class DescribePackageReader:
     def it_can_construct_from_pkg_file(
         self, _init_, PhysPkgReader_, from_xml, _srels_for, _load_serialized_parts
     ):
@@ -276,7 +276,7 @@ class DescribePackageReader(object):
         return method_mock(request, PackageReader, "_walk_phys_parts", autospec=False)
 
 
-class Describe_ContentTypeMap(object):
+class Describe_ContentTypeMap:
     def it_can_construct_from_ct_item_xml(self, from_xml_fixture):
         content_types_xml, expected_defaults, expected_overrides = from_xml_fixture
         ct_map = _ContentTypeMap.from_xml(content_types_xml)
@@ -380,7 +380,7 @@ class Describe_ContentTypeMap(object):
         return types_bldr.xml()
 
 
-class Describe_SerializedPart(object):
+class Describe_SerializedPart:
     def it_remembers_construction_values(self):
         # test data --------------------
         partname = "/part/name.xml"
@@ -398,7 +398,7 @@ class Describe_SerializedPart(object):
         assert spart.srels == srels
 
 
-class Describe_SerializedRelationship(object):
+class Describe_SerializedRelationship:
     def it_remembers_construction_values(self):
         # test data --------------------
         rel_elm = Mock(
@@ -468,7 +468,7 @@ class Describe_SerializedRelationship(object):
             srel.target_partname
 
 
-class Describe_SerializedRelationships(object):
+class Describe_SerializedRelationships:
     def it_can_load_from_xml(self, parse_xml_, _SerializedRelationship_):
         # mockery ----------------------
         baseURI, rels_item_xml, rel_elm_1, rel_elm_2 = (

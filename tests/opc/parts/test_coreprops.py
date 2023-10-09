@@ -11,7 +11,7 @@ from docx.oxml.coreprops import CT_CoreProperties
 from ...unitutil.mock import class_mock, instance_mock
 
 
-class DescribeCorePropertiesPart(object):
+class DescribeCorePropertiesPart:
     def it_provides_access_to_its_core_props_object(self, coreprops_fixture):
         core_properties_part, CoreProperties_ = coreprops_fixture
         core_properties = core_properties_part.core_properties

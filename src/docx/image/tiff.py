@@ -34,7 +34,7 @@ class Tiff(BaseImageHeader):
         return cls(px_width, px_height, horz_dpi, vert_dpi)
 
 
-class _TiffParser(object):
+class _TiffParser:
     """Parses a TIFF image stream to extract the image properties found in its main
     image file directory (IFD)"""
 
@@ -119,7 +119,7 @@ class _TiffParser(object):
         return StreamReader(stream, endian)
 
 
-class _IfdEntries(object):
+class _IfdEntries:
     """Image File Directory for a TIFF image, having mapping (dict) semantics allowing
     "tag" values to be retrieved by tag code."""
 
@@ -149,7 +149,7 @@ class _IfdEntries(object):
         return self._entries.get(tag_code, default)
 
 
-class _IfdParser(object):
+class _IfdParser:
     """Service object that knows how to extract directory entries from an Image File
     Directory (IFD)"""
 
@@ -186,7 +186,7 @@ def _IfdEntryFactory(stream_rdr, offset):
     return EntryCls.from_stream(stream_rdr, offset)
 
 
-class _IfdEntry(object):
+class _IfdEntry:
     """Base class for IFD entry classes.
 
     Subclasses are differentiated by value type, e.g. ASCII, long int, etc.

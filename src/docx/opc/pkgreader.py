@@ -7,7 +7,7 @@ from docx.opc.phys_pkg import PhysPkgReader
 from docx.opc.shared import CaseInsensitiveDict
 
 
-class PackageReader(object):
+class PackageReader:
     """Provides access to the contents of a zip-format OPC package via its
     :attr:`serialized_parts` and :attr:`pkg_srels` attributes."""
 
@@ -87,7 +87,7 @@ class PackageReader(object):
                 yield (partname, blob, reltype, srels)
 
 
-class _ContentTypeMap(object):
+class _ContentTypeMap:
     """Value type providing dictionary semantics for looking up content type by part
     name, e.g. ``content_type = cti['/ppt/presentation.xml']``."""
 
@@ -131,7 +131,7 @@ class _ContentTypeMap(object):
         self._overrides[partname] = content_type
 
 
-class _SerializedPart(object):
+class _SerializedPart:
     """Value object for an OPC package part.
 
     Provides access to the partname, content type, blob, and serialized relationships
@@ -168,7 +168,7 @@ class _SerializedPart(object):
         return self._srels
 
 
-class _SerializedRelationship(object):
+class _SerializedRelationship:
     """Value object representing a serialized relationship in an OPC package.
 
     Serialized, in this case, means any target part is referred to via its partname
@@ -231,7 +231,7 @@ class _SerializedRelationship(object):
         return self._target_partname
 
 
-class _SerializedRelationships(object):
+class _SerializedRelationships:
     """Read-only sequence of |_SerializedRelationship| instances corresponding to the
     relationships item XML passed to constructor."""
 

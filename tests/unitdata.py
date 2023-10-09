@@ -4,7 +4,7 @@ from docx.oxml.ns import nsdecls
 from docx.oxml.parser import parse_xml
 
 
-class BaseBuilder(object):
+class BaseBuilder:
     """
     Provides common behavior for all data builders.
     """

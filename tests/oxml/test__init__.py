@@ -8,7 +8,7 @@ from docx.oxml.parser import OxmlElement, oxml_parser, parse_xml, register_eleme
 from docx.oxml.shared import BaseOxmlElement
 
 
-class DescribeOxmlElement(object):
+class DescribeOxmlElement:
     def it_returns_an_lxml_element_with_matching_tag_name(self):
         element = OxmlElement("a:foo")
         assert isinstance(element, etree._Element)
@@ -32,7 +32,7 @@ class DescribeOxmlElement(object):
         assert element.nsmap["x"] == ns2
 
 
-class DescribeOxmlParser(object):
+class DescribeOxmlParser:
     def it_strips_whitespace_between_elements(self, whitespace_fixture):
         pretty_xml_text, stripped_xml_text = whitespace_fixture
         element = etree.fromstring(pretty_xml_text, oxml_parser)
@@ -48,7 +48,7 @@ class DescribeOxmlParser(object):
         return pretty_xml_text, stripped_xml_text
 
 
-class DescribeParseXml(object):
+class DescribeParseXml:
     def it_accepts_bytes_and_assumes_utf8_encoding(self, xml_bytes):
         parse_xml(xml_bytes)
 
@@ -83,7 +83,7 @@ class DescribeParseXml(object):
         ).encode("utf-8")
 
 
-class DescribeRegisterElementCls(object):
+class DescribeRegisterElementCls:
     def it_determines_class_used_for_elements_with_matching_tagname(self, xml_text):
         register_element_cls("a:foo", CustElmCls)
         foo = parse_xml(xml_text)

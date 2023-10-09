@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Dict
 
 
-class BabelFish(object):
+class BabelFish:
     """Translates special-case style names from UI name (e.g. Heading 1) to
     internal/styles.xml name (e.g. heading 1) and back."""
 

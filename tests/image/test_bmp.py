@@ -10,7 +10,7 @@ from docx.image.constants import MIME_TYPE
 from ..unitutil.mock import ANY, initializer_mock
 
 
-class DescribeBmp(object):
+class DescribeBmp:
     def it_can_construct_from_a_bmp_stream(self, Bmp__init__):
         cx, cy, horz_dpi, vert_dpi = 26, 43, 200, 96
         bytes_ = (

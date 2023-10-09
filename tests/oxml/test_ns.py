@@ -5,7 +5,7 @@ import pytest
 from docx.oxml.ns import NamespacePrefixedTag
 
 
-class DescribeNamespacePrefixedTag(object):
+class DescribeNamespacePrefixedTag:
     def it_behaves_like_a_string_when_you_want_it_to(self, nsptag):
         s = "- %s -" % nsptag
         assert s == "- a:foobar -"

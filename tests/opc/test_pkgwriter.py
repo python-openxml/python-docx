@@ -20,7 +20,7 @@ from ..unitutil.mock import (
 from .unitdata.types import a_Default, a_Types, an_Override
 
 
-class DescribePackageWriter(object):
+class DescribePackageWriter:
     def it_can_write_a_package(self, PhysPkgWriter_, _write_methods):
         # mockery ----------------------
         pkg_file = Mock(name="pkg_file")
@@ -127,7 +127,7 @@ class DescribePackageWriter(object):
         return method_mock(request, _ContentTypesItem, "xml_for")
 
 
-class Describe_ContentTypesItem(object):
+class Describe_ContentTypesItem:
     def it_can_compose_content_types_element(self, xml_for_fixture):
         cti, expected_xml = xml_for_fixture
         types_elm = cti._element

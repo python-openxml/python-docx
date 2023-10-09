@@ -4,7 +4,7 @@ These are broadly-standardized attributes like author, last-modified, etc.
 """
 
 
-class CoreProperties(object):
+class CoreProperties:
     """Corresponds to part named ``/docProps/core.xml``, containing the core document
     properties for this document package."""
 

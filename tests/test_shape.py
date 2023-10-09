@@ -19,7 +19,7 @@ from .unitutil.cxml import element, xml
 from .unitutil.mock import loose_mock
 
 
-class DescribeInlineShapes(object):
+class DescribeInlineShapes:
     def it_knows_how_many_inline_shapes_it_contains(self, inline_shapes_fixture):
         inline_shapes, expected_count = inline_shapes_fixture
         assert len(inline_shapes) == expected_count
@@ -70,7 +70,7 @@ class DescribeInlineShapes(object):
         return inline_shapes, parent_
 
 
-class DescribeInlineShape(object):
+class DescribeInlineShape:
     def it_knows_what_type_of_shape_it_is(self, shape_type_fixture):
         inline_shape, inline_shape_type = shape_type_fixture
         assert inline_shape.type == inline_shape_type

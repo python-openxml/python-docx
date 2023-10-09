@@ -24,7 +24,7 @@ from ..unitutil.mock import (
 )
 
 
-class DescribeOpcPackage(object):
+class DescribeOpcPackage:
     def it_can_open_a_pkg_file(self, PackageReader_, PartFactory_, Unmarshaller_):
         # mockery ----------------------
         pkg_file = Mock(name="pkg_file")
@@ -292,7 +292,7 @@ class DescribeOpcPackage(object):
         return class_mock(request, "docx.opc.package.Unmarshaller")
 
 
-class DescribeUnmarshaller(object):
+class DescribeUnmarshaller:
     def it_can_unmarshal_from_a_pkg_reader(
         self,
         pkg_reader_,

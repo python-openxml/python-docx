@@ -47,7 +47,7 @@ class Package(OpcPackage):
             self.image_parts.append(rel.target_part)
 
 
-class ImageParts(object):
+class ImageParts:
     """Collection of |ImagePart| objects corresponding to images in the package."""
 
     def __init__(self):

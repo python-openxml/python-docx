@@ -8,7 +8,7 @@ from docx.image.exceptions import UnexpectedEndOfFileError
 from docx.image.helpers import BIG_ENDIAN, LITTLE_ENDIAN, StreamReader
 
 
-class DescribeStreamReader(object):
+class DescribeStreamReader:
     def it_can_read_a_string_of_specified_len_at_offset(self, read_str_fixture):
         stream_rdr, expected_string = read_str_fixture
         s = stream_rdr.read_str(6, 2)

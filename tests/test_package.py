@@ -11,7 +11,7 @@ from .unitutil.file import docx_path
 from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
-class DescribePackage(object):
+class DescribePackage:
     def it_can_get_or_add_an_image_part_containing_a_specified_image(
         self, image_parts_prop_, image_parts_, image_part_
     ):
@@ -46,7 +46,7 @@ class DescribePackage(object):
         return property_mock(request, Package, "image_parts")
 
 
-class DescribeImageParts(object):
+class DescribeImageParts:
     def it_can_get_a_matching_image_part(
         self, Image_, image_, _get_by_sha1_, image_part_
     ):

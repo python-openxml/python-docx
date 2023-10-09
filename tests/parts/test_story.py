@@ -16,7 +16,7 @@ from ..unitutil.file import snippet_text
 from ..unitutil.mock import instance_mock, method_mock, property_mock
 
 
-class DescribeStoryPart(object):
+class DescribeStoryPart:
     def it_can_get_or_add_an_image(self, package_, image_part_, image_, relate_to_):
         package_.get_or_add_image_part.return_value = image_part_
         relate_to_.return_value = "rId42"

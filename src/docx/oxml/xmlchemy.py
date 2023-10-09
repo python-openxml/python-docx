@@ -112,7 +112,7 @@ class MetaOxmlElement(type):
                 value.populate_class_members(cls, key)
 
 
-class BaseAttribute(object):
+class BaseAttribute:
     """Base class for OptionalAttribute and RequiredAttribute.
 
     Provides common methods.
@@ -268,7 +268,7 @@ class RequiredAttribute(BaseAttribute):
         return set_attr_value
 
 
-class _BaseChildElement(object):
+class _BaseChildElement:
     """Base class for the child element classes corresponding to varying cardinalities,
     such as ZeroOrOne and ZeroOrMore."""
 

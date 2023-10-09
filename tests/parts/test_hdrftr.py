@@ -12,7 +12,7 @@ from ..unitutil.cxml import element
 from ..unitutil.mock import function_mock, initializer_mock, instance_mock, method_mock
 
 
-class DescribeFooterPart(object):
+class DescribeFooterPart:
     def it_is_used_by_loader_to_construct_footer_part(
         self, package_, FooterPart_load_, footer_part_
     ):
@@ -80,7 +80,7 @@ class DescribeFooterPart(object):
         return function_mock(request, "docx.parts.hdrftr.parse_xml")
 
 
-class DescribeHeaderPart(object):
+class DescribeHeaderPart:
     def it_is_used_by_loader_to_construct_header_part(
         self, package_, HeaderPart_load_, header_part_
     ):

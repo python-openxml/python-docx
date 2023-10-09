@@ -6,7 +6,7 @@ BIG_ENDIAN = ">"
 LITTLE_ENDIAN = "<"
 
 
-class StreamReader(object):
+class StreamReader:
     """Wraps a file-like object to provide access to structured data from a binary file.
 
     Byte-order is configurable. `base_offset` is added to any base value provided to

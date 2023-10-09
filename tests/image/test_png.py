@@ -29,7 +29,7 @@ from ..unitutil.mock import (
 )
 
 
-class DescribePng(object):
+class DescribePng:
     def it_can_construct_from_a_png_stream(
         self, stream_, _PngParser_, png_parser_, Png__init__
     ):
@@ -76,7 +76,7 @@ class DescribePng(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_PngParser(object):
+class Describe_PngParser:
     def it_can_parse_the_headers_of_a_PNG_stream(
         self, stream_, _Chunks_, _PngParser__init_, chunks_
     ):
@@ -156,7 +156,7 @@ class Describe_PngParser(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_Chunks(object):
+class Describe_Chunks:
     def it_can_construct_from_a_stream(
         self, stream_, _ChunkParser_, chunk_parser_, _Chunks__init_
     ):
@@ -234,7 +234,7 @@ class Describe_Chunks(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_ChunkParser(object):
+class Describe_ChunkParser:
     def it_can_construct_from_a_stream(
         self, stream_, StreamReader_, stream_rdr_, _ChunkParser__init_
     ):
@@ -328,7 +328,7 @@ class Describe_ChunkParser(object):
         return instance_mock(request, StreamReader)
 
 
-class Describe_ChunkFactory(object):
+class Describe_ChunkFactory:
     def it_constructs_the_appropriate_Chunk_subclass(self, call_fixture):
         chunk_type, stream_rdr_, offset, chunk_cls_ = call_fixture
         chunk = _ChunkFactory(chunk_type, stream_rdr_, offset)
@@ -389,7 +389,7 @@ class Describe_ChunkFactory(object):
         return instance_mock(request, StreamReader)
 
 
-class Describe_Chunk(object):
+class Describe_Chunk:
     def it_can_construct_from_a_stream_and_offset(self):
         chunk_type = "fOOB"
         chunk = _Chunk.from_offset(chunk_type, None, None)
@@ -397,7 +397,7 @@ class Describe_Chunk(object):
         assert chunk.type_name == chunk_type
 
 
-class Describe_IHDRChunk(object):
+class Describe_IHDRChunk:
     def it_can_construct_from_a_stream_and_offset(self, from_offset_fixture):
         stream_rdr, offset, px_width, px_height = from_offset_fixture
         ihdr_chunk = _IHDRChunk.from_offset(None, stream_rdr, offset)
@@ -415,7 +415,7 @@ class Describe_IHDRChunk(object):
         return stream_rdr, offset, px_width, px_height
 
 
-class Describe_pHYsChunk(object):
+class Describe_pHYsChunk:
     def it_can_construct_from_a_stream_and_offset(self, from_offset_fixture):
         stream_rdr, offset = from_offset_fixture[:2]
         horz_px_per_unit, vert_px_per_unit = from_offset_fixture[2:4]

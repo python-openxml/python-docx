@@ -38,7 +38,7 @@ class InlineShapes(Parented):
         return body.xpath(xpath)
 
 
-class InlineShape(object):
+class InlineShape:
     """Proxy for an ``<wp:inline>`` element, representing the container for an inline
     graphical object."""
 

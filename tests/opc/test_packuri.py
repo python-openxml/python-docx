@@ -5,7 +5,7 @@ import pytest
 from docx.opc.packuri import PackURI
 
 
-class DescribePackURI(object):
+class DescribePackURI:
     def cases(self, expected_values):
         """
         Return list of tuples zipped from uri_str cases and

@@ -7,7 +7,7 @@ from docx.settings import Settings
 from .unitutil.cxml import element, xml
 
 
-class DescribeSettings(object):
+class DescribeSettings:
     def it_knows_when_the_document_has_distinct_odd_and_even_headers(
         self, odd_and_even_get_fixture
     ):

@@ -21,7 +21,7 @@ from ..unitutil.mock import (
 )
 
 
-class DescribePart(object):
+class DescribePart:
     def it_can_be_constructed_by_PartFactory(
         self, partname_, content_type_, blob_, package_, __init_
     ):
@@ -116,7 +116,7 @@ class DescribePart(object):
         return instance_mock(request, PackURI)
 
 
-class DescribePartRelationshipManagementInterface(object):
+class DescribePartRelationshipManagementInterface:
     def it_provides_access_to_its_relationships(self, rels_fixture):
         part, Relationships_, partname_, rels_ = rels_fixture
         rels = part.rels
@@ -263,7 +263,7 @@ class DescribePartRelationshipManagementInterface(object):
         return instance_mock(request, str)
 
 
-class DescribePartFactory(object):
+class DescribePartFactory:
     def it_constructs_part_from_selector_if_defined(self, cls_selector_fixture):
         # fixture ----------------------
         (
@@ -419,7 +419,7 @@ class DescribePartFactory(object):
         return instance_mock(request, str)
 
 
-class DescribeXmlPart(object):
+class DescribeXmlPart:
     def it_can_be_constructed_by_PartFactory(
         self, partname_, content_type_, blob_, package_, element_, parse_xml_, __init_
     ):

@@ -11,7 +11,7 @@ from ..unitutil.cxml import element, xml
 from ..unitutil.mock import class_mock, instance_mock
 
 
-class DescribeParagraphFormat(object):
+class DescribeParagraphFormat:
     def it_knows_its_alignment_value(self, alignment_get_fixture):
         paragraph_format, expected_value = alignment_get_fixture
         assert paragraph_format.alignment == expected_value

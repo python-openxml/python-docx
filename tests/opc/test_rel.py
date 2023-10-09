@@ -12,7 +12,7 @@ from docx.opc.rel import Relationships, _Relationship
 from ..unitutil.mock import Mock, PropertyMock, call, class_mock, instance_mock, patch
 
 
-class Describe_Relationship(object):
+class Describe_Relationship:
     def it_remembers_construction_values(self):
         # test data --------------------
         rId = "rId9"
@@ -48,7 +48,7 @@ class Describe_Relationship(object):
         assert rel.target_ref == "../media/image1.png"
 
 
-class DescribeRelationships(object):
+class DescribeRelationships:
     def it_can_add_a_relationship(self, _Relationship_):
         baseURI, rId, reltype, target, external = (
             "baseURI",

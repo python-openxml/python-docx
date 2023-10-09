@@ -14,7 +14,7 @@ from ..unitutil.file import test_file
 from ..unitutil.mock import ANY, initializer_mock, instance_mock, method_mock
 
 
-class DescribeImagePart(object):
+class DescribeImagePart:
     def it_is_used_by_PartFactory_to_construct_image_part(
         self, image_part_load_, partname_, blob_, package_, image_part_
     ):

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from docx.shared import Length
 
 
-class Section(object):
+class Section:
     """Document section, providing access to section and page setup settings.
 
     Also provides access to headers and footers.

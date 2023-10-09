@@ -31,7 +31,7 @@ from ..unitutil.mock import (
 )
 
 
-class DescribeTiff(object):
+class DescribeTiff:
     def it_can_construct_from_a_tiff_stream(
         self, stream_, _TiffParser_, tiff_parser_, Tiff__init_
     ):
@@ -79,7 +79,7 @@ class DescribeTiff(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_TiffParser(object):
+class Describe_TiffParser:
     def it_can_parse_the_properties_from_a_tiff_stream(
         self,
         stream_,
@@ -201,7 +201,7 @@ class Describe_TiffParser(object):
         return initializer_mock(request, _TiffParser)
 
 
-class Describe_IfdEntries(object):
+class Describe_IfdEntries:
     def it_can_construct_from_a_stream_and_offset(
         self,
         stream_,
@@ -261,7 +261,7 @@ class Describe_IfdEntries(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_IfdParser(object):
+class Describe_IfdParser:
     def it_can_iterate_through_the_directory_entries_in_an_IFD(self, iter_fixture):
         (
             ifd_parser,
@@ -304,7 +304,7 @@ class Describe_IfdParser(object):
         return (ifd_parser, _IfdEntryFactory_, stream_rdr, offsets, expected_entries)
 
 
-class Describe_IfdEntryFactory(object):
+class Describe_IfdEntryFactory:
     def it_constructs_the_right_class_for_a_given_ifd_entry(self, fixture):
         stream_rdr, offset, entry_cls_, ifd_entry_ = fixture
         ifd_entry = _IfdEntryFactory(stream_rdr, offset)
@@ -385,7 +385,7 @@ class Describe_IfdEntryFactory(object):
         return instance_mock(request, int)
 
 
-class Describe_IfdEntry(object):
+class Describe_IfdEntry:
     def it_can_construct_from_a_stream_and_offset(
         self, _parse_value_, _IfdEntry__init_, value_
     ):
@@ -422,7 +422,7 @@ class Describe_IfdEntry(object):
         return loose_mock(request)
 
 
-class Describe_AsciiIfdEntry(object):
+class Describe_AsciiIfdEntry:
     def it_can_parse_an_ascii_string_IFD_entry(self):
         bytes_ = b"foobar\x00"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
@@ -430,7 +430,7 @@ class Describe_AsciiIfdEntry(object):
         assert val == "foobar"
 
 
-class Describe_ShortIfdEntry(object):
+class Describe_ShortIfdEntry:
     def it_can_parse_a_short_int_IFD_entry(self):
         bytes_ = b"foobaroo\x00\x2A"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
@@ -438,7 +438,7 @@ class Describe_ShortIfdEntry(object):
         assert val == 42
 
 
-class Describe_LongIfdEntry(object):
+class Describe_LongIfdEntry:
     def it_can_parse_a_long_int_IFD_entry(self):
         bytes_ = b"foobaroo\x00\x00\x00\x2A"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
@@ -446,7 +446,7 @@ class Describe_LongIfdEntry(object):
         assert val == 42
 
 
-class Describe_RationalIfdEntry(object):
+class Describe_RationalIfdEntry:
     def it_can_parse_a_rational_IFD_entry(self):
         bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x54"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)

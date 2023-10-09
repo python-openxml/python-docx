@@ -7,7 +7,7 @@ from docx.opc.exceptions import PackageNotFoundError
 from docx.opc.packuri import CONTENT_TYPES_URI
 
 
-class PhysPkgReader(object):
+class PhysPkgReader:
     """Factory for physical package reader objects."""
 
     def __new__(cls, pkg_file):
@@ -25,7 +25,7 @@ class PhysPkgReader(object):
         return super(PhysPkgReader, cls).__new__(reader_cls)
 
 
-class PhysPkgWriter(object):
+class PhysPkgWriter:
     """Factory for physical package writer objects."""
 
     def __new__(cls, pkg_file):

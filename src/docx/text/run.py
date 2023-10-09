@@ -240,7 +240,7 @@ class Run(StoryChild):
         self.font.underline = value
 
 
-class _Text(object):
+class _Text:
     """Proxy object wrapping `<w:t>` element."""
 
     def __init__(self, t_elm: CT_Text):

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from docx.package import Package
 
 
-class Part(object):
+class Part:
     """Base class for package parts.
 
     Provides common properties and methods, but intended to be subclassed in client code
@@ -154,7 +154,7 @@ class Part(object):
         return len([_rId for _rId in rIds if _rId == rId])
 
 
-class PartFactory(object):
+class PartFactory:
     """Provides a way for client code to specify a subclass of |Part| to be constructed
     by |Unmarshaller| based on its content type and/or a custom callable.
 

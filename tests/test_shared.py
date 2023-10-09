@@ -9,7 +9,7 @@ from .unitutil.cxml import element
 from .unitutil.mock import instance_mock
 
 
-class DescribeElementProxy(object):
+class DescribeElementProxy:
     def it_knows_when_its_equal_to_another_proxy_object(self, eq_fixture):
         proxy, proxy_2, proxy_3, not_a_proxy = eq_fixture
 
@@ -63,7 +63,7 @@ class DescribeElementProxy(object):
         return instance_mock(request, XmlPart)
 
 
-class DescribeLength(object):
+class DescribeLength:
     def it_can_construct_from_convenient_units(self, construct_fixture):
         UnitCls, units_val, emu = construct_fixture
         length = UnitCls(units_val)
@@ -109,7 +109,7 @@ class DescribeLength(object):
         return emu, units_prop_name, expected_length_in_units, type_
 
 
-class DescribeRGBColor(object):
+class DescribeRGBColor:
     def it_is_natively_constructed_using_three_ints_0_to_255(self):
         RGBColor(0x12, 0x34, 0x56)
         with pytest.raises(ValueError, match=r"RGBColor\(\) takes three integer valu"):

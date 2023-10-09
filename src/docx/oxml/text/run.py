@@ -231,7 +231,7 @@ class CT_Text(BaseOxmlElement):
 # Utility
 
 
-class _RunContentAppender(object):
+class _RunContentAppender:
     """Translates a Python string into run content elements appended in a `w:r` element.
 
     Contiguous sequences of regular characters are appended in a single `<w:t>` element.

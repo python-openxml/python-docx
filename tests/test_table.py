@@ -23,7 +23,7 @@ from .unitutil.file import snippet_seq
 from .unitutil.mock import instance_mock, property_mock
 
 
-class DescribeTable(object):
+class DescribeTable:
     def it_can_add_a_row(self, add_row_fixture):
         table, expected_xml = add_row_fixture
         row = table.add_row()
@@ -346,7 +346,7 @@ class DescribeTable(object):
         return table
 
 
-class Describe_Cell(object):
+class Describe_Cell:
     def it_knows_what_text_it_contains(self, text_get_fixture):
         cell, expected_text = text_get_fixture
         text = cell.text
@@ -585,7 +585,7 @@ class Describe_Cell(object):
         return instance_mock(request, CT_Tc)
 
 
-class Describe_Column(object):
+class Describe_Column:
     def it_provides_access_to_its_cells(self, cells_fixture):
         column, column_idx, expected_cells = cells_fixture
         cells = column.cells
@@ -681,7 +681,7 @@ class Describe_Column(object):
         return property_mock(request, _Column, "table", return_value=table_)
 
 
-class Describe_Columns(object):
+class Describe_Columns:
     def it_knows_how_many_columns_it_contains(self, columns_fixture):
         columns, column_count = columns_fixture
         assert len(columns) == column_count
@@ -735,7 +735,7 @@ class Describe_Columns(object):
         return instance_mock(request, Table)
 
 
-class Describe_Row(object):
+class Describe_Row:
     def it_knows_its_height(self, height_get_fixture):
         row, expected_height = height_get_fixture
         assert row.height == expected_height
@@ -900,7 +900,7 @@ class Describe_Row(object):
         return property_mock(request, _Row, "table", return_value=table_)
 
 
-class Describe_Rows(object):
+class Describe_Rows:
     def it_knows_how_many_rows_it_contains(self, rows_fixture):
         rows, row_count = rows_fixture
         assert len(rows) == row_count

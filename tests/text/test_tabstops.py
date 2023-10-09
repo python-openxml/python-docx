@@ -10,7 +10,7 @@ from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock
 
 
-class DescribeTabStop(object):
+class DescribeTabStop:
     def it_knows_its_position(self, position_get_fixture):
         tab_stop, expected_value = position_get_fixture
         assert tab_stop.position == expected_value
@@ -144,7 +144,7 @@ class DescribeTabStop(object):
         return tab_stop, value, tabs, new_idx, expected_xml
 
 
-class DescribeTabStops(object):
+class DescribeTabStops:
     def it_knows_its_length(self, len_fixture):
         tab_stops, expected_value = len_fixture
         assert len(tab_stops) == expected_value

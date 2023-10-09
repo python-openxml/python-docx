@@ -61,7 +61,7 @@ class Jfif(Jpeg):
         return cls(px_width, px_height, horz_dpi, vert_dpi)
 
 
-class _JfifMarkers(object):
+class _JfifMarkers:
     """Sequence of markers in a JPEG file, perhaps truncated at first SOS marker for
     performance reasons."""
 
@@ -125,7 +125,7 @@ class _JfifMarkers(object):
         raise KeyError("no start of frame (SOFn) marker in image")
 
 
-class _MarkerParser(object):
+class _MarkerParser:
     """Service class that knows how to parse a JFIF stream and iterate over its
     markers."""
 
@@ -152,7 +152,7 @@ class _MarkerParser(object):
             start = segment_offset + marker.segment_length
 
 
-class _MarkerFinder(object):
+class _MarkerFinder:
     """Service class that knows how to find the next JFIF marker in a stream."""
 
     def __init__(self, stream):
@@ -239,7 +239,7 @@ def _MarkerFactory(marker_code, stream, offset):
     return marker_cls.from_stream(stream, marker_code, offset)
 
 
-class _Marker(object):
+class _Marker:
     """Base class for JFIF marker classes.
 
     Represents a marker and its segment occuring in a JPEG byte stream.

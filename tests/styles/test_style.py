@@ -18,7 +18,7 @@ from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, function_mock, instance_mock
 
 
-class DescribeStyleFactory(object):
+class DescribeStyleFactory:
     def it_constructs_the_right_type_of_style(self, factory_fixture):
         style_elm, StyleCls_, style_ = factory_fixture
         style = StyleFactory(style_elm)
@@ -94,7 +94,7 @@ class DescribeStyleFactory(object):
         return instance_mock(request, _NumberingStyle)
 
 
-class DescribeBaseStyle(object):
+class DescribeBaseStyle:
     def it_knows_its_style_id(self, id_get_fixture):
         style, expected_value = id_get_fixture
         assert style.style_id == expected_value
@@ -396,7 +396,7 @@ class DescribeBaseStyle(object):
         return style, value, expected_xml
 
 
-class DescribeCharacterStyle(object):
+class DescribeCharacterStyle:
     def it_knows_which_style_it_is_based_on(self, base_get_fixture):
         style, StyleFactory_, StyleFactory_calls, base_style_ = base_get_fixture
         base_style = style.base_style
@@ -476,7 +476,7 @@ class DescribeCharacterStyle(object):
         return function_mock(request, "docx.styles.style.StyleFactory")
 
 
-class DescribeParagraphStyle(object):
+class DescribeParagraphStyle:
     def it_knows_its_next_paragraph_style(self, next_get_fixture):
         style, expected_value = next_get_fixture
         assert style.next_paragraph_style == expected_value

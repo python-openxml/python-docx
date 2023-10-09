@@ -12,7 +12,7 @@ from ..unitutil.cxml import element
 from ..unitutil.mock import call, class_mock, function_mock, instance_mock, method_mock
 
 
-class DescribeStyles(object):
+class DescribeStyles:
     def it_supports_the_in_operator_on_style_name(self, in_fixture):
         styles, name, expected_value = in_fixture
         assert (name in styles) is expected_value

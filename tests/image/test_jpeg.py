@@ -31,7 +31,7 @@ from ..unitutil.mock import (
 )
 
 
-class DescribeJpeg(object):
+class DescribeJpeg:
     def it_knows_its_content_type(self):
         jpeg = Jpeg(None, None, None, None)
         assert jpeg.content_type == MIME_TYPE.JPEG
@@ -40,7 +40,7 @@ class DescribeJpeg(object):
         jpeg = Jpeg(None, None, None, None)
         assert jpeg.default_ext == "jpg"
 
-    class DescribeExif(object):
+    class DescribeExif:
         def it_can_construct_from_an_exif_stream(self, from_exif_fixture):
             # fixture ----------------------
             stream_, _JfifMarkers_, cx, cy, horz_dpi, vert_dpi = from_exif_fixture
@@ -54,7 +54,7 @@ class DescribeJpeg(object):
             assert exif.horz_dpi == horz_dpi
             assert exif.vert_dpi == vert_dpi
 
-    class DescribeJfif(object):
+    class DescribeJfif:
         def it_can_construct_from_a_jfif_stream(self, from_jfif_fixture):
             stream_, _JfifMarkers_, cx, cy, horz_dpi, vert_dpi = from_jfif_fixture
             jfif = Jfif.from_stream(stream_)
@@ -102,7 +102,7 @@ class DescribeJpeg(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_JfifMarkers(object):
+class Describe_JfifMarkers:
     def it_can_construct_from_a_jfif_stream(
         self, stream_, _MarkerParser_, _JfifMarkers__init_, soi_, app0_, sof_, sos_
     ):
@@ -228,7 +228,7 @@ class Describe_JfifMarkers(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_Marker(object):
+class Describe_Marker:
     def it_can_construct_from_a_stream_and_offset(self, from_stream_fixture):
         stream, marker_code, offset, _Marker__init_, length = from_stream_fixture
 
@@ -256,7 +256,7 @@ class Describe_Marker(object):
         return initializer_mock(request, _Marker)
 
 
-class Describe_App0Marker(object):
+class Describe_App0Marker:
     def it_can_construct_from_a_stream_and_offset(self, _App0Marker__init_):
         bytes_ = b"\x00\x10JFIF\x00\x01\x01\x01\x00\x2A\x00\x18"
         marker_code, offset, length = JPEG_MARKER_CODE.APP0, 0, 16
@@ -294,7 +294,7 @@ class Describe_App0Marker(object):
         return density_units, x_density, y_density, horz_dpi, vert_dpi
 
 
-class Describe_App1Marker(object):
+class Describe_App1Marker:
     def it_can_construct_from_a_stream_and_offset(
         self, _App1Marker__init_, _tiff_from_exif_segment_
     ):
@@ -388,7 +388,7 @@ class Describe_App1Marker(object):
         )
 
 
-class Describe_SofMarker(object):
+class Describe_SofMarker:
     def it_can_construct_from_a_stream_and_offset(self, request, _SofMarker__init_):
         bytes_ = b"\x00\x11\x00\x00\x2A\x00\x18"
         marker_code, offset, length = JPEG_MARKER_CODE.SOF0, 0, 17
@@ -414,7 +414,7 @@ class Describe_SofMarker(object):
         return initializer_mock(request, _SofMarker)
 
 
-class Describe_MarkerFactory(object):
+class Describe_MarkerFactory:
     def it_constructs_the_appropriate_marker_object(self, call_fixture):
         marker_code, stream_, offset_, marker_cls_ = call_fixture
         marker = _MarkerFactory(marker_code, stream_, offset_)
@@ -478,7 +478,7 @@ class Describe_MarkerFactory(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_MarkerFinder(object):
+class Describe_MarkerFinder:
     def it_can_construct_from_a_stream(self, stream_, _MarkerFinder__init_):
         marker_finder = _MarkerFinder.from_stream(stream_)
 
@@ -520,7 +520,7 @@ class Describe_MarkerFinder(object):
         return instance_mock(request, io.BytesIO)
 
 
-class Describe_MarkerParser(object):
+class Describe_MarkerParser:
     def it_can_construct_from_a_jfif_stream(
         self, stream_, StreamReader_, _MarkerParser__init_, stream_reader_
     ):

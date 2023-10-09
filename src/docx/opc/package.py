@@ -10,7 +10,7 @@ from docx.opc.rel import Relationships
 from docx.opc.shared import lazyproperty
 
 
-class OpcPackage(object):
+class OpcPackage:
     """Main API class for |python-opc|.
 
     A new instance is constructed by calling the :meth:`open` class method with a path
@@ -164,7 +164,7 @@ class OpcPackage(object):
             return core_properties_part
 
 
-class Unmarshaller(object):
+class Unmarshaller:
     """Hosts static methods for unmarshalling a package from a |PackageReader|."""
 
     @staticmethod

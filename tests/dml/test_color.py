@@ -9,7 +9,7 @@ from docx.shared import RGBColor
 from ..unitutil.cxml import element, xml
 
 
-class DescribeColorFormat(object):
+class DescribeColorFormat:
     def it_knows_its_color_type(self, type_fixture):
         color_format, expected_value = type_fixture
         assert color_format.type == expected_value

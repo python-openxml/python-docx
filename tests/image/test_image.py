@@ -26,7 +26,7 @@ from ..unitutil.mock import (
 )
 
 
-class DescribeImage(object):
+class DescribeImage:
     def it_can_construct_from_an_image_blob(
         self, blob_, BytesIO_, _from_stream_, stream_, image_
     ):
@@ -266,7 +266,7 @@ class DescribeImage(object):
         return property_mock(request, Image, "width")
 
 
-class Describe_ImageHeaderFactory(object):
+class Describe_ImageHeaderFactory:
     def it_constructs_the_right_class_for_a_given_image_stream(self, call_fixture):
         stream, expected_class = call_fixture
         image_header = _ImageHeaderFactory(stream)
@@ -300,7 +300,7 @@ class Describe_ImageHeaderFactory(object):
         return image_stream, expected_class
 
 
-class DescribeBaseImageHeader(object):
+class DescribeBaseImageHeader:
     def it_defines_content_type_as_an_abstract_property(self):
         base_image_header = BaseImageHeader(None, None, None, None)
         with pytest.raises(NotImplementedError):

@@ -5,7 +5,7 @@ import pytest
 from ...unitutil.cxml import element, xml
 
 
-class DescribeCT_Body(object):
+class DescribeCT_Body:
     def it_can_clear_all_its_content(self, clear_fixture):
         body, expected_xml = clear_fixture
         body.clear_content()

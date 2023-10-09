@@ -18,7 +18,7 @@ from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock, method_mock, property_mock
 
 
-class DescribeParagraph(object):
+class DescribeParagraph:
     """Unit-test suite for `docx.text.run.Paragraph`."""
 
     @pytest.mark.parametrize(

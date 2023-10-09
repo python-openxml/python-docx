@@ -19,7 +19,7 @@ from .unitdata.rels import (
 )
 
 
-class DescribeCT_Default(object):
+class DescribeCT_Default:
     def it_provides_read_access_to_xml_values(self):
         default = a_Default().element
         assert default.extension == "xml"
@@ -31,7 +31,7 @@ class DescribeCT_Default(object):
         assert default.xml == expected_xml
 
 
-class DescribeCT_Override(object):
+class DescribeCT_Override:
     def it_provides_read_access_to_xml_values(self):
         override = an_Override().element
         assert override.partname == "/part/name.xml"
@@ -43,7 +43,7 @@ class DescribeCT_Override(object):
         assert override.xml == expected_xml
 
 
-class DescribeCT_Relationship(object):
+class DescribeCT_Relationship:
     def it_provides_read_access_to_xml_values(self):
         rel = a_Relationship().element
         assert rel.rId == "rId9"
@@ -69,7 +69,7 @@ class DescribeCT_Relationship(object):
             assert rel.xml == expected_rel_xml
 
 
-class DescribeCT_Relationships(object):
+class DescribeCT_Relationships:
     def it_can_construct_a_new_relationships_element(self):
         rels = CT_Relationships.new()
         expected_xml = (
@@ -98,7 +98,7 @@ class DescribeCT_Relationships(object):
         assert CT_Relationships.new().xml == expected_xml
 
 
-class DescribeCT_Types(object):
+class DescribeCT_Types:
     def it_provides_access_to_default_child_elements(self):
         types = a_Types().element
         assert len(types.defaults) == 2

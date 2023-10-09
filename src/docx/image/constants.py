@@ -1,7 +1,7 @@
 """Constants specific the the image sub-package."""
 
 
-class JPEG_MARKER_CODE(object):
+class JPEG_MARKER_CODE:
     """JPEG marker codes."""
 
     TEM = b"\x01"
@@ -97,7 +97,7 @@ class JPEG_MARKER_CODE(object):
         return marker_code in cls.STANDALONE_MARKERS
 
 
-class MIME_TYPE(object):
+class MIME_TYPE:
     """Image content types."""
 
     BMP = "image/bmp"
@@ -107,7 +107,7 @@ class MIME_TYPE(object):
     TIFF = "image/tiff"
 
 
-class PNG_CHUNK_TYPE(object):
+class PNG_CHUNK_TYPE:
     """PNG chunk type names."""
 
     IHDR = "IHDR"
@@ -115,7 +115,7 @@ class PNG_CHUNK_TYPE(object):
     IEND = "IEND"
 
 
-class TIFF_FLD_TYPE(object):
+class TIFF_FLD_TYPE:
     """Tag codes for TIFF Image File Directory (IFD) entries."""
 
     BYTE = 1
@@ -136,7 +136,7 @@ class TIFF_FLD_TYPE(object):
 TIFF_FLD = TIFF_FLD_TYPE
 
 
-class TIFF_TAG(object):
+class TIFF_TAG:
     """Tag codes for TIFF Image File Directory (IFD) entries."""
 
     IMAGE_WIDTH = 0x0100

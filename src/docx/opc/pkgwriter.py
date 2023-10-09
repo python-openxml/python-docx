@@ -12,7 +12,7 @@ from docx.opc.shared import CaseInsensitiveDict
 from docx.opc.spec import default_content_types
 
 
-class PackageWriter(object):
+class PackageWriter:
     """Writes a zip-format OPC package to `pkg_file`, where `pkg_file` can be either a
     path to a zip file (a string) or a file-like object.
 
@@ -52,7 +52,7 @@ class PackageWriter(object):
         phys_writer.write(PACKAGE_URI.rels_uri, pkg_rels.xml)
 
 
-class _ContentTypesItem(object):
+class _ContentTypesItem:
     """Service class that composes a content types item ([Content_Types].xml) based on a
     list of parts.
 

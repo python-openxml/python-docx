@@ -21,7 +21,7 @@ from ..unitutil.cxml import element, xml
 from ..unitutil.mock import class_mock, instance_mock, property_mock
 
 
-class DescribeRun(object):
+class DescribeRun:
     """Unit-test suite for `docx.text.run.Run`."""
 
     def it_knows_its_bool_prop_states(self, bool_prop_get_fixture):
@@ -171,7 +171,7 @@ class DescribeRun(object):
                 'w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
                 "w:r/w:rPr/(w:b, w:i)",
             ),
-        ]
+        ],
     )
     def it_can_remove_its_content_but_keep_formatting(
         self, initial_r_cxml: str, expected_cxml: str

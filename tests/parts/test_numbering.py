@@ -9,7 +9,7 @@ from ..oxml.unitdata.numbering import a_num, a_numbering
 from ..unitutil.mock import class_mock, instance_mock
 
 
-class DescribeNumberingPart(object):
+class DescribeNumberingPart:
     def it_provides_access_to_the_numbering_definitions(self, num_defs_fixture):
         (
             numbering_part,
@@ -54,7 +54,7 @@ class DescribeNumberingPart(object):
         return instance_mock(request, CT_Numbering)
 
 
-class Describe_NumberingDefinitions(object):
+class Describe_NumberingDefinitions:
     def it_knows_how_many_numbering_definitions_it_contains(self, len_fixture):
         numbering_definitions, numbering_definition_count = len_fixture
         assert len(numbering_definitions) == numbering_definition_count

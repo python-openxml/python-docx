@@ -20,7 +20,7 @@ from .unitutil.cxml import element, xml
 from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
-class DescribeDocument(object):
+class DescribeDocument:
     def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
         level, style = add_heading_fixture
         add_paragraph_.return_value = paragraph_
@@ -354,7 +354,7 @@ class DescribeDocument(object):
         return instance_mock(request, list)
 
 
-class Describe_Body(object):
+class Describe_Body:
     def it_can_clear_itself_of_all_content_it_holds(self, clear_fixture):
         body, expected_xml = clear_fixture
         _body = body.clear_content()

@@ -6,7 +6,7 @@ from docx.opc.oxml import parse_xml
 from docx.opc.rel import Relationships
 
 
-class BaseBuilder(object):
+class BaseBuilder:
     """
     Provides common behavior for all data builders.
     """
@@ -22,7 +22,7 @@ class BaseBuilder(object):
         return self
 
 
-class RelationshipsBuilder(object):
+class RelationshipsBuilder:
     """Builder class for test Relationships"""
 
     partname_tmpls = {

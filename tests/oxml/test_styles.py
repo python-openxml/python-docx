@@ -7,7 +7,7 @@ from docx.enum.style import WD_STYLE_TYPE
 from ..unitutil.cxml import element, xml
 
 
-class DescribeCT_Styles(object):
+class DescribeCT_Styles:
     def it_can_add_a_style_of_type(self, add_fixture):
         styles, name, style_type, builtin, expected_xml = add_fixture
         style = styles.add_style_of_type(name, style_type, builtin)

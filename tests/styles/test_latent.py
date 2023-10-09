@@ -7,7 +7,7 @@ from docx.styles.latent import LatentStyles, _LatentStyle
 from ..unitutil.cxml import element, xml
 
 
-class DescribeLatentStyle(object):
+class DescribeLatentStyle:
     def it_can_delete_itself(self, delete_fixture):
         latent_style, latent_styles, expected_xml = delete_fixture
         latent_style.delete()
@@ -129,7 +129,7 @@ class DescribeLatentStyle(object):
         return latent_style, new_value, expected_xml
 
 
-class DescribeLatentStyles(object):
+class DescribeLatentStyles:
     def it_can_add_a_latent_style(self, add_fixture):
         latent_styles, name, expected_xml = add_fixture
 

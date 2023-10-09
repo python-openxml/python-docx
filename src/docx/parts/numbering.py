@@ -21,7 +21,7 @@ class NumberingPart(XmlPart):
         return _NumberingDefinitions(self._element)
 
 
-class _NumberingDefinitions(object):
+class _NumberingDefinitions:
     """Collection of |_NumberingDefinition| instances corresponding to the ``<w:num>``
     elements in a numbering part."""
 
