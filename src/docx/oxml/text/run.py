@@ -12,7 +12,9 @@ from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, Z
 from docx.shared import TextAccumulator
 
 if TYPE_CHECKING:
+    from docx.oxml.shape import CT_Anchor, CT_Inline
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
+    from docx.oxml.text.parfmt import CT_TabStop
 
 # ------------------------------------------------------------------------------------
 # Run-level elements
@@ -22,10 +24,12 @@ class CT_R(BaseOxmlElement):
     """`<w:r>` element, containing the properties and text for a run."""
 
     add_br: Callable[[], CT_Br]
+    add_tab: Callable[[], CT_TabStop]
     get_or_add_rPr: Callable[[], CT_RPr]
+    _add_drawing: Callable[[], CT_Drawing]
     _add_t: Callable[..., CT_Text]
 
-    rPr = ZeroOrOne("w:rPr")
+    rPr: CT_RPr | None = ZeroOrOne("w:rPr")  # pyright: ignore[reportGeneralTypeIssues]
     br = ZeroOrMore("w:br")
     cr = ZeroOrMore("w:cr")
     drawing = ZeroOrMore("w:drawing")
@@ -39,7 +43,7 @@ class CT_R(BaseOxmlElement):
             t.set(qn("xml:space"), "preserve")
         return t
 
-    def add_drawing(self, inline_or_anchor):
+    def add_drawing(self, inline_or_anchor: CT_Inline | CT_Anchor) -> CT_Drawing:
         """Return newly appended `CT_Drawing` (`w:drawing`) child element.
 
         The `w:drawing` element has `inline_or_anchor` as its child.
@@ -48,11 +52,11 @@ class CT_R(BaseOxmlElement):
         drawing.append(inline_or_anchor)
         return drawing
 
-    def clear_content(self):
+    def clear_content(self) -> None:
         """Remove all child elements except a `w:rPr` element if present."""
-        content_child_elms = self[1:] if self.rPr is not None else self[:]
-        for child in content_child_elms:
-            self.remove(child)
+        # -- remove all run inner-content except a `w:rPr` when present. --
+        for e in self.xpath("./*[not(self::w:rPr)]"):
+            self.remove(e)
 
     @property
     def inner_content_items(self) -> List[str | CT_Drawing | CT_LastRenderedPageBreak]:
@@ -100,7 +104,7 @@ class CT_R(BaseOxmlElement):
         return rPr.style
 
     @style.setter
-    def style(self, style):
+    def style(self, style: str | None):
         """Set character style of this `w:r` element to `style`.
 
         If `style` is None, remove the style element.
@@ -120,7 +124,7 @@ class CT_R(BaseOxmlElement):
             for e in self.xpath("w:br | w:cr | w:noBreakHyphen | w:ptab | w:t | w:tab")
         )
 
-    @text.setter
+    @text.setter  # pyright: ignore[reportIncompatibleVariableOverride]
     def text(self, text: str):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
@@ -140,7 +144,9 @@ class CT_Br(BaseOxmlElement):
     type: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
         "w:type", ST_BrType, default="textWrapping"
     )
-    clear = OptionalAttribute("w:clear", ST_BrClear)
+    clear: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:clear", ST_BrClear
+    )
 
     def __str__(self) -> str:
         """Text equivalent of this element. Actual value depends on break type.
@@ -236,7 +242,7 @@ class _RunContentAppender(object):
 
     def __init__(self, r: CT_R):
         self._r = r
-        self._bfr = []
+        self._bfr: List[str] = []
 
     @classmethod
     def append_to_run_from_text(cls, r: CT_R, text: str):
@@ -270,4 +276,4 @@ class _RunContentAppender(object):
         text = "".join(self._bfr)
         if text:
             self._r.add_t(text)
-        del self._bfr[:]
+        self._bfr.clear()

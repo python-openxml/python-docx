@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from docx.enum.dml import MSO_THEME_COLOR
 from docx.enum.text import WD_COLOR, WD_UNDERLINE
@@ -20,6 +20,9 @@ from docx.oxml.xmlchemy import (
     RequiredAttribute,
     ZeroOrOne,
 )
+
+if TYPE_CHECKING:
+    from docx.oxml.shared import CT_OnOff, CT_String
 
 
 class CT_Color(BaseOxmlElement):
@@ -53,7 +56,9 @@ class CT_RPr(BaseOxmlElement):
     """``<w:rPr>`` element, containing the properties for a run."""
 
     _add_u: Callable[[], CT_Underline]
+    _add_rStyle: Callable[..., CT_String]
     _remove_u: Callable[[], None]
+    _remove_rStyle: Callable[[], None]
 
     _tag_seq = (
         "w:rStyle",
@@ -96,9 +101,13 @@ class CT_RPr(BaseOxmlElement):
         "w:specVanish",
         "w:oMath",
     )
-    rStyle = ZeroOrOne("w:rStyle", successors=_tag_seq[1:])
+    rStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:rStyle", successors=_tag_seq[1:]
+    )
     rFonts = ZeroOrOne("w:rFonts", successors=_tag_seq[2:])
-    b = ZeroOrOne("w:b", successors=_tag_seq[3:])
+    b: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:b", successors=_tag_seq[3:]
+    )
     bCs = ZeroOrOne("w:bCs", successors=_tag_seq[4:])
     i = ZeroOrOne("w:i", successors=_tag_seq[5:])
     iCs = ZeroOrOne("w:iCs", successors=_tag_seq[6:])
@@ -185,20 +194,18 @@ class CT_RPr(BaseOxmlElement):
         rFonts.hAnsi = value
 
     @property
-    def style(self):
-        """String contained in <w:rStyle> child, or None if that element is not
-        present."""
+    def style(self) -> str | None:
+        """String in `./w:rStyle/@val`, or None if `w:rStyle` is not present."""
         rStyle = self.rStyle
         if rStyle is None:
             return None
         return rStyle.val
 
     @style.setter
-    def style(self, style):
-        """Set val attribute of <w:rStyle> child element to `style`, adding a new
-        element if necessary.
+    def style(self, style: str | None) -> None:
+        """Set `./w:rStyle/@val` to `style`, adding the `w:rStyle` element if necessary.
 
-        If `style` is |None|, remove the <w:rStyle> element if present.
+        If `style` is |None|, remove `w:rStyle` element if present.
         """
         if style is None:
             self._remove_rStyle()
@@ -291,15 +298,14 @@ class CT_RPr(BaseOxmlElement):
         if value is not None:
             self._add_u().val = value
 
-    def _get_bool_val(self, name):
-        """Return the value of the boolean child element having `name`, e.g. 'b', 'i',
-        and 'smallCaps'."""
+    def _get_bool_val(self, name: str) -> bool | None:
+        """Value of boolean child with `name`, e.g. "w:b", "w:i", and "w:smallCaps"."""
         element = getattr(self, name)
         if element is None:
             return None
         return element.val
 
-    def _set_bool_val(self, name, value):
+    def _set_bool_val(self, name: str, value: bool | None):
         if value is None:
             getattr(self, "_remove_%s" % name)()
             return

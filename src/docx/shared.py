@@ -268,7 +268,7 @@ class ElementProxy(object):
     common type of class in python-docx other than custom element (oxml) classes.
     """
 
-    def __init__(self, element: BaseOxmlElement, parent=None):
+    def __init__(self, element: BaseOxmlElement, parent: Any | None = None):
         self._element = element
         self._parent = parent
 
@@ -321,9 +321,9 @@ class StoryChild:
     """A document element within a story part.
 
     Story parts include DocumentPart and Header/FooterPart and can contain block items
-    (paragraphs and tables). These occasionally require an ancestor object to provide
-    access to part-level or package-level items like styles or images or to add or drop
-    a relationship.
+    (paragraphs and tables). Items from the block-item subtree occasionally require an
+    ancestor object to provide access to part-level or package-level items like styles
+    or images or to add or drop a relationship.
 
     Provides `self._parent` attribute to subclasses.
     """

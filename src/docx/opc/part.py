@@ -11,7 +11,7 @@ from docx.opc.shared import cls_method_fn, lazyproperty
 from docx.oxml.parser import parse_xml
 
 if TYPE_CHECKING:
-    from docx.opc.package import OpcPackage
+    from docx.package import Package
 
 
 class Part(object):
@@ -26,7 +26,7 @@ class Part(object):
         partname: str,
         content_type: str,
         blob: bytes | None = None,
-        package: OpcPackage | None = None,
+        package: Package | None = None,
     ):
         super(Part, self).__init__()
         self._partname = partname

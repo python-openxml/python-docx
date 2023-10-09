@@ -1,5 +1,7 @@
 """The proxy class for an image part, and related objects."""
 
+from __future__ import annotations
+
 import hashlib
 
 from docx.image.image import Image
@@ -13,7 +15,9 @@ class ImagePart(Part):
     Corresponds to the target part of a relationship with type RELATIONSHIP_TYPE.IMAGE.
     """
 
-    def __init__(self, partname, content_type, blob, image=None):
+    def __init__(
+        self, partname: str, content_type: str, blob: bytes, image: Image | None = None
+    ):
         super(ImagePart, self).__init__(partname, content_type, blob)
         self._image = image
 
@@ -54,7 +58,7 @@ class ImagePart(Part):
         return ImagePart(partname, image.content_type, image.blob, image)
 
     @property
-    def image(self):
+    def image(self) -> Image:
         if self._image is None:
             self._image = Image.from_blob(self.blob)
         return self._image

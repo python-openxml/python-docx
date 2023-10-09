@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for the docx.text.run module."""
 
 from __future__ import annotations
@@ -157,11 +159,31 @@ class DescribeRun(object):
         InlineShape_.assert_called_once_with(inline)
         assert picture is picture_
 
-    def it_can_remove_its_content_but_keep_formatting(self, clear_fixture):
-        run, expected_xml = clear_fixture
-        _run = run.clear()
+    @pytest.mark.parametrize(
+        ("initial_r_cxml", "expected_cxml"),
+        [
+            ("w:r", "w:r"),
+            ('w:r/w:t"foo"', "w:r"),
+            ("w:r/w:br", "w:r"),
+            ("w:r/w:rPr", "w:r/w:rPr"),
+            ('w:r/(w:rPr, w:t"foo")', "w:r/w:rPr"),
+            (
+                'w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
+                "w:r/w:rPr/(w:b, w:i)",
+            ),
+        ]
+    )
+    def it_can_remove_its_content_but_keep_formatting(
+        self, initial_r_cxml: str, expected_cxml: str
+    ):
+        r = cast(CT_R, element(initial_r_cxml))
+        run = Run(r, None)  # pyright: ignore[reportGeneralTypeIssues]
+        expected_xml = xml(expected_cxml)
+
+        cleared_run = run.clear()
+
         assert run._r.xml == expected_xml
-        assert _run is run
+        assert cleared_run is run
 
     @pytest.mark.parametrize(
         ("r_cxml", "expected_text"),
@@ -259,25 +281,6 @@ class DescribeRun(object):
         run = Run(element(initial_r_cxml), None)
         expected_xml = xml(expected_cxml)
         return run, bool_prop_name, value, expected_xml
-
-    @pytest.fixture(
-        params=[
-            ("w:r", "w:r"),
-            ('w:r/w:t"foo"', "w:r"),
-            ("w:r/w:br", "w:r"),
-            ("w:r/w:rPr", "w:r/w:rPr"),
-            ('w:r/(w:rPr, w:t"foo")', "w:r/w:rPr"),
-            (
-                'w:r/(w:rPr/(w:b, w:i), w:t"foo", w:cr, w:t"bar")',
-                "w:r/w:rPr/(w:b, w:i)",
-            ),
-        ]
-    )
-    def clear_fixture(self, request):
-        initial_r_cxml, expected_cxml = request.param
-        run = Run(element(initial_r_cxml), None)
-        expected_xml = xml(expected_cxml)
-        return run, expected_xml
 
     @pytest.fixture
     def font_fixture(self, Font_, font_):

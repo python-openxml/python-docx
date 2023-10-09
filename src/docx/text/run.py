@@ -2,23 +2,26 @@
 
 from __future__ import annotations
 
-from typing import IO, Iterator
+from typing import IO, TYPE_CHECKING, Iterator, cast
 
-from docx import types as t
 from docx.drawing import Drawing
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
 from docx.oxml.drawing import CT_Drawing
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
-from docx.oxml.text.run import CT_R, CT_Text
 from docx.shape import InlineShape
-from docx.shared import Length, Parented
+from docx.shared import StoryChild
 from docx.styles.style import CharacterStyle
 from docx.text.font import Font
 from docx.text.pagebreak import RenderedPageBreak
 
+if TYPE_CHECKING:
+    from docx.enum.text import WD_UNDERLINE
+    from docx.oxml.text.run import CT_R, CT_Text
+    from docx.shared import Length
 
-class Run(Parented):
+
+class Run(StoryChild):
     """Proxy object wrapping `<w:r>` element.
 
     Several of the properties on Run take a tri-state value, |True|, |False|, or |None|.
@@ -27,8 +30,8 @@ class Run(Parented):
     the style hierarchy.
     """
 
-    def __init__(self, r: CT_R, parent: t.StoryChild):
-        super(Run, self).__init__(parent)
+    def __init__(self, r: CT_R, parent: StoryChild):
+        super().__init__(parent)
         self._r = self._element = self.element = r
 
     def add_break(self, break_type: WD_BREAK = WD_BREAK.LINE):
@@ -58,11 +61,14 @@ class Run(Parented):
         width: Length | None = None,
         height: Length | None = None,
     ) -> InlineShape:
-        """Return an |InlineShape| instance containing the image identified by
-        `image_path_or_stream`, added to the end of this run.
+        """Return |InlineShape| containing image identified by `image_path_or_stream`.
+
+        The picture is added to the end of this run.
 
         `image_path_or_stream` can be a path (a string) or a file-like object containing
-        a binary image. If neither width nor height is specified, the picture appears at
+        a binary image.
+
+        If neither width nor height is specified, the picture appears at
         its native size. If only one is specified, it is used to compute a scaling
         factor that is then applied to the unspecified dimension, preserving the aspect
         ratio of the image. The native size of the picture is calculated using the dots-
@@ -73,10 +79,10 @@ class Run(Parented):
         self._r.add_drawing(inline)
         return InlineShape(inline)
 
-    def add_tab(self):
+    def add_tab(self) -> None:
         """Add a ``<w:tab/>`` element at the end of the run, which Word interprets as a
         tab character."""
-        self._r._add_tab()
+        self._r.add_tab()
 
     def add_text(self, text: str):
         """Returns a newly appended |_Text| object (corresponding to a new ``<w:t>``
@@ -89,15 +95,17 @@ class Run(Parented):
         return _Text(t)
 
     @property
-    def bold(self) -> bool:
-        """Read/write.
+    def bold(self) -> bool | None:
+        """Read/write tri-state value.
 
-        Causes the text of the run to appear in bold.
+        When |True|, causes the text of the run to appear in bold face. When |False|,
+        the text unconditionally appears non-bold. When |None| the bold setting for this
+        run is inherited from the style hierarchy.
         """
         return self.font.bold
 
     @bold.setter
-    def bold(self, value: bool):
+    def bold(self, value: bool | None):
         self.font.bold = value
 
     def clear(self):
@@ -122,21 +130,23 @@ class Run(Parented):
         return bool(self._r.lastRenderedPageBreaks)
 
     @property
-    def font(self):
+    def font(self) -> Font:
         """The |Font| object providing access to the character formatting properties for
         this run, such as font name and size."""
         return Font(self._element)
 
     @property
-    def italic(self) -> bool:
+    def italic(self) -> bool | None:
         """Read/write tri-state value.
 
-        When |True|, causes the text of the run to appear in italics.
+        When |True|, causes the text of the run to appear in italics. When |False|, the
+        text unconditionally appears non-italic. When |None| the italic setting for this
+        run is inherited from the style hierarchy.
         """
         return self.font.italic
 
     @italic.setter
-    def italic(self, value: bool):
+    def italic(self, value: bool | None):
         self.font.italic = value
 
     def iter_inner_content(self) -> Iterator[str | Drawing | RenderedPageBreak]:
@@ -165,16 +175,18 @@ class Run(Parented):
                 yield Drawing(item, self)
 
     @property
-    def style(self) -> CharacterStyle | None:
+    def style(self) -> CharacterStyle:
         """Read/write.
 
-        A |_CharacterStyle| object representing the character style applied to this run.
+        A |CharacterStyle| object representing the character style applied to this run.
         The default character style for the document (often `Default Character Font`) is
         returned if the run has no directly-applied character style. Setting this
         property to |None| removes any directly-applied character style.
         """
         style_id = self._r.style
-        return self.part.get_style(style_id, WD_STYLE_TYPE.CHARACTER)
+        return cast(
+            CharacterStyle, self.part.get_style(style_id, WD_STYLE_TYPE.CHARACTER)
+        )
 
     @style.setter
     def style(self, style_or_name: str | CharacterStyle | None):
@@ -204,17 +216,22 @@ class Run(Parented):
         self._r.text = text
 
     @property
-    def underline(self) -> bool:
-        """The underline style for this |Run|, one of |None|, |True|, |False|, or a
-        value from :ref:`WdUnderline`.
+    def underline(self) -> bool | WD_UNDERLINE | None:
+        """The underline style for this |Run|.
+
+        Value is one of |None|, |True|, |False|, or a member of :ref:`WdUnderline`.
 
         A value of |None| indicates the run has no directly-applied underline value and
         so will inherit the underline value of its containing paragraph. Assigning
-        |None| to this property removes any directly-applied underline value. A value of
-        |False| indicates a directly-applied setting of no underline, overriding any
-        inherited value. A value of |True| indicates single underline. The values from
-        :ref:`WdUnderline` are used to specify other outline styles such as double,
-        wavy, and dotted.
+        |None| to this property removes any directly-applied underline value.
+
+        A value of |False| indicates a directly-applied setting of no underline,
+        overriding any inherited value.
+
+        A value of |True| indicates single underline.
+
+        The values from :ref:`WdUnderline` are used to specify other outline styles such
+        as double, wavy, and dotted.
         """
         return self.font.underline
 

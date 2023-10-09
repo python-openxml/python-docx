@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from docx.oxml.ns import nsdecls
 from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
@@ -19,6 +21,13 @@ from docx.oxml.xmlchemy import (
     RequiredAttribute,
     ZeroOrOne,
 )
+
+if TYPE_CHECKING:
+    from docx.shared import Length
+
+
+class CT_Anchor(BaseOxmlElement):
+    """`<wp:anchor>` element, container for a "floating" shape."""
 
 
 class CT_Blip(BaseOxmlElement):
@@ -49,14 +58,14 @@ class CT_GraphicalObjectData(BaseOxmlElement):
 
 
 class CT_Inline(BaseOxmlElement):
-    """``<w:inline>`` element, container for an inline shape."""
+    """`<wp:inline>` element, container for an inline shape."""
 
     extent = OneAndOnlyOne("wp:extent")
     docPr = OneAndOnlyOne("wp:docPr")
     graphic = OneAndOnlyOne("a:graphic")
 
     @classmethod
-    def new(cls, cx, cy, shape_id, pic):
+    def new(cls, cx: Length, cy: Length, shape_id: int, pic: CT_Picture) -> CT_Inline:
         """Return a new ``<wp:inline>`` element populated with the values passed as
         parameters."""
         inline = parse_xml(cls._inline_xml())
@@ -71,9 +80,13 @@ class CT_Inline(BaseOxmlElement):
         return inline
 
     @classmethod
-    def new_pic_inline(cls, shape_id, rId, filename, cx, cy):
-        """Return a new `wp:inline` element containing the `pic:pic` element specified
-        by the argument values."""
+    def new_pic_inline(
+        cls, shape_id: int, rId: str, filename: str, cx: Length, cy: Length
+    ) -> CT_Inline:
+        """Create `wp:inline` element containing a `pic:pic` element.
+
+        The contents of the `pic:pic` element is taken from the argument values.
+        """
         pic_id = 0  # Word doesn't seem to use this, but does not omit it
         pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
         inline = cls.new(cx, cy, shape_id, pic)

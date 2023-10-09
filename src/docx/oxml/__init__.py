@@ -8,6 +8,7 @@ from __future__ import annotations
 from docx.oxml.drawing import CT_Drawing
 from docx.oxml.parser import register_element_cls
 from docx.oxml.shape import (
+    CT_Anchor,
     CT_Blip,
     CT_BlipFillProperties,
     CT_GraphicalObject,
@@ -48,6 +49,7 @@ register_element_cls("pic:nvPicPr", CT_PictureNonVisual)
 register_element_cls("pic:pic", CT_Picture)
 register_element_cls("pic:spPr", CT_ShapeProperties)
 register_element_cls("w:drawing", CT_Drawing)
+register_element_cls("wp:anchor", CT_Anchor)
 register_element_cls("wp:docPr", CT_NonVisualDrawingProps)
 register_element_cls("wp:extent", CT_PositiveSize2D)
 register_element_cls("wp:inline", CT_Inline)

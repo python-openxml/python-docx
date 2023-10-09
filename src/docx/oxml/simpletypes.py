@@ -5,20 +5,33 @@ attributes. Naming generally corresponds to the simple type in the associated XM
 schema.
 """
 
-from ..exceptions import InvalidXmlError
-from ..shared import Emu, Pt, RGBColor, Twips
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
+from docx.exceptions import InvalidXmlError
+from docx.shared import Emu, Pt, RGBColor, Twips
+
+if TYPE_CHECKING:
+    from docx import types as t
 
 
 class BaseSimpleType(object):
+    """Base class for simple-types."""
+
     @classmethod
-    def from_xml(cls, str_value):
-        return cls.convert_from_xml(str_value)
+    def from_xml(cls, xml_value: str):
+        return cls.convert_from_xml(xml_value)
 
     @classmethod
     def to_xml(cls, value):
         cls.validate(value)
         str_value = cls.convert_to_xml(value)
         return str_value
+
+    @classmethod
+    def convert_from_xml(cls, str_value: str) -> t.AbstractSimpleTypeMember:
+        return int(str_value)
 
     @classmethod
     def validate_int(cls, value):
@@ -35,15 +48,10 @@ class BaseSimpleType(object):
             )
 
     @classmethod
-    def validate_string(cls, value):
-        if isinstance(value, str):
-            return value
-        try:
-            if isinstance(value, basestring):
-                return value
-        except NameError:  # means we're on Python 3
-            pass
-        raise TypeError("value must be a string, got %s" % type(value))
+    def validate_string(cls, value: Any) -> str:
+        if not isinstance(value, str):
+            raise TypeError("value must be a string, got %s" % type(value))
+        return value
 
 
 class BaseIntType(BaseSimpleType):
@@ -62,15 +70,15 @@ class BaseIntType(BaseSimpleType):
 
 class BaseStringType(BaseSimpleType):
     @classmethod
-    def convert_from_xml(cls, str_value):
+    def convert_from_xml(cls, str_value: str) -> str:
         return str_value
 
     @classmethod
-    def convert_to_xml(cls, value):
+    def convert_to_xml(cls, value: str) -> str:
         return value
 
     @classmethod
-    def validate(cls, value):
+    def validate(cls, value: str):
         cls.validate_string(value)
 
 
@@ -160,7 +168,7 @@ class XsdUnsignedLong(BaseIntType):
 
 class ST_BrClear(XsdString):
     @classmethod
-    def validate(cls, value):
+    def validate(cls, value: str) -> None:
         cls.validate_string(value)
         valid_values = ("none", "left", "right", "all")
         if value not in valid_values:

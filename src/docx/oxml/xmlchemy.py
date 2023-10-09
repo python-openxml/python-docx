@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Tuple, Type, TypeVar
 
 from lxml import etree
 from lxml.etree import ElementBase
@@ -11,6 +11,9 @@ from lxml.etree import ElementBase
 from docx.oxml.exceptions import InvalidXmlError
 from docx.oxml.ns import NamespacePrefixedTag, nsmap, qn
 from docx.shared import lazyproperty
+
+if TYPE_CHECKING:
+    from docx import types as t
 
 
 def serialize_for_reading(element):
@@ -108,15 +111,19 @@ class MetaOxmlElement(type):
 
 
 class BaseAttribute(object):
-    """Base class for OptionalAttribute and RequiredAttribute, providing common
-    methods."""
+    """Base class for OptionalAttribute and RequiredAttribute.
 
-    def __init__(self, attr_name, simple_type):
+    Provides common methods.
+    """
+
+    def __init__(self, attr_name: str, simple_type: Type[t.AbstractSimpleType]):
         super(BaseAttribute, self).__init__()
         self._attr_name = attr_name
         self._simple_type = simple_type
 
-    def populate_class_members(self, element_cls, prop_name):
+    def populate_class_members(
+        self, element_cls: Type[BaseOxmlElement], prop_name: str
+    ) -> None:
         """Add the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
         self._prop_name = prop_name
@@ -137,24 +144,53 @@ class BaseAttribute(object):
             return qn(self._attr_name)
         return self._attr_name
 
+    @property
+    def _getter(self) -> Callable[[BaseOxmlElement], t.AbstractSimpleTypeMember]:
+        ...
+
+    @property
+    def _setter(
+        self,
+    ) -> Callable[[BaseOxmlElement, t.AbstractSimpleTypeMember | None], None]:
+        ...
+
 
 class OptionalAttribute(BaseAttribute):
     """Defines an optional attribute on a custom element class.
 
     An optional attribute returns a default value when not present for reading. When
-    assigned |None|, the attribute is removed.
+    assigned |None|, the attribute is removed, but still returns the default value when
+    one is specified.
     """
 
-    def __init__(self, attr_name, simple_type, default=None):
+    def __init__(
+        self,
+        attr_name: str,
+        simple_type: Type[t.AbstractSimpleType],
+        default: t.AbstractSimpleTypeMember | None = None,
+    ):
         super(OptionalAttribute, self).__init__(attr_name, simple_type)
         self._default = default
 
     @property
-    def _getter(self):
-        """Return a function object suitable for the "get" side of the attribute
-        property descriptor."""
+    def _docstring(self):
+        """String to use as `__doc__` attribute of attribute property."""
+        return (
+            f"{self._simple_type.__name__} type-converted value of"
+            f" ``{self._attr_name}`` attribute, or |None| (or specified default"
+            f" value) if not present. Assigning the default value causes the"
+            f" attribute to be removed from the element."
+        )
 
-        def get_attr_value(obj):
+    @property
+    def _getter(
+        self,
+    ) -> Callable[[BaseOxmlElement], str | bool | t.AbstractSimpleTypeMember]:
+        """Function suitable for `__get__()` method on attribute property descriptor."""
+
+        def get_attr_value(
+            obj: BaseOxmlElement,
+        ) -> str | bool | t.AbstractSimpleTypeMember:
             attr_str_value = obj.get(self._clark_name)
             if attr_str_value is None:
                 return self._default
@@ -164,22 +200,12 @@ class OptionalAttribute(BaseAttribute):
         return get_attr_value
 
     @property
-    def _docstring(self):
-        """Return the string to use as the ``__doc__`` attribute of the property for
-        this attribute."""
-        return (
-            "%s type-converted value of ``%s`` attribute, or |None| (or spec"
-            "ified default value) if not present. Assigning the default valu"
-            "e causes the attribute to be removed from the element."
-            % (self._simple_type.__name__, self._attr_name)
-        )
+    def _setter(self) -> Callable[[BaseOxmlElement, t.AbstractSimpleTypeMember], None]:
+        """Function suitable for `__set__()` method on attribute property descriptor."""
 
-    @property
-    def _setter(self):
-        """Return a function object suitable for the "set" side of the attribute
-        property descriptor."""
-
-        def set_attr_value(obj, value):
+        def set_attr_value(
+            obj: BaseOxmlElement, value: t.AbstractSimpleTypeMember | None
+        ):
             if value is None or value == self._default:
                 if self._clark_name in obj.attrib:
                     del obj.attrib[self._clark_name]
@@ -201,6 +227,15 @@ class RequiredAttribute(BaseAttribute):
     """
 
     @property
+    def _docstring(self):
+        """Return the string to use as the ``__doc__`` attribute of the property for
+        this attribute."""
+        return "%s type-converted value of ``%s`` attribute." % (
+            self._simple_type.__name__,
+            self._attr_name,
+        )
+
+    @property
     def _getter(self):
         """Return a function object suitable for the "get" side of the attribute
         property descriptor."""
@@ -216,15 +251,6 @@ class RequiredAttribute(BaseAttribute):
 
         get_attr_value.__doc__ = self._docstring
         return get_attr_value
-
-    @property
-    def _docstring(self):
-        """Return the string to use as the ``__doc__`` attribute of the property for
-        this attribute."""
-        return "%s type-converted value of ``%s`` attribute." % (
-            self._simple_type.__name__,
-            self._attr_name,
-        )
 
     @property
     def _setter(self):
@@ -625,13 +651,14 @@ class BaseOxmlElement(metaclass=MetaOxmlElement):
 
     addprevious: Callable[[BaseOxmlElement], None]
     attrib: Dict[str, str]
-    append: Callable[[ElementBase], None]
+    append: Callable[[BaseOxmlElement], None]
     find: Callable[[str], ElementBase | None]
     findall: Callable[[str], List[ElementBase]]
     get: Callable[[str], str | None]
     getparent: Callable[[], BaseOxmlElement]
     insert: Callable[[int, BaseOxmlElement], None]
     remove: Callable[[BaseOxmlElement], None]
+    set: Callable[[str, str], None]
     tag: str
     text: str | None
 

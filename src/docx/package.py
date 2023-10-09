@@ -1,5 +1,9 @@
 """WordprocessingML Package class and related objects."""
 
+from __future__ import annotations
+
+from typing import IO
+
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.package import OpcPackage
@@ -18,7 +22,7 @@ class Package(OpcPackage):
         """
         self._gather_image_parts()
 
-    def get_or_add_image_part(self, image_descriptor):
+    def get_or_add_image_part(self, image_descriptor: str | IO[bytes]) -> ImagePart:
         """Return |ImagePart| containing image specified by `image_descriptor`.
 
         The image-part is newly created if a matching one is not already present in the
@@ -27,7 +31,7 @@ class Package(OpcPackage):
         return self.image_parts.get_or_add_image_part(image_descriptor)
 
     @lazyproperty
-    def image_parts(self):
+    def image_parts(self) -> ImageParts:
         """|ImageParts| collection object for this package."""
         return ImageParts()
 
@@ -61,7 +65,7 @@ class ImageParts(object):
     def append(self, item):
         self._image_parts.append(item)
 
-    def get_or_add_image_part(self, image_descriptor):
+    def get_or_add_image_part(self, image_descriptor: str | IO[bytes]) -> ImagePart:
         """Return |ImagePart| object containing image identified by `image_descriptor`.
 
         The image-part is newly created if a matching one is not present in the

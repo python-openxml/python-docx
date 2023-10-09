@@ -2,14 +2,24 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from docx.dml.color import ColorFormat
 from docx.enum.text import WD_UNDERLINE
 from docx.shared import ElementProxy
 
+if TYPE_CHECKING:
+    from docx.oxml.text.run import CT_R
+
 
 class Font(ElementProxy):
-    """Proxy object wrapping the parent of a ``<w:rPr>`` element and providing access to
+    """Proxy object for parent of a `<w:rPr>` element and providing access to
     character properties such as font name, font size, bold, and subscript."""
+
+    def __init__(self, r: CT_R, parent: Any | None = None):
+        super().__init__(r, parent)
+        self._element = r
+        self._r = r
 
     @property
     def all_caps(self):
@@ -384,7 +394,7 @@ class Font(ElementProxy):
     def web_hidden(self, value):
         self._set_bool_prop("webHidden", value)
 
-    def _get_bool_prop(self, name):
+    def _get_bool_prop(self, name: str) -> bool | None:
         """Return the value of boolean child of `w:rPr` having `name`."""
         rPr = self._element.rPr
         if rPr is None:

@@ -4,26 +4,31 @@ That characterization is as to content type and size, as a required step in incl
 them in a document.
 """
 
+from __future__ import annotations
+
 import hashlib
 import io
 import os
+from typing import IO, Tuple
+
+from typing_extensions import Self
 
 from docx.image.exceptions import UnrecognizedImageError
-from docx.shared import Emu, Inches, lazyproperty
+from docx.shared import Emu, Inches, Length, lazyproperty
 
 
-class Image(object):
+class Image:
     """Graphical image stream such as JPEG, PNG, or GIF with properties and methods
     required by ImagePart."""
 
-    def __init__(self, blob, filename, image_header):
+    def __init__(self, blob: bytes, filename: str, image_header: BaseImageHeader):
         super(Image, self).__init__()
         self._blob = blob
         self._filename = filename
         self._image_header = image_header
 
     @classmethod
-    def from_blob(cls, blob):
+    def from_blob(cls, blob: bytes) -> Self:
         """Return a new |Image| subclass instance parsed from the image binary contained
         in `blob`."""
         stream = io.BytesIO(blob)
@@ -73,17 +78,17 @@ class Image(object):
         return self._filename
 
     @property
-    def px_width(self):
+    def px_width(self) -> int:
         """The horizontal pixel dimension of the image."""
         return self._image_header.px_width
 
     @property
-    def px_height(self):
+    def px_height(self) -> int:
         """The vertical pixel dimension of the image."""
         return self._image_header.px_height
 
     @property
-    def horz_dpi(self):
+    def horz_dpi(self) -> int:
         """Integer dots per inch for the width of this image.
 
         Defaults to 72 when not present in the file, as is often the case.
@@ -91,7 +96,7 @@ class Image(object):
         return self._image_header.horz_dpi
 
     @property
-    def vert_dpi(self):
+    def vert_dpi(self) -> int:
         """Integer dots per inch for the height of this image.
 
         Defaults to 72 when not present in the file, as is often the case.
@@ -99,34 +104,40 @@ class Image(object):
         return self._image_header.vert_dpi
 
     @property
-    def width(self):
+    def width(self) -> Inches:
         """A |Length| value representing the native width of the image, calculated from
         the values of `px_width` and `horz_dpi`."""
         return Inches(self.px_width / self.horz_dpi)
 
     @property
-    def height(self):
+    def height(self) -> Inches:
         """A |Length| value representing the native height of the image, calculated from
         the values of `px_height` and `vert_dpi`."""
         return Inches(self.px_height / self.vert_dpi)
 
-    def scaled_dimensions(self, width=None, height=None):
-        """Return a (cx, cy) 2-tuple representing the native dimensions of this image
-        scaled by applying the following rules to `width` and `height`.
+    def scaled_dimensions(
+        self, width: int | None = None, height: int | None = None
+    ) -> Tuple[Length, Length]:
+        """(cx, cy) pair representing scaled dimensions of this image.
 
-        If both `width` and `height` are specified, the return value is (`width`,
-        `height`); no scaling is performed. If only one is specified, it is used to
-        compute a scaling factor that is then applied to the unspecified dimension,
-        preserving the aspect ratio of the image. If both `width` and `height` are
-        |None|, the native dimensions are returned. The native dimensions are calculated
-        using the dots-per-inch (dpi) value embedded in the image, defaulting to 72 dpi
-        if no value is specified, as is often the case. The returned values are both
-        |Length| objects.
+        The native dimensions of the image are scaled by applying the following rules to
+        the `width` and `height` arguments.
+
+        * If both `width` and `height` are specified, the return value is (`width`,
+        `height`); no scaling is performed.
+        * If only one is specified, it is used to compute a scaling factor that is then
+        applied to the unspecified dimension, preserving the aspect ratio of the image.
+        * If both `width` and `height` are |None|, the native dimensions are returned.
+
+        The native dimensions are calculated using the dots-per-inch (dpi) value
+        embedded in the image, defaulting to 72 dpi if no value is specified, as is
+        often the case. The returned values are both |Length| objects.
         """
         if width is None and height is None:
             return self.width, self.height
 
         if width is None:
+            assert height is not None
             scaling_factor = float(height) / float(self.height)
             width = round(self.width * scaling_factor)
 
@@ -142,7 +153,12 @@ class Image(object):
         return hashlib.sha1(self._blob).hexdigest()
 
     @classmethod
-    def _from_stream(cls, stream, blob, filename=None):
+    def _from_stream(
+        cls,
+        stream: IO[bytes],
+        blob: bytes,
+        filename: str | None = None,
+    ) -> Image:
         """Return an instance of the |Image| subclass corresponding to the format of the
         image in `stream`."""
         image_header = _ImageHeaderFactory(stream)
