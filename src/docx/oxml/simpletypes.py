@@ -14,6 +14,7 @@ from docx.shared import Emu, Pt, RGBColor, Twips
 
 if TYPE_CHECKING:
     from docx import types as t
+    from docx.shared import Length
 
 
 class BaseSimpleType(object):
@@ -245,13 +246,13 @@ class ST_HpsMeasure(XsdUnsignedLong):
     """Half-point measure, e.g. 24.0 represents 12.0 points."""
 
     @classmethod
-    def convert_from_xml(cls, str_value):
+    def convert_from_xml(cls, str_value: str) -> Length:
         if "m" in str_value or "n" in str_value or "p" in str_value:
             return ST_UniversalMeasure.convert_from_xml(str_value)
         return Pt(int(str_value) / 2.0)
 
     @classmethod
-    def convert_to_xml(cls, value):
+    def convert_to_xml(cls, value: int | Length) -> str:
         emu = Emu(value)
         half_points = int(emu.pt * 2)
         return str(half_points)
@@ -343,7 +344,7 @@ class ST_TwipsMeasure(XsdUnsignedLong):
 
 class ST_UniversalMeasure(BaseSimpleType):
     @classmethod
-    def convert_from_xml(cls, str_value):
+    def convert_from_xml(cls, str_value: str) -> Emu:
         float_part, units_part = str_value[:-2], str_value[-2:]
         quantity = float(float_part)
         multiplier = {
@@ -354,8 +355,7 @@ class ST_UniversalMeasure(BaseSimpleType):
             "pc": 152400,
             "pi": 152400,
         }[units_part]
-        emu_value = Emu(int(round(quantity * multiplier)))
-        return emu_value
+        return Emu(int(round(quantity * multiplier)))
 
 
 class ST_VerticalAlignRun(XsdStringEnumeration):

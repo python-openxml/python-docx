@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 
 from docx.enum.dml import MSO_THEME_COLOR
-from docx.enum.text import WD_COLOR, WD_UNDERLINE
-from docx.oxml.ns import nsdecls, qn
+from docx.enum.text import WD_COLOR_INDEX, WD_UNDERLINE
+from docx.oxml.ns import nsdecls
 from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
     ST_HexColor,
@@ -23,6 +23,7 @@ from docx.oxml.xmlchemy import (
 
 if TYPE_CHECKING:
     from docx.oxml.shared import CT_OnOff, CT_String
+    from docx.shared import Length
 
 
 class CT_Color(BaseOxmlElement):
@@ -33,32 +34,50 @@ class CT_Color(BaseOxmlElement):
 
 
 class CT_Fonts(BaseOxmlElement):
-    """``<w:rFonts>`` element, specifying typeface name for the various language
-    types."""
+    """`<w:rFonts>` element.
 
-    ascii = OptionalAttribute("w:ascii", ST_String)
-    hAnsi = OptionalAttribute("w:hAnsi", ST_String)
+    Specifies typeface name for the various language types.
+    """
+
+    ascii: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:ascii", ST_String
+    )
+    hAnsi: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:hAnsi", ST_String
+    )
 
 
 class CT_Highlight(BaseOxmlElement):
     """`w:highlight` element, specifying font highlighting/background color."""
 
-    val = RequiredAttribute("w:val", WD_COLOR)
+    val: WD_COLOR_INDEX = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:val", WD_COLOR_INDEX
+    )
 
 
 class CT_HpsMeasure(BaseOxmlElement):
-    """Used for ``<w:sz>`` element and others, specifying font size in half-points."""
+    """Used for `<w:sz>` element and others, specifying font size in half-points."""
 
-    val = RequiredAttribute("w:val", ST_HpsMeasure)
+    val: Length = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:val", ST_HpsMeasure
+    )
 
 
 class CT_RPr(BaseOxmlElement):
-    """``<w:rPr>`` element, containing the properties for a run."""
+    """`<w:rPr>` element, containing the properties for a run."""
 
-    _add_u: Callable[[], CT_Underline]
+    get_or_add_highlight: Callable[[], CT_Highlight]
+    get_or_add_rFonts: Callable[[], CT_Fonts]
+    get_or_add_sz: Callable[[], CT_HpsMeasure]
+    get_or_add_vertAlign: Callable[[], CT_VerticalAlignRun]
     _add_rStyle: Callable[..., CT_String]
-    _remove_u: Callable[[], None]
+    _add_u: Callable[[], CT_Underline]
+    _remove_highlight: Callable[[], None]
+    _remove_rFonts: Callable[[], None]
     _remove_rStyle: Callable[[], None]
+    _remove_sz: Callable[[], None]
+    _remove_u: Callable[[], None]
+    _remove_vertAlign: Callable[[], None]
 
     _tag_seq = (
         "w:rStyle",
@@ -104,7 +123,9 @@ class CT_RPr(BaseOxmlElement):
     rStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:rStyle", successors=_tag_seq[1:]
     )
-    rFonts = ZeroOrOne("w:rFonts", successors=_tag_seq[2:])
+    rFonts: CT_Fonts | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:rFonts", successors=_tag_seq[2:]
+    )
     b: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:b", successors=_tag_seq[3:]
     )
@@ -124,12 +145,22 @@ class CT_RPr(BaseOxmlElement):
     vanish = ZeroOrOne("w:vanish", successors=_tag_seq[17:])
     webHidden = ZeroOrOne("w:webHidden", successors=_tag_seq[18:])
     color = ZeroOrOne("w:color", successors=_tag_seq[19:])
-    sz = ZeroOrOne("w:sz", successors=_tag_seq[24:])
-    highlight = ZeroOrOne("w:highlight", successors=_tag_seq[26:])
+    sz: CT_HpsMeasure | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:sz", successors=_tag_seq[24:]
+    )
+    highlight: CT_Highlight | None = (
+        ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:highlight", successors=_tag_seq[26:]
+        )
+    )
     u: CT_Underline | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:u", successors=_tag_seq[27:]
     )
-    vertAlign = ZeroOrOne("w:vertAlign", successors=_tag_seq[32:])
+    vertAlign: CT_VerticalAlignRun | None = (
+        ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:vertAlign", successors=_tag_seq[32:]
+        )
+    )
     rtl = ZeroOrOne("w:rtl", successors=_tag_seq[33:])
     cs = ZeroOrOne("w:cs", successors=_tag_seq[34:])
     specVanish = ZeroOrOne("w:specVanish", successors=_tag_seq[38:])
@@ -141,16 +172,18 @@ class CT_RPr(BaseOxmlElement):
         return parse_xml('<w:color %s w:val="000000"/>' % nsdecls("w"))
 
     @property
-    def highlight_val(self):
-        """Value of `w:highlight/@val` attribute, specifying a font's highlight color,
-        or `None` if the text is not highlighted."""
+    def highlight_val(self) -> WD_COLOR_INDEX | None:
+        """Value of `./w:highlight/@val`.
+
+        Specifies font's highlight color, or `None` if the text is not highlighted.
+        """
         highlight = self.highlight
         if highlight is None:
             return None
         return highlight.val
 
     @highlight_val.setter
-    def highlight_val(self, value):
+    def highlight_val(self, value: WD_COLOR_INDEX | None) -> None:
         if value is None:
             self._remove_highlight()
             return
@@ -158,7 +191,7 @@ class CT_RPr(BaseOxmlElement):
         highlight.val = value
 
     @property
-    def rFonts_ascii(self):
+    def rFonts_ascii(self) -> str | None:
         """The value of `w:rFonts/@w:ascii` or |None| if not present.
 
         Represents the assigned typeface name. The rFonts element also specifies other
@@ -171,7 +204,7 @@ class CT_RPr(BaseOxmlElement):
         return rFonts.ascii
 
     @rFonts_ascii.setter
-    def rFonts_ascii(self, value):
+    def rFonts_ascii(self, value: str | None) -> None:
         if value is None:
             self._remove_rFonts()
             return
@@ -179,7 +212,7 @@ class CT_RPr(BaseOxmlElement):
         rFonts.ascii = value
 
     @property
-    def rFonts_hAnsi(self):
+    def rFonts_hAnsi(self) -> str | None:
         """The value of `w:rFonts/@w:hAnsi` or |None| if not present."""
         rFonts = self.rFonts
         if rFonts is None:
@@ -187,7 +220,7 @@ class CT_RPr(BaseOxmlElement):
         return rFonts.hAnsi
 
     @rFonts_hAnsi.setter
-    def rFonts_hAnsi(self, value):
+    def rFonts_hAnsi(self, value: str | None):
         if value is None and self.rFonts is None:
             return
         rFonts = self.get_or_add_rFonts()
@@ -215,8 +248,8 @@ class CT_RPr(BaseOxmlElement):
             self.rStyle.val = style
 
     @property
-    def subscript(self):
-        """|True| if `w:vertAlign/@w:val` is 'subscript'.
+    def subscript(self) -> bool | None:
+        """|True| if `./w:vertAlign/@w:val` is "subscript".
 
         |False| if `w:vertAlign/@w:val` contains any other value. |None| if
         `w:vertAlign` is not present.
@@ -229,18 +262,20 @@ class CT_RPr(BaseOxmlElement):
         return False
 
     @subscript.setter
-    def subscript(self, value):
+    def subscript(self, value: bool | None) -> None:
         if value is None:
             self._remove_vertAlign()
         elif bool(value) is True:
             self.get_or_add_vertAlign().val = ST_VerticalAlignRun.SUBSCRIPT
-        elif self.vertAlign is None:
-            return
-        elif self.vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT:
+        # -- assert bool(value) is False --
+        elif (
+            self.vertAlign is not None
+            and self.vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT
+        ):
             self._remove_vertAlign()
 
     @property
-    def superscript(self):
+    def superscript(self) -> bool | None:
         """|True| if `w:vertAlign/@w:val` is 'superscript'.
 
         |False| if `w:vertAlign/@w:val` contains any other value. |None| if
@@ -254,18 +289,20 @@ class CT_RPr(BaseOxmlElement):
         return False
 
     @superscript.setter
-    def superscript(self, value):
+    def superscript(self, value: bool | None):
         if value is None:
             self._remove_vertAlign()
         elif bool(value) is True:
             self.get_or_add_vertAlign().val = ST_VerticalAlignRun.SUPERSCRIPT
-        elif self.vertAlign is None:
-            return
-        elif self.vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT:
+        # -- assert bool(value) is False --
+        elif (
+            self.vertAlign is not None
+            and self.vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT
+        ):
             self._remove_vertAlign()
 
     @property
-    def sz_val(self):
+    def sz_val(self) -> Length | None:
         """The value of `w:sz/@w:val` or |None| if not present."""
         sz = self.sz
         if sz is None:
@@ -273,7 +310,7 @@ class CT_RPr(BaseOxmlElement):
         return sz.val
 
     @sz_val.setter
-    def sz_val(self, value):
+    def sz_val(self, value: Length | None):
         if value is None:
             self._remove_sz()
             return
@@ -281,7 +318,7 @@ class CT_RPr(BaseOxmlElement):
         sz.val = value
 
     @property
-    def u_val(self) -> bool | WD_UNDERLINE | None:
+    def u_val(self) -> WD_UNDERLINE | None:
         """Value of `w:u/@val`, or None if not present.
 
         Values `WD_UNDERLINE.SINGLE` and `WD_UNDERLINE.NONE` are mapped to `True` and
@@ -293,7 +330,7 @@ class CT_RPr(BaseOxmlElement):
         return u.val
 
     @u_val.setter
-    def u_val(self, value: bool | WD_UNDERLINE | None):
+    def u_val(self, value: WD_UNDERLINE | None):
         self._remove_u()
         if value is not None:
             self._add_u().val = value
@@ -314,38 +351,18 @@ class CT_RPr(BaseOxmlElement):
 
 
 class CT_Underline(BaseOxmlElement):
-    """``<w:u>`` element, specifying the underlining style for a run."""
+    """`<w:u>` element, specifying the underlining style for a run."""
 
-    @property
-    def val(self) -> bool | WD_UNDERLINE | None:
-        """The underline type corresponding to the ``w:val`` attribute value."""
-        val = self.get(qn("w:val"))
-        underline = WD_UNDERLINE.from_xml(val)
-        return (
-            None
-            if underline == WD_UNDERLINE.INHERITED
-            else True
-            if underline == WD_UNDERLINE.SINGLE
-            else False
-            if underline == WD_UNDERLINE.NONE
-            else underline
+    val: WD_UNDERLINE | None = (
+        OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:val", WD_UNDERLINE
         )
-
-    @val.setter
-    def val(self, value: bool | WD_UNDERLINE | None):
-        # works fine without these two mappings, but only because True == 1
-        # and False == 0, which happen to match the mapping for WD_UNDERLINE
-        # .SINGLE and .NONE respectively.
-        if value is True:
-            value = WD_UNDERLINE.SINGLE
-        elif value is False:
-            value = WD_UNDERLINE.NONE
-
-        val = WD_UNDERLINE.to_xml(value)
-        self.set(qn("w:val"), val)
+    )
 
 
 class CT_VerticalAlignRun(BaseOxmlElement):
-    """``<w:vertAlign>`` element, specifying subscript or superscript."""
+    """`<w:vertAlign>` element, specifying subscript or superscript."""
 
-    val = RequiredAttribute("w:val", ST_VerticalAlignRun)
+    val: str = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:val", ST_VerticalAlignRun
+    )

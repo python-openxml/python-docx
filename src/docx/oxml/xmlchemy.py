@@ -14,6 +14,8 @@ from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
     from docx import types as t
+    from docx.enum.base import BaseXmlEnum
+    from docx.oxml.simpletypes import BaseSimpleType
 
 
 def serialize_for_reading(element):
@@ -116,7 +118,9 @@ class BaseAttribute(object):
     Provides common methods.
     """
 
-    def __init__(self, attr_name: str, simple_type: Type[t.AbstractSimpleType]):
+    def __init__(
+        self, attr_name: str, simple_type: Type[BaseXmlEnum] | Type[BaseSimpleType]
+    ):
         super(BaseAttribute, self).__init__()
         self._attr_name = attr_name
         self._simple_type = simple_type
@@ -166,8 +170,8 @@ class OptionalAttribute(BaseAttribute):
     def __init__(
         self,
         attr_name: str,
-        simple_type: Type[t.AbstractSimpleType],
-        default: t.AbstractSimpleTypeMember | None = None,
+        simple_type: Type[BaseXmlEnum] | Type[BaseSimpleType],
+        default: BaseXmlEnum | BaseSimpleType | None = None,
     ):
         super(OptionalAttribute, self).__init__(attr_name, simple_type)
         self._default = default
