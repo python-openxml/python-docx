@@ -35,10 +35,10 @@ in the appropriate style.
        part, style_id
 
 
-|_CharacterStyle| objects
+|CharacterStyle| objects
 -------------------------
 
-.. autoclass:: _CharacterStyle()
+.. autoclass:: CharacterStyle()
    :show-inheritance:
    :members:
    :inherited-members:
@@ -46,10 +46,10 @@ in the appropriate style.
        element, part, style_id, type
 
 
-|_ParagraphStyle| objects
+|ParagraphStyle| objects
 -------------------------
 
-.. autoclass:: _ParagraphStyle()
+.. autoclass:: ParagraphStyle()
    :show-inheritance:
    :members:
    :inherited-members:

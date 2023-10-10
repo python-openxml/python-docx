@@ -79,7 +79,9 @@ rst_epilog = """
 
 .. |_Cell| replace:: :class:`._Cell`
 
-.. |_CharacterStyle| replace:: :class:`._CharacterStyle`
+.. |_CharacterStyle| replace:: :class:`.CharacterStyle`
+
+.. |CharacterStyle| replace:: :class:`.CharacterStyle`
 
 .. |Cm| replace:: :class:`.Cm`
 
@@ -147,7 +149,9 @@ rst_epilog = """
 
 .. |ParagraphFormat| replace:: :class:`.ParagraphFormat`
 
-.. |_ParagraphStyle| replace:: :class:`._ParagraphStyle`
+.. |_ParagraphStyle| replace:: :class:`.ParagraphStyle`
+
+.. |ParagraphStyle| replace:: :class:`.ParagraphStyle`
 
 .. |Part| replace:: :class:`.Part`
 
