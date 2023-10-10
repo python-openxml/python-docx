@@ -1,5 +1,9 @@
 """The |Table| object and related proxy classes."""
 
+from __future__ import annotations
+
+from typing import List, Tuple, overload
+
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.simpletypes import ST_Merge
@@ -85,7 +89,7 @@ class Table(Parented):
         return self._cells[start:end]
 
     @lazyproperty
-    def rows(self):
+    def rows(self) -> _Rows:
         """|_Rows| instance containing the sequence of rows in this table."""
         return _Rows(self._tbl, self)
 
@@ -221,7 +225,7 @@ class _Cell(BlockItemContainer):
         return super(_Cell, self).tables
 
     @property
-    def text(self):
+    def text(self) -> str:
         """The entire contents of this cell as a string of text.
 
         Assigning a string to this property replaces all existing content with a single
@@ -349,7 +353,7 @@ class _Row(Parented):
         self._tr = self._element = tr
 
     @property
-    def cells(self):
+    def cells(self) -> Tuple[_Cell]:
         """Sequence of |_Cell| instances corresponding to cells in this row."""
         return tuple(self.table.row_cells(self._index))
 
@@ -394,8 +398,16 @@ class _Rows(Parented):
         super(_Rows, self).__init__(parent)
         self._tbl = tbl
 
-    def __getitem__(self, idx):
-        """Provide indexed access, (e.g. 'rows[0]')"""
+    @overload
+    def __getitem__(self, idx: int) -> _Row:
+        ...
+
+    @overload
+    def __getitem__(self, idx: slice) -> List[_Row]:
+        ...
+
+    def __getitem__(self, idx: int | slice) -> _Row | List[_Row]:
+        """Provide indexed access, (e.g. `rows[0]` or `rows[1:3]`)"""
         return list(self)[idx]
 
     def __iter__(self):

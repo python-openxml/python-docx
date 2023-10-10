@@ -8,6 +8,7 @@ from typing import cast
 
 import pytest
 
+from docx import Document
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION
 from docx.oxml.document import CT_Document
 from docx.oxml.section import CT_SectPr
@@ -15,8 +16,11 @@ from docx.parts.document import DocumentPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.section import Section, Sections, _BaseHeaderFooter, _Footer, _Header
 from docx.shared import Inches, Length
+from docx.table import Table
+from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element, xml
+from .unitutil.file import test_file
 from .unitutil.mock import (
     FixtureRequest,
     Mock,
@@ -240,6 +244,50 @@ class DescribeSection:
             sectPr, document_part_, WD_HEADER_FOOTER.PRIMARY
         )
         assert header is header_
+
+    def it_can_iterate_its_inner_content(self):
+        document = Document(test_file("sct-inner-content.docx"))
+
+        assert len(document.sections) == 3
+
+        inner_content = list(document.sections[0].iter_inner_content())
+
+        assert len(inner_content) == 3
+        p = inner_content[0]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P1"
+        t = inner_content[1]
+        assert isinstance(t, Table)
+        assert t.rows[0].cells[0].text == "T2"
+        p = inner_content[2]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P3"
+
+        inner_content = list(document.sections[1].iter_inner_content())
+
+        assert len(inner_content) == 3
+        t = inner_content[0]
+        assert isinstance(t, Table)
+        assert t.rows[0].cells[0].text == "T4"
+        p = inner_content[1]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P5"
+        p = inner_content[2]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P6"
+
+        inner_content = list(document.sections[2].iter_inner_content())
+
+        assert len(inner_content) == 3
+        p = inner_content[0]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P7"
+        p = inner_content[1]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P8"
+        p = inner_content[2]
+        assert isinstance(p, Paragraph)
+        assert p.text == "P9"
 
     @pytest.mark.parametrize(
         ("sectPr_cxml", "expected_value"),

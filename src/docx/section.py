@@ -6,14 +6,18 @@ from typing import TYPE_CHECKING, Iterator, List, Sequence, overload
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_HEADER_FOOTER
+from docx.oxml.text.paragraph import CT_P
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.shared import lazyproperty
+from docx.table import Table
+from docx.text.paragraph import Paragraph
 
 if TYPE_CHECKING:
     from docx.enum.section import WD_ORIENTATION, WD_SECTION_START
     from docx.oxml.document import CT_Document
     from docx.oxml.section import CT_SectPr
     from docx.parts.document import DocumentPart
+    from docx.parts.story import StoryPart
     from docx.shared import Length
 
 
@@ -150,6 +154,18 @@ class Section:
     def header_distance(self, value: int | Length | None):
         self._sectPr.header = value
 
+    def iter_inner_content(self) -> Iterator[Paragraph | Table]:
+        """Generate each Paragraph or Table object in this `section`.
+
+        Items appear in document order.
+        """
+        for element in self._sectPr.iter_inner_content():
+            yield (
+                Paragraph(element, self)  # pyright: ignore[reportGeneralTypeIssues]
+                if isinstance(element, CT_P)
+                else Table(element, self)
+            )
+
     @property
     def left_margin(self) -> Length | None:
         """|Length| object representing the left margin for all pages in this section in
@@ -202,6 +218,10 @@ class Section:
     @page_width.setter
     def page_width(self, value: Length | None):
         self._sectPr.page_width = value
+
+    @property
+    def part(self) -> StoryPart:
+        return self._document_part
 
     @property
     def right_margin(self) -> Length | None:

@@ -16,6 +16,6 @@
     "reportUnnecessaryTypeIgnoreComment": true,
     "stubPath": "./typings",
     "typeCheckingMode": "strict",
-    "useLibraryCodeForTypes": false,
+    "useLibraryCodeForTypes": true,
     "verboseOutput": true
 }

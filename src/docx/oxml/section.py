@@ -3,11 +3,17 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Callable
+from typing import Callable, Iterator, Sequence, Union, cast
+
+from lxml import etree
+from typing_extensions import TypeAlias
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
+from docx.oxml.ns import nsmap
 from docx.oxml.shared import CT_OnOff
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
+from docx.oxml.table import CT_Tbl
+from docx.oxml.text.paragraph import CT_P
 from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OptionalAttribute,
@@ -15,7 +21,9 @@ from docx.oxml.xmlchemy import (
     ZeroOrMore,
     ZeroOrOne,
 )
-from docx.shared import Length
+from docx.shared import Length, lazyproperty
+
+BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
 
 
 class CT_HdrFtr(BaseOxmlElement):
@@ -251,6 +259,14 @@ class CT_SectPr(BaseOxmlElement):
             value if value is None or isinstance(value, Length) else Length(value)
         )
 
+    def iter_inner_content(self) -> Iterator[CT_P | CT_Tbl]:
+        """Generate all `w:p` and `w:tbl` elements in this section.
+
+        Elements appear in document order. Elements shaded by nesting in a `w:ins` or
+        other "wrapper" element will not be included.
+        """
+        return _SectBlockElementIterator.iter_sect_block_elements(self)
+
     @property
     def left_margin(self) -> Length | None:
         """The value of the ``w:left`` attribute in the ``<w:pgMar>`` child element, as
@@ -414,3 +430,116 @@ class CT_SectType(BaseOxmlElement):
     val: WD_SECTION_START | None = (  # pyright: ignore[reportGeneralTypeIssues]
         OptionalAttribute("w:val", WD_SECTION_START)
     )
+
+
+# == HELPERS =========================================================================
+
+
+class _SectBlockElementIterator:
+    """Generates the block-item XML elements in a section.
+
+    A block-item element is a `CT_P` (paragraph) or a `CT_Tbl` (table).
+    """
+
+    _compiled_blocks_xpath: etree.XPath | None = None
+    _compiled_count_xpath: etree.XPath | None = None
+
+    def __init__(self, sectPr: CT_SectPr):
+        self._sectPr = sectPr
+
+    @classmethod
+    def iter_sect_block_elements(cls, sectPr: CT_SectPr) -> Iterator[BlockElement]:
+        """Generate each CT_P or CT_Tbl element within extents governed by `sectPr`."""
+        return cls(sectPr)._iter_sect_block_elements()
+
+    def _iter_sect_block_elements(self) -> Iterator[BlockElement]:
+        """Generate each CT_P or CT_Tbl element in section."""
+        # -- General strategy is to get all block (<w;p> and <w:tbl>) elements from
+        # -- start of doc to and including this section, then compute the count of those
+        # -- elements that came from prior sections and skip that many to leave only the
+        # -- ones in this section. It's possible to express this "between here and
+        # -- there" (end of prior section and end of this one) concept in XPath, but it
+        # -- would be harder to follow because there are special cases (e.g. no prior
+        # -- section) and the boundary expressions are fairly hairy. I also believe it
+        # -- would be computationally more expensive than doing it this straighforward
+        # -- albeit (theoretically) slightly wasteful way.
+
+        sectPr, sectPrs = self._sectPr, self._sectPrs
+        sectPr_idx = sectPrs.index(sectPr)
+
+        # -- count block items belonging to prior sections --
+        n_blks_to_skip = (
+            0
+            if sectPr_idx == 0
+            else self._count_of_blocks_in_and_above_section(sectPrs[sectPr_idx - 1])
+        )
+
+        # -- and skip those in set of all blks from doc start to end of this section --
+        for element in self._blocks_in_and_above_section(sectPr)[n_blks_to_skip:]:
+            yield element
+
+    def _blocks_in_and_above_section(self, sectPr: CT_SectPr) -> Sequence[BlockElement]:
+        """All ps and tbls in section defined by `sectPr` and all prior sections."""
+        if self._compiled_blocks_xpath is None:
+            self._compiled_blocks_xpath = etree.XPath(
+                self._blocks_in_and_above_section_xpath,
+                namespaces=nsmap,
+                regexp=False,
+            )
+        xpath = self._compiled_blocks_xpath
+        # -- XPath callable results are Any (basically), so need a cast. Also the
+        # -- callable wants an etree._Element, which CT_SectPr is, but we haven't
+        # -- figured out the typing through the metaclass yet.
+        return cast(
+            Sequence[BlockElement],
+            xpath(sectPr),  # pyright: ignore[reportGeneralTypeIssues]
+        )
+
+    @lazyproperty
+    def _blocks_in_and_above_section_xpath(self) -> str:
+        """XPath expr for ps and tbls in context of a sectPr and all prior sectPrs."""
+        # -- "p_sect" is a section with sectPr located at w:p/w:pPr/w:sectPr.
+        # -- "body_sect" is a section with sectPr located at w:body/w:sectPr. The last
+        # -- section in the document is a "body_sect". All others are of the "p_sect"
+        # -- variety. "term" means "terminal", like the last p or tbl in the section.
+        # -- "pred" means "predecessor", like a preceding p or tbl in the section.
+
+        # -- the terminal block in a p-based sect is the p the sectPr appears in --
+        p_sect_term_block = "./parent::w:pPr/parent::w:p"
+        # -- the terminus of a body-based sect is the sectPr itself (not a block) --
+        body_sect_term = "self::w:sectPr[parent::w:body]"
+        # -- all the ps and tbls preceding (but not including) the context node --
+        pred_ps_and_tbls = "preceding-sibling::*[self::w:p | self::w:tbl]"
+
+        # -- p_sect_term_block and body_sect_term(inus) are mutually exclusive. So the
+        # -- result is either the union of nodes found by the first two selectors or the
+        # -- nodes found by the last selector, never both.
+        return (
+            # -- include the p containing a sectPr --
+            f"{p_sect_term_block}"
+            # -- along with all the blocks that precede it --
+            f" | {p_sect_term_block}/{pred_ps_and_tbls}"
+            # -- or all the preceding blocks if sectPr is body-based (last sectPr) --
+            f" | {body_sect_term}/{pred_ps_and_tbls}"
+        )
+
+    def _count_of_blocks_in_and_above_section(self, sectPr: CT_SectPr) -> int:
+        """All ps and tbls in section defined by `sectPr` and all prior sections."""
+        if self._compiled_count_xpath is None:
+            self._compiled_count_xpath = etree.XPath(
+                f"count({self._blocks_in_and_above_section_xpath})",
+                namespaces=nsmap,
+                regexp=False,
+            )
+        xpath = self._compiled_count_xpath
+        # -- numeric XPath results are always float, so need an int() conversion --
+        return int(
+            cast(float, xpath(sectPr))  # pyright: ignore[reportGeneralTypeIssues]
+        )
+
+    @lazyproperty
+    def _sectPrs(self) -> Sequence[CT_SectPr]:
+        """All w:sectPr elements in document, in document-order."""
+        return self._sectPr.xpath(
+            "/w:document/w:body/w:p/w:pPr/w:sectPr | /w:document/w:body/w:sectPr",
+        )

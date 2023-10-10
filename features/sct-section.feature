@@ -57,6 +57,11 @@ Feature: Access and change section properties
      Then section.header is a _Header object
 
 
+  Scenario: Section.iter_inner_content()
+    Given a Section object of a multi-section document as section
+     Then section.iter_inner_content() produces the paragraphs and tables in section
+
+
   Scenario Outline: Get section start type
     Given a section having start type <start-type>
      Then the reported section start type is <start-type>

@@ -1,5 +1,10 @@
 """Custom element classes that correspond to the document part, e.g. <w:document>."""
 
+from __future__ import annotations
+
+from typing import List
+
+from docx.oxml.section import CT_SectPr
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 
@@ -9,10 +14,18 @@ class CT_Document(BaseOxmlElement):
     body = ZeroOrOne("w:body")
 
     @property
-    def sectPr_lst(self):
-        """Return a list containing a reference to each ``<w:sectPr>`` element in the
-        document, in the order encountered."""
-        return self.xpath(".//w:sectPr")
+    def sectPr_lst(self) -> List[CT_SectPr]:
+        """All `w:sectPr` elements directly accessible from document element.
+
+        Note this does not include a `sectPr` child in a paragraphs wrapped in
+        revision marks or other intervening layer, perhaps `w:sdt` or customXml
+        elements.
+
+        `w:sectPr` elements appear in document order. The last one is always
+        `w:body/w:sectPr`, all preceding are `w:p/w:pPr/w:sectPr`.
+        """
+        xpath = "./w:body/w:p/w:pPr/w:sectPr | ./w:body/w:sectPr"
+        return self.xpath(xpath)
 
 
 class CT_Body(BaseOxmlElement):
