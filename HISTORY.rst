@@ -20,6 +20,7 @@ Release History
 * Add RenderedPageBreak.preceding_paragraph_fragment
 * Add Run.contains_page_break
 * Add Run.iter_inner_content()
+* Add Section.iter_inner_content()
 
 
 0.8.11 (2021-05-15)

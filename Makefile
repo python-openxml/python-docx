@@ -57,7 +57,7 @@ test:
 test-upload: sdist wheel
 	$(TWINE) upload --repository testpypi dist/*
 
-upload: sdist wheel
+upload: clean sdist wheel
 	$(TWINE) upload dist/*
 
 wheel:
