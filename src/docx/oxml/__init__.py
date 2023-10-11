@@ -6,7 +6,7 @@ This including registering custom element classes corresponding to Open XML elem
 from __future__ import annotations
 
 from docx.oxml.drawing import CT_Drawing
-from docx.oxml.parser import register_element_cls
+from docx.oxml.parser import OxmlElement, parse_xml, register_element_cls
 from docx.oxml.shape import (
     CT_Anchor,
     CT_Blip,
@@ -33,6 +33,11 @@ from docx.oxml.text.run import (
     CT_PTab,
     CT_Text,
 )
+
+# -- `OxmlElement` and `parse_xml()` are not used in this module but several downstream
+# -- "extension" packages expect to find them here and there's no compelling reason
+# -- not to republish them here so those keep working.
+__all__ = ["OxmlElement", "parse_xml"]
 
 # ---------------------------------------------------------------------------
 # DrawingML-related elements
