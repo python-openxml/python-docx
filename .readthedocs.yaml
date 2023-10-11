@@ -1,0 +1,19 @@
+version: 2
+
+# -- set the OS, Python version and other tools you might need --
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.9"
+
+# -- build documentation in the "docs/" directory with Sphinx --
+sphinx:
+  configuration: docs/conf.py
+  # -- fail on all warnings to avoid broken references --
+  # fail_on_warning: true
+
+# -- package versions required to build your documentation --
+# -- see https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html --
+python:
+   install:
+   - requirements: requirements-docs.txt
