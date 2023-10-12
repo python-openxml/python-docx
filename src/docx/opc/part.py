@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Dict, Type
 
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
@@ -78,7 +78,7 @@ class Part:
             del self.rels[rId]
 
     @classmethod
-    def load(cls, partname, content_type, blob, package):
+    def load(cls, partname: str, content_type: str, blob: bytes, package: Package):
         return cls(partname, content_type, blob, package)
 
     def load_rel(self, reltype, target, rId, is_external=False):
@@ -167,12 +167,19 @@ class PartFactory:
     the part, which is by default ``opc.package.Part``.
     """
 
-    part_class_selector = None
-    part_type_for = {}
+    part_class_selector: Callable[[str, str], Type[Part] | None] | None
+    part_type_for: Dict[str, Type[Part]] = {}
     default_part_type = Part
 
-    def __new__(cls, partname, content_type, reltype, blob, package):
-        PartClass = None
+    def __new__(
+        cls,
+        partname: str,
+        content_type: str,
+        reltype: str,
+        blob: bytes,
+        package: Package,
+    ):
+        PartClass: Type[Part] | None = None
         if cls.part_class_selector is not None:
             part_class_selector = cls_method_fn(cls, "part_class_selector")
             PartClass = part_class_selector(content_type, reltype)
@@ -181,7 +188,7 @@ class PartFactory:
         return PartClass.load(partname, content_type, blob, package)
 
     @classmethod
-    def _part_cls_for(cls, content_type):
+    def _part_cls_for(cls, content_type: str):
         """Return the custom part class registered for `content_type`, or the default
         part class if no custom class is registered for `content_type`."""
         if content_type in cls.part_type_for:
