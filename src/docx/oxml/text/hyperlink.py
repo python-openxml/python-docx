@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from docx.oxml.simpletypes import ST_OnOff, XsdString
+from docx.oxml.simpletypes import ST_OnOff, ST_String, XsdString
 from docx.oxml.text.run import CT_R
 from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OptionalAttribute,
-    RequiredAttribute,
     ZeroOrMore,
 )
 
@@ -22,7 +21,12 @@ class CT_Hyperlink(BaseOxmlElement):
 
     r_lst: List[CT_R]
 
-    rId = RequiredAttribute("r:id", XsdString)
+    rId: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "r:id", XsdString
+    )
+    anchor: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:anchor", ST_String
+    )
     history = OptionalAttribute("w:history", ST_OnOff, default=True)
 
     r = ZeroOrMore("w:r")

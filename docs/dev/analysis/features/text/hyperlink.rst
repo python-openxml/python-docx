@@ -2,31 +2,45 @@
 Hyperlink
 =========
 
-Word allows hyperlinks to be placed in a document wherever paragraphs can appear.
+Word allows a hyperlink to be placed in a document wherever a paragraph can appear. The
+actual hyperlink element is a peer of |Run|.
 
-The target (URL) of a hyperlink may be external, such as a web site, or internal, to
-another location in the document.
+The link may be to an external resource such as a web site, or internal, to another
+location in the document. The link may also be a `mailto:` URI or a reference to a file
+on an accessible local or network filesystem.
 
 The visible text of a hyperlink is held in one or more runs. Technically a hyperlink can
 have zero runs, but this occurs only in contrived cases (otherwise there would be
 nothing to click on). As usual, each run can have its own distinct text formatting
 (font), so for example one word in the hyperlink can be bold, etc. By default, Word
-applies the built-in `Hyperlink` character style to a newly inserted hyperlink.
+applies the built-in `Hyperlink` character style to a newly inserted hyperlink. Like
+other text, the hyperlink text may often be broken into multiple runs as a result of
+edits in different "revision-save" editing sessions (between "Save" commands).
 
 Note that rendered page-breaks can occur in the middle of a hyperlink.
 
 A |Hyperlink| is a child of |Paragraph|, a peer of |Run|.
 
 
+TODO: What about URL-encoding/decoding (like %20) behaviors, if any?
+
+
 Candidate protocol
 ------------------
 
 An external hyperlink has an address and an optional anchor. An internal hyperlink has
-only an anchor. An anchor is also known as a *URI fragment* and follows a hash mark
-("#").
+only an anchor. An anchor is more precisely known as a *URI fragment* in a web URL and
+follows a hash mark ("#"). The fragment-separator hash character is not stored in the
+XML.
 
-Note that the anchor and URL are stored in two distinct attributes, so you need to
-concatenate `.address` and `.anchor` if you want the whole thing.
+Note that the anchor and address are stored in two distinct attributes, so you need to
+concatenate `.address` and `.anchor` like `f"{address}#{anchor}"` if you want the whole
+thing.
+
+Also note that Word does not rigorously separate a fragment in a web URI so it may
+appear as part of the address or separately in the anchor attribute, depending on how
+the hyperlink was authored. Hyperlinks inserted using the dialog-box seem to separate it
+and addresses typed into the document directly don't, based on my limited experience.
 
 .. highlight:: python
 
@@ -49,6 +63,16 @@ concatenate `.address` and `.anchor` if you want the whole thing.
     >>> hyperlink.address
     'https://google.com/'
 
+**Access hyperlink fragment**::
+
+    >>> hyperlink.fragment
+    'introduction'
+
+**Access hyperlink history (visited or not, True means not visited yet)**::
+
+    >>> hyperlink.history
+    True
+
 **Access hyperlinks runs**::
 
     >>> hyperlink.runs
@@ -57,6 +81,11 @@ concatenate `.address` and `.anchor` if you want the whole thing.
       <docx.text.run.Run at 0x7f...>
       <docx.text.run.Run at 0x7f...>
     ]
+
+**Access hyperlink URL**::
+
+    >>> hyperlink.url
+    'https://us.com#introduction'
 
 **Determine whether a hyperlink contains a rendered page-break**::
 
@@ -68,29 +97,31 @@ concatenate `.address` and `.anchor` if you want the whole thing.
     >>> hyperlink.text
     'an excellent Wikipedia article on ferrets'
 
-**Add an external hyperlink**::
+**Add an external hyperlink** (not yet implemented)::
 
     >>> hyperlink = paragraph.add_hyperlink(
-          'About', address='http://us.com', anchor='about'
-        )
+    ...   'About', address='http://us.com', fragment='about'
+    ... )
     >>> hyperlink
     <docx.text.hyperlink.Hyperlink at 0x7f...>
     >>> hyperlink.text
     'About'
     >>> hyperlink.address
     'http://us.com'
-    >>> hyperlink.anchor
+    >>> hyperlink.fragment
     'about'
+    >>> hyperlink.url
+    'http://us.com#about'
 
 **Add an internal hyperlink (to a bookmark)**::
 
-    >>> hyperlink = paragraph.add_hyperlink('Section 1', anchor='Section_1')
+    >>> hyperlink = paragraph.add_hyperlink('Section 1', fragment='Section_1')
     >>> hyperlink.text
     'Section 1'
-    >>> hyperlink.anchor
+    >>> hyperlink.fragment
     'Section_1'
     >>> hyperlink.address
-    None
+    ''
 
 **Modify hyperlink properties**::
 
@@ -183,8 +214,8 @@ file, keyed by the w:hyperlink@r:id attribute::
       <Relationship Id="rId4" Mode="External" Type="http://..." Target="http://google.com/"/>
     </Relationships>
 
-A hyperlink can contain multiple runs of text (and a whole lot of other
-stuff, including nested hyperlinks, at least as far as the schema indicates)::
+A hyperlink can contain multiple runs of text (and a whole lot of other stuff, at least
+as far as the schema indicates)::
 
     <w:p>
       <w:hyperlink r:id="rId2">
@@ -256,97 +287,97 @@ Schema excerpt
 
 ::
 
-    <xsd:complexType name="CT_P">
-      <xsd:sequence>
-        <xsd:element name="pPr" type="CT_PPr" minOccurs="0"/>
-        <xsd:group   ref="EG_PContent"        minOccurs="0" maxOccurs="unbounded"/>
-      </xsd:sequence>
-      <xsd:attribute name="rsidRPr"      type="ST_LongHexNumber"/>
-      <xsd:attribute name="rsidR"        type="ST_LongHexNumber"/>
-      <xsd:attribute name="rsidDel"      type="ST_LongHexNumber"/>
-      <xsd:attribute name="rsidP"        type="ST_LongHexNumber"/>
-      <xsd:attribute name="rsidRDefault" type="ST_LongHexNumber"/>
-    </xsd:complexType>
+  <xsd:complexType name="CT_P">
+    <xsd:sequence>
+      <xsd:element name="pPr" type="CT_PPr" minOccurs="0"/>
+      <xsd:group   ref="EG_PContent"        minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="rsidRPr"      type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidR"        type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidDel"      type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidP"        type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidRDefault" type="ST_LongHexNumber"/>
+  </xsd:complexType>
 
-    <xsd:group name="EG_PContent">  <!-- denormalized -->
-      <xsd:choice>
-        <xsd:element name="r"         type="CT_R"/>
-        <xsd:element name="hyperlink" type="CT_Hyperlink"/>
-        <xsd:element name="fldSimple" type="CT_SimpleField"/>
-        <xsd:element name="sdt"       type="CT_SdtRun"/>
-        <xsd:element name="customXml" type="CT_CustomXmlRun"/>
-        <xsd:element name="smartTag"  type="CT_SmartTagRun"/>
-        <xsd:element name="dir"       type="CT_DirContentRun"/>
-        <xsd:element name="bdo"       type="CT_BdoContentRun"/>
-        <xsd:element name="subDoc"    type="CT_Rel"/>
-        <xsd:group ref="EG_RunLevelElts"/>
-      </xsd:choice>
-    </xsd:group>
+  <xsd:group name="EG_PContent">  <!-- denormalized -->
+    <xsd:choice>
+      <xsd:element name="r"         type="CT_R"/>
+      <xsd:element name="hyperlink" type="CT_Hyperlink"/>
+      <xsd:element name="fldSimple" type="CT_SimpleField"/>
+      <xsd:element name="sdt"       type="CT_SdtRun"/>
+      <xsd:element name="customXml" type="CT_CustomXmlRun"/>
+      <xsd:element name="smartTag"  type="CT_SmartTagRun"/>
+      <xsd:element name="dir"       type="CT_DirContentRun"/>
+      <xsd:element name="bdo"       type="CT_BdoContentRun"/>
+      <xsd:element name="subDoc"    type="CT_Rel"/>
+      <xsd:group ref="EG_RunLevelElts"/>
+    </xsd:choice>
+  </xsd:group>
 
-    <xsd:complexType name="CT_Hyperlink">
-      <xsd:group ref="EG_PContent" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:attribute name="tgtFrame"    type="s:ST_String"/>
-      <xsd:attribute name="tooltip"     type="s:ST_String"/>
-      <xsd:attribute name="docLocation" type="s:ST_String"/>
-      <xsd:attribute name="history"     type="s:ST_OnOff"/>
-      <xsd:attribute name="anchor"      type="s:ST_String"/>
-      <xsd:attribute  ref="r:id"/>
-    </xsd:complexType>
+  <xsd:complexType name="CT_Hyperlink">
+    <xsd:group ref="EG_PContent" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:attribute name="tgtFrame"    type="s:ST_String"/>
+    <xsd:attribute name="tooltip"     type="s:ST_String"/>
+    <xsd:attribute name="docLocation" type="s:ST_String"/>
+    <xsd:attribute name="history"     type="s:ST_OnOff"/>
+    <xsd:attribute name="anchor"      type="s:ST_String"/>
+    <xsd:attribute ref="r:id"/>
+  </xsd:complexType>
 
-    <xsd:group name="EG_RunLevelElts">
-      <xsd:choice>
-        <xsd:element name="proofErr"                    type="CT_ProofErr"/>
-        <xsd:element name="permStart"                   type="CT_PermStart"/>
-        <xsd:element name="permEnd"                     type="CT_Perm"/>
-        <xsd:element name="bookmarkStart"               type="CT_Bookmark"/>
-        <xsd:element name="bookmarkEnd"                 type="CT_MarkupRange"/>
-        <xsd:element name="moveFromRangeStart"          type="CT_MoveBookmark"/>
-        <xsd:element name="moveFromRangeEnd"            type="CT_MarkupRange"/>
-        <xsd:element name="moveToRangeStart"            type="CT_MoveBookmark"/>
-        <xsd:element name="moveToRangeEnd"              type="CT_MarkupRange"/>
-        <xsd:element name="commentRangeStart"           type="CT_MarkupRange"/>
-        <xsd:element name="commentRangeEnd"             type="CT_MarkupRange"/>
-        <xsd:element name="customXmlInsRangeStart"      type="CT_TrackChange"/>
-        <xsd:element name="customXmlInsRangeEnd"        type="CT_Markup"/>
-        <xsd:element name="customXmlDelRangeStart"      type="CT_TrackChange"/>
-        <xsd:element name="customXmlDelRangeEnd"        type="CT_Markup"/>
-        <xsd:element name="customXmlMoveFromRangeStart" type="CT_TrackChange"/>
-        <xsd:element name="customXmlMoveFromRangeEnd"   type="CT_Markup"/>
-        <xsd:element name="customXmlMoveToRangeStart"   type="CT_TrackChange"/>
-        <xsd:element name="customXmlMoveToRangeEnd"     type="CT_Markup"/>
-        <xsd:element name="ins"                         type="CT_RunTrackChange"/>
-        <xsd:element name="del"                         type="CT_RunTrackChange"/>
-        <xsd:element name="moveFrom"                    type="CT_RunTrackChange"/>
-        <xsd:element name="moveTo"                      type="CT_RunTrackChange"/>
-        <xsd:group ref="EG_MathContent" minOccurs="0" maxOccurs="unbounded"/>
-      </xsd:choice>
-    </xsd:group>
+  <xsd:group name="EG_RunLevelElts">
+    <xsd:choice>
+      <xsd:element name="proofErr"                    type="CT_ProofErr"/>
+      <xsd:element name="permStart"                   type="CT_PermStart"/>
+      <xsd:element name="permEnd"                     type="CT_Perm"/>
+      <xsd:element name="bookmarkStart"               type="CT_Bookmark"/>
+      <xsd:element name="bookmarkEnd"                 type="CT_MarkupRange"/>
+      <xsd:element name="moveFromRangeStart"          type="CT_MoveBookmark"/>
+      <xsd:element name="moveFromRangeEnd"            type="CT_MarkupRange"/>
+      <xsd:element name="moveToRangeStart"            type="CT_MoveBookmark"/>
+      <xsd:element name="moveToRangeEnd"              type="CT_MarkupRange"/>
+      <xsd:element name="commentRangeStart"           type="CT_MarkupRange"/>
+      <xsd:element name="commentRangeEnd"             type="CT_MarkupRange"/>
+      <xsd:element name="customXmlInsRangeStart"      type="CT_TrackChange"/>
+      <xsd:element name="customXmlInsRangeEnd"        type="CT_Markup"/>
+      <xsd:element name="customXmlDelRangeStart"      type="CT_TrackChange"/>
+      <xsd:element name="customXmlDelRangeEnd"        type="CT_Markup"/>
+      <xsd:element name="customXmlMoveFromRangeStart" type="CT_TrackChange"/>
+      <xsd:element name="customXmlMoveFromRangeEnd"   type="CT_Markup"/>
+      <xsd:element name="customXmlMoveToRangeStart"   type="CT_TrackChange"/>
+      <xsd:element name="customXmlMoveToRangeEnd"     type="CT_Markup"/>
+      <xsd:element name="ins"                         type="CT_RunTrackChange"/>
+      <xsd:element name="del"                         type="CT_RunTrackChange"/>
+      <xsd:element name="moveFrom"                    type="CT_RunTrackChange"/>
+      <xsd:element name="moveTo"                      type="CT_RunTrackChange"/>
+      <xsd:group ref="EG_MathContent" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:choice>
+  </xsd:group>
 
-    <xsd:complexType name="CT_R">
-      <xsd:sequence>
-        <xsd:group ref="EG_RPr"             minOccurs="0"/>
-        <xsd:group ref="EG_RunInnerContent" minOccurs="0" maxOccurs="unbounded"/>
-      </xsd:sequence>
-      <xsd:attribute name="rsidRPr" type="ST_LongHexNumber"/>
-      <xsd:attribute name="rsidDel" type="ST_LongHexNumber"/>
-      <xsd:attribute name="rsidR"   type="ST_LongHexNumber"/>
-    </xsd:complexType>
+  <xsd:complexType name="CT_R">
+    <xsd:sequence>
+      <xsd:group ref="EG_RPr"             minOccurs="0"/>
+      <xsd:group ref="EG_RunInnerContent" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="rsidRPr" type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidDel" type="ST_LongHexNumber"/>
+    <xsd:attribute name="rsidR"   type="ST_LongHexNumber"/>
+  </xsd:complexType>
 
-    <xsd:simpleType name="ST_OnOff">
-      <xsd:union memberTypes="xsd:boolean ST_OnOff1"/>
-    </xsd:simpleType>
+  <xsd:simpleType name="ST_OnOff">
+    <xsd:union memberTypes="xsd:boolean ST_OnOff1"/>
+  </xsd:simpleType>
 
-    <xsd:simpleType name="ST_OnOff1">
-      <xsd:restriction base="xsd:string">
-        <xsd:enumeration value="on"/>
-        <xsd:enumeration value="off"/>
-      </xsd:restriction>
-    </xsd:simpleType>
+  <xsd:simpleType name="ST_OnOff1">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="on"/>
+      <xsd:enumeration value="off"/>
+    </xsd:restriction>
+  </xsd:simpleType>
 
-    <xsd:simpleType name="ST_RelationshipId">
-      <xsd:restriction base="xsd:string"/>
-    </xsd:simpleType>
+  <xsd:simpleType name="ST_RelationshipId">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
 
-    <xsd:simpleType name="ST_String">
-      <xsd:restriction base="xsd:string"/>
-    </xsd:simpleType>
+  <xsd:simpleType name="ST_String">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>

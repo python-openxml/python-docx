@@ -17,12 +17,21 @@ from ..unitutil.mock import FixtureRequest, Mock, instance_mock
 class DescribeHyperlink:
     """Unit-test suite for the docx.text.hyperlink.Hyperlink object."""
 
-    def it_knows_the_hyperlink_URL(self, fake_parent: t.StoryChild):
-        cxml = 'w:hyperlink{r:id=rId6}/w:r/w:t"post"'
-        hlink = cast(CT_Hyperlink, element(cxml))
+    @pytest.mark.parametrize(
+        ("hlink_cxml", "expected_value"),
+        [
+            ('w:hyperlink{r:id=rId6}/w:r/w:t"post"', "https://google.com/"),
+            ("w:hyperlink{w:anchor=_Toc147925734}", ""),
+            ("w:hyperlink", ""),
+        ],
+    )
+    def it_knows_the_hyperlink_address(
+        self, hlink_cxml: str, expected_value: str, fake_parent: t.StoryChild
+    ):
+        hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
 
-        assert hyperlink.address == "https://google.com/"
+        assert hyperlink.address == expected_value
 
     @pytest.mark.parametrize(
         ("hlink_cxml", "expected_value"),
@@ -41,6 +50,21 @@ class DescribeHyperlink:
         hyperlink = Hyperlink(hlink, fake_parent)
 
         assert hyperlink.contains_page_break is expected_value
+
+    @pytest.mark.parametrize(
+        ("hlink_cxml", "expected_value"),
+        [
+            ("w:hyperlink{r:id=rId6}", ""),
+            ("w:hyperlink{w:anchor=intro}", "intro"),
+        ],
+    )
+    def it_knows_the_link_fragment_when_there_is_one(
+        self, hlink_cxml: str, expected_value: str, fake_parent: t.StoryChild
+    ):
+        hlink = cast(CT_Hyperlink, element(hlink_cxml))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        assert hyperlink.fragment == expected_value
 
     @pytest.mark.parametrize(
         ("hlink_cxml", "count"),
@@ -84,6 +108,26 @@ class DescribeHyperlink:
         text = hyperlink.text
 
         assert text == expected_text
+
+    @pytest.mark.parametrize(
+        ("hlink_cxml", "expected_value"),
+        [
+            ("w:hyperlink", ""),
+            ("w:hyperlink{w:anchor=_Toc147925734}", ""),
+            ('w:hyperlink{r:id=rId6}/w:r/w:t"post"', "https://google.com/"),
+            (
+                'w:hyperlink{r:id=rId6,w:anchor=foo}/w:r/w:t"post"',
+                "https://google.com/#foo",
+            ),
+        ],
+    )
+    def it_knows_the_full_url_for_web_addresses(
+        self, hlink_cxml: str, expected_value: str, fake_parent: t.StoryChild
+    ):
+        hlink = cast(CT_Hyperlink, element(hlink_cxml))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        assert hyperlink.url == expected_value
 
     # -- fixtures --------------------------------------------------------------------
 

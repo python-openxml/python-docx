@@ -19,6 +19,11 @@ Feature: Access hyperlink properties
       | one          | True  |
 
 
+  Scenario: Hyperlink.fragment has the URI fragment of the hyperlink
+    Given a hyperlink having a URI fragment
+     Then hyperlink.fragment is the URI fragment of the hyperlink
+
+
   Scenario Outline: Hyperlink.runs contains Run for each run in hyperlink
     Given a hyperlink having <zero-or-more> runs
      Then hyperlink.runs has length <value>
@@ -33,3 +38,17 @@ Feature: Access hyperlink properties
   Scenario: Hyperlink.text has the visible text of the hyperlink
     Given a hyperlink
      Then hyperlink.text is the visible text of the hyperlink
+
+
+  Scenario Outline: Hyperlink.url is the full URL of an internet hyperlink
+    Given a hyperlink having address <address> and fragment <fragment>
+     Then hyperlink.url is <url>
+
+    Examples: Hyperlink.url cases
+      | address                   | fragment       | url                       |
+      | ''                        | linkedBookmark | ''                        |
+      | https://foo.com           | ''             | https://foo.com           |
+      | https://foo.com?q=bar     | ''             | https://foo.com?q=bar     |
+      | http://foo.com/           | intro          | http://foo.com/#intro     |
+      | https://foo.com?q=bar#baz | ''             | https://foo.com?q=bar#baz |
+      | court-exif.jpg            | ''             | court-exif.jpg            |
