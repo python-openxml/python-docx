@@ -3,24 +3,31 @@
 Release History
 ---------------
 
+1.0.1 (2023-10-12)
+++++++++++++++++++
+
+- Fix #1256: parse_xml() and OxmlElement moved.
+- Add Hyperlink.fragment and .url
+
+
 1.0.0 (2023-10-01)
 +++++++++++++++++++
 
 - Remove Python 2 support. Supported versions are 3.7+
-* Fix #85:   Paragraph.text includes hyperlink text
-* Add #1113: Hyperlink.address
-* Add Hyperlink.contains_page_break
-* Add Hyperlink.runs
-* Add Hyperlink.text
-* Add Paragraph.contains_page_break
-* Add Paragraph.hyperlinks
-* Add Paragraph.iter_inner_content()
-* Add Paragraph.rendered_page_breaks
-* Add RenderedPageBreak.following_paragraph_fragment
-* Add RenderedPageBreak.preceding_paragraph_fragment
-* Add Run.contains_page_break
-* Add Run.iter_inner_content()
-* Add Section.iter_inner_content()
+- Fix #85:   Paragraph.text includes hyperlink text
+- Add #1113: Hyperlink.address
+- Add Hyperlink.contains_page_break
+- Add Hyperlink.runs
+- Add Hyperlink.text
+- Add Paragraph.contains_page_break
+- Add Paragraph.hyperlinks
+- Add Paragraph.iter_inner_content()
+- Add Paragraph.rendered_page_breaks
+- Add RenderedPageBreak.following_paragraph_fragment
+- Add RenderedPageBreak.preceding_paragraph_fragment
+- Add Run.contains_page_break
+- Add Run.iter_inner_content()
+- Add Section.iter_inner_content()
 
 
 0.8.11 (2021-05-15)
