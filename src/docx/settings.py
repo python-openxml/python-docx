@@ -17,6 +17,19 @@ class Settings(ElementProxy):
         """
         return self._element.evenAndOddHeaders_val
 
+    @property
+    def track_revisions(self):
+        """
+		True if this document has track revisions feature enabled.
+
+        Read/write.
+        """
+        return self._element.trackRevisions_val
+
     @odd_and_even_pages_header_footer.setter
     def odd_and_even_pages_header_footer(self, value):
         self._element.evenAndOddHeaders_val = value
+
+    @track_revisions.setter
+    def track_revisions(self, value):
+        self._element.trackRevisions_val = value
