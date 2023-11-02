@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Type, TypeVar
 
 from lxml import etree
 from lxml.etree import ElementBase
@@ -90,12 +90,6 @@ _T = TypeVar("_T")
 
 class MetaOxmlElement(type):
     """Metaclass for BaseOxmlElement."""
-
-    def __new__(
-        cls: Type[_T], clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]
-    ) -> _T:
-        bases = (*bases, etree.ElementBase)
-        return super().__new__(cls, clsname, bases, namespace)
 
     def __init__(cls, clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]):
         dispatchable = (
@@ -647,24 +641,14 @@ class ZeroOrOneChoice(_BaseChildElement):
         return "_remove_%s" % self._prop_name
 
 
-class BaseOxmlElement(metaclass=MetaOxmlElement):
+# -- lxml typing isn't quite right here, just ignore this error on _Element --
+class BaseOxmlElement(  # pyright: ignore[reportGeneralTypeIssues]
+    etree.ElementBase, metaclass=MetaOxmlElement
+):
     """Effective base class for all custom element classes.
 
     Adds standardized behavior to all classes in one place.
     """
-
-    addprevious: Callable[[BaseOxmlElement], None]
-    attrib: Dict[str, str]
-    append: Callable[[BaseOxmlElement], None]
-    find: Callable[[str], ElementBase | None]
-    findall: Callable[[str], List[ElementBase]]
-    get: Callable[[str], str | None]
-    getparent: Callable[[], BaseOxmlElement]
-    insert: Callable[[int, BaseOxmlElement], None]
-    remove: Callable[[BaseOxmlElement], None]
-    set: Callable[[str, str], None]
-    tag: str
-    text: str | None
 
     def __repr__(self):
         return "<%s '<%s>' at 0x%0x>" % (
