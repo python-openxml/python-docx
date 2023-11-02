@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Callable, Iterator, Sequence, Union, cast
+from typing import Callable, Iterator, List, Sequence, cast
 
 from lxml import etree
 from typing_extensions import TypeAlias
@@ -23,11 +23,17 @@ from docx.oxml.xmlchemy import (
 )
 from docx.shared import Length, lazyproperty
 
-BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
+BlockElement: TypeAlias = "CT_P | CT_Tbl"
 
 
 class CT_HdrFtr(BaseOxmlElement):
     """`w:hdr` and `w:ftr`, the root element for header and footer part respectively."""
+
+    add_p: Callable[[], CT_P]
+    p_lst: List[CT_P]
+    tbl_lst: List[CT_Tbl]
+
+    _insert_tbl: Callable[[CT_Tbl], CT_Tbl]
 
     p = ZeroOrMore("w:p", successors=())
     tbl = ZeroOrMore("w:tbl", successors=())
@@ -487,13 +493,8 @@ class _SectBlockElementIterator:
                 regexp=False,
             )
         xpath = self._compiled_blocks_xpath
-        # -- XPath callable results are Any (basically), so need a cast. Also the
-        # -- callable wants an etree._Element, which CT_SectPr is, but we haven't
-        # -- figured out the typing through the metaclass yet.
-        return cast(
-            Sequence[BlockElement],
-            xpath(sectPr),  # pyright: ignore[reportGeneralTypeIssues]
-        )
+        # -- XPath callable results are Any (basically), so need a cast. --
+        return cast(Sequence[BlockElement], xpath(sectPr))
 
     @lazyproperty
     def _blocks_in_and_above_section_xpath(self) -> str:
@@ -533,9 +534,7 @@ class _SectBlockElementIterator:
             )
         xpath = self._compiled_count_xpath
         # -- numeric XPath results are always float, so need an int() conversion --
-        return int(
-            cast(float, xpath(sectPr))  # pyright: ignore[reportGeneralTypeIssues]
-        )
+        return int(cast(float, xpath(sectPr)))
 
     @lazyproperty
     def _sectPrs(self) -> Sequence[CT_SectPr]:

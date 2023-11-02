@@ -1,5 +1,9 @@
 """Custom element classes for tables."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Callable, List
+
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from docx.exceptions import InvalidSpanError
 from docx.oxml.ns import nsdecls, qn
@@ -21,6 +25,10 @@ from docx.oxml.xmlchemy import (
     ZeroOrOne,
 )
 from docx.shared import Emu, Twips
+
+if TYPE_CHECKING:
+    from docx.oxml.text.paragraph import CT_P
+    from docx.shared import Length
 
 
 class CT_Height(BaseOxmlElement):
@@ -140,9 +148,11 @@ class CT_Tbl(BaseOxmlElement):
                 yield tc
 
     @classmethod
-    def new_tbl(cls, rows, cols, width):
-        """Return a new `w:tbl` element having `rows` rows and `cols` columns with
-        `width` distributed evenly between the columns."""
+    def new_tbl(cls, rows: int, cols: int, width: Length) -> CT_Tbl:
+        """Return a new `w:tbl` element having `rows` rows and `cols` columns.
+
+        `width` is distributed evenly between the columns.
+        """
         return parse_xml(cls._tbl_xml(rows, cols, width))
 
     @property
@@ -167,7 +177,7 @@ class CT_Tbl(BaseOxmlElement):
         tblPr._add_tblStyle().val = styleId
 
     @classmethod
-    def _tbl_xml(cls, rows, cols, width):
+    def _tbl_xml(cls, rows: int, cols: int, width: Length) -> str:
         col_width = Emu(width / cols) if cols > 0 else Emu(0)
         return (
             "<w:tbl %s>\n"
@@ -295,7 +305,7 @@ class CT_TblPr(BaseOxmlElement):
         jc.val = value
 
     @property
-    def autofit(self):
+    def autofit(self) -> bool:
         """|False| when there is a `w:tblLayout` child with `@w:type="fixed"`.
 
         Otherwise |True|.
@@ -304,7 +314,7 @@ class CT_TblPr(BaseOxmlElement):
         return True if tblLayout is None else tblLayout.type != "fixed"
 
     @autofit.setter
-    def autofit(self, value):
+    def autofit(self, value: bool):
         tblLayout = self.get_or_add_tblLayout()
         tblLayout.type = "autofit" if value else "fixed"
 
@@ -351,6 +361,12 @@ class CT_TblWidth(BaseOxmlElement):
 
 class CT_Tc(BaseOxmlElement):
     """`w:tc` table cell element."""
+
+    add_p: Callable[[], CT_P]
+    p_lst: List[CT_P]
+    tbl_lst: List[CT_Tbl]
+
+    _insert_tbl: Callable[[CT_Tbl], CT_Tbl]
 
     tcPr = ZeroOrOne("w:tcPr")  # bunches of successors, overriding insert
     p = OneOrMore("w:p")

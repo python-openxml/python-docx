@@ -1,5 +1,7 @@
 """Test suite for the docx.oxml.text module."""
 
+from __future__ import annotations
+
 import pytest
 
 from docx.exceptions import InvalidSpanError

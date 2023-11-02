@@ -2,22 +2,29 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple, overload
+from typing import TYPE_CHECKING, List, Tuple, overload
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.simpletypes import ST_Merge
 from docx.shared import Inches, Parented, lazyproperty
 
+if TYPE_CHECKING:
+    from docx import types as t
+    from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+    from docx.oxml.table import CT_Tbl, CT_TblPr
+    from docx.shared import Length
+    from docx.styles.style import _TableStyle  # pyright: ignore[reportPrivateUsage]
+
 
 class Table(Parented):
     """Proxy class for a WordprocessingML ``<w:tbl>`` element."""
 
-    def __init__(self, tbl, parent):
+    def __init__(self, tbl: CT_Tbl, parent: t.StoryChild):
         super(Table, self).__init__(parent)
         self._element = self._tbl = tbl
 
-    def add_column(self, width):
+    def add_column(self, width: Length):
         """Return a |_Column| object of `width`, newly added rightmost to the table."""
         tblGrid = self._tbl.tblGrid
         gridCol = tblGrid.add_gridCol()
@@ -37,7 +44,7 @@ class Table(Parented):
         return _Row(tr, self)
 
     @property
-    def alignment(self):
+    def alignment(self) -> WD_TABLE_ALIGNMENT | None:
         """Read/write.
 
         A member of :ref:`WdRowAlignment` or None, specifying the positioning of this
@@ -47,11 +54,11 @@ class Table(Parented):
         return self._tblPr.alignment
 
     @alignment.setter
-    def alignment(self, value):
+    def alignment(self, value: WD_TABLE_ALIGNMENT | None):
         self._tblPr.alignment = value
 
     @property
-    def autofit(self):
+    def autofit(self) -> bool:
         """|True| if column widths can be automatically adjusted to improve the fit of
         cell contents.
 
@@ -61,16 +68,18 @@ class Table(Parented):
         return self._tblPr.autofit
 
     @autofit.setter
-    def autofit(self, value):
+    def autofit(self, value: bool):
         self._tblPr.autofit = value
 
-    def cell(self, row_idx, col_idx):
-        """Return |_Cell| instance correponding to table cell at `row_idx`, `col_idx`
-        intersection, where (0, 0) is the top, left-most cell."""
+    def cell(self, row_idx: int, col_idx: int) -> _Cell:
+        """|_Cell| at `row_idx`, `col_idx` intersection.
+
+        (0, 0) is the top, left-most cell.
+        """
         cell_idx = col_idx + (row_idx * self._column_count)
         return self._cells[cell_idx]
 
-    def column_cells(self, column_idx):
+    def column_cells(self, column_idx: int) -> List[_Cell]:
         """Sequence of cells in the column at `column_idx` in this table."""
         cells = self._cells
         idxs = range(column_idx, len(cells), self._column_count)
@@ -81,7 +90,7 @@ class Table(Parented):
         """|_Columns| instance representing the sequence of columns in this table."""
         return _Columns(self._tbl, self)
 
-    def row_cells(self, row_idx):
+    def row_cells(self, row_idx: int) -> List[_Cell]:
         """Sequence of cells in the row at `row_idx` in this table."""
         column_count = self._column_count
         start = row_idx * column_count
@@ -94,22 +103,23 @@ class Table(Parented):
         return _Rows(self._tbl, self)
 
     @property
-    def style(self):
-        """Read/write. A |_TableStyle| object representing the style applied to this
-        table. The default table style for the document (often `Normal Table`) is
+    def style(self) -> _TableStyle | None:
+        """|_TableStyle| object representing the style applied to this table.
+
+        Read/write. The default table style for the document (often `Normal Table`) is
         returned if the table has no directly-applied style. Assigning |None| to this
         property removes any directly-applied table style causing it to inherit the
-        default table style of the document. Note that the style name of a table style
-        differs slightly from that.
+        default table style of the document.
 
-        displayed in the user interface; a hyphen, if it appears, must be removed. For
-        example, `Light Shading - Accent 1` becomes `Light Shading Accent 1`.
+        Note that the style name of a table style differs slightly from that displayed
+        in the user interface; a hyphen, if it appears, must be removed. For example,
+        `Light Shading - Accent 1` becomes `Light Shading Accent 1`.
         """
         style_id = self._tbl.tblStyle_val
         return self.part.get_style(style_id, WD_STYLE_TYPE.TABLE)
 
     @style.setter
-    def style(self, style_or_name):
+    def style(self, style_or_name: _TableStyle | None):
         style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.TABLE)
         self._tbl.tblStyle_val = style_id
 
@@ -124,20 +134,20 @@ class Table(Parented):
         return self
 
     @property
-    def table_direction(self):
-        """A member of :ref:`WdTableDirection` indicating the direction in which the
-        table cells are ordered, e.g. `WD_TABLE_DIRECTION.LTR`.
+    def table_direction(self) -> WD_TABLE_DIRECTION | None:
+        """Member of :ref:`WdTableDirection` indicating cell-ordering direction.
 
-        |None| indicates the value is inherited from the style hierarchy.
+        For example: `WD_TABLE_DIRECTION.LTR`. |None| indicates the value is inherited
+        from the style hierarchy.
         """
         return self._element.bidiVisual_val
 
     @table_direction.setter
-    def table_direction(self, value):
+    def table_direction(self, value: WD_TABLE_DIRECTION | None):
         self._element.bidiVisual_val = value
 
     @property
-    def _cells(self):
+    def _cells(self) -> List[_Cell]:
         """A sequence of |_Cell| objects, one for each cell of the layout grid.
 
         If the table contains a span, one or more |_Cell| object references are
@@ -161,7 +171,7 @@ class Table(Parented):
         return self._tbl.col_count
 
     @property
-    def _tblPr(self):
+    def _tblPr(self) -> CT_TblPr:
         return self._tbl.tblPr
 
 

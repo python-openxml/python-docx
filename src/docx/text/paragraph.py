@@ -2,21 +2,24 @@
 
 from __future__ import annotations
 
-from typing import Iterator, List, cast
+from typing import TYPE_CHECKING, Iterator, List, cast
 
 from typing_extensions import Self
 
 from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.shared import StoryChild
-from docx.styles.style import CharacterStyle, ParagraphStyle
+from docx.styles.style import ParagraphStyle
 from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
+
+if TYPE_CHECKING:
+    from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+    from docx.oxml.text.paragraph import CT_P
+    from docx.styles.style import CharacterStyle
 
 
 class Paragraph(StoryChild):

@@ -1,4 +1,9 @@
+# pyright: reportPrivateUsage=false
+# pyright: reportUnknownMemberType=false
+
 """Unit test suite for the docx.document module."""
+
+from __future__ import annotations
 
 import pytest
 
@@ -21,6 +26,8 @@ from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocument:
+    """Unit-test suite for `docx.Document`."""
+
     def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
         level, style = add_heading_fixture
         add_paragraph_.return_value = paragraph_
