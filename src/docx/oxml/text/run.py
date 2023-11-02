@@ -35,6 +35,8 @@ class CT_R(BaseOxmlElement):
     drawing = ZeroOrMore("w:drawing")
     t = ZeroOrMore("w:t")
     tab = ZeroOrMore("w:tab")
+    footnoteReference = ZeroOrMore('w:footnoteReference')
+    endnoteReference = ZeroOrMore('w:endnoteReference')
 
     def add_t(self, text: str) -> CT_Text:
         """Return a newly added `<w:t>` element containing `text`."""

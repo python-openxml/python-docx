@@ -31,6 +31,7 @@ from docx.parts.image import ImagePart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.styles import StylesPart
+from docx.parts.fntent import FootnotesPart, EndnotesPart
 
 
 def part_class_selector(content_type: str, reltype: str) -> Type[Part] | None:
@@ -47,6 +48,8 @@ PartFactory.part_type_for[CT.WML_HEADER] = HeaderPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
+PartFactory.part_type_for[CT.WML_FOOTNOTES] = FootnotesPart
+PartFactory.part_type_for[CT.WML_ENDNOTES] = EndnotesPart
 
 del (
     CT,

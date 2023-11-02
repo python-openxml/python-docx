@@ -14,6 +14,8 @@ from docx.shared import StoryChild
 from docx.styles.style import CharacterStyle
 from docx.text.font import Font
 from docx.text.pagebreak import RenderedPageBreak
+from ..fntent.footnoteReference import FootnoteReference
+from ..fntent.endnoteReference import EndnoteReference
 
 if TYPE_CHECKING:
     from docx.enum.text import WD_UNDERLINE
@@ -238,6 +240,24 @@ class Run(StoryChild):
     @underline.setter
     def underline(self, value: bool):
         self.font.underline = value
+
+    @property
+    def footnotes(self):
+        """
+        Return a list of footnote proxy elements.
+        """
+
+        return [FootnoteReference(footnoteReference, self) for footnoteReference in
+                self._r.footnoteReference_lst]
+
+    @property
+    def endnotes(self):
+        """
+        Return a list of endnote proxy elements.
+        """
+
+        return [EndnoteReference(endnoteReference, self) for endnoteReference in
+                self._r.endnoteReference_lst]
 
 
 class _Text:
