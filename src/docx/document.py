@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, List
+from typing import IO, TYPE_CHECKING, Iterator, List
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
@@ -123,6 +123,10 @@ class Document(ElementProxy):
         paragraph.
         """
         return self._part.inline_shapes
+
+    def iter_inner_content(self) -> Iterator[Paragraph | Table]:
+        """Generate each `Paragraph` or `Table` in this document in document order."""
+        return self._body.iter_inner_content()
 
     @property
     def paragraphs(self) -> List[Paragraph]:

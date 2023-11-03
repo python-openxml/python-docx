@@ -8,7 +8,7 @@ specialized ones like structured document tags.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 from typing_extensions import TypeAlias
 
@@ -70,6 +70,10 @@ class BlockItemContainer(StoryChild):
         tbl = CT_Tbl.new_tbl(rows, cols, width)
         self._element._insert_tbl(tbl)  #  # pyright: ignore[reportPrivateUsage]
         return Table(tbl, self)
+
+    def iter_inner_content(self) -> Iterator[Paragraph | Table]:
+        """Generate each `Paragraph` or `Table` in this container in document order."""
+        raise NotImplementedError
 
     @property
     def paragraphs(self):
