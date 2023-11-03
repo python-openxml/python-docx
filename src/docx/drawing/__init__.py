@@ -10,7 +10,7 @@ from docx.shared import Parented
 class Drawing(Parented):
     """Container for a DrawingML object."""
 
-    def __init__(self, drawing: CT_Drawing, parent: t.StoryChild):
+    def __init__(self, drawing: CT_Drawing, parent: t.ProvidesStoryPart):
         super().__init__(parent)
         self._parent = parent
         self._drawing = self._element = drawing

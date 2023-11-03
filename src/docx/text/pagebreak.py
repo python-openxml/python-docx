@@ -36,7 +36,9 @@ class RenderedPageBreak(Parented):
     """
 
     def __init__(
-        self, lastRenderedPageBreak: CT_LastRenderedPageBreak, parent: t.StoryChild
+        self,
+        lastRenderedPageBreak: CT_LastRenderedPageBreak,
+        parent: t.ProvidesStoryPart,
     ):
         super().__init__(parent)
         self._element = lastRenderedPageBreak

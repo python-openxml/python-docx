@@ -23,7 +23,7 @@ class Hyperlink(Parented):
     stored.
     """
 
-    def __init__(self, hyperlink: CT_Hyperlink, parent: t.StoryChild):
+    def __init__(self, hyperlink: CT_Hyperlink, parent: t.ProvidesStoryPart):
         super().__init__(parent)
         self._parent = parent
         self._hyperlink = self._element = hyperlink

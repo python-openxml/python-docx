@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import IO, TYPE_CHECKING, Iterator, cast
 
+from docx import types as t
 from docx.drawing import Drawing
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
@@ -30,7 +31,7 @@ class Run(StoryChild):
     the style hierarchy.
     """
 
-    def __init__(self, r: CT_R, parent: StoryChild):
+    def __init__(self, r: CT_R, parent: t.ProvidesStoryPart):
         super().__init__(parent)
         self._r = self._element = self.element = r
 

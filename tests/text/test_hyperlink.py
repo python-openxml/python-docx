@@ -26,7 +26,7 @@ class DescribeHyperlink:
         ],
     )
     def it_knows_the_hyperlink_address(
-        self, hlink_cxml: str, expected_value: str, fake_parent: t.StoryChild
+        self, hlink_cxml: str, expected_value: str, fake_parent: t.ProvidesStoryPart
     ):
         hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
@@ -44,7 +44,7 @@ class DescribeHyperlink:
         ],
     )
     def it_knows_whether_it_contains_a_page_break(
-        self, hlink_cxml: str, expected_value: bool, fake_parent: t.StoryChild
+        self, hlink_cxml: str, expected_value: bool, fake_parent: t.ProvidesStoryPart
     ):
         hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
@@ -59,7 +59,7 @@ class DescribeHyperlink:
         ],
     )
     def it_knows_the_link_fragment_when_there_is_one(
-        self, hlink_cxml: str, expected_value: str, fake_parent: t.StoryChild
+        self, hlink_cxml: str, expected_value: str, fake_parent: t.ProvidesStoryPart
     ):
         hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
@@ -78,7 +78,7 @@ class DescribeHyperlink:
         ],
     )
     def it_provides_access_to_the_runs_it_contains(
-        self, hlink_cxml: str, count: int, fake_parent: t.StoryChild
+        self, hlink_cxml: str, count: int, fake_parent: t.ProvidesStoryPart
     ):
         hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
@@ -100,7 +100,7 @@ class DescribeHyperlink:
         ],
     )
     def it_knows_the_visible_text_of_the_link(
-        self, hlink_cxml: str, expected_text: str, fake_parent: t.StoryChild
+        self, hlink_cxml: str, expected_text: str, fake_parent: t.ProvidesStoryPart
     ):
         hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
@@ -122,7 +122,7 @@ class DescribeHyperlink:
         ],
     )
     def it_knows_the_full_url_for_web_addresses(
-        self, hlink_cxml: str, expected_value: str, fake_parent: t.StoryChild
+        self, hlink_cxml: str, expected_value: str, fake_parent: t.ProvidesStoryPart
     ):
         hlink = cast(CT_Hyperlink, element(hlink_cxml))
         hyperlink = Hyperlink(hlink, fake_parent)
@@ -132,7 +132,7 @@ class DescribeHyperlink:
     # -- fixtures --------------------------------------------------------------------
 
     @pytest.fixture
-    def fake_parent(self, story_part: Mock, rel: Mock) -> t.StoryChild:
+    def fake_parent(self, story_part: Mock, rel: Mock) -> t.ProvidesStoryPart:
         class StoryChild:
             @property
             def part(self) -> StoryPart:

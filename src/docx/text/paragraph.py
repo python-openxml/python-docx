@@ -6,6 +6,7 @@ from typing import Iterator, List, cast
 
 from typing_extensions import Self
 
+from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml.text.paragraph import CT_P
@@ -21,7 +22,7 @@ from docx.text.run import Run
 class Paragraph(StoryChild):
     """Proxy object wrapping a `<w:p>` element."""
 
-    def __init__(self, p: CT_P, parent: StoryChild):
+    def __init__(self, p: CT_P, parent: t.ProvidesStoryPart):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
 
