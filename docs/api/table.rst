@@ -22,7 +22,9 @@ Table objects are constructed using the ``add_table()`` method on |Document|.
 ------------------------
 
 .. autoclass:: _Cell
+   :inherited-members: 
    :members:
+   :exclude-members: part
 
 
 |_Row| objects
