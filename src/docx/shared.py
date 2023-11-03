@@ -16,6 +16,8 @@ from typing import (
 )
 
 if TYPE_CHECKING:
+    from docx import types as t
+    from docx.opc.part import XmlPart
     from docx.oxml.xmlchemy import BaseOxmlElement
     from docx.parts.story import StoryPart
 
@@ -34,7 +36,7 @@ class Length(int):
     _EMUS_PER_PT = 12700
     _EMUS_PER_TWIP = 635
 
-    def __new__(cls, emu):
+    def __new__(cls, emu: int):
         return int.__new__(cls, emu)
 
     @property
@@ -71,7 +73,7 @@ class Length(int):
 class Inches(Length):
     """Convenience constructor for length in inches, e.g. ``width = Inches(0.5)``."""
 
-    def __new__(cls, inches):
+    def __new__(cls, inches: float):
         emu = int(inches * Length._EMUS_PER_INCH)
         return Length.__new__(cls, emu)
 
@@ -79,7 +81,7 @@ class Inches(Length):
 class Cm(Length):
     """Convenience constructor for length in centimeters, e.g. ``height = Cm(12)``."""
 
-    def __new__(cls, cm):
+    def __new__(cls, cm: float):
         emu = int(cm * Length._EMUS_PER_CM)
         return Length.__new__(cls, emu)
 
@@ -88,14 +90,14 @@ class Emu(Length):
     """Convenience constructor for length in English Metric Units, e.g. ``width =
     Emu(457200)``."""
 
-    def __new__(cls, emu):
+    def __new__(cls, emu: int):
         return Length.__new__(cls, int(emu))
 
 
 class Mm(Length):
     """Convenience constructor for length in millimeters, e.g. ``width = Mm(240.5)``."""
 
-    def __new__(cls, mm):
+    def __new__(cls, mm: float):
         emu = int(mm * Length._EMUS_PER_MM)
         return Length.__new__(cls, emu)
 
@@ -103,7 +105,7 @@ class Mm(Length):
 class Pt(Length):
     """Convenience value class for specifying a length in points."""
 
-    def __new__(cls, points):
+    def __new__(cls, points: float):
         emu = int(points * Length._EMUS_PER_PT)
         return Length.__new__(cls, emu)
 
@@ -114,7 +116,7 @@ class Twips(Length):
     A twip is a twentieth of a point, 635 EMU.
     """
 
-    def __new__(cls, twips):
+    def __new__(cls, twips: float):
         emu = int(twips * Length._EMUS_PER_TWIP)
         return Length.__new__(cls, emu)
 
@@ -263,7 +265,7 @@ class lazyproperty(Generic[T]):
         raise AttributeError("can't set attribute")
 
 
-def write_only_property(f):
+def write_only_property(f: Callable[[Any, Any], None]):
     """@write_only_property decorator.
 
     Creates a property (descriptor attribute) that accepts assignment, but not getattr
@@ -282,11 +284,13 @@ class ElementProxy:
     common type of class in python-docx other than custom element (oxml) classes.
     """
 
-    def __init__(self, element: BaseOxmlElement, parent: Any | None = None):
+    def __init__(
+        self, element: BaseOxmlElement, parent: t.ProvidesXmlPart | None = None
+    ):
         self._element = element
         self._parent = parent
 
-    def __eq__(self, other):
+    def __eq__(self, other: object):
         """Return |True| if this proxy object refers to the same oxml element as does
         `other`.
 
@@ -298,7 +302,7 @@ class ElementProxy:
             return False
         return self._element is other._element
 
-    def __ne__(self, other):
+    def __ne__(self, other: object):
         if not isinstance(other, ElementProxy):
             return True
         return self._element is not other._element
@@ -309,8 +313,10 @@ class ElementProxy:
         return self._element
 
     @property
-    def part(self):
+    def part(self) -> XmlPart:
         """The package part containing this object."""
+        if self._parent is None:
+            raise ValueError("part is not accessible from this element")
         return self._parent.part
 
 
@@ -322,7 +328,7 @@ class Parented:
     Provides ``self._parent`` attribute to subclasses.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent: t.ProvidesXmlPart):
         self._parent = parent
 
     @property
@@ -342,7 +348,7 @@ class StoryChild:
     Provides `self._parent` attribute to subclasses.
     """
 
-    def __init__(self, parent: StoryChild):
+    def __init__(self, parent: t.ProvidesStoryPart):
         self._parent = parent
 
     @property
