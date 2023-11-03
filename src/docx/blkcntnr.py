@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Iterator
 from typing_extensions import TypeAlias
 
 from docx.oxml.table import CT_Tbl
+from docx.oxml.text.paragraph import CT_P
 from docx.shared import StoryChild
 from docx.text.paragraph import Paragraph
 
@@ -73,7 +74,14 @@ class BlockItemContainer(StoryChild):
 
     def iter_inner_content(self) -> Iterator[Paragraph | Table]:
         """Generate each `Paragraph` or `Table` in this container in document order."""
-        raise NotImplementedError
+        from docx.table import Table
+
+        for element in self._element.inner_content_elements:
+            yield (
+                Paragraph(element, self)
+                if isinstance(element, CT_P)
+                else Table(element, self)
+            )
 
     @property
     def paragraphs(self):

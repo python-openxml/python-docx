@@ -4,25 +4,21 @@ Feature: Iterate paragraphs and tables in document-order
   I need the ability to iterate the inner-content of a block-item-container
 
 
-  @wip
   Scenario: Document.iter_inner_content()
     Given a Document object with paragraphs and tables
      Then document.iter_inner_content() produces the block-items in document order
 
 
-  @wip
   Scenario: Header.iter_inner_content()
     Given a Header object with paragraphs and tables
      Then header.iter_inner_content() produces the block-items in document order
 
 
-  @wip
   Scenario: Footer.iter_inner_content()
     Given a Footer object with paragraphs and tables
      Then footer.iter_inner_content() produces the block-items in document order
 
 
-  @wip
   Scenario: _Cell.iter_inner_content()
     Given a _Cell object with paragraphs and tables
      Then cell.iter_inner_content() produces the block-items in document order
