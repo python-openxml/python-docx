@@ -11,9 +11,31 @@ from helpers import test_docx
 # given ===================================================
 
 
+@given("a _Cell object with paragraphs and tables")
+def given_a_cell_with_paragraphs_and_tables(context: Context):
+    context.cell = (
+        Document(test_docx("blk-paras-and-tables")).tables[1].rows[0].cells[0]
+    )
+
+
+@given("a Document object with paragraphs and tables")
+def given_a_document_with_paragraphs_and_tables(context: Context):
+    context.document = Document(test_docx("blk-paras-and-tables"))
+
+
 @given("a document containing a table")
 def given_a_document_containing_a_table(context: Context):
     context.document = Document(test_docx("blk-containing-table"))
+
+
+@given("a Footer object with paragraphs and tables")
+def given_a_footer_with_paragraphs_and_tables(context: Context):
+    context.footer = Document(test_docx("blk-paras-and-tables")).sections[0].footer
+
+
+@given("a Header object with paragraphs and tables")
+def given_a_header_with_paragraphs_and_tables(context: Context):
+    context.header = Document(test_docx("blk-paras-and-tables")).sections[0].header
 
 
 @given("a paragraph")
@@ -38,6 +60,34 @@ def when_add_table(context: Context):
 
 
 # then =====================================================
+
+
+@then("cell.iter_inner_content() produces the block-items in document order")
+def then_cell_iter_inner_content_produces_the_block_items(context: Context):
+    actual = [type(item).__name__ for item in context.cell.iter_inner_content()]
+    expected = ["Paragraph", "Table", "Paragraph"]
+    assert actual == expected, f"expected: {expected}, got: {actual}"
+
+
+@then("document.iter_inner_content() produces the block-items in document order")
+def then_document_iter_inner_content_produces_the_block_items(context: Context):
+    actual = [type(item).__name__ for item in context.document.iter_inner_content()]
+    expected = ["Table", "Paragraph", "Table", "Paragraph", "Table", "Paragraph"]
+    assert actual == expected, f"expected: {expected}, got: {actual}"
+
+
+@then("footer.iter_inner_content() produces the block-items in document order")
+def then_footer_iter_inner_content_produces_the_block_items(context: Context):
+    actual = [type(item).__name__ for item in context.footer.iter_inner_content()]
+    expected = ["Paragraph", "Table", "Paragraph"]
+    assert actual == expected, f"expected: {expected}, got: {actual}"
+
+
+@then("header.iter_inner_content() produces the block-items in document order")
+def then_header_iter_inner_content_produces_the_block_items(context: Context):
+    actual = [type(item).__name__ for item in context.header.iter_inner_content()]
+    expected = ["Table", "Paragraph"]
+    assert actual == expected, f"expected: {expected}, got: {actual}"
 
 
 @then("I can access the table")
