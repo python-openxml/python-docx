@@ -3,7 +3,17 @@
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterator, List, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Generic,
+    Iterator,
+    List,
+    Tuple,
+    TypeVar,
+    cast,
+)
 
 if TYPE_CHECKING:
     from docx.oxml.xmlchemy import BaseOxmlElement
@@ -109,13 +119,17 @@ class Twips(Length):
         return Length.__new__(cls, emu)
 
 
-class RGBColor(tuple):
+class RGBColor(Tuple[int, int, int]):
     """Immutable value object defining a particular RGB color."""
 
-    def __new__(cls, r, g, b):
+    def __new__(cls, r: int, g: int, b: int):
         msg = "RGBColor() takes three integer values 0-255"
         for val in (r, g, b):
-            if not isinstance(val, int) or val < 0 or val > 255:
+            if (
+                not isinstance(val, int)  # pyright: ignore[reportUnnecessaryIsInstance]
+                or val < 0
+                or val > 255
+            ):
                 raise ValueError(msg)
         return super(RGBColor, cls).__new__(cls, (r, g, b))
 
@@ -127,7 +141,7 @@ class RGBColor(tuple):
         return "%02X%02X%02X" % self
 
     @classmethod
-    def from_string(cls, rgb_hex_str):
+    def from_string(cls, rgb_hex_str: str) -> RGBColor:
         """Return a new instance from an RGB color hex string like ``'3C2F80'``."""
         r = int(rgb_hex_str[:2], 16)
         g = int(rgb_hex_str[2:4], 16)

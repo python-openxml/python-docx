@@ -67,7 +67,9 @@ class BaseXmlEnum(int, enum.Enum):
     @classmethod
     def to_xml(cls: Type[_T], value: int | _T | None) -> str | None:
         """XML value of this enum member, generally an XML attribute value."""
-        return cls(value).xml_value
+        # -- presence of multi-arg `__new__()` method fools type-checker, but getting a
+        # -- member by its value using EnumCls(val) works as usual.
+        return cls(value).xml_value  # pyright: ignore[reportGeneralTypeIssues]
 
 
 class DocsPageFormatter:
