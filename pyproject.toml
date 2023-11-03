@@ -42,6 +42,17 @@ Repository = "https://github.com/python-openxml/python-docx"
 target-version = ["py37", "py38", "py39", "py310", "py311"]
 
 [tool.pytest.ini_options]
+filterwarnings = [
+    # -- exit on any warning not explicitly ignored here --
+    "error",
+
+    # -- pytest-xdist plugin may warn about `looponfailroots` deprecation --
+    "ignore::DeprecationWarning:xdist",
+
+    # -- pytest complains when pytest-xdist is not installed --
+    "ignore:Unknown config option. looponfailroots:pytest.PytestConfigWarning",
+]
+looponfailroots = ["src", "tests"]
 norecursedirs = [
     "doc",
     "docx",
