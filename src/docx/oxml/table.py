@@ -415,6 +415,15 @@ class CT_Tc(BaseOxmlElement):
         tcPr = self.get_or_add_tcPr()
         tcPr.grid_span = value
 
+    @property
+    def inner_content_elements(self) -> List[CT_P | CT_Tbl]:
+        """Generate all `w:p` and `w:tbl` elements in this document-body.
+
+        Elements appear in document order. Elements shaded by nesting in a `w:ins` or
+        other "wrapper" element will not be included.
+        """
+        return self.xpath("./w:p | ./w:tbl")
+
     def iter_block_items(self):
         """Generate a reference to each of the block-level content elements in this
         cell, in the order they appear."""

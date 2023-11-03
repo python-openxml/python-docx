@@ -38,6 +38,15 @@ class CT_HdrFtr(BaseOxmlElement):
     p = ZeroOrMore("w:p", successors=())
     tbl = ZeroOrMore("w:tbl", successors=())
 
+    @property
+    def inner_content_elements(self) -> List[CT_P | CT_Tbl]:
+        """Generate all `w:p` and `w:tbl` elements in this header or footer.
+
+        Elements appear in document order. Elements shaded by nesting in a `w:ins` or
+        other "wrapper" element will not be included.
+        """
+        return self.xpath("./w:p | ./w:tbl")
+
 
 class CT_HdrFtrRef(BaseOxmlElement):
     """`w:headerReference` and `w:footerReference` elements."""

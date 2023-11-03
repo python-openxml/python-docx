@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import pytest
 
 from docx.exceptions import InvalidSpanError
 from docx.oxml.parser import parse_xml
-from docx.oxml.table import CT_Row, CT_Tc
+from docx.oxml.table import CT_Row, CT_Tbl, CT_Tc
+from docx.oxml.text.paragraph import CT_P
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.file import snippet_seq
@@ -101,6 +104,10 @@ class DescribeCT_Tc:
             call(tc, grid_width, top_tc_),
         ]
         assert tc.vMerge == vMerge
+
+    def it_knows_its_inner_content_block_item_elements(self):
+        tc = cast(CT_Tc, element("w:tc/(w:p,w:tbl,w:p)"))
+        assert [type(e) for e in tc.inner_content_elements] == [CT_P, CT_Tbl, CT_P]
 
     def it_can_swallow_the_next_tc_help_merge(self, swallow_fixture):
         tc, grid_width, top_tc, tr, expected_xml = swallow_fixture

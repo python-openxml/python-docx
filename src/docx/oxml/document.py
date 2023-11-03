@@ -77,3 +77,12 @@ class CT_Body(BaseOxmlElement):
         """
         for content_elm in self.xpath("./*[not(self::w:sectPr)]"):
             self.remove(content_elm)
+
+    @property
+    def inner_content_elements(self) -> List[CT_P | CT_Tbl]:
+        """Generate all `w:p` and `w:tbl` elements in this document-body.
+
+        Elements appear in document order. Elements shaded by nesting in a `w:ins` or
+        other "wrapper" element will not be included.
+        """
+        return self.xpath("./w:p | ./w:tbl")
