@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+1.1.0 (2023-11-03)
+++++++++++++++++++
+
+- Add BlockItemContainer.iter_inner_content()
+
+
 1.0.1 (2023-10-12)
 ++++++++++++++++++
 
