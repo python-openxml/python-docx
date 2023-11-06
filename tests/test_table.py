@@ -1,7 +1,14 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for the docx.table module."""
+
+from __future__ import annotations
+
+from typing import cast
 
 import pytest
 
+from docx.document import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import (
     WD_ALIGN_VERTICAL,
@@ -10,7 +17,7 @@ from docx.enum.table import (
     WD_TABLE_DIRECTION,
 )
 from docx.oxml.parser import parse_xml
-from docx.oxml.table import CT_Tc
+from docx.oxml.table import CT_Tbl, CT_Tc
 from docx.parts.document import DocumentPart
 from docx.shared import Inches
 from docx.table import Table, _Cell, _Column, _Columns, _Row, _Rows
@@ -20,7 +27,7 @@ from .oxml.unitdata.table import a_gridCol, a_tbl, a_tblGrid, a_tc, a_tr
 from .oxml.unitdata.text import a_p
 from .unitutil.cxml import element, xml
 from .unitutil.file import snippet_seq
-from .unitutil.mock import instance_mock, property_mock
+from .unitutil.mock import FixtureRequest, Mock, instance_mock, property_mock
 
 
 class DescribeTable:
@@ -89,14 +96,44 @@ class DescribeTable:
         table = table_fixture
         assert table.table is table
 
-    def it_knows_its_direction(self, direction_get_fixture):
-        table, expected_value = direction_get_fixture
-        assert table.table_direction == expected_value
+    @pytest.mark.parametrize(
+        ("tbl_cxml", "expected_value"),
+        [
+            # ("w:tbl/w:tblPr", None),
+            ("w:tbl/w:tblPr/w:bidiVisual", WD_TABLE_DIRECTION.RTL),
+            ("w:tbl/w:tblPr/w:bidiVisual{w:val=0}", WD_TABLE_DIRECTION.LTR),
+            ("w:tbl/w:tblPr/w:bidiVisual{w:val=on}", WD_TABLE_DIRECTION.RTL),
+        ],
+    )
+    def it_knows_its_direction(
+        self, tbl_cxml: str, expected_value: WD_TABLE_DIRECTION | None, document_: Mock
+    ):
+        tbl = cast(CT_Tbl, element(tbl_cxml))
+        assert Table(tbl, document_).table_direction == expected_value
 
-    def it_can_change_its_direction(self, direction_set_fixture):
-        table, new_value, expected_xml = direction_set_fixture
+    @pytest.mark.parametrize(
+        ("tbl_cxml", "new_value", "expected_cxml"),
+        [
+            ("w:tbl/w:tblPr", WD_TABLE_DIRECTION.RTL, "w:tbl/w:tblPr/w:bidiVisual"),
+            (
+                "w:tbl/w:tblPr/w:bidiVisual",
+                WD_TABLE_DIRECTION.LTR,
+                "w:tbl/w:tblPr/w:bidiVisual{w:val=0}",
+            ),
+            (
+                "w:tbl/w:tblPr/w:bidiVisual{w:val=0}",
+                WD_TABLE_DIRECTION.RTL,
+                "w:tbl/w:tblPr/w:bidiVisual",
+            ),
+            ("w:tbl/w:tblPr/w:bidiVisual{w:val=1}", None, "w:tbl/w:tblPr"),
+        ],
+    )
+    def it_can_change_its_direction(
+        self, tbl_cxml: str, new_value: WD_TABLE_DIRECTION, expected_cxml: str, document_: Mock
+    ):
+        table = Table(cast(CT_Tbl, element(tbl_cxml)), document_)
         table.table_direction = new_value
-        assert table._element.xml == expected_xml
+        assert table._element.xml == xml(expected_cxml)
 
     def it_knows_its_table_style(self, style_get_fixture):
         table, style_id_, style_ = style_get_fixture
@@ -245,41 +282,6 @@ class DescribeTable:
         table = Table(element(tbl_cxml), None)
         return table, expected_value
 
-    @pytest.fixture(
-        params=[
-            ("w:tbl/w:tblPr", None),
-            ("w:tbl/w:tblPr/w:bidiVisual", WD_TABLE_DIRECTION.RTL),
-            ("w:tbl/w:tblPr/w:bidiVisual{w:val=0}", WD_TABLE_DIRECTION.LTR),
-            ("w:tbl/w:tblPr/w:bidiVisual{w:val=on}", WD_TABLE_DIRECTION.RTL),
-        ]
-    )
-    def direction_get_fixture(self, request):
-        tbl_cxml, expected_value = request.param
-        table = Table(element(tbl_cxml), None)
-        return table, expected_value
-
-    @pytest.fixture(
-        params=[
-            ("w:tbl/w:tblPr", WD_TABLE_DIRECTION.RTL, "w:tbl/w:tblPr/w:bidiVisual"),
-            (
-                "w:tbl/w:tblPr/w:bidiVisual",
-                WD_TABLE_DIRECTION.LTR,
-                "w:tbl/w:tblPr/w:bidiVisual{w:val=0}",
-            ),
-            (
-                "w:tbl/w:tblPr/w:bidiVisual{w:val=0}",
-                WD_TABLE_DIRECTION.RTL,
-                "w:tbl/w:tblPr/w:bidiVisual",
-            ),
-            ("w:tbl/w:tblPr/w:bidiVisual{w:val=1}", None, "w:tbl/w:tblPr"),
-        ]
-    )
-    def direction_set_fixture(self, request):
-        tbl_cxml, new_value, expected_cxml = request.param
-        table = Table(element(tbl_cxml), None)
-        expected_xml = xml(expected_cxml)
-        return table, new_value, expected_xml
-
     @pytest.fixture
     def row_cells_fixture(self, _cells_, _column_count_):
         table = Table(None, None)
@@ -330,6 +332,10 @@ class DescribeTable:
     @pytest.fixture
     def _column_count_(self, request):
         return property_mock(request, Table, "_column_count")
+
+    @pytest.fixture
+    def document_(self, request: FixtureRequest):
+        return instance_mock(request, Document)
 
     @pytest.fixture
     def document_part_(self, request):

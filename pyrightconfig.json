@@ -6,7 +6,7 @@
     "ignore":  [
     ],
     "include": [
-        "src/docx/",
+        "src/docx",
         "tests"
     ],
     "pythonPlatform": "All",

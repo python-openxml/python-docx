@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Temporary stand-in for main oxml module.
 
 This module came across with the PackageReader transplant. Probably much will get
@@ -27,7 +29,7 @@ nsmap = {
 # ===========================================================================
 
 
-def parse_xml(text: str) -> etree._Element:  # pyright: ignore[reportPrivateUsage]
+def parse_xml(text: str) -> etree._Element:
     """`etree.fromstring()` replacement that uses oxml parser."""
     return etree.fromstring(text, oxml_parser)
 
@@ -44,7 +46,7 @@ def qn(tag):
     return "{%s}%s" % (uri, tagroot)
 
 
-def serialize_part_xml(part_elm):
+def serialize_part_xml(part_elm: etree._Element):
     """Serialize `part_elm` etree element to XML suitable for storage as an XML part.
 
     That is to say, no insignificant whitespace added for readability, and an

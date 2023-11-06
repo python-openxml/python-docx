@@ -15,7 +15,7 @@ class CT_DecimalNumber(BaseOxmlElement):
     containing a text representation of a decimal number (e.g. 42) in its ``val``
     attribute."""
 
-    val = RequiredAttribute("w:val", ST_DecimalNumber)
+    val: int = RequiredAttribute("w:val", ST_DecimalNumber)  # pyright: ignore[reportAssignmentType]
 
     @classmethod
     def new(cls, nsptagname, val):
@@ -42,9 +42,7 @@ class CT_String(BaseOxmlElement):
     In those cases, it containing a style name in its `val` attribute.
     """
 
-    val: str = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:val", ST_String
-    )
+    val: str = RequiredAttribute("w:val", ST_String)  # pyright: ignore[reportGeneralTypeIssues]
 
     @classmethod
     def new(cls, nsptagname: str, val: str):

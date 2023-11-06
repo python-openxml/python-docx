@@ -1,3 +1,5 @@
+# pyright: reportImportCycles=false
+
 """XML parser for python-docx."""
 
 from __future__ import annotations
@@ -43,7 +45,7 @@ def OxmlElement(
     nsptag_str: str,
     attrs: Dict[str, str] | None = None,
     nsdecls: Dict[str, str] | None = None,
-) -> BaseOxmlElement:
+) -> BaseOxmlElement | etree._Element:  # pyright: ignore[reportPrivateUsage]
     """Return a 'loose' lxml element having the tag specified by `nsptag_str`.
 
     The tag in `nsptag_str` must contain the standard namespace prefix, e.g. `a:tbl`.

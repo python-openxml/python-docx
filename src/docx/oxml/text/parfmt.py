@@ -37,7 +37,9 @@ class CT_Ind(BaseOxmlElement):
 class CT_Jc(BaseOxmlElement):
     """``<w:jc>`` element, specifying paragraph justification."""
 
-    val = RequiredAttribute("w:val", WD_ALIGN_PARAGRAPH)
+    val: WD_ALIGN_PARAGRAPH = RequiredAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:val", WD_ALIGN_PARAGRAPH
+    )
 
 
 class CT_PPr(BaseOxmlElement):
@@ -86,7 +88,7 @@ class CT_PPr(BaseOxmlElement):
         "w:sectPr",
         "w:pPrChange",
     )
-    pStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+    pStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:pStyle", successors=_tag_seq[1:]
     )
     keepNext = ZeroOrOne("w:keepNext", successors=_tag_seq[2:])

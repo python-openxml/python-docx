@@ -2,4 +2,5 @@
 behave>=1.2.3
 pyparsing>=2.0.1
 pytest>=2.5
+pytest-xdist
 ruff

@@ -44,7 +44,7 @@ class CT_Body(BaseOxmlElement):
 
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))
-    sectPr: CT_SectPr | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+    sectPr: CT_SectPr | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:sectPr", successors=()
     )
 
