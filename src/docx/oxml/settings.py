@@ -107,6 +107,7 @@ class CT_Settings(BaseOxmlElement):
         "w:listSeparator",
     )
     evenAndOddHeaders = ZeroOrOne("w:evenAndOddHeaders", successors=_tag_seq[48:])
+    trackRevisions = ZeroOrOne("w:trackRevisions", successors=_tag_seq[32:])
     del _tag_seq
 
     @property
@@ -117,9 +118,24 @@ class CT_Settings(BaseOxmlElement):
             return False
         return evenAndOddHeaders.val
 
+    @property
+    def trackRevisions_val(self):
+        """Value of `w:trackRevisions/@w:val` or |None| if not present."""
+        trackRevisions = self.trackRevisions
+        if trackRevisions is None:
+            return False
+        return trackRevisions.val
+
     @evenAndOddHeaders_val.setter
     def evenAndOddHeaders_val(self, value):
         if value in [None, False]:
             self._remove_evenAndOddHeaders()
         else:
             self.get_or_add_evenAndOddHeaders().val = value
+
+    @trackRevisions_val.setter
+    def trackRevisions_val(self, value):
+        if value in [None, False]:
+            self._remove_trackRevisions()
+        else:
+            self.get_or_add_trackRevisions().val = value

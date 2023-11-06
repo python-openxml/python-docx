@@ -76,6 +76,10 @@ register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
 
 # ---------------------------------------------------------------------------
+# track revisions configurations
+register_element_cls("w:trackRevisions", CT_OnOff)
+
+# ---------------------------------------------------------------------------
 # header/footer-related mappings
 
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)

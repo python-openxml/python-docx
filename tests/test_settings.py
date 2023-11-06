@@ -28,6 +28,26 @@ class DescribeSettings:
 
         assert settings_elm.xml == expected_xml
 
+    def it_knows_when_the_document_has_track_revisions(
+        self, track_revisions_get_fixture
+    ):
+        settings_elm, expected_value = track_revisions_get_fixture
+        settings = Settings(settings_elm)
+
+        track_revisions = settings.track_revisions
+
+        assert track_revisions is expected_value
+
+    def it_can_change_whether_the_document_has_track_revisions(
+        self, track_revisions_set_fixture
+    ):
+        settings_elm, value, expected_xml = track_revisions_set_fixture
+        settings = Settings(settings_elm)
+
+        settings.track_revisions = value
+
+        assert settings_elm.xml == expected_xml
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture(
@@ -57,6 +77,38 @@ class DescribeSettings:
         ]
     )
     def odd_and_even_set_fixture(self, request):
+        settings_cxml, value, expected_cxml = request.param
+        settings_elm = element(settings_cxml)
+        expected_xml = xml(expected_cxml)
+        return settings_elm, value, expected_xml
+
+    @pytest.fixture(
+        params=[
+            ("w:settings", False),
+            ("w:settings/w:trackRevisions", True),
+            ("w:settings/w:trackRevisions{w:val=0}", False),
+            ("w:settings/w:trackRevisions{w:val=1}", True),
+            ("w:settings/w:trackRevisions{w:val=true}", True),
+        ]
+    )
+    def track_revisions_get_fixture(self, request):
+        settings_cxml, expected_value = request.param
+        settings_elm = element(settings_cxml)
+        return settings_elm, expected_value
+
+    @pytest.fixture(
+        params=[
+            ("w:settings", True, "w:settings/w:trackRevisions"),
+            ("w:settings/w:trackRevisions", False, "w:settings"),
+            (
+                "w:settings/w:trackRevisions{w:val=1}",
+                True,
+                "w:settings/w:trackRevisions",
+            ),
+            ("w:settings/w:trackRevisions{w:val=off}", False, "w:settings"),
+        ]
+    )
+    def track_revisions_set_fixture(self, request):
         settings_cxml, value, expected_cxml = request.param
         settings_elm = element(settings_cxml)
         expected_xml = xml(expected_cxml)
