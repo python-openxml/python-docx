@@ -60,14 +60,14 @@ set to left, centered, right, or fully justified (aligned on both the left
 and right sides) using values from the enumeration
 :ref:`WdParagraphAlignment`::
 
-    >>> from docx.enum.text import WD_ALIGN_PARAGRAPH
+    >>> from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
     >>> document = Document()
     >>> paragraph = document.add_paragraph()
     >>> paragraph_format = paragraph.paragraph_format
 
     >>> paragraph_format.alignment
     None  # indicating alignment is inherited from the style hierarchy
-    >>> paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    >>> paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     >>> paragraph_format.alignment
     CENTER (1)
 
