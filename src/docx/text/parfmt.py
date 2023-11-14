@@ -28,6 +28,23 @@ class ParagraphFormat(ElementProxy):
         pPr.jc_val = value
 
     @property
+    def outlineLvl(self):
+        """
+        A member of the :ref:`WdParagraphOutlineLevel` enumeration specifying
+        the outline level setting for this paragraph. A value of |None|
+        indicates paragraph outline level is inherited from the style hierarchy.
+        """
+        pPr = self._element.pPr
+        if pPr is None:
+            return None
+        return pPr.outlineLvl_val
+
+    @outlineLvl.setter
+    def outlineLvl(self, value):
+        pPr = self._element.get_or_add_pPr()
+        pPr.outlineLvl_val = value
+
+    @property
     def first_line_indent(self):
         """|Length| value specifying the relative difference in indentation for the
         first line of the paragraph.
