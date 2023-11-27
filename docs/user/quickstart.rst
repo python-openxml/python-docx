@@ -155,9 +155,9 @@ above::
     # add a data row for each item
     for item in items:
         cells = table.add_row().cells
-        cells[0].text = str(item.qty)
-        cells[1].text = item.sku
-        cells[2].text = item.desc
+        cells[0].text = str(item[0])
+        cells[1].text = item[1]
+        cells[2].text = item[2]
 
 
 The same works for columns, although I've yet to see a use case for it.
