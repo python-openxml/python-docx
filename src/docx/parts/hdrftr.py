@@ -22,7 +22,7 @@ class FooterPart(StoryPart):
     def _default_footer_xml(cls):
         """Return bytes containing XML for a default footer part."""
         path = os.path.join(
-            os.path.split(__file__)[0], "..", "templates", "default-footer.xml"
+            os.path.dirname(os.path.split(__file__)[0]), "templates", "default-footer.xml"
         )
         with open(path, "rb") as f:
             xml_bytes = f.read()
