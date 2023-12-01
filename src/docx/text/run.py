@@ -1,8 +1,8 @@
 """Run-related proxy objects for python-docx, Run in particular."""
 
-import copy
-
 from __future__ import annotations
+
+import copy
 
 from typing import IO, TYPE_CHECKING, Iterator, cast
 
