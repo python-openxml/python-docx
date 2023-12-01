@@ -1,5 +1,7 @@
 """Run-related proxy objects for python-docx, Run in particular."""
 
+import copy
+
 from __future__ import annotations
 
 from typing import IO, TYPE_CHECKING, Iterator, cast
@@ -136,36 +138,15 @@ class Run(StoryChild):
         this run, such as font name and size."""
         return Font(self._element)
 
-    @font.setter
-    def font(self, value: Font):
-        this_font = self.font
-        this_font.name = value.name
-        this_font.size = value.size
-        this_font.strike = value.strike
-        this_font.subscript = value.subscript
-        this_font.superscript = value.superscript
-        this_font.underline = value.underline
-        this_font.web_hidden = value.web_hidden
-        this_font.spec_vanish = value.spec_vanish
-        this_font.snap_to_grid = value.snap_to_grid
-        this_font.small_caps = value.small_caps
-        this_font.shadow = value.shadow
-        this_font.rtl = value.rtl
-        this_font.outline = value.outline
-        this_font.no_proof = value.no_proof
-        this_font.math = value.math
-        this_font.imprint = value.imprint
-        this_font.italic = value.italic
-        this_font.highlight_color = value.highlight_color
-        this_font.hidden = value.hidden
-        this_font.emboss = value.emboss
-        this_font.double_strike = value.double_strike
-        this_font.cs_italic = value.cs_italic
-        this_font.cs_bold = value.cs_bold
-        this_font.complex_script = value.complex_script
-        this_font.color = value.color
-        this_font.bold = value.bold
-        this_font.all_caps = value.all_caps
+    @property
+    def formatting(self) -> CT_RPr:
+        """The |CT_RPr| object providing access to the full range of formatting properties for
+        this run, such as font name and size."""
+      return copy.deepcopy(self._r.get_or_add_rPr())
+
+    @formatting.setter
+    def formatting(self, new_rPr: CT_RPr):
+          self._r.replace(self._r.get_or_add_rPr(), new_rPr)
 
     @property
     def italic(self) -> bool | None:
