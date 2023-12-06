@@ -14,7 +14,7 @@ Headings, bullets, and numbered lists are simply paragraphs with a particular
 style applied.
 
 In this way, a document can be "written" from top to bottom, roughly like
-a person would if they knew exactly what they wanted to say This basic use
+a person would if they knew exactly what they wanted to say. This basic use
 case, where content is always added to the end of the document, is expected to
 account for perhaps 80% of actual use cases, so it's a priority to make it as
 simple as possible without compromising the power of the overall API.
