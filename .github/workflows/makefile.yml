@@ -20,8 +20,13 @@ jobs:
         sudo pip3 install -r requirements.txt
         sudo pip3 install -r requirements-test.txt
 
+    - name: Build and install package
+      run: |
+        make build
+        make install
+
     - name: Run tests
       run: make test
 
-    - name: Build artefact
-      run: make build
+    - name: Build wheel
+      run: make wheel
