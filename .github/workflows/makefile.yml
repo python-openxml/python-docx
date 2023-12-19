@@ -17,6 +17,7 @@ jobs:
     - name: Install reuirements
       run: |
         sudo apt-get install -y python3 python3-pip
+        sudo python3 -m pip install --upgrade pip
         sudo pip3 install -r requirements.txt
         sudo pip3 install -r requirements-dev.txt
         sudo pip3 install -r requirements-test.txt
