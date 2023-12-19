@@ -14,6 +14,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install reuirements
+      run: |
+        apt-get install -y python3 python3-pip
+        pip3 install -r requirements.txt
+        pip3 install -r requirements-test.txt
+
     - name: Run tests
       run: make test
 
