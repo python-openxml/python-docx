@@ -27,6 +27,19 @@ class Paragraph(StoryChild):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
 
+    def add_footnote(self):
+        """
+        Append a run that contains a ``<w:footnoteReferenceId>`` element.
+        The footnotes are kept in order by `footnote_reference_id`, so
+        the appropriate id is calculated based on the current state.
+        """
+        document = self._parent._parent
+        new_fr_id = document._calculate_next_footnote_reference_id(self._p)
+        r = self._p.add_r()
+        r.add_footnoteReference(new_fr_id)
+        footnote = document._add_footnote(new_fr_id)
+        return footnote
+
     def add_run(self, text: str | None = None, style: str | CharacterStyle | None = None) -> Run:
         """Append run containing `text` and having character-style `style`.
 
@@ -76,6 +89,21 @@ class Paragraph(StoryChild):
         """A |Hyperlink| instance for each hyperlink in this paragraph."""
         return [Hyperlink(hyperlink, self) for hyperlink in self._p.hyperlink_lst]
 
+    @property
+    def footnotes(self):
+        """
+        Returns a list of |Footnote| instances that refers to the footnotes in this paragraph,
+        or |None| if none footnote is defined.
+        """
+        reference_ids = self._p.footnote_reference_ids
+        if reference_ids == None:
+            return None
+        footnotes = self._parent._parent.footnotes
+        footnote_list = []
+        for ref_id in reference_ids:
+            footnote_list.append(footnotes[ref_id])
+        return footnote_list
+
     def insert_paragraph_before(
         self, text: str | None = None, style: str | ParagraphStyle | None = None
     ) -> Paragraph:
@@ -105,6 +133,10 @@ class Paragraph(StoryChild):
                 if isinstance(r_or_hlink, CT_R)
                 else Hyperlink(r_or_hlink, self)
             )
+
+    def increment_containing_footnote_reference_ids(self):
+        for r in self.runs:
+            r._r.increment_containing_footnote_reference_ids()
 
     @property
     def paragraph_format(self):

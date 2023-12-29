@@ -70,6 +70,21 @@ class CT_P(BaseOxmlElement):
             "./w:r/w:lastRenderedPageBreak | ./w:hyperlink/w:r/w:lastRenderedPageBreak"
         )
 
+    @property
+    def footnote_reference_ids(self):
+        """
+        Return all footnote reference ids (``<w:footnoteReference>``) form the paragraph,
+        or |None| if not present.
+        """
+        footnote_ids = []
+        for run in self.r_lst:
+            new_footnote_ids = run.footnote_reference_ids
+            if new_footnote_ids:
+                footnote_ids.extend(new_footnote_ids)
+        if footnote_ids == []:
+            footnote_ids = None
+        return footnote_ids
+
     def set_sectPr(self, sectPr: CT_SectPr):
         """Unconditionally replace or add `sectPr` as grandchild in correct sequence."""
         pPr = self.get_or_add_pPr()
