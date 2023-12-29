@@ -137,6 +137,13 @@ class Run(StoryChild):
         return Font(self._element)
 
     @property
+    def footnote_reference_ids(self):
+        """
+        Returns all footnote reference ids from the run, or |None| if none found.
+        """
+        return self._r.footnote_reference_ids
+
+    @property
     def italic(self) -> bool | None:
         """Read/write tri-state value.
 
