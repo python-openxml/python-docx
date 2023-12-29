@@ -210,7 +210,7 @@ class Document(ElementProxy):
         new_fr_id = 1
         # If paragraph already contains footnotes
         # append the new footnote and the end with the next reference id.
-        if p.footnote_reference_ids is not None:
+        if len(p.footnote_reference_ids) > 0:
             new_fr_id = p.footnote_reference_ids[-1] + 1
         # Read the paragraphs containing footnotes and find where the
         # new footnote will be. Keeping in mind that the footnotes are
@@ -226,7 +226,7 @@ class Document(ElementProxy):
                 has_passed_containing_para = True
                 continue
             # Skip paragraphs without footnotes (they don't impact new id).
-            if self.paragraphs[p_i]._p.footnote_reference_ids is None:
+            if len(self.paragraphs[p_i]._p.footnote_reference_ids) == 0:
                 continue
             # These footnotes are after the new footnote, so we increment them.
             if not has_passed_containing_para:

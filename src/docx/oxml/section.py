@@ -258,7 +258,7 @@ class CT_SectPr(BaseOxmlElement):
         attribute is not present.
         """
         fPr = self.footnotePr
-        if fPr is None or fPr.numFmt:
+        if fPr is None or fPr.numFmt is None:
             return None
         return fPr.numFmt.val
 
@@ -276,7 +276,7 @@ class CT_SectPr(BaseOxmlElement):
         attribute is not present.
         """
         fPr = self.footnotePr
-        if fPr is None or fPr.numRestart:
+        if fPr is None or fPr.numRestart is None:
             return None
         return fPr.numRestart.val
 
@@ -301,7 +301,7 @@ class CT_SectPr(BaseOxmlElement):
         attribute is not present.
         """
         fPr = self.footnotePr
-        if fPr is None or fPr.numStart:
+        if fPr is None or fPr.numStart is None:
             return None
         return fPr.numStart.val
 
