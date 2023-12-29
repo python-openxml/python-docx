@@ -81,8 +81,6 @@ class CT_P(BaseOxmlElement):
             new_footnote_ids = run.footnote_reference_ids
             if new_footnote_ids:
                 footnote_ids.extend(new_footnote_ids)
-        if footnote_ids == []:
-            footnote_ids = None
         return footnote_ids
 
     def set_sectPr(self, sectPr: CT_SectPr):

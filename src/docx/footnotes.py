@@ -35,7 +35,7 @@ class Footnotes(Parented):
         """
         elements = self._element # for easy access
         new_footnote = None
-        if elements.get_by_id(footnote_reference_id):
+        if elements.get_by_id(footnote_reference_id) is not None:
             # When adding a footnote it can be inserted 
             # in front of some other footnotes, so
             # we need to sort footnotes by `footnote_reference_id`

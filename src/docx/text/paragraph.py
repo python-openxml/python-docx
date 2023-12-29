@@ -95,11 +95,9 @@ class Paragraph(StoryChild):
         Returns a list of |Footnote| instances that refers to the footnotes in this paragraph,
         or |None| if none footnote is defined.
         """
-        reference_ids = self._p.footnote_reference_ids
-        if reference_ids == None:
-            return None
-        footnotes = self._parent._parent.footnotes
         footnote_list = []
+        reference_ids = self._p.footnote_reference_ids
+        footnotes = self._parent._parent.footnotes
         for ref_id in reference_ids:
             footnote_list.append(footnotes[ref_id])
         return footnote_list
