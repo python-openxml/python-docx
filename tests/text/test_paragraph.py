@@ -13,6 +13,8 @@ from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
+from docx.footnotes import Footnotes
+from docx.document import Document
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock, method_mock, property_mock
@@ -37,6 +39,10 @@ class DescribeParagraph:
         paragraph = Paragraph(p, fake_parent)
 
         assert paragraph.contains_page_break == expected_value
+
+    def it_provides_access_to_its_footnotes(self, footnotes_fixture):
+        paragraph, footnotes_ = footnotes_fixture
+        assert paragraph.footnotes == footnotes_
 
     @pytest.mark.parametrize(
         ("p_cxml", "count"),
@@ -214,6 +220,22 @@ class DescribeParagraph:
         assert body.xml == expected_xml
 
     # fixtures -------------------------------------------------------
+
+    @pytest.fixture(params=[
+        ('w:p/w:r/w:footnoteReference{w:id=2}', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")', [2]),
+        ('w:p/w:r/w:footnoteReference{w:id=1}', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")', [1]),
+        ('w:p/w:r/(w:footnoteReference{w:id=1}, w:footnoteReference{w:id=2})', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")', [1,2]),
+        ('w:p/w:r/(w:footnoteReference{w:id=3}, w:footnoteReference{w:id=2})', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note", w:footnote{w:id=3}/w:p/w:r/w:t"third note")', [3,2]),
+    ])
+    def footnotes_fixture(self, request, document_part_):
+        paragraph_cxml, footnotes_cxml, footnote_ids_in_p = request.param
+        document_elm = element('w:document/w:body')
+        document = Document(document_elm, document_part_)
+        paragraph = Paragraph(element(paragraph_cxml), document._body)
+        footnotes = Footnotes(element(footnotes_cxml), None)
+        footnotes_in_p = [footnotes[id] for id in footnote_ids_in_p]
+        document_part_.footnotes = footnotes
+        return paragraph, footnotes_in_p
 
     @pytest.fixture(
         params=[
