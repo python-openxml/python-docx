@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from docx.oxml.shape import CT_Anchor, CT_Inline
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
     from docx.oxml.text.parfmt import CT_TabStop
+    from docx.oxml.text.footnote_reference import CT_FtnEdnRef
 
 # ------------------------------------------------------------------------------------
 # Run-level elements
@@ -28,6 +29,9 @@ class CT_R(BaseOxmlElement):
     get_or_add_rPr: Callable[[], CT_RPr]
     _add_drawing: Callable[[], CT_Drawing]
     _add_t: Callable[..., CT_Text]
+    _add_rPr: Callable[[], CT_RPr]
+    _add_footnoteReference: Callable[[], CT_FtnEdnRef]
+    footnoteReference_lst: List[CT_FtnEdnRef] | None
 
     rPr: CT_RPr | None = ZeroOrOne("w:rPr")  # pyright: ignore[reportAssignmentType]
     br = ZeroOrMore("w:br")
@@ -37,7 +41,7 @@ class CT_R(BaseOxmlElement):
     tab = ZeroOrMore("w:tab")
     footnoteReference = ZeroOrMore('w:footnoteReference')
 
-    def add_footnoteReference(self, id):
+    def add_footnoteReference(self, id: int) -> CT_FtnEdnRef:
         """
         Return a newly added ``<w:footnoteReference>`` element containing
         the footnote reference id.
@@ -105,7 +109,7 @@ class CT_R(BaseOxmlElement):
         return self.xpath("./w:lastRenderedPageBreak")
 
     @property
-    def footnote_reference_ids(self):
+    def footnote_reference_ids(self) -> List[int] | None:
         """
         Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present.
         """
@@ -117,7 +121,7 @@ class CT_R(BaseOxmlElement):
             references = None
         return references
 
-    def increment_containing_footnote_reference_ids(self):
+    def increment_containing_footnote_reference_ids(self) -> CT_FtnEdnRef | None:
         """
         Increment all footnote reference ids by one if they exist.
         Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present.

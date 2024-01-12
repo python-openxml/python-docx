@@ -22,6 +22,8 @@ if TYPE_CHECKING:
     from docx.styles.style import ParagraphStyle, _TableStyle
     from docx.table import Table
     from docx.text.paragraph import Paragraph
+    from docx.oxml.footnote import CT_Footnotes, CT_FtnEnd
+    from docx.oxml.text.paragraph import CT_P
 
 
 class Document(ElementProxy):
@@ -113,7 +115,7 @@ class Document(ElementProxy):
         return self._part.core_properties
 
     @property
-    def footnotes(self):
+    def footnotes(self) -> CT_Footnotes:
         """A |Footnotes| object providing access to footnote elements in this document."""
         return self._part.footnotes
 
@@ -179,7 +181,7 @@ class Document(ElementProxy):
         """
         return self._body.tables
 
-    def _add_footnote(self, footnote_reference_ids):
+    def _add_footnote(self, footnote_reference_ids: int) -> CT_FtnEnd:
         """Inserts a newly created footnote to |Footnotes|."""
         return self._part.footnotes.add_footnote(footnote_reference_ids)
 
@@ -196,7 +198,7 @@ class Document(ElementProxy):
             self.__body = _Body(self._element.body, self)
         return self.__body
 
-    def _calculate_next_footnote_reference_id(self, p):
+    def _calculate_next_footnote_reference_id(self, p: CT_P) -> int:
         """
         Return the appropriate footnote reference id number for
         a new footnote added at the end of paragraph `p`.
@@ -228,7 +230,7 @@ class Document(ElementProxy):
                 continue
             # These footnotes are after the new footnote, so we increment them.
             if not has_passed_containing_para:
-                self.paragraphs[p_i].increment_containing_footnote_reference_ids()
+                self.paragraphs[p_i]._increment_containing_footnote_reference_ids()
             else:
                 # This is the last footnote before the new footnote, so we use its
                 # value to determent the value of the new footnote.
