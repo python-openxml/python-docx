@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Iterator, cast
+from typing import IO, TYPE_CHECKING, List, Iterator, cast
 
 from docx import types as t
 from docx.drawing import Drawing
@@ -137,10 +137,8 @@ class Run(StoryChild):
         return Font(self._element)
 
     @property
-    def footnote_reference_ids(self):
-        """
-        Returns all footnote reference ids from the run, or |None| if none found.
-        """
+    def footnote_reference_ids(self) -> List[int] | None:
+        """Returns all footnote reference ids from the run, or |None| if none found."""
         return self._r.footnote_reference_ids
 
     @property

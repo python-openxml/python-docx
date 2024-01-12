@@ -12,8 +12,8 @@ from typing_extensions import TypeAlias
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
 from docx.oxml.ns import nsmap
-from docx.oxml.shared import CT_OnOff
-from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString, ST_FtnPos, ST_NumberFormat, ST_RestartNumber
+from docx.oxml.shared import CT_OnOff, CT_DecimalNumber
+from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString, ST_FtnPos, ST_NumberFormat, ST_RestartNumber, ST_DecimalNumber
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.xmlchemy import (
@@ -35,13 +35,19 @@ class CT_FtnPos(BaseOxmlElement):
 
 class CT_FtnProps(BaseOxmlElement):
     """``<w:footnotePr>`` element, section wide footnote properties"""
+
+    get_or_add_pos: Callable[[], CT_FtnPos]
+    get_or_add_numFmt: Callable[[], CT_NumFmt]
+    get_or_add_numStart: Callable[[], CT_DecimalNumber]
+    get_or_add_numRestart: Callable[[], CT_NumRestart]
+
     _tag_seq = (
         'w:pos', 'w:numFmt', 'w:numStart', 'w:numRestart'
     )
-    pos = ZeroOrOne('w:pos', successors=_tag_seq)
-    numFmt = ZeroOrOne('w:numFmt', successors=_tag_seq[1:])
-    numStart = ZeroOrOne('w:numStart', successors=_tag_seq[2:])
-    numRestart = ZeroOrOne('w:numRestart', successors=_tag_seq[3:])
+    pos: CT_FtnPos | None = ZeroOrOne('w:pos', successors=_tag_seq)  # pyright: ignore[reportGeneralTypeIssues]
+    numFmt: CT_NumFmt | None = ZeroOrOne('w:numFmt', successors=_tag_seq[1:])  # pyright: ignore[reportGeneralTypeIssues]
+    numStart: CT_DecimalNumber | None = ZeroOrOne('w:numStart', successors=_tag_seq[2:])  # pyright: ignore[reportGeneralTypeIssues]
+    numRestart: CT_NumRestart | None = ZeroOrOne('w:numRestart', successors=_tag_seq[3:])  # pyright: ignore[reportGeneralTypeIssues]
 
 
 class CT_HdrFtr(BaseOxmlElement):
@@ -138,6 +144,7 @@ class CT_SectPr(BaseOxmlElement):
     get_or_add_pgSz: Callable[[], CT_PageSz]
     get_or_add_titlePg: Callable[[], CT_OnOff]
     get_or_add_type: Callable[[], CT_SectType]
+    get_or_add_footnotePr: Callable[[], CT_FtnProps]
     _add_footerReference: Callable[[], CT_HdrFtrRef]
     _add_headerReference: Callable[[], CT_HdrFtrRef]
     _remove_titlePg: Callable[[], None]
@@ -179,7 +186,9 @@ class CT_SectPr(BaseOxmlElement):
     titlePg: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:titlePg", successors=_tag_seq[14:]
     )
-    footnotePr = ZeroOrOne("w:footnotePr", successors=_tag_seq[1:])
+    footnotePr: CT_FtnProps | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:footnotePr", successors=_tag_seq[1:]
+    )
     del _tag_seq
 
     def add_footerReference(self, type_: WD_HEADER_FOOTER, rId: str) -> CT_HdrFtrRef:
@@ -251,7 +260,7 @@ class CT_SectPr(BaseOxmlElement):
         )
 
     @property
-    def footnote_number_format(self):
+    def footnote_number_format(self) -> ST_NumberFormat | None:
         """
         The value of the ``w:val`` attribute in the ``<w:numFmt>`` child
         element of ``<w:footnotePr>`` element, as a |String|, or |None| if either the element or the
@@ -263,13 +272,13 @@ class CT_SectPr(BaseOxmlElement):
         return fPr.numFmt.val
 
     @footnote_number_format.setter
-    def footnote_number_format(self, value):
+    def footnote_number_format(self, value: ST_NumberFormat | None):
         fPr = self.get_or_add_footnotePr()
         numFmt = fPr.get_or_add_numFmt()
         numFmt.val = value
 
     @property
-    def footnote_numbering_restart_location(self):
+    def footnote_numbering_restart_location(self) -> ST_RestartNumber | None:
         """
         The value of the ``w:val`` attribute in the ``<w:numRestart>`` child
         element of ``<w:footnotePr>`` element, as a |String|, or |None| if either the element or the
@@ -281,12 +290,12 @@ class CT_SectPr(BaseOxmlElement):
         return fPr.numRestart.val
 
     @footnote_numbering_restart_location.setter
-    def footnote_numbering_restart_location(self, value):
+    def footnote_numbering_restart_location(self, value: ST_RestartNumber | None):
         fPr = self.get_or_add_footnotePr()
         numStart = fPr.get_or_add_numStart()
         numRestart = fPr.get_or_add_numRestart()
         numRestart.val = value
-        if numStart is None or len(numStart.values()) == 0:
+        if len(numStart.values()) == 0:
             numStart.val = 1
         elif value != 'continuous':
             numStart.val = 1
@@ -294,7 +303,7 @@ class CT_SectPr(BaseOxmlElement):
             warn(msg, UserWarning, stacklevel=2)
 
     @property
-    def footnote_numbering_start_value(self):
+    def footnote_numbering_start_value(self) -> ST_DecimalNumber | None:
         """
         The value of the ``w:val`` attribute in the ``<w:numStart>`` child
         element of ``<w:footnotePr>`` element, as a |Number|, or |None| if either the element or the
@@ -306,12 +315,12 @@ class CT_SectPr(BaseOxmlElement):
         return fPr.numStart.val
 
     @footnote_numbering_start_value.setter
-    def footnote_numbering_start_value(self, value):
+    def footnote_numbering_start_value(self, value: ST_DecimalNumber | None):
         fPr = self.get_or_add_footnotePr()
         numStart = fPr.get_or_add_numStart()
         numRestart = fPr.get_or_add_numRestart()
         numStart.val = value
-        if numRestart is None or len(numRestart.values()) == 0:
+        if len(numRestart.values()) == 0:
             numRestart.val = 'continuous'
         elif value != 1:
             numRestart.val = 'continuous'
@@ -319,7 +328,7 @@ class CT_SectPr(BaseOxmlElement):
             warn(msg, UserWarning, stacklevel=2)
 
     @property
-    def footnote_position(self):
+    def footnote_position(self) -> ST_FtnPos | None:
         """
         The value of the ``w:val`` attribute in the ``<w:pos>`` child
         element of ``<w:footnotePr>`` element, as a |String|, or |None| if either the element or the
@@ -331,7 +340,7 @@ class CT_SectPr(BaseOxmlElement):
         return fPr.pos.val
 
     @footnote_position.setter
-    def footnote_position(self, value):
+    def footnote_position(self, value: ST_FtnPos | None):
         fPr = self.get_or_add_footnotePr()
         pos = fPr.get_or_add_pos()
         pos.val = value

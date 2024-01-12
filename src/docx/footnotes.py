@@ -2,19 +2,24 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from docx.blkcntnr import BlockItemContainer
 from docx.shared import Parented
 
+if TYPE_CHECKING:
+    from docx import types as t
+    from docx.oxml.footnote import CT_FtnEnd, CT_Footnotes
 
 class Footnotes(Parented):
     """
     Proxy object wrapping ``<w:footnotes>`` element.
     """
-    def __init__(self, footnotes, parent):
+    def __init__(self, footnotes: CT_Footnotes, parent: t.ProvidesStoryPart):
         super(Footnotes, self).__init__(parent)
         self._element = self._footnotes = footnotes
 
-    def __getitem__(self, reference_id):
+    def __getitem__(self, reference_id: int) -> Footnote:
         """
         A |Footnote| for a specific footnote of reference id, defined with ``w:id`` argument of ``<w:footnoteReference>``.
         If reference id is invalid raises an |IndexError|
@@ -24,10 +29,10 @@ class Footnotes(Parented):
             raise IndexError
         return Footnote(footnote, self)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._element)
 
-    def add_footnote(self, footnote_reference_id):
+    def add_footnote(self, footnote_reference_id: int) -> Footnote:
         """
         Return a newly created |Footnote|, the new footnote will
         be inserted in the correct spot by `footnote_reference_id`.
@@ -63,20 +68,20 @@ class Footnote(BlockItemContainer):
     """
     Proxy object wrapping ``<w:footnote>`` element.
     """
-    def __init__(self, f, parent):
+    def __init__(self, f: CT_FtnEnd, parent:  t.ProvidesStoryPart):
         super(Footnote, self).__init__(f, parent)
         self._f = self._element = f
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Footnote):
             return self._f is other._f
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         if isinstance(other, Footnote):
             return self._f is not other._f
         return True
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._f.id
