@@ -13,9 +13,9 @@ from docx.shared import TextAccumulator
 
 if TYPE_CHECKING:
     from docx.oxml.shape import CT_Anchor, CT_Inline
+    from docx.oxml.text.footnote_reference import CT_FtnEdnRef
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
     from docx.oxml.text.parfmt import CT_TabStop
-    from docx.oxml.text.footnote_reference import CT_FtnEdnRef
 
 # ------------------------------------------------------------------------------------
 # Run-level elements
@@ -39,15 +39,13 @@ class CT_R(BaseOxmlElement):
     drawing = ZeroOrMore("w:drawing")
     t = ZeroOrMore("w:t")
     tab = ZeroOrMore("w:tab")
-    footnoteReference = ZeroOrMore('w:footnoteReference')
+    footnoteReference = ZeroOrMore("w:footnoteReference")
 
     def add_footnoteReference(self, id: int) -> CT_FtnEdnRef:
-        """
-        Return a newly added ``<w:footnoteReference>`` element containing
-        the footnote reference id.
-        """
+        """Return a newly added ``<w:footnoteReference>`` element containing
+        the footnote reference id."""
         rPr = self._add_rPr()
-        rPr.style = 'FootnoteReference'
+        rPr.style = "FootnoteReference"
         new_fr = self._add_footnoteReference()
         new_fr.id = id
         return new_fr
@@ -110,20 +108,17 @@ class CT_R(BaseOxmlElement):
 
     @property
     def footnote_reference_ids(self) -> List[int] | None:
-        """
-        Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present.
-        """
+        """Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present."""
         references = []
         for child in self:
-            if child.tag == qn('w:footnoteReference'):
-               references.append(child.id)
+            if child.tag == qn("w:footnoteReference"):
+                references.append(child.id)
         if references == []:
             references = None
         return references
 
     def increment_containing_footnote_reference_ids(self) -> CT_FtnEdnRef | None:
-        """
-        Increment all footnote reference ids by one if they exist.
+        """Increment all footnote reference ids by one if they exist.
         Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present.
         """
         if self.footnoteReference_lst is not None:

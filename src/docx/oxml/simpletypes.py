@@ -222,15 +222,12 @@ class ST_DrawingElementId(XsdUnsignedInt):
 
 
 class ST_FtnPos(XsdString):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
-        valid_values = ('pageBottom', 'beneathText', 'sectEnd', 'docEnd')
+        valid_values = ("pageBottom", "beneathText", "sectEnd", "docEnd")
         if value not in valid_values:
-            raise ValueError(
-                "must be one of %s, got '%s'" % (valid_values, value)
-            )
+            raise ValueError("must be one of %s, got '%s'" % (valid_values, value))
 
 
 class ST_HexColor(BaseStringType):
@@ -322,15 +319,13 @@ class ST_RelationshipId(XsdString):
 
 
 class ST_RestartNumber(XsdString):
-
     @classmethod
     def validate(cls, value):
         cls.validate_string(value)
-        valid_values = ('continuous', 'eachSect', 'eachPage')
+        valid_values = ("continuous", "eachSect", "eachPage")
         if value not in valid_values:
-            raise ValueError(
-                "must be one of %s, got '%s'" % (valid_values, value)
-            )
+            raise ValueError("must be one of %s, got '%s'" % (valid_values, value))
+
 
 class ST_SignedTwipsMeasure(XsdInt):
     @classmethod

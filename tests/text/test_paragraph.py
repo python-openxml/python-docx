@@ -5,16 +5,16 @@ from typing import List, cast
 import pytest
 
 from docx import types as t
+from docx.document import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.footnotes import Footnotes
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
-from docx.footnotes import Footnotes
-from docx.document import Document
 
 from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock, method_mock, property_mock
@@ -221,15 +221,33 @@ class DescribeParagraph:
 
     # fixtures -------------------------------------------------------
 
-    @pytest.fixture(params=[
-        ('w:p/w:r/w:footnoteReference{w:id=2}', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")', [2]),
-        ('w:p/w:r/w:footnoteReference{w:id=1}', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")', [1]),
-        ('w:p/w:r/(w:footnoteReference{w:id=1}, w:footnoteReference{w:id=2})', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")', [1,2]),
-        ('w:p/w:r/(w:footnoteReference{w:id=3}, w:footnoteReference{w:id=2})', 'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note", w:footnote{w:id=3}/w:p/w:r/w:t"third note")', [3,2]),
-    ])
+    @pytest.fixture(
+        params=[
+            (
+                "w:p/w:r/w:footnoteReference{w:id=2}",
+                'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")',
+                [2],
+            ),
+            (
+                "w:p/w:r/w:footnoteReference{w:id=1}",
+                'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")',
+                [1],
+            ),
+            (
+                "w:p/w:r/(w:footnoteReference{w:id=1}, w:footnoteReference{w:id=2})",
+                'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")',
+                [1, 2],
+            ),
+            (
+                "w:p/w:r/(w:footnoteReference{w:id=3}, w:footnoteReference{w:id=2})",
+                'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note", w:footnote{w:id=3}/w:p/w:r/w:t"third note")',
+                [3, 2],
+            ),
+        ]
+    )
     def footnotes_fixture(self, request, document_part_):
         paragraph_cxml, footnotes_cxml, footnote_ids_in_p = request.param
-        document_elm = element('w:document/w:body')
+        document_elm = element("w:document/w:body")
         document = Document(document_elm, document_part_)
         paragraph = Paragraph(element(paragraph_cxml), document._body)
         footnotes = Footnotes(element(footnotes_cxml), None)

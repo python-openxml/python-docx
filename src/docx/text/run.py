@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, List, Iterator, cast
+from typing import IO, TYPE_CHECKING, Iterator, List, cast
 
 from docx.drawing import Drawing
 from docx.enum.style import WD_STYLE_TYPE
