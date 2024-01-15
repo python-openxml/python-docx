@@ -12,6 +12,7 @@ import pytest
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
+from docx.footnotes import Footnotes
 from docx.opc.coreprops import CoreProperties
 from docx.oxml.document import CT_Document
 from docx.parts.document import DocumentPart
@@ -23,7 +24,6 @@ from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from docx.footnotes import Footnotes
 
 from .unitutil.cxml import element, xml
 from .unitutil.mock import Mock, class_mock, instance_mock, method_mock, property_mock
@@ -251,11 +251,19 @@ class DescribeDocument:
         document_part_.core_properties = core_properties_
         return document, core_properties_
 
-    @pytest.fixture(params=[
-        ('w:footnotes/(w:footnote{w:id=-1}/w:p/w:r/w:t"minus one note", w:footnote{w:id=0}/w:p/w:r/w:t"zero note")'),
-        ('w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")'),
-        ('w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note", w:footnote{w:id=3}/w:p/w:r/w:t"third note")'),
-    ])
+    @pytest.fixture(
+        params=[
+            (
+                'w:footnotes/(w:footnote{w:id=-1}/w:p/w:r/w:t"minus one note", w:footnote{w:id=0}/w:p/w:r/w:t"zero note")'
+            ),
+            (
+                'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note")'
+            ),
+            (
+                'w:footnotes/(w:footnote{w:id=1}/w:p/w:r/w:t"first note", w:footnote{w:id=2}/w:p/w:r/w:t"second note", w:footnote{w:id=3}/w:p/w:r/w:t"third note")'
+            ),
+        ]
+    )
     def footnotes_fixture(self, request, document_part_):
         footnotes_cxml = request.param
         document = Document(None, document_part_)

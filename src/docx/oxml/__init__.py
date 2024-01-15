@@ -117,17 +117,17 @@ from .section import (  # noqa
     CT_SectType,
 )
 
-register_element_cls('w:footnotePr',           CT_FtnProps)
+register_element_cls("w:footnotePr", CT_FtnProps)
 register_element_cls("w:footerReference", CT_HdrFtrRef)
 register_element_cls("w:ftr", CT_HdrFtr)
 register_element_cls("w:hdr", CT_HdrFtr)
 register_element_cls("w:headerReference", CT_HdrFtrRef)
-register_element_cls('w:numFmt',           CT_NumFmt)
-register_element_cls('w:numStart',           CT_DecimalNumber)
-register_element_cls('w:numRestart',           CT_NumRestart)
+register_element_cls("w:numFmt", CT_NumFmt)
+register_element_cls("w:numStart", CT_DecimalNumber)
+register_element_cls("w:numRestart", CT_NumRestart)
 register_element_cls("w:pgMar", CT_PageMar)
 register_element_cls("w:pgSz", CT_PageSz)
-register_element_cls('w:pos',           CT_FtnPos)
+register_element_cls("w:pos", CT_FtnPos)
 register_element_cls("w:sectPr", CT_SectPr)
 register_element_cls("w:type", CT_SectType)
 
@@ -250,11 +250,9 @@ register_element_cls("w:widowControl", CT_OnOff)
 # ---------------------------------------------------------------------------
 # footnote-related mappings
 
-from .footnote import (
-    CT_FtnEnd,
-    CT_Footnotes
-)
+from .footnote import CT_Footnotes, CT_FtnEnd
 from .text.footnote_reference import CT_FtnEdnRef
-register_element_cls('w:footnoteReference',  CT_FtnEdnRef)
-register_element_cls('w:footnote',           CT_FtnEnd)
-register_element_cls('w:footnotes',          CT_Footnotes)
+
+register_element_cls("w:footnoteReference", CT_FtnEdnRef)
+register_element_cls("w:footnote", CT_FtnEnd)
+register_element_cls("w:footnotes", CT_Footnotes)

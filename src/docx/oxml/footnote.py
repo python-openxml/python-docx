@@ -6,30 +6,23 @@ from typing import TYPE_CHECKING, Callable, List
 
 from docx.oxml.ns import qn
 from docx.oxml.parser import OxmlElement
-from docx.oxml.xmlchemy import (
-    BaseOxmlElement, RequiredAttribute, ZeroOrMore, OneOrMore
-)
-from docx.oxml.simpletypes import (
-    ST_DecimalNumber
-)
+from docx.oxml.simpletypes import ST_DecimalNumber
+from docx.oxml.xmlchemy import BaseOxmlElement, OneOrMore, RequiredAttribute, ZeroOrMore
 
 if TYPE_CHECKING:
     from docx.oxml.text.paragraph import CT_P
 
 
 class CT_FtnEnd(BaseOxmlElement):
-    """
-    ``<w:footnote>`` element, containing the properties for a specific footnote
-    """
-    id = RequiredAttribute('w:id', ST_DecimalNumber)
-    p = ZeroOrMore('w:p')
+    """``<w:footnote>`` element, containing the properties for a specific footnote"""
+
+    id = RequiredAttribute("w:id", ST_DecimalNumber)
+    p = ZeroOrMore("w:p")
 
     def add_footnote_before(self, footnote_reference_id: int) -> CT_FtnEnd:
-        """
-        Create a ``<w:footnote>`` element with `footnote_reference_id`
-        and insert it before the current element.
-        """
-        new_footnote = OxmlElement('w:footnote')
+        """Create a ``<w:footnote>`` element with `footnote_reference_id`
+        and insert it before the current element."""
+        new_footnote = OxmlElement("w:footnote")
         new_footnote.id = footnote_reference_id
         self.addprevious(new_footnote)
         return new_footnote
@@ -40,23 +33,20 @@ class CT_FtnEnd(BaseOxmlElement):
 
         paragraphs = []
         for child in self:
-            if child.tag == qn('w:p'):
+            if child.tag == qn("w:p"):
                 paragraphs.append(child)
         return paragraphs
 
 
 class CT_Footnotes(BaseOxmlElement):
-    """
-    ``<w:footnotes>`` element, containing a sequence of footnote (w:footnote) elements
-    """
+    """``<w:footnotes>`` element, containing a sequence of footnote (w:footnote) elements"""
+
     add_footnote_sequence: Callable[[], CT_FtnEnd]
 
-    footnote_sequence = OneOrMore('w:footnote')
+    footnote_sequence = OneOrMore("w:footnote")
 
     def add_footnote(self, footnote_reference_id: int) -> CT_FtnEnd:
-        """
-        Create a ``<w:footnote>`` element with `footnote_reference_id`.
-        """
+        """Create a ``<w:footnote>`` element with `footnote_reference_id`."""
         new_f = self.add_footnote_sequence()
         new_f.id = footnote_reference_id
         return new_f

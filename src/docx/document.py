@@ -16,14 +16,14 @@ from docx.shared import ElementProxy, Emu
 if TYPE_CHECKING:
     from docx import types as t
     from docx.oxml.document import CT_Body, CT_Document
+    from docx.oxml.footnote import CT_Footnotes, CT_FtnEnd
+    from docx.oxml.text.paragraph import CT_P
     from docx.parts.document import DocumentPart
     from docx.settings import Settings
     from docx.shared import Length
     from docx.styles.style import ParagraphStyle, _TableStyle
     from docx.table import Table
     from docx.text.paragraph import Paragraph
-    from docx.oxml.footnote import CT_Footnotes, CT_FtnEnd
-    from docx.oxml.text.paragraph import CT_P
 
 
 class Document(ElementProxy):
@@ -201,11 +201,9 @@ class Document(ElementProxy):
         return self.__body
 
     def _calculate_next_footnote_reference_id(self, p: CT_P) -> int:
-        """
-        Return the appropriate footnote reference id number for
-        a new footnote added at the end of paragraph `p`.
-        """
-        # When adding a footnote it can be inserted 
+        """Return the appropriate footnote reference id number for
+        a new footnote added at the end of paragraph `p`."""
+        # When adding a footnote it can be inserted
         # in front of some other footnotes, so
         # we need to sort footnotes by `footnote_reference_id`
         # in |Footnotes| and in |Paragraph|
@@ -236,7 +234,7 @@ class Document(ElementProxy):
             else:
                 # This is the last footnote before the new footnote, so we use its
                 # value to determent the value of the new footnote.
-                new_fr_id = max(self.paragraphs[p_i]._p.footnote_reference_ids)+1
+                new_fr_id = max(self.paragraphs[p_i]._p.footnote_reference_ids) + 1
                 break
         return new_fr_id
 

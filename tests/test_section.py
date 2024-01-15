@@ -164,16 +164,56 @@ class DescribeSection:
     @pytest.mark.parametrize(
         ("sectPr_cxml", "footnote_prop_name", "expected_value"),
         [
-            ("w:sectPr/w:footnotePr/w:numFmt{w:val=decimal}", "footnote_number_format", "decimal"),
-            ("w:sectPr/w:footnotePr/w:numFmt{w:val=upperRoman}", "footnote_number_format", "upperRoman"),
-            ("w:sectPr/w:footnotePr/w:numFmt{w:val=lowerLetter}", "footnote_number_format", "lowerLetter"),
-            ("w:sectPr/w:footnotePr/w:numFmt{w:val=bullet}", "footnote_number_format", "bullet"),
-            ("w:sectPr/w:footnotePr/w:pos{w:val=pageBottom}", "footnote_number_format", None),
-            ("w:sectPr/w:footnotePr/w:pos{w:val=pageBottom}", "footnote_position", "pageBottom"),
-            ("w:sectPr/w:footnotePr/w:numStart{w:val=5}", "footnote_numbering_start_value", 5),
-            ("w:sectPr/w:footnotePr/w:numStart{w:val=13}", "footnote_numbering_start_value", 13),
-            ("w:sectPr/w:footnotePr/w:numRestart{w:val=eachSect}", "footnote_numbering_restart_location", "eachSect"),
-            ("w:sectPr/w:footnotePr/w:numRestart{w:val=eachPage}", "footnote_numbering_restart_location", "eachPage"),
+            (
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=decimal}",
+                "footnote_number_format",
+                "decimal",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=upperRoman}",
+                "footnote_number_format",
+                "upperRoman",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=lowerLetter}",
+                "footnote_number_format",
+                "lowerLetter",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=bullet}",
+                "footnote_number_format",
+                "bullet",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:pos{w:val=pageBottom}",
+                "footnote_number_format",
+                None,
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:pos{w:val=pageBottom}",
+                "footnote_position",
+                "pageBottom",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numStart{w:val=5}",
+                "footnote_numbering_start_value",
+                5,
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numStart{w:val=13}",
+                "footnote_numbering_start_value",
+                13,
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numRestart{w:val=eachSect}",
+                "footnote_numbering_restart_location",
+                "eachSect",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numRestart{w:val=eachPage}",
+                "footnote_numbering_restart_location",
+                "eachPage",
+            ),
         ],
     )
     def it_knows_its_footnote_properties(
@@ -193,13 +233,48 @@ class DescribeSection:
     @pytest.mark.parametrize(
         ("sectPr_cxml", "footnote_prop_name", "value", "expected_cxml"),
         [
-            ("w:sectPr", "footnote_number_format", "upperRoman", "w:sectPr/w:footnotePr/w:numFmt{w:val=upperRoman}"),
-            ("w:sectPr/w:footnotePr/w:numFmt{w:val=decimal}", "footnote_number_format", "upperRoman", "w:sectPr/w:footnotePr/w:numFmt{w:val=upperRoman}"),
-            ("w:sectPr", "footnote_position", "pageBottom", "w:sectPr/w:footnotePr/w:pos{w:val=pageBottom}"),
-            ("w:sectPr", "footnote_numbering_start_value", 1, "w:sectPr/w:footnotePr/(w:numStart{w:val=1},w:numRestart{w:val=continuous})"),
-            ("w:sectPr", "footnote_numbering_start_value", 5, "w:sectPr/w:footnotePr/(w:numStart{w:val=5},w:numRestart{w:val=continuous})"),
-            ("w:sectPr", "footnote_numbering_restart_location", "eachSect", "w:sectPr/w:footnotePr/(w:numStart{w:val=1},w:numRestart{w:val=eachSect})"),
-            ("w:sectPr", "footnote_numbering_restart_location", "continuous", "w:sectPr/w:footnotePr/(w:numStart{w:val=1},w:numRestart{w:val=continuous})"),
+            (
+                "w:sectPr",
+                "footnote_number_format",
+                "upperRoman",
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=upperRoman}",
+            ),
+            (
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=decimal}",
+                "footnote_number_format",
+                "upperRoman",
+                "w:sectPr/w:footnotePr/w:numFmt{w:val=upperRoman}",
+            ),
+            (
+                "w:sectPr",
+                "footnote_position",
+                "pageBottom",
+                "w:sectPr/w:footnotePr/w:pos{w:val=pageBottom}",
+            ),
+            (
+                "w:sectPr",
+                "footnote_numbering_start_value",
+                1,
+                "w:sectPr/w:footnotePr/(w:numStart{w:val=1},w:numRestart{w:val=continuous})",
+            ),
+            (
+                "w:sectPr",
+                "footnote_numbering_start_value",
+                5,
+                "w:sectPr/w:footnotePr/(w:numStart{w:val=5},w:numRestart{w:val=continuous})",
+            ),
+            (
+                "w:sectPr",
+                "footnote_numbering_restart_location",
+                "eachSect",
+                "w:sectPr/w:footnotePr/(w:numStart{w:val=1},w:numRestart{w:val=eachSect})",
+            ),
+            (
+                "w:sectPr",
+                "footnote_numbering_restart_location",
+                "continuous",
+                "w:sectPr/w:footnotePr/(w:numStart{w:val=1},w:numRestart{w:val=continuous})",
+            ),
         ],
     )
     def it_can_change_its_footnote_properties(

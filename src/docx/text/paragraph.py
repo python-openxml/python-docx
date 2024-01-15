@@ -19,9 +19,9 @@ from docx.text.run import Run
 
 if TYPE_CHECKING:
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+    from docx.oxml.footnote import CT_FtnEnd
     from docx.oxml.text.paragraph import CT_P
     from docx.styles.style import CharacterStyle
-    from docx.oxml.footnote import CT_FtnEnd
 
 
 class Paragraph(StoryChild):
@@ -32,8 +32,8 @@ class Paragraph(StoryChild):
         self._p = self._element = p
 
     def add_footnote(self) -> CT_FtnEnd:
-        """
-        Append a run that contains a ``<w:footnoteReferenceId>`` element.
+        """Append a run that contains a ``<w:footnoteReferenceId>`` element.
+
         The footnotes are kept in order by `footnote_reference_id`, so
         the appropriate id is calculated based on the current state.
         """
