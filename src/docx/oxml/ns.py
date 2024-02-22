@@ -21,6 +21,7 @@ nsmap = {
     "wp": "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing",
     "xml": "http://www.w3.org/XML/1998/namespace",
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "asvg": "http://schemas.microsoft.com/office/drawing/2016/SVG/main",
 }
 
 pfxmap = {value: key for key, value in nsmap.items()}
