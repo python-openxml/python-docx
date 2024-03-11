@@ -25,9 +25,9 @@ class PackageWriter:
         """Write a physical package (.pptx file) to `pkg_file` containing `pkg_rels` and
         `parts` and a content types stream based on the content types of the parts."""
         phys_writer = PhysPkgWriter(pkg_file)
-        PackageWriter._write_content_types_stream(phys_writer, parts)
-        PackageWriter._write_pkg_rels(phys_writer, pkg_rels)
         PackageWriter._write_parts(phys_writer, parts)
+        PackageWriter._write_pkg_rels(phys_writer, pkg_rels)
+        PackageWriter._write_content_types_stream(phys_writer, parts)
         phys_writer.close()
 
     @staticmethod
