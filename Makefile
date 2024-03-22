@@ -46,7 +46,7 @@ install:
 	pip install -Ue .
 
 opendocs:
-	open docs/.build/html/index.html
+	open docs/_build/html/index.html
 
 sdist:
 	$(BUILD) --sdist .

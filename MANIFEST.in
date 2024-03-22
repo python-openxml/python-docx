@@ -4,7 +4,7 @@ graft src/docx/templates
 graft features
 graft tests
 graft docs
-prune docs/.build
+prune docs/_build
 global-exclude .DS_Store
 global-exclude __pycache__
 global-exclude *.py[co]
