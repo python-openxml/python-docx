@@ -1,7 +1,7 @@
 /build/
 .coverage
 /dist/
-/docs/.build/
+/docs/_build/
 /src/*.egg-info
 *.pyc
 .pytest_cache/
