@@ -167,7 +167,8 @@ gallery. You can apply one of those to the table like this::
 
     table.style = 'Light Shading Accent 1'
 
-The style name is formed by removing all the hyphens from the table style name.
+The style name is formed by removing all the hyphens from the table style name,
+so that *Light Shading - Accent 1* becomes *Light Shading Accent 1*.
 You can find the table style name by hovering your mouse over its thumbnail in
 Word's table style gallery.
 
