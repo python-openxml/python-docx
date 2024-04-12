@@ -165,9 +165,9 @@ The same works for columns, although I've yet to see a use case for it.
 Word has a set of pre-formatted table styles you can pick from its table style
 gallery. You can apply one of those to the table like this::
 
-    table.style = 'LightShading-Accent1'
+    table.style = 'Light Shading Accent 1'
 
-The style name is formed by removing all the spaces from the table style name.
+The style name is formed by removing all the hyphens from the table style name.
 You can find the table style name by hovering your mouse over its thumbnail in
 Word's table style gallery.
 
