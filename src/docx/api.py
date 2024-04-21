@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 from typing import IO
+
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.package import Package
 
