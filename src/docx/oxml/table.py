@@ -441,9 +441,7 @@ class CT_Tc(BaseOxmlElement):
         Determined by ./w:tcPr/w:gridSpan/@val, it defaults to 1.
         """
         tcPr = self.tcPr
-        if tcPr is None:
-            return 1
-        return tcPr.grid_span
+        return 1 if tcPr is None else tcPr.grid_span
 
     @grid_span.setter
     def grid_span(self, value: int):
@@ -809,9 +807,7 @@ class CT_TcPr(BaseOxmlElement):
         Determined by ./w:gridSpan/@val, it defaults to 1.
         """
         gridSpan = self.gridSpan
-        if gridSpan is None:
-            return 1
-        return gridSpan.val
+        return 1 if gridSpan is None else gridSpan.val
 
     @grid_span.setter
     def grid_span(self, value: int):
@@ -898,9 +894,7 @@ class CT_TrPr(BaseOxmlElement):
     def trHeight_hRule(self) -> WD_ROW_HEIGHT_RULE | None:
         """Return the value of `w:trHeight@w:hRule`, or |None| if not present."""
         trHeight = self.trHeight
-        if trHeight is None:
-            return None
-        return trHeight.hRule
+        return None if trHeight is None else trHeight.hRule
 
     @trHeight_hRule.setter
     def trHeight_hRule(self, value: WD_ROW_HEIGHT_RULE | None):
@@ -913,9 +907,7 @@ class CT_TrPr(BaseOxmlElement):
     def trHeight_val(self):
         """Return the value of `w:trHeight@w:val`, or |None| if not present."""
         trHeight = self.trHeight
-        if trHeight is None:
-            return None
-        return trHeight.val
+        return None if trHeight is None else trHeight.val
 
     @trHeight_val.setter
     def trHeight_val(self, value: Length | None):
