@@ -386,6 +386,23 @@ class _Row(Parented):
         return tuple(self.table.row_cells(self._index))
 
     @property
+    def grid_cols_before(self) -> int:
+        """Count of unpopulated grid-columns before the first cell in this row.
+
+        Word allows a row to "start late", meaning that one or more cells are not present at the
+        beginning of that row.
+
+        Note these are not simply "empty" cells. The renderer reads this value and skips forward to
+        the table layout-grid position of the first cell in this row; the renderer "skips" this many
+        columns before drawing the first cell.
+
+        Note this also implies that not all rows are guaranteed to have the same number of cells,
+        e.g. `_Row.cells` could have length `n` for one row and `n - m` for the next row in the same
+        table.
+        """
+        return self._tr.grid_before
+
+    @property
     def height(self) -> Length | None:
         """Return a |Length| object representing the height of this cell, or |None| if
         no explicit height is set."""

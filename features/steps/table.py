@@ -170,6 +170,13 @@ def given_a_table_row_having_height_rule_state(context: Context, state: str):
     context.row = table.rows[0]
 
 
+@given("a table row starting with {count} empty grid columns")
+def given_a_table_row_starting_with_count_empty_grid_columns(context: Context, count: str):
+    document = Document(test_docx("tbl-props"))
+    table = document.tables[7]
+    context.row = table.rows[int(count)]
+
+
 # when =====================================================
 
 
@@ -345,6 +352,13 @@ def then_can_iterate_over_row_collection(context: Context):
         actual_count += 1
         assert isinstance(row, _Row)
     assert actual_count == 2
+
+
+@then("row.grid_cols_before is {value}")
+def then_row_grid_cols_before_is_value(context: Context, value: str):
+    expected = int(value)
+    actual = context.row.grid_cols_before
+    assert actual == expected, "expected %s, got %s" % (expected, actual)
 
 
 @then("row.height is {value}")

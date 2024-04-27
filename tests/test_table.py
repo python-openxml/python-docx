@@ -648,6 +648,21 @@ class Describe_Row:
     @pytest.mark.parametrize(
         ("tr_cxml", "expected_value"),
         [
+            ("w:tr", 0),
+            ("w:tr/w:trPr", 0),
+            ("w:tr/w:trPr/w:gridBefore{w:val=0}", 0),
+            ("w:tr/w:trPr/w:gridBefore{w:val=3}", 3),
+        ],
+    )
+    def it_knows_its_grid_cols_before(
+        self, tr_cxml: str, expected_value: int | None, parent_: Mock
+    ):
+        row = _Row(cast(CT_Row, element(tr_cxml)), parent_)
+        assert row.grid_cols_before == expected_value
+
+    @pytest.mark.parametrize(
+        ("tr_cxml", "expected_value"),
+        [
             ("w:tr", None),
             ("w:tr/w:trPr", None),
             ("w:tr/w:trPr/w:trHeight", None),

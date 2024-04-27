@@ -60,6 +60,14 @@ class CT_Row(BaseOxmlElement):
     trPr: CT_TrPr | None = ZeroOrOne("w:trPr")  # pyright: ignore[reportAssignmentType]
     tc = ZeroOrMore("w:tc")
 
+    @property
+    def grid_before(self) -> int:
+        """The number of unpopulated layout-grid cells at the start of this row."""
+        trPr = self.trPr
+        if trPr is None:
+            return 0
+        return trPr.grid_before
+
     def tc_at_grid_col(self, idx: int) -> CT_Tc:
         """`<w:tc>` element appearing at grid column `idx`.
 
@@ -885,10 +893,19 @@ class CT_TrPr(BaseOxmlElement):
         "w:del",
         "w:trPrChange",
     )
+    gridBefore: CT_DecimalNumber | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:gridBefore", successors=_tag_seq[3:]
+    )
     trHeight: CT_Height | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:trHeight", successors=_tag_seq[8:]
     )
     del _tag_seq
+
+    @property
+    def grid_before(self) -> int:
+        """The number of unpopulated layout-grid cells at the start of this row."""
+        gridBefore = self.gridBefore
+        return 0 if gridBefore is None else gridBefore.val
 
     @property
     def trHeight_hRule(self) -> WD_ROW_HEIGHT_RULE | None:
