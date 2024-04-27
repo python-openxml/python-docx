@@ -51,6 +51,7 @@ class CT_Row(BaseOxmlElement):
 
     add_tc: Callable[[], CT_Tc]
     get_or_add_trPr: Callable[[], CT_TrPr]
+    _add_trPr: Callable[[], CT_TrPr]
 
     tc_lst: list[CT_Tc]
     # -- custom inserter below --

@@ -130,7 +130,7 @@ class Table(StoryChild):
         return cast("_TableStyle | None", self.part.get_style(style_id, WD_STYLE_TYPE.TABLE))
 
     @style.setter
-    def style(self, style_or_name: _TableStyle | None):
+    def style(self, style_or_name: _TableStyle | str | None):
         style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.TABLE)
         self._tbl.tblStyle_val = style_id
 
