@@ -159,6 +159,7 @@ from .table import (  # noqa
 )
 
 register_element_cls("w:bidiVisual", CT_OnOff)
+register_element_cls("w:gridAfter", CT_DecimalNumber)
 register_element_cls("w:gridBefore", CT_DecimalNumber)
 register_element_cls("w:gridCol", CT_TblGridCol)
 register_element_cls("w:gridSpan", CT_DecimalNumber)

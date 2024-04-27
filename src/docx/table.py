@@ -386,6 +386,23 @@ class _Row(Parented):
         return tuple(self.table.row_cells(self._index))
 
     @property
+    def grid_cols_after(self) -> int:
+        """Count of unpopulated grid-columns after the last cell in this row.
+
+        Word allows a row to "end early", meaning that one or more cells are not present at the
+        end of that row.
+
+        Note these are not simply "empty" cells. The renderer reads this value and "skips" this
+        many columns after drawing the last cell.
+
+        Note this also implies that not all rows are guaranteed to have the same number of cells,
+        e.g. `_Row.cells` could have length `n` for one row and `n - m` for the next row in the same
+        table. Visually this appears as a column (at the beginning or end, not in the middle) with
+        one or more cells missing.
+        """
+        return self._tr.grid_after
+
+    @property
     def grid_cols_before(self) -> int:
         """Count of unpopulated grid-columns before the first cell in this row.
 

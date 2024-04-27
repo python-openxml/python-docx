@@ -154,6 +154,13 @@ def given_a_table_having_two_rows(context: Context):
     context.table_ = document.tables[0]
 
 
+@given("a table row ending with {count} empty grid columns")
+def given_a_table_row_ending_with_count_empty_grid_columns(context: Context, count: str):
+    document = Document(test_docx("tbl-props"))
+    table = document.tables[8]
+    context.row = table.rows[int(count)]
+
+
 @given("a table row having height of {state}")
 def given_a_table_row_having_height_of_state(context: Context, state: str):
     table_idx = {"no explicit setting": 0, "2 inches": 2, "3 inches": 3}[state]
@@ -352,6 +359,13 @@ def then_can_iterate_over_row_collection(context: Context):
         actual_count += 1
         assert isinstance(row, _Row)
     assert actual_count == 2
+
+
+@then("row.grid_cols_after is {value}")
+def then_row_grid_cols_after_is_value(context: Context, value: str):
+    expected = int(value)
+    actual = context.row.grid_cols_after
+    assert actual == expected, "expected %s, got %s" % (expected, actual)
 
 
 @then("row.grid_cols_before is {value}")

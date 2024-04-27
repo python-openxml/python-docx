@@ -61,6 +61,14 @@ class CT_Row(BaseOxmlElement):
     tc = ZeroOrMore("w:tc")
 
     @property
+    def grid_after(self) -> int:
+        """The number of unpopulated layout-grid cells at the end of this row."""
+        trPr = self.trPr
+        if trPr is None:
+            return 0
+        return trPr.grid_after
+
+    @property
     def grid_before(self) -> int:
         """The number of unpopulated layout-grid cells at the start of this row."""
         trPr = self.trPr
@@ -893,6 +901,9 @@ class CT_TrPr(BaseOxmlElement):
         "w:del",
         "w:trPrChange",
     )
+    gridAfter: CT_DecimalNumber | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:gridAfter", successors=_tag_seq[4:]
+    )
     gridBefore: CT_DecimalNumber | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:gridBefore", successors=_tag_seq[3:]
     )
@@ -900,6 +911,12 @@ class CT_TrPr(BaseOxmlElement):
         "w:trHeight", successors=_tag_seq[8:]
     )
     del _tag_seq
+
+    @property
+    def grid_after(self) -> int:
+        """The number of unpopulated layout-grid cells at the end of this row."""
+        gridAfter = self.gridAfter
+        return 0 if gridAfter is None else gridAfter.val
 
     @property
     def grid_before(self) -> int:
