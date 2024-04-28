@@ -13,7 +13,7 @@ from docx.enum.table import (
     WD_TABLE_DIRECTION,
 )
 from docx.shared import Inches
-from docx.table import Table, _Column, _Columns, _Row, _Rows
+from docx.table import Table, _Cell, _Column, _Columns, _Row, _Rows
 
 from helpers import test_docx
 
@@ -35,6 +35,13 @@ def given_a_3x3_table_having_span_state(context: Context, span_state: str):
     }[span_state]
     document = Document(test_docx("tbl-cell-access"))
     context.table_ = document.tables[table_idx]
+
+
+@given("a _Cell object spanning {count} layout-grid cells")
+def given_a_Cell_object_spanning_count_layout_grid_cells(context: Context, count: str):
+    document = Document(test_docx("tbl-cell-props"))
+    table = document.tables[0]
+    context.cell = _Cell(table._tbl.tr_lst[int(count)].tc_lst[0], table)
 
 
 @given("a _Cell object with {state} vertical alignment as cell")
@@ -290,6 +297,13 @@ def when_I_set_the_table_autofit_to_setting(context: Context, setting: str):
 
 
 # then =====================================================
+
+
+@then("cell.grid_span is {count}")
+def then_cell_grid_span_is_count(context: Context, count: str):
+    expected = int(count)
+    actual = context.cell.grid_span
+    assert actual == expected, f"expected {expected}, got {actual}"
 
 
 @then("cell.tables[0] is a 2 x 2 table")

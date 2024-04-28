@@ -222,6 +222,15 @@ class _Cell(BlockItemContainer):
         self.add_paragraph()
         return table
 
+    @property
+    def grid_span(self) -> int:
+        """Number of layout-grid cells this cell spans horizontally.
+
+        A "normal" cell has a grid-span of 1. A horizontally merged cell has a grid-span of 2 or
+        more.
+        """
+        return self._tc.grid_span
+
     def merge(self, other_cell: _Cell):
         """Return a merged cell created by spanning the rectangular region having this
         cell and `other_cell` as diagonal corners.

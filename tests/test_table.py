@@ -327,6 +327,19 @@ class Describe_Cell:
     """Unit-test suite for `docx.table._Cell` objects."""
 
     @pytest.mark.parametrize(
+        ("tc_cxml", "expected_value"),
+        [
+            ("w:tc", 1),
+            ("w:tc/w:tcPr", 1),
+            ("w:tc/w:tcPr/w:gridSpan{w:val=1}", 1),
+            ("w:tc/w:tcPr/w:gridSpan{w:val=4}", 4),
+        ],
+    )
+    def it_knows_its_grid_span(self, tc_cxml: str, expected_value: int, parent_: Mock):
+        cell = _Cell(cast(CT_Tc, element(tc_cxml)), parent_)
+        assert cell.grid_span == expected_value
+
+    @pytest.mark.parametrize(
         ("tc_cxml", "expected_text"),
         [
             ("w:tc", ""),
