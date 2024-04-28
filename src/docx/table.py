@@ -382,7 +382,18 @@ class _Row(Parented):
 
     @property
     def cells(self) -> tuple[_Cell, ...]:
-        """Sequence of |_Cell| instances corresponding to cells in this row."""
+        """Sequence of |_Cell| instances corresponding to cells in this row.
+
+        Note that Word allows table rows to start later than the first column and end before the
+        last column.
+
+        - Only cells actually present are included in the return value.
+        - This implies the length of this cell sequence may differ between rows of the same table.
+        - If you are reading the cells from each row to form a rectangular "matrix" data structure
+          of the table cell values, you will need to account for empty leading and/or trailing
+          layout-grid positions using `.grid_cols_before` and `.grid_cols_after`.
+
+        """
         return tuple(self.table.row_cells(self._index))
 
     @property
