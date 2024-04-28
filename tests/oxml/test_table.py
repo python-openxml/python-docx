@@ -52,6 +52,22 @@ class DescribeCT_Row:
 class DescribeCT_Tc:
     """Unit-test suite for `docx.oxml.table.CT_Tc` objects."""
 
+    @pytest.mark.parametrize(
+        ("tr_cxml", "tc_idx", "expected_value"),
+        [
+            ("w:tr/(w:tc/w:p,w:tc/w:p)", 0, 0),
+            ("w:tr/(w:tc/w:p,w:tc/w:p)", 1, 1),
+            ("w:tr/(w:trPr/w:gridBefore{w:val=2},w:tc/w:p,w:tc/w:p)", 0, 2),
+            ("w:tr/(w:trPr/w:gridBefore{w:val=2},w:tc/w:p,w:tc/w:p)", 1, 3),
+            ("w:tr/(w:trPr/w:gridBefore{w:val=4},w:tc/w:p,w:tc/w:p,w:tc/w:p,w:tc/w:p)", 2, 6),
+        ],
+    )
+    def it_knows_its_grid_offset(self, tr_cxml: str, tc_idx: int, expected_value: int):
+        tr = cast(CT_Row, element(tr_cxml))
+        tc = tr.tc_lst[tc_idx]
+
+        assert tc.grid_offset == expected_value
+
     def it_can_merge_to_another_tc(
         self, tr_: Mock, _span_dimensions_: Mock, _tbl_: Mock, _grow_to_: Mock, top_tc_: Mock
     ):
