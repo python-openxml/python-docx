@@ -782,18 +782,41 @@ class Describe_Row:
         row.height_rule = new_value
         assert row._tr.xml == xml(expected_cxml)
 
+    @pytest.mark.parametrize(
+        ("tbl_cxml", "row_idx", "expected_len"),
+        [
+            # -- cell corresponds to single layout-grid cell --
+            ("w:tbl/w:tr/w:tc/w:p", 0, 1),
+            # -- cell has a horizontal span --
+            ("w:tbl/w:tr/w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p)", 0, 2),
+            # -- cell is in latter row of vertical span --
+            (
+                "w:tbl/(w:tr/w:tc/(w:tcPr/w:vMerge{w:val=restart},w:p),"
+                "w:tr/w:tc/(w:tcPr/w:vMerge,w:p))",
+                1,
+                1,
+            ),
+            # -- cell both has horizontal span and is latter row of vertical span --
+            (
+                "w:tbl/(w:tr/w:tc/(w:tcPr/(w:gridSpan{w:val=2},w:vMerge{w:val=restart}),w:p),"
+                "w:tr/w:tc/(w:tcPr/(w:gridSpan{w:val=2},w:vMerge),w:p))",
+                1,
+                2,
+            ),
+        ],
+    )
     def it_provides_access_to_its_cells(
-        self, _index_prop_: Mock, table_prop_: Mock, table_: Mock, parent_: Mock
+        self, tbl_cxml: str, row_idx: int, expected_len: int, parent_: Mock
     ):
-        row = _Row(cast(CT_Row, element("w:tr")), parent_)
-        _index_prop_.return_value = row_idx = 6
-        expected_cells = (1, 2, 3)
-        table_.row_cells.return_value = list(expected_cells)
+        tbl = cast(CT_Tbl, element(tbl_cxml))
+        tr = tbl.tr_lst[row_idx]
+        table = Table(tbl, parent_)
+        row = _Row(tr, table)
 
         cells = row.cells
 
-        table_.row_cells.assert_called_once_with(row_idx)
-        assert cells == expected_cells
+        assert len(cells) == expected_len
+        assert all(type(c) is _Cell for c in cells)
 
     def it_provides_access_to_the_table_it_belongs_to(self, parent_: Mock, table_: Mock):
         parent_.table = table_
@@ -821,7 +844,7 @@ class Describe_Row:
 
     @pytest.fixture
     def table_prop_(self, request: FixtureRequest, table_: Mock):
-        return property_mock(request, _Row, "table", return_value=table_)
+        return property_mock(request, _Row, "table")
 
 
 class Describe_Rows:

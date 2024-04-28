@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast, overload
+from typing import TYPE_CHECKING, Iterator, cast, overload
 
 from typing_extensions import TypeAlias
 
@@ -102,7 +102,10 @@ class Table(StoryChild):
         return _Columns(self._tbl, self)
 
     def row_cells(self, row_idx: int) -> list[_Cell]:
-        """Sequence of cells in the row at `row_idx` in this table."""
+        """DEPRECATED: Use `table.rows[row_idx].cells` instead.
+
+        Sequence of cells in the row at `row_idx` in this table.
+        """
         column_count = self._column_count
         start = row_idx * column_count
         end = start + column_count
@@ -403,7 +406,36 @@ class _Row(Parented):
           layout-grid positions using `.grid_cols_before` and `.grid_cols_after`.
 
         """
-        return tuple(self.table.row_cells(self._index))
+
+        def iter_tc_cells(tc: CT_Tc) -> Iterator[_Cell]:
+            """Generate a cell object for each layout-grid cell in `tc`.
+
+            In particular, a `<w:tc>` element with a horizontal "span" with generate the same cell
+            multiple times, one for each grid-cell being spanned. This approximates a row in a
+            "uniform" table, where each row has a cell for each column in the table.
+            """
+            # -- a cell comprising the second or later row of a vertical span is indicated by
+            # -- tc.vMerge="continue" (the default value of the `w:vMerge` attribute, when it is
+            # -- present in the XML). The `w:tc` element at the same grid-offset in the prior row
+            # -- is guaranteed to be the same width (gridSpan). So we can delegate content
+            # -- discovery to that prior-row `w:tc` element (recursively) until we arrive at the
+            # -- "root" cell -- for the vertical span.
+            if tc.vMerge == "continue":
+                yield from iter_tc_cells(tc._tc_above)  # pyright: ignore[reportPrivateUsage]
+                return
+
+            # -- Otherwise, vMerge is either "restart" or None, meaning this `tc` holds the actual
+            # -- content of the cell (whether it is vertically merged or not).
+            cell = _Cell(tc, self.table)
+            for _ in range(tc.grid_span):
+                yield cell
+
+        def _iter_row_cells() -> Iterator[_Cell]:
+            """Generate `_Cell` instance for each populated layout-grid cell in this row."""
+            for tc in self._tr.tc_lst:
+                yield from iter_tc_cells(tc)
+
+        return tuple(_iter_row_cells())
 
     @property
     def grid_cols_after(self) -> int:
