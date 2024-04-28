@@ -76,19 +76,26 @@ class CT_Row(BaseOxmlElement):
             return 0
         return trPr.grid_before
 
-    def tc_at_grid_col(self, idx: int) -> CT_Tc:
-        """`<w:tc>` element appearing at grid column `idx`.
+    def tc_at_grid_offset(self, grid_offset: int) -> CT_Tc:
+        """The `tc` element in this tr at exact `grid offset`.
 
-        Raises |ValueError| if no `w:tc` element begins at that grid column.
+        Raises ValueError when this `w:tr` contains no `w:tc` with exact starting `grid_offset`.
         """
-        grid_col = 0
+        # -- account for omitted cells at the start of the row --
+        remaining_offset = grid_offset - self.grid_before
+
         for tc in self.tc_lst:
-            if grid_col == idx:
+            # -- We've gone past grid_offset without finding a tc, no sense searching further. --
+            if remaining_offset < 0:
+                break
+            # -- We've arrived at grid_offset, this is the `w:tc` we're looking for. --
+            if remaining_offset == 0:
                 return tc
-            grid_col += tc.grid_span
-            if grid_col > idx:
-                raise ValueError("no cell on grid column %d" % idx)
-        raise ValueError("index out of bounds")
+            # -- We're not there yet, skip forward the number of layout-grid cells this cell
+            # -- occupies.
+            remaining_offset -= tc.grid_span
+
+        raise ValueError(f"no `tc` element at grid_offset={grid_offset}")
 
     @property
     def tr_idx(self) -> int:
@@ -505,7 +512,7 @@ class CT_Tc(BaseOxmlElement):
         element and `other_tc` as diagonal corners.
         """
         top, left, height, width = self._span_dimensions(other_tc)
-        top_tc = self._tbl.tr_lst[top].tc_at_grid_col(left)
+        top_tc = self._tbl.tr_lst[top].tc_at_grid_offset(left)
         top_tc._grow_to(width, height)
         return top_tc
 
@@ -731,7 +738,7 @@ class CT_Tc(BaseOxmlElement):
     @property
     def _tc_above(self) -> CT_Tc:
         """The `w:tc` element immediately above this one in its grid column."""
-        return self._tr_above.tc_at_grid_col(self.grid_offset)
+        return self._tr_above.tc_at_grid_offset(self.grid_offset)
 
     @property
     def _tc_below(self) -> CT_Tc | None:
@@ -739,7 +746,7 @@ class CT_Tc(BaseOxmlElement):
         tr_below = self._tr_below
         if tr_below is None:
             return None
-        return tr_below.tc_at_grid_col(self.grid_offset)
+        return tr_below.tc_at_grid_offset(self.grid_offset)
 
     @property
     def _tr(self) -> CT_Row:

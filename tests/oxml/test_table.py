@@ -34,19 +34,11 @@ class DescribeCT_Row:
         tr._add_trPr()
         assert tr.xml == xml(expected_cxml)
 
-    @pytest.mark.parametrize(
-        ("snippet_idx", "row_idx", "col_idx", "err_msg"),
-        [
-            (0, 0, 3, "index out of bounds"),
-            (1, 0, 1, "no cell on grid column 1"),
-        ],
-    )
-    def it_raises_on_tc_at_grid_col(
-        self, snippet_idx: int, row_idx: int, col_idx: int, err_msg: str
-    ):
+    @pytest.mark.parametrize(("snippet_idx", "row_idx", "col_idx"), [(0, 0, 3), (1, 0, 1)])
+    def it_raises_on_tc_at_grid_col(self, snippet_idx: int, row_idx: int, col_idx: int):
         tr = cast(CT_Tbl, parse_xml(snippet_seq("tbl-cells")[snippet_idx])).tr_lst[row_idx]
-        with pytest.raises(ValueError, match=err_msg):
-            tr.tc_at_grid_col(col_idx)
+        with pytest.raises(ValueError, match=f"no `tc` element at grid_offset={col_idx}"):
+            tr.tc_at_grid_offset(col_idx)
 
 
 class DescribeCT_Tc:
@@ -76,12 +68,12 @@ class DescribeCT_Tc:
         top, left, height, width = 0, 1, 2, 3
         _span_dimensions_.return_value = top, left, height, width
         _tbl_.return_value.tr_lst = [tr_]
-        tr_.tc_at_grid_col.return_value = top_tc_
+        tr_.tc_at_grid_offset.return_value = top_tc_
 
         merged_tc = tc.merge(other_tc)
 
         _span_dimensions_.assert_called_once_with(tc, other_tc)
-        top_tr_.tc_at_grid_col.assert_called_once_with(left)
+        top_tr_.tc_at_grid_offset.assert_called_once_with(left)
         top_tc_._grow_to.assert_called_once_with(width, height)
         assert merged_tc is top_tc_
 
