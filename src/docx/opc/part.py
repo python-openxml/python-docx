@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING, Callable, Dict, Type
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
 from docx.opc.rel import Relationships
-from docx.opc.shared import cls_method_fn, lazyproperty
+from docx.opc.shared import cls_method_fn
 from docx.oxml.parser import parse_xml
+from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
     from docx.package import Package
@@ -81,9 +82,10 @@ class Part:
     def load(cls, partname: str, content_type: str, blob: bytes, package: Package):
         return cls(partname, content_type, blob, package)
 
-    def load_rel(self, reltype, target, rId, is_external=False):
-        """Return newly added |_Relationship| instance of `reltype` between this part
-        and `target` with key `rId`.
+    def load_rel(self, reltype: str, target: Part | str, rId: str, is_external: bool = False):
+        """Return newly added |_Relationship| instance of `reltype`.
+
+        The new relationship relates the `target` part to this part with key `rId`.
 
         Target mode is set to ``RTM.EXTERNAL`` if `is_external` is |True|. Intended for
         use during load from a serialized package, where the rId is well-known. Other
@@ -118,7 +120,7 @@ class Part:
         """
         return self.rels.part_with_reltype(reltype)
 
-    def relate_to(self, target: Part, reltype: str, is_external: bool = False) -> str:
+    def relate_to(self, target: Part | str, reltype: str, is_external: bool = False) -> str:
         """Return rId key of relationship of `reltype` to `target`.
 
         The returned `rId` is from an existing relationship if there is one, otherwise a
@@ -142,7 +144,7 @@ class Part:
         """|Relationships| instance holding the relationships for this part."""
         return Relationships(self._partname.baseURI)
 
-    def target_ref(self, rId):
+    def target_ref(self, rId: str) -> str:
         """Return URL contained in target ref of relationship identified by `rId`."""
         rel = self.rels[rId]
         return rel.target_ref

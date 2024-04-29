@@ -1,4 +1,8 @@
+# pyright: reportPrivateUsage=false
+
 """Unit test suite for docx.opc.part module"""
+
+from __future__ import annotations
 
 import pytest
 
@@ -11,6 +15,7 @@ from docx.oxml.xmlchemy import BaseOxmlElement
 from ..unitutil.cxml import element
 from ..unitutil.mock import (
     ANY,
+    FixtureRequest,
     Mock,
     class_mock,
     cls_attr_mock,
@@ -18,6 +23,7 @@ from ..unitutil.mock import (
     initializer_mock,
     instance_mock,
     loose_mock,
+    property_mock,
 )
 
 
@@ -117,150 +123,126 @@ class DescribePart:
 
 
 class DescribePartRelationshipManagementInterface:
-    def it_provides_access_to_its_relationships(self, rels_fixture):
-        part, Relationships_, partname_, rels_ = rels_fixture
+    """Unit-test suite for `docx.opc.package.Part` relationship behaviors."""
+
+    def it_provides_access_to_its_relationships(
+        self, Relationships_: Mock, partname_: Mock, rels_: Mock
+    ):
+        Relationships_.return_value = rels_
+        part = Part(partname_, "content_type")
+
         rels = part.rels
+
         Relationships_.assert_called_once_with(partname_.baseURI)
         assert rels is rels_
 
-    def it_can_load_a_relationship(self, load_rel_fixture):
-        part, rels_, reltype_, target_, rId_ = load_rel_fixture
-        part.load_rel(reltype_, target_, rId_)
-        rels_.add_relationship.assert_called_once_with(reltype_, target_, rId_, False)
+    def it_can_load_a_relationship(self, rels_prop_: Mock, rels_: Mock, other_part_: Mock):
+        rels_prop_.return_value = rels_
+        part = Part("partname", "content_type")
 
-    def it_can_establish_a_relationship_to_another_part(self, relate_to_part_fixture):
-        part, target_, reltype_, rId_ = relate_to_part_fixture
-        rId = part.relate_to(target_, reltype_)
-        part.rels.get_or_add.assert_called_once_with(reltype_, target_)
-        assert rId is rId_
+        part.load_rel("http://rel/type", other_part_, "rId42")
 
-    def it_can_establish_an_external_relationship(self, relate_to_url_fixture):
-        part, url_, reltype_, rId_ = relate_to_url_fixture
-        rId = part.relate_to(url_, reltype_, is_external=True)
-        part.rels.get_or_add_ext_rel.assert_called_once_with(reltype_, url_)
-        assert rId is rId_
+        rels_.add_relationship.assert_called_once_with(
+            "http://rel/type", other_part_, "rId42", False
+        )
 
-    def it_can_drop_a_relationship(self, drop_rel_fixture):
-        part, rId, rel_should_be_gone = drop_rel_fixture
-        part.drop_rel(rId)
-        if rel_should_be_gone:
-            assert rId not in part.rels
-        else:
-            assert rId in part.rels
+    def it_can_establish_a_relationship_to_another_part(
+        self, rels_prop_: Mock, rels_: Mock, rel_: Mock, other_part_: Mock
+    ):
+        rels_prop_.return_value = rels_
+        rels_.get_or_add.return_value = rel_
+        rel_.rId = "rId18"
+        part = Part("partname", "content_type")
 
-    def it_can_find_a_related_part_by_reltype(self, related_part_fixture):
-        part, reltype_, related_part_ = related_part_fixture
-        related_part = part.part_related_by(reltype_)
-        part.rels.part_with_reltype.assert_called_once_with(reltype_)
-        assert related_part is related_part_
+        rId = part.relate_to(other_part_, "http://rel/type")
 
-    def it_can_find_a_related_part_by_rId(self, related_parts_fixture):
-        part, related_parts_ = related_parts_fixture
-        assert part.related_parts is related_parts_
+        rels_.get_or_add.assert_called_once_with("http://rel/type", other_part_)
+        assert rId == "rId18"
 
-    def it_can_find_the_uri_of_an_external_relationship(self, target_ref_fixture):
-        part, rId_, url_ = target_ref_fixture
-        url = part.target_ref(rId_)
-        assert url == url_
+    def it_can_establish_an_external_relationship(self, rels_prop_: Mock, rels_: Mock):
+        rels_prop_.return_value = rels_
+        rels_.get_or_add_ext_rel.return_value = "rId27"
+        part = Part("partname", "content_type")
 
-    # fixtures ---------------------------------------------
+        rId = part.relate_to("https://hyper/link", "http://rel/type", is_external=True)
 
-    @pytest.fixture(
-        params=[
+        rels_.get_or_add_ext_rel.assert_called_once_with("http://rel/type", "https://hyper/link")
+        assert rId == "rId27"
+
+    @pytest.mark.parametrize(
+        ("part_cxml", "rel_should_be_dropped"),
+        [
             ("w:p", True),
             ("w:p/r:a{r:id=rId42}", True),
             ("w:p/r:a{r:id=rId42}/r:b{r:id=rId42}", False),
-        ]
+        ],
     )
-    def drop_rel_fixture(self, request, part):
-        part_cxml, rel_should_be_dropped = request.param
-        rId = "rId42"
-        part._element = element(part_cxml)
-        part._rels = {rId: None}
-        return part, rId, rel_should_be_dropped
+    def it_can_drop_a_relationship(
+        self, part_cxml: str, rel_should_be_dropped: bool, rels_prop_: Mock
+    ):
+        rels_prop_.return_value = {"rId42": None}
+        part = Part("partname", "content_type")
+        part._element = element(part_cxml)  # pyright: ignore[reportAttributeAccessIssue]
+
+        part.drop_rel("rId42")
+
+        assert ("rId42" not in part.rels) is rel_should_be_dropped
+
+    def it_can_find_a_related_part_by_reltype(
+        self, rels_prop_: Mock, rels_: Mock, other_part_: Mock
+    ):
+        rels_prop_.return_value = rels_
+        rels_.part_with_reltype.return_value = other_part_
+        part = Part("partname", "content_type")
+
+        related_part = part.part_related_by("http://rel/type")
+
+        rels_.part_with_reltype.assert_called_once_with("http://rel/type")
+        assert related_part is other_part_
+
+    def it_can_find_a_related_part_by_rId(self, rels_prop_: Mock, rels_: Mock, other_part_: Mock):
+        rels_prop_.return_value = rels_
+        rels_.related_parts = {"rId24": other_part_}
+        part = Part("partname", "content_type")
+
+        assert part.related_parts["rId24"] is other_part_
+
+    def it_can_find_the_uri_of_an_external_relationship(
+        self, rels_prop_: Mock, rel_: Mock, other_part_: Mock
+    ):
+        rels_prop_.return_value = {"rId7": rel_}
+        rel_.target_ref = "https://hyper/link"
+        part = Part("partname", "content_type")
+
+        url = part.target_ref("rId7")
+
+        assert url == "https://hyper/link"
+
+    # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def load_rel_fixture(self, part, rels_, reltype_, part_, rId_):
-        part._rels = rels_
-        return part, rels_, reltype_, part_, rId_
-
-    @pytest.fixture
-    def relate_to_part_fixture(self, request, part, reltype_, part_, rels_, rId_):
-        part._rels = rels_
-        target_ = part_
-        return part, target_, reltype_, rId_
-
-    @pytest.fixture
-    def relate_to_url_fixture(self, request, part, rels_, url_, reltype_, rId_):
-        part._rels = rels_
-        return part, url_, reltype_, rId_
-
-    @pytest.fixture
-    def related_part_fixture(self, request, part, rels_, reltype_, part_):
-        part._rels = rels_
-        return part, reltype_, part_
-
-    @pytest.fixture
-    def related_parts_fixture(self, request, part, rels_, related_parts_):
-        part._rels = rels_
-        return part, related_parts_
-
-    @pytest.fixture
-    def rels_fixture(self, Relationships_, partname_, rels_):
-        part = Part(partname_, None)
-        return part, Relationships_, partname_, rels_
-
-    @pytest.fixture
-    def target_ref_fixture(self, request, part, rId_, rel_, url_):
-        part._rels = {rId_: rel_}
-        return part, rId_, url_
-
-    # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def part(self):
-        return Part(None, None)
-
-    @pytest.fixture
-    def part_(self, request):
+    def other_part_(self, request: FixtureRequest):
         return instance_mock(request, Part)
 
     @pytest.fixture
-    def partname_(self, request):
+    def partname_(self, request: FixtureRequest):
         return instance_mock(request, PackURI)
 
     @pytest.fixture
-    def Relationships_(self, request, rels_):
-        return class_mock(request, "docx.opc.part.Relationships", return_value=rels_)
+    def Relationships_(self, request: FixtureRequest):
+        return class_mock(request, "docx.opc.part.Relationships")
 
     @pytest.fixture
-    def rel_(self, request, rId_, url_):
-        return instance_mock(request, _Relationship, rId=rId_, target_ref=url_)
+    def rel_(self, request: FixtureRequest):
+        return instance_mock(request, _Relationship)
 
     @pytest.fixture
-    def rels_(self, request, part_, rel_, rId_, related_parts_):
-        rels_ = instance_mock(request, Relationships)
-        rels_.part_with_reltype.return_value = part_
-        rels_.get_or_add.return_value = rel_
-        rels_.get_or_add_ext_rel.return_value = rId_
-        rels_.related_parts = related_parts_
-        return rels_
+    def rels_(self, request: FixtureRequest):
+        return instance_mock(request, Relationships)
 
     @pytest.fixture
-    def related_parts_(self, request):
-        return instance_mock(request, dict)
-
-    @pytest.fixture
-    def reltype_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def rId_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def url_(self, request):
-        return instance_mock(request, str)
+    def rels_prop_(self, request: FixtureRequest):
+        return property_mock(request, Part, "rels")
 
 
 class DescribePartFactory:
@@ -278,9 +260,7 @@ class DescribePartFactory:
         part = PartFactory(partname, content_type, reltype, blob, package)
         # verify -----------------------
         cls_selector_fn_.assert_called_once_with(content_type, reltype)
-        CustomPartClass_.load.assert_called_once_with(
-            partname, content_type, blob, package
-        )
+        CustomPartClass_.load.assert_called_once_with(partname, content_type, blob, package)
         assert part is part_of_custom_type_
 
     def it_constructs_custom_part_type_for_registered_content_types(
@@ -292,9 +272,7 @@ class DescribePartFactory:
         PartFactory.part_type_for[content_type] = CustomPartClass_
         part = PartFactory(partname, content_type, reltype, blob, package)
         # verify -----------------------
-        CustomPartClass_.load.assert_called_once_with(
-            partname, content_type, blob, package
-        )
+        CustomPartClass_.load.assert_called_once_with(partname, content_type, blob, package)
         assert part is part_of_custom_type_
 
     def it_constructs_part_using_default_class_when_no_custom_registered(
@@ -302,9 +280,7 @@ class DescribePartFactory:
     ):
         partname, content_type, reltype, blob, package = part_args_2_
         part = PartFactory(partname, content_type, reltype, blob, package)
-        DefaultPartClass_.load.assert_called_once_with(
-            partname, content_type, blob, package
-        )
+        DefaultPartClass_.load.assert_called_once_with(partname, content_type, blob, package)
         assert part is part_of_default_type_
 
     # fixtures ---------------------------------------------
@@ -319,9 +295,7 @@ class DescribePartFactory:
 
     @pytest.fixture
     def cls_method_fn_(self, request, cls_selector_fn_):
-        return function_mock(
-            request, "docx.opc.part.cls_method_fn", return_value=cls_selector_fn_
-        )
+        return function_mock(request, "docx.opc.part.cls_method_fn", return_value=cls_selector_fn_)
 
     @pytest.fixture
     def cls_selector_fixture(
@@ -405,9 +379,7 @@ class DescribePartFactory:
         return partname_, content_type_, reltype_, blob_, package_
 
     @pytest.fixture
-    def part_args_2_(
-        self, request, partname_2_, content_type_2_, reltype_2_, package_2_, blob_2_
-    ):
+    def part_args_2_(self, request, partname_2_, content_type_2_, reltype_2_, package_2_, blob_2_):
         return partname_2_, content_type_2_, reltype_2_, blob_2_, package_2_
 
     @pytest.fixture
@@ -426,9 +398,7 @@ class DescribeXmlPart:
         part = XmlPart.load(partname_, content_type_, blob_, package_)
 
         parse_xml_.assert_called_once_with(blob_)
-        __init_.assert_called_once_with(
-            ANY, partname_, content_type_, element_, package_
-        )
+        __init_.assert_called_once_with(ANY, partname_, content_type_, element_, package_)
         assert isinstance(part, XmlPart)
 
     def it_can_serialize_to_xml(self, blob_fixture):

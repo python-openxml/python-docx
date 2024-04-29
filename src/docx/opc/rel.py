@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 from docx.opc.oxml import CT_Relationships
+
+if TYPE_CHECKING:
+    from docx.opc.part import Part
 
 
 class Relationships(Dict[str, "_Relationship"]):
@@ -16,7 +19,7 @@ class Relationships(Dict[str, "_Relationship"]):
         self._target_parts_by_rId: Dict[str, Any] = {}
 
     def add_relationship(
-        self, reltype: str, target: str | Any, rId: str, is_external: bool = False
+        self, reltype: str, target: Part | str, rId: str, is_external: bool = False
     ) -> "_Relationship":
         """Return a newly added |_Relationship| instance."""
         rel = _Relationship(rId, reltype, target, self._baseURI, is_external)
@@ -25,7 +28,7 @@ class Relationships(Dict[str, "_Relationship"]):
             self._target_parts_by_rId[rId] = target
         return rel
 
-    def get_or_add(self, reltype, target_part):
+    def get_or_add(self, reltype: str, target_part: Part) -> _Relationship:
         """Return relationship of `reltype` to `target_part`, newly added if not already
         present in collection."""
         rel = self._get_matching(reltype, target_part)
@@ -64,7 +67,9 @@ class Relationships(Dict[str, "_Relationship"]):
             rels_elm.add_rel(rel.rId, rel.reltype, rel.target_ref, rel.is_external)
         return rels_elm.xml
 
-    def _get_matching(self, reltype, target, is_external=False):
+    def _get_matching(
+        self, reltype: str, target: Part | str, is_external: bool = False
+    ) -> _Relationship | None:
         """Return relationship of matching `reltype`, `target`, and `is_external` from
         collection, or None if not found."""
 
@@ -99,7 +104,7 @@ class Relationships(Dict[str, "_Relationship"]):
         return matching[0]
 
     @property
-    def _next_rId(self):
+    def _next_rId(self) -> str:
         """Next available rId in collection, starting from 'rId1' and making use of any
         gaps in numbering, e.g. 'rId2' for rIds ['rId1', 'rId3']."""
         for n in range(1, len(self) + 2):
@@ -135,8 +140,7 @@ class _Relationship:
     def target_part(self):
         if self._is_external:
             raise ValueError(
-                "target_part property on _Relationship is undef"
-                "ined when target mode is External"
+                "target_part property on _Relationship is undef" "ined when target mode is External"
             )
         return self._target
 
