@@ -16,6 +16,7 @@ from docx.shape import InlineShapes
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.opc.coreprops import CoreProperties
     from docx.styles.style import BaseStyle
 
 
@@ -41,7 +42,7 @@ class DocumentPart(StoryPart):
         return header_part, rId
 
     @property
-    def core_properties(self):
+    def core_properties(self) -> CoreProperties:
         """A |CoreProperties| object providing read/write access to the core properties
         of this document."""
         return self.package.core_properties
