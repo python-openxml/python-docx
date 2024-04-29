@@ -748,11 +748,10 @@ class CT_Tc(BaseOxmlElement):
 
         Raises |ValueError| if called on a cell in the top-most row.
         """
-        tr_lst = self._tbl.tr_lst
-        tr_idx = tr_lst.index(self._tr)
-        if tr_idx == 0:
-            raise ValueError("no tr above topmost tr")
-        return tr_lst[tr_idx - 1]
+        tr_aboves = self.xpath("./ancestor::w:tr[position()=1]/preceding-sibling::w:tr[1]")
+        if not tr_aboves:
+            raise ValueError("no tr above topmost tr in w:tbl")
+        return tr_aboves[0]
 
     @property
     def _tr_below(self) -> CT_Row | None:
