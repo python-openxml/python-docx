@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
-from docx import types as t
+from typing import TYPE_CHECKING
+
 from docx.oxml.drawing import CT_Drawing
 from docx.shared import Parented
+
+if TYPE_CHECKING:
+    import docx.types as t
 
 
 class Drawing(Parented):

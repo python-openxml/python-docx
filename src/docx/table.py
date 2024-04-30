@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Iterator, cast, overload
 
 from typing_extensions import TypeAlias
 
-from docx import types as t
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
@@ -15,6 +14,7 @@ from docx.oxml.table import CT_TblGridCol
 from docx.shared import Inches, Parented, StoryChild, lazyproperty
 
 if TYPE_CHECKING:
+    import docx.types as t
     from docx.enum.table import WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
     from docx.oxml.table import CT_Row, CT_Tbl, CT_TblPr, CT_Tc
     from docx.shared import Length
@@ -193,7 +193,7 @@ class _Cell(BlockItemContainer):
     """Table cell."""
 
     def __init__(self, tc: CT_Tc, parent: TableParent):
-        super(_Cell, self).__init__(tc, cast(t.ProvidesStoryPart, parent))
+        super(_Cell, self).__init__(tc, cast("t.ProvidesStoryPart", parent))
         self._parent = parent
         self._tc = self._element = tc
 
