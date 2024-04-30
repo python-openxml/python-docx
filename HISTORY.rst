@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+1.1.1 (2024-04-29)
+++++++++++++++++++
+
+- Fix #531, #1146 Index error on table with misaligned borders
+- Fix #1335 Tolerate invalid float value in bottom-margin
+- Fix #1337 Do not require typing-extensions at runtime
+
+
 1.1.0 (2023-11-03)
 ++++++++++++++++++
 
