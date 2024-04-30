@@ -114,7 +114,7 @@ class Image:
         return Inches(self.px_height / self.vert_dpi)
 
     def scaled_dimensions(
-        self, width: int | None = None, height: int | None = None
+        self, width: int | Length | None = None, height: int | Length | None = None
     ) -> Tuple[Length, Length]:
         """(cx, cy) pair representing scaled dimensions of this image.
 

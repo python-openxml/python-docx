@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 
 from behave import given, then, when
+from behave.runner import Context
 
 from docx import Document
 from docx.opc.coreprops import CoreProperties
@@ -13,12 +14,12 @@ from helpers import test_docx
 
 
 @given("a document having known core properties")
-def given_a_document_having_known_core_properties(context):
+def given_a_document_having_known_core_properties(context: Context):
     context.document = Document(test_docx("doc-coreprops"))
 
 
 @given("a document having no core properties part")
-def given_a_document_having_no_core_properties_part(context):
+def given_a_document_having_no_core_properties_part(context: Context):
     context.document = Document(test_docx("doc-no-coreprops"))
 
 
@@ -26,12 +27,12 @@ def given_a_document_having_no_core_properties_part(context):
 
 
 @when("I access the core properties object")
-def when_I_access_the_core_properties_object(context):
+def when_I_access_the_core_properties_object(context: Context):
     context.document.core_properties
 
 
 @when("I assign new values to the properties")
-def when_I_assign_new_values_to_the_properties(context):
+def when_I_assign_new_values_to_the_properties(context: Context):
     context.propvals = (
         ("author", "Creator"),
         ("category", "Category"),
@@ -58,7 +59,7 @@ def when_I_assign_new_values_to_the_properties(context):
 
 
 @then("a core properties part with default values is added")
-def then_a_core_properties_part_with_default_values_is_added(context):
+def then_a_core_properties_part_with_default_values_is_added(context: Context):
     core_properties = context.document.core_properties
     assert core_properties.title == "Word Document"
     assert core_properties.last_modified_by == "python-docx"
@@ -71,14 +72,14 @@ def then_a_core_properties_part_with_default_values_is_added(context):
 
 
 @then("I can access the core properties object")
-def then_I_can_access_the_core_properties_object(context):
+def then_I_can_access_the_core_properties_object(context: Context):
     document = context.document
     core_properties = document.core_properties
     assert isinstance(core_properties, CoreProperties)
 
 
 @then("the core property values match the known values")
-def then_the_core_property_values_match_the_known_values(context):
+def then_the_core_property_values_match_the_known_values(context: Context):
     known_propvals = (
         ("author", "Steve Canny"),
         ("category", "Category"),
@@ -106,7 +107,7 @@ def then_the_core_property_values_match_the_known_values(context):
 
 
 @then("the core property values match the new values")
-def then_the_core_property_values_match_the_new_values(context):
+def then_the_core_property_values_match_the_new_values(context: Context):
     core_properties = context.document.core_properties
     for name, expected_value in context.propvals:
         value = getattr(core_properties, name)

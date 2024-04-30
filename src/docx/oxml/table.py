@@ -973,5 +973,5 @@ class CT_VMerge(BaseOxmlElement):
     """``<w:vMerge>`` element, specifying vertical merging behavior of a cell."""
 
     val: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
-        "w:val", ST_Merge, default=ST_Merge.CONTINUE  # pyright: ignore[reportArgumentType]
+        "w:val", ST_Merge, default=ST_Merge.CONTINUE
     )

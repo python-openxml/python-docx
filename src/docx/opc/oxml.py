@@ -7,6 +7,10 @@ replaced with objects from the pptx.oxml.core and then this module will either g
 deleted or only hold the package related custom element classes.
 """
 
+from __future__ import annotations
+
+from typing import cast
+
 from lxml import etree
 
 from docx.opc.constants import NAMESPACE as NS
@@ -138,7 +142,7 @@ class CT_Relationship(BaseOxmlElement):
     target part."""
 
     @staticmethod
-    def new(rId, reltype, target, target_mode=RTM.INTERNAL):
+    def new(rId: str, reltype: str, target: str, target_mode: str = RTM.INTERNAL):
         """Return a new ``<Relationship>`` element."""
         xml = '<Relationship xmlns="%s"/>' % nsmap["pr"]
         relationship = parse_xml(xml)
@@ -178,7 +182,7 @@ class CT_Relationship(BaseOxmlElement):
 class CT_Relationships(BaseOxmlElement):
     """``<Relationships>`` element, the root element in a .rels file."""
 
-    def add_rel(self, rId, reltype, target, is_external=False):
+    def add_rel(self, rId: str, reltype: str, target: str, is_external: bool = False):
         """Add a child ``<Relationship>`` element with attributes set according to
         parameter values."""
         target_mode = RTM.EXTERNAL if is_external else RTM.INTERNAL
@@ -186,11 +190,10 @@ class CT_Relationships(BaseOxmlElement):
         self.append(relationship)
 
     @staticmethod
-    def new():
+    def new() -> CT_Relationships:
         """Return a new ``<Relationships>`` element."""
         xml = '<Relationships xmlns="%s"/>' % nsmap["pr"]
-        relationships = parse_xml(xml)
-        return relationships
+        return cast(CT_Relationships, parse_xml(xml))
 
     @property
     def Relationship_lst(self):

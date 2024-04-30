@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class CT_Document(BaseOxmlElement):
     """``<w:document>`` element, the root element of a document.xml file."""
 
-    body = ZeroOrOne("w:body")
+    body: CT_Body = ZeroOrOne("w:body")  # pyright: ignore[reportAssignmentType]
 
     @property
     def sectPr_lst(self) -> List[CT_SectPr]:

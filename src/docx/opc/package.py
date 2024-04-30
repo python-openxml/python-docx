@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Iterator
+from typing import IO, TYPE_CHECKING, Iterator, cast
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.packuri import PACKAGE_URI, PackURI
@@ -14,7 +14,9 @@ from docx.opc.rel import Relationships
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.opc.coreprops import CoreProperties
     from docx.opc.part import Part
+    from docx.opc.rel import _Relationship  # pyright: ignore[reportPrivateUsage]
 
 
 class OpcPackage:
@@ -37,16 +39,18 @@ class OpcPackage:
         pass
 
     @property
-    def core_properties(self):
+    def core_properties(self) -> CoreProperties:
         """|CoreProperties| object providing read/write access to the Dublin Core
         properties for this document."""
         return self._core_properties_part.core_properties
 
-    def iter_rels(self):
+    def iter_rels(self) -> Iterator[_Relationship]:
         """Generate exactly one reference to each relationship in the package by
         performing a depth-first traversal of the rels graph."""
 
-        def walk_rels(source, visited=None):
+        def walk_rels(
+            source: OpcPackage | Part, visited: list[Part] | None = None
+        ) -> Iterator[_Relationship]:
             visited = [] if visited is None else visited
             for rel in source.rels.values():
                 yield rel
@@ -103,7 +107,7 @@ class OpcPackage:
         """
         return self.part_related_by(RT.OFFICE_DOCUMENT)
 
-    def next_partname(self, template):
+    def next_partname(self, template: str) -> PackURI:
         """Return a |PackURI| instance representing partname matching `template`.
 
         The returned part-name has the next available numeric suffix to distinguish it
@@ -163,13 +167,13 @@ class OpcPackage:
         PackageWriter.write(pkg_file, self.rels, self.parts)
 
     @property
-    def _core_properties_part(self):
+    def _core_properties_part(self) -> CorePropertiesPart:
         """|CorePropertiesPart| object related to this package.
 
         Creates a default core properties part if one is not present (not common).
         """
         try:
-            return self.part_related_by(RT.CORE_PROPERTIES)
+            return cast(CorePropertiesPart, self.part_related_by(RT.CORE_PROPERTIES))
         except KeyError:
             core_properties_part = CorePropertiesPart.default(self)
             self.relate_to(core_properties_part, RT.CORE_PROPERTIES)

@@ -28,98 +28,53 @@ from ..unitutil.mock import (
 
 
 class DescribePart:
-    def it_can_be_constructed_by_PartFactory(
-        self, partname_, content_type_, blob_, package_, __init_
-    ):
-        part = Part.load(partname_, content_type_, blob_, package_)
+    """Unit-test suite for `docx.opc.part.Part` objects."""
 
-        __init_.assert_called_once_with(ANY, partname_, content_type_, blob_, package_)
+    def it_can_be_constructed_by_PartFactory(self, package_: Mock, init__: Mock):
+        part = Part.load(PackURI("/part/name"), "content/type", b"1be2", package_)
+
+        init__.assert_called_once_with(ANY, "/part/name", "content/type", b"1be2", package_)
         assert isinstance(part, Part)
 
-    def it_knows_its_partname(self, partname_get_fixture):
-        part, expected_partname = partname_get_fixture
-        assert part.partname == expected_partname
+    def it_knows_its_partname(self):
+        part = Part(PackURI("/part/name"), "content/type")
+        assert part.partname == "/part/name"
 
-    def it_can_change_its_partname(self, partname_set_fixture):
-        part, new_partname = partname_set_fixture
-        part.partname = new_partname
-        assert part.partname == new_partname
+    def it_can_change_its_partname(self):
+        part = Part(PackURI("/old/part/name"), "content/type")
+        part.partname = PackURI("/new/part/name")
+        assert part.partname == "/new/part/name"
 
-    def it_knows_its_content_type(self, content_type_fixture):
-        part, expected_content_type = content_type_fixture
-        assert part.content_type == expected_content_type
+    def it_knows_its_content_type(self):
+        part = Part(PackURI("/part/name"), "content/type")
+        assert part.content_type == "content/type"
 
-    def it_knows_the_package_it_belongs_to(self, package_get_fixture):
-        part, expected_package = package_get_fixture
-        assert part.package == expected_package
+    def it_knows_the_package_it_belongs_to(self, package_: Mock):
+        part = Part(PackURI("/part/name"), "content/type", package=package_)
+        assert part.package is package_
 
-    def it_can_be_notified_after_unmarshalling_is_complete(self, part):
+    def it_can_be_notified_after_unmarshalling_is_complete(self):
+        part = Part(PackURI("/part/name"), "content/type")
         part.after_unmarshal()
 
-    def it_can_be_notified_before_marshalling_is_started(self, part):
+    def it_can_be_notified_before_marshalling_is_started(self):
+        part = Part(PackURI("/part/name"), "content/type")
         part.before_marshal()
 
-    def it_uses_the_load_blob_as_its_blob(self, blob_fixture):
-        part, load_blob = blob_fixture
-        assert part.blob is load_blob
+    def it_uses_the_load_blob_as_its_blob(self):
+        blob = b"abcde"
+        part = Part(PackURI("/part/name"), "content/type", blob)
+        assert part.blob is blob
 
     # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def blob_fixture(self, blob_):
-        part = Part(None, None, blob_, None)
-        return part, blob_
-
-    @pytest.fixture
-    def content_type_fixture(self):
-        content_type = "content/type"
-        part = Part(None, content_type, None, None)
-        return part, content_type
-
-    @pytest.fixture
-    def package_get_fixture(self, package_):
-        part = Part(None, None, None, package_)
-        return part, package_
-
-    @pytest.fixture
-    def part(self):
-        part = Part(None, None)
-        return part
-
-    @pytest.fixture
-    def partname_get_fixture(self):
-        partname = PackURI("/part/name")
-        part = Part(partname, None, None, None)
-        return part, partname
-
-    @pytest.fixture
-    def partname_set_fixture(self):
-        old_partname = PackURI("/old/part/name")
-        new_partname = PackURI("/new/part/name")
-        part = Part(old_partname, None, None, None)
-        return part, new_partname
-
-    # fixture components ---------------------------------------------
-
-    @pytest.fixture
-    def blob_(self, request):
-        return instance_mock(request, bytes)
-
-    @pytest.fixture
-    def content_type_(self, request):
-        return instance_mock(request, str)
-
-    @pytest.fixture
-    def __init_(self, request):
+    def init__(self, request: FixtureRequest):
         return initializer_mock(request, Part)
 
     @pytest.fixture
-    def package_(self, request):
+    def package_(self, request: FixtureRequest):
         return instance_mock(request, OpcPackage)
-
-    @pytest.fixture
-    def partname_(self, request):
-        return instance_mock(request, PackURI)
 
 
 class DescribePartRelationshipManagementInterface:

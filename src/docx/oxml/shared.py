@@ -18,7 +18,7 @@ class CT_DecimalNumber(BaseOxmlElement):
     val: int = RequiredAttribute("w:val", ST_DecimalNumber)  # pyright: ignore[reportAssignmentType]
 
     @classmethod
-    def new(cls, nsptagname, val):
+    def new(cls, nsptagname: str, val: int):
         """Return a new ``CT_DecimalNumber`` element having tagname `nsptagname` and
         ``val`` attribute set to `val`."""
         return OxmlElement(nsptagname, attrs={qn("w:val"): str(val)})
@@ -31,7 +31,7 @@ class CT_OnOff(BaseOxmlElement):
     "off". Defaults to `True`, so `<w:b>` for example means "bold is turned on".
     """
 
-    val: bool = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+    val: bool = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:val", ST_OnOff, default=True
     )
 
@@ -42,7 +42,7 @@ class CT_String(BaseOxmlElement):
     In those cases, it containing a style name in its `val` attribute.
     """
 
-    val: str = RequiredAttribute("w:val", ST_String)  # pyright: ignore[reportGeneralTypeIssues]
+    val: str = RequiredAttribute("w:val", ST_String)  # pyright: ignore[reportAssignmentType]
 
     @classmethod
     def new(cls, nsptagname: str, val: str):

@@ -20,7 +20,7 @@ oxml_parser = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
 oxml_parser.set_element_class_lookup(element_class_lookup)
 
 
-def parse_xml(xml: str) -> "BaseOxmlElement":
+def parse_xml(xml: str | bytes) -> "BaseOxmlElement":
     """Root lxml element obtained by parsing XML character string `xml`.
 
     The custom parser is used, so custom element classes are produced for elements in

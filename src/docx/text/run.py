@@ -59,8 +59,8 @@ class Run(StoryChild):
     def add_picture(
         self,
         image_path_or_stream: str | IO[bytes],
-        width: Length | None = None,
-        height: Length | None = None,
+        width: int | Length | None = None,
+        height: int | Length | None = None,
     ) -> InlineShape:
         """Return |InlineShape| containing image identified by `image_path_or_stream`.
 
