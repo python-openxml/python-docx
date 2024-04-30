@@ -145,7 +145,9 @@ class Part:
     @lazyproperty
     def rels(self):
         """|Relationships| instance holding the relationships for this part."""
-        return Relationships(self._partname.baseURI)
+        # -- prevent breakage in `python-docx-template` by retaining legacy `._rels` attribute --
+        self._rels = Relationships(self._partname.baseURI)
+        return self._rels
 
     def target_ref(self, rId: str) -> str:
         """Return URL contained in target ref of relationship identified by `rId`."""
