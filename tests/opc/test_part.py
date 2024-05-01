@@ -169,24 +169,13 @@ class DescribePartRelationshipManagementInterface:
         rels_.get_or_add_ext_rel.assert_called_once_with("http://rel/type", "https://hyper/link")
         assert rId == "rId27"
 
-    @pytest.mark.parametrize(
-        ("part_cxml", "rel_should_be_dropped"),
-        [
-            ("w:p", True),
-            ("w:p/r:a{r:id=rId42}", True),
-            ("w:p/r:a{r:id=rId42}/r:b{r:id=rId42}", False),
-        ],
-    )
-    def it_can_drop_a_relationship(
-        self, part_cxml: str, rel_should_be_dropped: bool, rels_prop_: Mock
-    ):
+    def it_can_drop_a_relationship(self, rels_prop_: Mock):
         rels_prop_.return_value = {"rId42": None}
-        part = Part("partname", "content_type")
-        part._element = element(part_cxml)  # pyright: ignore[reportAttributeAccessIssue]
+        part = Part(PackURI("/partname"), "content_type")
 
         part.drop_rel("rId42")
 
-        assert ("rId42" not in part.rels) is rel_should_be_dropped
+        assert "rId42" not in part.rels
 
     def it_can_find_a_related_part_by_reltype(
         self, rels_prop_: Mock, rels_: Mock, other_part_: Mock
@@ -411,6 +400,24 @@ class DescribeXmlPart:
         xml_part = part_fixture
         assert xml_part.part is xml_part
 
+    @pytest.mark.parametrize(
+        ("part_cxml", "rel_should_be_dropped"),
+        [
+            ("w:p", True),
+            ("w:p/r:a{r:id=rId42}", True),
+            ("w:p/r:a{r:id=rId42}/r:b{r:id=rId42}", False),
+        ],
+    )
+    def it_only_drops_a_relationship_with_zero_reference_count(
+        self, part_cxml: str, rel_should_be_dropped: bool, rels_prop_: Mock, package_: Mock
+    ):
+        rels_prop_.return_value = {"rId42": None}
+        part = XmlPart(PackURI("/partname"), "content_type", element(part_cxml), package_)
+
+        part.drop_rel("rId42")
+
+        assert ("rId42" not in part.rels) is rel_should_be_dropped
+
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
@@ -451,6 +458,10 @@ class DescribeXmlPart:
     @pytest.fixture
     def partname_(self, request):
         return instance_mock(request, PackURI)
+
+    @pytest.fixture
+    def rels_prop_(self, request: FixtureRequest):
+        return property_mock(request, XmlPart, "rels")
 
     @pytest.fixture
     def serialize_part_xml_(self, request):

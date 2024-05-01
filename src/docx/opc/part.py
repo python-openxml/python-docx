@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Dict, Type
+from typing import TYPE_CHECKING, Callable, Dict, Type, cast
 
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
@@ -149,11 +149,12 @@ class Part:
         rel = self.rels[rId]
         return rel.target_ref
 
-    def _rel_ref_count(self, rId):
-        """Return the count of references in this part's XML to the relationship
-        identified by `rId`."""
-        rIds = self._element.xpath("//@r:id")
-        return len([_rId for _rId in rIds if _rId == rId])
+    def _rel_ref_count(self, rId: str) -> int:
+        """Return the count of references in this part to the relationship identified by `rId`.
+
+        Only an XML part can contain references, so this is 0 for `Part`.
+        """
+        return 0
 
 
 class PartFactory:
@@ -231,3 +232,9 @@ class XmlPart(Part):
         That chain of delegation ends here for child objects.
         """
         return self
+
+    def _rel_ref_count(self, rId: str) -> int:
+        """Return the count of references in this part's XML to the relationship
+        identified by `rId`."""
+        rIds = cast("list[str]", self._element.xpath("//@r:id"))
+        return len([_rId for _rId in rIds if _rId == rId])
