@@ -68,8 +68,8 @@ class DescribeCoreProperties:
     @pytest.mark.parametrize(
         ("prop_name", "expected_datetime"),
         [
-            ("created", dt.datetime(2012, 11, 17, 16, 37, 40)),
-            ("last_printed", dt.datetime(2014, 6, 4, 4, 28)),
+            ("created", dt.datetime(2012, 11, 17, 16, 37, 40, tzinfo=dt.timezone.utc)),
+            ("last_printed", dt.datetime(2014, 6, 4, 4, 28, tzinfo=dt.timezone.utc)),
             ("modified", None),
         ],
     )

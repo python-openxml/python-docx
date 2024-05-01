@@ -254,8 +254,8 @@ class CT_CoreProperties(BaseOxmlElement):
             tmpl = "could not parse W3CDTF datetime string '%s'"
             raise ValueError(tmpl % w3cdtf_str)
         if len(offset_str) == 6:
-            return cls._offset_dt(dt_, offset_str)
-        return dt_
+            dt_ = cls._offset_dt(dt_, offset_str)
+        return dt_.replace(tzinfo=dt.timezone.utc)
 
     def _set_element_datetime(self, prop_name: str, value: dt.datetime):
         """Set date/time value of child element having `prop_name` to `value`."""

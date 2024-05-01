@@ -1,6 +1,8 @@
 """Unit test suite for the docx.opc.parts.coreprops module."""
 
-from datetime import datetime, timedelta
+from __future__ import annotations
+
+import datetime as dt
 
 import pytest
 
@@ -35,8 +37,9 @@ class DescribeCorePropertiesPart:
         assert core_properties.title == "Word Document"
         assert core_properties.last_modified_by == "python-docx"
         assert core_properties.revision == 1
-        delta = datetime.utcnow() - core_properties.modified
-        max_expected_delta = timedelta(seconds=2)
+        assert core_properties.modified is not None
+        delta = dt.datetime.now(dt.timezone.utc) - core_properties.modified
+        max_expected_delta = dt.timedelta(seconds=2)
         assert delta < max_expected_delta
 
     # fixtures ---------------------------------------------

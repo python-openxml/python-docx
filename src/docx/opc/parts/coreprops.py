@@ -31,7 +31,7 @@ class CorePropertiesPart(XmlPart):
         core_properties.title = "Word Document"
         core_properties.last_modified_by = "python-docx"
         core_properties.revision = 1
-        core_properties.modified = dt.datetime.utcnow()
+        core_properties.modified = dt.datetime.now(dt.timezone.utc)
         return core_properties_part
 
     @property

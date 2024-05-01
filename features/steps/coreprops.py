@@ -1,6 +1,6 @@
 """Gherkin step implementations for core properties-related features."""
 
-from datetime import datetime, timedelta
+import datetime as dt
 
 from behave import given, then, when
 from behave.runner import Context
@@ -38,13 +38,13 @@ def when_I_assign_new_values_to_the_properties(context: Context):
         ("category", "Category"),
         ("comments", "Description"),
         ("content_status", "Content Status"),
-        ("created", datetime(2013, 6, 15, 12, 34, 56)),
+        ("created", dt.datetime(2013, 6, 15, 12, 34, 56, tzinfo=dt.timezone.utc)),
         ("identifier", "Identifier"),
         ("keywords", "key; word; keyword"),
         ("language", "Language"),
         ("last_modified_by", "Last Modified By"),
-        ("last_printed", datetime(2013, 6, 15, 12, 34, 56)),
-        ("modified", datetime(2013, 6, 15, 12, 34, 56)),
+        ("last_printed", dt.datetime(2013, 6, 15, 12, 34, 56, tzinfo=dt.timezone.utc)),
+        ("modified", dt.datetime(2013, 6, 15, 12, 34, 56, tzinfo=dt.timezone.utc)),
         ("revision", 9),
         ("subject", "Subject"),
         ("title", "Title"),
@@ -66,8 +66,8 @@ def then_a_core_properties_part_with_default_values_is_added(context: Context):
     assert core_properties.revision == 1
     # core_properties.modified only stores time with seconds resolution, so
     # comparison needs to be a little loose (within two seconds)
-    modified_timedelta = datetime.utcnow() - core_properties.modified
-    max_expected_timedelta = timedelta(seconds=2)
+    modified_timedelta = dt.datetime.now(dt.timezone.utc) - core_properties.modified
+    max_expected_timedelta = dt.timedelta(seconds=2)
     assert modified_timedelta < max_expected_timedelta
 
 
@@ -85,13 +85,13 @@ def then_the_core_property_values_match_the_known_values(context: Context):
         ("category", "Category"),
         ("comments", "Description"),
         ("content_status", "Content Status"),
-        ("created", datetime(2014, 12, 13, 22, 2, 0)),
+        ("created", dt.datetime(2014, 12, 13, 22, 2, 0, tzinfo=dt.timezone.utc)),
         ("identifier", "Identifier"),
         ("keywords", "key; word; keyword"),
         ("language", "Language"),
         ("last_modified_by", "Steve Canny"),
-        ("last_printed", datetime(2014, 12, 13, 22, 2, 42)),
-        ("modified", datetime(2014, 12, 13, 22, 6, 0)),
+        ("last_printed", dt.datetime(2014, 12, 13, 22, 2, 42, tzinfo=dt.timezone.utc)),
+        ("modified", dt.datetime(2014, 12, 13, 22, 6, 0, tzinfo=dt.timezone.utc)),
         ("revision", 2),
         ("subject", "Subject"),
         ("title", "Title"),

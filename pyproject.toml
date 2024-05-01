@@ -42,6 +42,17 @@ Repository = "https://github.com/python-openxml/python-docx"
 line-length = 100
 target-version = ["py37", "py38", "py39", "py310", "py311"]
 
+[tool.pyright]
+include = ["src/docx", "tests"]
+pythonPlatform = "All"
+pythonVersion = "3.8"
+reportImportCycles = true
+reportUnnecessaryCast = true
+reportUnnecessaryTypeIgnoreComment = true
+stubPath = "./typings"
+typeCheckingMode = "strict"
+verboseOutput = true
+
 [tool.pytest.ini_options]
 filterwarnings = [
     # -- exit on any warning not explicitly ignored here --
