@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, division, print_function
-
 import xml.etree.ElementTree as ET
 
 from .constants import MIME_TYPE
