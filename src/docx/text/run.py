@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import copy
+
 from typing import IO, TYPE_CHECKING, Iterator, cast
 
 from docx.drawing import Drawing
@@ -135,6 +137,16 @@ class Run(StoryChild):
         """The |Font| object providing access to the character formatting properties for
         this run, such as font name and size."""
         return Font(self._element)
+
+    @property
+    def formatting(self) -> CT_RPr:
+        """The |CT_RPr| object providing access to the full range of formatting properties for
+        this run, such as font name and size."""
+      return copy.deepcopy(self._r.get_or_add_rPr())
+
+    @formatting.setter
+    def formatting(self, new_rPr: CT_RPr):
+          self._r.replace(self._r.get_or_add_rPr(), new_rPr)
 
     @property
     def italic(self) -> bool | None:
