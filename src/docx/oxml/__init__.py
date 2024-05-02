@@ -44,6 +44,8 @@ __all__ = ["OxmlElement", "parse_xml"]
 
 register_element_cls("a:blip", CT_Blip)
 register_element_cls("a:ext", CT_PositiveSize2D)
+register_element_cls("a:extLst", CT_Transform2D)
+register_element_cls("asvg:svgBlip", CT_Transform2D)
 register_element_cls("a:graphic", CT_GraphicalObject)
 register_element_cls("a:graphicData", CT_GraphicalObjectData)
 register_element_cls("a:off", CT_Point2D)

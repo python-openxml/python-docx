@@ -9,6 +9,7 @@ from docx.image.gif import Gif
 from docx.image.jpeg import Exif, Jfif
 from docx.image.png import Png
 from docx.image.tiff import Tiff
+from docx.image.svg import Svg
 
 SIGNATURES = (
     # class, offset, signature_bytes
@@ -20,4 +21,5 @@ SIGNATURES = (
     (Tiff, 0, b"MM\x00*"),  # big-endian (Motorola) TIFF
     (Tiff, 0, b"II*\x00"),  # little-endian (Intel) TIFF
     (Bmp, 0, b"BM"),
+    (Svg, 0, b"<svg "),
 )
