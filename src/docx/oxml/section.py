@@ -4,14 +4,23 @@ from __future__ import annotations
 
 from copy import deepcopy
 from typing import Callable, Iterator, List, Sequence, cast
+from warnings import warn
 
 from lxml import etree
 from typing_extensions import TypeAlias
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
 from docx.oxml.ns import nsmap
-from docx.oxml.shared import CT_OnOff
-from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
+from docx.oxml.shared import CT_DecimalNumber, CT_OnOff
+from docx.oxml.simpletypes import (
+    ST_DecimalNumber,
+    ST_FtnPos,
+    ST_NumberFormat,
+    ST_RestartNumber,
+    ST_SignedTwipsMeasure,
+    ST_TwipsMeasure,
+    XsdString,
+)
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.xmlchemy import (
@@ -24,6 +33,35 @@ from docx.oxml.xmlchemy import (
 from docx.shared import Length, lazyproperty
 
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
+
+
+class CT_FtnPos(BaseOxmlElement):
+    """``<w:pos>`` element, footnote placement"""
+
+    val = RequiredAttribute("w:val", ST_FtnPos)
+
+
+class CT_FtnProps(BaseOxmlElement):
+    """``<w:footnotePr>`` element, section wide footnote properties"""
+
+    get_or_add_pos: Callable[[], CT_FtnPos]
+    get_or_add_numFmt: Callable[[], CT_NumFmt]
+    get_or_add_numStart: Callable[[], CT_DecimalNumber]
+    get_or_add_numRestart: Callable[[], CT_NumRestart]
+
+    _tag_seq = ("w:pos", "w:numFmt", "w:numStart", "w:numRestart")
+    pos: CT_FtnPos | None = ZeroOrOne(
+        "w:pos", successors=_tag_seq
+    )  # pyright: ignore[reportGeneralTypeIssues]
+    numFmt: CT_NumFmt | None = ZeroOrOne(
+        "w:numFmt", successors=_tag_seq[1:]
+    )  # pyright: ignore[reportGeneralTypeIssues]
+    numStart: CT_DecimalNumber | None = ZeroOrOne(
+        "w:numStart", successors=_tag_seq[2:]
+    )  # pyright: ignore[reportGeneralTypeIssues]
+    numRestart: CT_NumRestart | None = ZeroOrOne(
+        "w:numRestart", successors=_tag_seq[3:]
+    )  # pyright: ignore[reportGeneralTypeIssues]
 
 
 class CT_HdrFtr(BaseOxmlElement):
@@ -55,6 +93,18 @@ class CT_HdrFtrRef(BaseOxmlElement):
         "w:type", WD_HEADER_FOOTER
     )
     rId: str = RequiredAttribute("r:id", XsdString)  # pyright: ignore[reportAssignmentType]
+
+
+class CT_NumFmt(BaseOxmlElement):
+    """``<w:numFmt>`` element, footnote numbering format"""
+
+    val = RequiredAttribute("w:val", ST_NumberFormat)
+
+
+class CT_NumRestart(BaseOxmlElement):
+    """``<w:numStart>`` element, footnote numbering restart location"""
+
+    val = RequiredAttribute("w:val", ST_RestartNumber)
 
 
 class CT_PageMar(BaseOxmlElement):
@@ -104,6 +154,7 @@ class CT_SectPr(BaseOxmlElement):
     get_or_add_pgSz: Callable[[], CT_PageSz]
     get_or_add_titlePg: Callable[[], CT_OnOff]
     get_or_add_type: Callable[[], CT_SectType]
+    get_or_add_footnotePr: Callable[[], CT_FtnProps]
     _add_footerReference: Callable[[], CT_HdrFtrRef]
     _add_headerReference: Callable[[], CT_HdrFtrRef]
     _remove_titlePg: Callable[[], None]
@@ -144,6 +195,11 @@ class CT_SectPr(BaseOxmlElement):
     )
     titlePg: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:titlePg", successors=_tag_seq[14:]
+    )
+    footnotePr: CT_FtnProps | None = (
+        ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+            "w:footnotePr", successors=_tag_seq[1:]
+        )
     )
     del _tag_seq
 
@@ -210,6 +266,84 @@ class CT_SectPr(BaseOxmlElement):
     def footer(self, value: int | Length | None):
         pgMar = self.get_or_add_pgMar()
         pgMar.footer = value if value is None or isinstance(value, Length) else Length(value)
+
+    @property
+    def footnote_number_format(self) -> ST_NumberFormat | None:
+        """The value of the ``w:val`` attribute in the ``<w:numFmt>`` child
+        element of ``<w:footnotePr>`` element, as a |String|, or |None| if either the element or the
+        attribute is not present."""
+        fPr = self.footnotePr
+        if fPr is None or fPr.numFmt is None:
+            return None
+        return fPr.numFmt.val
+
+    @footnote_number_format.setter
+    def footnote_number_format(self, value: ST_NumberFormat | None):
+        fPr = self.get_or_add_footnotePr()
+        numFmt = fPr.get_or_add_numFmt()
+        numFmt.val = value
+
+    @property
+    def footnote_numbering_restart_location(self) -> ST_RestartNumber | None:
+        """The value of the ``w:val`` attribute in the ``<w:numRestart>`` child
+        element of ``<w:footnotePr>`` element, as a |String|, or |None| if either the element or the
+        attribute is not present."""
+        fPr = self.footnotePr
+        if fPr is None or fPr.numRestart is None:
+            return None
+        return fPr.numRestart.val
+
+    @footnote_numbering_restart_location.setter
+    def footnote_numbering_restart_location(self, value: ST_RestartNumber | None):
+        fPr = self.get_or_add_footnotePr()
+        numStart = fPr.get_or_add_numStart()
+        numRestart = fPr.get_or_add_numRestart()
+        numRestart.val = value
+        if len(numStart.values()) == 0:
+            numStart.val = 1
+        elif value != "continuous":
+            numStart.val = 1
+            msg = "When ``<w:numRestart> is not 'continuous', then ``<w:numStart>`` must be 1."
+            warn(msg, UserWarning, stacklevel=2)
+
+    @property
+    def footnote_numbering_start_value(self) -> ST_DecimalNumber | None:
+        """The value of the ``w:val`` attribute in the ``<w:numStart>`` child
+        element of ``<w:footnotePr>`` element, as a |Number|, or |None| if either the element or the
+        attribute is not present."""
+        fPr = self.footnotePr
+        if fPr is None or fPr.numStart is None:
+            return None
+        return fPr.numStart.val
+
+    @footnote_numbering_start_value.setter
+    def footnote_numbering_start_value(self, value: ST_DecimalNumber | None):
+        fPr = self.get_or_add_footnotePr()
+        numStart = fPr.get_or_add_numStart()
+        numRestart = fPr.get_or_add_numRestart()
+        numStart.val = value
+        if len(numRestart.values()) == 0:
+            numRestart.val = "continuous"
+        elif value != 1:
+            numRestart.val = "continuous"
+            msg = "When ``<w:numStart> is not 1, then ``<w:numRestart>`` must be 'continuous'."
+            warn(msg, UserWarning, stacklevel=2)
+
+    @property
+    def footnote_position(self) -> ST_FtnPos | None:
+        """The value of the ``w:val`` attribute in the ``<w:pos>`` child
+        element of ``<w:footnotePr>`` element, as a |String|, or |None| if either the element or the
+        attribute is not present."""
+        fPr = self.footnotePr
+        if fPr is None or fPr.pos is None:
+            return None
+        return fPr.pos.val
+
+    @footnote_position.setter
+    def footnote_position(self, value: ST_FtnPos | None):
+        fPr = self.get_or_add_footnotePr()
+        pos = fPr.get_or_add_pos()
+        pos.val = value
 
     def get_footerReference(self, type_: WD_HEADER_FOOTER) -> CT_HdrFtrRef | None:
         """Return footerReference element of `type_` or None if not present."""

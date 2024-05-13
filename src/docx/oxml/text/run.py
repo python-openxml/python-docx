@@ -13,6 +13,7 @@ from docx.shared import TextAccumulator
 
 if TYPE_CHECKING:
     from docx.oxml.shape import CT_Anchor, CT_Inline
+    from docx.oxml.text.footnote_reference import CT_FtnEdnRef
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
     from docx.oxml.text.parfmt import CT_TabStop
 
@@ -28,6 +29,9 @@ class CT_R(BaseOxmlElement):
     get_or_add_rPr: Callable[[], CT_RPr]
     _add_drawing: Callable[[], CT_Drawing]
     _add_t: Callable[..., CT_Text]
+    _add_rPr: Callable[[], CT_RPr]
+    _add_footnoteReference: Callable[[], CT_FtnEdnRef]
+    footnoteReference_lst: List[CT_FtnEdnRef] | None
 
     rPr: CT_RPr | None = ZeroOrOne("w:rPr")  # pyright: ignore[reportAssignmentType]
     br = ZeroOrMore("w:br")
@@ -35,6 +39,16 @@ class CT_R(BaseOxmlElement):
     drawing = ZeroOrMore("w:drawing")
     t = ZeroOrMore("w:t")
     tab = ZeroOrMore("w:tab")
+    footnoteReference = ZeroOrMore("w:footnoteReference")
+
+    def add_footnoteReference(self, id: int) -> CT_FtnEdnRef:
+        """Return a newly added ``<w:footnoteReference>`` element containing
+        the footnote reference id."""
+        rPr = self._add_rPr()
+        rPr.style = "FootnoteReference"
+        new_fr = self._add_footnoteReference()
+        new_fr.id = id
+        return new_fr
 
     def add_t(self, text: str) -> CT_Text:
         """Return a newly added `<w:t>` element containing `text`."""
@@ -91,6 +105,27 @@ class CT_R(BaseOxmlElement):
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
         """All `w:lastRenderedPageBreaks` descendants of this run."""
         return self.xpath("./w:lastRenderedPageBreak")
+
+    @property
+    def footnote_reference_ids(self) -> List[int] | None:
+        """Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present."""
+        references = []
+        for child in self:
+            if child.tag == qn("w:footnoteReference"):
+                references.append(child.id)
+        if references == []:
+            references = None
+        return references
+
+    def increment_containing_footnote_reference_ids(self) -> CT_FtnEdnRef | None:
+        """Increment all footnote reference ids by one if they exist.
+        Return all footnote reference ids (``<w:footnoteReference>``), or |None| if not present.
+        """
+        if self.footnoteReference_lst is not None:
+            for i in range(len(self.footnoteReference_lst)):
+                self.footnoteReference_lst[i].id += 1
+            return self.footnoteReference_lst
+        return None
 
     @property
     def style(self) -> str | None:

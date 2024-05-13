@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<w:footnotes
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    mc:Ignorable="w14"
+  >
+    <w:footnote w:type="separator" w:id="-1">
+      <w:p>
+        <w:r>
+          <w:separator/>
+        </w:r>
+      </w:p>
+    </w:footnote>
+    <w:footnote w:type="continuationSeparator" w:id="0">
+      <w:p>
+        <w:r>
+          <w:continuationSeparator/>
+        </w:r>
+      </w:p>
+    </w:footnote>
+</w:footnotes>

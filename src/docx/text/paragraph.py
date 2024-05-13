@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Iterator, List, cast
 
 from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.text.footnote_reference import CT_FtnEdnRef
 from docx.oxml.text.run import CT_R
 from docx.shared import StoryChild
 from docx.styles.style import ParagraphStyle
@@ -16,6 +17,7 @@ from docx.text.run import Run
 if TYPE_CHECKING:
     import docx.types as t
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+    from docx.oxml.footnote import CT_FtnEnd
     from docx.oxml.text.paragraph import CT_P
     from docx.styles.style import CharacterStyle
 
@@ -26,6 +28,19 @@ class Paragraph(StoryChild):
     def __init__(self, p: CT_P, parent: t.ProvidesStoryPart):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+
+    def add_footnote(self) -> CT_FtnEnd:
+        """Append a run that contains a ``<w:footnoteReferenceId>`` element.
+
+        The footnotes are kept in order by `footnote_reference_id`, so
+        the appropriate id is calculated based on the current state.
+        """
+        document = self._parent._parent
+        new_fr_id = document._calculate_next_footnote_reference_id(self._p)
+        r = self._p.add_r()
+        r.add_footnoteReference(new_fr_id)
+        footnote = document._add_footnote(new_fr_id)
+        return footnote
 
     def add_run(self, text: str | None = None, style: str | CharacterStyle | None = None) -> Run:
         """Append run containing `text` and having character-style `style`.
@@ -75,6 +90,16 @@ class Paragraph(StoryChild):
     def hyperlinks(self) -> List[Hyperlink]:
         """A |Hyperlink| instance for each hyperlink in this paragraph."""
         return [Hyperlink(hyperlink, self) for hyperlink in self._p.hyperlink_lst]
+
+    @property
+    def footnotes(self) -> List[CT_FtnEnd]:
+        """Returns a list of |Footnote| instances that refers to the footnotes in this paragraph."""
+        footnote_list = []
+        reference_ids = self._p.footnote_reference_ids
+        footnotes = self._parent._parent.footnotes
+        for ref_id in reference_ids:
+            footnote_list.append(footnotes[ref_id])
+        return footnote_list
 
     def insert_paragraph_before(
         self, text: str | None = None, style: str | ParagraphStyle | None = None
@@ -171,3 +196,7 @@ class Paragraph(StoryChild):
         """Return a newly created paragraph, inserted directly before this paragraph."""
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)
+
+    def _increment_containing_footnote_reference_ids(self) -> CT_FtnEdnRef | None:
+        for r in self.runs:
+            r._r.increment_containing_footnote_reference_ids()

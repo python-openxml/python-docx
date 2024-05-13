@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Iterator, cast
+from typing import IO, TYPE_CHECKING, Iterator, List, cast
 
 from docx.drawing import Drawing
 from docx.enum.style import WD_STYLE_TYPE
@@ -135,6 +135,11 @@ class Run(StoryChild):
         """The |Font| object providing access to the character formatting properties for
         this run, such as font name and size."""
         return Font(self._element)
+
+    @property
+    def footnote_reference_ids(self) -> List[int] | None:
+        """Returns all footnote reference ids from the run, or |None| if none found."""
+        return self._r.footnote_reference_ids
 
     @property
     def italic(self) -> bool | None:
