@@ -224,6 +224,7 @@ register_element_cls("w:p", CT_P)
 from .text.parfmt import (  # noqa
     CT_Ind,
     CT_Jc,
+    CT_OutlineLvl,
     CT_PPr,
     CT_Spacing,
     CT_TabStop,
@@ -232,6 +233,7 @@ from .text.parfmt import (  # noqa
 
 register_element_cls("w:ind", CT_Ind)
 register_element_cls("w:jc", CT_Jc)
+register_element_cls('w:outlineLvl', CT_OutlineLvl)
 register_element_cls("w:keepLines", CT_OnOff)
 register_element_cls("w:keepNext", CT_OnOff)
 register_element_cls("w:pageBreakBefore", CT_OnOff)

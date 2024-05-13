@@ -67,6 +67,42 @@ class WD_PARAGRAPH_ALIGNMENT(BaseXmlEnum):
 WD_ALIGN_PARAGRAPH = WD_PARAGRAPH_ALIGNMENT
 
 
+class WD_PARAGRAPH_OUTLINELVL(BaseXmlEnum):
+    """Alias: **WD_OUTLINELVL_PARAGRAPH**
+
+    Specifies paragraph outline level.
+
+    Example::
+
+        from docx.enum.text import WD_OUTLINELVL_PARAGRAPH
+
+        paragraph = document.add_paragraph()
+        paragraph.outlineLvl = WD_OUTLINELVL_PARAGRAPH.LEVEL_1
+    """
+
+    LEVEL_1 = (0, "outline-level 1", "Outline Level 1")
+
+    LEVEL_2 = (1, "outline-level 2", "Outline Level 2")
+
+    LEVEL_3 = (2, "outline-level 3", "Outline Level 3")
+
+    LEVEL_4 = (3, "outline-level 4", "Outline Level 4")
+
+    LEVEL_5 = (4, "outline-level 5", "Outline Level 5")
+
+    LEVEL_6 = (5, "outline-level 6", "Outline Level 6")
+
+    LEVEL_7 = (6, "outline-level 7", "Outline Level 7")
+
+    LEVEL_8 = (7, "outline-level 8", "Outline Level 8")
+
+    LEVEL_9 = (8, "outline-level 9", "Outline Level 9")
+
+    BODY_TEXT = (9, "outline-level Body Text", "Outline Level Body Text")
+
+
+WD_OUTLINELVL_PARAGRAPH = WD_PARAGRAPH_OUTLINELVL
+
 class WD_BREAK_TYPE(enum.Enum):
     """Corresponds to WdBreakType enumeration.
 

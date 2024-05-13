@@ -58,6 +58,21 @@ class Paragraph(StoryChild):
     def alignment(self, value: WD_PARAGRAPH_ALIGNMENT):
         self._p.alignment = value
 
+    @property
+    def outlineLvl(self):
+        """
+        A member of the :ref:`WdParagraphOutlineLevel` enumeration specifying
+        the outline-level setting for this paragraph. A value of |None|
+        indicates the paragraph has no directly-applied outline-level value and
+        will inherit its outline-level value from its style hierarchy. Assigning
+        |None| to this property removes any directly-applied outline-level value.
+        """
+        return self._p.outlineLvl
+
+    @outlineLvl.setter
+    def outlineLvl(self, value):
+        self._p.outlineLvl = value
+
     def clear(self):
         """Return this same paragraph after removing all its content.
 
