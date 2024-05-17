@@ -29,7 +29,7 @@ class CT_R(BaseOxmlElement):
     _add_drawing: Callable[[], CT_Drawing]
     _add_t: Callable[..., CT_Text]
 
-    rPr: CT_RPr | None = ZeroOrOne("w:rPr")  # pyright: ignore[reportGeneralTypeIssues]
+    rPr: CT_RPr | None = ZeroOrOne("w:rPr")  # pyright: ignore[reportAssignmentType]
     br = ZeroOrMore("w:br")
     cr = ZeroOrMore("w:cr")
     drawing = ZeroOrMore("w:drawing")
@@ -120,12 +120,11 @@ class CT_R(BaseOxmlElement):
         equivalent.
         """
         return "".join(
-            str(e)
-            for e in self.xpath("w:br | w:cr | w:noBreakHyphen | w:ptab | w:t | w:tab")
+            str(e) for e in self.xpath("w:br | w:cr | w:noBreakHyphen | w:ptab | w:t | w:tab")
         )
 
-    @text.setter  # pyright: ignore[reportIncompatibleVariableOverride]
-    def text(self, text: str):
+    @text.setter
+    def text(self, text: str):  # pyright: ignore[reportIncompatibleMethodOverride]
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
 
@@ -141,12 +140,10 @@ class CT_R(BaseOxmlElement):
 class CT_Br(BaseOxmlElement):
     """`<w:br>` element, indicating a line, page, or column break in a run."""
 
-    type: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+    type: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:type", ST_BrType, default="textWrapping"
     )
-    clear: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:clear", ST_BrClear
-    )
+    clear: str | None = OptionalAttribute("w:clear", ST_BrClear)  # pyright: ignore
 
     def __str__(self) -> str:
         """Text equivalent of this element. Actual value depends on break type.

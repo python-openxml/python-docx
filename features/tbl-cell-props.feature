@@ -4,6 +4,17 @@ Feature: Get and set table cell properties
   I need a way to get and set the properties of a table cell
 
 
+  Scenario Outline: Get _Cell.grid_span
+    Given a _Cell object spanning <count> layout-grid cells
+     Then cell.grid_span is <count>
+
+    Examples: Cell.grid_span value cases
+      | count |
+      | 1     |
+      | 2     |
+      | 4     |
+
+
   Scenario Outline: Get _Cell.vertical_alignment
     Given a _Cell object with <state> vertical alignment as cell
      Then cell.vertical_alignment is <value>

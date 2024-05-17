@@ -98,11 +98,7 @@ class _TiffParser:
             return 72
 
         # resolution unit defaults to inches (2)
-        resolution_unit = (
-            ifd_entries[TIFF_TAG.RESOLUTION_UNIT]
-            if TIFF_TAG.RESOLUTION_UNIT in ifd_entries
-            else 2
-        )
+        resolution_unit = ifd_entries.get(TIFF_TAG.RESOLUTION_UNIT, 2)
 
         if resolution_unit == 1:  # aspect ratio only
             return 72

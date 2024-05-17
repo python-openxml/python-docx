@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class CT_Document(BaseOxmlElement):
     """``<w:document>`` element, the root element of a document.xml file."""
 
-    body = ZeroOrOne("w:body")
+    body: CT_Body = ZeroOrOne("w:body")  # pyright: ignore[reportAssignmentType]
 
     @property
     def sectPr_lst(self) -> List[CT_SectPr]:
@@ -44,7 +44,7 @@ class CT_Body(BaseOxmlElement):
 
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))
-    sectPr: CT_SectPr | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+    sectPr: CT_SectPr | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:sectPr", successors=()
     )
 

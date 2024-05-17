@@ -89,7 +89,7 @@ class Element:
         Return an ``Element`` object constructed from a parser element token.
         """
         tagname = token.tagname
-        attrs = [(name, value) for name, value in token.attr_list]
+        attrs = [tuple(a) for a in token.attr_list]
         text = token.text
         return cls(tagname, attrs, text)
 
@@ -263,9 +263,7 @@ def grammar():
     child_node_list << (open_paren + delimitedList(node) + close_paren | node)
 
     root_node = (
-        element("element")
-        + Group(Optional(slash + child_node_list))("child_node_list")
-        + stringEnd
+        element("element") + Group(Optional(slash + child_node_list))("child_node_list") + stringEnd
     ).setParseAction(connect_root_node_children)
 
     return root_node

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Tuple
+from typing import IO, TYPE_CHECKING, Tuple, cast
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
@@ -60,8 +60,8 @@ class StoryPart(XmlPart):
     def new_pic_inline(
         self,
         image_descriptor: str | IO[bytes],
-        width: Length | None = None,
-        height: Length | None = None,
+        width: int | Length | None = None,
+        height: int | Length | None = None,
     ) -> CT_Inline:
         """Return a newly-created `w:inline` element.
 
@@ -92,4 +92,4 @@ class StoryPart(XmlPart):
         """|DocumentPart| object for this package."""
         package = self.package
         assert package is not None
-        return package.main_document_part
+        return cast("DocumentPart", package.main_document_part)

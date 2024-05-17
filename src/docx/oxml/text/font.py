@@ -39,10 +39,10 @@ class CT_Fonts(BaseOxmlElement):
     Specifies typeface name for the various language types.
     """
 
-    ascii: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+    ascii: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:ascii", ST_String
     )
-    hAnsi: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+    hAnsi: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:hAnsi", ST_String
     )
 
@@ -148,18 +148,14 @@ class CT_RPr(BaseOxmlElement):
     sz: CT_HpsMeasure | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:sz", successors=_tag_seq[24:]
     )
-    highlight: CT_Highlight | None = (
-        ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-            "w:highlight", successors=_tag_seq[26:]
-        )
+    highlight: CT_Highlight | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:highlight", successors=_tag_seq[26:]
     )
     u: CT_Underline | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
         "w:u", successors=_tag_seq[27:]
     )
-    vertAlign: CT_VerticalAlignRun | None = (
-        ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-            "w:vertAlign", successors=_tag_seq[32:]
-        )
+    vertAlign: CT_VerticalAlignRun | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+        "w:vertAlign", successors=_tag_seq[32:]
     )
     rtl = ZeroOrOne("w:rtl", successors=_tag_seq[33:])
     cs = ZeroOrOne("w:cs", successors=_tag_seq[34:])
@@ -268,10 +264,7 @@ class CT_RPr(BaseOxmlElement):
         elif bool(value) is True:
             self.get_or_add_vertAlign().val = ST_VerticalAlignRun.SUBSCRIPT
         # -- assert bool(value) is False --
-        elif (
-            self.vertAlign is not None
-            and self.vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT
-        ):
+        elif self.vertAlign is not None and self.vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT:
             self._remove_vertAlign()
 
     @property
@@ -295,10 +288,7 @@ class CT_RPr(BaseOxmlElement):
         elif bool(value) is True:
             self.get_or_add_vertAlign().val = ST_VerticalAlignRun.SUPERSCRIPT
         # -- assert bool(value) is False --
-        elif (
-            self.vertAlign is not None
-            and self.vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT
-        ):
+        elif self.vertAlign is not None and self.vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT:
             self._remove_vertAlign()
 
     @property
@@ -353,10 +343,8 @@ class CT_RPr(BaseOxmlElement):
 class CT_Underline(BaseOxmlElement):
     """`<w:u>` element, specifying the underlining style for a run."""
 
-    val: WD_UNDERLINE | None = (
-        OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-            "w:val", WD_UNDERLINE
-        )
+    val: WD_UNDERLINE | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:val", WD_UNDERLINE
     )
 
 

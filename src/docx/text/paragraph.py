@@ -4,9 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator, List, cast
 
-from typing_extensions import Self
-
-from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.text.run import CT_R
 from docx.shared import StoryChild
@@ -17,6 +14,7 @@ from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
 if TYPE_CHECKING:
+    import docx.types as t
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
     from docx.oxml.text.paragraph import CT_P
     from docx.styles.style import CharacterStyle
@@ -29,9 +27,7 @@ class Paragraph(StoryChild):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
 
-    def add_run(
-        self, text: str | None = None, style: str | CharacterStyle | None = None
-    ) -> Run:
+    def add_run(self, text: str | None = None, style: str | CharacterStyle | None = None) -> Run:
         """Append run containing `text` and having character-style `style`.
 
         `text` can contain tab (``\\t``) characters, which are converted to the
@@ -82,7 +78,7 @@ class Paragraph(StoryChild):
 
     def insert_paragraph_before(
         self, text: str | None = None, style: str | ParagraphStyle | None = None
-    ) -> Self:
+    ) -> Paragraph:
         """Return a newly created paragraph, inserted directly before this paragraph.
 
         If `text` is supplied, the new paragraph contains that text in a single run. If
@@ -123,9 +119,7 @@ class Paragraph(StoryChild):
         Most often an empty list, sometimes contains one page-break, but can contain
         more than one is rare or contrived cases.
         """
-        return [
-            RenderedPageBreak(lrpb, self) for lrpb in self._p.lastRenderedPageBreaks
-        ]
+        return [RenderedPageBreak(lrpb, self) for lrpb in self._p.lastRenderedPageBreaks]
 
     @property
     def runs(self) -> List[Run]:

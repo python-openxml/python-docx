@@ -36,12 +36,10 @@ class BaseSimpleType:
         return int(str_value)
 
     @classmethod
-    def convert_to_xml(cls, value: Any) -> str:
-        ...
+    def convert_to_xml(cls, value: Any) -> str: ...
 
     @classmethod
-    def validate(cls, value: Any) -> None:
-        ...
+    def validate(cls, value: Any) -> None: ...
 
     @classmethod
     def validate_int(cls, value: object):
@@ -49,9 +47,7 @@ class BaseSimpleType:
             raise TypeError("value must be <type 'int'>, got %s" % type(value))
 
     @classmethod
-    def validate_int_in_range(
-        cls, value: int, min_inclusive: int, max_inclusive: int
-    ) -> None:
+    def validate_int_in_range(cls, value: int, min_inclusive: int, max_inclusive: int) -> None:
         cls.validate_int(value)
         if value < min_inclusive or value > max_inclusive:
             raise ValueError(
@@ -129,8 +125,7 @@ class XsdBoolean(BaseSimpleType):
     def validate(cls, value: Any) -> None:
         if value not in (True, False):
             raise TypeError(
-                "only True or False (and possibly None) may be assigned, got"
-                " '%s'" % value
+                "only True or False (and possibly None) may be assigned, got" " '%s'" % value
             )
 
 
@@ -248,8 +243,7 @@ class ST_HexColor(BaseStringType):
         # must be an RGBColor object ---
         if not isinstance(value, RGBColor):
             raise ValueError(
-                "rgb color value must be RGBColor object, got %s %s"
-                % (type(value), value)
+                "rgb color value must be RGBColor object, got %s %s" % (type(value), value)
             )
 
 
@@ -316,7 +310,7 @@ class ST_SignedTwipsMeasure(XsdInt):
     def convert_from_xml(cls, str_value: str) -> Length:
         if "i" in str_value or "m" in str_value or "p" in str_value:
             return ST_UniversalMeasure.convert_from_xml(str_value)
-        return Twips(int(str_value))
+        return Twips(int(round(float(str_value))))
 
     @classmethod
     def convert_to_xml(cls, value: int | Length) -> str:
