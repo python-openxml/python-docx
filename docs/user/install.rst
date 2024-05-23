@@ -28,7 +28,7 @@ and running ``setup.py``::
 
 |docx| depends on the ``lxml`` package. Both ``pip`` and ``easy_install``
 will take care of satisfying those dependencies for you, but if you use this
-last method you will need to install those yourself.
+last method you will need to install that yourself.
 
 
 Dependencies
