@@ -1,0 +1,27 @@
+from docx import Document
+
+# Create a new Document
+doc = Document()
+
+# Title
+doc.add_heading('MCQs and True/False Questions on Herbal Medicines', 0)
+
+# Add MCQs
+doc.add_heading('Multiple-Choice Questions (MCQs)', level=1)
+for i, mcq in enumerate(mcqs, 1):
+    doc.add_paragraph(f"{i}. {mcq['question']}")
+    for option in mcq['options']:
+        doc.add_paragraph(option, style='ListBullet')
+    doc.add_paragraph(f"Answer: {mcq['answer']}\n")
+
+# Add True/False Questions
+doc.add_heading('True/False Questions', level=1)
+for i, tf in enumerate(true_false, 1):
+    doc.add_paragraph(f"{i}. {tf['question']}")
+    doc.add_paragraph(f"Answer: {tf['answer']}\n")
+
+# Save the document
+file_path = '/mnt/data/Herbal_Medicines_Questions.docx'
+doc.save(file_path)
+
+file_path
