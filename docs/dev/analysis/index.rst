@@ -19,6 +19,7 @@ Feature Analysis
    features/coreprops
    features/numbering
    features/sections
+   features/section-columns
 
 
 Schema Analysis
