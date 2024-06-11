@@ -174,7 +174,8 @@ class Table(StoryChild):
                 if tc.vMerge == ST_Merge.CONTINUE:
                     cells.append(cells[-col_count])
                 elif grid_span_idx > 0:
-                    cells.append(cells[-1])
+                    if len(cells) > 0:
+                        cells.append(cells[-1])
                 else:
                     cells.append(_Cell(tc, self))
         return cells
