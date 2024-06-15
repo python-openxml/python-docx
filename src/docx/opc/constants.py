@@ -209,6 +209,9 @@ class CONTENT_TYPE:
         "application/vnd.openxmlformats-officedocument.wordprocessingml.docu"
         "ment.main+xml"
     )
+    WML_DOCUMENT_MAIN_WITH_MACROS = (
+        "application/vnd.ms-word.document.macroEnabled.main+xml"
+    )
     WML_ENDNOTES = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml"
     )
