@@ -39,13 +39,3 @@ Usage:
     paragraph.add_footnote('footnote text') # add a footnote
 
 
-Donation
-------------
-
-    bitcoin: bc1q9dftn4ndufwzyzkm8ryu0kky0v8y7w00zdah9r
-
-
-License
--------
-
-[MIT](https://choosealicense.com/licenses/mit/)
