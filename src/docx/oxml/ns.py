@@ -1,8 +1,8 @@
 """Namespace-related objects."""
 
-from typing import Any, Dict
+from __future__ import annotations
 
-from typing_extensions import Self
+from typing import Any, Dict
 
 nsmap = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
@@ -41,7 +41,7 @@ class NamespacePrefixedTag(str):
         return "{%s}%s" % (self._ns_uri, self._local_part)
 
     @classmethod
-    def from_clark_name(cls, clark_name: str) -> Self:
+    def from_clark_name(cls, clark_name: str) -> NamespacePrefixedTag:
         nsuri, local_name = clark_name[1:].split("}")
         nstag = "%s:%s" % (pfxmap[nsuri], local_name)
         return cls(nstag)

@@ -1,4 +1,8 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for opc.pkgwriter module."""
+
+from __future__ import annotations
 
 import pytest
 
@@ -7,9 +11,10 @@ from docx.opc.packuri import PackURI
 from docx.opc.part import Part
 from docx.opc.phys_pkg import _ZipPkgWriter
 from docx.opc.pkgwriter import PackageWriter, _ContentTypesItem
+from docx.opc.rel import Relationships
 
 from ..unitutil.mock import (
-    MagicMock,
+    FixtureRequest,
     Mock,
     call,
     class_mock,
@@ -54,41 +59,48 @@ class DescribePackageWriter:
         # verify -----------------------
         phys_writer.write.assert_called_once_with("/_rels/.rels", pkg_rels.xml)
 
-    def it_can_write_a_list_of_parts(self):
-        # mockery ----------------------
-        phys_writer = Mock(name="phys_writer")
-        rels = MagicMock(name="rels")
-        rels.__len__.return_value = 1
-        part1 = Mock(name="part1", _rels=rels)
-        part2 = Mock(name="part2", _rels=[])
-        # exercise ---------------------
-        PackageWriter._write_parts(phys_writer, [part1, part2])
-        # verify -----------------------
+    def it_can_write_a_list_of_parts(
+        self, phys_pkg_writer_: Mock, part_: Mock, part_2_: Mock, rels_: Mock
+    ):
+        rels_.__len__.return_value = 1
+        part_.rels = rels_
+        part_2_.rels = []
+
+        PackageWriter._write_parts(phys_pkg_writer_, [part_, part_2_])
+
         expected_calls = [
-            call(part1.partname, part1.blob),
-            call(part1.partname.rels_uri, part1._rels.xml),
-            call(part2.partname, part2.blob),
+            call(part_.partname, part_.blob),
+            call(part_.partname.rels_uri, part_.rels.xml),
+            call(part_2_.partname, part_2_.blob),
         ]
-        assert phys_writer.write.mock_calls == expected_calls
+        assert phys_pkg_writer_.write.mock_calls == expected_calls
 
     # fixtures ---------------------------------------------
 
     @pytest.fixture
-    def blob_(self, request):
+    def blob_(self, request: FixtureRequest):
         return instance_mock(request, str)
 
     @pytest.fixture
-    def cti_(self, request, blob_):
+    def cti_(self, request: FixtureRequest, blob_):
         return instance_mock(request, _ContentTypesItem, blob=blob_)
 
     @pytest.fixture
-    def _ContentTypesItem_(self, request, cti_):
+    def _ContentTypesItem_(self, request: FixtureRequest, cti_):
         _ContentTypesItem_ = class_mock(request, "docx.opc.pkgwriter._ContentTypesItem")
         _ContentTypesItem_.from_parts.return_value = cti_
         return _ContentTypesItem_
 
     @pytest.fixture
-    def parts_(self, request):
+    def part_(self, request: FixtureRequest):
+        return instance_mock(request, Part)
+
+    @pytest.fixture
+    def part_2_(self, request: FixtureRequest):
+        return instance_mock(request, Part)
+
+    @pytest.fixture
+    def parts_(self, request: FixtureRequest):
         return instance_mock(request, list)
 
     @pytest.fixture
@@ -98,8 +110,12 @@ class DescribePackageWriter:
         p.stop()
 
     @pytest.fixture
-    def phys_pkg_writer_(self, request):
+    def phys_pkg_writer_(self, request: FixtureRequest):
         return instance_mock(request, _ZipPkgWriter)
+
+    @pytest.fixture
+    def rels_(self, request: FixtureRequest):
+        return instance_mock(request, Relationships)
 
     @pytest.fixture
     def write_cti_fixture(self, _ContentTypesItem_, parts_, phys_pkg_writer_, blob_):
@@ -123,7 +139,7 @@ class DescribePackageWriter:
         patch3.stop()
 
     @pytest.fixture
-    def xml_for_(self, request):
+    def xml_for_(self, request: FixtureRequest):
         return method_mock(request, _ContentTypesItem, "xml_for")
 
 
@@ -135,11 +151,9 @@ class Describe_ContentTypesItem:
 
     # fixtures ---------------------------------------------
 
-    def _mock_part(self, request, name, partname_str, content_type):
+    def _mock_part(self, request: FixtureRequest, name, partname_str, content_type):
         partname = PackURI(partname_str)
-        return instance_mock(
-            request, Part, name=name, partname=partname, content_type=content_type
-        )
+        return instance_mock(request, Part, name=name, partname=partname, content_type=content_type)
 
     @pytest.fixture(
         params=[
@@ -152,7 +166,7 @@ class Describe_ContentTypesItem:
             ("Override", "/zebra/foo.bar", "app/vnd.foobar"),
         ]
     )
-    def xml_for_fixture(self, request):
+    def xml_for_fixture(self, request: FixtureRequest):
         elm_type, partname_str, content_type = request.param
         part_ = self._mock_part(request, "part_", partname_str, content_type)
         cti = _ContentTypesItem.from_parts([part_])
@@ -168,9 +182,7 @@ class Describe_ContentTypesItem:
         types_bldr.with_child(
             a_Default().with_Extension("rels").with_ContentType(CT.OPC_RELATIONSHIPS)
         )
-        types_bldr.with_child(
-            a_Default().with_Extension("xml").with_ContentType(CT.XML)
-        )
+        types_bldr.with_child(a_Default().with_Extension("xml").with_ContentType(CT.XML))
 
         if elm_type == "Override":
             override_bldr = an_Override()

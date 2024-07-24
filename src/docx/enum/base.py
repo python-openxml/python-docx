@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import enum
 import textwrap
-from typing import Any, Dict, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, Type, TypeVar
 
-from typing_extensions import Self
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 _T = TypeVar("_T", bound="BaseXmlEnum")
 
@@ -69,7 +70,7 @@ class BaseXmlEnum(int, enum.Enum):
         """XML value of this enum member, generally an XML attribute value."""
         # -- presence of multi-arg `__new__()` method fools type-checker, but getting a
         # -- member by its value using EnumCls(val) works as usual.
-        return cls(value).xml_value  # pyright: ignore[reportGeneralTypeIssues]
+        return cls(value).xml_value
 
 
 class DocsPageFormatter:
@@ -129,9 +130,7 @@ class DocsPageFormatter:
         """A single string containing the aggregated member definitions section of the
         documentation page."""
         members = self._clsdict["__members__"]
-        member_defs = [
-            self._member_def(member) for member in members if member.name is not None
-        ]
+        member_defs = [self._member_def(member) for member in members if member.name is not None]
         return "\n".join(member_defs)
 
     @property

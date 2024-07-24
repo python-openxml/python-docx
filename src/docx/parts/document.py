@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import IO, TYPE_CHECKING, cast
 
 from docx.document import Document
 from docx.enum.style import WD_STYLE_TYPE
@@ -16,6 +16,8 @@ from docx.shape import InlineShapes
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.opc.coreprops import CoreProperties
+    from docx.settings import Settings
     from docx.styles.style import BaseStyle
 
 
@@ -41,7 +43,7 @@ class DocumentPart(StoryPart):
         return header_part, rId
 
     @property
-    def core_properties(self):
+    def core_properties(self) -> CoreProperties:
         """A |CoreProperties| object providing read/write access to the core properties
         of this document."""
         return self.package.core_properties
@@ -100,13 +102,13 @@ class DocumentPart(StoryPart):
             self.relate_to(numbering_part, RT.NUMBERING)
             return numbering_part
 
-    def save(self, path_or_stream):
+    def save(self, path_or_stream: str | IO[bytes]):
         """Save this document to `path_or_stream`, which can be either a path to a
         filesystem location (a string) or a file-like object."""
         self.package.save(path_or_stream)
 
     @property
-    def settings(self):
+    def settings(self) -> Settings:
         """A |Settings| object providing access to the settings in the settings part of
         this document."""
         return self._settings_part.settings
@@ -118,14 +120,14 @@ class DocumentPart(StoryPart):
         return self._styles_part.styles
 
     @property
-    def _settings_part(self):
+    def _settings_part(self) -> SettingsPart:
         """A |SettingsPart| object providing access to the document-level settings for
         this document.
 
         Creates a default settings part if one is not present.
         """
         try:
-            return self.part_related_by(RT.SETTINGS)
+            return cast(SettingsPart, self.part_related_by(RT.SETTINGS))
         except KeyError:
             settings_part = SettingsPart.default(self.package)
             self.relate_to(settings_part, RT.SETTINGS)

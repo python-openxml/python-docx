@@ -28,21 +28,32 @@ if TYPE_CHECKING:
 class CT_Ind(BaseOxmlElement):
     """``<w:ind>`` element, specifying paragraph indentation."""
 
-    left = OptionalAttribute("w:left", ST_SignedTwipsMeasure)
-    right = OptionalAttribute("w:right", ST_SignedTwipsMeasure)
-    firstLine = OptionalAttribute("w:firstLine", ST_TwipsMeasure)
-    hanging = OptionalAttribute("w:hanging", ST_TwipsMeasure)
+    left: Length | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:left", ST_SignedTwipsMeasure
+    )
+    right: Length | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:right", ST_SignedTwipsMeasure
+    )
+    firstLine: Length | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:firstLine", ST_TwipsMeasure
+    )
+    hanging: Length | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:hanging", ST_TwipsMeasure
+    )
 
 
 class CT_Jc(BaseOxmlElement):
     """``<w:jc>`` element, specifying paragraph justification."""
 
-    val = RequiredAttribute("w:val", WD_ALIGN_PARAGRAPH)
+    val: WD_ALIGN_PARAGRAPH = RequiredAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:val", WD_ALIGN_PARAGRAPH
+    )
 
 
 class CT_PPr(BaseOxmlElement):
     """``<w:pPr>`` element, containing the properties for a paragraph."""
 
+    get_or_add_ind: Callable[[], CT_Ind]
     get_or_add_pStyle: Callable[[], CT_String]
     _insert_sectPr: Callable[[CT_SectPr], None]
     _remove_pStyle: Callable[[], None]
@@ -86,7 +97,7 @@ class CT_PPr(BaseOxmlElement):
         "w:sectPr",
         "w:pPrChange",
     )
-    pStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
+    pStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:pStyle", successors=_tag_seq[1:]
     )
     keepNext = ZeroOrOne("w:keepNext", successors=_tag_seq[2:])
@@ -96,13 +107,15 @@ class CT_PPr(BaseOxmlElement):
     numPr = ZeroOrOne("w:numPr", successors=_tag_seq[7:])
     tabs = ZeroOrOne("w:tabs", successors=_tag_seq[11:])
     spacing = ZeroOrOne("w:spacing", successors=_tag_seq[22:])
-    ind = ZeroOrOne("w:ind", successors=_tag_seq[23:])
+    ind: CT_Ind | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:ind", successors=_tag_seq[23:]
+    )
     jc = ZeroOrOne("w:jc", successors=_tag_seq[27:])
     sectPr = ZeroOrOne("w:sectPr", successors=_tag_seq[35:])
     del _tag_seq
 
     @property
-    def first_line_indent(self):
+    def first_line_indent(self) -> Length | None:
         """A |Length| value calculated from the values of `w:ind/@w:firstLine` and
         `w:ind/@w:hanging`.
 
@@ -120,7 +133,7 @@ class CT_PPr(BaseOxmlElement):
         return firstLine
 
     @first_line_indent.setter
-    def first_line_indent(self, value):
+    def first_line_indent(self, value: Length | None):
         if self.ind is None and value is None:
             return
         ind = self.get_or_add_ind()
@@ -133,7 +146,7 @@ class CT_PPr(BaseOxmlElement):
             ind.firstLine = value
 
     @property
-    def ind_left(self):
+    def ind_left(self) -> Length | None:
         """The value of `w:ind/@w:left` or |None| if not present."""
         ind = self.ind
         if ind is None:
@@ -141,14 +154,14 @@ class CT_PPr(BaseOxmlElement):
         return ind.left
 
     @ind_left.setter
-    def ind_left(self, value):
+    def ind_left(self, value: Length | None):
         if value is None and self.ind is None:
             return
         ind = self.get_or_add_ind()
         ind.left = value
 
     @property
-    def ind_right(self):
+    def ind_right(self) -> Length | None:
         """The value of `w:ind/@w:right` or |None| if not present."""
         ind = self.ind
         if ind is None:
@@ -156,7 +169,7 @@ class CT_PPr(BaseOxmlElement):
         return ind.right
 
     @ind_right.setter
-    def ind_right(self, value):
+    def ind_right(self, value: Length | None):
         if value is None and self.ind is None:
             return
         ind = self.get_or_add_ind()
@@ -338,9 +351,15 @@ class CT_TabStop(BaseOxmlElement):
     only needs a __str__ method.
     """
 
-    val = RequiredAttribute("w:val", WD_TAB_ALIGNMENT)
-    leader = OptionalAttribute("w:leader", WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES)
-    pos = RequiredAttribute("w:pos", ST_SignedTwipsMeasure)
+    val: WD_TAB_ALIGNMENT = RequiredAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:val", WD_TAB_ALIGNMENT
+    )
+    leader: WD_TAB_LEADER | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:leader", WD_TAB_LEADER, default=WD_TAB_LEADER.SPACES
+    )
+    pos: Length = RequiredAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:pos", ST_SignedTwipsMeasure
+    )
 
     def __str__(self) -> str:
         """Text equivalent of a `w:tab` element appearing in a run.

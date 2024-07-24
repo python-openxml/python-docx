@@ -4,6 +4,28 @@ Feature: Get and set table row properties
   I need a way to get and set the properties of a table row
 
 
+  Scenario Outline: Get Row.grid_cols_after
+    Given a table row ending with <count> empty grid columns
+     Then row.grid_cols_after is <count>
+
+    Examples: Row.grid_cols_after value cases
+      | count |
+      | 0     |
+      | 1     |
+      | 2     |
+
+
+  Scenario Outline: Get Row.grid_cols_before
+    Given a table row starting with <count> empty grid columns
+     Then row.grid_cols_before is <count>
+
+    Examples: Row.grid_cols_before value cases
+      | count |
+      | 0     |
+      | 1     |
+      | 3     |
+
+
   Scenario Outline: Get Row.height_rule
     Given a table row having height rule <state>
      Then row.height_rule is <value>
