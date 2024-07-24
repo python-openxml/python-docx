@@ -53,6 +53,12 @@ class Font(ElementProxy):
         font."""
         return ColorFormat(self._element)
 
+    @color.setter
+    def color(self, value: ColorFormat):
+        this_color = self.color
+        this_color.theme_color = value.theme_color
+        this_color.rgb = value.rgb
+
     @property
     def complex_script(self) -> bool | None:
         """Read/write tri-state value.
