@@ -1,0 +1,354 @@
+superkirana/
+│
+├── css/
+│   └── styles.css
+│
+├── img/
+│   └── hero-image.jpg
+│   └── logo.png
+│
+├── js/
+│   └── main.js
+│
+├── index.html
+├── about.html
+├── solutions.html
+├── partnerships.html
+├── future-plans.html
+├── contact.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superkirana - Home</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <img src="img/logo.png" alt="Superkirana Logo" class="logo">
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="solutions.html">Solutions</a></li>
+                    <li><a href="partnerships.html">Partnerships</a></li>
+                    <li><a href="future-plans.html">Future Plans</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Superkirana</h1>
+            <p>Fostering a collaborative network of grocery retailers.</p>
+            <a href="about.html" class="cta">Join Our Community</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Superkirana. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    background-color: #FFD700;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    width: 150px;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #000;
+}
+
+.hero {
+    background: url('../img/hero-image.jpg') no-repeat center center/cover;
+    color: #fff;
+    text-align: center;
+    padding: 100px 0;
+}
+
+.cta {
+    background-color: #000;
+    color: #FFD700;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.footer {
+    background-color: #666;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+document.addEventListener("DOMContentLoaded", function() {
+    // JavaScript code to add interactivity can go here
+    console.log("Website is fully loaded");
+});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superkirana - About Us</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <img src="img/logo.png" alt="Superkirana Logo" class="logo">
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="solutions.html">Solutions</a></li>
+                    <li><a href="partnerships.html">Partnerships</a></li>
+                    <li><a href="future-plans.html">Future Plans</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="about">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>Superkirana is dedicated to fostering a collaborative network of grocery retailers...</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Superkirana. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superkirana - Solutions</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <img src="img/logo.png" alt="Superkirana Logo" class="logo">
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="solutions.html">Solutions</a></li>
+                    <li><a href="partnerships.html">Partnerships</a></li>
+                    <li><a href="future-plans.html">Future Plans</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="solutions">
+        <div class="container">
+            <h2>Our Solutions</h2>
+            <p>We offer integrated services including Supply Chain Management, Quality Control, Financial Services, and Retail Technology.</p>
+            <div class="solution-item">
+                <h3>Supply Chain Management</h3>
+                <p>Efficient and effective management of the flow of goods from suppliers to customers.</p>
+            </div>
+            <div class="solution-item">
+                <h3>Quality Control</h3>
+                <p>Ensuring products meet high standards and are safe for consumption.</p>
+            </div>
+            <div class="solution-item">
+                <h3>Financial Services</h3>
+                <p>Providing financial solutions to support your business growth.</p>
+            </div>
+            <div class="solution-item">
+                <h3>Retail Technology</h3>
+                <p>Advanced technology solutions to streamline your retail operations.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Superkirana. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superkirana - Partnerships</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <img src="img/logo.png" alt="Superkirana Logo" class="logo">
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="solutions.html">Solutions</a></li>
+                    <li><a href="partnerships.html">Partnerships</a></li>
+                    <li><a href="future-plans.html">Future Plans</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="partnerships">
+        <div class="container">
+            <h2>Partnerships</h2>
+            <p>Join our community and benefit from our extensive network.</p>
+            <div class="partnership-item">
+                <h3>Brand Partnerships</h3>
+                <p>Collaborate with top brands to expand your product offerings.</p>
+            </div>
+            <div class="partnership-item">
+                <h3>Retailer Partnerships</h3>
+                <p>Join a network of trusted retailers and grow your business.</p>
+            </div>
+            <div class="partnership-item">
+                <h3>Supplier Partnerships</h3>
+                <p>Work with reliable suppliers to ensure the highest quality products.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Superkirana. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superkirana - Future Plans</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <img src="img/logo.png" alt="Superkirana Logo" class="logo">
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="solutions.html">Solutions</a></li>
+                    <li><a href="partnerships.html">Partnerships</a></li>
+                    <li><a href="future-plans.html">Future Plans</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="future-plans">
+        <div class="container">
+            <h2>Future Plans</h2>
+            <p>We are committed to continuous growth and innovation. Here are some of our upcoming initiatives:</p>
+            <div class="plan-item">
+                <h3>Expansion of Services</h3>
+                <p>Introducing new services to better support our community.</p>
+            </div>
+            <div class="plan-item">
+                <h3>Technology Upgrades</h3>
+                <p>Investing in cutting-edge technology to improve efficiency.</p>
+            </div>
+            <div class="plan-item">
+                <h3>Community Programs</h3>
+                <p>Launching programs to support and give back to the community.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Superkirana. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("contact-form");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        console.log("Form submitted", Object.fromEntries(formData));
+        alert("Form submitted successfully!");
+        form.reset();
+    });
+});
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    background-color: #FFD700;
+    padding: 20px
+
+
+
+
