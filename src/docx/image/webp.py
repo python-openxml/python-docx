@@ -1,6 +1,5 @@
 """Objects related to parsing headers of WEBP image streams."""
 
-import io
 from struct import unpack
 
 from docx.image.constants import MIME_TYPE
