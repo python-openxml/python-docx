@@ -313,6 +313,10 @@ class RELATIONSHIP_TYPE:
         "http://schemas.openxmlformats.org/package/2006/relationships/metada"
         "ta/core-properties"
     )
+    CORE_PROPERTIES_OFFICEDOCUMENT = (
+        "http://schemas.openxmlformats.org/officedocument/2006/relationships"
+        "/metadata/core-properties"
+    )
     CUSTOM_PROPERTIES = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/custom-properties"
