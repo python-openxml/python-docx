@@ -194,10 +194,15 @@ class Font(ElementProxy):
         return rPr.rFonts_ascii
 
     @name.setter
-    def name(self, value: str | None) -> None:
+    def name(self, value: str | None, eastAsia: bool | False, cs: bool | False) -> None:
         rPr = self._element.get_or_add_rPr()
         rPr.rFonts_ascii = value
         rPr.rFonts_hAnsi = value
+
+        if eastAsia:
+            self._element.rPr.rFonts.set(qn('w:eastAsia'), value)
+        if cs:
+            self._element.rPr.rFonts.set(qn('w:cs'), value)
 
     @property
     def no_proof(self) -> bool | None:
