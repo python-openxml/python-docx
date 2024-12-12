@@ -76,9 +76,10 @@ class DescribeCustomProperties(object):
         tmpl = (
             '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" '
             'xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">\n'
-            '  <property name="%s" fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="2">\n'
+            '  <op:property xmlns:op="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" '
+            'name="%s" fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="2">\n'
             '    <vt:%s>%s</vt:%s>\n'
-            '  </property>\n'
+            '  </op:property>\n'
             '</Properties>'
         )
         return tmpl % (prop_name, str_type, str_value, str_type)
@@ -98,9 +99,9 @@ class DescribeCustomProperties(object):
             b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
             b'<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" '
             b'xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">\n'
-            b'  <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="2" name="CustomPropBool"><vt:bool>1</vt:bool></property>\n'
-            b'  <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="3" name="CustomPropInt"><vt:i4>13</vt:i4></property>\n'
-            b'  <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="4" name="CustomPropString"><vt:lpwstr>Test String</vt:lpwstr></property>\n'
+            b'  <op:property xmlns:op="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="2" name="CustomPropBool"><vt:bool>1</vt:bool></op:property>\n'
+            b'  <op:property xmlns:op="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="3" name="CustomPropInt"><vt:i4>13</vt:i4></op:property>\n'
+            b'  <op:property xmlns:op="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="4" name="CustomPropString"><vt:lpwstr>Test String</vt:lpwstr></op:property>\n'
             b'</Properties>\n'
         )
         return CustomProperties(element)
