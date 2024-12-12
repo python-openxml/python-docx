@@ -3,6 +3,21 @@
 Release History
 ---------------
 
+1.1.2 (2024-05-01)
+++++++++++++++++++
+
+- Fix #1383 Revert lxml<=4.9.2 pin that breaks Python 3.12 install
+- Fix #1385 Support use of Part._rels by python-docx-template
+- Add support and testing for Python 3.12
+
+1.1.1 (2024-04-29)
+++++++++++++++++++
+
+- Fix #531, #1146 Index error on table with misaligned borders
+- Fix #1335 Tolerate invalid float value in bottom-margin
+- Fix #1337 Do not require typing-extensions at runtime
+
+
 1.1.0 (2023-11-03)
 ++++++++++++++++++
 

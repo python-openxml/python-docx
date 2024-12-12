@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "lxml>=3.1.0",
-    "typing_extensions",
+    "typing_extensions>=4.9.0",
 ]
 description = "Create, read, and update Microsoft Word .docx files."
 dynamic = ["version"]
@@ -39,7 +39,19 @@ Homepage = "https://github.com/python-openxml/python-docx"
 Repository = "https://github.com/python-openxml/python-docx"
 
 [tool.black]
+line-length = 100
 target-version = ["py37", "py38", "py39", "py310", "py311"]
+
+[tool.pyright]
+include = ["src/docx", "tests"]
+pythonPlatform = "All"
+pythonVersion = "3.8"
+reportImportCycles = true
+reportUnnecessaryCast = true
+reportUnnecessaryTypeIgnoreComment = true
+stubPath = "./typings"
+typeCheckingMode = "strict"
+verboseOutput = true
 
 [tool.pytest.ini_options]
 filterwarnings = [
@@ -69,6 +81,10 @@ python_functions = ["it_", "its_", "they_", "and_", "but_"]
 
 [tool.ruff]
 exclude = []
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint]
 ignore = [
     "COM812",   # -- over-aggressively insists on trailing commas where not desired --
     "PT001",    # -- wants @pytest.fixture() instead of @pytest.fixture --
@@ -88,9 +104,8 @@ select = [
     "UP032",    # -- Use f-string instead of `.format()` call --
     "UP034",    # -- Avoid extraneous parentheses --
 ]
-target-version = "py37"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["docx"]
 known-local-folder = ["helpers"]
 

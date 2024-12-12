@@ -1,16 +1,20 @@
+# pyright: reportImportCycles=false
+
 """Open Packaging Convention (OPC) objects related to package parts."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Dict, Type
+from typing import TYPE_CHECKING, Callable, Type, cast
 
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
 from docx.opc.rel import Relationships
-from docx.opc.shared import cls_method_fn, lazyproperty
+from docx.opc.shared import cls_method_fn
 from docx.oxml.parser import parse_xml
+from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.oxml.xmlchemy import BaseOxmlElement
     from docx.package import Package
 
 
@@ -23,7 +27,7 @@ class Part:
 
     def __init__(
         self,
-        partname: str,
+        partname: PackURI,
         content_type: str,
         blob: bytes | None = None,
         package: Package | None = None,
@@ -55,13 +59,13 @@ class Part:
         pass
 
     @property
-    def blob(self):
+    def blob(self) -> bytes:
         """Contents of this package part as a sequence of bytes.
 
         May be text or binary. Intended to be overridden by subclasses. Default behavior
         is to return load blob.
         """
-        return self._blob
+        return self._blob or b""
 
     @property
     def content_type(self):
@@ -78,12 +82,13 @@ class Part:
             del self.rels[rId]
 
     @classmethod
-    def load(cls, partname: str, content_type: str, blob: bytes, package: Package):
+    def load(cls, partname: PackURI, content_type: str, blob: bytes, package: Package):
         return cls(partname, content_type, blob, package)
 
-    def load_rel(self, reltype, target, rId, is_external=False):
-        """Return newly added |_Relationship| instance of `reltype` between this part
-        and `target` with key `rId`.
+    def load_rel(self, reltype: str, target: Part | str, rId: str, is_external: bool = False):
+        """Return newly added |_Relationship| instance of `reltype`.
+
+        The new relationship relates the `target` part to this part with key `rId`.
 
         Target mode is set to ``RTM.EXTERNAL`` if `is_external` is |True|. Intended for
         use during load from a serialized package, where the rId is well-known. Other
@@ -103,7 +108,7 @@ class Part:
         return self._partname
 
     @partname.setter
-    def partname(self, partname):
+    def partname(self, partname: str):
         if not isinstance(partname, PackURI):
             tmpl = "partname must be instance of PackURI, got '%s'"
             raise TypeError(tmpl % type(partname).__name__)
@@ -118,16 +123,16 @@ class Part:
         """
         return self.rels.part_with_reltype(reltype)
 
-    def relate_to(self, target: Part, reltype: str, is_external: bool = False) -> str:
+    def relate_to(self, target: Part | str, reltype: str, is_external: bool = False) -> str:
         """Return rId key of relationship of `reltype` to `target`.
 
         The returned `rId` is from an existing relationship if there is one, otherwise a
         new relationship is created.
         """
         if is_external:
-            return self.rels.get_or_add_ext_rel(reltype, target)
+            return self.rels.get_or_add_ext_rel(reltype, cast(str, target))
         else:
-            rel = self.rels.get_or_add(reltype, target)
+            rel = self.rels.get_or_add(reltype, cast(Part, target))
             return rel.rId
 
     @property
@@ -140,18 +145,21 @@ class Part:
     @lazyproperty
     def rels(self):
         """|Relationships| instance holding the relationships for this part."""
-        return Relationships(self._partname.baseURI)
+        # -- prevent breakage in `python-docx-template` by retaining legacy `._rels` attribute --
+        self._rels = Relationships(self._partname.baseURI)
+        return self._rels
 
-    def target_ref(self, rId):
+    def target_ref(self, rId: str) -> str:
         """Return URL contained in target ref of relationship identified by `rId`."""
         rel = self.rels[rId]
         return rel.target_ref
 
-    def _rel_ref_count(self, rId):
-        """Return the count of references in this part's XML to the relationship
-        identified by `rId`."""
-        rIds = self._element.xpath("//@r:id")
-        return len([_rId for _rId in rIds if _rId == rId])
+    def _rel_ref_count(self, rId: str) -> int:
+        """Return the count of references in this part to the relationship identified by `rId`.
+
+        Only an XML part can contain references, so this is 0 for `Part`.
+        """
+        return 0
 
 
 class PartFactory:
@@ -168,12 +176,12 @@ class PartFactory:
     """
 
     part_class_selector: Callable[[str, str], Type[Part] | None] | None
-    part_type_for: Dict[str, Type[Part]] = {}
+    part_type_for: dict[str, Type[Part]] = {}
     default_part_type = Part
 
     def __new__(
         cls,
-        partname: str,
+        partname: PackURI,
         content_type: str,
         reltype: str,
         blob: bytes,
@@ -203,7 +211,9 @@ class XmlPart(Part):
     reserializing the XML payload and managing relationships to other parts.
     """
 
-    def __init__(self, partname, content_type, element, package):
+    def __init__(
+        self, partname: PackURI, content_type: str, element: BaseOxmlElement, package: Package
+    ):
         super(XmlPart, self).__init__(partname, content_type, package=package)
         self._element = element
 
@@ -217,7 +227,7 @@ class XmlPart(Part):
         return self._element
 
     @classmethod
-    def load(cls, partname, content_type, blob, package):
+    def load(cls, partname: PackURI, content_type: str, blob: bytes, package: Package):
         element = parse_xml(blob)
         return cls(partname, content_type, element, package)
 
@@ -229,3 +239,9 @@ class XmlPart(Part):
         That chain of delegation ends here for child objects.
         """
         return self
+
+    def _rel_ref_count(self, rId: str) -> int:
+        """Return the count of references in this part's XML to the relationship
+        identified by `rId`."""
+        rIds = cast("list[str]", self._element.xpath("//@r:id"))
+        return len([_rId for _rId in rIds if _rId == rId])

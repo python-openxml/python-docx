@@ -126,16 +126,12 @@ class BaseAttribute:
     Provides common methods.
     """
 
-    def __init__(
-        self, attr_name: str, simple_type: Type[BaseXmlEnum] | Type[BaseSimpleType]
-    ):
+    def __init__(self, attr_name: str, simple_type: Type[BaseXmlEnum] | Type[BaseSimpleType]):
         super(BaseAttribute, self).__init__()
         self._attr_name = attr_name
         self._simple_type = simple_type
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Add the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
         self._prop_name = prop_name
@@ -159,14 +155,12 @@ class BaseAttribute:
         return self._attr_name
 
     @property
-    def _getter(self) -> Callable[[BaseOxmlElement], Any | None]:
-        ...
+    def _getter(self) -> Callable[[BaseOxmlElement], Any | None]: ...
 
     @property
     def _setter(
         self,
-    ) -> Callable[[BaseOxmlElement, Any | None], None]:
-        ...
+    ) -> Callable[[BaseOxmlElement, Any | None], None]: ...
 
 
 class OptionalAttribute(BaseAttribute):
@@ -181,7 +175,7 @@ class OptionalAttribute(BaseAttribute):
         self,
         attr_name: str,
         simple_type: Type[BaseXmlEnum] | Type[BaseSimpleType],
-        default: BaseXmlEnum | BaseSimpleType | None = None,
+        default: BaseXmlEnum | BaseSimpleType | str | bool | None = None,
     ):
         super(OptionalAttribute, self).__init__(attr_name, simple_type)
         self._default = default
@@ -259,8 +253,7 @@ class RequiredAttribute(BaseAttribute):
             attr_str_value = obj.get(self._clark_name)
             if attr_str_value is None:
                 raise InvalidXmlError(
-                    "required '%s' attribute not present on element %s"
-                    % (self._attr_name, obj.tag)
+                    "required '%s' attribute not present on element %s" % (self._attr_name, obj.tag)
                 )
             return self._simple_type.from_xml(attr_str_value)
 
@@ -292,9 +285,7 @@ class _BaseChildElement:
         self._nsptagname = nsptagname
         self._successors = successors
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Baseline behavior for adding the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
         self._prop_name = prop_name
@@ -508,9 +499,7 @@ class OneAndOnlyOne(_BaseChildElement):
     def __init__(self, nsptagname: str):
         super(OneAndOnlyOne, self).__init__(nsptagname, ())
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Add the appropriate methods to `element_cls`."""
         super(OneAndOnlyOne, self).populate_class_members(element_cls, prop_name)
         self._add_getter()
@@ -528,9 +517,7 @@ class OneAndOnlyOne(_BaseChildElement):
                 )
             return child
 
-        get_child_element.__doc__ = (
-            "Required ``<%s>`` child element." % self._nsptagname
-        )
+        get_child_element.__doc__ = "Required ``<%s>`` child element." % self._nsptagname
         return get_child_element
 
 
@@ -538,9 +525,7 @@ class OneOrMore(_BaseChildElement):
     """Defines a repeating child element for MetaOxmlElement that must appear at least
     once."""
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Add the appropriate methods to `element_cls`."""
         super(OneOrMore, self).populate_class_members(element_cls, prop_name)
         self._add_list_getter()
@@ -554,9 +539,7 @@ class OneOrMore(_BaseChildElement):
 class ZeroOrMore(_BaseChildElement):
     """Defines an optional repeating child element for MetaOxmlElement."""
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Add the appropriate methods to `element_cls`."""
         super(ZeroOrMore, self).populate_class_members(element_cls, prop_name)
         self._add_list_getter()
@@ -570,9 +553,7 @@ class ZeroOrMore(_BaseChildElement):
 class ZeroOrOne(_BaseChildElement):
     """Defines an optional child element for MetaOxmlElement."""
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Add the appropriate methods to `element_cls`."""
         super(ZeroOrOne, self).populate_class_members(element_cls, prop_name)
         self._add_getter()
@@ -604,9 +585,7 @@ class ZeroOrOne(_BaseChildElement):
         def _remove_child(obj: BaseOxmlElement):
             obj.remove_all(self._nsptagname)
 
-        _remove_child.__doc__ = (
-            "Remove all ``<%s>`` child elements."
-        ) % self._nsptagname
+        _remove_child.__doc__ = ("Remove all ``<%s>`` child elements.") % self._nsptagname
         self._add_to_class(self._remove_method_name, _remove_child)
 
     @lazyproperty
@@ -622,16 +601,12 @@ class ZeroOrOneChoice(_BaseChildElement):
         self._choices = choices
         self._successors = successors
 
-    def populate_class_members(
-        self, element_cls: MetaOxmlElement, prop_name: str
-    ) -> None:
+    def populate_class_members(self, element_cls: MetaOxmlElement, prop_name: str) -> None:
         """Add the appropriate methods to `element_cls`."""
         super(ZeroOrOneChoice, self).populate_class_members(element_cls, prop_name)
         self._add_choice_getter()
         for choice in self._choices:
-            choice.populate_class_members(
-                element_cls, self._prop_name, self._successors
-            )
+            choice.populate_class_members(element_cls, self._prop_name, self._successors)
         self._add_group_remover()
 
     def _add_choice_getter(self):
@@ -649,9 +624,7 @@ class ZeroOrOneChoice(_BaseChildElement):
             for tagname in self._member_nsptagnames:
                 obj.remove_all(tagname)
 
-        _remove_choice_group.__doc__ = (
-            "Remove the current choice group child element if present."
-        )
+        _remove_choice_group.__doc__ = "Remove the current choice group child element if present."
         self._add_to_class(self._remove_choice_group_method_name, _remove_choice_group)
 
     @property
@@ -680,9 +653,7 @@ class ZeroOrOneChoice(_BaseChildElement):
 
 
 # -- lxml typing isn't quite right here, just ignore this error on _Element --
-class BaseOxmlElement(  # pyright: ignore[reportGeneralTypeIssues]
-    etree.ElementBase, metaclass=MetaOxmlElement
-):
+class BaseOxmlElement(etree.ElementBase, metaclass=MetaOxmlElement):
     """Effective base class for all custom element classes.
 
     Adds standardized behavior to all classes in one place.
@@ -726,9 +697,7 @@ class BaseOxmlElement(  # pyright: ignore[reportGeneralTypeIssues]
         """
         return serialize_for_reading(self)
 
-    def xpath(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, xpath_str: str
-    ) -> Any:
+    def xpath(self, xpath_str: str) -> Any:  # pyright: ignore[reportIncompatibleMethodOverride]
         """Override of `lxml` _Element.xpath() method.
 
         Provides standard Open XML namespace mapping (`nsmap`) in centralized location.

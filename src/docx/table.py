@@ -2,27 +2,37 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Tuple, overload
+from typing import TYPE_CHECKING, Iterator, cast, overload
+
+from typing_extensions import TypeAlias
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml.simpletypes import ST_Merge
-from docx.shared import Inches, Parented, lazyproperty
+from docx.oxml.table import CT_TblGridCol
+from docx.shared import Inches, Parented, StoryChild, lazyproperty
 
 if TYPE_CHECKING:
-    from docx import types as t
-    from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
-    from docx.oxml.table import CT_Tbl, CT_TblPr
+    import docx.types as t
+    from docx.enum.table import WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+    from docx.oxml.table import CT_Row, CT_Tbl, CT_TblPr, CT_Tc
     from docx.shared import Length
-    from docx.styles.style import _TableStyle  # pyright: ignore[reportPrivateUsage]
+    from docx.styles.style import (
+        ParagraphStyle,
+        _TableStyle,  # pyright: ignore[reportPrivateUsage]
+    )
+
+TableParent: TypeAlias = "Table | _Columns | _Rows"
 
 
-class Table(Parented):
+class Table(StoryChild):
     """Proxy class for a WordprocessingML ``<w:tbl>`` element."""
 
-    def __init__(self, tbl: CT_Tbl, parent: t.StoryChild):
+    def __init__(self, tbl: CT_Tbl, parent: t.ProvidesStoryPart):
         super(Table, self).__init__(parent)
-        self._element = self._tbl = tbl
+        self._element = tbl
+        self._tbl = tbl
 
     def add_column(self, width: Length):
         """Return a |_Column| object of `width`, newly added rightmost to the table."""
@@ -40,7 +50,8 @@ class Table(Parented):
         tr = tbl.add_tr()
         for gridCol in tbl.tblGrid.gridCol_lst:
             tc = tr.add_tc()
-            tc.width = gridCol.w
+            if gridCol.w is not None:
+                tc.width = gridCol.w
         return _Row(tr, self)
 
     @property
@@ -79,7 +90,7 @@ class Table(Parented):
         cell_idx = col_idx + (row_idx * self._column_count)
         return self._cells[cell_idx]
 
-    def column_cells(self, column_idx: int) -> List[_Cell]:
+    def column_cells(self, column_idx: int) -> list[_Cell]:
         """Sequence of cells in the column at `column_idx` in this table."""
         cells = self._cells
         idxs = range(column_idx, len(cells), self._column_count)
@@ -90,8 +101,11 @@ class Table(Parented):
         """|_Columns| instance representing the sequence of columns in this table."""
         return _Columns(self._tbl, self)
 
-    def row_cells(self, row_idx: int) -> List[_Cell]:
-        """Sequence of cells in the row at `row_idx` in this table."""
+    def row_cells(self, row_idx: int) -> list[_Cell]:
+        """DEPRECATED: Use `table.rows[row_idx].cells` instead.
+
+        Sequence of cells in the row at `row_idx` in this table.
+        """
         column_count = self._column_count
         start = row_idx * column_count
         end = start + column_count
@@ -116,10 +130,10 @@ class Table(Parented):
         `Light Shading - Accent 1` becomes `Light Shading Accent 1`.
         """
         style_id = self._tbl.tblStyle_val
-        return self.part.get_style(style_id, WD_STYLE_TYPE.TABLE)
+        return cast("_TableStyle | None", self.part.get_style(style_id, WD_STYLE_TYPE.TABLE))
 
     @style.setter
-    def style(self, style_or_name: _TableStyle | None):
+    def style(self, style_or_name: _TableStyle | str | None):
         style_id = self.part.get_style_id(style_or_name, WD_STYLE_TYPE.TABLE)
         self._tbl.tblStyle_val = style_id
 
@@ -140,21 +154,21 @@ class Table(Parented):
         For example: `WD_TABLE_DIRECTION.LTR`. |None| indicates the value is inherited
         from the style hierarchy.
         """
-        return self._element.bidiVisual_val
+        return cast("WD_TABLE_DIRECTION | None", self._tbl.bidiVisual_val)
 
     @table_direction.setter
     def table_direction(self, value: WD_TABLE_DIRECTION | None):
         self._element.bidiVisual_val = value
 
     @property
-    def _cells(self) -> List[_Cell]:
+    def _cells(self) -> list[_Cell]:
         """A sequence of |_Cell| objects, one for each cell of the layout grid.
 
         If the table contains a span, one or more |_Cell| object references are
         repeated.
         """
         col_count = self._column_count
-        cells = []
+        cells: list[_Cell] = []
         for tc in self._tbl.iter_tcs():
             for grid_span_idx in range(tc.grid_span):
                 if tc.vMerge == ST_Merge.CONTINUE:
@@ -178,11 +192,12 @@ class Table(Parented):
 class _Cell(BlockItemContainer):
     """Table cell."""
 
-    def __init__(self, tc, parent):
-        super(_Cell, self).__init__(tc, parent)
+    def __init__(self, tc: CT_Tc, parent: TableParent):
+        super(_Cell, self).__init__(tc, cast("t.ProvidesStoryPart", parent))
+        self._parent = parent
         self._tc = self._element = tc
 
-    def add_paragraph(self, text="", style=None):
+    def add_paragraph(self, text: str = "", style: str | ParagraphStyle | None = None):
         """Return a paragraph newly added to the end of the content in this cell.
 
         If present, `text` is added to the paragraph in a single run. If specified, the
@@ -195,9 +210,12 @@ class _Cell(BlockItemContainer):
         """
         return super(_Cell, self).add_paragraph(text, style)
 
-    def add_table(self, rows, cols):
-        """Return a table newly added to this cell after any existing cell content,
-        having `rows` rows and `cols` columns.
+    def add_table(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self, rows: int, cols: int
+    ) -> Table:
+        """Return a table newly added to this cell after any existing cell content.
+
+        The new table will have `rows` rows and `cols` columns.
 
         An empty paragraph is added after the table because Word requires a paragraph
         element as the last element in every cell.
@@ -207,7 +225,16 @@ class _Cell(BlockItemContainer):
         self.add_paragraph()
         return table
 
-    def merge(self, other_cell):
+    @property
+    def grid_span(self) -> int:
+        """Number of layout-grid cells this cell spans horizontally.
+
+        A "normal" cell has a grid-span of 1. A horizontally merged cell has a grid-span of 2 or
+        more.
+        """
+        return self._tc.grid_span
+
+    def merge(self, other_cell: _Cell):
         """Return a merged cell created by spanning the rectangular region having this
         cell and `other_cell` as diagonal corners.
 
@@ -244,7 +271,7 @@ class _Cell(BlockItemContainer):
         return "\n".join(p.text for p in self.paragraphs)
 
     @text.setter
-    def text(self, text):
+    def text(self, text: str):
         """Write-only.
 
         Set entire contents of cell to the string `text`. Any existing content or
@@ -270,7 +297,7 @@ class _Cell(BlockItemContainer):
         return tcPr.vAlign_val
 
     @vertical_alignment.setter
-    def vertical_alignment(self, value):
+    def vertical_alignment(self, value: WD_CELL_VERTICAL_ALIGNMENT | None):
         tcPr = self._element.get_or_add_tcPr()
         tcPr.vAlign_val = value
 
@@ -280,34 +307,35 @@ class _Cell(BlockItemContainer):
         return self._tc.width
 
     @width.setter
-    def width(self, value):
+    def width(self, value: Length):
         self._tc.width = value
 
 
 class _Column(Parented):
     """Table column."""
 
-    def __init__(self, gridCol, parent):
+    def __init__(self, gridCol: CT_TblGridCol, parent: TableParent):
         super(_Column, self).__init__(parent)
+        self._parent = parent
         self._gridCol = gridCol
 
     @property
-    def cells(self):
+    def cells(self) -> tuple[_Cell, ...]:
         """Sequence of |_Cell| instances corresponding to cells in this column."""
         return tuple(self.table.column_cells(self._index))
 
     @property
-    def table(self):
+    def table(self) -> Table:
         """Reference to the |Table| object this column belongs to."""
         return self._parent.table
 
     @property
-    def width(self):
+    def width(self) -> Length | None:
         """The width of this column in EMU, or |None| if no explicit width is set."""
         return self._gridCol.w
 
     @width.setter
-    def width(self, value):
+    def width(self, value: Length | None):
         self._gridCol.w = value
 
     @property
@@ -322,11 +350,12 @@ class _Columns(Parented):
     Supports ``len()``, iteration and indexed access.
     """
 
-    def __init__(self, tbl, parent):
+    def __init__(self, tbl: CT_Tbl, parent: TableParent):
         super(_Columns, self).__init__(parent)
+        self._parent = parent
         self._tbl = tbl
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int):
         """Provide indexed access, e.g. 'columns[0]'."""
         try:
             gridCol = self._gridCol_lst[idx]
@@ -343,7 +372,7 @@ class _Columns(Parented):
         return len(self._gridCol_lst)
 
     @property
-    def table(self):
+    def table(self) -> Table:
         """Reference to the |Table| object this column collection belongs to."""
         return self._parent.table
 
@@ -358,42 +387,119 @@ class _Columns(Parented):
 class _Row(Parented):
     """Table row."""
 
-    def __init__(self, tr, parent):
+    def __init__(self, tr: CT_Row, parent: TableParent):
         super(_Row, self).__init__(parent)
+        self._parent = parent
         self._tr = self._element = tr
 
     @property
-    def cells(self) -> Tuple[_Cell]:
-        """Sequence of |_Cell| instances corresponding to cells in this row."""
-        return tuple(self.table.row_cells(self._index))
+    def cells(self) -> tuple[_Cell, ...]:
+        """Sequence of |_Cell| instances corresponding to cells in this row.
+
+        Note that Word allows table rows to start later than the first column and end before the
+        last column.
+
+        - Only cells actually present are included in the return value.
+        - This implies the length of this cell sequence may differ between rows of the same table.
+        - If you are reading the cells from each row to form a rectangular "matrix" data structure
+          of the table cell values, you will need to account for empty leading and/or trailing
+          layout-grid positions using `.grid_cols_before` and `.grid_cols_after`.
+
+        """
+
+        def iter_tc_cells(tc: CT_Tc) -> Iterator[_Cell]:
+            """Generate a cell object for each layout-grid cell in `tc`.
+
+            In particular, a `<w:tc>` element with a horizontal "span" with generate the same cell
+            multiple times, one for each grid-cell being spanned. This approximates a row in a
+            "uniform" table, where each row has a cell for each column in the table.
+            """
+            # -- a cell comprising the second or later row of a vertical span is indicated by
+            # -- tc.vMerge="continue" (the default value of the `w:vMerge` attribute, when it is
+            # -- present in the XML). The `w:tc` element at the same grid-offset in the prior row
+            # -- is guaranteed to be the same width (gridSpan). So we can delegate content
+            # -- discovery to that prior-row `w:tc` element (recursively) until we arrive at the
+            # -- "root" cell -- for the vertical span.
+            if tc.vMerge == "continue":
+                yield from iter_tc_cells(tc._tc_above)  # pyright: ignore[reportPrivateUsage]
+                return
+
+            # -- Otherwise, vMerge is either "restart" or None, meaning this `tc` holds the actual
+            # -- content of the cell (whether it is vertically merged or not).
+            cell = _Cell(tc, self.table)
+            for _ in range(tc.grid_span):
+                yield cell
+
+        def _iter_row_cells() -> Iterator[_Cell]:
+            """Generate `_Cell` instance for each populated layout-grid cell in this row."""
+            for tc in self._tr.tc_lst:
+                yield from iter_tc_cells(tc)
+
+        return tuple(_iter_row_cells())
 
     @property
-    def height(self):
+    def grid_cols_after(self) -> int:
+        """Count of unpopulated grid-columns after the last cell in this row.
+
+        Word allows a row to "end early", meaning that one or more cells are not present at the
+        end of that row.
+
+        Note these are not simply "empty" cells. The renderer reads this value and "skips" this
+        many columns after drawing the last cell.
+
+        Note this also implies that not all rows are guaranteed to have the same number of cells,
+        e.g. `_Row.cells` could have length `n` for one row and `n - m` for the next row in the same
+        table. Visually this appears as a column (at the beginning or end, not in the middle) with
+        one or more cells missing.
+        """
+        return self._tr.grid_after
+
+    @property
+    def grid_cols_before(self) -> int:
+        """Count of unpopulated grid-columns before the first cell in this row.
+
+        Word allows a row to "start late", meaning that one or more cells are not present at the
+        beginning of that row.
+
+        Note these are not simply "empty" cells. The renderer reads this value and skips forward to
+        the table layout-grid position of the first cell in this row; the renderer "skips" this many
+        columns before drawing the first cell.
+
+        Note this also implies that not all rows are guaranteed to have the same number of cells,
+        e.g. `_Row.cells` could have length `n` for one row and `n - m` for the next row in the same
+        table.
+        """
+        return self._tr.grid_before
+
+    @property
+    def height(self) -> Length | None:
         """Return a |Length| object representing the height of this cell, or |None| if
         no explicit height is set."""
         return self._tr.trHeight_val
 
     @height.setter
-    def height(self, value):
+    def height(self, value: Length | None):
         self._tr.trHeight_val = value
 
     @property
-    def height_rule(self):
-        """Return the height rule of this cell as a member of the :ref:`WdRowHeightRule`
-        enumeration, or |None| if no explicit height_rule is set."""
+    def height_rule(self) -> WD_ROW_HEIGHT_RULE | None:
+        """Return the height rule of this cell as a member of the :ref:`WdRowHeightRule`.
+
+        This value is |None| if no explicit height_rule is set.
+        """
         return self._tr.trHeight_hRule
 
     @height_rule.setter
-    def height_rule(self, value):
+    def height_rule(self, value: WD_ROW_HEIGHT_RULE | None):
         self._tr.trHeight_hRule = value
 
     @property
-    def table(self):
+    def table(self) -> Table:
         """Reference to the |Table| object this row belongs to."""
         return self._parent.table
 
     @property
-    def _index(self):
+    def _index(self) -> int:
         """Index of this row in its table, starting from zero."""
         return self._tr.tr_idx
 
@@ -404,19 +510,18 @@ class _Rows(Parented):
     Supports ``len()``, iteration, indexed access, and slicing.
     """
 
-    def __init__(self, tbl, parent):
+    def __init__(self, tbl: CT_Tbl, parent: TableParent):
         super(_Rows, self).__init__(parent)
+        self._parent = parent
         self._tbl = tbl
 
     @overload
-    def __getitem__(self, idx: int) -> _Row:
-        ...
+    def __getitem__(self, idx: int) -> _Row: ...
 
     @overload
-    def __getitem__(self, idx: slice) -> List[_Row]:
-        ...
+    def __getitem__(self, idx: slice) -> list[_Row]: ...
 
-    def __getitem__(self, idx: int | slice) -> _Row | List[_Row]:
+    def __getitem__(self, idx: int | slice) -> _Row | list[_Row]:
         """Provide indexed access, (e.g. `rows[0]` or `rows[1:3]`)"""
         return list(self)[idx]
 
@@ -427,6 +532,6 @@ class _Rows(Parented):
         return len(self._tbl.tr_lst)
 
     @property
-    def table(self):
+    def table(self) -> Table:
         """Reference to the |Table| object this row collection belongs to."""
         return self._parent.table

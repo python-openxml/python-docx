@@ -16,7 +16,7 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from docx import types as t
+    import docx.types as t
     from docx.opc.part import XmlPart
     from docx.oxml.xmlchemy import BaseOxmlElement
     from docx.parts.story import StoryPart
@@ -284,9 +284,7 @@ class ElementProxy:
     common type of class in python-docx other than custom element (oxml) classes.
     """
 
-    def __init__(
-        self, element: BaseOxmlElement, parent: t.ProvidesXmlPart | None = None
-    ):
+    def __init__(self, element: BaseOxmlElement, parent: t.ProvidesXmlPart | None = None):
         self._element = element
         self._parent = parent
 

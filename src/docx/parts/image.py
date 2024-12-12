@@ -3,10 +3,15 @@
 from __future__ import annotations
 
 import hashlib
+from typing import TYPE_CHECKING
 
 from docx.image.image import Image
 from docx.opc.part import Part
 from docx.shared import Emu, Inches
+
+if TYPE_CHECKING:
+    from docx.opc.package import OpcPackage
+    from docx.opc.packuri import PackURI
 
 
 class ImagePart(Part):
@@ -16,7 +21,7 @@ class ImagePart(Part):
     """
 
     def __init__(
-        self, partname: str, content_type: str, blob: bytes, image: Image | None = None
+        self, partname: PackURI, content_type: str, blob: bytes, image: Image | None = None
     ):
         super(ImagePart, self).__init__(partname, content_type, blob)
         self._image = image
@@ -36,7 +41,7 @@ class ImagePart(Part):
         vertical dots per inch (dpi)."""
         px_height = self.image.px_height
         horz_dpi = self.image.horz_dpi
-        height_in_emu = 914400 * px_height / horz_dpi
+        height_in_emu = int(round(914400 * px_height / horz_dpi))
         return Emu(height_in_emu)
 
     @property
@@ -52,7 +57,7 @@ class ImagePart(Part):
         return "image.%s" % self.partname.ext
 
     @classmethod
-    def from_image(cls, image, partname):
+    def from_image(cls, image: Image, partname: PackURI):
         """Return an |ImagePart| instance newly created from `image` and assigned
         `partname`."""
         return ImagePart(partname, image.content_type, image.blob, image)
@@ -64,7 +69,7 @@ class ImagePart(Part):
         return self._image
 
     @classmethod
-    def load(cls, partname, content_type, blob, package):
+    def load(cls, partname: PackURI, content_type: str, blob: bytes, package: OpcPackage):
         """Called by ``docx.opc.package.PartFactory`` to load an image part from a
         package being opened by ``Document(...)`` call."""
         return cls(partname, content_type, blob)
@@ -72,4 +77,4 @@ class ImagePart(Part):
     @property
     def sha1(self):
         """SHA1 hash digest of the blob of this image part."""
-        return hashlib.sha1(self._blob).hexdigest()
+        return hashlib.sha1(self.blob).hexdigest()

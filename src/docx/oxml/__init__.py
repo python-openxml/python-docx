@@ -149,6 +149,7 @@ from .table import (  # noqa
     CT_TblGridCol,
     CT_TblLayoutType,
     CT_TblPr,
+    CT_TblPrEx,
     CT_TblWidth,
     CT_Tc,
     CT_TcPr,
@@ -158,12 +159,15 @@ from .table import (  # noqa
 )
 
 register_element_cls("w:bidiVisual", CT_OnOff)
+register_element_cls("w:gridAfter", CT_DecimalNumber)
+register_element_cls("w:gridBefore", CT_DecimalNumber)
 register_element_cls("w:gridCol", CT_TblGridCol)
 register_element_cls("w:gridSpan", CT_DecimalNumber)
 register_element_cls("w:tbl", CT_Tbl)
 register_element_cls("w:tblGrid", CT_TblGrid)
 register_element_cls("w:tblLayout", CT_TblLayoutType)
 register_element_cls("w:tblPr", CT_TblPr)
+register_element_cls("w:tblPrEx", CT_TblPrEx)
 register_element_cls("w:tblStyle", CT_String)
 register_element_cls("w:tc", CT_Tc)
 register_element_cls("w:tcPr", CT_TcPr)

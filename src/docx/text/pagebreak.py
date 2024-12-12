@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from docx import types as t
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.shared import Parented
 
 if TYPE_CHECKING:
+    import docx.types as t
     from docx.text.paragraph import Paragraph
 
 

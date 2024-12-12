@@ -21,13 +21,13 @@ class CT_Hyperlink(BaseOxmlElement):
 
     r_lst: List[CT_R]
 
-    rId: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-        "r:id", XsdString
-    )
-    anchor: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+    rId: str | None = OptionalAttribute("r:id", XsdString)  # pyright: ignore[reportAssignmentType]
+    anchor: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:anchor", ST_String
     )
-    history = OptionalAttribute("w:history", ST_OnOff, default=True)
+    history: bool = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:history", ST_OnOff, default=True
+    )
 
     r = ZeroOrMore("w:r")
 
@@ -36,8 +36,8 @@ class CT_Hyperlink(BaseOxmlElement):
         """All `w:lastRenderedPageBreak` descendants of this hyperlink."""
         return self.xpath("./w:r/w:lastRenderedPageBreak")
 
-    @property  # pyright: ignore[reportIncompatibleVariableOverride]
-    def text(self) -> str:
+    @property
+    def text(self) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
         """The textual content of this hyperlink.
 
         `CT_Hyperlink` stores the hyperlink-text as one or more `w:r` children.

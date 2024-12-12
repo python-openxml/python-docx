@@ -128,12 +128,10 @@ class CT_Style(BaseOxmlElement):
     rPr = ZeroOrOne("w:rPr", successors=_tag_seq[18:])
     del _tag_seq
 
-    type: WD_STYLE_TYPE | None = (
-        OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-            "w:type", WD_STYLE_TYPE
-        )
+    type: WD_STYLE_TYPE | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:type", WD_STYLE_TYPE
     )
-    styleId: str | None = OptionalAttribute(  # pyright: ignore[reportGeneralTypeIssues]
+    styleId: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:styleId", ST_String
     )
     default = OptionalAttribute("w:default", ST_OnOff)
