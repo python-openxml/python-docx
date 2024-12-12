@@ -2,17 +2,20 @@
 
 import pytest
 
+from docx import Document
 from docx.blkcntnr import BlockItemContainer
 from docx.shared import Inches
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
 from .unitutil.cxml import element, xml
-from .unitutil.file import snippet_seq
+from .unitutil.file import snippet_seq, test_file
 from .unitutil.mock import call, instance_mock, method_mock
 
 
 class DescribeBlockItemContainer:
+    """Unit-test suite for `docx.blkcntnr.BlockItemContainer`."""
+
     def it_can_add_a_paragraph(self, add_paragraph_fixture, _add_paragraph_):
         text, style, paragraph_, add_run_calls = add_paragraph_fixture
         _add_paragraph_.return_value = paragraph_
@@ -31,6 +34,26 @@ class DescribeBlockItemContainer:
         assert isinstance(table, Table)
         assert table._element.xml == expected_xml
         assert table._parent is blkcntnr
+
+    def it_can_iterate_its_inner_content(self):
+        document = Document(test_file("blk-inner-content.docx"))
+
+        inner_content = document.iter_inner_content()
+
+        para = next(inner_content)
+        assert isinstance(para, Paragraph)
+        assert para.text == "P1"
+        # --
+        t = next(inner_content)
+        assert isinstance(t, Table)
+        assert t.rows[0].cells[0].text == "T2"
+        # --
+        para = next(inner_content)
+        assert isinstance(para, Paragraph)
+        assert para.text == "P3"
+        # --
+        with pytest.raises(StopIteration):
+            next(inner_content)
 
     def it_provides_access_to_the_paragraphs_it_contains(self, paragraphs_fixture):
         # test len(), iterable, and indexed access

@@ -11,8 +11,6 @@ import io
 import os
 from typing import IO, Tuple
 
-from typing_extensions import Self
-
 from docx.image.exceptions import UnrecognizedImageError
 from docx.shared import Emu, Inches, Length, lazyproperty
 
@@ -28,14 +26,14 @@ class Image:
         self._image_header = image_header
 
     @classmethod
-    def from_blob(cls, blob: bytes) -> Self:
+    def from_blob(cls, blob: bytes) -> Image:
         """Return a new |Image| subclass instance parsed from the image binary contained
         in `blob`."""
         stream = io.BytesIO(blob)
         return cls._from_stream(stream, blob)
 
     @classmethod
-    def from_file(cls, image_descriptor):
+    def from_file(cls, image_descriptor: str | IO[bytes]):
         """Return a new |Image| subclass instance loaded from the image file identified
         by `image_descriptor`, a path or file-like object."""
         if isinstance(image_descriptor, str):
@@ -57,7 +55,7 @@ class Image:
         return self._blob
 
     @property
-    def content_type(self):
+    def content_type(self) -> str:
         """MIME content type for this image, e.g. ``'image/jpeg'`` for a JPEG image."""
         return self._image_header.content_type
 
@@ -116,7 +114,7 @@ class Image:
         return Inches(self.px_height / self.vert_dpi)
 
     def scaled_dimensions(
-        self, width: int | None = None, height: int | None = None
+        self, width: int | Length | None = None, height: int | Length | None = None
     ) -> Tuple[Length, Length]:
         """(cx, cy) pair representing scaled dimensions of this image.
 
@@ -167,12 +165,11 @@ class Image:
         return cls(blob, filename, image_header)
 
 
-def _ImageHeaderFactory(stream):
-    """Return a |BaseImageHeader| subclass instance that knows how to parse the headers
-    of the image in `stream`."""
+def _ImageHeaderFactory(stream: IO[bytes]):
+    """A |BaseImageHeader| subclass instance that can parse headers of image in `stream`."""
     from docx.image import SIGNATURES
 
-    def read_32(stream):
+    def read_32(stream: IO[bytes]):
         stream.seek(0)
         return stream.read(32)
 
@@ -188,32 +185,27 @@ def _ImageHeaderFactory(stream):
 class BaseImageHeader:
     """Base class for image header subclasses like |Jpeg| and |Tiff|."""
 
-    def __init__(self, px_width, px_height, horz_dpi, vert_dpi):
+    def __init__(self, px_width: int, px_height: int, horz_dpi: int, vert_dpi: int):
         self._px_width = px_width
         self._px_height = px_height
         self._horz_dpi = horz_dpi
         self._vert_dpi = vert_dpi
 
     @property
-    def content_type(self):
+    def content_type(self) -> str:
         """Abstract property definition, must be implemented by all subclasses."""
-        msg = (
-            "content_type property must be implemented by all subclasses of "
-            "BaseImageHeader"
-        )
+        msg = "content_type property must be implemented by all subclasses of " "BaseImageHeader"
         raise NotImplementedError(msg)
 
     @property
-    def default_ext(self):
+    def default_ext(self) -> str:
         """Default filename extension for images of this type.
 
         An abstract property definition, must be implemented by all subclasses.
         """
-        msg = (
-            "default_ext property must be implemented by all subclasses of "
-            "BaseImageHeader"
+        raise NotImplementedError(
+            "default_ext property must be implemented by all subclasses of " "BaseImageHeader"
         )
-        raise NotImplementedError(msg)
 
     @property
     def px_width(self):

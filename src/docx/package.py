@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO
+from typing import IO, cast
 
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -44,16 +44,16 @@ class Package(OpcPackage):
                 continue
             if rel.target_part in self.image_parts:
                 continue
-            self.image_parts.append(rel.target_part)
+            self.image_parts.append(cast("ImagePart", rel.target_part))
 
 
 class ImageParts:
     """Collection of |ImagePart| objects corresponding to images in the package."""
 
     def __init__(self):
-        self._image_parts = []
+        self._image_parts: list[ImagePart] = []
 
-    def __contains__(self, item):
+    def __contains__(self, item: object):
         return self._image_parts.__contains__(item)
 
     def __iter__(self):
@@ -62,7 +62,7 @@ class ImageParts:
     def __len__(self):
         return self._image_parts.__len__()
 
-    def append(self, item):
+    def append(self, item: ImagePart):
         self._image_parts.append(item)
 
     def get_or_add_image_part(self, image_descriptor: str | IO[bytes]) -> ImagePart:
@@ -77,15 +77,14 @@ class ImageParts:
             return matching_image_part
         return self._add_image_part(image)
 
-    def _add_image_part(self, image):
-        """Return an |ImagePart| instance newly created from image and appended to the
-        collection."""
+    def _add_image_part(self, image: Image):
+        """Return |ImagePart| instance newly created from `image` and appended to the collection."""
         partname = self._next_image_partname(image.ext)
         image_part = ImagePart.from_image(image, partname)
         self.append(image_part)
         return image_part
 
-    def _get_by_sha1(self, sha1):
+    def _get_by_sha1(self, sha1: str) -> ImagePart | None:
         """Return the image part in this collection having a SHA1 hash matching `sha1`,
         or |None| if not found."""
         for image_part in self._image_parts:
@@ -93,7 +92,7 @@ class ImageParts:
                 return image_part
         return None
 
-    def _next_image_partname(self, ext):
+    def _next_image_partname(self, ext: str) -> PackURI:
         """The next available image partname, starting from ``/word/media/image1.{ext}``
         where unused numbers are reused.
 
@@ -101,7 +100,7 @@ class ImageParts:
         not include the leading period.
         """
 
-        def image_partname(n):
+        def image_partname(n: int) -> PackURI:
             return PackURI("/word/media/image%d.%s" % (n, ext))
 
         used_numbers = [image_part.partname.idx for image_part in self]

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from docx import types as t
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
 from docx.shared import Parented
 
 if TYPE_CHECKING:
+    import docx.types as t
     from docx.text.paragraph import Paragraph
 
 
@@ -36,7 +36,9 @@ class RenderedPageBreak(Parented):
     """
 
     def __init__(
-        self, lastRenderedPageBreak: CT_LastRenderedPageBreak, parent: t.StoryChild
+        self,
+        lastRenderedPageBreak: CT_LastRenderedPageBreak,
+        parent: t.ProvidesStoryPart,
     ):
         super().__init__(parent)
         self._element = lastRenderedPageBreak

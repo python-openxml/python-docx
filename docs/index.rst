@@ -74,6 +74,7 @@ User Guide
    user/install
    user/quickstart
    user/documents
+   user/tables
    user/text
    user/sections
    user/hdrftr

@@ -1,10 +1,20 @@
 """Custom element classes related to document settings."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Callable
+
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
+
+if TYPE_CHECKING:
+    from docx.oxml.shared import CT_OnOff
 
 
 class CT_Settings(BaseOxmlElement):
     """`w:settings` element, root element for the settings part."""
+
+    get_or_add_evenAndOddHeaders: Callable[[], CT_OnOff]
+    _remove_evenAndOddHeaders: Callable[[], None]
 
     _tag_seq = (
         "w:writeProtection",
@@ -106,11 +116,13 @@ class CT_Settings(BaseOxmlElement):
         "w:decimalSymbol",
         "w:listSeparator",
     )
-    evenAndOddHeaders = ZeroOrOne("w:evenAndOddHeaders", successors=_tag_seq[48:])
+    evenAndOddHeaders: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:evenAndOddHeaders", successors=_tag_seq[48:]
+    )
     del _tag_seq
 
     @property
-    def evenAndOddHeaders_val(self):
+    def evenAndOddHeaders_val(self) -> bool:
         """Value of `w:evenAndOddHeaders/@w:val` or |None| if not present."""
         evenAndOddHeaders = self.evenAndOddHeaders
         if evenAndOddHeaders is None:
@@ -118,8 +130,9 @@ class CT_Settings(BaseOxmlElement):
         return evenAndOddHeaders.val
 
     @evenAndOddHeaders_val.setter
-    def evenAndOddHeaders_val(self, value):
-        if value in [None, False]:
+    def evenAndOddHeaders_val(self, value: bool | None):
+        if value is None or value is False:
             self._remove_evenAndOddHeaders()
-        else:
-            self.get_or_add_evenAndOddHeaders().val = value
+            return
+
+        self.get_or_add_evenAndOddHeaders().val = value

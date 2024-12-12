@@ -31,7 +31,7 @@ class DescribeParagraph:
         ],
     )
     def it_knows_whether_it_contains_a_page_break(
-        self, p_cxml: str, expected_value: bool, fake_parent: t.StoryChild
+        self, p_cxml: str, expected_value: bool, fake_parent: t.ProvidesStoryPart
     ):
         p = cast(CT_P, element(p_cxml))
         paragraph = Paragraph(p, fake_parent)
@@ -50,7 +50,7 @@ class DescribeParagraph:
         ],
     )
     def it_provides_access_to_the_hyperlinks_it_contains(
-        self, p_cxml: str, count: int, fake_parent: t.StoryChild
+        self, p_cxml: str, count: int, fake_parent: t.ProvidesStoryPart
     ):
         p = cast(CT_P, element(p_cxml))
         paragraph = Paragraph(p, fake_parent)
@@ -72,7 +72,7 @@ class DescribeParagraph:
         ],
     )
     def it_can_iterate_its_inner_content_items(
-        self, p_cxml: str, expected: List[str], fake_parent: t.StoryChild
+        self, p_cxml: str, expected: List[str], fake_parent: t.ProvidesStoryPart
     ):
         p = cast(CT_P, element(p_cxml))
         paragraph = Paragraph(p, fake_parent)
@@ -120,7 +120,7 @@ class DescribeParagraph:
         ],
     )
     def it_provides_access_to_the_rendered_page_breaks_it_contains(
-        self, p_cxml: str, count: int, fake_parent: t.StoryChild
+        self, p_cxml: str, count: int, fake_parent: t.ProvidesStoryPart
     ):
         p = cast(CT_P, element(p_cxml))
         paragraph = Paragraph(p, fake_parent)

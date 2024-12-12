@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import TYPE_CHECKING, Callable, List
 
 from docx.oxml.section import CT_SectPr
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
+
+if TYPE_CHECKING:
+    from docx.oxml.table import CT_Tbl
+    from docx.oxml.text.paragraph import CT_P
 
 
 class CT_Document(BaseOxmlElement):
     """``<w:document>`` element, the root element of a document.xml file."""
 
-    body = ZeroOrOne("w:body")
+    body: CT_Body = ZeroOrOne("w:body")  # pyright: ignore[reportAssignmentType]
 
     @property
     def sectPr_lst(self) -> List[CT_SectPr]:
@@ -29,14 +33,22 @@ class CT_Document(BaseOxmlElement):
 
 
 class CT_Body(BaseOxmlElement):
-    """``<w:body>``, the container element for the main document story in
-    ``document.xml``."""
+    """`w:body`, the container element for the main document story in `document.xml`."""
+
+    add_p: Callable[[], CT_P]
+    get_or_add_sectPr: Callable[[], CT_SectPr]
+    p_lst: List[CT_P]
+    tbl_lst: List[CT_Tbl]
+
+    _insert_tbl: Callable[[CT_Tbl], CT_Tbl]
 
     p = ZeroOrMore("w:p", successors=("w:sectPr",))
     tbl = ZeroOrMore("w:tbl", successors=("w:sectPr",))
-    sectPr = ZeroOrOne("w:sectPr", successors=())
+    sectPr: CT_SectPr | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:sectPr", successors=()
+    )
 
-    def add_section_break(self):
+    def add_section_break(self) -> CT_SectPr:
         """Return `w:sectPr` element for new section added at end of document.
 
         The last `w:sectPr` becomes the second-to-last, with the new `w:sectPr` being an
@@ -63,6 +75,14 @@ class CT_Body(BaseOxmlElement):
 
         Leave the <w:sectPr> element if it is present.
         """
-        content_elms = self[:-1] if self.sectPr is not None else self[:]
-        for content_elm in content_elms:
+        for content_elm in self.xpath("./*[not(self::w:sectPr)]"):
             self.remove(content_elm)
+
+    @property
+    def inner_content_elements(self) -> List[CT_P | CT_Tbl]:
+        """Generate all `w:p` and `w:tbl` elements in this document-body.
+
+        Elements appear in document order. Elements shaded by nesting in a `w:ins` or
+        other "wrapper" element will not be included.
+        """
+        return self.xpath("./w:p | ./w:tbl")

@@ -70,7 +70,7 @@ class DescribeRun:
         ],
     )
     def it_can_iterate_its_inner_content_items(
-        self, r_cxml: str, expected: List[str], fake_parent: t.StoryChild
+        self, r_cxml: str, expected: List[str], fake_parent: t.ProvidesStoryPart
     ):
         r = cast(CT_R, element(r_cxml))
         run = Run(r, fake_parent)

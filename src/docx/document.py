@@ -1,11 +1,27 @@
+# pyright: reportImportCycles=false
+# pyright: reportPrivateUsage=false
+
 """|Document| and closely related objects."""
+
+from __future__ import annotations
+
+from typing import IO, TYPE_CHECKING, Iterator, List
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu
-from docx.text.paragraph import Paragraph
+
+if TYPE_CHECKING:
+    import docx.types as t
+    from docx.oxml.document import CT_Body, CT_Document
+    from docx.parts.document import DocumentPart
+    from docx.settings import Settings
+    from docx.shared import Length
+    from docx.styles.style import ParagraphStyle, _TableStyle
+    from docx.table import Table
+    from docx.text.paragraph import Paragraph
 
 
 class Document(ElementProxy):
@@ -15,12 +31,13 @@ class Document(ElementProxy):
     a document.
     """
 
-    def __init__(self, element, part):
+    def __init__(self, element: CT_Document, part: DocumentPart):
         super(Document, self).__init__(element)
+        self._element = element
         self._part = part
         self.__body = None
 
-    def add_heading(self, text="", level=1):
+    def add_heading(self, text: str = "", level: int = 1):
         """Return a heading paragraph newly added to the end of the document.
 
         The heading paragraph will contain `text` and have its paragraph style
@@ -39,7 +56,7 @@ class Document(ElementProxy):
         paragraph.add_run().add_break(WD_BREAK.PAGE)
         return paragraph
 
-    def add_paragraph(self, text: str = "", style=None) -> Paragraph:
+    def add_paragraph(self, text: str = "", style: str | ParagraphStyle | None = None) -> Paragraph:
         """Return paragraph newly added to the end of the document.
 
         The paragraph is populated with `text` and having paragraph style `style`.
@@ -51,7 +68,12 @@ class Document(ElementProxy):
         """
         return self._body.add_paragraph(text, style)
 
-    def add_picture(self, image_path_or_stream, width=None, height=None):
+    def add_picture(
+        self,
+        image_path_or_stream: str | IO[bytes],
+        width: int | Length | None = None,
+        height: int | Length | None = None,
+    ):
         """Return new picture shape added in its own paragraph at end of the document.
 
         The picture contains the image at `image_path_or_stream`, scaled based on
@@ -65,7 +87,7 @@ class Document(ElementProxy):
         run = self.add_paragraph().add_run()
         return run.add_picture(image_path_or_stream, width, height)
 
-    def add_section(self, start_type=WD_SECTION.NEW_PAGE):
+    def add_section(self, start_type: WD_SECTION = WD_SECTION.NEW_PAGE):
         """Return a |Section| object newly added at the end of the document.
 
         The optional `start_type` argument must be a member of the :ref:`WdSectionStart`
@@ -75,7 +97,7 @@ class Document(ElementProxy):
         new_sectPr.start_type = start_type
         return Section(new_sectPr, self._part)
 
-    def add_table(self, rows, cols, style=None):
+    def add_table(self, rows: int, cols: int, style: str | _TableStyle | None = None):
         """Add a table having row and column counts of `rows` and `cols` respectively.
 
         `style` may be a table style object or a table style name. If `style` is |None|,
@@ -100,7 +122,7 @@ class Document(ElementProxy):
 
     @property
     def inline_shapes(self):
-        """The |InlineShapes| collectoin for this document.
+        """The |InlineShapes| collection for this document.
 
         An inline shape is a graphical object, such as a picture, contained in a run of
         text and behaving like a character glyph, being flowed like other text in a
@@ -108,8 +130,12 @@ class Document(ElementProxy):
         """
         return self._part.inline_shapes
 
+    def iter_inner_content(self) -> Iterator[Paragraph | Table]:
+        """Generate each `Paragraph` or `Table` in this document in document order."""
+        return self._body.iter_inner_content()
+
     @property
-    def paragraphs(self):
+    def paragraphs(self) -> List[Paragraph]:
         """The |Paragraph| instances in the document, in document order.
 
         Note that paragraphs within revision marks such as ``<w:ins>`` or ``<w:del>`` do
@@ -118,11 +144,11 @@ class Document(ElementProxy):
         return self._body.paragraphs
 
     @property
-    def part(self):
+    def part(self) -> DocumentPart:
         """The |DocumentPart| object of this document."""
         return self._part
 
-    def save(self, path_or_stream):
+    def save(self, path_or_stream: str | IO[bytes]):
         """Save this document to `path_or_stream`.
 
         `path_or_stream` can be either a path to a filesystem location (a string) or a
@@ -131,12 +157,12 @@ class Document(ElementProxy):
         self._part.save(path_or_stream)
 
     @property
-    def sections(self):
+    def sections(self) -> Sections:
         """|Sections| object providing access to each section in this document."""
         return Sections(self._element, self._part)
 
     @property
-    def settings(self):
+    def settings(self) -> Settings:
         """A |Settings| object providing access to the document-level settings."""
         return self._part.settings
 
@@ -146,7 +172,7 @@ class Document(ElementProxy):
         return self._part.styles
 
     @property
-    def tables(self):
+    def tables(self) -> List[Table]:
         """All |Table| instances in the document, in document order.
 
         Note that only tables appearing at the top level of the document appear in this
@@ -157,13 +183,13 @@ class Document(ElementProxy):
         return self._body.tables
 
     @property
-    def _block_width(self):
+    def _block_width(self) -> Length:
         """A |Length| object specifying the space between margins in last section."""
         section = self.sections[-1]
         return Emu(section.page_width - section.left_margin - section.right_margin)
 
     @property
-    def _body(self):
+    def _body(self) -> _Body:
         """The |_Body| instance containing the content for this document."""
         if self.__body is None:
             self.__body = _Body(self._element.body, self)
@@ -176,7 +202,7 @@ class _Body(BlockItemContainer):
     It's primary role is a container for document content.
     """
 
-    def __init__(self, body_elm, parent):
+    def __init__(self, body_elm: CT_Body, parent: t.ProvidesStoryPart):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
 

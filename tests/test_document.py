@@ -1,4 +1,11 @@
+# pyright: reportPrivateUsage=false
+# pyright: reportUnknownMemberType=false
+
 """Unit test suite for the docx.document module."""
+
+from __future__ import annotations
+
+from typing import cast
 
 import pytest
 
@@ -6,6 +13,7 @@ from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
+from docx.oxml.document import CT_Document
 from docx.parts.document import DocumentPart
 from docx.section import Section, Sections
 from docx.settings import Settings
@@ -17,10 +25,12 @@ from docx.text.paragraph import Paragraph
 from docx.text.run import Run
 
 from .unitutil.cxml import element, xml
-from .unitutil.mock import class_mock, instance_mock, method_mock, property_mock
+from .unitutil.mock import Mock, class_mock, instance_mock, method_mock, property_mock
 
 
 class DescribeDocument:
+    """Unit-test suite for `docx.Document`."""
+
     def it_can_add_a_heading(self, add_heading_fixture, add_paragraph_, paragraph_):
         level, style = add_heading_fixture
         add_paragraph_.return_value = paragraph_
@@ -96,6 +106,16 @@ class DescribeDocument:
     def it_provides_access_to_its_inline_shapes(self, inline_shapes_fixture):
         document, inline_shapes_ = inline_shapes_fixture
         assert document.inline_shapes is inline_shapes_
+
+    def it_can_iterate_the_inner_content_of_the_document(
+        self, body_prop_: Mock, body_: Mock, document_part_: Mock
+    ):
+        document_elm = cast(CT_Document, element("w:document"))
+        body_prop_.return_value = body_
+        body_.iter_inner_content.return_value = iter((1, 2, 3))
+        document = Document(document_elm, document_part_)
+
+        assert list(document.iter_inner_content()) == [1, 2, 3]
 
     def it_provides_access_to_its_paragraphs(self, paragraphs_fixture):
         document, paragraphs_ = paragraphs_fixture
