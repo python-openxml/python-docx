@@ -90,7 +90,7 @@ register_element_cls("cp:coreProperties", CT_CoreProperties)
 
 from .customprops import CT_CustomProperties  # noqa
 
-register_element_cls('cup:Properties', CT_CustomProperties)
+register_element_cls('op:Properties', CT_CustomProperties)
 
 from .document import CT_Body, CT_Document  # noqa
 

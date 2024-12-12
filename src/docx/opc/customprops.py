@@ -10,8 +10,7 @@ from __future__ import (
 
 import numbers
 from lxml import etree
-
-NS_VT = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
+from docx.oxml.ns import nspfxmap, qn
 
 
 class CustomProperties(object):
@@ -26,12 +25,12 @@ class CustomProperties(object):
         prop = self.lookup(item)
         if prop is not None:
             elm = prop[0]
-            if elm.tag == f"{{{NS_VT}}}i4":
+            if elm.tag == qn("vt:i4"):
                 try:
                     return int(elm.text)
                 except ValueError:
                     return elm.text
-            elif elm.tag == f"{{{NS_VT}}}bool":
+            elif elm.tag == qn("vt:bool"):
                 return True if elm.text == '1' else False
             return elm.text
 
@@ -45,8 +44,8 @@ class CustomProperties(object):
             elif isinstance(value, numbers.Number):
                 elm_type = 'i4'
                 value = str(int(value))
-            prop = etree.SubElement(self._element, "property")
-            elm = etree.SubElement(prop, f"{{{NS_VT}}}{elm_type}", nsmap={'vt':NS_VT})
+            prop = etree.SubElement(self._element, qn("op:property"), nsmap=nspfxmap("op"))
+            elm = etree.SubElement(prop, qn(f"vt:{elm_type}"), nsmap=nspfxmap("vt"))
             elm.text = value
             prop.set("name", key)
             # magic number "FMTID_UserDefinedProperties"
@@ -55,9 +54,9 @@ class CustomProperties(object):
             prop.set("pid", str(len(self._element) + 1))
         else:
             elm = prop[0]
-            if elm.tag == f"{{{NS_VT}}}i4":
+            if elm.tag == qn("vt:i4"):
                 elm.text = str(int(value))
-            elif elm.tag == f"{{{NS_VT}}}bool":
+            elif elm.tag == qn("vt:bool"):
                 elm.text = str(1 if value else 0)
             else:
                 elm.text = str(value)
