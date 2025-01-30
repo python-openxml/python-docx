@@ -198,6 +198,9 @@ class CONTENT_TYPE:
     WML_COMMENTS = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml"
     )
+    WML_COMMENTS_EXTENDED = (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.commentsExtended+xml"
+    )
     WML_DOCUMENT = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
@@ -297,6 +300,9 @@ class RELATIONSHIP_TYPE:
     COMMENTS = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
         "/comments"
+    )
+    COMMENTS_EXTENDED = (
+        "http://schemas.microsoft.com/office/2011/relationships/commentsExtended"
     )
     COMMENT_AUTHORS = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
