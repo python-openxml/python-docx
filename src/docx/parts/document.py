@@ -7,6 +7,7 @@ from typing import IO, TYPE_CHECKING, cast
 from docx.document import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.parts.comments import CommentsExtendedPart, CommentsPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
@@ -101,6 +102,34 @@ class DocumentPart(StoryPart):
             numbering_part = NumberingPart.new()
             self.relate_to(numbering_part, RT.NUMBERING)
             return numbering_part
+
+    @lazyproperty
+    def comments_part(self) -> CommentsPart:
+        """The |CommentsPart| object providing access to the comments part of this
+        document.
+
+        Creates an empty comments part if one is not present.
+        """
+        try:
+            return cast(CommentsPart, self.part_related_by(RT.COMMENTS))
+        except KeyError:
+            comments_part = CommentsPart.new(self.package)
+            self.relate_to(comments_part, RT.COMMENTS)
+            return comments_part
+
+    @lazyproperty
+    def comments_extended_part(self) -> CommentsExtendedPart:
+        """The |CommentsExtendedPart| object providing access to the comments extended part of this
+        document.
+
+        Creates an empty comments extended part if one is not present.
+        """
+        try:
+            return cast(CommentsExtendedPart, self.part_related_by(RT.COMMENTS_EXTENDED))
+        except KeyError:
+            comments_extended_part = CommentsExtendedPart.new(self.package)
+            self.relate_to(comments_extended_part, RT.COMMENTS_EXTENDED)
+            return comments_extended_part
 
     def save(self, path_or_stream: str | IO[bytes]):
         """Save this document to `path_or_stream`, which can be either a path to a
