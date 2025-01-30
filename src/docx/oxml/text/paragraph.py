@@ -7,7 +7,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, List, cast
 
 from docx.oxml.parser import OxmlElement
-from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
+from docx.oxml.simpletypes import ST_String
+from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
 
 if TYPE_CHECKING:
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -26,6 +27,7 @@ class CT_P(BaseOxmlElement):
     hyperlink_lst: List[CT_Hyperlink]
     r_lst: List[CT_R]
 
+    para_id = OptionalAttribute("w14:paraId", ST_String)
     pPr: CT_PPr | None = ZeroOrOne("w:pPr")  # pyright: ignore[reportAssignmentType]
     hyperlink = ZeroOrMore("w:hyperlink")
     r = ZeroOrMore("w:r")
