@@ -4,8 +4,16 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, List, cast
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, cast
 
+from docx.oxml.comments import (
+    CT_Comment,
+    CT_CommentRangeEnd,
+    CT_CommentRangeStart,
+    CT_CommentReference,
+    CT_Comments,
+    CT_CommentsExtended,
+)
 from docx.oxml.parser import OxmlElement
 from docx.oxml.simpletypes import ST_String
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
@@ -17,6 +25,7 @@ if TYPE_CHECKING:
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
     from docx.oxml.text.parfmt import CT_PPr
     from docx.oxml.text.run import CT_R
+    from docx.parts.comments import CommentsExtendedPart, CommentsPart
 
 
 class CT_P(BaseOxmlElement):
@@ -106,3 +115,32 @@ class CT_P(BaseOxmlElement):
     def _insert_pPr(self, pPr: CT_PPr) -> CT_PPr:
         self.insert(0, pPr)
         return pPr
+
+    def add_comment(
+        self,
+        comments_part: "CommentsPart",
+        comments_extended_part: "CommentsExtendedPart",
+        text: str,
+        metadata: Dict[str, str | bool],
+    ) -> CT_Comment:
+        """
+        Add a comment to this paragraph.
+        """
+        comment_ele = cast(CT_Comments, comments_part.element)
+        comments_extended_ele = cast(CT_CommentsExtended, comments_extended_part.element)
+
+        new_p = cast(CT_P, OxmlElement("w:p"))
+        new_p.add_r().text = text
+        comment = comment_ele.add_comment(
+            new_p, metadata["author"], metadata["initials"], metadata["date"]
+        )
+        # TODO: modify this insert call to insert below the any existing comment reference.
+        self.insert(0, CT_CommentRangeStart.new(comment.id))
+        self.append(CT_CommentRangeEnd.new(comment.id))
+        self.add_r().append(CT_CommentReference.new(comment.id))
+
+        resolved = metadata.get("resolved", False)
+        parent = metadata.get("parent")
+        comments_extended_ele.add_comment_reference(comment, parent, resolved)
+
+        return comment
