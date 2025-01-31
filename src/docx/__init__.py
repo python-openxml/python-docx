@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 from docx.api import Document
+from docx.parts.comments import CommentsExtendedPart, CommentsPart
 
 if TYPE_CHECKING:
     from docx.opc.part import Part
@@ -47,6 +48,8 @@ PartFactory.part_type_for[CT.WML_HEADER] = HeaderPart
 PartFactory.part_type_for[CT.WML_NUMBERING] = NumberingPart
 PartFactory.part_type_for[CT.WML_SETTINGS] = SettingsPart
 PartFactory.part_type_for[CT.WML_STYLES] = StylesPart
+PartFactory.part_type_for[CT.WML_COMMENTS] = CommentsPart
+PartFactory.part_type_for[CT.WML_COMMENTS_EXTENDED] = CommentsExtendedPart
 
 del (
     CT,
@@ -58,5 +61,7 @@ del (
     PartFactory,
     SettingsPart,
     StylesPart,
+    CommentsPart,
+    CommentsExtendedPart,
     part_class_selector,
 )
