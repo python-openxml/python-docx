@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional, cast
+from typing import TYPE_CHECKING, Callable, Dict, List, cast
 
+from docx.opc.oxml import qn
 from docx.oxml.comments import (
     CT_Comment,
     CT_CommentRangeEnd,
@@ -134,8 +135,11 @@ class CT_P(BaseOxmlElement):
         comment = comment_ele.add_comment(
             new_p, metadata["author"], metadata["initials"], metadata["date"]
         )
-        # TODO: modify this insert call to insert below the any existing comment reference.
-        self.insert(0, CT_CommentRangeStart.new(comment.id))
+        cmt_range_start = CT_CommentRangeStart.new(comment.id)
+        if self.find(qn("w:commentRangeStart")) is not None:
+            self.insert(0, cmt_range_start)
+        else:
+            self.insert_element_before(cmt_range_start, "w:commentRangeStart")
         self.append(CT_CommentRangeEnd.new(comment.id))
         self.add_r().append(CT_CommentReference.new(comment.id))
 
