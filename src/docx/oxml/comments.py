@@ -2,7 +2,7 @@ import random
 from typing import TYPE_CHECKING, Callable, List, Optional, cast
 
 from docx.oxml.parser import OxmlElement
-from docx.oxml.simpletypes import ST_DecimalNumber, ST_String, XsdBoolean
+from docx.oxml.simpletypes import ST_DecimalNumber, ST_OnOff, ST_String
 from docx.oxml.xmlchemy import (
     BaseOxmlElement,
     OneOrMore,
@@ -113,7 +113,7 @@ class CT_CommentExtended(BaseOxmlElement):
     """``<w15:commentEx>`` element, the root element of the commentsExtended part."""
 
     para_id = RequiredAttribute("w15:paraId", ST_String)
-    resolved = RequiredAttribute("w15:done", XsdBoolean)
+    resolved = RequiredAttribute("w15:done", ST_OnOff)
     parent_para_id = OptionalAttribute("w15:paraIdParent", ST_String)
 
 
