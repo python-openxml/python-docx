@@ -120,8 +120,8 @@ class CT_CommentExtended(BaseOxmlElement):
 class CT_CommentsExtended(BaseOxmlElement):
     """``<w15:commentsEx>`` element, the root element of the commentsExtended part."""
 
-    add_comments_extended_sequence: Callable[[], CT_CommentExtended]
-    comments_extended_sequence = OneOrMore("w15:commentEx")
+    add_comments_extended_element: Callable[[], CT_CommentExtended]
+    comments_extended_element = OneOrMore("w15:commentEx")
 
     def add_comment_reference(
         self,
@@ -130,7 +130,7 @@ class CT_CommentsExtended(BaseOxmlElement):
         resolved: Optional[bool] = False,
     ) -> CT_CommentExtended:
         """Add a reply to the comment identified by `parent_comment_id`."""
-        comment_ext = self.add_comments_extended_sequence()
+        comment_ext = self.add_comments_extended_element()
         comment_ext.para_id = comment.para_id
         if parent is not None:
             comment_ext.parent_para_id = parent.para_id
