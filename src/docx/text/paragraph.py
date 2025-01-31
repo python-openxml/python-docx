@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator, List, cast
+from typing import TYPE_CHECKING, Iterator, List, Optional, cast
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.text.run import CT_R
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
     from docx.oxml.text.paragraph import CT_P
     from docx.styles.style import CharacterStyle
+    from docx.oxml.comments import CT_Comment
 
 
 class Paragraph(StoryChild):
@@ -171,3 +172,28 @@ class Paragraph(StoryChild):
         """Return a newly created paragraph, inserted directly before this paragraph."""
         p = self._p.add_p_before()
         return Paragraph(p, self._parent)
+
+    def add_comment(
+        self,
+        text: str,
+        author: str,
+        initials: str,
+        date: str,
+        resolved: bool = False,
+        parent: Optional["CT_Comment"] = None,
+    ) -> "CT_Comment":
+        """Add a comment to this paragraph.
+
+        The comment is added to the end of the paragraph. The `text` argument is the
+        text of the comment, and the `metadata` argument is a dictionary of metadata
+        about the comment. The keys and values in the dictionary are arbitrary strings.
+        """
+        comments_part = self.part._document_part.comments_part
+        comments_extended_part = self.part._document_part.comments_extended_part
+        metadata = {
+            "author": author,
+            "initials": initials,
+            "date": date,
+            "resolved": resolved,
+        }
+        return self._p.add_comment(comments_part, comments_extended_part, text, metadata, parent)
