@@ -78,7 +78,7 @@ class CT_CommentRangeStart(BaseOxmlElement):
     _id = RequiredAttribute("w:id", ST_DecimalNumber)
 
     @classmethod
-    def new(cls, _id):
+    def new(cls, _id: ST_DecimalNumber) -> "CT_CommentRangeStart":
         """Return a new ``<w:commentRangeStart>`` element having id `id`."""
         comment_range_start = OxmlElement("w:commentRangeStart")
         comment_range_start._id = _id
@@ -90,7 +90,7 @@ class CT_CommentRangeEnd(BaseOxmlElement):
     _id = RequiredAttribute("w:id", ST_DecimalNumber)
 
     @classmethod
-    def new(cls, _id):
+    def new(cls, _id: ST_DecimalNumber) -> "CT_CommentRangeEnd":
         """Return a new ``<w:commentRangeEnd>`` element having id `id`."""
         comment_range_end = OxmlElement("w:commentRangeEnd")
         comment_range_end._id = _id
@@ -102,7 +102,7 @@ class CT_CommentReference(BaseOxmlElement):
     _id = RequiredAttribute("w:id", ST_DecimalNumber)
 
     @classmethod
-    def new(cls, _id):
+    def new(cls, _id: ST_DecimalNumber) -> "CT_CommentReference":
         """Return a new ``<w:commentReference>`` element having id `id`."""
         comment_reference = OxmlElement("w:commentReference")
         comment_reference._id = _id
