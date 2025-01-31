@@ -121,7 +121,7 @@ class CT_P(BaseOxmlElement):
         comments_part: "CommentsPart",
         comments_extended_part: "CommentsExtendedPart",
         text: str,
-        metadata: Dict[str, str | bool],
+        metadata: Dict[str, str | bool | "CT_Comment"],
     ) -> CT_Comment:
         """
         Add a comment to this paragraph.

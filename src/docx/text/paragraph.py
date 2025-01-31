@@ -179,7 +179,7 @@ class Paragraph(StoryChild):
         author: str,
         initials: str,
         date: str,
-        resolved: bool = False,
+        resolved: Optional[bool] = False,
         parent: Optional["CT_Comment"] = None,
     ) -> "CT_Comment":
         """Add a comment to this paragraph.
@@ -195,5 +195,6 @@ class Paragraph(StoryChild):
             "initials": initials,
             "date": date,
             "resolved": resolved,
+            "parent": parent,
         }
-        return self._p.add_comment(comments_part, comments_extended_part, text, metadata, parent)
+        return self._p.add_comment(comments_part, comments_extended_part, text, metadata)
