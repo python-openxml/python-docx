@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Dict, List, cast
 
-from docx.opc.oxml import qn
+from docx.oxml.ns import qn
 from docx.oxml.comments import (
     CT_Comment,
     CT_CommentRangeEnd,
@@ -117,6 +117,45 @@ class CT_P(BaseOxmlElement):
         self.insert(0, pPr)
         return pPr
 
+    def mark_comment_start(
+        self,
+        comments_part: "CommentsPart",
+        comments_extended_part: "CommentsExtendedPart",
+        text: str,
+        metadata: Dict[str, str | bool | "CT_Comment"],
+    ):
+        """Start a comment marker."""
+        comment = self._create_comment(comments_part, comments_extended_part, text, metadata)
+        self.append(CT_CommentRangeStart.new(comment.id))
+        return comment
+
+    def mark_comment_end(self, id: str):
+        """End a comment marker."""
+        self.append(CT_CommentRangeEnd.new(id))
+        self.add_r().append(CT_CommentReference.new(id))
+
+    def _create_comment(
+        self,
+        comments_part: "CommentsPart",
+        comments_extended_part: "CommentsExtendedPart",
+        text: str,
+        metadata: Dict[str, str | bool | "CT_Comment"],
+    ) -> CT_Comment:
+        """
+        Add a comment to this paragraph.
+        """
+        comments_ele = cast(CT_Comments, comments_part.element)
+        comments_extended_ele = cast(CT_CommentsExtended, comments_extended_part.element)
+        new_p = cast(CT_P, OxmlElement("w:p"))
+        new_p.add_r().text = text
+        comment = comments_ele.add_comment(
+            new_p, metadata["author"], metadata["initials"], metadata["date"]
+        )
+        resolved = metadata.get("resolved", False)
+        parent = metadata.get("parent")
+        comments_extended_ele.add_comment_reference(comment, parent, resolved)
+        return comment
+
     def add_comment(
         self,
         comments_part: "CommentsPart",
@@ -127,14 +166,7 @@ class CT_P(BaseOxmlElement):
         """
         Add a comment to this paragraph.
         """
-        comment_ele = cast(CT_Comments, comments_part.element)
-        comments_extended_ele = cast(CT_CommentsExtended, comments_extended_part.element)
-
-        new_p = cast(CT_P, OxmlElement("w:p"))
-        new_p.add_r().text = text
-        comment = comment_ele.add_comment(
-            new_p, metadata["author"], metadata["initials"], metadata["date"]
-        )
+        comment = self._create_comment(comments_part, comments_extended_part, text, metadata)
         cmt_range_start = CT_CommentRangeStart.new(comment.id)
         if self.find(qn("w:commentRangeStart")) is not None:
             self.insert(0, cmt_range_start)
@@ -142,9 +174,5 @@ class CT_P(BaseOxmlElement):
             self.insert_element_before(cmt_range_start, "w:commentRangeStart")
         self.append(CT_CommentRangeEnd.new(comment.id))
         self.add_r().append(CT_CommentReference.new(comment.id))
-
-        resolved = metadata.get("resolved", False)
-        parent = metadata.get("parent")
-        comments_extended_ele.add_comment_reference(comment, parent, resolved)
 
         return comment
