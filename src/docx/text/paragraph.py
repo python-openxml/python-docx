@@ -182,7 +182,9 @@ class Paragraph(StoryChild):
         resolved: Optional[bool] = False,
         parent: Optional["CT_Comment"] = None,
     ) -> "CT_Comment":
-        """Start a comment marker."""
+        """
+        Adds a `commentRangeStart` to this paragraph.
+        """
         comments_part = self.part._document_part.comments_part
         comments_extended_part = self.part._document_part.comments_extended_part
         metadata = {
@@ -195,7 +197,16 @@ class Paragraph(StoryChild):
         return self._p.mark_comment_start(comments_part, comments_extended_part, text, metadata)
 
     def mark_comment_end(self, id: str):
-        """End a comment marker."""
+        """
+        Adds a `commentRangeEnd` and `commentReference` to this paragraph.
+
+        Raises |ValueError| if the `commentRangeStart` for this `id` is not found or
+        if `commentRangeEnd` was already added.
+        """
+        if len(self._parent._element.xpath(f"//w:commentRangeStart[@w:id='{id}']")) == 0:
+            raise ValueError("Comment start marker not found")
+        if len(self._parent._element.xpath(f"//w:commentRangeEnd[@w:id='{id}']")) > 0:
+            raise ValueError("Comment end marker was already added")
         self._p.mark_comment_end(id)
 
     def add_comment(
