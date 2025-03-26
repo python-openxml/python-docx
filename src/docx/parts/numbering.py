@@ -2,6 +2,8 @@
 
 from ..opc.part import XmlPart
 from ..shared import lazyproperty
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
 
 
 class NumberingPart(XmlPart):
@@ -12,7 +14,12 @@ class NumberingPart(XmlPart):
     def new(cls):
         """Return newly created empty numbering part, containing only the root
         ``<w:numbering>`` element."""
-        raise NotImplementedError
+        xml_str = '<w:numbering {}></w:numbering>'.format(nsdecls('w'))
+        numbering_xml = parse_xml(xml_str)
+        content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml'
+        partname = '/word/numbering.xml'
+
+        return cls(partname, content_type, numbering_xml, None)
 
     @lazyproperty
     def numbering_definitions(self):
