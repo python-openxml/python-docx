@@ -134,8 +134,9 @@ class _Relationship:
     def reltype(self) -> str:
         return self._reltype
 
-    def set_reltype(self, reltype:str) -> None:
-        self._reltype = reltype
+    @reltype.setter
+    def reltype(self, value: str):
+        self._reltype = value
 
     @property
     def rId(self) -> str:
