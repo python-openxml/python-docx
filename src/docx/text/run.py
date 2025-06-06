@@ -233,7 +233,7 @@ class Run(StoryChild):
         return self.font.underline
 
     @underline.setter
-    def underline(self, value: bool):
+    def underline(self, value: bool | WD_UNDERLINE | None):
         self.font.underline = value
 
 

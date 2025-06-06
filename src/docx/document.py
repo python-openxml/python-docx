@@ -11,14 +11,13 @@ from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
-from docx.shared import ElementProxy, Emu
+from docx.shared import ElementProxy, Emu, Inches, Length
 
 if TYPE_CHECKING:
     import docx.types as t
     from docx.oxml.document import CT_Body, CT_Document
     from docx.parts.document import DocumentPart
     from docx.settings import Settings
-    from docx.shared import Length
     from docx.styles.style import ParagraphStyle, _TableStyle
     from docx.table import Table
     from docx.text.paragraph import Paragraph
@@ -178,7 +177,10 @@ class Document(ElementProxy):
     def _block_width(self) -> Length:
         """A |Length| object specifying the space between margins in last section."""
         section = self.sections[-1]
-        return Emu(section.page_width - section.left_margin - section.right_margin)
+        page_width = section.page_width or Inches(8.5)
+        left_margin = section.left_margin or Inches(1)
+        right_margin = section.right_margin or Inches(1)
+        return Emu(page_width - left_margin - right_margin)
 
     @property
     def _body(self) -> _Body:
@@ -198,7 +200,7 @@ class _Body(BlockItemContainer):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
 
-    def clear_content(self):
+    def clear_content(self) -> _Body:
         """Return this |_Body| instance after clearing it of all content.
 
         Section properties for the main document story, if present, are preserved.
