@@ -22,9 +22,7 @@ def given_a_document_having_no_settings_part(context):
 
 @given("a Settings object {with_or_without} odd and even page headers as settings")
 def given_a_Settings_object_with_or_without_odd_and_even_hdrs(context, with_or_without):
-    testfile_name = {"with": "doc-odd-even-hdrs", "without": "sct-section-props"}[
-        with_or_without
-    ]
+    testfile_name = {"with": "doc-odd-even-hdrs", "without": "sct-section-props"}[with_or_without]
     context.settings = Document(test_docx(testfile_name)).settings
 
 
@@ -49,6 +47,4 @@ def then_document_settings_is_a_Settings_object(context):
 def then_settings_odd_and_even_pages_header_footer_is(context, bool_val):
     actual = context.settings.odd_and_even_pages_header_footer
     expected = eval(bool_val)
-    assert actual == expected, (
-        "settings.odd_and_even_pages_header_footer is %s" % actual
-    )
+    assert actual == expected, "settings.odd_and_even_pages_header_footer is %s" % actual

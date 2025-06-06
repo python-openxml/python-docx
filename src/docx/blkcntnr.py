@@ -67,7 +67,7 @@ class BlockItemContainer(StoryChild):
         from docx.table import Table
 
         tbl = CT_Tbl.new_tbl(rows, cols, width)
-        self._element._insert_tbl(tbl)  #  # pyright: ignore[reportPrivateUsage]
+        self._element._insert_tbl(tbl)  # pyright: ignore[reportPrivateUsage]
         return Table(tbl, self)
 
     def iter_inner_content(self) -> Iterator[Paragraph | Table]:

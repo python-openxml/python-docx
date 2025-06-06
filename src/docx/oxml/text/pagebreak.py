@@ -46,9 +46,7 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
 
         # -- splitting approach is different when break is inside a hyperlink --
         return (
-            self._following_frag_in_hlink
-            if self._is_in_hyperlink
-            else self._following_frag_in_run
+            self._following_frag_in_hlink if self._is_in_hyperlink else self._following_frag_in_run
         )
 
     @property
@@ -116,9 +114,7 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
 
         # -- splitting approach is different when break is inside a hyperlink --
         return (
-            self._preceding_frag_in_hlink
-            if self._is_in_hyperlink
-            else self._preceding_frag_in_run
+            self._preceding_frag_in_hlink if self._is_in_hyperlink else self._preceding_frag_in_run
         )
 
     def _enclosing_hyperlink(self, lrpb: CT_LastRenderedPageBreak) -> CT_Hyperlink:
@@ -139,9 +135,7 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
 
         Raises `ValueError` if there are no rendered page-breaks in `p`.
         """
-        lrpbs = p.xpath(
-            "./w:r/w:lastRenderedPageBreak | ./w:hyperlink/w:r/w:lastRenderedPageBreak"
-        )
+        lrpbs = p.xpath("./w:r/w:lastRenderedPageBreak | ./w:hyperlink/w:r/w:lastRenderedPageBreak")
         if not lrpbs:
             raise ValueError("no rendered page-breaks in paragraph element")
         return lrpbs[0]

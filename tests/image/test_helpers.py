@@ -28,8 +28,8 @@ class DescribeStreamReader:
 
     @pytest.fixture(
         params=[
-            (BIG_ENDIAN, b"\xBE\x00\x00\x00\x2A\xEF", 1, 42),
-            (LITTLE_ENDIAN, b"\xBE\xEF\x2A\x00\x00\x00", 2, 42),
+            (BIG_ENDIAN, b"\xbe\x00\x00\x00\x2a\xef", 1, 42),
+            (LITTLE_ENDIAN, b"\xbe\xef\x2a\x00\x00\x00", 2, 42),
         ]
     )
     def read_long_fixture(self, request):

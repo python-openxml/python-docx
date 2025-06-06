@@ -14,9 +14,7 @@ from ..unitutil.mock import class_mock, instance_mock, method_mock
 
 
 class DescribeSettingsPart:
-    def it_is_used_by_loader_to_construct_settings_part(
-        self, load_, package_, settings_part_
-    ):
+    def it_is_used_by_loader_to_construct_settings_part(self, load_, package_, settings_part_):
         partname, blob = "partname", "blob"
         content_type = CT.WML_SETTINGS
         load_.return_value = settings_part_
@@ -61,9 +59,7 @@ class DescribeSettingsPart:
 
     @pytest.fixture
     def Settings_(self, request, settings_):
-        return class_mock(
-            request, "docx.parts.settings.Settings", return_value=settings_
-        )
+        return class_mock(request, "docx.parts.settings.Settings", return_value=settings_)
 
     @pytest.fixture
     def settings_(self, request):

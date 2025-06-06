@@ -236,9 +236,7 @@ class CT_RPr(BaseOxmlElement):
         vertAlign = self.vertAlign
         if vertAlign is None:
             return None
-        if vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT:
-            return True
-        return False
+        return vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT
 
     @subscript.setter
     def subscript(self, value: bool | None) -> None:
@@ -260,9 +258,7 @@ class CT_RPr(BaseOxmlElement):
         vertAlign = self.vertAlign
         if vertAlign is None:
             return None
-        if vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT:
-            return True
-        return False
+        return vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT
 
     @superscript.setter
     def superscript(self, value: bool | None):

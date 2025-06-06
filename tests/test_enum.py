@@ -60,9 +60,7 @@ class DescribeBaseXmlEnum:
         assert SomeXmlAttr.from_xml(None) == SomeXmlAttr.BAZ
 
     def but_it_raises_when_there_is_no_such_mapped_XML_value(self):
-        with pytest.raises(
-            ValueError, match="SomeXmlAttr has no XML mapping for 'baz'"
-        ):
+        with pytest.raises(ValueError, match="SomeXmlAttr has no XML mapping for 'baz'"):
             SomeXmlAttr.from_xml("baz")
 
 

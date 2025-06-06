@@ -52,9 +52,7 @@ class DescribeStyles:
 
         style = styles.add_style(name, style_type, builtin)
 
-        styles._element.add_style_of_type.assert_called_once_with(
-            name_, style_type, builtin
-        )
+        styles._element.add_style_of_type.assert_called_once_with(name_, style_type, builtin)
         StyleFactory_.assert_called_once_with(style_elm_)
         assert style is style_
 
@@ -110,9 +108,7 @@ class DescribeStyles:
 
         style_id = styles.get_style_id("Style Name", style_type)
 
-        _get_style_id_from_name_.assert_called_once_with(
-            styles, "Style Name", style_type
-        )
+        _get_style_id_from_name_.assert_called_once_with(styles, "Style Name", style_type)
         assert style_id == "StyleId"
 
     def but_it_returns_None_for_a_style_or_name_of_None(self):
@@ -132,9 +128,7 @@ class DescribeStyles:
         assert StyleFactory_.call_args_list == StyleFactory_calls
         assert style is style_
 
-    def it_gets_a_style_id_from_a_name_to_help(
-        self, _getitem_, _get_style_id_from_style_, style_
-    ):
+    def it_gets_a_style_id_from_a_name_to_help(self, _getitem_, _get_style_id_from_style_, style_):
         style_name, style_type, style_id_ = "Foo Bar", 1, "FooBar"
         _getitem_.return_value = style_
         _get_style_id_from_style_.return_value = style_id_
@@ -173,9 +167,7 @@ class DescribeStyles:
             ("Heading 1", "heading 1", WD_STYLE_TYPE.PARAGRAPH, True),
         ]
     )
-    def add_fixture(
-        self, request, styles_elm_, _getitem_, style_elm_, StyleFactory_, style_
-    ):
+    def add_fixture(self, request, styles_elm_, _getitem_, style_elm_, StyleFactory_, style_):
         name, name_, style_type, builtin = request.param
         styles = Styles(styles_elm_)
         _getitem_.return_value = None
@@ -207,8 +199,7 @@ class DescribeStyles:
                 WD_STYLE_TYPE.PARAGRAPH,
             ),
             (
-                "w:styles/(w:style{w:type=table,w:default=1},w:style{w:type=table,w"
-                ":default=1})",
+                "w:styles/(w:style{w:type=table,w:default=1},w:style{w:type=table,w:default=1})",
                 True,
                 WD_STYLE_TYPE.TABLE,
             ),
@@ -387,9 +378,7 @@ class DescribeStyles:
 
     @pytest.fixture
     def LatentStyles_(self, request, latent_styles_):
-        return class_mock(
-            request, "docx.styles.styles.LatentStyles", return_value=latent_styles_
-        )
+        return class_mock(request, "docx.styles.styles.LatentStyles", return_value=latent_styles_)
 
     @pytest.fixture
     def latent_styles_(self, request):

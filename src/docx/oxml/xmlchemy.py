@@ -75,9 +75,7 @@ class XmlString(str):
             return False
         if close != close_2:
             return False
-        if text != text_2:
-            return False
-        return True
+        return text == text_2
 
     @classmethod
     def _parse_line(cls, line: str) -> tuple[str, str, str, str]:
@@ -464,7 +462,7 @@ class Choice(_BaseChildElement):
             return child
 
         get_or_change_to_child.__doc__ = (
-            "Return the ``<%s>`` child, replacing any other group element if" " found."
+            "Return the ``<%s>`` child, replacing any other group element if found."
         ) % self._nsptagname
         self._add_to_class(self._get_or_change_to_method_name, get_or_change_to_child)
 

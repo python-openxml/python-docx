@@ -50,9 +50,7 @@ class TabStops(ElementProxy):
             return 0
         return len(tabs.tab_lst)
 
-    def add_tab_stop(
-        self, position, alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES
-    ):
+    def add_tab_stop(self, position, alignment=WD_TAB_ALIGNMENT.LEFT, leader=WD_TAB_LEADER.SPACES):
         """Add a new tab stop at `position`, a |Length| object specifying the location
         of the tab stop relative to the paragraph edge.
 

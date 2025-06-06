@@ -32,9 +32,7 @@ from ..unitutil.mock import (
 
 
 class DescribeTiff:
-    def it_can_construct_from_a_tiff_stream(
-        self, stream_, _TiffParser_, tiff_parser_, Tiff__init_
-    ):
+    def it_can_construct_from_a_tiff_stream(self, stream_, _TiffParser_, tiff_parser_, Tiff__init_):
         px_width, px_height = 111, 222
         horz_dpi, vert_dpi = 333, 444
         tiff_parser_.px_width = px_width
@@ -45,9 +43,7 @@ class DescribeTiff:
         tiff = Tiff.from_stream(stream_)
 
         _TiffParser_.parse.assert_called_once_with(stream_)
-        Tiff__init_.assert_called_once_with(
-            ANY, px_width, px_height, horz_dpi, vert_dpi
-        )
+        Tiff__init_.assert_called_once_with(ANY, px_width, px_height, horz_dpi, vert_dpi)
         assert isinstance(tiff, Tiff)
 
     def it_knows_its_content_type(self):
@@ -186,9 +182,7 @@ class Describe_TiffParser:
 
     @pytest.fixture
     def StreamReader_(self, request, stream_rdr_):
-        return class_mock(
-            request, "docx.image.tiff.StreamReader", return_value=stream_rdr_
-        )
+        return class_mock(request, "docx.image.tiff.StreamReader", return_value=stream_rdr_)
 
     @pytest.fixture
     def stream_rdr_(self, request, ifd0_offset_):
@@ -244,9 +238,7 @@ class Describe_IfdEntries:
 
     @pytest.fixture
     def _IfdParser_(self, request, ifd_parser_):
-        return class_mock(
-            request, "docx.image.tiff._IfdParser", return_value=ifd_parser_
-        )
+        return class_mock(request, "docx.image.tiff._IfdParser", return_value=ifd_parser_)
 
     @pytest.fixture
     def ifd_parser_(self, request):
@@ -386,9 +378,7 @@ class Describe_IfdEntryFactory:
 
 
 class Describe_IfdEntry:
-    def it_can_construct_from_a_stream_and_offset(
-        self, _parse_value_, _IfdEntry__init_, value_
-    ):
+    def it_can_construct_from_a_stream_and_offset(self, _parse_value_, _IfdEntry__init_, value_):
         bytes_ = b"\x00\x01\x66\x66\x00\x00\x00\x02\x00\x00\x00\x03"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, tag_code, value_count, value_offset = 0, 1, 2, 3
@@ -396,9 +386,7 @@ class Describe_IfdEntry:
 
         ifd_entry = _IfdEntry.from_stream(stream_rdr, offset)
 
-        _parse_value_.assert_called_once_with(
-            stream_rdr, offset, value_count, value_offset
-        )
+        _parse_value_.assert_called_once_with(stream_rdr, offset, value_count, value_offset)
         _IfdEntry__init_.assert_called_once_with(ANY, tag_code, value_)
         assert isinstance(ifd_entry, _IfdEntry)
 
@@ -432,7 +420,7 @@ class Describe_AsciiIfdEntry:
 
 class Describe_ShortIfdEntry:
     def it_can_parse_a_short_int_IFD_entry(self):
-        bytes_ = b"foobaroo\x00\x2A"
+        bytes_ = b"foobaroo\x00\x2a"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _ShortIfdEntry._parse_value(stream_rdr, 0, 1, None)
         assert val == 42
@@ -440,7 +428,7 @@ class Describe_ShortIfdEntry:
 
 class Describe_LongIfdEntry:
     def it_can_parse_a_long_int_IFD_entry(self):
-        bytes_ = b"foobaroo\x00\x00\x00\x2A"
+        bytes_ = b"foobaroo\x00\x00\x00\x2a"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _LongIfdEntry._parse_value(stream_rdr, 0, 1, None)
         assert val == 42
@@ -448,7 +436,7 @@ class Describe_LongIfdEntry:
 
 class Describe_RationalIfdEntry:
     def it_can_parse_a_rational_IFD_entry(self):
-        bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x54"
+        bytes_ = b"\x00\x00\x00\x2a\x00\x00\x00\x54"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         val = _RationalIfdEntry._parse_value(stream_rdr, None, 1, 0)
         assert val == 0.5

@@ -43,9 +43,7 @@ def snippet_text(snippet_file_name: str):
     Return the unicode text read from the test snippet file having
     `snippet_file_name`.
     """
-    snippet_file_path = os.path.join(
-        test_file_dir, "snippets", "%s.txt" % snippet_file_name
-    )
+    snippet_file_path = os.path.join(test_file_dir, "snippets", "%s.txt" % snippet_file_name)
     with open(snippet_file_path, "rb") as f:
         snippet_bytes = f.read()
     return snippet_bytes.decode("utf-8")

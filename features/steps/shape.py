@@ -111,9 +111,10 @@ def then_the_document_contains_the_inline_picture(context):
     image_part = document.part.related_parts[rId]
     image_sha1 = hashlib.sha1(image_part.blob).hexdigest()
     expected_sha1 = "79769f1e202add2e963158b532e36c2c0f76a70c"
-    assert (
-        image_sha1 == expected_sha1
-    ), "image SHA1 doesn't match, expected %s, got %s" % (expected_sha1, image_sha1)
+    assert image_sha1 == expected_sha1, "image SHA1 doesn't match, expected %s, got %s" % (
+        expected_sha1,
+        image_sha1,
+    )
 
 
 @then("the length of the inline shape collection is 5")

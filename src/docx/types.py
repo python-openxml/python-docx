@@ -19,8 +19,7 @@ class ProvidesStoryPart(Protocol):
     """
 
     @property
-    def part(self) -> StoryPart:
-        ...
+    def part(self) -> StoryPart: ...
 
 
 class ProvidesXmlPart(Protocol):
@@ -32,5 +31,4 @@ class ProvidesXmlPart(Protocol):
     """
 
     @property
-    def part(self) -> XmlPart:
-        ...
+    def part(self) -> XmlPart: ...

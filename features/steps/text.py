@@ -60,9 +60,7 @@ def given_a_run_having_mixed_text_content(context):
           <w:t>pqr</w:t>
           <w:ptab/>
           <w:t>stu</w:t>
-        </w:r>""" % nsdecls(
-        "w"
-    )
+        </w:r>""" % nsdecls("w")
     r = parse_xml(r_xml)
     context.run = Run(r, None)
 
@@ -235,9 +233,7 @@ def then_run_font_is_the_Font_object_for_the_run(context):
 def then_run_iter_inner_content_generates_text_and_page_breaks(context: Context):
     actual_value = [type(item).__name__ for item in context.run.iter_inner_content()]
     expected_value = ["str", "RenderedPageBreak", "str", "RenderedPageBreak", "str"]
-    assert (
-        actual_value == expected_value
-    ), f"expected: {expected_value}, got: {actual_value}"
+    assert actual_value == expected_value, f"expected: {expected_value}, got: {actual_value}"
 
 
 @then("run.style is styles['{style_name}']")
@@ -267,15 +263,15 @@ def then_the_picture_appears_at_the_end_of_the_run(context):
     run = context.run
     r = run._r
     blip_rId = r.xpath(
-        "./w:drawing/wp:inline/a:graphic/a:graphicData/pic:pic/pic:blipFill/"
-        "a:blip/@r:embed"
+        "./w:drawing/wp:inline/a:graphic/a:graphicData/pic:pic/pic:blipFill/a:blip/@r:embed"
     )[0]
     image_part = run.part.related_parts[blip_rId]
     image_sha1 = hashlib.sha1(image_part.blob).hexdigest()
     expected_sha1 = "79769f1e202add2e963158b532e36c2c0f76a70c"
-    assert (
-        image_sha1 == expected_sha1
-    ), "image SHA1 doesn't match, expected %s, got %s" % (expected_sha1, image_sha1)
+    assert image_sha1 == expected_sha1, "image SHA1 doesn't match, expected %s, got %s" % (
+        expected_sha1,
+        image_sha1,
+    )
 
 
 @then("the run appears in {boolean_prop_name} unconditionally")

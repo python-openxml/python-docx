@@ -24,9 +24,7 @@ class DescribeNumberingPart:
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
-    def num_defs_fixture(
-        self, _NumberingDefinitions_, numbering_elm_, numbering_definitions_
-    ):
+    def num_defs_fixture(self, _NumberingDefinitions_, numbering_elm_, numbering_definitions_):
         numbering_part = NumberingPart(None, None, numbering_elm_, None)
         return (
             numbering_part,

@@ -77,18 +77,14 @@ class DescribeRelationships:
         rels["foobar"] = rel
         assert rels["foobar"] == rel
 
-    def it_can_find_or_add_a_relationship(
-        self, rels_with_matching_rel_, rels_with_missing_rel_
-    ):
+    def it_can_find_or_add_a_relationship(self, rels_with_matching_rel_, rels_with_missing_rel_):
         rels, reltype, part, matching_rel = rels_with_matching_rel_
         assert rels.get_or_add(reltype, part) == matching_rel
 
         rels, reltype, part, new_rel = rels_with_missing_rel_
         assert rels.get_or_add(reltype, part) == new_rel
 
-    def it_can_find_or_add_an_external_relationship(
-        self, add_matching_ext_rel_fixture_
-    ):
+    def it_can_find_or_add_an_external_relationship(self, add_matching_ext_rel_fixture_):
         rels, reltype, url, rId = add_matching_ext_rel_fixture_
         _rId = rels.get_or_add_ext_rel(reltype, url)
         assert _rId == rId
@@ -235,20 +231,14 @@ class DescribeRelationships:
     @pytest.fixture
     def rels_with_rId_gap(self, request):
         rels = Relationships(None)
-        rel_with_rId1 = instance_mock(
-            request, _Relationship, name="rel_with_rId1", rId="rId1"
-        )
-        rel_with_rId3 = instance_mock(
-            request, _Relationship, name="rel_with_rId3", rId="rId3"
-        )
+        rel_with_rId1 = instance_mock(request, _Relationship, name="rel_with_rId1", rId="rId1")
+        rel_with_rId3 = instance_mock(request, _Relationship, name="rel_with_rId3", rId="rId3")
         rels["rId1"] = rel_with_rId1
         rels["rId3"] = rel_with_rId3
         return rels, "rId2"
 
     @pytest.fixture
-    def rels_with_target_known_by_reltype(
-        self, rels, _rel_with_target_known_by_reltype
-    ):
+    def rels_with_target_known_by_reltype(self, rels, _rel_with_target_known_by_reltype):
         rel, reltype, target_part = _rel_with_target_known_by_reltype
         rels[1] = rel
         return rels, reltype, target_part

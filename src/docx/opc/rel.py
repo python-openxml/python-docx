@@ -79,9 +79,7 @@ class Relationships(Dict[str, "_Relationship"]):
             if rel.is_external != is_external:
                 return False
             rel_target = rel.target_ref if rel.is_external else rel.target_part
-            if rel_target != target:
-                return False
-            return True
+            return rel_target == target
 
         for rel in self.values():
             if matches(rel, reltype, target, is_external):
@@ -142,7 +140,7 @@ class _Relationship:
     def target_part(self) -> Part:
         if self._is_external:
             raise ValueError(
-                "target_part property on _Relationship is undef" "ined when target mode is External"
+                "target_part property on _Relationship is undefined when target mode is External"
             )
         return cast("Part", self._target)
 

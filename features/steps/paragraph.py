@@ -120,16 +120,12 @@ def when_I_set_the_paragraph_text(context: Context):
 def then_paragraph_contains_page_break_is_value(context: Context, value: str):
     actual_value = context.paragraph.contains_page_break
     expected_value = {"True": True, "False": False}[value]
-    assert (
-        actual_value == expected_value
-    ), f"expected: {expected_value}, got: {actual_value}"
+    assert actual_value == expected_value, f"expected: {expected_value}, got: {actual_value}"
 
 
 @then("paragraph.hyperlinks contains only Hyperlink instances")
 def then_paragraph_hyperlinks_contains_only_Hyperlink_instances(context: Context):
-    assert all(
-        type(item).__name__ == "Hyperlink" for item in context.paragraph.hyperlinks
-    )
+    assert all(type(item).__name__ == "Hyperlink" for item in context.paragraph.hyperlinks)
 
 
 @then("paragraph.hyperlinks has length {value}")
@@ -163,9 +159,7 @@ def then_paragraph_paragraph_format_is_its_parfmt_object(context: Context):
 def then_paragraph_rendered_page_breaks_has_length(context: Context, value: str):
     actual_value = len(context.paragraph.rendered_page_breaks)
     expected_value = int(value)
-    assert (
-        actual_value == expected_value
-    ), f"got: {actual_value}, expected: {expected_value}"
+    assert actual_value == expected_value, f"got: {actual_value}, expected: {expected_value}"
 
 
 @then("paragraph.rendered_page_breaks contains only RenderedPageBreak instances")
@@ -216,9 +210,7 @@ def then_document_contains_text_I_added(context: Context):
 
 
 @then("the paragraph alignment property value is {align_value}")
-def then_the_paragraph_alignment_prop_value_is_value(
-    context: Context, align_value: str
-):
+def then_the_paragraph_alignment_prop_value_is_value(context: Context, align_value: str):
     expected_value: Any = {
         "None": None,
         "WD_ALIGN_PARAGRAPH.LEFT": WD_PARAGRAPH_ALIGNMENT.LEFT,  # pyright: ignore

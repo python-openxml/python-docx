@@ -12,15 +12,12 @@ class DescribeOxmlElement:
     def it_returns_an_lxml_element_with_matching_tag_name(self):
         element = OxmlElement("a:foo")
         assert isinstance(element, etree._Element)
-        assert element.tag == (
-            "{http://schemas.openxmlformats.org/drawingml/2006/main}foo"
-        )
+        assert element.tag == ("{http://schemas.openxmlformats.org/drawingml/2006/main}foo")
 
     def it_adds_supplied_attributes(self):
         element = OxmlElement("a:foo", {"a": "b", "c": "d"})
         assert etree.tostring(element) == (
-            '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/200'
-            '6/main" a="b" c="d"/>'
+            '<a:foo xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" a="b" c="d"/>'
         ).encode("utf-8")
 
     def it_adds_additional_namespace_declarations_when_supplied(self):
@@ -43,7 +40,7 @@ class DescribeOxmlParser:
 
     @pytest.fixture
     def whitespace_fixture(self):
-        pretty_xml_text = "<foø>\n" "  <bår>text</bår>\n" "</foø>\n"
+        pretty_xml_text = "<foø>\n  <bår>text</bår>\n</foø>\n"
         stripped_xml_text = "<foø><bår>text</bår></foø>"
         return pretty_xml_text, stripped_xml_text
 

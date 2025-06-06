@@ -194,7 +194,7 @@ class BaseImageHeader:
     @property
     def content_type(self) -> str:
         """Abstract property definition, must be implemented by all subclasses."""
-        msg = "content_type property must be implemented by all subclasses of " "BaseImageHeader"
+        msg = "content_type property must be implemented by all subclasses of BaseImageHeader"
         raise NotImplementedError(msg)
 
     @property
@@ -204,7 +204,7 @@ class BaseImageHeader:
         An abstract property definition, must be implemented by all subclasses.
         """
         raise NotImplementedError(
-            "default_ext property must be implemented by all subclasses of " "BaseImageHeader"
+            "default_ext property must be implemented by all subclasses of BaseImageHeader"
         )
 
     @property

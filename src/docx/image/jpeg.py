@@ -188,20 +188,20 @@ class _MarkerFinder:
 
     def _next_non_ff_byte(self, start):
         """Return an offset, byte 2-tuple for the next byte in `stream` that is not
-        '\xFF', starting with the byte at offset `start`.
+        '\xff', starting with the byte at offset `start`.
 
-        If the byte at offset `start` is not '\xFF', `start` and the returned `offset`
+        If the byte at offset `start` is not '\xff', `start` and the returned `offset`
         will be the same.
         """
         self._stream.seek(start)
         byte_ = self._read_byte()
-        while byte_ == b"\xFF":
+        while byte_ == b"\xff":
             byte_ = self._read_byte()
         offset_of_non_ff_byte = self._stream.tell() - 1
         return offset_of_non_ff_byte, byte_
 
     def _offset_of_next_ff_byte(self, start):
-        """Return the offset of the next '\xFF' byte in `stream` starting with the byte
+        """Return the offset of the next '\xff' byte in `stream` starting with the byte
         at offset `start`.
 
         Returns `start` if the byte at that offset is a hex 255; it does not necessarily
@@ -209,7 +209,7 @@ class _MarkerFinder:
         """
         self._stream.seek(start)
         byte_ = self._read_byte()
-        while byte_ != b"\xFF":
+        while byte_ != b"\xff":
             byte_ = self._read_byte()
         offset_of_ff_byte = self._stream.tell() - 1
         return offset_of_ff_byte
@@ -263,7 +263,7 @@ class _Marker:
 
     @property
     def marker_code(self):
-        """The single-byte code that identifies the type of this marker, e.g. ``'\xE0'``
+        """The single-byte code that identifies the type of this marker, e.g. ``'\xe0'``
         for start of image (SOI)."""
         return self._marker_code
 
@@ -284,9 +284,7 @@ class _Marker:
 class _App0Marker(_Marker):
     """Represents a JFIF APP0 marker segment."""
 
-    def __init__(
-        self, marker_code, offset, length, density_units, x_density, y_density
-    ):
+    def __init__(self, marker_code, offset, length, density_units, x_density, y_density):
         super(_App0Marker, self).__init__(marker_code, offset, length)
         self._density_units = density_units
         self._x_density = x_density
@@ -332,9 +330,7 @@ class _App0Marker(_Marker):
         density_units = stream.read_byte(offset, 9)
         x_density = stream.read_short(offset, 10)
         y_density = stream.read_short(offset, 12)
-        return cls(
-            marker_code, offset, segment_length, density_units, x_density, y_density
-        )
+        return cls(marker_code, offset, segment_length, density_units, x_density, y_density)
 
 
 class _App1Marker(_Marker):

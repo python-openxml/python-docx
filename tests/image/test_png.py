@@ -30,9 +30,7 @@ from ..unitutil.mock import (
 
 
 class DescribePng:
-    def it_can_construct_from_a_png_stream(
-        self, stream_, _PngParser_, png_parser_, Png__init__
-    ):
+    def it_can_construct_from_a_png_stream(self, stream_, _PngParser_, png_parser_, Png__init__):
         px_width, px_height, horz_dpi, vert_dpi = 42, 24, 36, 63
         png_parser_.px_width = px_width
         png_parser_.px_height = px_height
@@ -42,9 +40,7 @@ class DescribePng:
         png = Png.from_stream(stream_)
 
         _PngParser_.parse.assert_called_once_with(stream_)
-        Png__init__.assert_called_once_with(
-            ANY, px_width, px_height, horz_dpi, vert_dpi
-        )
+        Png__init__.assert_called_once_with(ANY, px_width, px_height, horz_dpi, vert_dpi)
         assert isinstance(png, Png)
 
     def it_knows_its_content_type(self):
@@ -157,9 +153,7 @@ class Describe_PngParser:
 
 
 class Describe_Chunks:
-    def it_can_construct_from_a_stream(
-        self, stream_, _ChunkParser_, chunk_parser_, _Chunks__init_
-    ):
+    def it_can_construct_from_a_stream(self, stream_, _ChunkParser_, chunk_parser_, _Chunks__init_):
         chunk_lst = [1, 2]
         chunk_parser_.iter_chunks.return_value = iter(chunk_lst)
 
@@ -277,9 +271,7 @@ class Describe_ChunkParser:
 
     @pytest.fixture
     def _ChunkFactory_(self, request, chunk_lst_):
-        return function_mock(
-            request, "docx.image.png._ChunkFactory", side_effect=chunk_lst_
-        )
+        return function_mock(request, "docx.image.png._ChunkFactory", side_effect=chunk_lst_)
 
     @pytest.fixture
     def chunk_lst_(self, chunk_, chunk_2_):
@@ -315,9 +307,7 @@ class Describe_ChunkParser:
 
     @pytest.fixture
     def StreamReader_(self, request, stream_rdr_):
-        return class_mock(
-            request, "docx.image.png.StreamReader", return_value=stream_rdr_
-        )
+        return class_mock(request, "docx.image.png.StreamReader", return_value=stream_rdr_)
 
     @pytest.fixture
     def stream_(self, request):
@@ -409,7 +399,7 @@ class Describe_IHDRChunk:
 
     @pytest.fixture
     def from_offset_fixture(self):
-        bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x18"
+        bytes_ = b"\x00\x00\x00\x2a\x00\x00\x00\x18"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, px_width, px_height = 0, 42, 24
         return stream_rdr, offset, px_width, px_height
@@ -430,7 +420,7 @@ class Describe_pHYsChunk:
 
     @pytest.fixture
     def from_offset_fixture(self):
-        bytes_ = b"\x00\x00\x00\x2A\x00\x00\x00\x18\x01"
+        bytes_ = b"\x00\x00\x00\x2a\x00\x00\x00\x18\x01"
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, horz_px_per_unit, vert_px_per_unit, units_specifier = (0, 42, 24, 1)
         return (stream_rdr, offset, horz_px_per_unit, vert_px_per_unit, units_specifier)

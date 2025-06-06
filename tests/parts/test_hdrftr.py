@@ -27,9 +27,7 @@ class DescribeFooterPart:
         FooterPart_load_.assert_called_once_with(partname, content_type, blob, package_)
         assert part is footer_part_
 
-    def it_can_create_a_new_footer_part(
-        self, package_, _default_footer_xml_, parse_xml_, _init_
-    ):
+    def it_can_create_a_new_footer_part(self, package_, _default_footer_xml_, parse_xml_, _init_):
         ftr = element("w:ftr")
         package_.next_partname.return_value = "/word/footer24.xml"
         _default_footer_xml_.return_value = "<w:ftr>"
@@ -95,9 +93,7 @@ class DescribeHeaderPart:
         HeaderPart_load_.assert_called_once_with(partname, content_type, blob, package_)
         assert part is header_part_
 
-    def it_can_create_a_new_header_part(
-        self, package_, _default_header_xml_, parse_xml_, _init_
-    ):
+    def it_can_create_a_new_header_part(self, package_, _default_header_xml_, parse_xml_, _init_):
         hdr = element("w:hdr")
         package_.next_partname.return_value = "/word/header42.xml"
         _default_header_xml_.return_value = "<w:hdr>"

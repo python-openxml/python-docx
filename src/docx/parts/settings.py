@@ -27,8 +27,7 @@ class SettingsPart(XmlPart):
 
     @classmethod
     def default(cls, package: Package):
-        """Return a newly created settings part, containing a default `w:settings`
-        element tree."""
+        """Return a newly created settings part, containing a default `w:settings` element tree."""
         partname = PackURI("/word/settings.xml")
         content_type = CT.WML_SETTINGS
         element = cast("CT_Settings", parse_xml(cls._default_settings_xml()))

@@ -107,13 +107,7 @@ class DescribeRenderedPageBreak:
     def it_can_split_off_the_following_paragraph_content_when_in_a_run(
         self, fake_parent: t.ProvidesStoryPart
     ):
-        p_cxml = (
-            "w:p/("
-            "  w:pPr/w:ind"
-            '  ,w:r/(w:t"foo",w:lastRenderedPageBreak,w:t"bar")'
-            '  ,w:r/w:t"foo"'
-            ")"
-        )
+        p_cxml = 'w:p/(w:pPr/w:ind,w:r/(w:t"foo",w:lastRenderedPageBreak,w:t"bar"),w:r/w:t"foo")'
         p = cast(CT_P, element(p_cxml))
         lrpb = p.lastRenderedPageBreaks[0]
         page_break = RenderedPageBreak(lrpb, fake_parent)
