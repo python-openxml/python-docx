@@ -10,6 +10,7 @@ from docx.enum.text import (
     WD_TAB_ALIGNMENT,
     WD_TAB_LEADER,
 )
+from docx.oxml.shared import CT_DecimalNumber
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from docx.oxml.xmlchemy import (
     BaseOxmlElement,
@@ -55,6 +56,7 @@ class CT_PPr(BaseOxmlElement):
 
     get_or_add_ind: Callable[[], CT_Ind]
     get_or_add_pStyle: Callable[[], CT_String]
+    get_or_add_sectPr: Callable[[], CT_SectPr]
     _insert_sectPr: Callable[[CT_SectPr], None]
     _remove_pStyle: Callable[[], None]
     _remove_sectPr: Callable[[], None]
@@ -111,6 +113,9 @@ class CT_PPr(BaseOxmlElement):
         "w:ind", successors=_tag_seq[23:]
     )
     jc = ZeroOrOne("w:jc", successors=_tag_seq[27:])
+    outlineLvl: CT_DecimalNumber = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:outlineLvl", successors=_tag_seq[31:]
+    )
     sectPr = ZeroOrOne("w:sectPr", successors=_tag_seq[35:])
     del _tag_seq
 

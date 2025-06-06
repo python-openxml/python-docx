@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import IO, TYPE_CHECKING, cast
 
 from docx.document import Document
-from docx.enum.style import WD_STYLE_TYPE
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
@@ -16,6 +15,7 @@ from docx.shape import InlineShapes
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.enum.style import WD_STYLE_TYPE
     from docx.opc.coreprops import CoreProperties
     from docx.settings import Settings
     from docx.styles.style import BaseStyle

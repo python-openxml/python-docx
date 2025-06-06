@@ -145,10 +145,8 @@ class CT_Picture(BaseOxmlElement):
     spPr: CT_ShapeProperties = OneAndOnlyOne("pic:spPr")  # pyright: ignore[reportAssignmentType]
 
     @classmethod
-    def new(cls, pic_id, filename, rId, cx, cy):
-        """Return a new ``<pic:pic>`` element populated with the minimal contents
-        required to define a viable picture element, based on the values passed as
-        parameters."""
+    def new(cls, pic_id: int, filename: str, rId: str, cx: Length, cy: Length) -> CT_Picture:
+        """A new minimum viable `<pic:pic>` (picture) element."""
         pic = parse_xml(cls._pic_xml())
         pic.nvPicPr.cNvPr.id = pic_id
         pic.nvPicPr.cNvPr.name = filename

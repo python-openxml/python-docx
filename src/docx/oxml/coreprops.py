@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import re
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 from docx.oxml.ns import nsdecls, qn
 from docx.oxml.parser import parse_xml
@@ -45,14 +45,14 @@ class CT_CoreProperties(BaseOxmlElement):
     _coreProperties_tmpl = "<cp:coreProperties %s/>\n" % nsdecls("cp", "dc", "dcterms")
 
     @classmethod
-    def new(cls):
+    def new(cls) -> CT_CoreProperties:
         """Return a new `<cp:coreProperties>` element."""
         xml = cls._coreProperties_tmpl
-        coreProperties = parse_xml(xml)
+        coreProperties = cast(CT_CoreProperties, parse_xml(xml))
         return coreProperties
 
     @property
-    def author_text(self):
+    def author_text(self) -> str:
         """The text in the `dc:creator` child element."""
         return self._text_of_element("creator")
 
@@ -77,7 +77,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("description", value)
 
     @property
-    def contentStatus_text(self):
+    def contentStatus_text(self) -> str:
         return self._text_of_element("contentStatus")
 
     @contentStatus_text.setter
@@ -85,7 +85,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("contentStatus", value)
 
     @property
-    def created_datetime(self):
+    def created_datetime(self) -> dt.datetime | None:
         return self._datetime_of_element("created")
 
     @created_datetime.setter
@@ -93,7 +93,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_datetime("created", value)
 
     @property
-    def identifier_text(self):
+    def identifier_text(self) -> str:
         return self._text_of_element("identifier")
 
     @identifier_text.setter
@@ -101,7 +101,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("identifier", value)
 
     @property
-    def keywords_text(self):
+    def keywords_text(self) -> str:
         return self._text_of_element("keywords")
 
     @keywords_text.setter
@@ -109,7 +109,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("keywords", value)
 
     @property
-    def language_text(self):
+    def language_text(self) -> str:
         return self._text_of_element("language")
 
     @language_text.setter
@@ -117,7 +117,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("language", value)
 
     @property
-    def lastModifiedBy_text(self):
+    def lastModifiedBy_text(self) -> str:
         return self._text_of_element("lastModifiedBy")
 
     @lastModifiedBy_text.setter
@@ -125,7 +125,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("lastModifiedBy", value)
 
     @property
-    def lastPrinted_datetime(self):
+    def lastPrinted_datetime(self) -> dt.datetime | None:
         return self._datetime_of_element("lastPrinted")
 
     @lastPrinted_datetime.setter
@@ -141,7 +141,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_datetime("modified", value)
 
     @property
-    def revision_number(self):
+    def revision_number(self) -> int:
         """Integer value of revision property."""
         revision = self.revision
         if revision is None:
@@ -167,7 +167,7 @@ class CT_CoreProperties(BaseOxmlElement):
         revision.text = str(value)
 
     @property
-    def subject_text(self):
+    def subject_text(self) -> str:
         return self._text_of_element("subject")
 
     @subject_text.setter
@@ -175,7 +175,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("subject", value)
 
     @property
-    def title_text(self):
+    def title_text(self) -> str:
         return self._text_of_element("title")
 
     @title_text.setter
@@ -183,7 +183,7 @@ class CT_CoreProperties(BaseOxmlElement):
         self._set_element_text("title", value)
 
     @property
-    def version_text(self):
+    def version_text(self) -> str:
         return self._text_of_element("version")
 
     @version_text.setter
@@ -257,7 +257,7 @@ class CT_CoreProperties(BaseOxmlElement):
             dt_ = cls._offset_dt(dt_, offset_str)
         return dt_.replace(tzinfo=dt.timezone.utc)
 
-    def _set_element_datetime(self, prop_name: str, value: dt.datetime):
+    def _set_element_datetime(self, prop_name: str, value: dt.datetime) -> None:
         """Set date/time value of child element having `prop_name` to `value`."""
         if not isinstance(value, dt.datetime):  # pyright: ignore[reportUnnecessaryIsInstance]
             tmpl = "property requires <type 'datetime.datetime'> object, got %s"

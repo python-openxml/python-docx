@@ -5,6 +5,7 @@ These are broadly-standardized attributes like author, last-modified, etc.
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import TYPE_CHECKING
 
 from docx.oxml.coreprops import CT_CoreProperties
@@ -57,7 +58,7 @@ class CoreProperties:
         return self._element.created_datetime
 
     @created.setter
-    def created(self, value):
+    def created(self, value: dt.datetime):
         self._element.created_datetime = value
 
     @property
@@ -97,7 +98,7 @@ class CoreProperties:
         return self._element.lastPrinted_datetime
 
     @last_printed.setter
-    def last_printed(self, value):
+    def last_printed(self, value: dt.datetime):
         self._element.lastPrinted_datetime = value
 
     @property
@@ -105,7 +106,7 @@ class CoreProperties:
         return self._element.modified_datetime
 
     @modified.setter
-    def modified(self, value):
+    def modified(self, value: dt.datetime):
         self._element.modified_datetime = value
 
     @property
@@ -113,7 +114,7 @@ class CoreProperties:
         return self._element.revision_number
 
     @revision.setter
-    def revision(self, value):
+    def revision(self, value: int):
         self._element.revision_number = value
 
     @property

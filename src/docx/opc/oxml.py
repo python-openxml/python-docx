@@ -38,7 +38,7 @@ def parse_xml(text: str) -> etree._Element:
     return etree.fromstring(text, oxml_parser)
 
 
-def qn(tag):
+def qn(tag: str) -> str:
     """Stands for "qualified name", a utility function to turn a namespace prefixed tag
     name into a Clark-notation qualified tag name for lxml.
 
@@ -50,7 +50,7 @@ def qn(tag):
     return "{%s}%s" % (uri, tagroot)
 
 
-def serialize_part_xml(part_elm: etree._Element):
+def serialize_part_xml(part_elm: etree._Element) -> bytes:
     """Serialize `part_elm` etree element to XML suitable for storage as an XML part.
 
     That is to say, no insignificant whitespace added for readability, and an
@@ -59,7 +59,7 @@ def serialize_part_xml(part_elm: etree._Element):
     return etree.tostring(part_elm, encoding="UTF-8", standalone=True)
 
 
-def serialize_for_reading(element):
+def serialize_for_reading(element: etree._Element) -> str:
     """Serialize `element` to human-readable XML suitable for tests.
 
     No XML declaration.
@@ -77,7 +77,7 @@ class BaseOxmlElement(etree.ElementBase):
     classes in one place."""
 
     @property
-    def xml(self):
+    def xml(self) -> str:
         """Return XML string for this element, suitable for testing purposes.
 
         Pretty printed for readability and without an XML declaration at the top.
@@ -86,8 +86,10 @@ class BaseOxmlElement(etree.ElementBase):
 
 
 class CT_Default(BaseOxmlElement):
-    """``<Default>`` element, specifying the default content type to be applied to a
-    part with the specified extension."""
+    """`<Default>` element that appears in `[Content_Types].xml` part.
+
+    Used to specify a default content type to be applied to any part with the specified extension.
+    """
 
     @property
     def content_type(self):
@@ -101,9 +103,8 @@ class CT_Default(BaseOxmlElement):
         return self.get("Extension")
 
     @staticmethod
-    def new(ext, content_type):
-        """Return a new ``<Default>`` element with attributes set to parameter
-        values."""
+    def new(ext: str, content_type: str):
+        """Return a new ``<Default>`` element with attributes set to parameter values."""
         xml = '<Default xmlns="%s"/>' % nsmap["ct"]
         default = parse_xml(xml)
         default.set("Extension", ext)
@@ -123,8 +124,7 @@ class CT_Override(BaseOxmlElement):
 
     @staticmethod
     def new(partname, content_type):
-        """Return a new ``<Override>`` element with attributes set to parameter
-        values."""
+        """Return a new ``<Override>`` element with attributes set to parameter values."""
         xml = '<Override xmlns="%s"/>' % nsmap["ct"]
         override = parse_xml(xml)
         override.set("PartName", partname)
@@ -138,8 +138,7 @@ class CT_Override(BaseOxmlElement):
 
 
 class CT_Relationship(BaseOxmlElement):
-    """``<Relationship>`` element, representing a single relationship from a source to a
-    target part."""
+    """`<Relationship>` element, representing a single relationship from source to target part."""
 
     @staticmethod
     def new(rId: str, reltype: str, target: str, target_mode: str = RTM.INTERNAL):
