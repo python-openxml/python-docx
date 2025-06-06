@@ -1,0 +1,9 @@
+.tox
+Session.vim
+build/
+docs/.build
+features/_scratch
+__pycache__/
+ref/
+src/*.egg-info
+tests/test_files

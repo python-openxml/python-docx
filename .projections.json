@@ -1,0 +1,14 @@
+{
+  "src/docx/*.py" : {
+    "alternate" : [
+      "tests/{dirname}/test_{basename}.py"
+    ],
+    "type" : "source"
+  },
+  "tests/**/test_*.py" : {
+    "alternate" : [
+      "src/docx/{dirname}/{basename}.py"
+    ],
+    "type" : "test"
+  }
+}
