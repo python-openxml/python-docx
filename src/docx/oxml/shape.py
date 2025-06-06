@@ -100,7 +100,6 @@ class CT_Inline(BaseOxmlElement):
         pic_id = 0  # Word doesn't seem to use this, but does not omit it
         pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
         inline = cls.new(cx, cy, shape_id, pic)
-        inline.graphic.graphicData._insert_pic(pic)
         return inline
 
     @classmethod
