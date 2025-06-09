@@ -9,7 +9,7 @@ from typing import cast
 
 import pytest
 
-from docx.comments import Comments
+from docx.comments import Comment, Comments
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -38,6 +38,26 @@ from .unitutil.mock import (
 
 class DescribeDocument:
     """Unit-test suite for `docx.document.Document`."""
+
+    def it_can_add_a_comment(
+        self,
+        document_part_: Mock,
+        comments_prop_: Mock,
+        comments_: Mock,
+        comment_: Mock,
+        run_mark_comment_range_: Mock,
+    ):
+        comment_.comment_id = 42
+        comments_.add_comment.return_value = comment_
+        comments_prop_.return_value = comments_
+        document = Document(cast(CT_Document, element("w:document/w:body/w:p/w:r")), document_part_)
+        run = document.paragraphs[0].runs[0]
+
+        comment = document.add_comment(run, "Comment text.")
+
+        comments_.add_comment.assert_called_once_with("Comment text.", "", "")
+        run_mark_comment_range_.assert_called_once_with(run, run, 42)
+        assert comment is comment_
 
     @pytest.mark.parametrize(
         ("level", "style"), [(0, "Title"), (1, "Heading 1"), (2, "Heading 2"), (9, "Heading 9")]
@@ -289,8 +309,16 @@ class DescribeDocument:
         return property_mock(request, Document, "_body")
 
     @pytest.fixture
+    def comment_(self, request: FixtureRequest):
+        return instance_mock(request, Comment)
+
+    @pytest.fixture
     def comments_(self, request: FixtureRequest):
         return instance_mock(request, Comments)
+
+    @pytest.fixture
+    def comments_prop_(self, request: FixtureRequest):
+        return property_mock(request, Document, "comments")
 
     @pytest.fixture
     def core_properties_(self, request: FixtureRequest):
@@ -324,6 +352,10 @@ class DescribeDocument:
     @pytest.fixture
     def run_(self, request: FixtureRequest):
         return instance_mock(request, Run)
+
+    @pytest.fixture
+    def run_mark_comment_range_(self, request: FixtureRequest):
+        return method_mock(request, Run, "mark_comment_range")
 
     @pytest.fixture
     def Section_(self, request: FixtureRequest):
