@@ -46,8 +46,7 @@ class CT_String(BaseOxmlElement):
 
     @classmethod
     def new(cls, nsptagname: str, val: str):
-        """Return a new ``CT_String`` element with tagname `nsptagname` and ``val``
-        attribute set to `val`."""
+        """A new `CT_String`` element with tagname `nsptagname` and `val` attribute set to `val`."""
         elm = cast(CT_String, OxmlElement(nsptagname))
         elm.val = val
         return elm

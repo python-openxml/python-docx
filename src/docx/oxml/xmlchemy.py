@@ -423,8 +423,7 @@ class _BaseChildElement:
 
 
 class Choice(_BaseChildElement):
-    """Defines a child element belonging to a group, only one of which may appear as a
-    child."""
+    """Defines a child element belonging to a group, only one of which may appear as a child."""
 
     @property
     def nsptagname(self):

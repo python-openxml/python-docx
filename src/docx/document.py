@@ -5,17 +5,18 @@
 
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Iterator, List
+from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu, Inches, Length
+from docx.text.run import Run
 
 if TYPE_CHECKING:
     import docx.types as t
-    from docx.comments import Comments
+    from docx.comments import Comment, Comments
     from docx.oxml.document import CT_Body, CT_Document
     from docx.parts.document import DocumentPart
     from docx.settings import Settings
@@ -36,6 +37,51 @@ class Document(ElementProxy):
         self._element = element
         self._part = part
         self.__body = None
+
+    def add_comment(
+        self, runs: Run | Sequence[Run], text: str, author: str = "", initials: str | None = ""
+    ) -> Comment:
+        """Add a comment to the document, anchored to the specified runs.
+
+        `runs` can be a single `Run` object or a non-empty sequence of `Run` objects. Only the
+        first and last run of a sequence are used, it's just more convenient to pass a whole
+        sequence when that's what you have handy, like `paragraph.runs` for example. When `runs`
+        contains a single `Run` object, that run serves as both the first and last run.
+
+        A comment can be anchored only on an even run boundary, meaning the text the comment
+        "references" must be a non-zero integer number of consecutive runs. The runs need not be
+        _contiguous_ per se, like the first can be in one paragraph and the last in the next
+        paragraph, but all runs between the first and the last will be included in the reference.
+
+        The comment reference range is delimited by placing a `w:commentRangeStart` element before
+        the first run and a `w:commentRangeEnd` element after the last run. This is why only the
+        first and last run are required and why a single run can serve as both first and last.
+        Word works out which text to highlight in the UI based on these range markers.
+
+        `text` allows the contents of a simple comment to be provided in the call, providing for
+        the common case where a comment is a single phrase or sentence without special formatting
+        such as bold or italics. More complex comments can be added using the returned `Comment`
+        object in much the same way as a `Document` or (table) `Cell` object, using methods like
+        `.add_paragraph()`, .add_run()`, etc.
+
+        The `author` and `initials` parameters allow that metadata to be set for the comment.
+        `author` is a required attribute on a comment and is the empty string by default.
+        `initials` is optional on a comment and may be omitted by passing |None|, but Word adds an
+        `initials` attribute by default and we follow that convention by using the empty string
+        when no `initials` argument is provided.
+        """
+        # -- normalize `runs` to a sequence of runs --
+        runs = [runs] if isinstance(runs, Run) else runs
+        first_run = runs[0]
+        last_run = runs[-1]
+
+        # -- Note that comments can only appear in the document part --
+        comment = self.comments.add_comment(text=text, author=author, initials=initials)
+
+        # -- let the first run orchestrate placement of the comment range start and end --
+        first_run.mark_comment_range(last_run, comment.comment_id)
+
+        return comment
 
     def add_heading(self, text: str = "", level: int = 1):
         """Return a heading paragraph newly added to the end of the document.

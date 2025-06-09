@@ -173,6 +173,13 @@ class Run(StoryChild):
             elif isinstance(item, CT_Drawing):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield Drawing(item, self)
 
+    def mark_comment_range(self, last_run: Run, comment_id: int) -> None:
+        """Mark the range of runs from this run to `last_run` (inclusive) as belonging to a comment.
+
+        `comment_id` identfies the comment that references this range.
+        """
+        raise NotImplementedError
+
     @property
     def style(self) -> CharacterStyle:
         """Read/write.
