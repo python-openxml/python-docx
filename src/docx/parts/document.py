@@ -131,7 +131,13 @@ class DocumentPart(StoryPart):
 
         Creates a default comments part if one is not present.
         """
-        raise NotImplementedError
+        try:
+            return cast(CommentsPart, self.part_related_by(RT.COMMENTS))
+        except KeyError:
+            assert self.package is not None
+            comments_part = CommentsPart.default(self.package)
+            self.relate_to(comments_part, RT.COMMENTS)
+            return comments_part
 
     @property
     def _settings_part(self) -> SettingsPart:
