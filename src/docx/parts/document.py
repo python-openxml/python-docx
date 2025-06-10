@@ -6,6 +6,7 @@ from typing import IO, TYPE_CHECKING, cast
 
 from docx.document import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.parts.comments import CommentsPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
@@ -46,7 +47,7 @@ class DocumentPart(StoryPart):
     @property
     def comments(self) -> Comments:
         """|Comments| object providing access to the comments added to this document."""
-        raise NotImplementedError
+        return self._comments_part.comments
 
     @property
     def core_properties(self) -> CoreProperties:
@@ -123,6 +124,14 @@ class DocumentPart(StoryPart):
         """A |Styles| object providing access to the styles in the styles part of this
         document."""
         return self._styles_part.styles
+
+    @property
+    def _comments_part(self) -> CommentsPart:
+        """A |CommentsPart| object providing access to the comments added to this document.
+
+        Creates a default comments part if one is not present.
+        """
+        raise NotImplementedError
 
     @property
     def _settings_part(self) -> SettingsPart:
