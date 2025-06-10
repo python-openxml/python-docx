@@ -227,6 +227,39 @@ class DescribeDocumentPart:
         styles_.get_style_id.assert_called_once_with(style_, WD_STYLE_TYPE.CHARACTER)
         assert style_id == "BodyCharacter"
 
+    def it_provides_access_to_its_comments_part_to_help(
+        self, package_: Mock, part_related_by_: Mock, comments_part_: Mock
+    ):
+        part_related_by_.return_value = comments_part_
+        document_part = DocumentPart(
+            PackURI("/word/document.xml"), CT.WML_DOCUMENT, element("w:document"), package_
+        )
+
+        comments_part = document_part._comments_part
+
+        part_related_by_.assert_called_once_with(document_part, RT.COMMENTS)
+        assert comments_part is comments_part_
+
+    def and_it_creates_a_default_comments_part_if_not_present(
+        self,
+        package_: Mock,
+        part_related_by_: Mock,
+        CommentsPart_: Mock,
+        comments_part_: Mock,
+        relate_to_: Mock,
+    ):
+        part_related_by_.side_effect = KeyError
+        CommentsPart_.default.return_value = comments_part_
+        document_part = DocumentPart(
+            PackURI("/word/document.xml"), CT.WML_DOCUMENT, element("w:document"), package_
+        )
+
+        comments_part = document_part._comments_part
+
+        CommentsPart_.default.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, comments_part_, RT.COMMENTS)
+        assert comments_part is comments_part_
+
     def it_provides_access_to_its_settings_part_to_help(
         self, part_related_by_: Mock, settings_part_: Mock, package_: Mock
     ):
