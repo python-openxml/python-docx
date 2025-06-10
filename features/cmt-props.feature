@@ -14,7 +14,6 @@ Feature: Get comment properties
      Then comment.author is the author of the comment
 
 
-  @wip
   Scenario: Comment.initials
     Given a Comment object
      Then comment.initials is the initials of the comment author

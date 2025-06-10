@@ -107,6 +107,12 @@ class DescribeComment:
 
         assert comment.author == "Steve Canny"
 
+    def it_knows_the_initials_of_its_author(self, comments_part_: Mock):
+        comment_elm = cast(CT_Comment, element("w:comment{w:id=42,w:initials=SJC}"))
+        comment = Comment(comment_elm, comments_part_)
+
+        assert comment.initials == "SJC"
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture

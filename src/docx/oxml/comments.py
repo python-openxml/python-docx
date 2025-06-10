@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from docx.oxml.simpletypes import ST_DecimalNumber, ST_String
-from docx.oxml.xmlchemy import BaseOxmlElement, RequiredAttribute, ZeroOrMore
+from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore
 
 
 class CT_Comments(BaseOxmlElement):
@@ -36,3 +36,6 @@ class CT_Comment(BaseOxmlElement):
 
     id: int = RequiredAttribute("w:id", ST_DecimalNumber)  # pyright: ignore[reportAssignmentType]
     author: str = RequiredAttribute("w:author", ST_String)  # pyright: ignore[reportAssignmentType]
+    initials: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:initials", ST_String
+    )
