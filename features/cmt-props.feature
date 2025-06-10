@@ -9,7 +9,6 @@ Feature: Get comment properties
      Then comment.comment_id is the comment identifier
 
 
-  @wip
   Scenario: Comment.author
     Given a Comment object
      Then comment.author is the author of the comment
