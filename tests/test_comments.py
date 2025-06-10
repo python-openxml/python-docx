@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Unit test suite for the docx.comments module."""
 
 from __future__ import annotations
@@ -62,6 +64,26 @@ class DescribeComments:
         assert type(comment2) is Comment, "expected a `Comment` object"
         with pytest.raises(StopIteration):
             next(comment_iter)
+
+    def it_can_get_a_comment_by_id(self, package_: Mock):
+        comments_elm = cast(
+            CT_Comments,
+            element("w:comments/(w:comment{w:id=1},w:comment{w:id=2},w:comment{w:id=3})"),
+        )
+        comments = Comments(
+            comments_elm,
+            CommentsPart(
+                PackURI("/word/comments.xml"),
+                CT.WML_COMMENTS,
+                comments_elm,
+                package_,
+            ),
+        )
+
+        comment = comments.get(2)
+
+        assert type(comment) is Comment, "expected a `Comment` object"
+        assert comment._comment_elm is comments_elm.comment_lst[1]
 
     # -- fixtures --------------------------------------------------------------------------------
 
