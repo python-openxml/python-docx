@@ -2,11 +2,21 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from docx.blkcntnr import BlockItemContainer
+
+if TYPE_CHECKING:
+    from docx.oxml.comments import CT_Comments
+    from docx.parts.comments import CommentsPart
 
 
 class Comments:
     """Collection containing the comments added to this document."""
+
+    def __init__(self, comments_elm: CT_Comments, comments_part: CommentsPart):
+        self._comments_elm = comments_elm
+        self._comments_part = comments_part
 
 
 class Comment(BlockItemContainer):
