@@ -62,3 +62,12 @@ class Comment(BlockItemContainer):
     def comment_id(self) -> int:
         """The unique identifier of this comment."""
         return self._comment_elm.id
+
+    @property
+    def initials(self) -> str | None:
+        """Read/write. The recorded initials of the comment author.
+
+        This attribute is optional in the XML, returns |None| if not set. Assigning |None| removes
+        any existing initials from the XML.
+        """
+        return self._comment_elm.initials
