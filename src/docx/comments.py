@@ -52,3 +52,8 @@ class Comment(BlockItemContainer):
     def __init__(self, comment_elm: CT_Comment, comments_part: CommentsPart):
         super().__init__(comment_elm, comments_part)
         self._comment_elm = comment_elm
+
+    @property
+    def comment_id(self) -> int:
+        """The unique identifier of this comment."""
+        return self._comment_elm.id

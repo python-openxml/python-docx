@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore
+from docx.oxml.simpletypes import ST_DecimalNumber
+from docx.oxml.xmlchemy import BaseOxmlElement, RequiredAttribute, ZeroOrMore
 
 
 class CT_Comments(BaseOxmlElement):
@@ -32,3 +33,5 @@ class CT_Comment(BaseOxmlElement):
     While probably most often used for a single sentence or phrase, a comment can contain rich
     content, including multiple rich-text paragraphs, hyperlinks, images, and tables.
     """
+
+    id: int = RequiredAttribute("w:id", ST_DecimalNumber)  # pyright: ignore[reportAssignmentType]
