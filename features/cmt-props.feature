@@ -30,7 +30,6 @@ Feature: Get comment properties
      Then para_text is the text of the first paragraph in the comment
 
 
-  @wip
   Scenario: Retrieve embedded image from a comment
     Given a Comment object containing an embedded image
      Then I can extract the image from the comment

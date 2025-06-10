@@ -1,6 +1,6 @@
 # pyright: reportPrivateUsage=false
 
-"""Unit test suite for the docx.comments module."""
+"""Unit test suite for the `docx.comments` module."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from .unitutil.mock import FixtureRequest, Mock, instance_mock
 
 
 class DescribeComments:
-    """Unit-test suite for `docx.comments.Comments`."""
+    """Unit-test suite for `docx.comments.Comments` objects."""
 
     @pytest.mark.parametrize(
         ("cxml", "count"),
