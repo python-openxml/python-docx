@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from typing_extensions import Self
 
@@ -14,6 +14,10 @@ from docx.oxml.comments import CT_Comments
 from docx.oxml.parser import parse_xml
 from docx.package import Package
 from docx.parts.story import StoryPart
+
+if TYPE_CHECKING:
+    from docx.oxml.comments import CT_Comments
+    from docx.package import Package
 
 
 class CommentsPart(StoryPart):

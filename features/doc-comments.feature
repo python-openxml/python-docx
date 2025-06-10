@@ -5,7 +5,6 @@ Feature: Document.comments
   And I need methods allowing access to the comments in the collection
 
 
-  @wip
   Scenario Outline: Access document comments
     Given a document having <a-or-no> comments part
      Then document.comments is a Comments object

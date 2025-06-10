@@ -8,17 +8,33 @@ import pytest
 
 from docx.comments import Comments
 from docx.opc.constants import CONTENT_TYPE as CT
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.packuri import PackURI
+from docx.opc.part import PartFactory
 from docx.oxml.comments import CT_Comments
 from docx.package import Package
 from docx.parts.comments import CommentsPart
 
 from ..unitutil.cxml import element
-from ..unitutil.mock import FixtureRequest, Mock, class_mock, instance_mock
+from ..unitutil.mock import FixtureRequest, Mock, class_mock, instance_mock, method_mock
 
 
 class DescribeCommentsPart:
     """Unit test suite for `docx.parts.comments.CommentsPart` objects."""
+
+    def it_is_used_by_the_part_loader_to_construct_a_comments_part(
+        self, package_: Mock, CommentsPart_load_: Mock, comments_part_: Mock
+    ):
+        partname = PackURI("/word/comments.xml")
+        content_type = CT.WML_COMMENTS
+        reltype = RT.COMMENTS
+        blob = b"<w:comments/>"
+        CommentsPart_load_.return_value = comments_part_
+
+        part = PartFactory(partname, content_type, reltype, blob, package_)
+
+        CommentsPart_load_.assert_called_once_with(partname, content_type, blob, package_)
+        assert part is comments_part_
 
     def it_provides_access_to_its_comments_collection(
         self, Comments_: Mock, comments_: Mock, package_: Mock
@@ -57,6 +73,14 @@ class DescribeCommentsPart:
     @pytest.fixture
     def comments_(self, request: FixtureRequest) -> Mock:
         return instance_mock(request, Comments)
+
+    @pytest.fixture
+    def comments_part_(self, request: FixtureRequest) -> Mock:
+        return instance_mock(request, CommentsPart)
+
+    @pytest.fixture
+    def CommentsPart_load_(self, request: FixtureRequest) -> Mock:
+        return method_mock(request, CommentsPart, "load", autospec=False)
 
     @pytest.fixture
     def package_(self, request: FixtureRequest) -> Mock:
