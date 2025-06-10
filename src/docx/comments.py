@@ -54,6 +54,11 @@ class Comment(BlockItemContainer):
         self._comment_elm = comment_elm
 
     @property
+    def author(self) -> str:
+        """The recorded author of this comment."""
+        return self._comment_elm.author
+
+    @property
     def comment_id(self) -> int:
         """The unique identifier of this comment."""
         return self._comment_elm.id

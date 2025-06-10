@@ -101,6 +101,12 @@ class DescribeComment:
 
         assert comment.comment_id == 42
 
+    def it_knows_its_author(self, comments_part_: Mock):
+        comment_elm = cast(CT_Comment, element("w:comment{w:id=42,w:author=Steve Canny}"))
+        comment = Comment(comment_elm, comments_part_)
+
+        assert comment.author == "Steve Canny"
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture
