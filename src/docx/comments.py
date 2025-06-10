@@ -18,6 +18,10 @@ class Comments:
         self._comments_elm = comments_elm
         self._comments_part = comments_part
 
+    def __len__(self) -> int:
+        """The number of comments in this collection."""
+        return len(self._comments_elm.comment_lst)
+
 
 class Comment(BlockItemContainer):
     """Proxy for a single comment in the document.

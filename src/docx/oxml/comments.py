@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from docx.oxml.xmlchemy import BaseOxmlElement
+from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore
 
 
 class CT_Comments(BaseOxmlElement):
@@ -12,4 +12,18 @@ class CT_Comments(BaseOxmlElement):
     contained comment is identified by a unique `w:id` attribute, used to reference the comment
     from the document text. The offset of the comment in this collection is arbitrary; it is
     essentially a _set_ implemented as a list.
+    """
+
+    # -- type-declarations to fill in the gaps for metaclass-added methods --
+    comment_lst: list[CT_Comment]
+
+    comment = ZeroOrMore("w:comment")
+
+
+class CT_Comment(BaseOxmlElement):
+    """`w:comment` element, representing a single comment.
+
+    A comment is a so-called "story" and can contain paragraphs and tables much like a table-cell.
+    While probably most often used for a single sentence or phrase, a comment can contain rich
+    content, including multiple rich-text paragraphs, hyperlinks, images, and tables.
     """
