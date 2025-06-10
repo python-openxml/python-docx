@@ -209,6 +209,26 @@ class DescribeComment:
 
         assert comment.timestamp == dt.datetime(2023, 10, 1, 12, 34, 56, tzinfo=dt.timezone.utc)
 
+    @pytest.mark.parametrize(
+        ("cxml", "expected_value"),
+        [
+            ("w:comment{w:id=42}", ""),
+            ('w:comment{w:id=42}/w:p/w:r/w:t"Comment text."', "Comment text."),
+            (
+                'w:comment{w:id=42}/(w:p/w:r/w:t"First para",w:p/w:r/w:t"Second para")',
+                "First para\nSecond para",
+            ),
+            (
+                'w:comment{w:id=42}/(w:p/w:r/w:t"First para",w:p,w:p/w:r/w:t"Second para")',
+                "First para\n\nSecond para",
+            ),
+        ],
+    )
+    def it_can_summarize_its_content_as_text(
+        self, cxml: str, expected_value: str, comments_part_: Mock
+    ):
+        assert Comment(cast(CT_Comment, element(cxml)), comments_part_).text == expected_value
+
     def it_provides_access_to_the_paragraphs_it_contains(self, comments_part_: Mock):
         comment_elm = cast(
             CT_Comment,
