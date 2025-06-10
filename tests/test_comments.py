@@ -6,7 +6,7 @@ from typing import cast
 
 import pytest
 
-from docx.comments import Comments
+from docx.comments import Comment, Comments
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.packuri import PackURI
 from docx.oxml.comments import CT_Comments
@@ -41,6 +41,27 @@ class DescribeComments:
         )
 
         assert len(comments) == count
+
+    def it_is_iterable_over_the_comments_it_contains(self, package_: Mock):
+        comments_elm = cast(CT_Comments, element("w:comments/(w:comment,w:comment)"))
+        comments = Comments(
+            comments_elm,
+            CommentsPart(
+                PackURI("/word/comments.xml"),
+                CT.WML_COMMENTS,
+                comments_elm,
+                package_,
+            ),
+        )
+
+        comment_iter = iter(comments)
+
+        comment1 = next(comment_iter)
+        assert type(comment1) is Comment, "expected a `Comment` object"
+        comment2 = next(comment_iter)
+        assert type(comment2) is Comment, "expected a `Comment` object"
+        with pytest.raises(StopIteration):
+            next(comment_iter)
 
     # -- fixtures --------------------------------------------------------------------------------
 
