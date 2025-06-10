@@ -11,7 +11,7 @@ import pytest
 from docx.comments import Comment, Comments
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.packuri import PackURI
-from docx.oxml.comments import CT_Comments
+from docx.oxml.comments import CT_Comment, CT_Comments
 from docx.package import Package
 from docx.parts.comments import CommentsPart
 
@@ -90,3 +90,19 @@ class DescribeComments:
     @pytest.fixture
     def package_(self, request: FixtureRequest):
         return instance_mock(request, Package)
+
+
+class DescribeComment:
+    """Unit-test suite for `docx.comments.Comment`."""
+
+    def it_knows_its_comment_id(self, comments_part_: Mock):
+        comment_elm = cast(CT_Comment, element("w:comment{w:id=42}"))
+        comment = Comment(comment_elm, comments_part_)
+
+        assert comment.comment_id == 42
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture
+    def comments_part_(self, request: FixtureRequest):
+        return instance_mock(request, CommentsPart)

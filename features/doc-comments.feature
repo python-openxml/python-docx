@@ -30,7 +30,6 @@ Feature: Document.comments
      Then iterating comments yields 4 Comment objects
 
 
-  @wip
   Scenario: Comments.get()
     Given a Comments object with 4 comments
      When I call comments.get(2)
