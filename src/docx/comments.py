@@ -29,6 +29,11 @@ class Comments:
         """The number of comments in this collection."""
         return len(self._comments_elm.comment_lst)
 
+    def get(self, comment_id: int) -> Comment | None:
+        """Return the comment identified by `comment_id`, or |None| if not found."""
+        comment_elm = self._comments_elm.get_comment_by_id(comment_id)
+        return Comment(comment_elm, self._comments_part) if comment_elm is not None else None
+
 
 class Comment(BlockItemContainer):
     """Proxy for a single comment in the document.

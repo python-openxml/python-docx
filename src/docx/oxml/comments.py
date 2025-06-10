@@ -19,6 +19,11 @@ class CT_Comments(BaseOxmlElement):
 
     comment = ZeroOrMore("w:comment")
 
+    def get_comment_by_id(self, comment_id: int) -> CT_Comment | None:
+        """Return the `w:comment` element identified by `comment_id`, or |None| if not found."""
+        comment_elms = self.xpath(f"(./w:comment[@w:id='{comment_id}'])[1]")
+        return comment_elms[0] if comment_elms else None
+
 
 class CT_Comment(BaseOxmlElement):
     """`w:comment` element, representing a single comment.
