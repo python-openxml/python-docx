@@ -15,6 +15,7 @@ from docx.shape import InlineShapes
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from docx.comments import Comments
     from docx.enum.style import WD_STYLE_TYPE
     from docx.opc.coreprops import CoreProperties
     from docx.settings import Settings
@@ -41,6 +42,11 @@ class DocumentPart(StoryPart):
         header_part = HeaderPart.new(self.package)
         rId = self.relate_to(header_part, RT.HEADER)
         return header_part, rId
+
+    @property
+    def comments(self) -> Comments:
+        """|Comments| object providing access to the comments added to this document."""
+        raise NotImplementedError
 
     @property
     def core_properties(self) -> CoreProperties:

@@ -83,6 +83,8 @@ rst_epilog = """
 
 .. |CharacterStyle| replace:: :class:`.CharacterStyle`
 
+.. |Comments| replace:: :class:`.Comments`
+
 .. |Cm| replace:: :class:`.Cm`
 
 .. |ColorFormat| replace:: :class:`.ColorFormat`
