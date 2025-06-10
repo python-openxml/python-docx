@@ -178,7 +178,12 @@ class Run(StoryChild):
 
         `comment_id` identfies the comment that references this range.
         """
-        raise NotImplementedError
+        # -- insert `w:commentRangeStart` with `comment_id` before this (first) run --
+        self._r.insert_comment_range_start_above(comment_id)
+
+        # -- insert `w:commentRangeEnd` and `w:commentReference` run with `comment_id` after
+        # -- `last_run`
+        last_run._r.insert_comment_range_end_and_reference_below(comment_id)
 
     @property
     def style(self) -> CharacterStyle:
