@@ -63,6 +63,17 @@ def when_I_assign_comment_eq_comments_add_comment_with_author_and_initials(conte
     context.comment = context.comments.add_comment(author="John Doe", initials="JD")
 
 
+@when('I assign comment = document.add_comment(runs, "A comment", "John Doe", "JD")')
+def when_I_assign_comment_eq_document_add_comment(context: Context):
+    runs = list(context.document.paragraphs[0].runs)
+    context.comment = context.document.add_comment(
+        runs=runs,
+        text="A comment",
+        author="John Doe",
+        initials="JD",
+    )
+
+
 @when('I assign "{initials}" to comment.initials')
 def when_I_assign_initials(context: Context, initials: str):
     context.comment.initials = initials
@@ -98,16 +109,21 @@ def when_I_call_comments_get_2(context: Context):
 # then =====================================================
 
 
-@then("comment.author is the author of the comment")
-def then_comment_author_is_the_author_of_the_comment(context: Context):
-    actual = context.comment.author
-    assert actual == "Steve Canny", f"expected author 'Steve Canny', got '{actual}'"
+@then("comment is a Comment object")
+def then_comment_is_a_Comment_object(context: Context):
+    assert type(context.comment) is Comment
 
 
 @then('comment.author == "{author}"')
 def then_comment_author_eq_author(context: Context, author: str):
     actual = context.comment.author
     assert actual == author, f"expected author '{author}', got '{actual}'"
+
+
+@then("comment.author is the author of the comment")
+def then_comment_author_is_the_author_of_the_comment(context: Context):
+    actual = context.comment.author
+    assert actual == "Steve Canny", f"expected author 'Steve Canny', got '{actual}'"
 
 
 @then("comment.comment_id == 0")
@@ -144,6 +160,13 @@ def then_comment_paragraphs_idx_style_name_eq_style(context: Context, idx: str, 
     actual = context.comment.paragraphs[int(idx)]._p.style
     expected = style
     assert actual == expected, f"expected style name '{expected}', got '{actual}'"
+
+
+@then('comment.text == "{text}"')
+def then_comment_text_eq_text(context: Context, text: str):
+    actual = context.comment.text
+    expected = text
+    assert actual == expected, f"expected text '{expected}', got '{actual}'"
 
 
 @then("comment.timestamp is the date and time the comment was authored")
