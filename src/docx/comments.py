@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import TYPE_CHECKING, Iterator
 
 from docx.blkcntnr import BlockItemContainer
@@ -71,3 +72,11 @@ class Comment(BlockItemContainer):
         any existing initials from the XML.
         """
         return self._comment_elm.initials
+
+    @property
+    def timestamp(self) -> dt.datetime | None:
+        """The date and time this comment was authored.
+
+        This attribute is optional in the XML, returns |None| if not set.
+        """
+        return self._comment_elm.date

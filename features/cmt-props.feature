@@ -19,7 +19,6 @@ Feature: Get comment properties
      Then comment.initials is the initials of the comment author
 
 
-  @wip
   Scenario: Comment.timestamp
     Given a Comment object
      Then comment.timestamp is the date and time the comment was authored
