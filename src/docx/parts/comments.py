@@ -19,10 +19,16 @@ from docx.parts.story import StoryPart
 class CommentsPart(StoryPart):
     """Container part for comments added to the document."""
 
+    def __init__(
+        self, partname: PackURI, content_type: str, element: CT_Comments, package: Package
+    ):
+        super().__init__(partname, content_type, element, package)
+        self._comments = element
+
     @property
     def comments(self) -> Comments:
         """A |Comments| proxy object for the `w:comments` root element of this part."""
-        raise NotImplementedError
+        return Comments(self._comments, self)
 
     @classmethod
     def default(cls, package: Package) -> Self:
