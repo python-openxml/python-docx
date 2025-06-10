@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 import datetime as dt
+from typing import TYPE_CHECKING, Callable
 
 from docx.oxml.simpletypes import ST_DateTime, ST_DecimalNumber, ST_String
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore
+
+if TYPE_CHECKING:
+    from docx.oxml.table import CT_Tbl
+    from docx.oxml.text.paragraph import CT_P
 
 
 class CT_Comments(BaseOxmlElement):
@@ -36,6 +41,7 @@ class CT_Comment(BaseOxmlElement):
     content, including multiple rich-text paragraphs, hyperlinks, images, and tables.
     """
 
+    # -- attributes on `w:comment` --
     id: int = RequiredAttribute("w:id", ST_DecimalNumber)  # pyright: ignore[reportAssignmentType]
     author: str = RequiredAttribute("w:author", ST_String)  # pyright: ignore[reportAssignmentType]
     initials: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
@@ -44,3 +50,20 @@ class CT_Comment(BaseOxmlElement):
     date: dt.datetime | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:date", ST_DateTime
     )
+
+    # -- children --
+
+    p = ZeroOrMore("w:p", successors=())
+    tbl = ZeroOrMore("w:tbl", successors=())
+
+    # -- type-declarations for methods added by metaclass --
+
+    add_p: Callable[[], CT_P]
+    p_lst: list[CT_P]
+    tbl_lst: list[CT_Tbl]
+    _insert_tbl: Callable[[CT_Tbl], CT_Tbl]
+
+    @property
+    def inner_content_elements(self) -> list[CT_P | CT_Tbl]:
+        """Generate all `w:p` and `w:tbl` elements in this comment."""
+        return self.xpath("./w:p | ./w:tbl")
