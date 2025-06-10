@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import cast
 
 import pytest
@@ -112,6 +113,15 @@ class DescribeComment:
         comment = Comment(comment_elm, comments_part_)
 
         assert comment.initials == "SJC"
+
+    def it_knows_the_date_and_time_it_was_authored(self, comments_part_: Mock):
+        comment_elm = cast(
+            CT_Comment,
+            element("w:comment{w:id=42,w:date=2023-10-01T12:34:56Z}"),
+        )
+        comment = Comment(comment_elm, comments_part_)
+
+        assert comment.timestamp == dt.datetime(2023, 10, 1, 12, 34, 56, tzinfo=dt.timezone.utc)
 
     # -- fixtures --------------------------------------------------------------------------------
 

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from docx.oxml.simpletypes import ST_DecimalNumber, ST_String
+import datetime as dt
+
+from docx.oxml.simpletypes import ST_DateTime, ST_DecimalNumber, ST_String
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, RequiredAttribute, ZeroOrMore
 
 
@@ -38,4 +40,7 @@ class CT_Comment(BaseOxmlElement):
     author: str = RequiredAttribute("w:author", ST_String)  # pyright: ignore[reportAssignmentType]
     initials: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "w:initials", ST_String
+    )
+    date: dt.datetime | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:date", ST_DateTime
     )
