@@ -25,7 +25,6 @@ Feature: Document.comments
       | 4    |
 
 
-  @wip
   Scenario: Comments.__iter__()
     Given a Comments object with 4 comments
      Then iterating comments yields 4 Comment objects

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 from docx.blkcntnr import BlockItemContainer
 
 if TYPE_CHECKING:
-    from docx.oxml.comments import CT_Comments
+    from docx.oxml.comments import CT_Comment, CT_Comments
     from docx.parts.comments import CommentsPart
 
 
@@ -17,6 +17,13 @@ class Comments:
     def __init__(self, comments_elm: CT_Comments, comments_part: CommentsPart):
         self._comments_elm = comments_elm
         self._comments_part = comments_part
+
+    def __iter__(self) -> Iterator[Comment]:
+        """Iterator over the comments in this collection."""
+        return (
+            Comment(comment_elm, self._comments_part)
+            for comment_elm in self._comments_elm.comment_lst
+        )
 
     def __len__(self) -> int:
         """The number of comments in this collection."""
@@ -36,3 +43,7 @@ class Comment(BlockItemContainer):
     Note that certain content like tables may not be displayed in the Word comment sidebar due to
     space limitations. Such "over-sized" content can still be viewed in the review pane.
     """
+
+    def __init__(self, comment_elm: CT_Comment, comments_part: CommentsPart):
+        super().__init__(comment_elm, comments_part)
+        self._comment_elm = comment_elm
