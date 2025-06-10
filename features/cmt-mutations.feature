@@ -47,14 +47,12 @@ Feature: Comment mutations
      Then run.iter_inner_content() yields a single Picture drawing
 
 
-  @wip
   Scenario: update Comment.author
     Given a Comment object
      When I assign "Jane Smith" to comment.author
      Then comment.author == "Jane Smith"
 
 
-  @wip
   Scenario: update Comment.initials
     Given a Comment object
      When I assign "JS" to comment.initials
