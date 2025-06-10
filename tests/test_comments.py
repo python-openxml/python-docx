@@ -153,6 +153,14 @@ class DescribeComments:
         assert [p.text for p in comment.paragraphs] == ["para 1", "", "para 2"]
         assert all(p._p.style == "CommentText" for p in comment.paragraphs)
 
+    def and_it_sets_the_author_and_their_initials_when_adding_a_comment_when_provided(
+        self, comments: Comments, package_: Mock
+    ):
+        comment = comments.add_comment(author="Steve Canny", initials="SJC")
+
+        assert comment.author == "Steve Canny"
+        assert comment.initials == "SJC"
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture
@@ -212,6 +220,33 @@ class DescribeComment:
 
         assert len(paragraphs) == 2
         assert [para.text for para in paragraphs] == ["First para", "Second para"]
+
+    def it_can_update_the_comment_author(self, comments_part_: Mock):
+        comment_elm = cast(CT_Comment, element("w:comment{w:id=42,w:author=Old Author}"))
+        comment = Comment(comment_elm, comments_part_)
+
+        comment.author = "New Author"
+
+        assert comment.author == "New Author"
+
+    @pytest.mark.parametrize(
+        "initials",
+        [
+            # -- valid initials --
+            "XYZ",
+            # -- empty string is valid
+            "",
+            # -- None is valid, removes existing initials
+            None,
+        ],
+    )
+    def it_can_update_the_comment_initials(self, initials: str | None, comments_part_: Mock):
+        comment_elm = cast(CT_Comment, element("w:comment{w:id=42,w:initials=ABC}"))
+        comment = Comment(comment_elm, comments_part_)
+
+        comment.initials = initials
+
+        assert comment.initials == initials
 
     # -- fixtures --------------------------------------------------------------------------------
 

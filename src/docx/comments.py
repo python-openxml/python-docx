@@ -116,8 +116,15 @@ class Comment(BlockItemContainer):
 
     @property
     def author(self) -> str:
-        """The recorded author of this comment."""
+        """Read/write. The recorded author of this comment.
+
+        This field is required but can be set to the empty string.
+        """
         return self._comment_elm.author
+
+    @author.setter
+    def author(self, value: str):
+        self._comment_elm.author = value
 
     @property
     def comment_id(self) -> int:
@@ -132,6 +139,10 @@ class Comment(BlockItemContainer):
         any existing initials from the XML.
         """
         return self._comment_elm.initials
+
+    @initials.setter
+    def initials(self, value: str | None):
+        self._comment_elm.initials = value
 
     @property
     def timestamp(self) -> dt.datetime | None:
