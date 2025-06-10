@@ -13,6 +13,7 @@ from docx.comments import Comment, Comments
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.packuri import PackURI
 from docx.oxml.comments import CT_Comment, CT_Comments
+from docx.oxml.ns import qn
 from docx.package import Package
 from docx.parts.comments import CommentsPart
 
@@ -86,7 +87,84 @@ class DescribeComments:
         assert type(comment) is Comment, "expected a `Comment` object"
         assert comment._comment_elm is comments_elm.comment_lst[1]
 
+    def but_it_returns_None_when_no_comment_with_that_id_exists(self, package_: Mock):
+        comments_elm = cast(
+            CT_Comments,
+            element("w:comments/(w:comment{w:id=1},w:comment{w:id=2},w:comment{w:id=3})"),
+        )
+        comments = Comments(
+            comments_elm,
+            CommentsPart(
+                PackURI("/word/comments.xml"),
+                CT.WML_COMMENTS,
+                comments_elm,
+                package_,
+            ),
+        )
+
+        comment = comments.get(4)
+
+        assert comment is None, "expected None when no comment with that id exists"
+
+    def it_can_add_a_new_comment(self, package_: Mock):
+        comments_elm = cast(CT_Comments, element("w:comments"))
+        comments_part = CommentsPart(
+            PackURI("/word/comments.xml"),
+            CT.WML_COMMENTS,
+            comments_elm,
+            package_,
+        )
+        now_before = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
+        comments = Comments(comments_elm, comments_part)
+
+        comment = comments.add_comment()
+
+        now_after = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
+        # -- a comment is unconditionally added, and returned for any further adjustment --
+        assert isinstance(comment, Comment)
+        # -- it is "linked" to the comments part so it can add images and hyperlinks, etc. --
+        assert comment.part is comments_part
+        # -- comment numbering starts at 0, and is incremented for each new comment --
+        assert comment.comment_id == 0
+        # -- author is a required attribut, but is the empty string by default --
+        assert comment.author == ""
+        # -- initials is an optional attribute, but defaults to the empty string, same as Word --
+        assert comment.initials == ""
+        # -- timestamp is also optional, but defaults to now-UTC --
+        assert comment.timestamp is not None
+        assert now_before <= comment.timestamp <= now_after
+        # -- by default, a new comment contains a single empty paragraph --
+        assert [p.text for p in comment.paragraphs] == [""]
+        # -- that paragraph has the "CommentText" style, same as Word applies --
+        comment_elm = comment._comment_elm
+        assert len(comment_elm.p_lst) == 1
+        p = comment_elm.p_lst[0]
+        assert p.style == "CommentText"
+        # -- and that paragraph contains a single run with the necessary annotation reference --
+        assert len(p.r_lst) == 1
+        r = comment_elm.p_lst[0].r_lst[0]
+        assert r.style == "CommentReference"
+        assert r[-1].tag == qn("w:annotationRef")
+
+    def and_it_can_add_text_to_the_comment_when_adding_it(self, comments: Comments, package_: Mock):
+        comment = comments.add_comment(text="para 1\n\npara 2")
+
+        assert len(comment.paragraphs) == 3
+        assert [p.text for p in comment.paragraphs] == ["para 1", "", "para 2"]
+        assert all(p._p.style == "CommentText" for p in comment.paragraphs)
+
     # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture
+    def comments(self, package_: Mock) -> Comments:
+        comments_elm = cast(CT_Comments, element("w:comments"))
+        comments_part = CommentsPart(
+            PackURI("/word/comments.xml"),
+            CT.WML_COMMENTS,
+            comments_elm,
+            package_,
+        )
+        return Comments(comments_elm, comments_part)
 
     @pytest.fixture
     def package_(self, request: FixtureRequest):

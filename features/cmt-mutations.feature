@@ -4,7 +4,6 @@ Feature: Comment mutations
   I need mutation methods on Comment objects
 
 
-  @wip
   Scenario: Comments.add_comment()
     Given a Comments object with 0 comments
      When I assign comment = comments.add_comment()
@@ -15,7 +14,6 @@ Feature: Comment mutations
       And comments.get(0) == comment
 
 
-  @wip
   Scenario: Comments.add_comment() specifying author and initials
     Given a Comments object with 0 comments
      When I assign comment = comments.add_comment(author="John Doe", initials="JD")
@@ -23,7 +21,6 @@ Feature: Comment mutations
       And comment.initials == "JD"
 
 
-  @wip
   Scenario: Comment.add_paragraph() specifying text and style
     Given a default Comment object
      When I assign paragraph = comment.add_paragraph(text, style)
@@ -33,7 +30,6 @@ Feature: Comment mutations
       And comment.paragraphs[-1] == paragraph
 
 
-  @wip
   Scenario: Comment.add_paragraph() not specifying text or style
     Given a default Comment object
      When I assign paragraph = comment.add_paragraph()
@@ -43,7 +39,6 @@ Feature: Comment mutations
       And comment.paragraphs[-1] == paragraph
 
 
-  @wip
   Scenario: Add image to comment
     Given a default Comment object
      When I assign paragraph = comment.add_paragraph()
