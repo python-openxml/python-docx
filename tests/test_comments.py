@@ -123,6 +123,18 @@ class DescribeComment:
 
         assert comment.timestamp == dt.datetime(2023, 10, 1, 12, 34, 56, tzinfo=dt.timezone.utc)
 
+    def it_provides_access_to_the_paragraphs_it_contains(self, comments_part_: Mock):
+        comment_elm = cast(
+            CT_Comment,
+            element('w:comment{w:id=42}/(w:p/w:r/w:t"First para",w:p/w:r/w:t"Second para")'),
+        )
+        comment = Comment(comment_elm, comments_part_)
+
+        paragraphs = comment.paragraphs
+
+        assert len(paragraphs) == 2
+        assert [para.text for para in paragraphs] == ["First para", "Second para"]
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture

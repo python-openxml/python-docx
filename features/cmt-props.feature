@@ -24,7 +24,6 @@ Feature: Get comment properties
      Then comment.timestamp is the date and time the comment was authored
 
 
-  @wip
   Scenario: Comment.paragraphs[0].text
     Given a Comment object
      When I assign para_text = comment.paragraphs[0].text
