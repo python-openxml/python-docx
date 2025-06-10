@@ -4,7 +4,6 @@ Feature: Add a comment to a document
   I need a way to add a comment specifying both its content and its reference
 
 
-  @wip
   Scenario: Document.add_comment(runs, text, author, initials)
     Given a document having a comments part
      When I assign comment = document.add_comment(runs, "A comment", "John Doe", "JD")
