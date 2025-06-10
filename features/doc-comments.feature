@@ -15,7 +15,6 @@ Feature: Document.comments
       | no      |
 
 
-  @wip
   Scenario Outline: Comments.__len__()
     Given a Comments object with <count> comments
      Then len(comments) == <count>
