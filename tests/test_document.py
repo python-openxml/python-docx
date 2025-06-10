@@ -9,6 +9,7 @@ from typing import cast
 
 import pytest
 
+from docx.comments import Comments
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -164,6 +165,12 @@ class DescribeDocument:
 
         document_part_.save.assert_called_once_with("foobar.docx")
 
+    def it_provides_access_to_the_comments(self, document_part_: Mock, comments_: Mock):
+        document_part_.comments = comments_
+        document = Document(cast(CT_Document, element("w:document")), document_part_)
+
+        assert document.comments is comments_
+
     def it_provides_access_to_its_core_properties(
         self, document_part_: Mock, core_properties_: Mock
     ):
@@ -280,6 +287,10 @@ class DescribeDocument:
     @pytest.fixture
     def body_prop_(self, request: FixtureRequest):
         return property_mock(request, Document, "_body")
+
+    @pytest.fixture
+    def comments_(self, request: FixtureRequest):
+        return instance_mock(request, Comments)
 
     @pytest.fixture
     def core_properties_(self, request: FixtureRequest):

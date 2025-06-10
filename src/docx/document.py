@@ -15,6 +15,7 @@ from docx.shared import ElementProxy, Emu, Inches, Length
 
 if TYPE_CHECKING:
     import docx.types as t
+    from docx.comments import Comments
     from docx.oxml.document import CT_Body, CT_Document
     from docx.parts.document import DocumentPart
     from docx.settings import Settings
@@ -105,6 +106,11 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+
+    @property
+    def comments(self) -> Comments:
+        """A |Comments| object providing access to comments added to the document."""
+        return self._part.comments
 
     @property
     def core_properties(self):
