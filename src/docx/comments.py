@@ -150,7 +150,7 @@ class Comment(BlockItemContainer):
 
         Only content in paragraphs is included and of course all emphasis and styling is stripped.
 
-        Paragraph boundaries are indicated with a newline ("\n")
+        Paragraph boundaries are indicated with a newline (`"\\\\n"`)
         """
         return "\n".join(p.text for p in self.paragraphs)
 

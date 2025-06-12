@@ -30,7 +30,22 @@ dynamic = ["version"]
 keywords = ["docx", "office", "openxml", "word"]
 license = { text = "MIT" }
 readme = "README.md"
-requires-python = ">=3.9"
+# requires-python = ">=3.9"
+requires-python = ">=3.9,<3.10"
+
+[dependency-groups]
+dev = [
+    "Jinja2==2.11.3",
+    "MarkupSafe==0.23",
+    "Sphinx==1.8.6",
+    "alabaster<0.7.14",
+    "behave>=1.2.6",
+    "pyparsing>=3.2.3",
+    "pyright>=1.1.401",
+    "pytest>=8.4.0",
+    "ruff>=0.11.13",
+    "types-lxml-multi-subclass>=2025.3.30",
+]
 
 [project.urls]
 Changelog = "https://github.com/python-openxml/python-docx/blob/master/HISTORY.rst"
@@ -109,12 +124,3 @@ known-local-folder = ["helpers"]
 [tool.setuptools.dynamic]
 version = {attr = "docx.__version__"}
 
-[dependency-groups]
-dev = [
-    "behave>=1.2.6",
-    "pyparsing>=3.2.3",
-    "pyright>=1.1.401",
-    "pytest>=8.4.0",
-    "ruff>=0.11.13",
-    "types-lxml-multi-subclass>=2025.3.30",
-]
