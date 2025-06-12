@@ -39,7 +39,11 @@ class Document(ElementProxy):
         self.__body = None
 
     def add_comment(
-        self, runs: Run | Sequence[Run], text: str, author: str = "", initials: str | None = ""
+        self,
+        runs: Run | Sequence[Run],
+        text: str | None = "",
+        author: str = "",
+        initials: str | None = "",
     ) -> Comment:
         """Add a comment to the document, anchored to the specified runs.
 

@@ -83,8 +83,6 @@ rst_epilog = """
 
 .. |CharacterStyle| replace:: :class:`.CharacterStyle`
 
-.. |Comments| replace:: :class:`.Comments`
-
 .. |Cm| replace:: :class:`.Cm`
 
 .. |ColorFormat| replace:: :class:`.ColorFormat`
@@ -92,6 +90,10 @@ rst_epilog = """
 .. |_Column| replace:: :class:`._Column`
 
 .. |_Columns| replace:: :class:`._Columns`
+
+.. |Comment| replace:: :class:`.Comment`
+
+.. |Comments| replace:: :class:`.Comments`
 
 .. |CoreProperties| replace:: :class:`.CoreProperties`
 
