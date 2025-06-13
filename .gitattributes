@@ -1,0 +1,2 @@
+tests/test_files/** -text
+docx/templates/** -text
