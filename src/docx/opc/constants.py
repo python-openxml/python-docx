@@ -31,6 +31,7 @@ class CONTENT_TYPE:
     OFC_THEME_OVERRIDE = "application/vnd.openxmlformats-officedocument.themeOverride+xml"
     OFC_VML_DRAWING = "application/vnd.openxmlformats-officedocument.vmlDrawing"
     OPC_CORE_PROPERTIES = "application/vnd.openxmlformats-package.core-properties+xml"
+    OPC_CUSTOM_PROPERTIES = "application/vnd.openxmlformats-officedocument.custom-properties+xml"
     OPC_DIGITAL_SIGNATURE_CERTIFICATE = (
         "application/vnd.openxmlformats-package.digital-signature-certificate"
     )
