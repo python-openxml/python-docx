@@ -44,6 +44,7 @@ dev = [
     "pytest>=8.4.0",
     "ruff>=0.11.13",
     "tox>=4.26.0",
+    "twine>=6.1.0",
     "types-lxml-multi-subclass>=2025.3.30",
 ]
 
