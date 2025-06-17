@@ -23,4 +23,6 @@ pip install python-docx
 'It was a dark and stormy night.'
 ```
 
+Python Docx was originally created by [Mike MacCana](https://mikemaccana.com/).
+
 More information is available in the [python-docx documentation](https://python-docx.readthedocs.org/en/latest/)
