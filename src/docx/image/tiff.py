@@ -236,6 +236,8 @@ class _AsciiIfdEntry(_IfdEntry):
         The length of the string, including a terminating '\x00' (NUL) character, is in
         `value_count`.
         """
+        if value_count <= 4:
+            return stream_rdr.read_str(value_count - 1, offset + 8)
         return stream_rdr.read_str(value_count - 1, value_offset)
 
 
