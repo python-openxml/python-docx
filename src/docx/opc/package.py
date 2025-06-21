@@ -174,9 +174,15 @@ class OpcPackage:
         try:
             return cast(CorePropertiesPart, self.part_related_by(RT.CORE_PROPERTIES))
         except KeyError:
-            core_properties_part = CorePropertiesPart.default(self)
-            self.relate_to(core_properties_part, RT.CORE_PROPERTIES)
-            return core_properties_part
+            try:
+                office_document_part = self.part_related_by(RT.CORE_PROPERTIES_OFFICEDOCUMENT)
+                rel = self.relate_to(office_document_part, RT.CORE_PROPERTIES_OFFICEDOCUMENT)
+                self.rels[rel].reltype = RT.CORE_PROPERTIES
+                return cast(CorePropertiesPart, office_document_part)
+            except KeyError:
+                core_properties_part = CorePropertiesPart.default(self)
+                self.relate_to(core_properties_part, RT.CORE_PROPERTIES)
+                return core_properties_part
 
 
 class Unmarshaller:
