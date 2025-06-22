@@ -250,5 +250,13 @@ class _SerializedRelationships:
         if rels_item_xml is not None:
             rels_elm = parse_xml(rels_item_xml)
             for rel_elm in rels_elm.Relationship_lst:
+                # Null target
+                if rel_elm.target_ref in ("../NULL", "NULL"):
+                    continue
+                # Internal bookmarks
+                if rel_elm.target_ref.startswith("#_") or rel_elm.target_ref.startswith(
+                    "#"
+                ):
+                    continue
                 srels._srels.append(_SerializedRelationship(baseURI, rel_elm))
         return srels
