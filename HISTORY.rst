@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+Unreleased
+++++++++++
+
+* **Fixed** – Issues #1497 / #1494: adding an image whose header reports
+  `dpi = 0` now falls back to `72 dpi` instead of raising
+  `ZeroDivisionError` when using `Document.add_picture()`.
+
+
 1.2.0 (2025-06-16)
 ++++++++++++++++++
 

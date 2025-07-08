@@ -87,19 +87,27 @@ class Image:
 
     @property
     def horz_dpi(self) -> int:
-        """Integer dots per inch for the width of this image.
-
-        Defaults to 72 when not present in the file, as is often the case.
         """
-        return self._image_header.horz_dpi
+        Horizontal DPI reported for this image.  Returns the header value
+        unless it is `None` **or** `0`, in which case it defaults to
+        72 dpi, matching Word's internal assumption.
+        """
+        dpi = self._image_header.horz_dpi
+        if dpi in (None, 0):
+            return 72
+        return dpi
 
     @property
     def vert_dpi(self) -> int:
-        """Integer dots per inch for the height of this image.
-
-        Defaults to 72 when not present in the file, as is often the case.
         """
-        return self._image_header.vert_dpi
+        Vertical DPI reported for this image.  Returns the header value
+        unless it is `None` **or** `0`, in which case it defaults to
+        72 dpi, matching Word's internal assumption.
+        """
+        dpi = self._image_header.vert_dpi
+        if dpi in (None, 0):
+            return 72
+        return dpi
 
     @property
     def width(self) -> Inches:
@@ -219,16 +227,24 @@ class BaseImageHeader:
 
     @property
     def horz_dpi(self):
-        """Integer dots per inch for the width of this image.
-
-        Defaults to 72 when not present in the file, as is often the case.
         """
-        return self._horz_dpi
+        Horizontal DPI reported for this image.  Returns the header value
+        unless it is `None` **or** `0`, in which case it defaults to
+        72 dpi, matching Word's internal assumption.
+        """
+        dpi = self._horz_dpi
+        if dpi in (None, 0):
+            return 72
+        return dpi
 
     @property
     def vert_dpi(self):
-        """Integer dots per inch for the height of this image.
-
-        Defaults to 72 when not present in the file, as is often the case.
         """
-        return self._vert_dpi
+        Vertical DPI reported for this image.  Returns the header value
+        unless it is `None` **or** `0`, in which case it defaults to
+        72 dpi, matching Word's internal assumption.
+        """
+        dpi = self._vert_dpi
+        if dpi in (None, 0):
+            return 72
+        return dpi
