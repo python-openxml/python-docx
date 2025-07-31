@@ -79,7 +79,7 @@ class CT_Row(BaseOxmlElement):
     def tc_at_grid_offset(self, grid_offset: int) -> CT_Tc:
         """The `tc` element in this tr at exact `grid offset`.
 
-        Raises ValueError when this `w:tr` contains no `w:tc` with exact starting `grid_offset`.
+        Returns an empty `tc` element when this `w:tr` contains no `w:tc` with exact starting `grid_offset`.
         """
         # -- account for omitted cells at the start of the row --
         remaining_offset = grid_offset - self.grid_before
@@ -95,7 +95,8 @@ class CT_Row(BaseOxmlElement):
             # -- occupies.
             remaining_offset -= tc.grid_span
 
-        raise ValueError(f"no `tc` element at grid_offset={grid_offset}")
+        # 找不到时返回空的 tc 元素而不是抛出异常，避免整个文档解析失败
+        return CT_Tc.new()
 
     @property
     def tr_idx(self) -> int:
