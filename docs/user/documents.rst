@@ -78,11 +78,11 @@ a document like so::
     # or
 
     with open('foobar.docx', 'rb') as f:
-        source_stream = StringIO(f.read())
+        source_stream = BytesIO(f.read())
     document = Document(source_stream)
     source_stream.close()
     ...
-    target_stream = StringIO()
+    target_stream = BytesIO()
     document.save(target_stream)
 
 The ``'rb'`` file open mode parameter isn't required on all operating
