@@ -175,6 +175,8 @@ class CT_Relationship(BaseOxmlElement):
 
         Defaults to ``Internal``.
         """
+        if self.target_ref and self.target_ref.startswith("#"):
+            return RTM.EXTERNAL
         return self.get("TargetMode", RTM.INTERNAL)
 
 
