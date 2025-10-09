@@ -31,8 +31,7 @@ class DescribeCT_Styles:
                 "heading 1",
                 WD_STYLE_TYPE.PARAGRAPH,
                 True,
-                "w:styles/w:style{w:type=paragraph,w:styleId=Heading1}/w:name{w:val"
-                "=heading 1}",
+                "w:styles/w:style{w:type=paragraph,w:styleId=Heading1}/w:name{w:val=heading 1}",
             ),
         ]
     )

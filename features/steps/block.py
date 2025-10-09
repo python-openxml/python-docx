@@ -13,9 +13,7 @@ from helpers import test_docx
 
 @given("a _Cell object with paragraphs and tables")
 def given_a_cell_with_paragraphs_and_tables(context: Context):
-    context.cell = (
-        Document(test_docx("blk-paras-and-tables")).tables[1].rows[0].cells[0]
-    )
+    context.cell = Document(test_docx("blk-paras-and-tables")).tables[1].rows[0].cells[0]
 
 
 @given("a Document object with paragraphs and tables")

@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Iterator, List
+from typing import TYPE_CHECKING, Callable, Iterator, List, cast
 
 from docx.oxml.drawing import CT_Drawing
 from docx.oxml.ns import qn
+from docx.oxml.parser import OxmlElement
 from docx.oxml.simpletypes import ST_BrClear, ST_BrType
 from docx.oxml.text.font import CT_RPr
 from docx.oxml.xmlchemy import BaseOxmlElement, OptionalAttribute, ZeroOrMore, ZeroOrOne
@@ -87,6 +88,19 @@ class CT_R(BaseOxmlElement):
 
         return list(iter_items())
 
+    def insert_comment_range_end_and_reference_below(self, comment_id: int) -> None:
+        """Insert a `w:commentRangeEnd` and `w:commentReference` element after this run.
+
+        The `w:commentRangeEnd` element is the immediate sibling of this `w:r` and is followed by
+        a `w:r` containing the `w:commentReference` element.
+        """
+        self.addnext(self._new_comment_reference_run(comment_id))
+        self.addnext(OxmlElement("w:commentRangeEnd", attrs={qn("w:id"): str(comment_id)}))
+
+    def insert_comment_range_start_above(self, comment_id: int) -> None:
+        """Insert a `w:commentRangeStart` element with `comment_id` before this run."""
+        self.addprevious(OxmlElement("w:commentRangeStart", attrs={qn("w:id"): str(comment_id)}))
+
     @property
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
         """All `w:lastRenderedPageBreaks` descendants of this run."""
@@ -131,6 +145,23 @@ class CT_R(BaseOxmlElement):
     def _insert_rPr(self, rPr: CT_RPr) -> CT_RPr:
         self.insert(0, rPr)
         return rPr
+
+    def _new_comment_reference_run(self, comment_id: int) -> CT_R:
+        """Return a new `w:r` element with `w:commentReference` referencing `comment_id`.
+
+        Should look like this:
+
+            <w:r>
+              <w:rPr><w:rStyle w:val="CommentReference"/></w:rPr>
+              <w:commentReference w:id="0"/>
+            </w:r>
+
+        """
+        r = cast(CT_R, OxmlElement("w:r"))
+        rPr = r.get_or_add_rPr()
+        rPr.style = "CommentReference"
+        r.append(OxmlElement("w:commentReference", attrs={qn("w:id"): str(comment_id)}))
+        return r
 
 
 # ------------------------------------------------------------------------------------

@@ -38,9 +38,6 @@ class DescribeCT_Body:
     def section_break_fixture(self):
         body = element("w:body/w:sectPr/w:type{w:val=foobar}")
         expected_xml = xml(
-            "w:body/("
-            "  w:p/w:pPr/w:sectPr/w:type{w:val=foobar},"
-            "  w:sectPr/w:type{w:val=foobar}"
-            ")"
+            "w:body/(w:p/w:pPr/w:sectPr/w:type{w:val=foobar},w:sectPr/w:type{w:val=foobar})"
         )
         return body, expected_xml

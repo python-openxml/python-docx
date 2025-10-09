@@ -126,17 +126,13 @@ def when_add_picture_specifying_width_and_height(context):
 @when("I add a picture specifying a height of 1.5 inches")
 def when_add_picture_specifying_height(context):
     document = context.document
-    context.picture = document.add_picture(
-        test_file("monty-truth.png"), height=Inches(1.5)
-    )
+    context.picture = document.add_picture(test_file("monty-truth.png"), height=Inches(1.5))
 
 
 @when("I add a picture specifying a width of 1.5 inches")
 def when_add_picture_specifying_width(context):
     document = context.document
-    context.picture = document.add_picture(
-        test_file("monty-truth.png"), width=Inches(1.5)
-    )
+    context.picture = document.add_picture(test_file("monty-truth.png"), width=Inches(1.5))
 
 
 @when("I add a picture specifying only the image file")

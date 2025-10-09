@@ -44,9 +44,7 @@ class DescribePackageReader:
         PhysPkgReader_.assert_called_once_with(pkg_file)
         from_xml.assert_called_once_with(phys_reader.content_types_xml)
         _srels_for.assert_called_once_with(phys_reader, "/")
-        _load_serialized_parts.assert_called_once_with(
-            phys_reader, pkg_srels, content_types
-        )
+        _load_serialized_parts.assert_called_once_with(phys_reader, pkg_srels, content_types)
         phys_reader.close.assert_called_once_with()
         _init_.assert_called_once_with(ANY, content_types, pkg_srels, sparts)
         assert isinstance(pkg_reader, PackageReader)
@@ -94,17 +92,11 @@ class DescribePackageReader:
             Mock(name="spart_2"),
         )
         # exercise ---------------------
-        retval = PackageReader._load_serialized_parts(
-            phys_reader, pkg_srels, content_types
-        )
+        retval = PackageReader._load_serialized_parts(phys_reader, pkg_srels, content_types)
         # verify -----------------------
         expected_calls = [
-            call(
-                "/part/name1.xml", "app/vnd.type_1", "<Part_1/>", "reltype1", "srels_1"
-            ),
-            call(
-                "/part/name2.xml", "app/vnd.type_2", "<Part_2/>", "reltype2", "srels_2"
-            ),
+            call("/part/name1.xml", "app/vnd.type_1", "<Part_1/>", "reltype1", "srels_1"),
+            call("/part/name2.xml", "app/vnd.type_2", "<Part_2/>", "reltype2", "srels_2"),
         ]
         assert _SerializedPart_.call_args_list == expected_calls
         assert retval == expected_sparts
@@ -208,9 +200,7 @@ class DescribePackageReader:
         return initializer_mock(request, PackageReader)
 
     @pytest.fixture
-    def iter_sparts_fixture(
-        self, sparts_, partnames_, content_types_, reltypes_, blobs_
-    ):
+    def iter_sparts_fixture(self, sparts_, partnames_, content_types_, reltypes_, blobs_):
         pkg_reader = PackageReader(None, None, sparts_)
         expected_iter_spart_items = [
             (partnames_[0], content_types_[0], reltypes_[0], blobs_[0]),
@@ -220,9 +210,7 @@ class DescribePackageReader:
 
     @pytest.fixture
     def _load_serialized_parts(self, request):
-        return method_mock(
-            request, PackageReader, "_load_serialized_parts", autospec=False
-        )
+        return method_mock(request, PackageReader, "_load_serialized_parts", autospec=False)
 
     @pytest.fixture
     def partnames_(self, request):
@@ -283,15 +271,11 @@ class Describe_ContentTypeMap:
         assert ct_map._defaults == expected_defaults
         assert ct_map._overrides == expected_overrides
 
-    def it_matches_an_override_on_case_insensitive_partname(
-        self, match_override_fixture
-    ):
+    def it_matches_an_override_on_case_insensitive_partname(self, match_override_fixture):
         ct_map, partname, content_type = match_override_fixture
         assert ct_map[partname] == content_type
 
-    def it_falls_back_to_case_insensitive_extension_default_match(
-        self, match_default_fixture
-    ):
+    def it_falls_back_to_case_insensitive_extension_default_match(self, match_default_fixture):
         ct_map, partname, content_type = match_default_fixture
         assert ct_map[partname] == content_type
 

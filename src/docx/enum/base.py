@@ -37,9 +37,9 @@ class BaseXmlEnum(int, enum.Enum):
     corresponding member in the MS API enum of the same name.
     """
 
-    xml_value: str
+    xml_value: str | None
 
-    def __new__(cls, ms_api_value: int, xml_value: str, docstr: str):
+    def __new__(cls, ms_api_value: int, xml_value: str | None, docstr: str):
         self = int.__new__(cls, ms_api_value)
         self._value_ = ms_api_value
         self.xml_value = xml_value
@@ -70,7 +70,11 @@ class BaseXmlEnum(int, enum.Enum):
         """XML value of this enum member, generally an XML attribute value."""
         # -- presence of multi-arg `__new__()` method fools type-checker, but getting a
         # -- member by its value using EnumCls(val) works as usual.
-        return cls(value).xml_value
+        member = cls(value)
+        xml_value = member.xml_value
+        if not xml_value:
+            raise ValueError(f"{cls.__name__}.{member.name} has no XML representation")
+        return xml_value
 
 
 class DocsPageFormatter:

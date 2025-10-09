@@ -519,7 +519,7 @@ class CT_Tc(BaseOxmlElement):
     @classmethod
     def new(cls) -> CT_Tc:
         """A new `w:tc` element, containing an empty paragraph as the required EG_BlockLevelElt."""
-        return cast(CT_Tc, parse_xml("<w:tc %s>\n" "  <w:p/>\n" "</w:tc>" % nsdecls("w")))
+        return cast(CT_Tc, parse_xml("<w:tc %s><w:p/></w:tc>" % nsdecls("w")))
 
     @property
     def right(self) -> int:
@@ -583,7 +583,9 @@ class CT_Tc(BaseOxmlElement):
             return (
                 ST_Merge.CONTINUE
                 if top_tc is not self
-                else None if height == 1 else ST_Merge.RESTART
+                else None
+                if height == 1
+                else ST_Merge.RESTART
             )
 
         top_tc = self if top_tc is None else top_tc
@@ -609,9 +611,7 @@ class CT_Tc(BaseOxmlElement):
         # -- cell must include at least one block item but can be a `w:tbl`, `w:sdt`,
         # -- `w:customXml` or a `w:p`
         only_item = block_items[0]
-        if isinstance(only_item, CT_P) and len(only_item.r_lst) == 0:
-            return True
-        return False
+        return isinstance(only_item, CT_P) and len(only_item.r_lst) == 0
 
     def _move_content_to(self, other_tc: CT_Tc):
         """Append the content of this cell to `other_tc`.

@@ -13,7 +13,7 @@ from ..unitutil.mock import ANY, initializer_mock
 class DescribeGif:
     def it_can_construct_from_a_gif_stream(self, Gif__init__):
         cx, cy = 42, 24
-        bytes_ = b"filler\x2A\x00\x18\x00"
+        bytes_ = b"filler\x2a\x00\x18\x00"
         stream = io.BytesIO(bytes_)
 
         gif = Gif.from_stream(stream)

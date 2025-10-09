@@ -127,11 +127,9 @@ class RGBColor(Tuple[int, int, int]):
     def __new__(cls, r: int, g: int, b: int):
         msg = "RGBColor() takes three integer values 0-255"
         for val in (r, g, b):
-            if (
-                not isinstance(val, int)  # pyright: ignore[reportUnnecessaryIsInstance]
-                or val < 0
-                or val > 255
-            ):
+            if not isinstance(val, int):  # pyright: ignore[reportUnnecessaryIsInstance]
+                raise TypeError(msg)
+            if val < 0 or val > 255:
                 raise ValueError(msg)
         return super(RGBColor, cls).__new__(cls, (r, g, b))
 
@@ -330,7 +328,7 @@ class Parented:
         self._parent = parent
 
     @property
-    def part(self):
+    def part(self) -> XmlPart:
         """The package part containing this object."""
         return self._parent.part
 

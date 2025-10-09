@@ -73,9 +73,7 @@ def given_a_section_having_known_orientation(context: Context, orientation: str)
 
 
 @when("I assign {bool_val} to section.different_first_page_header_footer")
-def when_I_assign_value_to_section_different_first_page_hdrftr(
-    context: Context, bool_val: str
-):
+def when_I_assign_value_to_section_different_first_page_hdrftr(context: Context, bool_val: str):
     context.section.different_first_page_header_footer = eval(bool_val)
 
 
@@ -158,9 +156,7 @@ def then_len_sections_is_3(context: Context):
 def then_section_different_first_page_header_footer_is(context: Context, bool_val: str):
     actual = context.section.different_first_page_header_footer
     expected = eval(bool_val)
-    assert actual == expected, (
-        "section.different_first_page_header_footer is %s" % actual
-    )
+    assert actual == expected, "section.different_first_page_header_footer is %s" % actual
 
 
 @then("section.even_page_footer is a _Footer object")
@@ -213,9 +209,7 @@ def step_impl(context: Context):
 
 
 @then("section.{propname}.is_linked_to_previous is True")
-def then_section_hdrftr_prop_is_linked_to_previous_is_True(
-    context: Context, propname: str
-):
+def then_section_hdrftr_prop_is_linked_to_previous_is_True(context: Context, propname: str):
     actual = getattr(context.section, propname).is_linked_to_previous
     expected = True
     assert actual == expected, "section.%s.is_linked_to_previous is %s" % (
@@ -241,9 +235,7 @@ def then_the_reported_margin_is_inches(context: Context, margin_side: str, inche
 
 
 @then("the reported page orientation is {orientation}")
-def then_the_reported_page_orientation_is_orientation(
-    context: Context, orientation: str
-):
+def then_the_reported_page_orientation_is_orientation(context: Context, orientation: str):
     expected_value = {
         "WD_ORIENT.LANDSCAPE": WD_ORIENT.LANDSCAPE,
         "WD_ORIENT.PORTRAIT": WD_ORIENT.PORTRAIT,

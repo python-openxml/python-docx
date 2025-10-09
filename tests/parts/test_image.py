@@ -24,17 +24,13 @@ class DescribeImagePart:
 
         part = PartFactory(partname_, content_type, reltype, blob_, package_)
 
-        image_part_load_.assert_called_once_with(
-            partname_, content_type, blob_, package_
-        )
+        image_part_load_.assert_called_once_with(partname_, content_type, blob_, package_)
         assert part is image_part_
 
     def it_can_construct_from_an_Image_instance(self, image_, partname_, _init_):
         image_part = ImagePart.from_image(image_, partname_)
 
-        _init_.assert_called_once_with(
-            ANY, partname_, image_.content_type, image_.blob, image_
-        )
+        _init_.assert_called_once_with(ANY, partname_, image_.content_type, image_.blob, image_)
         assert isinstance(image_part, ImagePart)
 
     def it_knows_its_default_dimensions_in_EMU(self, dimensions_fixture):

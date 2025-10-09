@@ -30,9 +30,7 @@ class DescribeStoryPart:
         assert rId == "rId42"
         assert image is image_
 
-    def it_can_get_a_style_by_id_and_type(
-        self, _document_part_prop_, document_part_, style_
-    ):
+    def it_can_get_a_style_by_id_and_type(self, _document_part_prop_, document_part_, style_):
         style_id = "BodyText"
         style_type = WD_STYLE_TYPE.PARAGRAPH
         _document_part_prop_.return_value = document_part_

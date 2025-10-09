@@ -14,6 +14,8 @@ from docx.opc.rel import Relationships
 from docx.shared import lazyproperty
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from docx.opc.coreprops import CoreProperties
     from docx.opc.part import Part
     from docx.opc.rel import _Relationship  # pyright: ignore[reportPrivateUsage]
@@ -25,9 +27,6 @@ class OpcPackage:
     A new instance is constructed by calling the :meth:`open` class method with a path
     to a package file or file-like object containing one.
     """
-
-    def __init__(self):
-        super(OpcPackage, self).__init__()
 
     def after_unmarshal(self):
         """Entry point for any post-unmarshaling processing.
@@ -122,7 +121,7 @@ class OpcPackage:
                 return PackURI(candidate_partname)
 
     @classmethod
-    def open(cls, pkg_file: str | IO[bytes]) -> OpcPackage:
+    def open(cls, pkg_file: str | IO[bytes]) -> Self:
         """Return an |OpcPackage| instance loaded with the contents of `pkg_file`."""
         pkg_reader = PackageReader.from_file(pkg_file)
         package = cls()

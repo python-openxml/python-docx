@@ -14,8 +14,8 @@ class DescribeBmp:
     def it_can_construct_from_a_bmp_stream(self, Bmp__init__):
         cx, cy, horz_dpi, vert_dpi = 26, 43, 200, 96
         bytes_ = (
-            b"fillerfillerfiller\x1A\x00\x00\x00\x2B\x00\x00\x00"
-            b"fillerfiller\xB8\x1E\x00\x00\x00\x00\x00\x00"
+            b"fillerfillerfiller\x1a\x00\x00\x00\x2b\x00\x00\x00"
+            b"fillerfiller\xb8\x1e\x00\x00\x00\x00\x00\x00"
         )
         stream = io.BytesIO(bytes_)
 

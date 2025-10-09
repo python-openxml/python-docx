@@ -9,9 +9,8 @@ class NumberingPart(XmlPart):
     or glossary."""
 
     @classmethod
-    def new(cls):
-        """Return newly created empty numbering part, containing only the root
-        ``<w:numbering>`` element."""
+    def new(cls) -> "NumberingPart":
+        """Newly created numbering part, containing only the root ``<w:numbering>`` element."""
         raise NotImplementedError
 
     @lazyproperty

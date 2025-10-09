@@ -85,9 +85,7 @@ class DescribeParagraph:
     def it_knows_its_paragraph_style(self, style_get_fixture):
         paragraph, style_id_, style_ = style_get_fixture
         style = paragraph.style
-        paragraph.part.get_style.assert_called_once_with(
-            style_id_, WD_STYLE_TYPE.PARAGRAPH
-        )
+        paragraph.part.get_style.assert_called_once_with(style_id_, WD_STYLE_TYPE.PARAGRAPH)
         assert style is style_
 
     def it_can_change_its_paragraph_style(self, style_set_fixture):
@@ -95,9 +93,7 @@ class DescribeParagraph:
 
         paragraph.style = value
 
-        paragraph.part.get_style_id.assert_called_once_with(
-            value, WD_STYLE_TYPE.PARAGRAPH
-        )
+        paragraph.part.get_style_id.assert_called_once_with(value, WD_STYLE_TYPE.PARAGRAPH)
         assert paragraph._p.xml == expected_xml
 
     @pytest.mark.parametrize(
@@ -108,8 +104,7 @@ class DescribeParagraph:
             ("w:p/w:r/w:lastRenderedPageBreak", 1),
             ("w:p/w:hyperlink/w:r/w:lastRenderedPageBreak", 1),
             (
-                "w:p/(w:r/w:lastRenderedPageBreak,"
-                "w:hyperlink/w:r/w:lastRenderedPageBreak)",
+                "w:p/(w:r/w:lastRenderedPageBreak,w:hyperlink/w:r/w:lastRenderedPageBreak)",
                 2,
             ),
             (
@@ -144,8 +139,7 @@ class DescribeParagraph:
             ('w:p/w:r/(w:t"foo", w:br,  w:t"bar")', "foo\nbar"),
             ('w:p/w:r/(w:t"foo", w:cr,  w:t"bar")', "foo\nbar"),
             (
-                'w:p/(w:r/w:t"click ",w:hyperlink{r:id=rId6}/w:r/w:t"here",'
-                'w:r/w:t" for more")',
+                'w:p/(w:r/w:t"click ",w:hyperlink{r:id=rId6}/w:r/w:t"here",w:r/w:t" for more")',
                 "click here for more",
             ),
         ],
@@ -385,9 +379,7 @@ class DescribeParagraph:
     @pytest.fixture
     def Run_(self, request, runs_):
         run_, run_2_ = runs_
-        return class_mock(
-            request, "docx.text.paragraph.Run", side_effect=[run_, run_2_]
-        )
+        return class_mock(request, "docx.text.paragraph.Run", side_effect=[run_, run_2_])
 
     @pytest.fixture
     def r_(self, request):

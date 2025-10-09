@@ -173,6 +173,18 @@ class Run(StoryChild):
             elif isinstance(item, CT_Drawing):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield Drawing(item, self)
 
+    def mark_comment_range(self, last_run: Run, comment_id: int) -> None:
+        """Mark the range of runs from this run to `last_run` (inclusive) as belonging to a comment.
+
+        `comment_id` identfies the comment that references this range.
+        """
+        # -- insert `w:commentRangeStart` with `comment_id` before this (first) run --
+        self._r.insert_comment_range_start_above(comment_id)
+
+        # -- insert `w:commentRangeEnd` and `w:commentReference` run with `comment_id` after
+        # -- `last_run`
+        last_run._r.insert_comment_range_end_and_reference_below(comment_id)
+
     @property
     def style(self) -> CharacterStyle:
         """Read/write.
@@ -233,7 +245,7 @@ class Run(StoryChild):
         return self.font.underline
 
     @underline.setter
-    def underline(self, value: bool):
+    def underline(self, value: bool | WD_UNDERLINE | None):
         self.font.underline = value
 
 

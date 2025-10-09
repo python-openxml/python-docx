@@ -62,9 +62,7 @@ class DescribeFont:
             ),
         ],
     )
-    def it_can_change_its_typeface_name(
-        self, r_cxml: str, value: str, expected_r_cxml: str
-    ):
+    def it_can_change_its_typeface_name(self, r_cxml: str, value: str, expected_r_cxml: str):
         r = cast(CT_R, element(r_cxml))
         font = Font(r)
         expected_xml = xml(expected_r_cxml)
@@ -95,9 +93,7 @@ class DescribeFont:
             ("w:r/w:rPr/w:sz{w:val=36}", None, "w:r/w:rPr"),
         ],
     )
-    def it_can_change_its_size(
-        self, r_cxml: str, value: Length | None, expected_r_cxml: str
-    ):
+    def it_can_change_its_size(self, r_cxml: str, value: Length | None, expected_r_cxml: str):
         r = cast(CT_R, element(r_cxml))
         font = Font(r)
         expected_xml = xml(expected_r_cxml)
@@ -224,9 +220,7 @@ class DescribeFont:
             ("w:r/w:rPr/w:vertAlign{w:val=superscript}", False),
         ],
     )
-    def it_knows_whether_it_is_subscript(
-        self, r_cxml: str, expected_value: bool | None
-    ):
+    def it_knows_whether_it_is_subscript(self, r_cxml: str, expected_value: bool | None):
         r = cast(CT_R, element(r_cxml))
         font = Font(r)
         assert font.subscript == expected_value
@@ -283,9 +277,7 @@ class DescribeFont:
             ("w:r/w:rPr/w:vertAlign{w:val=superscript}", True),
         ],
     )
-    def it_knows_whether_it_is_superscript(
-        self, r_cxml: str, expected_value: bool | None
-    ):
+    def it_knows_whether_it_is_superscript(self, r_cxml: str, expected_value: bool | None):
         r = cast(CT_R, element(r_cxml))
         font = Font(r)
         assert font.superscript == expected_value
@@ -343,9 +335,7 @@ class DescribeFont:
             ("w:r/w:rPr/w:u{w:val=wave}", WD_UNDERLINE.WAVY),
         ],
     )
-    def it_knows_its_underline_type(
-        self, r_cxml: str, expected_value: WD_UNDERLINE | bool | None
-    ):
+    def it_knows_its_underline_type(self, r_cxml: str, expected_value: WD_UNDERLINE | bool | None):
         r = cast(CT_R, element(r_cxml))
         font = Font(r)
         assert font.underline is expected_value
@@ -393,9 +383,7 @@ class DescribeFont:
             ("w:r/w:rPr/w:highlight{w:val=blue}", WD_COLOR.BLUE),
         ],
     )
-    def it_knows_its_highlight_color(
-        self, r_cxml: str, expected_value: WD_COLOR | None
-    ):
+    def it_knows_its_highlight_color(self, r_cxml: str, expected_value: WD_COLOR | None):
         r = cast(CT_R, element(r_cxml))
         font = Font(r)
         assert font.highlight_color is expected_value

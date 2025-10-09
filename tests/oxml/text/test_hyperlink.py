@@ -30,9 +30,7 @@ class DescribeCT_Hyperlink:
             ("w:hyperlink{r:id=rId6,w:history=1}", True),
         ],
     )
-    def it_knows_whether_it_has_been_clicked_on_aka_visited(
-        self, cxml: str, expected_value: bool
-    ):
+    def it_knows_whether_it_has_been_clicked_on_aka_visited(self, cxml: str, expected_value: bool):
         hyperlink = cast(CT_Hyperlink, element(cxml))
         assert hyperlink.history is expected_value
 

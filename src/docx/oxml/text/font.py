@@ -1,3 +1,5 @@
+# pyright: reportAssignmentType=false
+
 """Custom element classes related to run properties (font)."""
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ from docx.oxml.xmlchemy import (
     RequiredAttribute,
     ZeroOrOne,
 )
+from docx.shared import RGBColor
 
 if TYPE_CHECKING:
     from docx.oxml.shared import CT_OnOff, CT_String
@@ -29,8 +32,8 @@ if TYPE_CHECKING:
 class CT_Color(BaseOxmlElement):
     """`w:color` element, specifying the color of a font and perhaps other objects."""
 
-    val = RequiredAttribute("w:val", ST_HexColor)
-    themeColor = OptionalAttribute("w:themeColor", MSO_THEME_COLOR)
+    val: RGBColor | str = RequiredAttribute("w:val", ST_HexColor)
+    themeColor: MSO_THEME_COLOR | None = OptionalAttribute("w:themeColor", MSO_THEME_COLOR)
 
 
 class CT_Fonts(BaseOxmlElement):
@@ -39,39 +42,33 @@ class CT_Fonts(BaseOxmlElement):
     Specifies typeface name for the various language types.
     """
 
-    ascii: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
-        "w:ascii", ST_String
-    )
-    hAnsi: str | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
-        "w:hAnsi", ST_String
-    )
+    ascii: str | None = OptionalAttribute("w:ascii", ST_String)
+    hAnsi: str | None = OptionalAttribute("w:hAnsi", ST_String)
 
 
 class CT_Highlight(BaseOxmlElement):
     """`w:highlight` element, specifying font highlighting/background color."""
 
-    val: WD_COLOR_INDEX = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:val", WD_COLOR_INDEX
-    )
+    val: WD_COLOR_INDEX = RequiredAttribute("w:val", WD_COLOR_INDEX)
 
 
 class CT_HpsMeasure(BaseOxmlElement):
     """Used for `<w:sz>` element and others, specifying font size in half-points."""
 
-    val: Length = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:val", ST_HpsMeasure
-    )
+    val: Length = RequiredAttribute("w:val", ST_HpsMeasure)
 
 
 class CT_RPr(BaseOxmlElement):
     """`<w:rPr>` element, containing the properties for a run."""
 
+    get_or_add_color: Callable[[], CT_Color]
     get_or_add_highlight: Callable[[], CT_Highlight]
     get_or_add_rFonts: Callable[[], CT_Fonts]
     get_or_add_sz: Callable[[], CT_HpsMeasure]
     get_or_add_vertAlign: Callable[[], CT_VerticalAlignRun]
     _add_rStyle: Callable[..., CT_String]
     _add_u: Callable[[], CT_Underline]
+    _remove_color: Callable[[], None]
     _remove_highlight: Callable[[], None]
     _remove_rFonts: Callable[[], None]
     _remove_rStyle: Callable[[], None]
@@ -120,15 +117,9 @@ class CT_RPr(BaseOxmlElement):
         "w:specVanish",
         "w:oMath",
     )
-    rStyle: CT_String | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:rStyle", successors=_tag_seq[1:]
-    )
-    rFonts: CT_Fonts | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:rFonts", successors=_tag_seq[2:]
-    )
-    b: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:b", successors=_tag_seq[3:]
-    )
+    rStyle: CT_String | None = ZeroOrOne("w:rStyle", successors=_tag_seq[1:])
+    rFonts: CT_Fonts | None = ZeroOrOne("w:rFonts", successors=_tag_seq[2:])
+    b: CT_OnOff | None = ZeroOrOne("w:b", successors=_tag_seq[3:])
     bCs = ZeroOrOne("w:bCs", successors=_tag_seq[4:])
     i = ZeroOrOne("w:i", successors=_tag_seq[5:])
     iCs = ZeroOrOne("w:iCs", successors=_tag_seq[6:])
@@ -144,19 +135,11 @@ class CT_RPr(BaseOxmlElement):
     snapToGrid = ZeroOrOne("w:snapToGrid", successors=_tag_seq[16:])
     vanish = ZeroOrOne("w:vanish", successors=_tag_seq[17:])
     webHidden = ZeroOrOne("w:webHidden", successors=_tag_seq[18:])
-    color = ZeroOrOne("w:color", successors=_tag_seq[19:])
-    sz: CT_HpsMeasure | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:sz", successors=_tag_seq[24:]
-    )
-    highlight: CT_Highlight | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:highlight", successors=_tag_seq[26:]
-    )
-    u: CT_Underline | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:u", successors=_tag_seq[27:]
-    )
-    vertAlign: CT_VerticalAlignRun | None = ZeroOrOne(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:vertAlign", successors=_tag_seq[32:]
-    )
+    color: CT_Color | None = ZeroOrOne("w:color", successors=_tag_seq[19:])
+    sz: CT_HpsMeasure | None = ZeroOrOne("w:sz", successors=_tag_seq[24:])
+    highlight: CT_Highlight | None = ZeroOrOne("w:highlight", successors=_tag_seq[26:])
+    u: CT_Underline | None = ZeroOrOne("w:u", successors=_tag_seq[27:])
+    vertAlign: CT_VerticalAlignRun | None = ZeroOrOne("w:vertAlign", successors=_tag_seq[32:])
     rtl = ZeroOrOne("w:rtl", successors=_tag_seq[33:])
     cs = ZeroOrOne("w:cs", successors=_tag_seq[34:])
     specVanish = ZeroOrOne("w:specVanish", successors=_tag_seq[38:])
@@ -253,9 +236,7 @@ class CT_RPr(BaseOxmlElement):
         vertAlign = self.vertAlign
         if vertAlign is None:
             return None
-        if vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT:
-            return True
-        return False
+        return vertAlign.val == ST_VerticalAlignRun.SUBSCRIPT
 
     @subscript.setter
     def subscript(self, value: bool | None) -> None:
@@ -277,9 +258,7 @@ class CT_RPr(BaseOxmlElement):
         vertAlign = self.vertAlign
         if vertAlign is None:
             return None
-        if vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT:
-            return True
-        return False
+        return vertAlign.val == ST_VerticalAlignRun.SUPERSCRIPT
 
     @superscript.setter
     def superscript(self, value: bool | None):
@@ -343,14 +322,10 @@ class CT_RPr(BaseOxmlElement):
 class CT_Underline(BaseOxmlElement):
     """`<w:u>` element, specifying the underlining style for a run."""
 
-    val: WD_UNDERLINE | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
-        "w:val", WD_UNDERLINE
-    )
+    val: WD_UNDERLINE | None = OptionalAttribute("w:val", WD_UNDERLINE)
 
 
 class CT_VerticalAlignRun(BaseOxmlElement):
     """`<w:vertAlign>` element, specifying subscript or superscript."""
 
-    val: str = RequiredAttribute(  # pyright: ignore[reportGeneralTypeIssues]
-        "w:val", ST_VerticalAlignRun
-    )
+    val: str = RequiredAttribute("w:val", ST_VerticalAlignRun)

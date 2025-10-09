@@ -27,9 +27,7 @@ from ..unitutil.mock import (
 
 
 class DescribeImage:
-    def it_can_construct_from_an_image_blob(
-        self, blob_, BytesIO_, _from_stream_, stream_, image_
-    ):
+    def it_can_construct_from_an_image_blob(self, blob_, BytesIO_, _from_stream_, stream_, image_):
         image = Image.from_blob(blob_)
 
         BytesIO_.assert_called_once_with(blob_)
@@ -231,9 +229,7 @@ class DescribeImage:
 
     @pytest.fixture
     def _from_stream_(self, request, image_):
-        return method_mock(
-            request, Image, "_from_stream", autospec=False, return_value=image_
-        )
+        return method_mock(request, Image, "_from_stream", autospec=False, return_value=image_)
 
     @pytest.fixture
     def height_prop_(self, request):

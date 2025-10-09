@@ -75,16 +75,12 @@ def function_mock(
     return _patch.start()
 
 
-def initializer_mock(
-    request: FixtureRequest, cls: type, autospec: bool = True, **kwargs: Any
-):
+def initializer_mock(request: FixtureRequest, cls: type, autospec: bool = True, **kwargs: Any):
     """Return mock for __init__() method on `cls`.
 
     The patch is reversed after pytest uses it.
     """
-    _patch = patch.object(
-        cls, "__init__", autospec=autospec, return_value=None, **kwargs
-    )
+    _patch = patch.object(cls, "__init__", autospec=autospec, return_value=None, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 

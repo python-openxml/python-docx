@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Dict
 
 nsmap = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
@@ -29,7 +29,7 @@ pfxmap = {value: key for key, value in nsmap.items()}
 class NamespacePrefixedTag(str):
     """Value object that knows the semantics of an XML tag having a namespace prefix."""
 
-    def __new__(cls, nstag: str, *args: Any):
+    def __new__(cls, nstag: str):
         return super(NamespacePrefixedTag, cls).__new__(cls, nstag)
 
     def __init__(self, nstag: str):

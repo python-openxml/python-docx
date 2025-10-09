@@ -22,9 +22,7 @@ class PackageReader:
         phys_reader = PhysPkgReader(pkg_file)
         content_types = _ContentTypeMap.from_xml(phys_reader.content_types_xml)
         pkg_srels = PackageReader._srels_for(phys_reader, PACKAGE_URI)
-        sparts = PackageReader._load_serialized_parts(
-            phys_reader, pkg_srels, content_types
-        )
+        sparts = PackageReader._load_serialized_parts(phys_reader, pkg_srels, content_types)
         phys_reader.close()
         return PackageReader(content_types, pkg_srels, sparts)
 
@@ -80,9 +78,7 @@ class PackageReader:
             part_srels = PackageReader._srels_for(phys_reader, partname)
             blob = phys_reader.blob_for(partname)
             yield (partname, blob, reltype, part_srels)
-            next_walker = PackageReader._walk_phys_parts(
-                phys_reader, part_srels, visited_partnames
-            )
+            next_walker = PackageReader._walk_phys_parts(phys_reader, part_srels, visited_partnames)
             for partname, blob, reltype, srels in next_walker:
                 yield (partname, blob, reltype, srels)
 

@@ -5,17 +5,7 @@
 from __future__ import annotations
 
 import re
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    List,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, Any, Callable, Sequence, Type, TypeVar
 
 from lxml import etree
 from lxml.etree import ElementBase, _Element  # pyright: ignore[reportPrivateUsage]
@@ -65,7 +55,7 @@ class XmlString(str):
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    def _attr_seq(self, attrs: str) -> List[str]:
+    def _attr_seq(self, attrs: str) -> list[str]:
         """Return a sequence of attribute strings parsed from `attrs`.
 
         Each attribute string is stripped of whitespace on both ends.
@@ -85,12 +75,10 @@ class XmlString(str):
             return False
         if close != close_2:
             return False
-        if text != text_2:
-            return False
-        return True
+        return text == text_2
 
     @classmethod
-    def _parse_line(cls, line: str) -> Tuple[str, str, str, str]:
+    def _parse_line(cls, line: str) -> tuple[str, str, str, str]:
         """(front, attrs, close, text) 4-tuple result of parsing XML element `line`."""
         match = cls._xml_elm_line_patt.match(line)
         if match is None:
@@ -105,7 +93,7 @@ _T = TypeVar("_T")
 class MetaOxmlElement(type):
     """Metaclass for BaseOxmlElement."""
 
-    def __init__(cls, clsname: str, bases: Tuple[type, ...], namespace: Dict[str, Any]):
+    def __init__(cls, clsname: str, bases: tuple[type, ...], namespace: dict[str, Any]):
         dispatchable = (
             OneAndOnlyOne,
             OneOrMore,
@@ -280,7 +268,7 @@ class _BaseChildElement:
     and ZeroOrMore.
     """
 
-    def __init__(self, nsptagname: str, successors: Tuple[str, ...] = ()):
+    def __init__(self, nsptagname: str, successors: tuple[str, ...] = ()):
         super(_BaseChildElement, self).__init__()
         self._nsptagname = nsptagname
         self._successors = successors
@@ -435,8 +423,7 @@ class _BaseChildElement:
 
 
 class Choice(_BaseChildElement):
-    """Defines a child element belonging to a group, only one of which may appear as a
-    child."""
+    """Defines a child element belonging to a group, only one of which may appear as a child."""
 
     @property
     def nsptagname(self):
@@ -446,7 +433,7 @@ class Choice(_BaseChildElement):
         self,
         element_cls: MetaOxmlElement,
         group_prop_name: str,
-        successors: Tuple[str, ...],
+        successors: tuple[str, ...],
     ) -> None:
         """Add the appropriate methods to `element_cls`."""
         self._element_cls = element_cls
@@ -474,7 +461,7 @@ class Choice(_BaseChildElement):
             return child
 
         get_or_change_to_child.__doc__ = (
-            "Return the ``<%s>`` child, replacing any other group element if" " found."
+            "Return the ``<%s>`` child, replacing any other group element if found."
         ) % self._nsptagname
         self._add_to_class(self._get_or_change_to_method_name, get_or_change_to_child)
 
@@ -597,7 +584,7 @@ class ZeroOrOneChoice(_BaseChildElement):
     """Correspondes to an ``EG_*`` element group where at most one of its members may
     appear as a child."""
 
-    def __init__(self, choices: Sequence[Choice], successors: Tuple[str, ...] = ()):
+    def __init__(self, choices: Sequence[Choice], successors: tuple[str, ...] = ()):
         self._choices = choices
         self._successors = successors
 

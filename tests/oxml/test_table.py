@@ -19,7 +19,6 @@ from ..unitutil.mock import FixtureRequest, Mock, call, instance_mock, method_mo
 
 
 class DescribeCT_Row:
-
     @pytest.mark.parametrize(
         ("tr_cxml", "expected_cxml"),
         [
@@ -231,7 +230,7 @@ class DescribeCT_Tc:
                 'w:tr/(w:tc/w:p/w:r/w:t"a",w:tc/w:p/w:r/w:t"b")',
                 0,
                 2,
-                'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p/w:r/w:t"a",' 'w:p/w:r/w:t"b"))',
+                'w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p/w:r/w:t"a",w:p/w:r/w:t"b"))',
             ),
             (
                 "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p),w:tc/w:p)",
@@ -266,7 +265,7 @@ class DescribeCT_Tc:
                 "w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))",
                 0,
                 2,
-                "w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=2880,w:type=dxa}," "w:gridSpan{w:val=2}),w:p))",
+                "w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=2880,w:type=dxa},w:gridSpan{w:val=2}),w:p))",
             ),
             # neither have a width
             (
@@ -277,17 +276,17 @@ class DescribeCT_Tc:
             ),
             # only second one has a width
             (
-                "w:tr/(w:tc/w:p," "w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))",
+                "w:tr/(w:tc/w:p,w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p))",
                 0,
                 2,
                 "w:tr/(w:tc/(w:tcPr/w:gridSpan{w:val=2},w:p))",
             ),
             # only first one has a width
             (
-                "w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p)," "w:tc/w:p)",
+                "w:tr/(w:tc/(w:tcPr/w:tcW{w:w=1440,w:type=dxa},w:p),w:tc/w:p)",
                 0,
                 2,
-                "w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=1440,w:type=dxa}," "w:gridSpan{w:val=2}),w:p))",
+                "w:tr/(w:tc/(w:tcPr/(w:tcW{w:w=1440,w:type=dxa},w:gridSpan{w:val=2}),w:p))",
             ),
         ],
     )

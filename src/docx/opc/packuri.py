@@ -10,8 +10,7 @@ import re
 
 
 class PackURI(str):
-    """Provides access to pack URI components such as the baseURI and the filename
-    slice.
+    """Provides access to pack URI components such as the baseURI and the filename slice.
 
     Behaves as |str| otherwise.
     """

@@ -30,7 +30,23 @@ dynamic = ["version"]
 keywords = ["docx", "office", "openxml", "word"]
 license = { text = "MIT" }
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
+
+[dependency-groups]
+dev = [
+    "Jinja2==2.11.3",
+    "MarkupSafe==0.23",
+    "Sphinx==1.8.6",
+    "alabaster<0.7.14",
+    "behave>=1.2.6",
+    "pyparsing>=3.2.3",
+    "pyright>=1.1.401",
+    "pytest>=8.4.0",
+    "ruff>=0.11.13",
+    "tox>=4.26.0",
+    "twine>=6.1.0",
+    "types-lxml-multi-subclass>=2025.3.30",
+]
 
 [project.urls]
 Changelog = "https://github.com/python-openxml/python-docx/blob/master/HISTORY.rst"
@@ -38,20 +54,18 @@ Documentation = "https://python-docx.readthedocs.org/en/latest/"
 Homepage = "https://github.com/python-openxml/python-docx"
 Repository = "https://github.com/python-openxml/python-docx"
 
-[tool.black]
-line-length = 100
-target-version = ["py37", "py38", "py39", "py310", "py311"]
-
 [tool.pyright]
 include = ["src/docx", "tests"]
 pythonPlatform = "All"
-pythonVersion = "3.8"
-reportImportCycles = true
+pythonVersion = "3.9"
+reportImportCycles = false
 reportUnnecessaryCast = true
 reportUnnecessaryTypeIgnoreComment = true
 stubPath = "./typings"
 typeCheckingMode = "strict"
 verboseOutput = true
+venvPath = "."
+venv = ".venv"
 
 [tool.pytest.ini_options]
 filterwarnings = [
@@ -88,7 +102,6 @@ target-version = "py38"
 ignore = [
     "COM812",   # -- over-aggressively insists on trailing commas where not desired --
     "PT001",    # -- wants @pytest.fixture() instead of @pytest.fixture --
-    "PT005",    # -- wants @pytest.fixture() instead of @pytest.fixture --
 ]
 select = [
     "C4",       # -- flake8-comprehensions --
@@ -111,3 +124,4 @@ known-local-folder = ["helpers"]
 
 [tool.setuptools.dynamic]
 version = {attr = "docx.__version__"}
+

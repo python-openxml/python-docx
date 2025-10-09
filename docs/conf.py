@@ -91,6 +91,10 @@ rst_epilog = """
 
 .. |_Columns| replace:: :class:`._Columns`
 
+.. |Comment| replace:: :class:`.Comment`
+
+.. |Comments| replace:: :class:`.Comments`
+
 .. |CoreProperties| replace:: :class:`.CoreProperties`
 
 .. |datetime| replace:: :class:`.datetime.datetime`
@@ -270,9 +274,7 @@ html_static_path = ["_static"]
 
 # Custom sidebar templates, maps document names to template names.
 # html_sidebars = {}
-html_sidebars = {
-    "**": ["localtoc.html", "relations.html", "sidebarlinks.html", "searchbox.html"]
-}
+html_sidebars = {"**": ["localtoc.html", "relations.html", "sidebarlinks.html", "searchbox.html"]}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

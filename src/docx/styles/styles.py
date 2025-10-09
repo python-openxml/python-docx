@@ -40,10 +40,7 @@ class Styles(ElementProxy):
 
         style_elm = self._element.get_by_id(key)
         if style_elm is not None:
-            msg = (
-                "style lookup by style_id is deprecated. Use style name as "
-                "key instead."
-            )
+            msg = "style lookup by style_id is deprecated. Use style name as key instead."
             warn(msg, UserWarning, stacklevel=2)
             return StyleFactory(style_elm)
 
@@ -118,9 +115,7 @@ class Styles(ElementProxy):
             return self.default(style_type)
         return StyleFactory(style)
 
-    def _get_style_id_from_name(
-        self, style_name: str, style_type: WD_STYLE_TYPE
-    ) -> str | None:
+    def _get_style_id_from_name(self, style_name: str, style_type: WD_STYLE_TYPE) -> str | None:
         """Return the id of the style of `style_type` corresponding to `style_name`.
 
         Returns |None| if that style is the default style for `style_type`. Raises
@@ -129,17 +124,13 @@ class Styles(ElementProxy):
         """
         return self._get_style_id_from_style(self[style_name], style_type)
 
-    def _get_style_id_from_style(
-        self, style: BaseStyle, style_type: WD_STYLE_TYPE
-    ) -> str | None:
+    def _get_style_id_from_style(self, style: BaseStyle, style_type: WD_STYLE_TYPE) -> str | None:
         """Id of `style`, or |None| if it is the default style of `style_type`.
 
         Raises |ValueError| if style is not of `style_type`.
         """
         if style.type != style_type:
-            raise ValueError(
-                "assigned style is type %s, need type %s" % (style.type, style_type)
-            )
+            raise ValueError("assigned style is type %s, need type %s" % (style.type, style_type))
         if style == self.default(style_type):
             return None
         return style.style_id
