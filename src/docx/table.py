@@ -82,6 +82,34 @@ class Table(StoryChild):
     def autofit(self, value: bool):
         self._tblPr.autofit = value
 
+    @property
+    def banded_columns(self) -> bool:
+        """|True| if banded columns formatting is applied to this table.
+
+        |False| if banded columns formatting is not applied. Read/write boolean.
+        """
+        tblLook = self._tblPr.tblLook
+        return not tblLook.noVBand if tblLook is not None else False
+    
+    @banded_columns.setter
+    def banded_columns(self, value: bool):
+        tblLook = self._tblPr.get_or_add_tblLook()
+        tblLook.noVBand = int(not value)
+
+    @property
+    def banded_rows(self) -> bool:
+        """|True| if banded rows formatting is applied to this table.
+
+        |False| if banded rows formatting is not applied. Read/write boolean.
+        """
+        tblLook = self._tblPr.tblLook
+        return not tblLook.noHBand if tblLook is not None else False
+
+    @banded_rows.setter
+    def banded_rows(self, value: bool):
+        tblLook = self._tblPr.get_or_add_tblLook()
+        tblLook.noHBand = int(not value)
+        
     def cell(self, row_idx: int, col_idx: int) -> _Cell:
         """|_Cell| at `row_idx`, `col_idx` intersection.
 

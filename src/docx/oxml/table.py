@@ -256,6 +256,20 @@ class CT_Tbl(BaseOxmlElement):
         ) * col_count
 
 
+class CT_TblLook(BaseOxmlElement):
+    """`w:tblLook` element, child of `w:tblPr`.
+
+    Specifies visual formatting of the table
+    """
+
+    noHBand: int | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:noHBand", XsdInt, default=1
+    )
+    noVBand: int | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "w:noVBand", XsdInt, default=1
+    )
+
+
 class CT_TblGrid(BaseOxmlElement):
     """`w:tblGrid` element.
 
@@ -301,6 +315,7 @@ class CT_TblPr(BaseOxmlElement):
     get_or_add_bidiVisual: Callable[[], CT_OnOff]
     get_or_add_jc: Callable[[], CT_Jc]
     get_or_add_tblLayout: Callable[[], CT_TblLayoutType]
+    get_or_add_tblLook: Callable[[], CT_TblLook]
     _add_tblStyle: Callable[[], CT_String]
     _remove_bidiVisual: Callable[[], None]
     _remove_jc: Callable[[], None]
@@ -338,6 +353,9 @@ class CT_TblPr(BaseOxmlElement):
     tblLayout: CT_TblLayoutType | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:tblLayout", successors=_tag_seq[13:]
     )
+    tblLook: CT_TblLook | None = ZeroOrOne(
+        "w:tblLook", successors=_tag_seq[15:])  # pyright: ignore[reportAssignmentType]
+
     del _tag_seq
 
     @property
