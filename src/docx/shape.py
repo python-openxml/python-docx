@@ -101,3 +101,42 @@ class InlineShape:
     def width(self, cx: Length):
         self._inline.extent.cx = cx
         self._inline.graphic.graphicData.pic.spPr.cx = cx
+
+    @property
+    def alt_text(self) -> str | None:
+        """Read/write alternative-text description for this inline shape.
+
+        This corresponds to the 'Description' field in Word's Alt Text pane and is
+        stored on the ``wp:docPr`` ``descr`` attribute.
+        """
+        docPr = self._inline.docPr
+        if docPr is None:
+            return None
+        return docPr.descr
+
+    @alt_text.setter
+    def alt_text(self, value: str | None) -> None:
+        docPr = self._inline.docPr
+        if docPr is None:
+            return
+        # Setting to empty/None clears the attribute.
+        docPr.descr = value if value else None
+
+    @property
+    def alt_title(self) -> str | None:
+        """Read/write alternative-text title for this inline shape.
+
+        This corresponds to the 'Title' field in Word's Alt Text pane and is
+        stored on the ``wp:docPr`` ``title`` attribute.
+        """
+        docPr = self._inline.docPr
+        if docPr is None:
+            return None
+        return docPr.title
+
+    @alt_title.setter
+    def alt_title(self, value: str | None) -> None:
+        docPr = self._inline.docPr
+        if docPr is None:
+            return
+        docPr.title = value if value else None

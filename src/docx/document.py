@@ -123,6 +123,8 @@ class Document(ElementProxy):
         image_path_or_stream: str | IO[bytes],
         width: int | Length | None = None,
         height: int | Length | None = None,
+        title: str | None = None,
+        descr: str | None = None,
     ):
         """Return new picture shape added in its own paragraph at end of the document.
 
@@ -133,9 +135,12 @@ class Document(ElementProxy):
         aspect ratio of the image. The native size of the picture is calculated using
         the dots-per-inch (dpi) value specified in the image file, defaulting to 72 dpi
         if no value is specified, as is often the case.
+
+        `title` sets the image's alternative-text title.
+        `descr` sets the alternative-text description shown in Word's Alt Text pane.
         """
         run = self.add_paragraph().add_run()
-        return run.add_picture(image_path_or_stream, width, height)
+        return run.add_picture(image_path_or_stream, width, height, title, descr)
 
     def add_section(self, start_type: WD_SECTION = WD_SECTION.NEW_PAGE):
         """Return a |Section| object newly added at the end of the document.
