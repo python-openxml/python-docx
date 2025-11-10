@@ -161,6 +161,34 @@ class Table(StoryChild):
         self._element.bidiVisual_val = value
 
     @property
+    def width(self) -> Length | None:
+        """The preferred width of this table in EMU, or |None| if no explicit width is set.
+
+        Read/write. When set to a |Length| value, the table will have a fixed preferred
+        width that Word will respect (checking the "Preferred width" box in Table Properties).
+        This provides true fixed-width behavior where the table maintains its width regardless
+        of window size.
+
+        Assigning |None| removes any explicit width setting, causing the table to use
+        automatic width (unchecking the "Preferred width" box).
+
+        Example::
+
+            >>> from docx.shared import Inches
+            >>> table = document.add_table(rows=2, cols=2)
+            >>> table.width
+            None
+            >>> table.width = Inches(6.0)
+            >>> table.width
+            5486400  # EMU equivalent of 6 inches
+        """
+        return self._tblPr.width
+
+    @width.setter
+    def width(self, value: Length | None):
+        self._tblPr.width = value
+
+    @property
     def _cells(self) -> list[_Cell]:
         """A sequence of |_Cell| objects, one for each cell of the layout grid.
 

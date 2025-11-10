@@ -301,10 +301,12 @@ class CT_TblPr(BaseOxmlElement):
     get_or_add_bidiVisual: Callable[[], CT_OnOff]
     get_or_add_jc: Callable[[], CT_Jc]
     get_or_add_tblLayout: Callable[[], CT_TblLayoutType]
+    get_or_add_tblW: Callable[[], CT_TblWidth]
     _add_tblStyle: Callable[[], CT_String]
     _remove_bidiVisual: Callable[[], None]
     _remove_jc: Callable[[], None]
     _remove_tblStyle: Callable[[], None]
+    _remove_tblW: Callable[[], None]
 
     _tag_seq = (
         "w:tblStyle",
@@ -331,6 +333,9 @@ class CT_TblPr(BaseOxmlElement):
     )
     bidiVisual: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:bidiVisual", successors=_tag_seq[4:]
+    )
+    tblW: CT_TblWidth | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:tblW", successors=_tag_seq[7:]
     )
     jc: CT_Jc | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:jc", successors=_tag_seq[8:]
@@ -385,6 +390,27 @@ class CT_TblPr(BaseOxmlElement):
         if value is None:
             return
         self._add_tblStyle().val = value
+
+    @property
+    def width(self) -> Length | None:
+        """EMU length in `./w:tblW` or |None| if not present or its type is not 'dxa'."""
+        tblW = self.tblW
+        if tblW is None:
+            return None
+        return tblW.width
+
+    @width.setter
+    def width(self, value: Length | None):
+        """Set the table width to a specific value.
+
+        Setting a Length value sets the table to a fixed preferred width (w:type="dxa").
+        Setting None removes the tblW element, causing the table to use automatic width.
+        """
+        if value is None:
+            self._remove_tblW()
+            return
+        tblW = self.get_or_add_tblW()
+        tblW.width = value
 
 
 class CT_TblPrEx(BaseOxmlElement):

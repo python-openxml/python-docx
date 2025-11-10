@@ -172,6 +172,45 @@ class DescribeTable:
         table.autofit = new_value
         assert table._tbl.xml == xml(expected_cxml)
 
+    @pytest.mark.parametrize(
+        ("tbl_cxml", "expected_value"),
+        [
+            ("w:tbl/w:tblPr", None),
+            ("w:tbl/w:tblPr/w:tblW{w:w=0,w:type=auto}", None),
+            ("w:tbl/w:tblPr/w:tblW{w:w=1440,w:type=dxa}", 914400),
+            ("w:tbl/w:tblPr/w:tblW{w:w=5000,w:type=dxa}", 3175000),
+        ],
+    )
+    def it_knows_its_width(
+        self, tbl_cxml: str, expected_value: int | None, document_: Mock
+    ):
+        table = Table(cast(CT_Tbl, element(tbl_cxml)), document_)
+        assert table.width == expected_value
+
+    @pytest.mark.parametrize(
+        ("tbl_cxml", "new_value", "expected_cxml"),
+        [
+            ("w:tbl/w:tblPr", Inches(1), "w:tbl/w:tblPr/w:tblW{w:w=1440,w:type=dxa}"),
+            (
+                "w:tbl/w:tblPr/w:tblW{w:w=0,w:type=auto}",
+                Inches(6),
+                "w:tbl/w:tblPr/w:tblW{w:w=8640,w:type=dxa}",
+            ),
+            (
+                "w:tbl/w:tblPr/w:tblW{w:w=1440,w:type=dxa}",
+                Inches(2),
+                "w:tbl/w:tblPr/w:tblW{w:w=2880,w:type=dxa}",
+            ),
+            ("w:tbl/w:tblPr/w:tblW{w:w=1440,w:type=dxa}", None, "w:tbl/w:tblPr"),
+        ],
+    )
+    def it_can_change_its_width(
+        self, tbl_cxml: str, new_value: Length | None, expected_cxml: str, document_: Mock
+    ):
+        table = Table(cast(CT_Tbl, element(tbl_cxml)), document_)
+        table.width = new_value
+        assert table._tbl.xml == xml(expected_cxml)
+
     def it_knows_it_is_the_table_its_children_belong_to(self, table: Table):
         assert table.table is table
 

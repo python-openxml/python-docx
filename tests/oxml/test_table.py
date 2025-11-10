@@ -386,3 +386,41 @@ class DescribeCT_Tc:
     @pytest.fixture
     def tr_(self, request: FixtureRequest):
         return instance_mock(request, CT_Row)
+
+
+class DescribeCT_TblPr:
+    """Unit-test suite for `docx.oxml.table.CT_TblPr` objects."""
+
+    @pytest.mark.parametrize(
+        ("tblPr_cxml", "expected_value"),
+        [
+            ("w:tblPr", None),
+            ("w:tblPr/w:tblW{w:w=0,w:type=auto}", None),
+            ("w:tblPr/w:tblW{w:w=1440,w:type=dxa}", 914400),
+            ("w:tblPr/w:tblW{w:w=5000,w:type=dxa}", 3175000),
+        ],
+    )
+    def it_knows_its_width(self, tblPr_cxml: str, expected_value: int | None):
+        from docx.oxml.table import CT_TblPr
+
+        tblPr = cast(CT_TblPr, element(tblPr_cxml))
+        assert tblPr.width == expected_value
+
+    @pytest.mark.parametrize(
+        ("tblPr_cxml", "new_value", "expected_cxml"),
+        [
+            ("w:tblPr", 914400, "w:tblPr/w:tblW{w:w=1440,w:type=dxa}"),
+            ("w:tblPr/w:tblW{w:w=0,w:type=auto}", 5486400, "w:tblPr/w:tblW{w:w=8640,w:type=dxa}"),
+            ("w:tblPr/w:tblW{w:w=1440,w:type=dxa}", 1828800, "w:tblPr/w:tblW{w:w=2880,w:type=dxa}"),
+            ("w:tblPr/w:tblW{w:w=1440,w:type=dxa}", None, "w:tblPr"),
+        ],
+    )
+    def it_can_change_its_width(
+        self, tblPr_cxml: str, new_value: int | None, expected_cxml: str
+    ):
+        from docx.oxml.table import CT_TblPr
+        from docx.shared import Emu
+
+        tblPr = cast(CT_TblPr, element(tblPr_cxml))
+        tblPr.width = Emu(new_value) if new_value is not None else None
+        assert tblPr.xml == xml(expected_cxml)

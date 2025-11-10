@@ -145,6 +145,18 @@ def given_a_table_having_table_direction_setting(context: Context, setting: str)
     context.table_ = document.tables[table_idx]
 
 
+@given("a table having a width of {width_desc}")
+def given_a_table_having_a_width_of_width_desc(context: Context, width_desc: str):
+    table_idx = {
+        "no explicit width": 0,
+        "automatic width": 1,
+        "1 inch": 9,
+        "6 inches": 10,
+    }[width_desc]
+    document = Document(test_docx("tbl-props"))
+    context.table_ = document.tables[table_idx]
+
+
 @given("a table having two columns")
 def given_a_table_having_two_columns(context: Context):
     docx_path = test_docx("blk-containing-table")
@@ -263,6 +275,16 @@ def when_apply_value_to_table_style(context: Context, value: str):
 def when_assign_value_to_table_table_direction(context: Context, value: str):
     new_value = None if value == "None" else getattr(WD_TABLE_DIRECTION, value)
     context.table_.table_direction = new_value
+
+
+@when("I assign {new_value} to table.width")
+def when_I_assign_new_value_to_table_width(context: Context, new_value: str):
+    from docx.shared import Cm
+
+    if new_value == "None":
+        context.table_.width = None
+    else:
+        context.table_.width = eval(new_value)
 
 
 @when("I merge from cell {origin} to cell {other}")
@@ -441,6 +463,23 @@ def then_table_table_direction_is_value(context: Context, value: str):
     expected_value = None if value == "None" else getattr(WD_TABLE_DIRECTION, value)
     actual_value = context.table_.table_direction
     assert actual_value == expected_value, "got '%s'" % actual_value
+
+
+@then("table.width is {value}")
+def then_table_width_is_value(context: Context, value: str):
+    from docx.shared import Cm
+
+    if value == "None":
+        expected = None
+    else:
+        expected = eval(value)
+    actual = context.table_.width
+    # Allow small tolerance for twips conversion rounding
+    if expected is None:
+        assert actual is None, f"expected None, got {actual}"
+    else:
+        tolerance = 50  # EMU
+        assert abs(actual - expected) < tolerance, f"expected {expected}, got {actual}"
 
 
 @then("the cell contains the string I assigned")

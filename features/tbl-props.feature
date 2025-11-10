@@ -76,3 +76,28 @@ Feature: Get and set table properties
       | to inherit    | RTL       | RTL   |
       | right-to-left | LTR       | LTR   |
       | left-to-right | None      | None  |
+
+
+  Scenario Outline: Get table preferred width
+    Given a table having a width of <width-desc>
+     Then table.width is <value>
+
+    Examples: table width settings
+      | width-desc              | value   |
+      | no explicit width       | None    |
+      | automatic width         | None    |
+      | 1 inch                  | 914400  |
+      | 6 inches                | 5486400 |
+
+
+  Scenario Outline: Set table preferred width
+    Given a table having a width of <width-desc>
+     When I assign <new-value> to table.width
+     Then table.width is <reported-value>
+
+    Examples: results of assignment to table.width
+      | width-desc        | new-value | reported-value |
+      | no explicit width | Inches(6) | Inches(6)      |
+      | 1 inch            | Inches(2) | Inches(2)      |
+      | 6 inches          | Cm(15)    | Cm(15)         |
+      | 6 inches          | None      | None           |

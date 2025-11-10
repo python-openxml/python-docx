@@ -40,6 +40,42 @@ is used::
     False
 
 
+Preferred Width
+---------------
+
+Word allows a table to have a preferred width, which corresponds to checking
+the "Preferred width" checkbox in the Table Properties dialog. When set, the
+table maintains its width regardless of window size, providing true fixed-width
+behavior.
+
+The read/write :attr:`Table.width` property specifies the preferred width for
+a table::
+
+    >>> from docx.shared import Inches, Cm
+    >>> table = document.add_table(rows=2, cols=2)
+    >>> table.width
+    None
+    >>> table.width = Inches(6)
+    >>> table.width
+    5486400
+    >>> table.width = Cm(15)
+    >>> table.width
+    5400040
+    >>> table.width = None  # Remove preferred width
+    >>> table.width
+    None
+
+When :attr:`Table.width` is set to a |Length| value, Word sets the table's
+``w:tblW`` element with ``w:type="dxa"`` and the width in twips. When set to
+|None|, the ``w:tblW`` element is removed (or remains with ``w:type="auto"``),
+allowing the table to use automatic width.
+
+This is distinct from the :attr:`Table.allow_autofit` property, which controls
+whether column widths adjust based on content. A table can have a fixed
+preferred width (``table.width = Inches(6)``) while still allowing autofit
+layout (``table.allow_autofit = True``), or vice versa.
+
+
 Specimen XML
 ------------
 
