@@ -6,6 +6,7 @@ element trees suitable for unit testing.
 
 from pyparsing import (
     Combine,
+    DelimitedList,
     Forward,
     Group,
     Literal,
@@ -15,7 +16,6 @@ from pyparsing import (
     alphanums,
     alphas,
     dblQuotedString,
-    delimitedList,
     removeQuotes,
     stringEnd,
 )
@@ -243,7 +243,7 @@ def grammar():
     attr_name = Word(alphas + ":")
     attr_val = Word(alphanums + " %-./:_")
     attr_def = Group(attr_name + equal + attr_val)
-    attr_list = open_brace + delimitedList(attr_def) + close_brace
+    attr_list = open_brace + DelimitedList(attr_def) + close_brace
 
     text = dblQuotedString.setParseAction(removeQuotes)
 
@@ -260,7 +260,7 @@ def grammar():
         element("element") + Group(Optional(slash + child_node_list))("child_node_list")
     ).setParseAction(connect_node_children)
 
-    child_node_list << (open_paren + delimitedList(node) + close_paren | node)
+    child_node_list << (open_paren + DelimitedList(node) + close_paren | node)
 
     root_node = (
         element("element") + Group(Optional(slash + child_node_list))("child_node_list") + stringEnd
