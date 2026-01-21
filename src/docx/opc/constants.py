@@ -135,6 +135,9 @@ class CONTENT_TYPE:
     WML_DOCUMENT_MAIN = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"
     )
+    WML_TEMPLATE_MAIN = (
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"
+    )
     WML_ENDNOTES = "application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml"
     WML_FONT_TABLE = "application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml"
     WML_FOOTER = "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"
