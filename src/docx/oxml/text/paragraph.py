@@ -57,7 +57,7 @@ class CT_P(BaseOxmlElement):
     @property
     def inner_content_elements(self) -> List[CT_R | CT_Hyperlink]:
         """Run and hyperlink children of the `w:p` element, in document order."""
-        return self.xpath("./w:r | ./w:hyperlink")
+        return self.xpath("./w:r | ./w:hyperlink | ./w:ins/w:r | ./w:moveTo/w:r")
 
     @property
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
@@ -99,7 +99,7 @@ class CT_P(BaseOxmlElement):
         Inner-content child elements like `w:r` and `w:hyperlink` are translated to
         their text equivalent.
         """
-        return "".join(e.text for e in self.xpath("w:r | w:hyperlink"))
+        return "".join(e.text for e in self.xpath("w:r | w:hyperlink | w:ins/w:r | w:moveTo/w:r"))
 
     def _insert_pPr(self, pPr: CT_PPr) -> CT_PPr:
         self.insert(0, pPr)

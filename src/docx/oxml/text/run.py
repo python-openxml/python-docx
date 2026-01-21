@@ -35,6 +35,7 @@ class CT_R(BaseOxmlElement):
     cr = ZeroOrMore("w:cr")
     drawing = ZeroOrMore("w:drawing")
     t = ZeroOrMore("w:t")
+    delText = ZeroOrMore("w:delText")
     tab = ZeroOrMore("w:tab")
 
     def add_t(self, text: str) -> CT_Text:
@@ -75,6 +76,7 @@ class CT_R(BaseOxmlElement):
                 " | w:noBreakHyphen"
                 " | w:ptab"
                 " | w:t"
+                " | w:delText"
                 " | w:tab"
             ):
                 if isinstance(e, (CT_Drawing, CT_LastRenderedPageBreak)):
@@ -134,7 +136,7 @@ class CT_R(BaseOxmlElement):
         equivalent.
         """
         return "".join(
-            str(e) for e in self.xpath("w:br | w:cr | w:noBreakHyphen | w:ptab | w:t | w:tab")
+            str(e) for e in self.xpath("w:br | w:cr | w:noBreakHyphen | w:ptab | w:t | w:delText | w:tab")
         )
 
     @text.setter

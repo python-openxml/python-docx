@@ -76,6 +76,7 @@ register_element_cls("w:noBreakHyphen", CT_NoBreakHyphen)
 register_element_cls("w:ptab", CT_PTab)
 register_element_cls("w:r", CT_R)
 register_element_cls("w:t", CT_Text)
+register_element_cls("w:delText", CT_Text)
 
 # ---------------------------------------------------------------------------
 # header/footer-related mappings
