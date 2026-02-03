@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import IO, TYPE_CHECKING, Iterator, cast
 
 from docx.drawing import Drawing
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
 from docx.oxml.drawing import CT_Drawing
+from docx.oxml.ns import qn
+from docx.oxml.parser import OxmlElement
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
+from docx.revision import TrackedDeletion
 from docx.shape import InlineShape
 from docx.shared import StoryChild
 from docx.styles.style import CharacterStyle
@@ -116,6 +120,156 @@ class Run(StoryChild):
         """
         self._r.clear_content()
         return self
+
+    def delete_tracked(self, author: str = "", revision_id: int | None = None) -> TrackedDeletion:
+        """Mark this run as deleted with track changes.
+
+        Instead of removing the run, it is wrapped in a `w:del` element to mark it
+        as deleted content when track changes is enabled. The run remains in the
+        document but is displayed as deleted text (e.g., with strikethrough).
+
+        Args:
+            author: Author name for the revision. Defaults to empty string.
+            revision_id: Unique ID for this revision. Auto-generated if not provided.
+
+        Returns:
+            A TrackedDeletion object wrapping the `w:del` element.
+        """
+        if revision_id is None:
+            revision_id = self._next_revision_id()
+
+        parent = self._r.getparent()
+        if parent is None:
+            raise ValueError("Run has no parent element")
+
+        del_elem = OxmlElement(
+            "w:del",
+            attrs={
+                qn("w:id"): str(revision_id),
+                qn("w:author"): author,
+                qn("w:date"): dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        )
+
+        for t_elem in self._r.findall(qn("w:t")):
+            delText = OxmlElement("w:delText")
+            delText.text = t_elem.text
+            if t_elem.get(qn("xml:space")) == "preserve":
+                delText.set(qn("xml:space"), "preserve")
+            t_elem.getparent().replace(t_elem, delText)  # pyright: ignore[reportOptionalMemberAccess]
+
+        index = list(parent).index(self._r)
+        parent.insert(index, del_elem)
+        del_elem.append(self._r)
+
+        return TrackedDeletion(del_elem, self._parent)  # pyright: ignore[reportArgumentType]
+
+    def replace_tracked_at(
+        self,
+        start: int,
+        end: int,
+        replace_text: str,
+        author: str = "",
+    ) -> None:
+        """Replace text at character offsets `start` to `end` using track changes.
+
+        Creates a tracked deletion of the text at positions [start, end) and a tracked
+        insertion of `replace_text` at that position.
+
+        Args:
+            start: Starting character offset (0-based, inclusive).
+            end: Ending character offset (0-based, exclusive).
+            replace_text: Text to insert in place of the deleted text.
+            author: Author name for the revision. Defaults to empty string.
+
+        Raises:
+            ValueError: If start or end are out of bounds or start >= end.
+        """
+        text = self.text
+        if start < 0 or end > len(text) or start >= end:
+            raise ValueError(
+                f"Invalid offsets: start={start}, end={end} for text of length {len(text)}"
+            )
+
+        now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        deleted_text = text[start:end]
+        before_text = text[:start]
+        after_text = text[end:]
+
+        r_elem = self._r
+        parent = r_elem.getparent()
+        if parent is None:
+            raise ValueError("Run has no parent element")
+
+        index = list(parent).index(r_elem)
+        parent.remove(r_elem)
+
+        insert_idx = index
+
+        if before_text:
+            before_r = OxmlElement("w:r")
+            before_t = OxmlElement("w:t")
+            before_t.text = before_text
+            if before_text.startswith(" ") or before_text.endswith(" "):
+                before_t.set(qn("xml:space"), "preserve")
+            before_r.append(before_t)
+            parent.insert(insert_idx, before_r)
+            insert_idx += 1
+
+        rev_id = self._next_revision_id()
+        del_elem = OxmlElement(
+            "w:del",
+            attrs={
+                qn("w:id"): str(rev_id),
+                qn("w:author"): author,
+                qn("w:date"): now,
+            },
+        )
+        del_r = OxmlElement("w:r")
+        del_text_elem = OxmlElement("w:delText")
+        del_text_elem.text = deleted_text
+        del_r.append(del_text_elem)
+        del_elem.append(del_r)
+        parent.insert(insert_idx, del_elem)
+        insert_idx += 1
+
+        rev_id = self._next_revision_id()
+        ins_elem = OxmlElement(
+            "w:ins",
+            attrs={
+                qn("w:id"): str(rev_id),
+                qn("w:author"): author,
+                qn("w:date"): now,
+            },
+        )
+        ins_r = OxmlElement("w:r")
+        ins_t = OxmlElement("w:t")
+        ins_t.text = replace_text
+        ins_r.append(ins_t)
+        ins_elem.append(ins_r)
+        parent.insert(insert_idx, ins_elem)
+        insert_idx += 1
+
+        if after_text:
+            after_r = OxmlElement("w:r")
+            after_t = OxmlElement("w:t")
+            after_t.text = after_text
+            if after_text.startswith(" ") or after_text.endswith(" "):
+                after_t.set(qn("xml:space"), "preserve")
+            after_r.append(after_t)
+            parent.insert(insert_idx, after_r)
+
+    def _next_revision_id(self) -> int:
+        """Generate the next unique revision ID for this document."""
+        max_id = 0
+        for ins_or_del in self._r.xpath("//w:ins | //w:del"):
+            id_val = ins_or_del.get(qn("w:id"))  # pyright: ignore[reportUnknownMemberType]
+            if id_val is not None:
+                try:
+                    max_id = max(max_id, int(id_val))
+                except ValueError:
+                    pass
+        return max_id + 1
 
     @property
     def contains_page_break(self) -> bool:

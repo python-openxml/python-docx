@@ -6,6 +6,7 @@ element trees suitable for unit testing.
 
 from pyparsing import (
     Combine,
+    DelimitedList,
     Forward,
     Group,
     Literal,
@@ -15,7 +16,6 @@ from pyparsing import (
     alphanums,
     alphas,
     dblQuotedString,
-    delimitedList,
     removeQuotes,
     stringEnd,
 )
@@ -36,7 +36,7 @@ def element(cxel_str: str):
 
 def xml(cxel_str: str) -> str:
     """Return the XML generated from `cxel_str`."""
-    root_token = root_node.parseString(cxel_str)
+    root_token = root_node.parse_string(cxel_str)
     xml = root_token.element.xml
     return xml
 
@@ -243,28 +243,28 @@ def grammar():
     attr_name = Word(alphas + ":")
     attr_val = Word(alphanums + " %-./:_")
     attr_def = Group(attr_name + equal + attr_val)
-    attr_list = open_brace + delimitedList(attr_def) + close_brace
+    attr_list = open_brace + DelimitedList(attr_def) + close_brace
 
-    text = dblQuotedString.setParseAction(removeQuotes)
+    text = dblQuotedString.set_parse_action(removeQuotes)
 
     # w:jc{val=right} ----------------------------
     element = (
         tagname("tagname")
         + Group(Optional(attr_list))("attr_list")
         + Optional(text, default="")("text")
-    ).setParseAction(Element.from_token)
+    ).set_parse_action(Element.from_token)
 
     child_node_list = Forward()
 
     node = Group(
         element("element") + Group(Optional(slash + child_node_list))("child_node_list")
-    ).setParseAction(connect_node_children)
+    ).set_parse_action(connect_node_children)
 
-    child_node_list << (open_paren + delimitedList(node) + close_paren | node)
+    child_node_list <<= (open_paren + DelimitedList(node) + close_paren | node)
 
     root_node = (
         element("element") + Group(Optional(slash + child_node_list))("child_node_list") + stringEnd
-    ).setParseAction(connect_root_node_children)
+    ).set_parse_action(connect_root_node_children)
 
     return root_node
 

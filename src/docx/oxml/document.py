@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, List
+from typing import TYPE_CHECKING, Callable, List, Union
 
 from docx.oxml.section import CT_SectPr
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 if TYPE_CHECKING:
+    from docx.oxml.revision import CT_RunTrackChange
     from docx.oxml.table import CT_Tbl
     from docx.oxml.text.paragraph import CT_P
 
@@ -80,9 +81,18 @@ class CT_Body(BaseOxmlElement):
 
     @property
     def inner_content_elements(self) -> List[CT_P | CT_Tbl]:
-        """Generate all `w:p` and `w:tbl` elements in this document-body.
+        """All `w:p` and `w:tbl` elements directly in this document-body.
 
-        Elements appear in document order. Elements shaded by nesting in a `w:ins` or
-        other "wrapper" element will not be included.
+        Elements appear in document order. Elements nested in `w:ins` or `w:del`
+        are NOT included. Use `inner_content_with_revisions` to include those.
         """
         return self.xpath("./w:p | ./w:tbl")
+
+    @property
+    def inner_content_with_revisions(self) -> List[Union[CT_P, CT_Tbl, CT_RunTrackChange]]:
+        """All `w:p`, `w:tbl`, `w:ins`, and `w:del` elements in this document-body.
+
+        Elements appear in document order. This includes block-level tracked changes
+        (`w:ins` and `w:del` elements that wrap paragraphs or tables).
+        """
+        return self.xpath("./w:p | ./w:tbl | ./w:ins | ./w:del")

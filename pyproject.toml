@@ -75,6 +75,9 @@ filterwarnings = [
     # -- pytest-xdist plugin may warn about `looponfailroots` deprecation --
     "ignore::DeprecationWarning:xdist",
 
+    # -- pyparsing 3.x deprecated many method names --
+    "ignore::DeprecationWarning:pyparsing",
+
     # -- pytest complains when pytest-xdist is not installed --
     "ignore:Unknown config option. looponfailroots:pytest.PytestConfigWarning",
 ]
@@ -124,4 +127,3 @@ known-local-folder = ["helpers"]
 
 [tool.setuptools.dynamic]
 version = {attr = "docx.__version__"}
-

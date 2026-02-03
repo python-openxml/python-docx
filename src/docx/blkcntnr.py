@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Iterator
 
 from typing_extensions import TypeAlias
 
+from docx.oxml.ns import qn
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.shared import StoryChild
@@ -23,6 +24,7 @@ if TYPE_CHECKING:
     from docx.oxml.document import CT_Body
     from docx.oxml.section import CT_HdrFtr
     from docx.oxml.table import CT_Tc
+    from docx.revision import TrackedDeletion, TrackedInsertion
     from docx.shared import Length
     from docx.styles.style import ParagraphStyle
     from docx.table import Table
@@ -71,12 +73,41 @@ class BlockItemContainer(StoryChild):
         self._element._insert_tbl(tbl)  # pyright: ignore[reportPrivateUsage]
         return Table(tbl, self)
 
-    def iter_inner_content(self) -> Iterator[Paragraph | Table]:
-        """Generate each `Paragraph` or `Table` in this container in document order."""
+    def iter_inner_content(
+        self, include_revisions: bool = False
+    ) -> Iterator[Paragraph | Table | TrackedInsertion | TrackedDeletion]:
+        """Generate each `Paragraph` or `Table` in this container in document order.
+
+        Args:
+            include_revisions: If True, also yields `TrackedInsertion` and
+                `TrackedDeletion` objects for block-level tracked changes
+                (`w:ins` and `w:del` elements that wrap paragraphs or tables).
+                Defaults to False for backward compatibility.
+
+        Yields:
+            Paragraph, Table, TrackedInsertion, or TrackedDeletion objects in
+            document order.
+        """
+        from docx.revision import TrackedDeletion, TrackedInsertion
         from docx.table import Table
 
-        for element in self._element.inner_content_elements:
-            yield (Paragraph(element, self) if isinstance(element, CT_P) else Table(element, self))
+        if include_revisions:
+            elements = getattr(self._element, "inner_content_with_revisions", None)
+            if elements is None:
+                elements = self._element.inner_content_elements
+        else:
+            elements = self._element.inner_content_elements
+
+        for element in elements:
+            tag = element.tag  # pyright: ignore[reportUnknownMemberType]
+            if tag == qn("w:p"):
+                yield Paragraph(element, self)
+            elif tag == qn("w:tbl"):
+                yield Table(element, self)
+            elif tag == qn("w:ins"):
+                yield TrackedInsertion(element, self)  # pyright: ignore[reportArgumentType]
+            elif tag == qn("w:del"):
+                yield TrackedDeletion(element, self)  # pyright: ignore[reportArgumentType]
 
     @property
     def paragraphs(self):

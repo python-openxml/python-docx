@@ -82,6 +82,7 @@ register_element_cls("w:t", CT_Text)
 
 register_element_cls("w:evenAndOddHeaders", CT_OnOff)
 register_element_cls("w:titlePg", CT_OnOff)
+register_element_cls("w:trackRevisions", CT_OnOff)
 
 # ---------------------------------------------------------------------------
 # other custom element class mappings
@@ -249,3 +250,22 @@ register_element_cls("w:spacing", CT_Spacing)
 register_element_cls("w:tab", CT_TabStop)
 register_element_cls("w:tabs", CT_TabStops)
 register_element_cls("w:widowControl", CT_OnOff)
+
+from .revision import (
+    CT_PPrChange,
+    CT_RPrChange,
+    CT_RunTrackChange,
+    CT_SectPrChange,
+    CT_TblPrChange,
+    CT_TcPrChange,
+    CT_TrPrChange,
+)
+
+register_element_cls("w:ins", CT_RunTrackChange)
+register_element_cls("w:del", CT_RunTrackChange)
+register_element_cls("w:rPrChange", CT_RPrChange)
+register_element_cls("w:pPrChange", CT_PPrChange)
+register_element_cls("w:sectPrChange", CT_SectPrChange)
+register_element_cls("w:tblPrChange", CT_TblPrChange)
+register_element_cls("w:tcPrChange", CT_TcPrChange)
+register_element_cls("w:trPrChange", CT_TrPrChange)

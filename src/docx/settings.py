@@ -33,3 +33,16 @@ class Settings(ElementProxy):
     @odd_and_even_pages_header_footer.setter
     def odd_and_even_pages_header_footer(self, value: bool):
         self._settings.evenAndOddHeaders_val = value
+
+    @property
+    def track_revisions(self) -> bool:
+        """True if track-changes is enabled for this document.
+
+        Read/write. When True, changes made to the document will be tracked as
+        revisions. When False, changes are applied directly without tracking.
+        """
+        return self._settings.trackRevisions_val
+
+    @track_revisions.setter
+    def track_revisions(self, value: bool):
+        self._settings.trackRevisions_val = value

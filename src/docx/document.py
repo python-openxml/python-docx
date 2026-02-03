@@ -229,6 +229,46 @@ class Document(ElementProxy):
         """
         return self._body.tables
 
+    def find_and_replace_tracked(
+        self,
+        search_text: str,
+        replace_text: str,
+        author: str = "",
+        comment: str | None = None,
+    ) -> int:
+        """Find and replace all occurrences of `search_text` with `replace_text` using track changes.
+
+        This method searches all paragraphs in the document (including those in tables)
+        and replaces text at the word level, creating tracked deletions and insertions.
+        If `comment` is provided, a comment is attached to each replacement explaining
+        the change.
+
+        Args:
+            search_text: Text to find and replace.
+            replace_text: Text to insert in place of search_text.
+            author: Author name for the revision. Defaults to empty string.
+            comment: Optional comment text to attach to each replacement.
+
+        Returns:
+            The total number of replacements made across the document.
+        """
+        total_count = 0
+
+        for para in self.paragraphs:
+            total_count += para.replace_tracked(
+                search_text, replace_text, author=author, comment=comment
+            )
+
+        for table in self.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for para in cell.paragraphs:
+                        total_count += para.replace_tracked(
+                            search_text, replace_text, author=author, comment=comment
+                        )
+
+        return total_count
+
     @property
     def _block_width(self) -> Length:
         """A |Length| object specifying the space between margins in last section."""

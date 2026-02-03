@@ -14,7 +14,9 @@ class CT_Settings(BaseOxmlElement):
     """`w:settings` element, root element for the settings part."""
 
     get_or_add_evenAndOddHeaders: Callable[[], CT_OnOff]
+    get_or_add_trackRevisions: Callable[[], CT_OnOff]
     _remove_evenAndOddHeaders: Callable[[], None]
+    _remove_trackRevisions: Callable[[], None]
 
     _tag_seq = (
         "w:writeProtection",
@@ -116,10 +118,28 @@ class CT_Settings(BaseOxmlElement):
         "w:decimalSymbol",
         "w:listSeparator",
     )
+    trackRevisions: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:trackRevisions", successors=_tag_seq[32:]
+    )
     evenAndOddHeaders: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:evenAndOddHeaders", successors=_tag_seq[48:]
     )
     del _tag_seq
+
+    @property
+    def trackRevisions_val(self) -> bool:
+        """Value of `w:trackRevisions/@w:val` or False if not present."""
+        trackRevisions = self.trackRevisions
+        if trackRevisions is None:
+            return False
+        return trackRevisions.val
+
+    @trackRevisions_val.setter
+    def trackRevisions_val(self, value: bool | None):
+        if value is None or value is False:
+            self._remove_trackRevisions()
+            return
+        self.get_or_add_trackRevisions().val = value
 
     @property
     def evenAndOddHeaders_val(self) -> bool:

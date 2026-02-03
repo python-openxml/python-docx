@@ -4,13 +4,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, List, cast
+from typing import TYPE_CHECKING, Callable, List, Union, cast
 
 from docx.oxml.parser import OxmlElement
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrMore, ZeroOrOne
 
 if TYPE_CHECKING:
     from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+    from docx.oxml.revision import CT_RunTrackChange
     from docx.oxml.section import CT_SectPr
     from docx.oxml.text.hyperlink import CT_Hyperlink
     from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
@@ -58,6 +59,17 @@ class CT_P(BaseOxmlElement):
     def inner_content_elements(self) -> List[CT_R | CT_Hyperlink]:
         """Run and hyperlink children of the `w:p` element, in document order."""
         return self.xpath("./w:r | ./w:hyperlink")
+
+    @property
+    def inner_content_with_revisions(
+        self,
+    ) -> List[Union[CT_R, CT_Hyperlink, CT_RunTrackChange]]:
+        """Run, hyperlink, and revision children of the `w:p` element.
+
+        Returns elements in document order, including `w:ins` and `w:del` elements
+        that wrap runs at the paragraph level.
+        """
+        return self.xpath("./w:r | ./w:hyperlink | ./w:ins | ./w:del")
 
     @property
     def lastRenderedPageBreaks(self) -> List[CT_LastRenderedPageBreak]:
