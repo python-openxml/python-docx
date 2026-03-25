@@ -82,20 +82,21 @@ class CT_Row(BaseOxmlElement):
         Raises ValueError when this `w:tr` contains no `w:tc` with exact starting `grid_offset`.
         """
         # -- account for omitted cells at the start of the row --
-        remaining_offset = grid_offset - self.grid_before
 
+        if grid_offset < self.grid_before:
+            raise ValueError(f"no `tc` element at grid_offset={grid_offset}")
+
+        cell_dict = dict()
+        cell_index = self.grid_before
         for tc in self.tc_lst:
-            # -- We've gone past grid_offset without finding a tc, no sense searching further. --
-            if remaining_offset < 0:
-                break
-            # -- We've arrived at grid_offset, this is the `w:tc` we're looking for. --
-            if remaining_offset == 0:
-                return tc
-            # -- We're not there yet, skip forward the number of layout-grid cells this cell
-            # -- occupies.
-            remaining_offset -= tc.grid_span
+            for _ in range(tc.grid_span):
+                cell_dict[cell_index] = tc
+                cell_index += 1
 
-        raise ValueError(f"no `tc` element at grid_offset={grid_offset}")
+        if grid_offset not in cell_dict:
+            raise ValueError(f"no `tc` element at grid_offset={grid_offset}")
+
+        return cell_dict[grid_offset]
 
     @property
     def tr_idx(self) -> int:
