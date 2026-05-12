@@ -446,6 +446,7 @@ class DescribeSection:
         ("sectPr_cxml", "margin_prop_name", "expected_value"),
         [
             ("w:sectPr/w:pgMar{w:left=120}", "left_margin", 76200),
+            ("w:sectPr/w:pgMar{w:left=119.6}", "left_margin", 76200),
             ("w:sectPr/w:pgMar{w:right=240}", "right_margin", 152400),
             ("w:sectPr/w:pgMar{w:top=-360}", "top_margin", -228600),
             ("w:sectPr/w:pgMar{w:bottom=480}", "bottom_margin", 304800),
