@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import IO, cast
 
 from docx.image.image import Image
@@ -22,7 +23,9 @@ class Package(OpcPackage):
         """
         self._gather_image_parts()
 
-    def get_or_add_image_part(self, image_descriptor: str | IO[bytes]) -> ImagePart:
+    def get_or_add_image_part(
+        self, image_descriptor: str | os.PathLike[str] | IO[bytes]
+    ) -> ImagePart:
         """Return |ImagePart| containing image specified by `image_descriptor`.
 
         The image-part is newly created if a matching one is not already present in the
@@ -65,7 +68,9 @@ class ImageParts:
     def append(self, item: ImagePart):
         self._image_parts.append(item)
 
-    def get_or_add_image_part(self, image_descriptor: str | IO[bytes]) -> ImagePart:
+    def get_or_add_image_part(
+        self, image_descriptor: str | os.PathLike[str] | IO[bytes]
+    ) -> ImagePart:
         """Return |ImagePart| object containing image identified by `image_descriptor`.
 
         The image-part is newly created if a matching one is not present in the

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import IO, TYPE_CHECKING, Tuple, cast
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -24,7 +25,9 @@ class StoryPart(XmlPart):
     `.add_paragraph()`, `.add_table()` etc.
     """
 
-    def get_or_add_image(self, image_descriptor: str | IO[bytes]) -> Tuple[str, Image]:
+    def get_or_add_image(
+        self, image_descriptor: str | os.PathLike[str] | IO[bytes]
+    ) -> Tuple[str, Image]:
         """Return (rId, image) pair for image identified by `image_descriptor`.
 
         `rId` is the str key (often like "rId7") for the relationship between this story
@@ -59,7 +62,7 @@ class StoryPart(XmlPart):
 
     def new_pic_inline(
         self,
-        image_descriptor: str | IO[bytes],
+        image_descriptor: str | os.PathLike[str] | IO[bytes],
         width: int | Length | None = None,
         height: int | Length | None = None,
     ) -> CT_Inline:
