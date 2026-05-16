@@ -57,7 +57,7 @@ and size, both paragraph and character styles, hyperlinks, images, and tables. N
 tables do not appear in the comment as displayed in the *comment-sidebar* although they
 do apper in the *reviewing-pane*.
 
-**Comment Metadata.** Each comment can be assigned *author*, *initals*, and *date*
+**Comment Metadata.** Each comment can be assigned *author*, *initials*, and *date*
 metadata. In Word, these fields are assigned automatically based on values in ``Settings
 > User`` of the installed Word application. These might be configured automatically in
 an enterprise installation, based on the user account, but by default they are empty.
@@ -66,7 +66,8 @@ an enterprise installation, based on the user account, but by default they are e
 the user name is not configured. *initials* is optional, but always set by Word, to the
 empty string if not configured. *date* is also optional, but always set by Word to the
 UTC date and time the comment was added, with seconds resolution (no milliseconds or
-microseconds).
+microseconds). The comment date is exposed in *python-docx* as
+:attr:`.Comment.timestamp`.
 
 **Additional Features.** Later versions of Word allow a comment to be *resolved*. A
 comment in this state will appear grayed-out in the Word UI. Later versions of Word also
@@ -90,19 +91,19 @@ A simple example is adding a comment to a paragraph::
 
     >>> comment = document.add_comment(
     ...    runs=paragraph.runs,
-    ...    text="I have this to say about that"
+    ...    text="I have this to say about that",
     ...    author="Steve Canny",
     ...    initials="SC",
     ... )
     >>> comment
     <docx.comments.Comment object at 0x02468ACE>
-    >>> comment.id
+    >>> comment.comment_id
     0
     >>> comment.author
     'Steve Canny'
     >>> comment.initials
     'SC'
-    >>> comment.date
+    >>> comment.timestamp
     datetime.datetime(2025, 6, 11, 20, 42, 30, 0, tzinfo=datetime.timezone.utc)
     >>> comment.text
     'I have this to say about that'
@@ -131,7 +132,7 @@ The comments collection supports random access to a comment by its id::
 Adding rich content to a comment
 --------------------------------
 
-A comment is a _block-item container_, just like the document body or a table cell, so
+A comment is a *block-item container*, just like the document body or a table cell, so
 it can contain any content that can appear in those places. It does not contain
 page-layout sections and cannot contain a comment reference, but it can contain multiple
 paragraphs and/or tables, and runs within paragraphs can have emphasis such as bold or
