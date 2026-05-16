@@ -102,7 +102,7 @@ class CT_Numbering(BaseOxmlElement):
         """The first ``numId`` unused by a ``<w:num>`` element, starting at 1 and
         filling any gaps in numbering between existing ``<w:num>`` elements."""
         numId_strs = self.xpath("./w:num/@w:numId")
-        num_ids = [int(numId_str) for numId_str in numId_strs]
+        num_ids = {int(numId_str) for numId_str in numId_strs}
         for num in range(1, len(num_ids) + 2):
             if num not in num_ids:
                 break
