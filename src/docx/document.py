@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 
 from docx.blkcntnr import BlockItemContainer
@@ -120,19 +121,20 @@ class Document(ElementProxy):
 
     def add_picture(
         self,
-        image_path_or_stream: str | IO[bytes],
+        image_path_or_stream: str | os.PathLike[str] | IO[bytes],
         width: int | Length | None = None,
         height: int | Length | None = None,
     ):
         """Return new picture shape added in its own paragraph at end of the document.
 
-        The picture contains the image at `image_path_or_stream`, scaled based on
-        `width` and `height`. If neither width nor height is specified, the picture
-        appears at its native size. If only one is specified, it is used to compute a
-        scaling factor that is then applied to the unspecified dimension, preserving the
-        aspect ratio of the image. The native size of the picture is calculated using
-        the dots-per-inch (dpi) value specified in the image file, defaulting to 72 dpi
-        if no value is specified, as is often the case.
+        The picture contains the image at `image_path_or_stream`, which is a path (a
+        string or path-like object) or a file-like object containing a binary image. The
+        picture is scaled based on `width` and `height`. If neither width nor height is
+        specified, the picture appears at its native size. If only one is specified, it
+        is used to compute a scaling factor that is then applied to the unspecified
+        dimension, preserving the aspect ratio of the image. The native size of the
+        picture is calculated using the dots-per-inch (dpi) value specified in the image
+        file, defaulting to 72 dpi if no value is specified, as is often the case.
         """
         run = self.add_paragraph().add_run()
         return run.add_picture(image_path_or_stream, width, height)

@@ -1,6 +1,7 @@
 """Unit test suite for docx.image package"""
 
 import io
+from pathlib import Path
 
 import pytest
 
@@ -37,6 +38,12 @@ class DescribeImage:
     def it_can_construct_from_an_image_path(self, from_path_fixture):
         image_path, _from_stream_, stream_, blob, filename, image_ = from_path_fixture
         image = Image.from_file(image_path)
+        _from_stream_.assert_called_once_with(stream_, blob, filename)
+        assert image is image_
+
+    def it_can_construct_from_a_pathlib_path(self, from_path_fixture):
+        image_path, _from_stream_, stream_, blob, filename, image_ = from_path_fixture
+        image = Image.from_file(Path(image_path))
         _from_stream_.assert_called_once_with(stream_, blob, filename)
         assert image is image_
 
