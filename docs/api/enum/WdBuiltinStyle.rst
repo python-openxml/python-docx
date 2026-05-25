@@ -10,11 +10,14 @@ Specifies a built-in Microsoft Word style.
 Example::
 
     from docx import Document
-    from docx.enum.style import WD_STYLE
 
     document = Document()
     styles = document.styles
-    style = styles[WD_STYLE.BODY_TEXT]
+    style = styles["Body Text"]
+
+A built-in style must be defined in the document before it can be looked up.
+Style lookup uses the style's English UI name, e.g. ``"Body Text"``; a
+``WD_STYLE`` member like ``WD_STYLE.BODY_TEXT`` is not a style lookup key.
 
 ----
 
