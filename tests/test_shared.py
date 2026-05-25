@@ -113,6 +113,18 @@ class DescribeRGBColor:
         rgb = RGBColor.from_string("123456")
         assert rgb == RGBColor(0x12, 0x34, 0x56)
 
+    @pytest.mark.parametrize(
+        ("rgb_hex_str", "expected_rgb"),
+        [
+            ("123", RGBColor(0x11, 0x22, 0x33)),
+            ("aBc", RGBColor(0xAA, 0xBB, 0xCC)),
+        ],
+    )
+    def it_can_construct_from_a_three_digit_hex_string_rgb_value(
+        self, rgb_hex_str: str, expected_rgb: RGBColor
+    ):
+        assert RGBColor.from_string(rgb_hex_str) == expected_rgb
+
     def it_can_provide_a_hex_string_rgb_value(self):
         assert str(RGBColor(0xF3, 0x8A, 0x56)) == "F38A56"
 
