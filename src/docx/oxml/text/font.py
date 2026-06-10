@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Callable
 
 from docx.enum.dml import MSO_THEME_COLOR
 from docx.enum.text import WD_COLOR_INDEX, WD_UNDERLINE
-from docx.oxml.ns import nsdecls
+from docx.oxml.ns import nsdecls, qn
 from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
     ST_HexColor,
@@ -158,6 +158,12 @@ class CT_RPr(BaseOxmlElement):
         """
         highlight = self.highlight
         if highlight is None:
+            return None
+        # -- `w:val="none"` is a valid `ST_HighlightColor` value meaning "no
+        # -- highlight". It has no `WD_COLOR_INDEX` member, so map it to `None`
+        # -- (the same value used when no `w:highlight` element is present)
+        # -- rather than raising on the unmapped value.
+        if highlight.get(qn("w:val")) == "none":
             return None
         return highlight.val
 

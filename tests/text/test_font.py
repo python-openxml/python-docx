@@ -381,6 +381,7 @@ class DescribeFont:
             ("w:r/w:rPr", None),
             ("w:r/w:rPr/w:highlight{w:val=default}", WD_COLOR.AUTO),
             ("w:r/w:rPr/w:highlight{w:val=blue}", WD_COLOR.BLUE),
+            ("w:r/w:rPr/w:highlight{w:val=none}", None),
         ],
     )
     def it_knows_its_highlight_color(self, r_cxml: str, expected_value: WD_COLOR | None):
