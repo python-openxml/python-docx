@@ -2,7 +2,9 @@
 
 import hashlib
 import io
-from zipfile import ZIP_DEFLATED, ZipFile
+import struct
+import zlib
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile
 
 import pytest
 
@@ -70,6 +72,50 @@ class DescribePhysPkgReader:
 
 
 class DescribeZipPkgReader:
+    def it_raises_PackageNotFoundError_when_stream_is_not_a_zip(self):
+        with pytest.raises(PackageNotFoundError, match="not a valid zip file"):
+            _ZipPkgReader(io.BytesIO(b"not a zip file"))
+
+    def it_raises_PackageNotFoundError_when_blob_has_bad_crc(self):
+        """BadZipFile (CRC mismatch) from ZipFile.read() is wrapped."""
+        # Build a zip with a large enough payload, then flip a byte in the
+        # middle of the compressed data to cause a CRC mismatch at read time.
+        buf = io.BytesIO()
+        with ZipFile(buf, "w", compression=ZIP_DEFLATED) as zf:
+            zf.writestr("[Content_Types].xml", b"<Types/>" * 50)
+        raw = bytearray(buf.getvalue())
+        sig_pos = raw.find(b"PK\x03\x04")
+        fname_len = struct.unpack_from("<H", raw, sig_pos + 26)[0]
+        extra_len = struct.unpack_from("<H", raw, sig_pos + 28)[0]
+        data_start = sig_pos + 30 + fname_len + extra_len
+        compressed_size = struct.unpack_from("<I", raw, sig_pos + 18)[0]
+        mid = data_start + compressed_size // 2
+        raw[mid] ^= 0xFF
+        reader = _ZipPkgReader(io.BytesIO(bytes(raw)))
+        pack_uri = PackURI("/[Content_Types].xml")
+        with pytest.raises(PackageNotFoundError, match="could not be read"):
+            reader.blob_for(pack_uri)
+
+    def it_raises_PackageNotFoundError_when_zlib_data_is_corrupt(self):
+        """zlib.error from ZipFile.read() is wrapped in PackageNotFoundError."""
+        # Corrupt the zlib header bytes of the compressed payload so that
+        # decompression fails with zlib.error before the CRC is checked.
+        buf = io.BytesIO()
+        with ZipFile(buf, "w", compression=ZIP_DEFLATED) as zf:
+            zf.writestr("[Content_Types].xml", b"<Types/>" * 1000)
+        raw = bytearray(buf.getvalue())
+        sig_pos = raw.find(b"PK\x03\x04")
+        fname_len = struct.unpack_from("<H", raw, sig_pos + 26)[0]
+        extra_len = struct.unpack_from("<H", raw, sig_pos + 28)[0]
+        data_start = sig_pos + 30 + fname_len + extra_len
+        # Flip the first two bytes of the zlib stream (the zlib header).
+        raw[data_start] ^= 0xFF
+        raw[data_start + 1] ^= 0xFF
+        reader = _ZipPkgReader(io.BytesIO(bytes(raw)))
+        pack_uri = PackURI("/[Content_Types].xml")
+        with pytest.raises(PackageNotFoundError, match="could not be read"):
+            reader.blob_for(pack_uri)
+
     def it_is_used_by_PhysPkgReader_when_pkg_is_a_zip(self):
         phys_reader = PhysPkgReader(zip_pkg_path)
         assert isinstance(phys_reader, _ZipPkgReader)
