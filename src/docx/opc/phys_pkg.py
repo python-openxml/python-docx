@@ -1,7 +1,8 @@
 """Provides a general interface to a `physical` OPC package, such as a zip file."""
 
 import os
-from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
+import zlib
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile, is_zipfile
 
 from docx.opc.exceptions import PackageNotFoundError
 from docx.opc.packuri import CONTENT_TYPES_URI
@@ -73,14 +74,24 @@ class _ZipPkgReader(PhysPkgReader):
 
     def __init__(self, pkg_file):
         super(_ZipPkgReader, self).__init__()
-        self._zipf = ZipFile(pkg_file, "r")
+        try:
+            self._zipf = ZipFile(pkg_file, "r")
+        except BadZipFile as e:
+            raise PackageNotFoundError("Package is not a valid zip file: %s" % e) from e
 
     def blob_for(self, pack_uri):
         """Return blob corresponding to `pack_uri`.
 
         Raises |ValueError| if no matching member is present in zip archive.
+        Raises |PackageNotFoundError| if the zip entry cannot be read due to corruption,
+        truncation, or encryption.
         """
-        return self._zipf.read(pack_uri.membername)
+        try:
+            return self._zipf.read(pack_uri.membername)
+        except (BadZipFile, zlib.error, EOFError, RuntimeError) as e:
+            raise PackageNotFoundError(
+                "Package member '%s' could not be read: %s" % (pack_uri.membername, e)
+            ) from e
 
     def close(self):
         """Close the zip archive, releasing any resources it is using."""
