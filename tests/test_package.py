@@ -8,6 +8,7 @@ import pytest
 
 from docx.image.image import Image
 from docx.opc.packuri import PackURI
+from docx.opc.part import Part
 from docx.package import ImageParts, Package
 from docx.parts.image import ImagePart
 
@@ -101,6 +102,18 @@ class DescribeImageParts:
         _get_by_sha1_.assert_called_once_with(image_parts, "fa1afe1")
         _add_image_part_.assert_called_once_with(image_parts, image_)
         assert image_part is image_part_
+
+    def it_skips_parts_without_a_sha1_when_matching(self, request: FixtureRequest):
+        # ---an unsupported image type (e.g. SVG) is reached through the image
+        # ---relationships as a plain Part with no sha1, and must be skipped
+        # ---rather than raising AttributeError---
+        non_image_part = instance_mock(request, Part)
+        image_part = instance_mock(request, ImagePart, sha1="f005ba11")
+        image_parts = ImageParts()
+        image_parts.append(non_image_part)
+        image_parts.append(image_part)
+
+        assert image_parts._get_by_sha1("f005ba11") is image_part
 
     @pytest.mark.parametrize(
         ("existing_partname_numbers", "expected_partname_number"),

@@ -88,6 +88,10 @@ class ImageParts:
         """Return the image part in this collection having a SHA1 hash matching `sha1`,
         or |None| if not found."""
         for image_part in self._image_parts:
+            # ---skip parts loaded for an unsupported image type (e.g. SVG), which
+            # ---come through the image relationships as a plain Part and have no sha1
+            if not hasattr(image_part, "sha1"):
+                continue
             if image_part.sha1 == sha1:
                 return image_part
         return None
