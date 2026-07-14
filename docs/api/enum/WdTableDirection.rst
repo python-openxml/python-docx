@@ -11,7 +11,7 @@ Example::
     from docx.enum.table import WD_TABLE_DIRECTION
 
     table = document.add_table(3, 3)
-    table.direction = WD_TABLE_DIRECTION.RTL
+    table.table_direction = WD_TABLE_DIRECTION.RTL
 
 ----
 
