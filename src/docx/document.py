@@ -232,6 +232,9 @@ class Document(ElementProxy):
     @property
     def _block_width(self) -> Length:
         """A |Length| object specifying the space between margins in last section."""
+        # No sectPr (some generators): same Letter defaults as None page/margin values.
+        if not self.sections:
+            return Emu(Inches(8.5) - Inches(1) - Inches(1))
         section = self.sections[-1]
         page_width = section.page_width or Inches(8.5)
         left_margin = section.left_margin or Inches(1)

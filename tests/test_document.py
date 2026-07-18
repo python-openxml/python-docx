@@ -19,7 +19,7 @@ from docx.parts.document import DocumentPart
 from docx.section import Section, Sections
 from docx.settings import Settings
 from docx.shape import InlineShape, InlineShapes
-from docx.shared import Length
+from docx.shared import Inches, Length
 from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -285,6 +285,17 @@ class DescribeDocument:
 
         assert isinstance(width, Length)
         assert width == 3500
+
+    def it_uses_default_block_width_when_document_has_no_sections(
+        self, document: Document, sections_prop_: Mock
+    ):
+        # No sectPr: same Letter defaults as None page/margin (avoids sections[-1]).
+        sections_prop_.return_value = []
+
+        width = document._block_width
+
+        assert isinstance(width, Length)
+        assert width == Inches(8.5) - Inches(1) - Inches(1)
 
     # -- fixtures --------------------------------------------------------------------------------
 
