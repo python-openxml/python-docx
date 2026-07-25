@@ -35,6 +35,21 @@ class DescribeDocument:
         Package_.open.assert_called_once_with("default-document.docx")
         assert document is document_
 
+    def it_opens_a_docx_file_from_a_pathlib_path(
+        self, _default_docx_path_: Mock, Package_: Mock, document_: Mock
+    ):
+        from pathlib import Path
+
+        _default_docx_path_.return_value = "default-document.docx"
+        document_part = Package_.open.return_value.main_document_part
+        document_part.document = document_
+        document_part.content_type = CT.WML_DOCUMENT_MAIN
+
+        document = DocumentFactoryFn(Path("foobar.docx"))
+
+        Package_.open.assert_called_once_with("foobar.docx")
+        assert document is document_
+
     def it_raises_on_not_a_Word_file(self, Package_: Mock):
         Package_.open.return_value.main_document_part.content_type = "BOGUS"
 

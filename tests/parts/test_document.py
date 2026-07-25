@@ -111,6 +111,17 @@ class DescribeDocumentPart:
 
         package_.save.assert_called_once_with("foobar.docx")
 
+    def it_can_save_the_package_to_a_pathlib_path(self, package_: Mock):
+        from pathlib import Path
+
+        document_part = DocumentPart(
+            PackURI("/word/document.xml"), CT.WML_DOCUMENT, element("w:document"), package_
+        )
+
+        document_part.save(Path("foobar.docx"))
+
+        package_.save.assert_called_once_with("foobar.docx")
+
     def it_provides_access_to_the_comments_added_to_the_document(
         self, _comments_part_prop_: Mock, comments_part_: Mock, comments_: Mock, package_: Mock
     ):

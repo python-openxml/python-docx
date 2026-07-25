@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import IO, TYPE_CHECKING, Iterator, cast
 
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -121,8 +122,10 @@ class OpcPackage:
                 return PackURI(candidate_partname)
 
     @classmethod
-    def open(cls, pkg_file: str | IO[bytes]) -> Self:
+    def open(cls, pkg_file: str | os.PathLike[str] | IO[bytes]) -> Self:
         """Return an |OpcPackage| instance loaded with the contents of `pkg_file`."""
+        if isinstance(pkg_file, os.PathLike):
+            pkg_file = os.fspath(pkg_file)
         pkg_reader = PackageReader.from_file(pkg_file)
         package = cls()
         Unmarshaller.unmarshal(pkg_reader, package, PartFactory)
@@ -156,11 +159,13 @@ class OpcPackage:
         relationships for this package."""
         return Relationships(PACKAGE_URI.baseURI)
 
-    def save(self, pkg_file: str | IO[bytes]):
+    def save(self, pkg_file: str | os.PathLike[str] | IO[bytes]):
         """Save this package to `pkg_file`.
 
         `pkg_file` can be either a file-path or a file-like object.
         """
+        if isinstance(pkg_file, os.PathLike):
+            pkg_file = os.fspath(pkg_file)
         for part in self.parts:
             part.before_marshal()
         PackageWriter.write(pkg_file, self.rels, self.parts)

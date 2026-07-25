@@ -68,6 +68,18 @@ class DescribePhysPkgReader:
         with pytest.raises(PackageNotFoundError):
             PhysPkgReader("foobar")
 
+    def it_uses_zip_reader_when_pkg_is_a_pathlib_path(self):
+        from pathlib import Path
+
+        phys_reader = PhysPkgReader(Path(zip_pkg_path))
+        assert isinstance(phys_reader, _ZipPkgReader)
+
+    def it_uses_dir_reader_when_pkg_is_a_pathlib_path(self):
+        from pathlib import Path
+
+        phys_reader = PhysPkgReader(Path(dir_pkg_path))
+        assert isinstance(phys_reader, _DirPkgReader)
+
 
 class DescribeZipPkgReader:
     def it_is_used_by_PhysPkgReader_when_pkg_is_a_zip(self):
