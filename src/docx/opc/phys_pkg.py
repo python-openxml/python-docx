@@ -11,8 +11,8 @@ class PhysPkgReader:
     """Factory for physical package reader objects."""
 
     def __new__(cls, pkg_file):
-        # if `pkg_file` is a string, treat it as a path
-        if isinstance(pkg_file, str):
+        # if `pkg_file` is a string or path-like object, treat it as a path
+        if isinstance(pkg_file, (str, os.PathLike)):
             if os.path.isdir(pkg_file):
                 reader_cls = _DirPkgReader
             elif is_zipfile(pkg_file):

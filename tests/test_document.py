@@ -185,6 +185,15 @@ class DescribeDocument:
 
         document_part_.save.assert_called_once_with("foobar.docx")
 
+    def it_can_save_the_document_to_a_pathlib_path(self, document_part_: Mock):
+        from pathlib import Path
+
+        document = Document(cast(CT_Document, element("w:document")), document_part_)
+
+        document.save(Path("foobar.docx"))
+
+        document_part_.save.assert_called_once_with("foobar.docx")
+
     def it_provides_access_to_the_comments(self, document_part_: Mock, comments_: Mock):
         document_part_.comments = comments_
         document = Document(cast(CT_Document, element("w:document")), document_part_)
