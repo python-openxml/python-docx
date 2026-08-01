@@ -34,8 +34,8 @@ requires-python = ">=3.9"
 
 [dependency-groups]
 dev = [
-    "Jinja2==2.11.3",
-    "MarkupSafe==0.23",
+    "Jinja2>=3.1.6",
+    "MarkupSafe>=2.1.0",
     "Sphinx==1.8.6",
     "alabaster<0.7.14",
     "behave>=1.2.6",
