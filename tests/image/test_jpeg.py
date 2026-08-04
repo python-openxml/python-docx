@@ -64,6 +64,20 @@ class DescribeJpeg:
             assert jfif.px_height == cy
             assert jfif.horz_dpi == horz_dpi
             assert jfif.vert_dpi == vert_dpi
+            assert jfif.orientation == 1
+
+        def it_reads_orientation_from_exif_app1_when_present(
+            self, stream_, _JfifMarkers_, jfif_markers_
+        ):
+            jfif_markers_.sof.px_width = 111
+            jfif_markers_.sof.px_height = 222
+            jfif_markers_.app0.horz_dpi = 72
+            jfif_markers_.app0.vert_dpi = 72
+            jfif_markers_.app1.orientation = 8
+
+            jfif = Jfif.from_stream(stream_)
+
+            assert jfif.orientation == 8
 
     # fixtures -------------------------------------------------------
 
@@ -75,6 +89,7 @@ class DescribeJpeg:
         jfif_markers_.sof.px_height = px_height
         jfif_markers_.app1.horz_dpi = horz_dpi
         jfif_markers_.app1.vert_dpi = vert_dpi
+        jfif_markers_.app1.orientation = 1
         return (stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi)
 
     @pytest.fixture
@@ -85,6 +100,9 @@ class DescribeJpeg:
         jfif_markers_.sof.px_height = px_height
         jfif_markers_.app0.horz_dpi = horz_dpi
         jfif_markers_.app0.vert_dpi = vert_dpi
+        type(jfif_markers_).app1 = property(
+            lambda self: (_ for _ in ()).throw(KeyError("no APP1 marker in image"))
+        )
         return (stream_, _JfifMarkers_, px_width, px_height, horz_dpi, vert_dpi)
 
     @pytest.fixture
@@ -307,7 +325,7 @@ class Describe_App1Marker:
 
         _tiff_from_exif_segment_.assert_called_once_with(stream, offset, length)
         _App1Marker__init_.assert_called_once_with(
-            ANY, marker_code, offset, length, horz_dpi, vert_dpi
+            ANY, marker_code, offset, length, horz_dpi, vert_dpi, 1
         )
         assert isinstance(app1_marker, _App1Marker)
 
@@ -335,6 +353,10 @@ class Describe_App1Marker:
         app1 = _App1Marker(None, None, None, horz_dpi, vert_dpi)
         assert app1.horz_dpi == horz_dpi
         assert app1.vert_dpi == vert_dpi
+
+    def it_knows_the_image_orientation(self):
+        app1 = _App1Marker(None, None, None, 72, 72, orientation=6)
+        assert app1.orientation == 6
 
     # fixtures -------------------------------------------------------
 
@@ -371,7 +393,7 @@ class Describe_App1Marker:
 
     @pytest.fixture
     def tiff_(self, request):
-        return instance_mock(request, Tiff, horz_dpi=42, vert_dpi=24)
+        return instance_mock(request, Tiff, horz_dpi=42, vert_dpi=24, orientation=1)
 
     @pytest.fixture
     def _tiff_from_exif_segment_(self, request, tiff_):

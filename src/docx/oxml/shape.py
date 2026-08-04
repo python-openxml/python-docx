@@ -4,13 +4,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.oxml.ns import nsdecls
 from docx.oxml.parser import parse_xml
 from docx.oxml.simpletypes import (
+    ST_Angle,
     ST_Coordinate,
     ST_DrawingElementId,
     ST_PositiveCoordinate,
     ST_RelationshipId,
+    XsdBoolean,
     XsdString,
     XsdToken,
 )
@@ -91,14 +94,24 @@ class CT_Inline(BaseOxmlElement):
 
     @classmethod
     def new_pic_inline(
-        cls, shape_id: int, rId: str, filename: str, cx: Length, cy: Length
+        cls,
+        shape_id: int,
+        rId: str,
+        filename: str,
+        cx: Length,
+        cy: Length,
+        orientation: EXIF_ORIENTATION = EXIF_ORIENTATION.NORMAL,
     ) -> CT_Inline:
         """Create `wp:inline` element containing a `pic:pic` element.
 
         The contents of the `pic:pic` element is taken from the argument values.
+        When `orientation` swaps axes (90°/270°), `wp:extent` uses the swapped
+        display size while the picture transform keeps the native `cx`/`cy`.
         """
         pic_id = 0  # Word doesn't seem to use this, but does not omit it
-        pic = CT_Picture.new(pic_id, filename, rId, cx, cy)
+        pic = CT_Picture.new(pic_id, filename, rId, cx, cy, orientation)
+        if orientation.swaps_axes:
+            cx, cy = cy, cx
         inline = cls.new(cx, cy, shape_id, pic)
         return inline
 
@@ -144,7 +157,15 @@ class CT_Picture(BaseOxmlElement):
     spPr: CT_ShapeProperties = OneAndOnlyOne("pic:spPr")  # pyright: ignore[reportAssignmentType]
 
     @classmethod
-    def new(cls, pic_id: int, filename: str, rId: str, cx: Length, cy: Length) -> CT_Picture:
+    def new(
+        cls,
+        pic_id: int,
+        filename: str,
+        rId: str,
+        cx: Length,
+        cy: Length,
+        orientation: EXIF_ORIENTATION = EXIF_ORIENTATION.NORMAL,
+    ) -> CT_Picture:
         """A new minimum viable `<pic:pic>` (picture) element."""
         pic = parse_xml(cls._pic_xml())
         pic.nvPicPr.cNvPr.id = pic_id
@@ -152,6 +173,10 @@ class CT_Picture(BaseOxmlElement):
         pic.blipFill.blip.embed = rId
         pic.spPr.cx = cx
         pic.spPr.cy = cy
+        xfrm = pic.spPr.get_or_add_xfrm()
+        xfrm.rot = orientation.rot
+        xfrm.flipH = orientation.flip_h
+        xfrm.flipV = orientation.flip_v
         return pic
 
     @classmethod
@@ -273,6 +298,15 @@ class CT_Transform2D(BaseOxmlElement):
 
     off = ZeroOrOne("a:off", successors=("a:ext",))
     ext = ZeroOrOne("a:ext", successors=())
+    rot: int = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "rot", ST_Angle, default=0
+    )
+    flipH: bool = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "flipH", XsdBoolean, default=False
+    )
+    flipV: bool = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "flipV", XsdBoolean, default=False
+    )
 
     @property
     def cx(self):

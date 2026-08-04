@@ -2,6 +2,7 @@
 
 import pytest
 
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.enum.style import WD_STYLE_TYPE
 from docx.image.image import Image
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
@@ -59,6 +60,7 @@ class DescribeStoryPart:
         get_or_add_image_.return_value = "rId42", image_
         image_.scaled_dimensions.return_value = 444, 888
         image_.filename = "bar.png"
+        image_.orientation = EXIF_ORIENTATION.NORMAL
         next_id_prop_.return_value = 24
         expected_xml = snippet_text("inline")
         story_part = StoryPart(None, None, None, None)

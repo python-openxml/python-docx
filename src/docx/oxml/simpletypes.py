@@ -178,6 +178,10 @@ class XsdUnsignedLong(BaseIntType):
         cls.validate_int_in_range(value, 0, 18446744073709551615)
 
 
+class ST_Angle(BaseIntType):
+    """Angle in DrawingML units: 1/60000 of a degree."""
+
+
 class ST_BrClear(XsdString):
     @classmethod
     def validate(cls, value: str) -> None:

@@ -4,6 +4,7 @@ import io
 
 import pytest
 
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.image.bmp import Bmp
 from docx.image.exceptions import UnrecognizedImageError
 from docx.image.gif import Gif
@@ -78,6 +79,11 @@ class DescribeImage:
         image = Image(None, None, image_header_)
         assert image.horz_dpi == horz_dpi
         assert image.vert_dpi == vert_dpi
+
+    def it_knows_the_image_orientation(self, image_header_):
+        image_header_.orientation = 6
+        image = Image(None, None, image_header_)
+        assert image.orientation is EXIF_ORIENTATION.ROTATE_90
 
     def it_knows_the_image_native_size(self, size_fixture):
         image, width, height = size_fixture
@@ -318,3 +324,11 @@ class DescribeBaseImageHeader:
         image_header = BaseImageHeader(None, None, horz_dpi, vert_dpi)
         assert image_header.horz_dpi == horz_dpi
         assert image_header.vert_dpi == vert_dpi
+
+    def it_knows_the_orientation_of_the_image(self):
+        image_header = BaseImageHeader(None, None, 72, 72, orientation=8)
+        assert image_header.orientation == 8
+
+    def it_defaults_orientation_to_normal(self):
+        image_header = BaseImageHeader(None, None, 72, 72)
+        assert image_header.orientation == 1

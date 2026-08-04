@@ -14,6 +14,7 @@ from docx.image.png import (
     _ChunkParser,
     _Chunks,
     _IHDRChunk,
+    _eXIfChunk,
     _pHYsChunk,
     _PngParser,
 )
@@ -36,11 +37,12 @@ class DescribePng:
         png_parser_.px_height = px_height
         png_parser_.horz_dpi = horz_dpi
         png_parser_.vert_dpi = vert_dpi
+        png_parser_.orientation = 6
 
         png = Png.from_stream(stream_)
 
         _PngParser_.parse.assert_called_once_with(stream_)
-        Png__init__.assert_called_once_with(ANY, px_width, px_height, horz_dpi, vert_dpi)
+        Png__init__.assert_called_once_with(ANY, px_width, px_height, horz_dpi, vert_dpi, 6)
         assert isinstance(png, Png)
 
     def it_knows_its_content_type(self):
@@ -96,6 +98,14 @@ class Describe_PngParser:
         png_parser = no_dpi_fixture
         assert png_parser.horz_dpi == 72
         assert png_parser.vert_dpi == 72
+
+    def it_knows_the_image_orientation(self, chunks_):
+        chunks_.eXIf.orientation = 8
+        assert _PngParser(chunks_).orientation == 8
+
+    def it_defaults_orientation_to_normal_when_no_exif_chunk(self, chunks_):
+        chunks_.eXIf = None
+        assert _PngParser(chunks_).orientation == 1
 
     # fixtures -------------------------------------------------------
 
@@ -172,6 +182,10 @@ class Describe_Chunks:
         chunks, expected_chunk = pHYs_fixture
         assert chunks.pHYs == expected_chunk
 
+    def it_provides_access_to_the_eXIf_chunk(self, eXIf_fixture):
+        chunks, expected_chunk = eXIf_fixture
+        assert chunks.eXIf == expected_chunk
+
     def it_raises_if_theres_no_IHDR_chunk(self, no_IHDR_fixture):
         chunks = no_IHDR_fixture
         with pytest.raises(InvalidImageStreamError):
@@ -198,6 +212,20 @@ class Describe_Chunks:
         chunks = (IHDR_chunk_, pHYs_chunk_)
         chunks = _Chunks(chunks)
         return chunks, IHDR_chunk_
+
+    @pytest.fixture
+    def eXIf_chunk_(self, request):
+        return instance_mock(request, _eXIfChunk, type_name=PNG_CHUNK_TYPE.eXIf)
+
+    @pytest.fixture(params=[True, False])
+    def eXIf_fixture(self, request, IHDR_chunk_, eXIf_chunk_):
+        has_eXIf_chunk = request.param
+        chunks = [IHDR_chunk_]
+        if has_eXIf_chunk:
+            chunks.append(eXIf_chunk_)
+        expected_chunk = eXIf_chunk_ if has_eXIf_chunk else None
+        chunks = _Chunks(chunks)
+        return chunks, expected_chunk
 
     @pytest.fixture
     def IHDR_chunk_(self, request):
@@ -331,14 +359,18 @@ class Describe_ChunkFactory:
         params=[
             PNG_CHUNK_TYPE.IHDR,
             PNG_CHUNK_TYPE.pHYs,
+            PNG_CHUNK_TYPE.eXIf,
             PNG_CHUNK_TYPE.IEND,
         ]
     )
-    def call_fixture(self, request, _IHDRChunk_, _pHYsChunk_, _Chunk_, stream_rdr_):
+    def call_fixture(
+        self, request, _IHDRChunk_, _pHYsChunk_, _eXIfChunk_, _Chunk_, stream_rdr_
+    ):
         chunk_type = request.param
         chunk_cls_ = {
             PNG_CHUNK_TYPE.IHDR: _IHDRChunk_,
             PNG_CHUNK_TYPE.pHYs: _pHYsChunk_,
+            PNG_CHUNK_TYPE.eXIf: _eXIfChunk_,
             PNG_CHUNK_TYPE.IEND: _Chunk_,
         }[chunk_type]
         offset = 999
@@ -353,6 +385,16 @@ class Describe_ChunkFactory:
     @pytest.fixture
     def chunk_(self, request):
         return instance_mock(request, _Chunk)
+
+    @pytest.fixture
+    def _eXIfChunk_(self, request, exif_chunk_):
+        _eXIfChunk_ = class_mock(request, "docx.image.png._eXIfChunk")
+        _eXIfChunk_.from_offset.return_value = exif_chunk_
+        return _eXIfChunk_
+
+    @pytest.fixture
+    def exif_chunk_(self, request):
+        return instance_mock(request, _eXIfChunk)
 
     @pytest.fixture
     def _IHDRChunk_(self, request, ihdr_chunk_):
@@ -424,3 +466,42 @@ class Describe_pHYsChunk:
         stream_rdr = StreamReader(io.BytesIO(bytes_), BIG_ENDIAN)
         offset, horz_px_per_unit, vert_px_per_unit, units_specifier = (0, 42, 24, 1)
         return (stream_rdr, offset, horz_px_per_unit, vert_px_per_unit, units_specifier)
+
+
+class Describe_eXIfChunk:
+    def it_can_construct_from_a_stream_and_offset(self, from_offset_fixture):
+        stream_rdr, offset, expected_orientation = from_offset_fixture
+        eXIf_chunk = _eXIfChunk.from_offset(PNG_CHUNK_TYPE.eXIf, stream_rdr, offset)
+        assert isinstance(eXIf_chunk, _eXIfChunk)
+        assert eXIf_chunk.orientation == expected_orientation
+
+    def it_strips_an_exif_identifier_prefix_when_present(self):
+        # length(4) + type(4) are before data; we place length at offset-8.
+        # TIFF: MM, magic 42, IFD0 at 8; IFD with one SHORT Orientation=6 entry.
+        tiff = (
+            b"MM\x00*\x00\x00\x00\x08"  # header, IFD0 offset 8
+            b"\x00\x01"  # 1 IFD entry
+            b"\x01\x12\x00\x03\x00\x00\x00\x01\x00\x06\x00\x00"  # Orientation SHORT = 6
+            b"\x00\x00\x00\x00"  # next IFD
+        )
+        payload = b"Exif\x00\x00" + tiff
+        # prepend fake length field so read_long(offset, -8) works
+        blob = len(payload).to_bytes(4, "big") + b"eXIf" + payload
+        stream_rdr = StreamReader(io.BytesIO(blob), BIG_ENDIAN)
+        offset = 8
+        eXIf_chunk = _eXIfChunk.from_offset(PNG_CHUNK_TYPE.eXIf, stream_rdr, offset)
+        assert eXIf_chunk.orientation == 6
+
+    # fixtures -------------------------------------------------------
+
+    @pytest.fixture
+    def from_offset_fixture(self):
+        tiff = (
+            b"MM\x00*\x00\x00\x00\x08"
+            b"\x00\x01"
+            b"\x01\x12\x00\x03\x00\x00\x00\x01\x00\x08\x00\x00"
+            b"\x00\x00\x00\x00"
+        )
+        blob = len(tiff).to_bytes(4, "big") + b"eXIf" + tiff
+        stream_rdr = StreamReader(io.BytesIO(blob), BIG_ENDIAN)
+        return stream_rdr, 8, 8

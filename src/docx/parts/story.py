@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import IO, TYPE_CHECKING, Tuple, cast
 
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.part import XmlPart
 from docx.oxml.shape import CT_Inline
@@ -62,6 +63,7 @@ class StoryPart(XmlPart):
         image_descriptor: str | IO[bytes],
         width: int | Length | None = None,
         height: int | Length | None = None,
+        orientation: EXIF_ORIENTATION = EXIF_ORIENTATION.AUTO,
     ) -> CT_Inline:
         """Return a newly-created `w:inline` element.
 
@@ -70,8 +72,10 @@ class StoryPart(XmlPart):
         """
         rId, image = self.get_or_add_image(image_descriptor)
         cx, cy = image.scaled_dimensions(width, height)
+        if orientation is EXIF_ORIENTATION.AUTO:
+            orientation = image.orientation
         shape_id, filename = self.next_id, image.filename
-        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy)
+        return CT_Inline.new_pic_inline(shape_id, rId, filename, cx, cy, orientation)
 
     @property
     def next_id(self) -> int:

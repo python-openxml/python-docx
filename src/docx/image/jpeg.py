@@ -40,8 +40,9 @@ class Exif(Jpeg):
         px_height = markers.sof.px_height
         horz_dpi = markers.app1.horz_dpi
         vert_dpi = markers.app1.vert_dpi
+        orientation = markers.app1.orientation
 
-        return cls(px_width, px_height, horz_dpi, vert_dpi)
+        return cls(px_width, px_height, horz_dpi, vert_dpi, orientation)
 
 
 class Jfif(Jpeg):
@@ -57,8 +58,13 @@ class Jfif(Jpeg):
         px_height = markers.sof.px_height
         horz_dpi = markers.app0.horz_dpi
         vert_dpi = markers.app0.vert_dpi
+        # Many JFIF files also carry an Exif APP1 segment with Orientation.
+        try:
+            orientation = markers.app1.orientation
+        except KeyError:
+            orientation = 1
 
-        return cls(px_width, px_height, horz_dpi, vert_dpi)
+        return cls(px_width, px_height, horz_dpi, vert_dpi, orientation)
 
 
 class _JfifMarkers:
@@ -336,14 +342,15 @@ class _App0Marker(_Marker):
 class _App1Marker(_Marker):
     """Represents a JFIF APP1 (Exif) marker segment."""
 
-    def __init__(self, marker_code, offset, length, horz_dpi, vert_dpi):
+    def __init__(self, marker_code, offset, length, horz_dpi, vert_dpi, orientation=1):
         super(_App1Marker, self).__init__(marker_code, offset, length)
         self._horz_dpi = horz_dpi
         self._vert_dpi = vert_dpi
+        self._orientation = orientation
 
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
-        """Extract the horizontal and vertical dots-per-inch value from the APP1 header
+        """Extract the horizontal and vertical dots-per-inch values and orientation from the APP1 header
         at `offset` in `stream`."""
         # field                 off  len  type   notes
         # --------------------  ---  ---  -----  ----------------------------
@@ -357,7 +364,14 @@ class _App1Marker(_Marker):
         if cls._is_non_Exif_APP1_segment(stream, offset):
             return cls(marker_code, offset, segment_length, 72, 72)
         tiff = cls._tiff_from_exif_segment(stream, offset, segment_length)
-        return cls(marker_code, offset, segment_length, tiff.horz_dpi, tiff.vert_dpi)
+        return cls(
+            marker_code,
+            offset,
+            segment_length,
+            tiff.horz_dpi,
+            tiff.vert_dpi,
+            tiff.orientation,
+        )
 
     @property
     def horz_dpi(self):
@@ -370,6 +384,11 @@ class _App1Marker(_Marker):
         """Vertical dots per inch specified in this marker, defaults to 72 if not
         specified."""
         return self._vert_dpi
+
+    @property
+    def orientation(self):
+        """Exif Orientation tag value (1-8), defaulting to 1 when absent."""
+        return self._orientation
 
     @classmethod
     def _is_non_Exif_APP1_segment(cls, stream, offset):

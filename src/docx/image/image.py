@@ -11,6 +11,7 @@ import io
 import os
 from typing import IO, Tuple
 
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.image.exceptions import UnrecognizedImageError
 from docx.shared import Emu, Inches, Length, lazyproperty
 
@@ -102,6 +103,11 @@ class Image:
         return self._image_header.vert_dpi
 
     @property
+    def orientation(self) -> EXIF_ORIENTATION:
+        """Exif/TIFF Orientation for this image, defaulting to |NORMAL| when absent."""
+        return EXIF_ORIENTATION.from_exif_value(self._image_header.orientation)
+
+    @property
     def width(self) -> Inches:
         """A |Length| value representing the native width of the image, calculated from
         the values of `px_width` and `horz_dpi`."""
@@ -185,11 +191,19 @@ def _ImageHeaderFactory(stream: IO[bytes]):
 class BaseImageHeader:
     """Base class for image header subclasses like |Jpeg| and |Tiff|."""
 
-    def __init__(self, px_width: int, px_height: int, horz_dpi: int, vert_dpi: int):
+    def __init__(
+        self,
+        px_width: int,
+        px_height: int,
+        horz_dpi: int,
+        vert_dpi: int,
+        orientation: int = 1,
+    ):
         self._px_width = px_width
         self._px_height = px_height
         self._horz_dpi = horz_dpi
         self._vert_dpi = vert_dpi
+        self._orientation = orientation
 
     @property
     def content_type(self) -> str:
@@ -232,3 +246,8 @@ class BaseImageHeader:
         Defaults to 72 when not present in the file, as is often the case.
         """
         return self._vert_dpi
+
+    @property
+    def orientation(self) -> int:
+        """Exif/TIFF Orientation tag value (1-8), defaulting to 1 (normal)."""
+        return self._orientation

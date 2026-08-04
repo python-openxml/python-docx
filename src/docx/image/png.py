@@ -1,7 +1,14 @@
+"""Objects related to parsing headers of PNG image streams."""
+
+from __future__ import annotations
+
+import io
+
 from .constants import MIME_TYPE, PNG_CHUNK_TYPE
 from .exceptions import InvalidImageStreamError
 from .helpers import BIG_ENDIAN, StreamReader
 from .image import BaseImageHeader
+from .tiff import Tiff
 
 
 class Png(BaseImageHeader):
@@ -28,8 +35,9 @@ class Png(BaseImageHeader):
         px_height = parser.px_height
         horz_dpi = parser.horz_dpi
         vert_dpi = parser.vert_dpi
+        orientation = parser.orientation
 
-        return cls(px_width, px_height, horz_dpi, vert_dpi)
+        return cls(px_width, px_height, horz_dpi, vert_dpi, orientation)
 
 
 class _PngParser:
@@ -80,6 +88,14 @@ class _PngParser:
             return 72
         return self._dpi(pHYs.units_specifier, pHYs.vert_px_per_unit)
 
+    @property
+    def orientation(self):
+        """Exif/TIFF Orientation tag value (1-8), defaulting to 1 when absent."""
+        eXIf = self._chunks.eXIf
+        if eXIf is None:
+            return 1
+        return eXIf.orientation
+
     @staticmethod
     def _dpi(units_specifier, px_per_unit):
         """Return dots per inch value calculated from `units_specifier` and
@@ -116,6 +132,12 @@ class _Chunks:
     def pHYs(self):
         """PHYs chunk in PNG image, or |None| if not present."""
         match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.pHYs  # noqa
+        return self._find_first(match)
+
+    @property
+    def eXIf(self):
+        """eXIf chunk in PNG image, or |None| if not present."""
+        match = lambda chunk: chunk.type_name == PNG_CHUNK_TYPE.eXIf  # noqa
         return self._find_first(match)
 
     def _find_first(self, match):
@@ -171,6 +193,7 @@ def _ChunkFactory(chunk_type, stream_rdr, offset):
     chunk_cls_map = {
         PNG_CHUNK_TYPE.IHDR: _IHDRChunk,
         PNG_CHUNK_TYPE.pHYs: _pHYsChunk,
+        PNG_CHUNK_TYPE.eXIf: _eXIfChunk,
     }
     chunk_cls = chunk_cls_map.get(chunk_type, _Chunk)
     return chunk_cls.from_offset(chunk_type, stream_rdr, offset)
@@ -251,3 +274,31 @@ class _pHYsChunk(_Chunk):
     @property
     def units_specifier(self):
         return self._units_specifier
+
+
+class _eXIfChunk(_Chunk):
+    """eXIf chunk, contains an Exif profile with optional Orientation tag."""
+
+    def __init__(self, chunk_type, orientation):
+        super(_eXIfChunk, self).__init__(chunk_type)
+        self._orientation = orientation
+
+    @classmethod
+    def from_offset(cls, chunk_type, stream_rdr, offset):
+        """Return an |_eXIfChunk| with Orientation parsed from the eXIf payload.
+
+        PNG eXIf chunk data is a TIFF/Exif IFD (usually starting with ``II``/``MM``).
+        Some encoders prepend ``Exif\\x00\\x00``; that prefix is stripped when present.
+        """
+        chunk_data_len = stream_rdr.read_long(offset, -8)
+        stream_rdr.seek(offset)
+        data = stream_rdr.read(chunk_data_len)
+        if data.startswith(b"Exif\x00\x00"):
+            data = data[6:]
+        tiff = Tiff.from_stream(io.BytesIO(data))
+        return cls(chunk_type, tiff.orientation)
+
+    @property
+    def orientation(self):
+        """Exif Orientation tag value (1-8)."""
+        return self._orientation

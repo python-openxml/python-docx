@@ -39,11 +39,12 @@ class DescribeTiff:
         tiff_parser_.px_height = px_height
         tiff_parser_.horz_dpi = horz_dpi
         tiff_parser_.vert_dpi = vert_dpi
+        tiff_parser_.orientation = 1
 
         tiff = Tiff.from_stream(stream_)
 
         _TiffParser_.parse.assert_called_once_with(stream_)
-        Tiff__init_.assert_called_once_with(ANY, px_width, px_height, horz_dpi, vert_dpi)
+        Tiff__init_.assert_called_once_with(ANY, px_width, px_height, horz_dpi, vert_dpi, 1)
         assert isinstance(tiff, Tiff)
 
     def it_knows_its_content_type(self):
@@ -109,6 +110,13 @@ class Describe_TiffParser:
         tiff_parser = _TiffParser(ifd_entries)
         assert tiff_parser.px_width == px_width
         assert tiff_parser.px_height == px_height
+
+    def it_knows_orientation_after_parsing(self):
+        ifd_entries = _IfdEntries({TIFF_TAG.ORIENTATION: 6})
+        assert _TiffParser(ifd_entries).orientation == 6
+
+    def it_defaults_orientation_to_normal_when_tag_absent(self):
+        assert _TiffParser(_IfdEntries({})).orientation == 1
 
     def it_knows_the_horz_and_vert_dpi_after_parsing(self, dpi_fixture):
         tiff_parser, expected_horz_dpi, expected_vert_dpi = dpi_fixture

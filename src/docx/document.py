@@ -9,6 +9,7 @@ from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu, Inches, Length
@@ -123,6 +124,7 @@ class Document(ElementProxy):
         image_path_or_stream: str | IO[bytes],
         width: int | Length | None = None,
         height: int | Length | None = None,
+        orientation: EXIF_ORIENTATION = EXIF_ORIENTATION.AUTO,
     ):
         """Return new picture shape added in its own paragraph at end of the document.
 
@@ -133,9 +135,12 @@ class Document(ElementProxy):
         aspect ratio of the image. The native size of the picture is calculated using
         the dots-per-inch (dpi) value specified in the image file, defaulting to 72 dpi
         if no value is specified, as is often the case.
+
+        `orientation` defaults to |AUTO|, which applies the Exif/TIFF Orientation
+        embedded in the image.
         """
         run = self.add_paragraph().add_run()
-        return run.add_picture(image_path_or_stream, width, height)
+        return run.add_picture(image_path_or_stream, width, height, orientation)
 
     def add_section(self, start_type: WD_SECTION = WD_SECTION.NEW_PAGE):
         """Return a |Section| object newly added at the end of the document.

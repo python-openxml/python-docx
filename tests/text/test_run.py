@@ -9,6 +9,7 @@ from typing import Any, List, cast
 import pytest
 
 from docx import types as t
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
 from docx.oxml.text.paragraph import CT_P
@@ -313,7 +314,9 @@ class DescribeRun:
 
         picture = run.add_picture(image, width, height)
 
-        document_part_.new_pic_inline.assert_called_once_with(image, width, height)
+        document_part_.new_pic_inline.assert_called_once_with(
+            image, width, height, EXIF_ORIENTATION.AUTO
+        )
         assert run._r.xml == xml("w:r/(wp:x,w:drawing/wp:inline{id=42})")
         InlineShape_.assert_called_once_with(inline)
         assert picture is picture_

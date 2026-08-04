@@ -30,8 +30,9 @@ class Tiff(BaseImageHeader):
         px_height = parser.px_height
         horz_dpi = parser.horz_dpi
         vert_dpi = parser.vert_dpi
+        orientation = parser.orientation
 
-        return cls(px_width, px_height, horz_dpi, vert_dpi)
+        return cls(px_width, px_height, horz_dpi, vert_dpi, orientation)
 
 
 class _TiffParser:
@@ -76,6 +77,11 @@ class _TiffParser:
         ``ImageWidth`` tag, the expected case when the TIFF is embeded in an Exif
         image."""
         return self._ifd_entries.get(TIFF_TAG.IMAGE_WIDTH)
+
+    @property
+    def orientation(self):
+        """Exif/TIFF Orientation tag value (1-8), defaulting to 1 when absent."""
+        return self._ifd_entries.get(TIFF_TAG.ORIENTATION, 1)
 
     @classmethod
     def _detect_endian(cls, stream):

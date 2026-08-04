@@ -12,6 +12,7 @@ import pytest
 from docx.comments import Comment, Comments
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
+from docx.enum.shape import EXIF_ORIENTATION
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
 from docx.oxml.document import CT_Body, CT_Document
@@ -120,7 +121,9 @@ class DescribeDocument:
 
         picture = document.add_picture(path, width, height)
 
-        run_.add_picture.assert_called_once_with(path, width, height)
+        run_.add_picture.assert_called_once_with(
+            path, width, height, EXIF_ORIENTATION.AUTO
+        )
         assert picture is picture_
 
     @pytest.mark.parametrize(
