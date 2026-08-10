@@ -159,6 +159,10 @@ class CT_RPr(BaseOxmlElement):
         highlight = self.highlight
         if highlight is None:
             return None
+        if highlight.get("w:val") == "none":
+            # `w:val="none"` is a valid ST_HighlightColor value meaning the
+            # highlight is explicitly cleared; it has no WD_COLOR_INDEX mapping.
+            return None
         return highlight.val
 
     @highlight_val.setter
