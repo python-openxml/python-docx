@@ -40,7 +40,11 @@ Here's an example of what |docx| can do:
                                                     'first item in ordered list', style='List Number'
                                                 )
 
-                                                document.add_picture('monty-truth.png', width=Inches(1.25))
+                                                try:
+                                                    document.add_picture('monty-truth.png', width=Inches(1.25))
+                                                except FileNotFoundError:
+                                                    # the image is optional; the example works without it
+                                                    pass
 
                                                 records = (
                                                     (3, '101', 'Spam'),
