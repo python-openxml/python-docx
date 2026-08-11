@@ -315,7 +315,7 @@ class ST_HpsMeasure(XsdUnsignedLong):
     def convert_from_xml(cls, str_value: str) -> Length:
         if "m" in str_value or "n" in str_value or "p" in str_value:
             return ST_UniversalMeasure.convert_from_xml(str_value)
-        return Pt(int(str_value) / 2.0)
+        return Pt(float(str_value) / 2.0)
 
     @classmethod
     def convert_to_xml(cls, value: int | Length) -> str:
