@@ -17,8 +17,12 @@ class PhysPkgReader:
                 reader_cls = _DirPkgReader
             elif is_zipfile(pkg_file):
                 reader_cls = _ZipPkgReader
+            elif not os.path.exists(pkg_file):
+                raise PackageNotFoundError("Package not found: '%s' does not exist" % pkg_file)
             else:
-                raise PackageNotFoundError("Package not found at '%s'" % pkg_file)
+                raise PackageNotFoundError(
+                    "Package not found at '%s': not a valid zip archive" % pkg_file
+                )
         else:  # assume it's a stream and pass it to Zip reader to sort out
             reader_cls = _ZipPkgReader
 
