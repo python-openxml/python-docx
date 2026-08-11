@@ -142,7 +142,11 @@ class RGBColor(Tuple[int, int, int]):
 
     @classmethod
     def from_string(cls, rgb_hex_str: str) -> RGBColor:
-        """Return a new instance from an RGB color hex string like ``'3C2F80'``."""
+        """Return a new instance from an RGB color hex string like ``'3C2F80'`` or ``'1FC'``."""
+        rgb_hex_str = rgb_hex_str.strip()
+        if len(rgb_hex_str) == 3:
+            # -- expand 3-digit hex to 6-digit by repeating each digit, e.g. '1FC' -> '11FFCC' --
+            rgb_hex_str = "".join(digit * 2 for digit in rgb_hex_str)
         r = int(rgb_hex_str[:2], 16)
         g = int(rgb_hex_str[2:4], 16)
         b = int(rgb_hex_str[4:], 16)
