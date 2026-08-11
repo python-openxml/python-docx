@@ -1,7 +1,17 @@
 """|NumberingPart| and closely related objects."""
 
-from ..opc.part import XmlPart
-from ..shared import lazyproperty
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from docx.opc.constants import CONTENT_TYPE as CT
+from docx.oxml.ns import nsdecls
+from docx.oxml.parser import parse_xml
+from docx.opc.part import XmlPart
+from docx.shared import lazyproperty
+
+if TYPE_CHECKING:
+    from docx.package import Package
 
 
 class NumberingPart(XmlPart):
@@ -9,9 +19,13 @@ class NumberingPart(XmlPart):
     or glossary."""
 
     @classmethod
-    def new(cls) -> "NumberingPart":
-        """Newly created numbering part, containing only the root ``<w:numbering>`` element."""
-        raise NotImplementedError
+    def new(cls, package: Package) -> "NumberingPart":
+        """Return newly created numbering part, containing only the root ``<w:numbering>``
+        element."""
+        partname = package.next_partname("/word/numbering%d.xml")
+        content_type = CT.WML_NUMBERING
+        element = parse_xml("<w:numbering %s/>" % nsdecls("w"))
+        return cls(partname, content_type, element, package)
 
     @lazyproperty
     def numbering_definitions(self):
