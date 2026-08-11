@@ -303,14 +303,18 @@ class _App0Marker(_Marker):
         return self._dpi(self._y_density)
 
     def _dpi(self, density):
-        """Return dots per inch corresponding to `density` value."""
+        """Return dots per inch corresponding to `density` value.
+
+        A zero density is invalid and would cause a division by zero when
+        calculating native image dimensions, so it defaults to 72.
+        """
         if self._density_units == 1:
             dpi = density
         elif self._density_units == 2:
             dpi = int(round(density * 2.54))
         else:
             dpi = 72
-        return dpi
+        return dpi if dpi else 72
 
     @classmethod
     def from_stream(cls, stream, marker_code, offset):
