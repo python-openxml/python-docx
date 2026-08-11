@@ -40,7 +40,11 @@ Here's an example of what |docx| can do:
                                                     'first item in ordered list', style='List Number'
                                                 )
 
-                                                document.add_picture('monty-truth.png', width=Inches(1.25))
+                                                try:
+                                                    document.add_picture('monty-truth.png', width=Inches(1.25))
+                                                except FileNotFoundError:
+                                                    # the image is optional; the example works without it
+                                                    pass
 
                                                 records = (
                                                     (3, '101', 'Spam'),
@@ -48,7 +52,7 @@ Here's an example of what |docx| can do:
                                                     (4, '631', 'Spam, spam, eggs, and spam')
                                                 )
 
-                                                table = document.add_table(rows=1, cols=3)
+                                                table = document.add_table(rows=1, cols=3, style='Light Shading Accent 1')
                                                 hdr_cells = table.rows[0].cells
                                                 hdr_cells[0].text = 'Qty'
                                                 hdr_cells[1].text = 'Id'
