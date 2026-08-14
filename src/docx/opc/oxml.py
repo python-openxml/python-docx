@@ -15,6 +15,7 @@ from lxml import etree
 
 from docx.opc.constants import NAMESPACE as NS
 from docx.opc.constants import RELATIONSHIP_TARGET_MODE as RTM
+from docx.opc.exceptions import OpcError
 
 # configure XML parser
 element_class_lookup = etree.ElementNamespaceClassLookup()
@@ -35,7 +36,12 @@ nsmap = {
 
 def parse_xml(text: str) -> etree._Element:
     """`etree.fromstring()` replacement that uses oxml parser."""
-    return etree.fromstring(text, oxml_parser)
+    try:
+        return etree.fromstring(text, oxml_parser)
+    except etree.XMLSyntaxError as exc:
+        # A malformed [Content_Types].xml or .rels part would otherwise raise a
+        # bare lxml XMLSyntaxError while opening the package.
+        raise OpcError("package contains invalid XML: %s" % exc) from exc
 
 
 def qn(tag: str) -> str:

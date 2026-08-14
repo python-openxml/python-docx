@@ -345,6 +345,14 @@ class DescribeXmlPart:
         __init_.assert_called_once_with(ANY, partname_, content_type_, element_, package_)
         assert isinstance(part, XmlPart)
 
+    def it_raises_OpcError_on_a_part_with_invalid_xml(
+        self, partname_, content_type_, package_
+    ):
+        from docx.opc.exceptions import OpcError
+
+        with pytest.raises(OpcError):
+            XmlPart.load(partname_, content_type_, b"<not well formed", package_)
+
     def it_can_serialize_to_xml(self, blob_fixture):
         xml_part, element_, serialize_part_xml_ = blob_fixture
         blob = xml_part.blob

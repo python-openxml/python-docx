@@ -6,6 +6,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Type, cast
 
+from lxml.etree import XMLSyntaxError
+
+from docx.opc.exceptions import OpcError
 from docx.opc.oxml import serialize_part_xml
 from docx.opc.packuri import PackURI
 from docx.opc.rel import Relationships
@@ -228,7 +231,14 @@ class XmlPart(Part):
 
     @classmethod
     def load(cls, partname: PackURI, content_type: str, blob: bytes, package: Package):
-        element = parse_xml(blob)
+        try:
+            element = parse_xml(blob)
+        except XMLSyntaxError as exc:
+            # A part with malformed XML would otherwise raise a bare lxml
+            # XMLSyntaxError out of Document()/open; report it as a package error.
+            raise OpcError(
+                "part '%s' contains invalid XML: %s" % (partname, exc)
+            ) from exc
         return cls(partname, content_type, element, package)
 
     @property
