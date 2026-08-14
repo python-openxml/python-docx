@@ -1,7 +1,7 @@
 """Provides a general interface to a `physical` OPC package, such as a zip file."""
 
 import os
-from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile, is_zipfile
 
 from docx.opc.exceptions import PackageNotFoundError
 from docx.opc.packuri import CONTENT_TYPES_URI
@@ -73,7 +73,12 @@ class _ZipPkgReader(PhysPkgReader):
 
     def __init__(self, pkg_file):
         super(_ZipPkgReader, self).__init__()
-        self._zipf = ZipFile(pkg_file, "r")
+        try:
+            self._zipf = ZipFile(pkg_file, "r")
+        except BadZipFile:
+            raise PackageNotFoundError(
+                "Package not found or not a valid OPC package file"
+            )
 
     def blob_for(self, pack_uri):
         """Return blob corresponding to `pack_uri`.

@@ -68,6 +68,10 @@ class DescribePhysPkgReader:
         with pytest.raises(PackageNotFoundError):
             PhysPkgReader("foobar")
 
+    def it_raises_when_pkg_stream_is_not_a_zip(self):
+        with pytest.raises(PackageNotFoundError):
+            PhysPkgReader(io.BytesIO(b"not a zip"))
+
 
 class DescribeZipPkgReader:
     def it_is_used_by_PhysPkgReader_when_pkg_is_a_zip(self):
