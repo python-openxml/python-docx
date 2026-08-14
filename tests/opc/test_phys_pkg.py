@@ -64,9 +64,16 @@ class DescribeDirPkgReader:
 
 
 class DescribePhysPkgReader:
-    def it_raises_when_pkg_path_is_not_a_package(self):
-        with pytest.raises(PackageNotFoundError):
+    def it_raises_when_pkg_path_does_not_exist(self):
+        with pytest.raises(FileNotFoundError):
             PhysPkgReader("foobar")
+
+    def it_raises_when_pkg_path_exists_but_is_not_a_zip(self, tmpdir):
+        not_a_pkg = str(tmpdir.join("not-a-package.docx"))
+        with open(not_a_pkg, "w") as f:
+            f.write("not a zip")
+        with pytest.raises(PackageNotFoundError):
+            PhysPkgReader(not_a_pkg)
 
 
 class DescribeZipPkgReader:
