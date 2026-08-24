@@ -322,7 +322,12 @@ class _Column(Parented):
     @property
     def cells(self) -> tuple[_Cell, ...]:
         """Sequence of |_Cell| instances corresponding to cells in this column."""
-        return tuple(self.table.column_cells(self._index))
+        return tuple(self.table.column_cells(self.index))
+
+    @property
+    def index(self) -> int:
+        """Index of this column in the table, starting from zero."""
+        return self._gridCol.gridCol_idx
 
     @property
     def table(self) -> Table:
@@ -337,11 +342,6 @@ class _Column(Parented):
     @width.setter
     def width(self, value: Length | None):
         self._gridCol.w = value
-
-    @property
-    def _index(self):
-        """Index of this column in its table, starting from zero."""
-        return self._gridCol.gridCol_idx
 
 
 class _Columns(Parented):
@@ -472,6 +472,11 @@ class _Row(Parented):
         return self._tr.grid_before
 
     @property
+    def index(self) -> int:
+        """Index of this row in the table, starting from zero."""
+        return self._tr.tr_idx
+
+    @property
     def height(self) -> Length | None:
         """Return a |Length| object representing the height of this cell, or |None| if
         no explicit height is set."""
@@ -497,11 +502,6 @@ class _Row(Parented):
     def table(self) -> Table:
         """Reference to the |Table| object this row belongs to."""
         return self._parent.table
-
-    @property
-    def _index(self) -> int:
-        """Index of this row in its table, starting from zero."""
-        return self._tr.tr_idx
 
 
 class _Rows(Parented):

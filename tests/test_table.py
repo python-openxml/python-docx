@@ -599,13 +599,13 @@ class Describe_Column:
         tbl = cast(CT_Tbl, element("w:tbl/w:tblGrid/(w:gridCol,w:gridCol,w:gridCol)"))
         gridCol = tbl.tblGrid.gridCol_lst[1]
         column = _Column(gridCol, table_)
-        assert column._index == 1
+        assert column.index == 1
 
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def _index_prop_(self, request: FixtureRequest):
-        return property_mock(request, _Column, "_index")
+        return property_mock(request, _Column, "index")
 
     @pytest.fixture
     def parent_(self, request: FixtureRequest):
@@ -826,13 +826,13 @@ class Describe_Row:
     def it_knows_its_index_in_table_to_help(self, parent_: Mock):
         tbl = element("w:tbl/(w:tr,w:tr,w:tr)")
         row = _Row(cast(CT_Row, tbl[1]), parent_)
-        assert row._index == 1
+        assert row.index == 1
 
     # fixtures -------------------------------------------------------
 
     @pytest.fixture
     def _index_prop_(self, request: FixtureRequest):
-        return property_mock(request, _Row, "_index")
+        return property_mock(request, _Row, "index")
 
     @pytest.fixture
     def parent_(self, request: FixtureRequest):
