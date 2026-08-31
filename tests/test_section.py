@@ -470,6 +470,14 @@ class DescribeSection:
 
         assert value == expected_value
 
+    def it_accepts_a_fractional_right_margin(self, document_part_: Mock):
+        sectPr = cast(CT_SectPr, element("w:sectPr/w:pgMar{w:right=0.218505859375}"))
+        section = Section(sectPr, document_part_)
+
+        right_margin = section.right_margin
+
+        assert right_margin == 0
+
     @pytest.mark.parametrize(
         ("sectPr_cxml", "margin_prop_name", "value", "expected_cxml"),
         [
