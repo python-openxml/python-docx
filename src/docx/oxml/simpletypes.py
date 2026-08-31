@@ -399,7 +399,10 @@ class ST_TwipsMeasure(XsdUnsignedLong):
     def convert_from_xml(cls, str_value: str) -> Length:
         if "i" in str_value or "m" in str_value or "p" in str_value:
             return ST_UniversalMeasure.convert_from_xml(str_value)
-        return Twips(int(str_value))
+        try:
+            return Twips(int(str_value))
+        except ValueError:
+            return Twips(int(round(float(str_value))))
 
     @classmethod
     def convert_to_xml(cls, value: int | Length) -> str:
