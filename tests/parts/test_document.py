@@ -195,7 +195,7 @@ class DescribeDocumentPart:
 
         numbering_part = document_part.numbering_part
 
-        NumberingPart_.new.assert_called_once_with()
+        NumberingPart_.new.assert_called_once_with(package_)
         relate_to_.assert_called_once_with(document_part, numbering_part_, RT.NUMBERING)
         assert numbering_part is numbering_part_
 

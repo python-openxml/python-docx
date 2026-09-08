@@ -2,7 +2,9 @@
 
 import pytest
 
+from docx.opc.constants import CONTENT_TYPE as CT
 from docx.oxml.numbering import CT_Numbering
+from docx.package import Package
 from docx.parts.numbering import NumberingPart, _NumberingDefinitions
 
 from ..oxml.unitdata.numbering import a_num, a_numbering
@@ -20,6 +22,20 @@ class DescribeNumberingPart:
         numbering_definitions = numbering_part.numbering_definitions
         _NumberingDefinitions_.assert_called_once_with(numbering_elm_)
         assert numbering_definitions is numbering_definitions_
+
+    def it_constructs_a_default_numbering_part_to_help(self):
+        package = Package()
+
+        numbering_part = NumberingPart.new(package)
+
+        assert isinstance(numbering_part, NumberingPart)
+        assert numbering_part.partname == "/word/numbering.xml"
+        assert numbering_part.content_type == CT.WML_NUMBERING
+        assert numbering_part.package is package
+        assert numbering_part.element.tag == (
+            "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}numbering"
+        )
+        assert len(numbering_part.element) == 0
 
     # fixtures -------------------------------------------------------
 

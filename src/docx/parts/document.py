@@ -104,7 +104,8 @@ class DocumentPart(StoryPart):
         try:
             return cast(NumberingPart, self.part_related_by(RT.NUMBERING))
         except KeyError:
-            numbering_part = NumberingPart.new()
+            assert self.package is not None
+            numbering_part = NumberingPart.new(self.package)
             self.relate_to(numbering_part, RT.NUMBERING)
             return numbering_part
 
