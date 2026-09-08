@@ -154,6 +154,28 @@ class DescribeParagraph:
         paragraph.text = text
         assert paragraph.text == expected_text
 
+    def it_reattaches_comment_markers_when_text_is_assigned(
+        self, fake_parent: t.ProvidesStoryPart
+    ):
+        p = cast(
+            CT_P,
+            element(
+                'w:p/(w:commentRangeStart{w:id=42},w:r/w:t"old"'
+                ",w:commentRangeEnd{w:id=42}"
+                ",w:r/(w:rPr/w:rStyle{w:val=CommentReference},w:commentReference{w:id=42}))"
+            ),
+        )
+        paragraph = Paragraph(p, fake_parent)
+
+        paragraph.text = "new"
+
+        assert paragraph.text == "new"
+        assert p.xml == xml(
+            'w:p/(w:commentRangeStart{w:id=42},w:r/w:t"new"'
+            ",w:commentRangeEnd{w:id=42}"
+            ",w:r/(w:rPr/w:rStyle{w:val=CommentReference},w:commentReference{w:id=42}))"
+        )
+
     def it_knows_its_alignment_value(self, alignment_get_fixture):
         paragraph, expected_value = alignment_get_fixture
         assert paragraph.alignment == expected_value
