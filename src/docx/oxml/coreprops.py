@@ -234,6 +234,7 @@ class CT_CoreProperties(BaseOxmlElement):
         # yyyy-mm-dd e.g. "2003-12-31"
         # UTC timezone e.g. "2003-12-31T10:14:55Z"
         # numeric timezone e.g. "2003-12-31T10:14:55-08:00"
+        # fractional seconds e.g. "2003-12-31T10:14:55.123-08:00"
         templates = (
             "%Y-%m-%dT%H:%M:%S",
             "%Y-%m-%d",
@@ -253,6 +254,11 @@ class CT_CoreProperties(BaseOxmlElement):
         if dt_ is None:
             tmpl = "could not parse W3CDTF datetime string '%s'"
             raise ValueError(tmpl % w3cdtf_str)
+        fraction_match = re.fullmatch(r"\.([0-9]+)(Z|[+-][0-9]{2}:[0-9]{2})?", offset_str)
+        if fraction_match is not None:
+            fraction, offset_str = fraction_match.groups(default="")
+            # datetime supports microseconds; truncate any finer precision.
+            dt_ = dt_.replace(microsecond=int(fraction[:6].ljust(6, "0")))
         if len(offset_str) == 6:
             dt_ = cls._offset_dt(dt_, offset_str)
         return dt_.replace(tzinfo=dt.timezone.utc)
