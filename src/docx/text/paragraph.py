@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Iterator, List, cast
 
 from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.ns import qn
 from docx.oxml.text.run import CT_R
 from docx.shared import StoryChild
 from docx.styles.style import ParagraphStyle
@@ -159,13 +160,24 @@ class Paragraph(StoryChild):
         the text is mapped to a ``<w:tab/>`` element and each ``\\n`` or ``\\r``
         character is mapped to a line break. Paragraph-level formatting, such as style,
         is preserved. All run-level formatting, such as bold or italic, is removed.
+        Comment range markers (`w:commentRangeStart` / `w:commentRangeEnd` and the
+        comment reference run) are reattached around the replacement run so comments
+        stay anchored. The range then covers that whole run, not the original
+        word span. Footnote references and tracked-change markup are still dropped.
         """
         return self._p.text
 
     @text.setter
     def text(self, text: str | None):
+        comment_ids = [
+            int(el.get(qn("w:id")))
+            for el in self._p.xpath("./w:commentRangeStart")
+            if el.get(qn("w:id")) is not None
+        ]
         self.clear()
-        self.add_run(text)
+        run = self.add_run(text)
+        for comment_id in comment_ids:
+            run.mark_comment_range(run, comment_id)
 
     def _insert_paragraph_before(self):
         """Return a newly created paragraph, inserted directly before this paragraph."""
