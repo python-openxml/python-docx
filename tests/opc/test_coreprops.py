@@ -80,6 +80,60 @@ class DescribeCoreProperties:
         assert actual_datetime == expected_datetime
 
     @pytest.mark.parametrize(
+        ("prop_name", "tagname"),
+        [
+            ("created", "dcterms:created"),
+            ("modified", "dcterms:modified"),
+            ("last_printed", "cp:lastPrinted"),
+        ],
+    )
+    @pytest.mark.parametrize(
+        ("str_val", "expected_datetime"),
+        [
+            ("1997", dt.datetime(1997, 1, 1, tzinfo=dt.timezone.utc)),
+            ("1997-07", dt.datetime(1997, 7, 1, tzinfo=dt.timezone.utc)),
+            ("1997-07-16", dt.datetime(1997, 7, 16, tzinfo=dt.timezone.utc)),
+            ("1997-07-16T19:20:30Z", dt.datetime(1997, 7, 16, 19, 20, 30, tzinfo=dt.timezone.utc)),
+            (
+                "1997-07-16T19:20:30+01:00",
+                dt.datetime(1997, 7, 16, 18, 20, 30, tzinfo=dt.timezone.utc),
+            ),
+            (
+                "1997-07-16T19:20:30.45+01:00",
+                dt.datetime(1997, 7, 16, 18, 20, 30, 450000, tzinfo=dt.timezone.utc),
+            ),
+            (
+                "1997-07-16T19:20:30.1234Z",
+                dt.datetime(1997, 7, 16, 19, 20, 30, 123400, tzinfo=dt.timezone.utc),
+            ),
+            (
+                "1997-07-16T23:45:30.987654-05:30",
+                dt.datetime(1997, 7, 17, 5, 15, 30, 987654, tzinfo=dt.timezone.utc),
+            ),
+            (
+                "1997-01-01T00:15:30.1+05:45",
+                dt.datetime(1996, 12, 31, 18, 30, 30, 100000, tzinfo=dt.timezone.utc),
+            ),
+            (
+                "1997-07-16T19:20:30.123456789Z",
+                dt.datetime(1997, 7, 16, 19, 20, 30, 123456, tzinfo=dt.timezone.utc),
+            ),
+            (
+                "1997-07-16T19:20:30.0Z",
+                dt.datetime(1997, 7, 16, 19, 20, 30, tzinfo=dt.timezone.utc),
+            ),
+            ("not a date", None),
+        ],
+    )
+    def it_reads_date_properties_with_fractional_seconds(
+        self, prop_name: str, tagname: str, str_val: str, expected_datetime: dt.datetime | None
+    ):
+        xml = self.coreProperties(tagname, str_val)
+        core_properties = CoreProperties(cast("CT_CoreProperties", parse_xml(xml)))
+
+        assert getattr(core_properties, prop_name) == expected_datetime
+
+    @pytest.mark.parametrize(
         ("prop_name", "tagname", "value", "str_val", "attrs"),
         [
             (
