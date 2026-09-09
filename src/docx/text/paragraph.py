@@ -162,7 +162,8 @@ class Paragraph(StoryChild):
         is preserved. All run-level formatting, such as bold or italic, is removed.
         Comment range markers (`w:commentRangeStart` / `w:commentRangeEnd` and the
         comment reference run) are reattached around the replacement run so comments
-        stay anchored.
+        stay anchored. The range then covers that whole run, not the original
+        word span. Footnote references and tracked-change markup are still dropped.
         """
         return self._p.text
 
