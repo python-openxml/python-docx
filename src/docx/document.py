@@ -79,6 +79,9 @@ class Document(ElementProxy):
         first_run = runs[0]
         last_run = runs[-1]
 
+        # -- guarantee the 'CommentReference' character style is defined in styles.xml --
+        self.styles._ensure_comment_reference_style()
+
         # -- Note that comments can only appear in the document part --
         comment = self.comments.add_comment(text=text, author=author, initials=initials)
 
