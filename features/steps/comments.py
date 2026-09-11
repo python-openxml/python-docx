@@ -45,6 +45,12 @@ def given_a_document_having_no_comments_part(context: Context):
     context.document = Document(test_docx("doc-default"))
 
 
+@given("a new document without a CommentReference style")
+def given_a_new_document_without_a_comment_reference_style(context: Context):
+    context.document = Document()
+    context.document.add_paragraph("Test paragraph for comment anchor.")
+
+
 # when =====================================================
 
 
@@ -282,3 +288,15 @@ def then_the_result_is_a_comment_object_with_id_2(context: Context):
     comment = context.comment
     assert type(comment) is Comment, f"expected a Comment object, got {type(comment)}"
     assert comment.comment_id == 2, f"expected comment_id `2`, got '{comment.comment_id}'"
+
+
+@then('the document styles include a "CommentReference" character style')
+def then_document_styles_include_comment_reference_style(context: Context):
+    from docx.enum.style import WD_STYLE_TYPE
+
+    styles = context.document.styles
+    style = styles._element.get_by_id("CommentReference")
+    assert style is not None, "expected 'CommentReference' style in styles.xml, but it is absent"
+    assert style.type == WD_STYLE_TYPE.CHARACTER, (
+        f"expected CHARACTER style, got {style.type}"
+    )

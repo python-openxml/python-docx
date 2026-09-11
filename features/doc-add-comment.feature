@@ -11,3 +11,8 @@ Feature: Add a comment to a document
       And comment.text == "A comment"
       And comment.author == "John Doe"
       And comment.initials == "JD"
+
+  Scenario: Document.add_comment() registers the CommentReference character style
+    Given a new document without a CommentReference style
+     When I assign comment = document.add_comment(runs, "A comment", "John Doe", "JD")
+     Then the document styles include a "CommentReference" character style

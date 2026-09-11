@@ -6,7 +6,7 @@ from warnings import warn
 
 from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.styles import CT_Styles
-from docx.shared import ElementProxy
+from docx.shared import ElementProxy, Pt
 from docx.styles import BabelFish
 from docx.styles.latent import LatentStyles
 from docx.styles.style import BaseStyle, StyleFactory
@@ -114,6 +114,31 @@ class Styles(ElementProxy):
         if style is None or style.type != style_type:
             return self.default(style_type)
         return StyleFactory(style)
+
+    def _ensure_comment_reference_style(self) -> None:
+        """Add the built-in 'CommentReference' character style if not present.
+
+        `Document.add_comment()` writes `<w:rStyle w:val="CommentReference"/>` into the
+        reference run but never adds the corresponding style definition to styles.xml.
+        Word silently tolerates the dangling reference, but the reference mark then
+        inherits default run formatting instead of the intended 8-pt "annotation
+        reference" appearance.  This method adds the style once per document, skipping
+        the work on subsequent calls.
+        """
+        if self._element.get_by_id("CommentReference") is not None:
+            return
+        style_elm = self._element.add_style_of_type(
+            "annotation reference", WD_STYLE_TYPE.CHARACTER, True
+        )
+        # The auto-generated styleId from the name would be "annotationreference";
+        # override it to match the id that the reference run already uses.
+        style_elm.styleId = "CommentReference"
+        style_elm.basedOn_val = "DefaultParagraphFont"
+        style_elm.uiPriority_val = 99
+        style_elm.semiHidden_val = True
+        style_elm.unhideWhenUsed_val = True
+        rPr = style_elm.get_or_add_rPr()
+        rPr.sz_val = Pt(8)
 
     def _get_style_id_from_name(self, style_name: str, style_type: WD_STYLE_TYPE) -> str | None:
         """Return the id of the style of `style_type` corresponding to `style_name`.
