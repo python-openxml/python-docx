@@ -7,6 +7,65 @@ about block-level elements like paragraphs and inline-level objects like
 runs.
 
 
+Adding hyperlinks
+-----------------
+
+Use :meth:`Paragraph.add_hyperlink` to append a link to a web page, email
+address, or file. It returns a |Hyperlink| containing the label text::
+
+    >>> paragraph = document.add_paragraph('Read ')
+    >>> hyperlink = paragraph.add_hyperlink(
+    ...     'the documentation',
+    ...     address='https://example.com/docs?lang=en#intro',
+    ...     tooltip='Project documentation',
+    ... )
+    >>> paragraph.add_run(' for details.')
+    >>> hyperlink.url
+    'https://example.com/docs?lang=en#intro'
+
+The destination is stored exactly as supplied, including query strings,
+percent escapes, and fragments. The library does not fetch the destination,
+check whether a file exists, or encode the address. Relative file paths and
+``mailto:`` URIs are supported. An address is required. Empty addresses and
+fragment-only addresses such as ``#heading`` raise :exc:`ValueError`.
+Creating links to bookmarks within the same document is not supported by
+this method.
+
+For a formatted label, omit the initial text and append runs to the hyperlink::
+
+    >>> hyperlink = paragraph.add_hyperlink(address='https://example.com')
+    >>> hyperlink.add_run('An ')
+    >>> hyperlink.add_run('important').bold = True
+    >>> hyperlink.add_run(' example').italic = True
+
+Each returned |Run| supports the usual font, style, and picture operations.
+Tabs and line breaks behave as they do in paragraph runs. Text outside the
+link remains in separate paragraph runs. Hyperlinks can also be added to
+paragraphs in table cells, headers, and footers.
+
+No character style is applied automatically. To use a template's Hyperlink
+character style, pass ``style='Hyperlink'`` to :meth:`Hyperlink.add_run` or
+assign it to a run's ``style`` property. A missing style raises
+:exc:`KeyError`. If needed, create a theme-aware style through the public
+style API, preserving any existing definition::
+
+    >>> from docx.enum.dml import MSO_THEME_COLOR_INDEX
+    >>> from docx.enum.style import WD_STYLE_TYPE
+    >>> if 'Hyperlink' not in document.styles:
+    ...     style = document.styles.add_style('Hyperlink', WD_STYLE_TYPE.CHARACTER)
+    ...     style.font.color.theme_color = MSO_THEME_COLOR_INDEX.HYPERLINK
+    ...     style.font.underline = True
+    >>> hyperlink.add_run(' styled label', style='Hyperlink')
+
+The ``tooltip`` property can be read or changed later. Assign |None| to
+remove a tooltip. An empty string is stored as an explicitly empty tooltip.
+The library does not manage visited-link colors or history.
+
+Label text, destinations, and tooltips must contain valid XML characters.
+Invalid types raise :exc:`TypeError`. Invalid XML characters raise
+:exc:`ValueError` before a new link is attached to the paragraph.
+
+
 Block-level vs. inline text objects
 -----------------------------------
 

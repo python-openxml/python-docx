@@ -5,6 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Iterator, List, cast
 
 from docx.enum.style import WD_STYLE_TYPE
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.oxml import CT_Relationship
+from docx.oxml.simpletypes import XsdString
+from docx.oxml.text.hyperlink import CT_Hyperlink
 from docx.oxml.text.run import CT_R
 from docx.shared import StoryChild
 from docx.styles.style import ParagraphStyle
@@ -26,6 +30,40 @@ class Paragraph(StoryChild):
     def __init__(self, p: CT_P, parent: t.ProvidesStoryPart):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
+
+    def add_hyperlink(
+        self, text: str | None = None, *, address: str, tooltip: str | None = None
+    ) -> Hyperlink:
+        """Append an external hyperlink containing `text` and return its proxy.
+
+        `address` is a non-empty external destination, such as a web URL, mailto
+        URI, or relative file path. It is stored unchanged, including any URI
+        fragment. No URL encoding or target lookup is performed. Empty addresses
+        and fragment-only addresses like ``#bookmark`` raise |ValueError|.
+
+        Omit `text` or pass an empty string to create a hyperlink without runs.
+        Use :meth:`Hyperlink.add_run` to add individually formatted label runs.
+        No character style is applied automatically.
+
+        `tooltip` is optional hover text. |None| omits it and an empty string
+        specifies an empty tooltip. Invalid argument types raise :exc:`TypeError`.
+        Strings must contain only characters allowed in XML.
+        """
+        XsdString.validate(address)
+        if not address or address.startswith("#"):
+            raise ValueError("address must be a non-empty external destination")
+        # -- validate the XML target before adding a relationship to the part --
+        CT_Relationship.new("rId0", RT.HYPERLINK, address)
+        hyperlink_elm = CT_Hyperlink.new()
+        hyperlink = Hyperlink(hyperlink_elm, self)
+        hyperlink.tooltip = tooltip
+        if text is not None:
+            XsdString.validate(text)
+            if text:
+                hyperlink.add_run(text)
+        hyperlink_elm.rId = self.part.relate_to(address, RT.HYPERLINK, is_external=True)
+        self._p.append(hyperlink_elm)
+        return hyperlink
 
     def add_run(self, text: str | None = None, style: str | CharacterStyle | None = None) -> Run:
         """Append run containing `text` and having character-style `style`.

@@ -1,25 +1,134 @@
 """Unit test suite for the docx.text.paragraph module."""
 
-from typing import List, cast
+from __future__ import annotations
+
+from typing import Any, List, cast
 
 import pytest
 
 from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
+from docx.parts.story import StoryPart
+from docx.text.hyperlink import Hyperlink
 from docx.text.paragraph import Paragraph
 from docx.text.parfmt import ParagraphFormat
 from docx.text.run import Run
 
 from ..unitutil.cxml import element, xml
-from ..unitutil.mock import call, class_mock, instance_mock, method_mock, property_mock
+from ..unitutil.mock import (
+    FixtureRequest,
+    Mock,
+    call,
+    class_mock,
+    instance_mock,
+    method_mock,
+    property_mock,
+)
 
 
 class DescribeParagraph:
     """Unit-test suite for `docx.text.run.Paragraph`."""
+
+    @pytest.mark.parametrize("text", [None, "", "label"])
+    def it_appends_a_hyperlink_and_delegates_its_label(
+        self,
+        request: FixtureRequest,
+        text: str | None,
+        hyperlink_story_part_: Mock,
+        fake_parent: t.ProvidesStoryPart,
+    ):
+        add_run_ = method_mock(request, Hyperlink, "add_run")
+        p = cast(CT_P, element('w:p/(w:pPr,w:r/w:t"before",w:hyperlink{r:id=rId4})'))
+        paragraph = Paragraph(p, fake_parent)
+
+        hyperlink = paragraph.add_hyperlink(text, address="https://example.com")
+
+        hyperlink_story_part_.relate_to.assert_called_once_with(
+            "https://example.com", RT.HYPERLINK, is_external=True
+        )
+        assert isinstance(hyperlink, Hyperlink)
+        assert hyperlink.part is hyperlink_story_part_
+        assert p.xml == xml(
+            'w:p/(w:pPr,w:r/w:t"before",w:hyperlink{r:id=rId4},w:hyperlink{r:id=rId7})'
+        )
+        if text:
+            add_run_.assert_called_once_with(hyperlink, text)
+        else:
+            add_run_.assert_not_called()
+
+    @pytest.mark.parametrize("tooltip", [None, "", "Link details"])
+    def it_delegates_the_initial_tooltip_to_the_hyperlink(
+        self,
+        request: FixtureRequest,
+        tooltip: str | None,
+        hyperlink_story_part_: Mock,
+        fake_parent: t.ProvidesStoryPart,
+    ):
+        tooltip_ = property_mock(request, Hyperlink, "tooltip")
+        paragraph = Paragraph(cast(CT_P, element("w:p")), fake_parent)
+
+        paragraph.add_hyperlink(address="guide.pdf", tooltip=tooltip)
+
+        tooltip_.assert_called_once_with(tooltip)
+
+    @pytest.mark.parametrize(
+        "address",
+        ["https://example.com/a%20b?q=1&b=2#part", "mailto:a@example.com", "../a b.docx"],
+    )
+    def it_preserves_the_external_target_when_registering_its_relationship(
+        self, address: str, hyperlink_story_part_: Mock, fake_parent: t.ProvidesStoryPart
+    ):
+        paragraph = Paragraph(cast(CT_P, element("w:p")), fake_parent)
+
+        paragraph.add_hyperlink(address=address)
+
+        hyperlink_story_part_.relate_to.assert_called_once_with(
+            address, RT.HYPERLINK, is_external=True
+        )
+
+    @pytest.mark.parametrize(
+        ("kwargs", "exception"),
+        [
+            ({}, TypeError),
+            ({"address": None}, TypeError),
+            ({"address": 0}, TypeError),
+            ({"address": b"guide.pdf"}, TypeError),
+            ({"address": ""}, ValueError),
+            ({"address": "#bookmark"}, ValueError),
+            ({"address": "bad\x00target"}, ValueError),
+            ({"address": "guide.pdf", "tooltip": 0}, TypeError),
+            ({"address": "guide.pdf", "tooltip": "bad\x00tooltip"}, ValueError),
+            ({"address": "guide.pdf", "text": 0}, TypeError),
+            ({"address": "guide.pdf", "text": "bad\x00text"}, ValueError),
+        ],
+    )
+    def it_rejects_invalid_hyperlink_input_before_changing_the_document(
+        self,
+        kwargs: dict[str, Any],
+        exception: type[Exception],
+        hyperlink_story_part_: Mock,
+        fake_parent: t.ProvidesStoryPart,
+    ):
+        p = cast(CT_P, element('w:p/(w:r/w:t"before",w:hyperlink{r:id=rId4})'))
+        paragraph = Paragraph(p, fake_parent)
+
+        with pytest.raises(exception):
+            paragraph.add_hyperlink(**kwargs)
+
+        hyperlink_story_part_.relate_to.assert_not_called()
+        assert p.xml == xml('w:p/(w:r/w:t"before",w:hyperlink{r:id=rId4})')
+
+    @pytest.fixture
+    def hyperlink_story_part_(self, request: FixtureRequest) -> Mock:
+        story_part = instance_mock(request, StoryPart)
+        story_part.relate_to.return_value = "rId7"
+        property_mock(request, Paragraph, "part", return_value=story_part)
+        return story_part
 
     @pytest.mark.parametrize(
         ("p_cxml", "expected_value"),

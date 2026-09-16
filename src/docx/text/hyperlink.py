@@ -9,15 +9,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from docx.shared import Parented
+from docx.oxml.simpletypes import XsdString
+from docx.shared import StoryChild
 from docx.text.run import Run
 
 if TYPE_CHECKING:
     import docx.types as t
     from docx.oxml.text.hyperlink import CT_Hyperlink
+    from docx.styles.style import CharacterStyle
 
 
-class Hyperlink(Parented):
+class Hyperlink(StoryChild):
     """Proxy object wrapping a `<w:hyperlink>` element.
 
     A hyperlink occurs as a child of a paragraph, at the same level as a Run. A
@@ -29,6 +31,26 @@ class Hyperlink(Parented):
         super().__init__(parent)
         self._parent = parent
         self._hyperlink = self._element = hyperlink
+
+    def add_run(self, text: str | None = None, style: str | CharacterStyle | None = None) -> Run:
+        """Append a run containing `text` and having character-style `style`.
+
+        Tabs (``\\t``), newlines (``\\n``), and carriage returns (``\\r``) have the
+        same behavior as in :meth:`Paragraph.add_run`. Omit `text` for an empty
+        run, which can also contain a picture added using :meth:`Run.add_picture`.
+
+        No character style is applied by default. Pass a style name or a
+        |CharacterStyle| object to apply one. A missing style raises :exc:`KeyError`.
+        """
+        r = self._hyperlink._new_r()  # pyright: ignore[reportPrivateUsage]
+        run = Run(r, self)
+        if text is not None:
+            XsdString.validate(text)
+            run.text = text
+        if style is not None:
+            run.style = style
+        self._hyperlink.append(r)
+        return run
 
     @property
     def address(self) -> str:
@@ -88,7 +110,7 @@ class Hyperlink(Parented):
         example part of the hyperlink is bold or the text was changed after the document
         was saved.
         """
-        return [Run(r, self._parent) for r in self._hyperlink.r_lst]
+        return [Run(r, self) for r in self._hyperlink.r_lst]
 
     @property
     def text(self) -> str:
@@ -99,6 +121,19 @@ class Hyperlink(Parented):
         they are not reflected in this text.
         """
         return self._hyperlink.text
+
+    @property
+    def tooltip(self) -> str | None:
+        """Text displayed when the pointer rests over this hyperlink.
+
+        |None| means no tooltip is specified. Assigning |None| removes the
+        tooltip. An empty string specifies an empty tooltip.
+        """
+        return self._hyperlink.tooltip
+
+    @tooltip.setter
+    def tooltip(self, value: str | None):
+        self._hyperlink.tooltip = value
 
     @property
     def url(self) -> str:

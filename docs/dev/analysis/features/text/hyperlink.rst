@@ -22,11 +22,102 @@ Note that rendered page-breaks can occur in the middle of a hyperlink.
 A |Hyperlink| is a child of |Paragraph|, a peer of |Run|.
 
 
-TODO: What about URL-encoding/decoding (like %20) behaviors, if any?
+External authoring proposal
+---------------------------
+
+This contribution proposes a first authoring increment for `issue #74
+<https://github.com/python-openxml/python-docx/issues/74>`_. It extends the existing
+hyperlink reader with external link creation, append-only label runs, and tooltips.
+These API choices are proposed for maintainer review, not previously approved.
+
+The analysis in `PR #278 <https://github.com/python-openxml/python-docx/pull/278>`_
+was incorporated upstream before authoring was implemented. The current reader
+provides the foundation for this proposal. `PR #784
+<https://github.com/python-openxml/python-docx/pull/784>`_ also proposes authoring,
+but predates the current proxy structure and includes unrelated changes. This
+increment builds on current upstream and does not copy either implementation.
+
+The proposed signatures are::
+
+    paragraph.add_hyperlink(text=None, *, address, tooltip=None) -> Hyperlink
+    hyperlink.add_run(text=None, style=None) -> Run
+    hyperlink.tooltip -> str | None  # read/write
+
+For example::
+
+    >>> paragraph = document.add_paragraph('Read ')
+    >>> hyperlink = paragraph.add_hyperlink(
+    ...     address='https://example.com/docs?lang=en#intro',
+    ...     tooltip='Project documentation',
+    ... )
+    >>> hyperlink.add_run('the ')
+    >>> hyperlink.add_run('documentation').bold = True
+    >>> paragraph.add_run(' for details.')
+
+The design decisions for this increment are:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Concern
+     - Proposed behavior and rationale
+   * - Address naming
+     - Use ``address``, as in the current reader and the candidate protocol below.
+       The original issue's ``url`` argument was illustrative. Require the address
+       by keyword to avoid confusing a label with its destination.
+   * - Fragments and escaping
+     - Store the full external destination unchanged in its relationship. Preserve
+       query strings, percent escapes, and URI fragments. Do not perform URL
+       encoding or target lookup. XML serialization supplies attribute escaping.
+       Defer a separate ``fragment`` argument so there is only one source of truth.
+   * - Label runs
+     - Use ``add_run(text, style)`` to match ``Paragraph.add_run``. The earlier
+       ``insert_run`` proposal also addresses arbitrary insertion, which is outside
+       this increment. Do not introduce both methods for append-only authoring.
+       Existing Run APIs supply formatting, whitespace handling, and pictures.
+   * - Styling
+     - Apply no character style automatically, matching ordinary run creation.
+       Callers can assign an existing Hyperlink character style or create one using
+       the public style API. Preserve template definitions and avoid hard-coded
+       colors. This choice differs from Word's automatic styling and needs review.
+   * - Tooltip
+     - Use a read/write optional string. ``None`` means absent and removes the
+       attribute when assigned. An empty string is stored explicitly. Offer the
+       same value as a creation keyword for labels with hover text.
+   * - Relationship ownership
+     - Register the external relationship on the paragraph's story part. Links in
+       headers and footers must not place their relationships on the document part.
+       Adjacent links may share a relationship while retaining separate elements.
+   * - Invalid input
+     - Require a non-empty external address. Reject fragment-only destinations.
+       Missing or wrongly typed arguments raise ``TypeError``. Empty destinations
+       and invalid XML characters raise ``ValueError``. Prepare content before
+       attaching a new link or adding its relationship. Failed run creation must
+       not append a partial run.
+
+An absent or empty initial label creates a hyperlink without runs. Callers can
+populate it incrementally. The existing text, address, fragment, URL, run, and
+inline-iteration getters retain their behavior.
+
+Internal bookmark links, bookmark creation, address editing, link removal, run
+insertion, and visited-state management are deferred. In particular, the unresolved
+bookmark behavior discussed in PR #278 does not need to be decided for this external
+link increment. The history attribute is not exposed or changed.
+
+Acceptance scenarios specify each public operation before its implementation.
+XML and proxy unit tests isolate each new helper, method, or property. Saved-document
+tests then cover relationship ownership, adjacent links, formatted labels, picture
+runs, input failures, and tooltip states. Word inspection complements these tests
+because successfully reopening a package does not establish click behavior.
 
 
 Candidate protocol
 ------------------
+
+The following is the broader historical design. Examples for internal links,
+separate fragments, property mutation, and arbitrary insertion remain proposals
+beyond the external-authoring increment above.
 
 An external hyperlink has an address and an optional anchor. An internal hyperlink has
 only an anchor. An anchor is more precisely known as a *URI fragment* in a web URL and
@@ -97,7 +188,7 @@ and addresses typed into the document directly don't, based on my limited experi
     >>> hyperlink.text
     'an excellent Wikipedia article on ferrets'
 
-**Add an external hyperlink** (not yet implemented)::
+**Add an external hyperlink with a separate fragment** (broader proposal)::
 
     >>> hyperlink = paragraph.add_hyperlink(
     ...   'About', address='http://us.com', fragment='about'

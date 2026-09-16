@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+Unreleased
+++++++++++
+
+- Add external hyperlink creation, formatted label runs, and tooltip support.
+
+
 1.2.0 (2025-06-16)
 ++++++++++++++++++
 

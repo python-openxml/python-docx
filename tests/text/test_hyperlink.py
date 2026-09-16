@@ -1,5 +1,7 @@
 """Test suite for the docx.text.hyperlink module."""
 
+from __future__ import annotations
+
 from typing import cast
 
 import pytest
@@ -9,13 +11,106 @@ from docx.opc.rel import _Relationship  # pyright: ignore[reportPrivateUsage]
 from docx.oxml.text.hyperlink import CT_Hyperlink
 from docx.parts.story import StoryPart
 from docx.text.hyperlink import Hyperlink
+from docx.text.run import Run
 
-from ..unitutil.cxml import element
-from ..unitutil.mock import FixtureRequest, Mock, instance_mock
+from ..unitutil.cxml import element, xml
+from ..unitutil.mock import FixtureRequest, Mock, instance_mock, property_mock
 
 
 class DescribeHyperlink:
     """Unit-test suite for the docx.text.hyperlink.Hyperlink object."""
+
+    @pytest.mark.parametrize(
+        ("text", "expected_cxml"),
+        [
+            (None, "w:hyperlink/w:r"),
+            ("", "w:hyperlink/w:r"),
+            ("label", 'w:hyperlink/w:r/w:t"label"'),
+            (
+                " a\tb\nc\rd ",
+                'w:hyperlink/w:r/(w:t{xml:space=preserve}" a",w:tab,w:t"b",'
+                'w:br,w:t"c",w:br,w:t{xml:space=preserve}"d ")',
+            ),
+        ],
+    )
+    def it_can_append_a_run(
+        self, text: str | None, expected_cxml: str, fake_parent: t.ProvidesStoryPart
+    ):
+        hlink = cast(CT_Hyperlink, element("w:hyperlink"))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        run = hyperlink.add_run(text)
+
+        assert isinstance(run, Run)
+        assert run.part is fake_parent.part
+        assert hlink.xml == xml(expected_cxml)
+
+    def it_can_apply_a_character_style_to_a_new_run(
+        self, request: FixtureRequest, fake_parent: t.ProvidesStoryPart
+    ):
+        style_prop = property_mock(request, Run, "style")
+        hyperlink = Hyperlink(cast(CT_Hyperlink, element("w:hyperlink")), fake_parent)
+
+        hyperlink.add_run("label", "Emphasis")
+
+        style_prop.assert_called_once_with("Emphasis")
+
+    def it_appends_a_run_after_existing_content(self, fake_parent: t.ProvidesStoryPart):
+        hlink = cast(CT_Hyperlink, element('w:hyperlink/w:r/w:t"before"'))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        run = hyperlink.add_run("after")
+
+        assert hlink.xml == xml('w:hyperlink/(w:r/w:t"before",w:r/w:t"after")')
+        assert run.text == "after"
+        assert all(run.part is fake_parent.part for run in hyperlink.runs)
+
+    @pytest.mark.parametrize(
+        ("value", "exception"),
+        [(0, TypeError), (b"label", TypeError), ("bad\x00text", ValueError)],
+    )
+    def it_rejects_invalid_run_text_before_appending(
+        self, value: object, exception: type[Exception], fake_parent: t.ProvidesStoryPart
+    ):
+        hlink = cast(CT_Hyperlink, element('w:hyperlink/w:r/w:t"before"'))
+        hyperlink = Hyperlink(hlink, fake_parent)
+
+        with pytest.raises(exception):
+            hyperlink.add_run(cast(str, value))
+
+        assert hlink.xml == xml('w:hyperlink/w:r/w:t"before"')
+
+    def it_does_not_append_a_run_when_its_style_cannot_be_applied(
+        self, request: FixtureRequest, fake_parent: t.ProvidesStoryPart
+    ):
+        property_mock(request, Run, "style", side_effect=KeyError("Missing style"))
+        hlink = cast(CT_Hyperlink, element("w:hyperlink"))
+
+        with pytest.raises(KeyError, match="Missing style"):
+            Hyperlink(hlink, fake_parent).add_run("label", "Missing style")
+
+        assert hlink.xml == xml("w:hyperlink")
+
+    @pytest.mark.parametrize("value", [None, "", "tip"])
+    def it_reads_its_tooltip_from_the_xml_element(
+        self, request: FixtureRequest, value: str | None, fake_parent: t.ProvidesStoryPart
+    ):
+        tooltip_prop = property_mock(request, CT_Hyperlink, "tooltip", return_value=value)
+        hyperlink = Hyperlink(cast(CT_Hyperlink, element("w:hyperlink")), fake_parent)
+
+        assert hyperlink.tooltip == value
+        tooltip_prop.assert_called_once_with()
+
+    @pytest.mark.parametrize("value", [None, "", "tip"])
+    def it_delegates_tooltip_assignment_to_the_xml_element(
+        self, request: FixtureRequest, value: str | None, fake_parent: t.ProvidesStoryPart
+    ):
+        tooltip_prop = property_mock(request, CT_Hyperlink, "tooltip")
+        hyperlink = Hyperlink(cast(CT_Hyperlink, element("w:hyperlink")), fake_parent)
+
+        hyperlink.tooltip = value
+
+        tooltip_prop.assert_called_once_with(value)
 
     @pytest.mark.parametrize(
         ("hlink_cxml", "expected_value"),
