@@ -494,6 +494,29 @@ class _Row(Parented):
         self._tr.trHeight_hRule = value
 
     @property
+    def repeat_as_header(self) -> bool | None:
+        """Whether this row is explicitly marked as a repeating table header.
+
+        True enables repetition, False explicitly disables it, and None means
+        the direct setting is absent. Word repeats only a contiguous group of
+        header rows at the beginning of a table, subject to page layout.
+        """
+        properties = self._tr.trPr
+        if properties is None or properties.tblHeader is None:
+            return None
+        return properties.tblHeader.val
+
+    @repeat_as_header.setter
+    def repeat_as_header(self, value: bool | None):
+        if value is not None and value is not True and value is not False:
+            raise TypeError("repeat_as_header must be True, False, or None")
+        if value is None:
+            if self._tr.trPr is not None:
+                self._tr.trPr._remove_tblHeader()  # pyright: ignore[reportPrivateUsage]
+            return
+        self._tr.get_or_add_trPr().get_or_add_tblHeader().val = value
+
+    @property
     def table(self) -> Table:
         """Reference to the |Table| object this row belongs to."""
         return self._parent.table

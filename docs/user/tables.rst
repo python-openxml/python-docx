@@ -200,3 +200,21 @@ can itself include one or more tables.
 
 These can be detected using ``_Cell.tables`` or ``_Cell.iter_inner_content()``. The latter preserves
 the document order of the table with respect to paragraphs also in the cell.
+
+Repeating table headers
+-----------------------
+
+Mark one or more contiguous leading rows to repeat when the table spans pages::
+
+    table.rows[0].repeat_as_header = True
+    table.rows[1].repeat_as_header = True
+
+Assign ``False`` to explicitly disable repetition or ``None`` to remove the direct
+setting. New rows have no direct setting. The library does not enable repetition
+by default. This property does not change row height, splitting, or cell formatting.
+
+Word only repeats marked rows that form a contiguous group starting with the first
+row. A marked row after an unmarked row is stored but does not become a repeating
+header. Repetition depends on Word-compatible pagination, and manual page breaks
+inside a table can affect it. The property describes the stored setting rather
+than a calculated page-layout result.

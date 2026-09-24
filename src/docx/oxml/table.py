@@ -893,6 +893,8 @@ class CT_TrPr(BaseOxmlElement):
     """``<w:trPr>`` element, defining table row properties."""
 
     get_or_add_trHeight: Callable[[], CT_Height]
+    get_or_add_tblHeader: Callable[[], CT_OnOff]
+    _remove_tblHeader: Callable[[], None]
 
     _tag_seq = (
         "w:cnfStyle",
@@ -916,6 +918,9 @@ class CT_TrPr(BaseOxmlElement):
     )
     gridBefore: CT_DecimalNumber | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:gridBefore", successors=_tag_seq[3:]
+    )
+    tblHeader: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:tblHeader", successors=_tag_seq[9:]
     )
     trHeight: CT_Height | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:trHeight", successors=_tag_seq[8:]
