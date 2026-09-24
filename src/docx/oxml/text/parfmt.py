@@ -22,6 +22,7 @@ from docx.oxml.xmlchemy import (
 from docx.shared import Length
 
 if TYPE_CHECKING:
+    from docx.oxml.numbering import CT_NumPr
     from docx.oxml.section import CT_SectPr
     from docx.oxml.shared import CT_String
 
@@ -54,6 +55,11 @@ class CT_Jc(BaseOxmlElement):
 class CT_PPr(BaseOxmlElement):
     """``<w:pPr>`` element, containing the properties for a paragraph."""
 
+    get_or_add_numPr: Callable[[], CT_NumPr]
+    _remove_ind: Callable[[], None]
+    _insert_ind: Callable[[CT_Ind], None]
+    _remove_tabs: Callable[[], None]
+    _insert_tabs: Callable[[CT_TabStops], None]
     get_or_add_ind: Callable[[], CT_Ind]
     get_or_add_pStyle: Callable[[], CT_String]
     get_or_add_sectPr: Callable[[], CT_SectPr]
@@ -106,7 +112,7 @@ class CT_PPr(BaseOxmlElement):
     keepLines = ZeroOrOne("w:keepLines", successors=_tag_seq[3:])
     pageBreakBefore = ZeroOrOne("w:pageBreakBefore", successors=_tag_seq[4:])
     widowControl = ZeroOrOne("w:widowControl", successors=_tag_seq[6:])
-    numPr = ZeroOrOne("w:numPr", successors=_tag_seq[7:])
+    numPr: CT_NumPr | None = ZeroOrOne("w:numPr", successors=_tag_seq[7:])  # pyright: ignore[reportAssignmentType]
     tabs = ZeroOrOne("w:tabs", successors=_tag_seq[11:])
     spacing = ZeroOrOne("w:spacing", successors=_tag_seq[22:])
     ind: CT_Ind | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]

@@ -1,5 +1,9 @@
 """Custom element classes related to the numbering part."""
 
+from __future__ import annotations
+
+from typing import Callable
+
 from docx.oxml.parser import OxmlElement
 from docx.oxml.shared import CT_DecimalNumber
 from docx.oxml.simpletypes import ST_DecimalNumber
@@ -17,11 +21,13 @@ class CT_Num(BaseOxmlElement):
     a required child <w:abstractNumId> that references an abstract numbering definition
     that defines most of the formatting details."""
 
-    abstractNumId = OneAndOnlyOne("w:abstractNumId")
+    abstractNumId: CT_DecimalNumber = OneAndOnlyOne("w:abstractNumId")  # pyright: ignore[reportAssignmentType]
     lvlOverride = ZeroOrMore("w:lvlOverride")
-    numId = RequiredAttribute("w:numId", ST_DecimalNumber)
+    numId: int = RequiredAttribute("w:numId", ST_DecimalNumber)  # pyright: ignore[reportAssignmentType]
 
-    def add_lvlOverride(self, ilvl):
+    _add_lvlOverride: Callable[..., CT_NumLvl]
+
+    def add_lvlOverride(self, ilvl: int) -> CT_NumLvl:
         """Return a newly added CT_NumLvl (<w:lvlOverride>) element having its ``ilvl``
         attribute set to `ilvl`."""
         return self._add_lvlOverride(ilvl=ilvl)
@@ -41,6 +47,8 @@ class CT_NumLvl(BaseOxmlElement):
     """``<w:lvlOverride>`` element, which identifies a level in a list definition to
     override with settings it contains."""
 
+    get_or_add_startOverride: Callable[[], CT_DecimalNumber]
+
     startOverride = ZeroOrOne("w:startOverride", successors=("w:lvl",))
     ilvl = RequiredAttribute("w:ilvl", ST_DecimalNumber)
 
@@ -54,8 +62,14 @@ class CT_NumPr(BaseOxmlElement):
     """A ``<w:numPr>`` element, a container for numbering properties applied to a
     paragraph."""
 
-    ilvl = ZeroOrOne("w:ilvl", successors=("w:numId", "w:numberingChange", "w:ins"))
-    numId = ZeroOrOne("w:numId", successors=("w:numberingChange", "w:ins"))
+    ilvl: CT_DecimalNumber | None = ZeroOrOne(
+        "w:ilvl", successors=("w:numId", "w:numberingChange", "w:ins")
+    )  # pyright: ignore[reportAssignmentType]
+    numId: CT_DecimalNumber | None = ZeroOrOne("w:numId", successors=("w:numberingChange", "w:ins"))  # pyright: ignore[reportAssignmentType]
+
+    get_or_add_ilvl: Callable[[], CT_DecimalNumber]
+    get_or_add_numId: Callable[[], CT_DecimalNumber]
+    _remove_ilvl: Callable[[], None]
 
     # @ilvl.setter
     # def _set_ilvl(self, val):
@@ -79,6 +93,8 @@ class CT_Numbering(BaseOxmlElement):
     """``<w:numbering>`` element, the root element of a numbering part, i.e.
     numbering.xml."""
 
+    _insert_num: Callable[[CT_Num], CT_Num]
+
     num = ZeroOrMore("w:num", successors=("w:numIdMacAtCleanup",))
 
     def add_num(self, abstractNum_id):
@@ -88,7 +104,7 @@ class CT_Numbering(BaseOxmlElement):
         num = CT_Num.new(next_num_id, abstractNum_id)
         return self._insert_num(num)
 
-    def num_having_numId(self, numId):
+    def num_having_numId(self, numId: int) -> CT_Num:
         """Return the ``<w:num>`` child element having ``numId`` attribute matching
         `numId`."""
         xpath = './w:num[@w:numId="%d"]' % numId
@@ -98,7 +114,7 @@ class CT_Numbering(BaseOxmlElement):
             raise KeyError("no <w:num> element with numId %d" % numId)
 
     @property
-    def _next_numId(self):
+    def _next_numId(self) -> int:
         """The first ``numId`` unused by a ``<w:num>`` element, starting at 1 and
         filling any gaps in numbering between existing ``<w:num>`` elements."""
         numId_strs = self.xpath("./w:num/@w:numId")

@@ -10,6 +10,7 @@ from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
+from docx.numbering import ListInstance
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu, Inches, Length
 from docx.text.run import Run
@@ -37,6 +38,25 @@ class Document(ElementProxy):
         self._element = element
         self._part = part
         self.__body = None
+
+    def add_list(
+        self,
+        style: str | ParagraphStyle = "List Number",
+        *,
+        start: int = 1,
+        level: int | None = None,
+    ) -> ListInstance:
+        """Create an independent list using the numbering referenced by `style`.
+
+        `start` selects the first number, including zero. `level` selects a
+        zero-based level defined by the template. Omit it to use the style's
+        associated level. The style must belong to this document and reference
+        an existing numbering definition. Numbering-style links are unsupported.
+
+        This adds a numbering instance but no paragraphs. Use its ``apply()``
+        method on paragraphs to number them. Set their styles separately.
+        """
+        return ListInstance._from_style(self, style, start, level)
 
     def add_comment(
         self,

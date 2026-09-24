@@ -21,6 +21,13 @@ The main Document and related objects.
    :exclude-members: styles_part
 
 
+List instances
+--------------
+
+.. autoclass:: docx.numbering.ListInstance()
+   :members: apply, apply_continuation, default_level, levels, restart
+
+
 |CoreProperties| objects
 -------------------------
 

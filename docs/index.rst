@@ -72,6 +72,7 @@ User Guide
    :maxdepth: 1
 
    user/install
+   user/lists
    user/quickstart
    user/documents
    user/tables
