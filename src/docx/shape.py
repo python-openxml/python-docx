@@ -57,6 +57,23 @@ class InlineShape:
         self._inline = inline
 
     @property
+    def description(self) -> str | None:
+        """Read/write alternative-text description of this inline shape.
+
+        Stored in the ``descr`` attribute of ``wp:docPr``. |None| means the
+        attribute is absent. Assigning |None| removes it. An empty string is
+        preserved and does not mark the shape as decorative.
+
+        This describes the placed shape, independently of its title, internal
+        object name, and image filename.
+        """
+        return self._inline.docPr.descr
+
+    @description.setter
+    def description(self, value: str | None) -> None:
+        self._inline.docPr.descr = value
+
+    @property
     def height(self) -> Length:
         """Read/write.
 
@@ -68,6 +85,20 @@ class InlineShape:
     def height(self, cy: Length):
         self._inline.extent.cy = cy
         self._inline.graphic.graphicData.pic.spPr.cy = cy
+
+    @property
+    def title(self) -> str | None:
+        """Read/write alternative-text title of this inline shape.
+
+        Stored in the ``title`` attribute of ``wp:docPr``. |None| means the
+        attribute is absent. Assigning |None| removes it. An empty string is
+        preserved. This optional title does not replace the description.
+        """
+        return self._inline.docPr.title
+
+    @title.setter
+    def title(self, value: str | None) -> None:
+        self._inline.docPr.title = value
 
     @property
     def type(self):

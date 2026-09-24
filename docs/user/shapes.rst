@@ -25,3 +25,29 @@ issue tracker. The ``Document.add_picture()`` method adds a specified picture
 to the end of the document in a paragraph of its own. However, by digging
 a little deeper into the API you can place text on either side of the picture
 in its paragraph, or both.
+
+
+Image alternative text
+----------------------
+
+Use the returned |InlineShape| to describe an image for readers who cannot see
+it::
+
+    picture = document.add_picture("revenue.png")
+    picture.description = "Quarterly revenue increased by 20 percent."
+    picture.title = "Quarterly revenue"
+
+``description`` maps to ``wp:docPr/@descr`` and ``title`` maps to
+``wp:docPr/@title``. Both properties accept Unicode strings. A missing attribute
+returns |None|. Assign |None| to remove it, or ``""`` to store an explicitly empty
+value. An empty description does not mark the image as decorative.
+
+These properties belong to each placed shape. Two uses of the same image can
+have different descriptions. They do not change the image bytes, filename,
+internal object name, dimensions, or one another. They also leave any metadata
+on the nested ``pic:cNvPr`` element unchanged and do not use it as a fallback.
+
+The same properties are available on shapes returned by ``Run.add_picture()``,
+including pictures in table cells, headers, and footers. The optional title is
+separate from the description and is not a replacement for it. This API does
+not add floating-shape or decorative-image support.
