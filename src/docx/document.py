@@ -10,6 +10,7 @@ from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
+from docx.footnotes import Footnote, Footnotes
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu, Inches, Length
 from docx.text.run import Run
@@ -37,6 +38,20 @@ class Document(ElementProxy):
         self._element = element
         self._part = part
         self.__body = None
+
+    def add_footnote(self, after: Run, text: str = "") -> Footnote:
+        """Insert a native footnote reference immediately after `after`.
+
+        `after` must be a direct run in an attached body or table-cell paragraph
+        in this document. Each call creates a new note. The original run is
+        unchanged. Newlines in `text` separate paragraphs.
+        """
+        return self.footnotes._add(after, text)
+
+    @property
+    def footnotes(self) -> Footnotes:
+        """Ordinary footnotes. Reading this collection does not create a part."""
+        return Footnotes(self._part)
 
     def add_comment(
         self,

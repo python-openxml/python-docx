@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
+from docx.oxml.ns import qn
+from docx.oxml.parser import OxmlElement
 from docx.oxml.xmlchemy import BaseOxmlElement, ZeroOrOne
 
 if TYPE_CHECKING:
@@ -12,6 +14,18 @@ if TYPE_CHECKING:
 
 class CT_Settings(BaseOxmlElement):
     """`w:settings` element, root element for the settings part."""
+
+    get_or_add_footnotePr: Callable[[], BaseOxmlElement]
+
+    def ensure_footnote_separators(self) -> None:
+        """Reference the default separator entries without changing numbering."""
+        props = self.get_or_add_footnotePr()
+        existing = {entry.get(qn("w:id")) for entry in props.findall(qn("w:footnote"))}
+        for value in ("-1", "0"):
+            if value not in existing:
+                entry = OxmlElement("w:footnote")
+                entry.set(qn("w:id"), value)
+                props.append(entry)
 
     get_or_add_evenAndOddHeaders: Callable[[], CT_OnOff]
     _remove_evenAndOddHeaders: Callable[[], None]
@@ -119,6 +133,10 @@ class CT_Settings(BaseOxmlElement):
     evenAndOddHeaders: CT_OnOff | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:evenAndOddHeaders", successors=_tag_seq[48:]
     )
+    footnotePr = ZeroOrOne(
+        "w:footnotePr", successors=_tag_seq[_tag_seq.index("w:footnotePr") + 1 :]
+    )
+
     del _tag_seq
 
     @property

@@ -35,6 +35,15 @@ class Run(StoryChild):
         super().__init__(parent)
         self._r = self._element = self.element = r
 
+    @property
+    def footnote_ids(self) -> tuple[int, ...]:
+        """IDs of native footnote references in this run, in content order.
+
+        Resolve each ID with ``Document.footnotes.get()``. A dangling reference
+        still appears here even when its note is absent.
+        """
+        return tuple(int(value) for value in self._r.xpath("./w:footnoteReference/@w:id"))
+
     def add_break(self, break_type: WD_BREAK = WD_BREAK.LINE):
         """Add a break element of `break_type` to this run.
 

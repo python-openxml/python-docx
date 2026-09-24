@@ -7,7 +7,9 @@ This including registering custom element classes corresponding to Open XML elem
 
 from __future__ import annotations
 
+from docx.oxml.footnotes import CT_Footnote, CT_Footnotes
 from docx.oxml.drawing import CT_Drawing
+
 from docx.oxml.parser import OxmlElement, parse_xml, register_element_cls
 from docx.oxml.shape import (
     CT_Anchor,
@@ -44,6 +46,8 @@ __all__ = ["OxmlElement", "parse_xml"]
 # ---------------------------------------------------------------------------
 # DrawingML-related elements
 
+register_element_cls("w:footnote", CT_Footnote)
+register_element_cls("w:footnotes", CT_Footnotes)
 register_element_cls("a:blip", CT_Blip)
 register_element_cls("a:ext", CT_PositiveSize2D)
 register_element_cls("a:graphic", CT_GraphicalObject)
