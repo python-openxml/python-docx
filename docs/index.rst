@@ -72,6 +72,7 @@ User Guide
    :maxdepth: 1
 
    user/install
+   user/bookmarks
    user/quickstart
    user/documents
    user/tables
@@ -92,6 +93,7 @@ API Documentation
    :maxdepth: 2
 
    api/document
+   api/bookmarks
    api/settings
    api/style
    api/text

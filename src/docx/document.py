@@ -8,6 +8,7 @@ from __future__ import annotations
 from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 
 from docx.blkcntnr import BlockItemContainer
+from docx.bookmarks import Bookmarks
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
@@ -37,6 +38,11 @@ class Document(ElementProxy):
         self._element = element
         self._part = part
         self.__body = None
+
+    @property
+    def bookmarks(self) -> Bookmarks:
+        """Document bookmarks, with main-story creation and lookup by name."""
+        return Bookmarks(self._part)
 
     def add_comment(
         self,
