@@ -300,10 +300,12 @@ class CT_TblPr(BaseOxmlElement):
 
     get_or_add_bidiVisual: Callable[[], CT_OnOff]
     get_or_add_jc: Callable[[], CT_Jc]
+    get_or_add_tblInd: Callable[[], CT_TblWidth]
     get_or_add_tblLayout: Callable[[], CT_TblLayoutType]
     _add_tblStyle: Callable[[], CT_String]
     _remove_bidiVisual: Callable[[], None]
     _remove_jc: Callable[[], None]
+    _remove_tblInd: Callable[[], None]
     _remove_tblStyle: Callable[[], None]
 
     _tag_seq = (
@@ -335,6 +337,9 @@ class CT_TblPr(BaseOxmlElement):
     jc: CT_Jc | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:jc", successors=_tag_seq[8:]
     )
+    tblInd: CT_TblWidth | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "w:tblInd", successors=_tag_seq[10:]
+    )
     tblLayout: CT_TblLayoutType | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
         "w:tblLayout", successors=_tag_seq[13:]
     )
@@ -355,6 +360,19 @@ class CT_TblPr(BaseOxmlElement):
             return
         jc = self.get_or_add_jc()
         jc.val = cast("WD_ALIGN_PARAGRAPH", value)
+
+    @property
+    def left_indent(self) -> Length | None:
+        """Direct table indentation, or |None| when inherited or not expressed in twips."""
+        tbl_ind = self.tblInd
+        return None if tbl_ind is None else tbl_ind.width
+
+    @left_indent.setter
+    def left_indent(self, value: Length | None) -> None:
+        if value is None:
+            self._remove_tblInd()
+        else:
+            self.get_or_add_tblInd().width = value
 
     @property
     def autofit(self) -> bool:

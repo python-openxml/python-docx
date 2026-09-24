@@ -69,6 +69,19 @@ class Table(StoryChild):
         self._tblPr.alignment = value
 
     @property
+    def left_indent(self) -> Length | None:
+        """Direct distance from the table's left edge to the page margin.
+
+        |None| means the indentation is inherited from the table style. This setting
+        applies to left-aligned tables. Assign |None| to remove the direct setting.
+        """
+        return self._tblPr.left_indent
+
+    @left_indent.setter
+    def left_indent(self, value: Length | None) -> None:
+        self._tblPr.left_indent = value
+
+    @property
     def autofit(self) -> bool:
         """|True| if column widths can be automatically adjusted to improve the fit of
         cell contents.

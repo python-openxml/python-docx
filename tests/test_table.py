@@ -134,6 +134,37 @@ class DescribeTable:
         assert table._tbl.xml == xml(expected_cxml)
 
     @pytest.mark.parametrize(
+        ("tbl_cxml", "expected"),
+        [
+            ("w:tbl/w:tblPr", None),
+            ("w:tbl/w:tblPr/w:tblInd{w:type=dxa,w:w=720}", Inches(0.5)),
+            ("w:tbl/w:tblPr/w:tblInd{w:type=pct,w:w=5000}", None),
+        ],
+    )
+    def it_knows_its_left_indent(self, tbl_cxml: str, expected: Length | None, document_: Mock):
+        table = Table(cast(CT_Tbl, element(tbl_cxml)), document_)
+        assert table.left_indent == expected
+
+    @pytest.mark.parametrize(
+        ("tbl_cxml", "value", "expected_cxml"),
+        [
+            ("w:tbl/w:tblPr", Inches(0.5), "w:tbl/w:tblPr/w:tblInd{w:type=dxa,w:w=720}"),
+            (
+                "w:tbl/w:tblPr/w:tblInd{w:type=dxa,w:w=720}",
+                Inches(1),
+                "w:tbl/w:tblPr/w:tblInd{w:type=dxa,w:w=1440}",
+            ),
+            ("w:tbl/w:tblPr/w:tblInd{w:type=dxa,w:w=720}", None, "w:tbl/w:tblPr"),
+        ],
+    )
+    def it_can_change_its_left_indent(
+        self, tbl_cxml: str, value: Length | None, expected_cxml: str, document_: Mock
+    ):
+        table = Table(cast(CT_Tbl, element(tbl_cxml)), document_)
+        table.left_indent = value
+        assert table._tbl.xml == xml(expected_cxml)
+
+    @pytest.mark.parametrize(
         ("tbl_cxml", "expected_value"),
         [
             ("w:tbl/w:tblPr", True),
