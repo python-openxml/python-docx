@@ -12,6 +12,7 @@ from docx.parts.numbering import NumberingPart
 from docx.parts.settings import SettingsPart
 from docx.parts.story import StoryPart
 from docx.parts.styles import StylesPart
+from docx.parts.theme import ThemePart
 from docx.shape import InlineShapes
 from docx.shared import lazyproperty
 
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
     from docx.opc.coreprops import CoreProperties
     from docx.settings import Settings
     from docx.styles.style import BaseStyle
+    from docx.theme import ThemeFonts
 
 
 class DocumentPart(StoryPart):
@@ -124,6 +126,17 @@ class DocumentPart(StoryPart):
         """A |Styles| object providing access to the styles in the styles part of this
         document."""
         return self._styles_part.styles
+
+    @property
+    def theme_fonts(self) -> ThemeFonts:
+        """Font scheme of the related theme, creating a default theme if absent."""
+        try:
+            theme_part = cast(ThemePart, self.part_related_by(RT.THEME))
+        except KeyError:
+            assert self.package is not None
+            theme_part = ThemePart.default(self.package)
+            self.relate_to(theme_part, RT.THEME)
+        return theme_part.fonts
 
     @property
     def _comments_part(self) -> CommentsPart:

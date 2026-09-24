@@ -133,8 +133,18 @@ from .settings import CT_Settings
 
 register_element_cls("w:settings", CT_Settings)
 
-from .styles import CT_LatentStyles, CT_LsdException, CT_Style, CT_Styles
+from .styles import (
+    CT_DocDefaults,
+    CT_LatentStyles,
+    CT_LsdException,
+    CT_RPrDefault,
+    CT_Style,
+    CT_Styles,
+)
 
+register_element_cls("w:docDefaults", CT_DocDefaults)
+register_element_cls("w:rPrDefault", CT_RPrDefault)
+register_element_cls("w:link", CT_String)
 register_element_cls("w:basedOn", CT_String)
 register_element_cls("w:latentStyles", CT_LatentStyles)
 register_element_cls("w:locked", CT_OnOff)

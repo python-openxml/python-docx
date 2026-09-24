@@ -185,6 +185,8 @@ rst_epilog = """
 
 .. |Styles| replace:: :class:`.Styles`
 
+.. |ThemeFonts| replace:: :class:`docx.theme.ThemeFonts`
+
 .. |StylesPart| replace:: :class:`.StylesPart`
 
 .. |Table| replace:: :class:`.Table`

@@ -10,6 +10,7 @@ from docx.shared import ElementProxy
 from docx.styles import BabelFish
 from docx.styles.latent import LatentStyles
 from docx.styles.style import BaseStyle, StyleFactory
+from docx.text.font import Font
 
 
 class Styles(ElementProxy):
@@ -71,6 +72,16 @@ class Styles(ElementProxy):
         if style is None:
             return None
         return StyleFactory(style)
+
+    @property
+    def default_font(self) -> Font:
+        """Document-wide character defaults at the root of the style hierarchy.
+
+        Access creates missing default containers. More specific style or run
+        formatting can override these properties.
+        """
+        defaults = self._element.get_or_add_docDefaults().get_or_add_rPrDefault()
+        return Font(defaults)
 
     def get_by_id(self, style_id: str | None, style_type: WD_STYLE_TYPE):
         """Return the style of `style_type` matching `style_id`.

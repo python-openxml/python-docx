@@ -30,6 +30,18 @@ def styleId_from_name(name):
     }.get(name, name.replace(" ", ""))
 
 
+class CT_DocDefaults(BaseOxmlElement):
+    """Document-wide defaults for paragraph and character formatting."""
+
+    rPrDefault = ZeroOrOne("w:rPrDefault", successors=("w:pPrDefault",))
+
+
+class CT_RPrDefault(BaseOxmlElement):
+    """Container for default run properties."""
+
+    rPr = ZeroOrOne("w:rPr", successors=())
+
+
 class CT_LatentStyles(BaseOxmlElement):
     """`w:latentStyles` element, defining behavior defaults for latent styles and
     containing `w:lsdException` child elements that each override those defaults for a
@@ -119,6 +131,7 @@ class CT_Style(BaseOxmlElement):
     name = ZeroOrOne("w:name", successors=_tag_seq[1:])
     basedOn = ZeroOrOne("w:basedOn", successors=_tag_seq[3:])
     next = ZeroOrOne("w:next", successors=_tag_seq[4:])
+    link = ZeroOrOne("w:link", successors=_tag_seq[5:])
     uiPriority = ZeroOrOne("w:uiPriority", successors=_tag_seq[8:])
     semiHidden = ZeroOrOne("w:semiHidden", successors=_tag_seq[9:])
     unhideWhenUsed = ZeroOrOne("w:unhideWhenUsed", successors=_tag_seq[10:])
@@ -151,6 +164,13 @@ class CT_Style(BaseOxmlElement):
             self._remove_basedOn()
         else:
             self.get_or_add_basedOn().val = value
+
+    @property
+    def linked_style(self):
+        """Sibling style referenced by ``w:link``, or |None| for a missing target."""
+        if self.link is None or self.getparent() is None:
+            return None
+        return self.getparent().get_by_id(self.link.val)
 
     @property
     def base_style(self):
@@ -273,6 +293,7 @@ class CT_Styles(BaseOxmlElement):
     """``<w:styles>`` element, the root element of a styles part, i.e. styles.xml."""
 
     _tag_seq = ("w:docDefaults", "w:latentStyles", "w:style")
+    docDefaults = ZeroOrOne("w:docDefaults", successors=_tag_seq[1:])
     latentStyles = ZeroOrOne("w:latentStyles", successors=_tag_seq[2:])
     style = ZeroOrMore("w:style", successors=())
     del _tag_seq

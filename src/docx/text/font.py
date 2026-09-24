@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 from docx.dml.color import ColorFormat
 from docx.enum.text import WD_UNDERLINE
@@ -198,6 +198,50 @@ class Font(ElementProxy):
         rPr = self._element.get_or_add_rPr()
         rPr.rFonts_ascii = value
         rPr.rFonts_hAnsi = value
+
+    @property
+    def theme_font(self) -> Literal["major", "minor"] | None:
+        """Latin theme family, either ``"major"`` (heading) or ``"minor"`` (body).
+
+        |None| means no uniform local theme family is set for ASCII and high ANSI.
+        This does not resolve inherited or mixed references. Assigning a family
+        removes conflicting literal Latin names. Assigning |None| removes only
+        those theme references, leaving literal names and other scripts unchanged.
+
+        To use a literal typeface, clear this property before setting ``name``.
+        The existing behavior of ``name`` is unchanged.
+        """
+        rPr = self._element.rPr
+        if rPr is None or rPr.rFonts is None:
+            return None
+        fonts = rPr.rFonts
+        if fonts.asciiTheme in ("majorAscii", "majorHAnsi") and fonts.hAnsiTheme in (
+            "majorAscii",
+            "majorHAnsi",
+        ):
+            return "major"
+        if fonts.asciiTheme in ("minorAscii", "minorHAnsi") and fonts.hAnsiTheme in (
+            "minorAscii",
+            "minorHAnsi",
+        ):
+            return "minor"
+        return None
+
+    @theme_font.setter
+    def theme_font(self, value: Literal["major", "minor"] | None) -> None:
+        if value not in (None, "major", "minor"):
+            raise ValueError("theme_font must be 'major', 'minor', or None")
+        if value is None:
+            rPr = self._element.rPr
+            if rPr is not None and rPr.rFonts is not None:
+                rPr.rFonts.asciiTheme = None
+                rPr.rFonts.hAnsiTheme = None
+            return
+        fonts = self._element.get_or_add_rPr().get_or_add_rFonts()
+        fonts.ascii = None
+        fonts.hAnsi = None
+        fonts.asciiTheme = f"{value}HAnsi"
+        fonts.hAnsiTheme = f"{value}HAnsi"
 
     @property
     def no_proof(self) -> bool | None:

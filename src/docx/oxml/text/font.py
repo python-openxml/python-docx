@@ -44,6 +44,8 @@ class CT_Fonts(BaseOxmlElement):
 
     ascii: str | None = OptionalAttribute("w:ascii", ST_String)
     hAnsi: str | None = OptionalAttribute("w:hAnsi", ST_String)
+    asciiTheme: str | None = OptionalAttribute("w:asciiTheme", ST_String)
+    hAnsiTheme: str | None = OptionalAttribute("w:hAnsiTheme", ST_String)
 
 
 class CT_Highlight(BaseOxmlElement):

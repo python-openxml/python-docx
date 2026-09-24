@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from docx.styles.style import ParagraphStyle, _TableStyle
     from docx.table import Table
     from docx.text.paragraph import Paragraph
+    from docx.theme import ThemeFonts
 
 
 class Document(ElementProxy):
@@ -217,6 +218,15 @@ class Document(ElementProxy):
     def styles(self):
         """A |Styles| object providing access to the styles in this document."""
         return self._part.styles
+
+    @property
+    def theme_fonts(self) -> ThemeFonts:
+        """The document's |ThemeFonts| scheme.
+
+        Creates a default theme if the document has none. Raises |ValueError| if
+        an existing theme is malformed or lacks a complete font scheme.
+        """
+        return self._part.theme_fonts
 
     @property
     def tables(self) -> List[Table]:

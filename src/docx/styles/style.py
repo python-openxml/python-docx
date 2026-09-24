@@ -71,6 +71,16 @@ class BaseStyle(ElementProxy):
         self._element.semiHidden_val = value
 
     @property
+    def linked_style(self) -> BaseStyle | None:
+        """Read-only linked style, or |None| if no valid target is defined.
+
+        Paragraph styles can have a linked character style used when applying the
+        style to selected text. Changing one does not automatically change the other.
+        """
+        linked = self._element.linked_style
+        return None if linked is None else StyleFactory(linked)
+
+    @property
     def locked(self):
         """Read/write Boolean.
 

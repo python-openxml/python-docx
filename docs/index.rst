@@ -92,6 +92,7 @@ API Documentation
    :maxdepth: 2
 
    api/document
+   api/theme
    api/settings
    api/style
    api/text
