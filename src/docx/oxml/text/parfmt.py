@@ -10,6 +10,7 @@ from docx.enum.text import (
     WD_TAB_ALIGNMENT,
     WD_TAB_LEADER,
 )
+from docx.oxml.ns import qn
 from docx.oxml.shared import CT_DecimalNumber
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure
 from docx.oxml.xmlchemy import (
@@ -51,9 +52,23 @@ class CT_Jc(BaseOxmlElement):
     )
 
 
+class CT_PBdr(BaseOxmlElement):
+    """Paragraph borders, including Word's horizontal-rule bottom border."""
+
+    get_or_add_bottom: Callable[[], BaseOxmlElement]
+    bottom = ZeroOrOne("w:bottom", successors=("w:right", "w:between", "w:bar"))
+
+    def set_horizontal_rule(self) -> None:
+        """Apply the simple bottom border Word uses for a horizontal rule."""
+        bottom = self.get_or_add_bottom()
+        for name, value in (("val", "single"), ("sz", "6"), ("space", "1"), ("color", "auto")):
+            bottom.set(qn(f"w:{name}"), value)
+
+
 class CT_PPr(BaseOxmlElement):
     """``<w:pPr>`` element, containing the properties for a paragraph."""
 
+    get_or_add_pBdr: Callable[[], CT_PBdr]
     get_or_add_ind: Callable[[], CT_Ind]
     get_or_add_pStyle: Callable[[], CT_String]
     get_or_add_sectPr: Callable[[], CT_SectPr]
@@ -107,6 +122,7 @@ class CT_PPr(BaseOxmlElement):
     pageBreakBefore = ZeroOrOne("w:pageBreakBefore", successors=_tag_seq[4:])
     widowControl = ZeroOrOne("w:widowControl", successors=_tag_seq[6:])
     numPr = ZeroOrOne("w:numPr", successors=_tag_seq[7:])
+    pBdr = ZeroOrOne("w:pBdr", successors=_tag_seq[9:])
     tabs = ZeroOrOne("w:tabs", successors=_tag_seq[11:])
     spacing = ZeroOrOne("w:spacing", successors=_tag_seq[22:])
     ind: CT_Ind | None = ZeroOrOne(  # pyright: ignore[reportAssignmentType]

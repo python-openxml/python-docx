@@ -27,6 +27,14 @@ class Paragraph(StoryChild):
         super(Paragraph, self).__init__(parent)
         self._p = self._element = p
 
+    def add_horizontal_rule(self) -> None:
+        """Apply Word's horizontal-rule bottom border to this paragraph.
+
+        Call this on an empty paragraph for the same structure Word creates
+        when its horizontal-line shortcut is used.
+        """
+        self._p.get_or_add_pPr().get_or_add_pBdr().set_horizontal_rule()
+
     def add_run(self, text: str | None = None, style: str | CharacterStyle | None = None) -> Run:
         """Append run containing `text` and having character-style `style`.
 
