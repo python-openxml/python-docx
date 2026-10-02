@@ -195,6 +195,8 @@ class CT_CoreProperties(BaseOxmlElement):
         if element is None:
             return None
         datetime_str = element.text
+        if not datetime_str:
+            return None
         try:
             return self._parse_W3CDTF_to_datetime(datetime_str)
         except ValueError:
