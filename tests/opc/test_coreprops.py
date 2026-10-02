@@ -80,6 +80,23 @@ class DescribeCoreProperties:
         assert actual_datetime == expected_datetime
 
     @pytest.mark.parametrize(
+        ("prop_name", "tagname"),
+        [
+            ("created", "dcterms:created"),
+            ("modified", "dcterms:modified"),
+            ("last_printed", "cp:lastPrinted"),
+        ],
+    )
+    @pytest.mark.parametrize("value", ["", " ", "not-a-date"])
+    def it_returns_none_for_empty_or_invalid_date_properties(
+        self, prop_name: str, tagname: str, value: str
+    ):
+        xml = self.coreProperties(tagname, value)
+        core_properties = CoreProperties(cast("CT_CoreProperties", parse_xml(xml)))
+
+        assert getattr(core_properties, prop_name) is None
+
+    @pytest.mark.parametrize(
         ("prop_name", "tagname", "value", "str_val", "attrs"),
         [
             (
