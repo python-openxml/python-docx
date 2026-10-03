@@ -65,11 +65,11 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
         return bool(
             # -- XPath will match zero-or-one w:lastRenderedPageBreak element --
             self._enclosing_p.xpath(
-                # -- in first run of paragraph --
-                f"(./w:r)[last()]"
+                # -- in last run or hyperlink of paragraph --
+                f"(./w:r | ./w:hyperlink)[last()]"
                 # -- all page-breaks --
                 f"/w:lastRenderedPageBreak"
-                # -- that are not preceded by any content-bearing elements --
+                # -- that are not followed by any content-bearing elements --
                 f"[not(following-sibling::*[{self._run_inner_content_xpath}])]"
             )
         )
@@ -89,8 +89,8 @@ class CT_LastRenderedPageBreak(BaseOxmlElement):
         return bool(
             # -- XPath will match zero-or-one w:lastRenderedPageBreak element --
             self._enclosing_p.xpath(
-                # -- in first run of paragraph --
-                f"./w:r[1]"
+                # -- in first run or hyperlink of paragraph --
+                f"(./w:r | ./w:hyperlink)[1]"
                 # -- all page-breaks --
                 f"/w:lastRenderedPageBreak"
                 # -- that are not preceded by any content-bearing elements --
