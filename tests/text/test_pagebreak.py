@@ -40,6 +40,46 @@ class DescribeRenderedPageBreak:
 
         assert preceding_fragment is None
 
+    @pytest.mark.parametrize("prefix", ["", "w:pPr/w:ind,w:bookmarkStart{w:id=0,w:name=bookmark},"])
+    def it_preserves_a_hyperlink_before_a_page_break_in_the_first_run(
+        self, prefix: str, fake_parent: t.ProvidesStoryPart
+    ):
+        p_cxml = (
+            f"w:p/({prefix}"
+            'w:hyperlink{w:anchor=bookmark}/w:r/w:t"link",'
+            'w:r/(w:lastRenderedPageBreak,w:t"after"))'
+        )
+        p = cast(CT_P, element(p_cxml))
+        original_xml = p.xml
+        page_break = RenderedPageBreak(p.lastRenderedPageBreaks[0], fake_parent)
+
+        fragment = page_break.preceding_paragraph_fragment
+
+        assert fragment is not None
+        assert fragment.text == "link"
+        assert fragment.hyperlinks[0].fragment == "bookmark"
+        assert p.xml == original_xml
+
+    @pytest.mark.parametrize("suffix", ["", ",w:bookmarkEnd{w:id=0}"])
+    def it_preserves_a_hyperlink_after_a_page_break_in_the_last_run(
+        self, suffix: str, fake_parent: t.ProvidesStoryPart
+    ):
+        p_cxml = (
+            'w:p/(w:r/(w:t"before",w:lastRenderedPageBreak),'
+            'w:hyperlink{w:anchor=bookmark}/w:r/w:t"link"'
+            f"{suffix})"
+        )
+        p = cast(CT_P, element(p_cxml))
+        original_xml = p.xml
+        page_break = RenderedPageBreak(p.lastRenderedPageBreaks[0], fake_parent)
+
+        fragment = page_break.following_paragraph_fragment
+
+        assert fragment is not None
+        assert fragment.text == "link"
+        assert fragment.hyperlinks[0].fragment == "bookmark"
+        assert p.xml == original_xml
+
     def it_can_split_off_the_preceding_paragraph_content_when_in_a_run(
         self, fake_parent: t.ProvidesStoryPart
     ):
