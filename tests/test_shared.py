@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from docx.opc.part import XmlPart
-from docx.shared import Cm, ElementProxy, Emu, Inches, Length, Mm, Pt, RGBColor, Twips
+from docx.shared import Cm, ElementProxy, Emu, Inches, Length, Mm, Pt, RGBColor, Twips, lazyproperty
 
 from .unitutil.cxml import element
 from .unitutil.mock import FixtureRequest, Mock, instance_mock
@@ -119,3 +119,40 @@ class DescribeRGBColor:
     def it_has_a_custom_repr(self):
         rgb_color = RGBColor(0x42, 0xF0, 0xBA)
         assert repr(rgb_color) == "RGBColor(0x42, 0xf0, 0xba)"
+
+
+class DescribeLazyproperty:
+    """Unit-test suite for `docx.shared.lazyproperty`."""
+
+    def it_evaluates_the_getter_only_once_when_the_value_is_none(self):
+        class Widget:
+            def __init__(self):
+                self.call_count = 0
+
+            @lazyproperty
+            def maybe_missing(self):
+                self.call_count += 1
+                return None
+
+        widget = Widget()
+
+        assert widget.maybe_missing is None
+        assert widget.maybe_missing is None
+        assert widget.maybe_missing is None
+        assert widget.call_count == 1
+
+    def it_evaluates_the_getter_only_once_when_the_value_is_not_none(self):
+        class Widget:
+            def __init__(self):
+                self.call_count = 0
+
+            @lazyproperty
+            def child(self):
+                self.call_count += 1
+                return "ok"
+
+        widget = Widget()
+
+        assert widget.child == "ok"
+        assert widget.child == "ok"
+        assert widget.call_count == 1
