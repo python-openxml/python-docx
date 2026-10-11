@@ -127,6 +127,32 @@ class DescribeCoreProperties:
 
         assert core_properties.revision == expected_value
 
+    @pytest.mark.parametrize(
+        ("prop_name", "tagname"),
+        [
+            ("created", "dcterms:created"),
+            ("modified", "dcterms:modified"),
+            ("last_printed", "cp:lastPrinted"),
+        ],
+    )
+    @pytest.mark.parametrize("suffix", ["+01:00junk", "-01:00junk", "+01:00Z"])
+    def it_ignores_trailing_numeric_timezone_text(self, prop_name: str, tagname: str, suffix: str):
+        xml = self.coreProperties(tagname, "2012-11-17T11:07:40" + suffix)
+        core_properties = CoreProperties(cast("CT_CoreProperties", parse_xml(xml)))
+
+        assert getattr(core_properties, prop_name) is None
+
+    @pytest.mark.parametrize(
+        ("suffix", "expected_hour"), [("", 11), ("Z", 11), ("+01:00", 10), ("-01:00", 12)]
+    )
+    def it_keeps_supported_timezone_suffixes(self, suffix: str, expected_hour: int):
+        xml = self.coreProperties("dcterms:created", "2012-11-17T11:07:40" + suffix)
+        core_properties = CoreProperties(cast("CT_CoreProperties", parse_xml(xml)))
+
+        assert core_properties.created == dt.datetime(
+            2012, 11, 17, expected_hour, 7, 40, tzinfo=dt.timezone.utc
+        )
+
     @pytest.mark.parametrize(("value", "str_val"), [(42, "42")])
     def it_can_change_the_revision_number(self, value: int, str_val: str):
         coreProperties = self.coreProperties(tagname="", str_val="")

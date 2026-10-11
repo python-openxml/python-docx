@@ -214,7 +214,7 @@ class CT_CoreProperties(BaseOxmlElement):
 
         `offset_str` is like `"-07:00"`.
         """
-        match = cls._offset_pattern.match(offset_str)
+        match = cls._offset_pattern.fullmatch(offset_str)
         if match is None:
             raise ValueError("'%s' is not a valid offset string" % offset_str)
         sign, hours_str, minutes_str = match.groups()
@@ -253,7 +253,7 @@ class CT_CoreProperties(BaseOxmlElement):
         if dt_ is None:
             tmpl = "could not parse W3CDTF datetime string '%s'"
             raise ValueError(tmpl % w3cdtf_str)
-        if len(offset_str) == 6:
+        if len(offset_str) == 6 or offset_str.startswith(("+", "-")):
             dt_ = cls._offset_dt(dt_, offset_str)
         return dt_.replace(tzinfo=dt.timezone.utc)
 
