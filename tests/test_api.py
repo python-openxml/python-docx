@@ -1,16 +1,40 @@
 """Test suite for the docx.api module."""
 
+import io
+from pathlib import Path
+
 import pytest
 
 from docx.api import Document as DocumentFactoryFn
 from docx.document import Document as DocumentCls
 from docx.opc.constants import CONTENT_TYPE as CT
 
+from .unitutil.file import test_file
 from .unitutil.mock import FixtureRequest, Mock, class_mock, function_mock, instance_mock
 
 
 class DescribeDocument:
     """Unit-test suite for `docx.api.Document` factory function."""
+
+    @pytest.mark.parametrize("in_run", [False, True])
+    def it_can_add_a_picture_from_a_path(self, tmp_path: Path, in_run: bool):
+        image_path = tmp_path / "图片.png"
+        image_path.write_bytes(Path(test_file("python-icon.png")).read_bytes())
+        document = DocumentFactoryFn()
+        target = document.add_paragraph().add_run() if in_run else document
+
+        target.add_picture(image_path)
+
+        assert len(document.inline_shapes) == 1
+        stream = io.BytesIO()
+        document.save(stream)
+        stream.seek(0)
+        reloaded = DocumentFactoryFn(stream)
+        assert len(reloaded.inline_shapes) == 1
+        package = reloaded.part.package
+        assert package is not None
+        (image_part,) = package.image_parts
+        assert image_part.blob == image_path.read_bytes()
 
     def it_opens_a_docx_file(self, Package_: Mock, document_: Mock):
         document_part = Package_.open.return_value.main_document_part

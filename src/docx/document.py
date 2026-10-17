@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+from os import PathLike
 from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 
 from docx.blkcntnr import BlockItemContainer
@@ -120,7 +121,7 @@ class Document(ElementProxy):
 
     def add_picture(
         self,
-        image_path_or_stream: str | IO[bytes],
+        image_path_or_stream: str | PathLike[str] | IO[bytes],
         width: int | Length | None = None,
         height: int | Length | None = None,
     ):

@@ -33,11 +33,11 @@ class Image:
         return cls._from_stream(stream, blob)
 
     @classmethod
-    def from_file(cls, image_descriptor: str | IO[bytes]):
+    def from_file(cls, image_descriptor: str | os.PathLike[str] | IO[bytes]):
         """Return a new |Image| subclass instance loaded from the image file identified
         by `image_descriptor`, a path or file-like object."""
-        if isinstance(image_descriptor, str):
-            path = image_descriptor
+        if isinstance(image_descriptor, (str, os.PathLike)):
+            path = os.fspath(image_descriptor)
             with open(path, "rb") as f:
                 blob = f.read()
                 stream = io.BytesIO(blob)
