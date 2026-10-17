@@ -1,6 +1,7 @@
 """Unit test suite for docx.image package"""
 
 import io
+from pathlib import Path
 
 import pytest
 
@@ -150,13 +151,13 @@ class DescribeImage:
         image_stream = io.BytesIO(blob)
         return image_stream, _from_stream_, blob, image_
 
-    @pytest.fixture
-    def from_path_fixture(self, _from_stream_, BytesIO_, stream_, image_):
+    @pytest.fixture(params=[str, Path])
+    def from_path_fixture(self, request, _from_stream_, BytesIO_, stream_, image_):
         filename = "python-icon.png"
         image_path = test_file(filename)
         with open(image_path, "rb") as f:
             blob = f.read()
-        return image_path, _from_stream_, stream_, blob, filename, image_
+        return request.param(image_path), _from_stream_, stream_, blob, filename, image_
 
     @pytest.fixture(params=["foobar.png", None])
     def from_stream_fixture(
