@@ -238,7 +238,9 @@ class _Cell(BlockItemContainer):
         """Return a merged cell created by spanning the rectangular region having this
         cell and `other_cell` as diagonal corners.
 
-        Raises |InvalidSpanError| if the cells do not define a rectangular region.
+        Raises |InvalidSpanError| if the cells do not define a rectangular region
+        or the region contains cells enclosed in content controls. Content-control
+        cells can be read, but merging across their wrappers is not supported.
         """
         tc, tc_2 = self._tc, other_cell._tc
         merged_tc = tc.merge(tc_2)
@@ -396,6 +398,8 @@ class _Row(Parented):
     def cells(self) -> tuple[_Cell, ...]:
         """Sequence of |_Cell| instances corresponding to cells in this row.
 
+        Cells enclosed in cell-level content controls are included in document order.
+
         Note that Word allows table rows to start later than the first column and end before the
         last column.
 
@@ -432,7 +436,7 @@ class _Row(Parented):
 
         def _iter_row_cells() -> Iterator[_Cell]:
             """Generate `_Cell` instance for each populated layout-grid cell in this row."""
-            for tc in self._tr.tc_lst:
+            for tc in self._tr.iter_tcs():
                 yield from iter_tc_cells(tc)
 
         return tuple(_iter_row_cells())

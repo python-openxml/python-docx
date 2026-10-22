@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, cast
+from typing import TYPE_CHECKING, Callable, Iterator, cast
 
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE, WD_TABLE_DIRECTION
 from docx.exceptions import InvalidSpanError
@@ -60,6 +60,23 @@ class CT_Row(BaseOxmlElement):
     trPr: CT_TrPr | None = ZeroOrOne("w:trPr")  # pyright: ignore[reportAssignmentType]
     tc = ZeroOrMore("w:tc")
 
+    def iter_tcs(self) -> Iterator[CT_Tc]:
+        """Generate this row's cells, including those inside cell content controls.
+
+        Only `w:sdt/w:sdtContent` wrappers are transparent. Stop at each cell so
+        nested tables and block-level controls do not add cells to this row.
+        """
+
+        def iter_child_tcs(parent: BaseOxmlElement) -> Iterator[CT_Tc]:
+            for child in parent:
+                if child.tag == qn("w:tc"):
+                    yield cast(CT_Tc, child)
+                elif child.tag == qn("w:sdt"):
+                    for content in child.findall(qn("w:sdtContent")):
+                        yield from iter_child_tcs(cast(BaseOxmlElement, content))
+
+        yield from iter_child_tcs(self)
+
     @property
     def grid_after(self) -> int:
         """The number of unpopulated layout-grid cells at the end of this row."""
@@ -84,7 +101,7 @@ class CT_Row(BaseOxmlElement):
         # -- account for omitted cells at the start of the row --
         remaining_offset = grid_offset - self.grid_before
 
-        for tc in self.tc_lst:
+        for tc in self.iter_tcs():
             # -- We've gone past grid_offset without finding a tc, no sense searching further. --
             if remaining_offset < 0:
                 break
@@ -177,7 +194,7 @@ class CT_Tbl(BaseOxmlElement):
         """The number of grid columns in this table."""
         return len(self.tblGrid.gridCol_lst)
 
-    def iter_tcs(self):
+    def iter_tcs(self) -> Iterator[CT_Tc]:
         """Generate each of the `w:tc` elements in this table, left to right and top to
         bottom.
 
@@ -185,8 +202,7 @@ class CT_Tbl(BaseOxmlElement):
         row, etc.
         """
         for tr in self.tr_lst:
-            for tc in tr.tc_lst:
-                yield tc
+            yield from tr.iter_tcs()
 
     @classmethod
     def new_tbl(cls, rows: int, cols: int, width: Length) -> CT_Tbl:
@@ -463,11 +479,12 @@ class CT_Tc(BaseOxmlElement):
 
         A cell in the leftmost grid-column has offset 0.
         """
-        grid_before = self._tr.grid_before
-        preceding_tc_grid_spans = sum(
-            tc.grid_span for tc in self.xpath("./preceding-sibling::w:tc")
-        )
-        return grid_before + preceding_tc_grid_spans
+        offset = self._tr.grid_before
+        for tc in self._tr.iter_tcs():
+            if tc is self:
+                return offset
+            offset += tc.grid_span
+        raise ValueError("cell is not a supported cell of its row")
 
     @property
     def grid_span(self) -> int:
@@ -685,6 +702,16 @@ class CT_Tc(BaseOxmlElement):
         left = min(self.left, other_tc.left)
         bottom = max(self.bottom, other_tc.bottom)
         right = max(self.right, other_tc.right)
+
+        # -- The merge implementation removes sibling cells. Crossing a content
+        # -- control would skip cells or discard its metadata, so reject the
+        # -- entire operation before moving any content or modifying the XML.
+        for tr in self._tbl.tr_lst[top:bottom]:
+            offset = tr.grid_before
+            for tc in tr.iter_tcs():
+                if offset < right and offset + tc.grid_span > left and tc.getparent() is not tr:
+                    raise InvalidSpanError("cannot merge cells inside content controls")
+                offset += tc.grid_span
 
         return top, left, bottom - top, right - left
 
