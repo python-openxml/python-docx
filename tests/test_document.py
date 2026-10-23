@@ -5,21 +5,26 @@
 
 from __future__ import annotations
 
+from io import BytesIO
 from typing import cast
 
 import pytest
 
+import docx
 from docx.comments import Comment, Comments
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
+from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
 from docx.opc.coreprops import CoreProperties
 from docx.oxml.document import CT_Body, CT_Document
+from docx.oxml.table import CT_Tbl
 from docx.parts.document import DocumentPart
 from docx.section import Section, Sections
 from docx.settings import Settings
 from docx.shape import InlineShape, InlineShapes
 from docx.shared import Length
+from docx.styles.style import _TableStyle
 from docx.styles.styles import Styles
 from docx.table import Table
 from docx.text.paragraph import Paragraph
@@ -165,9 +170,11 @@ class DescribeDocument:
         _block_width_prop_: Mock,
         body_prop_: Mock,
         body_: Mock,
-        table_: Mock,
+        document_part_: Mock,
     ):
         rows, cols, style = 4, 2, "Light Shading Accent 1"
+        table_ = Table(cast(CT_Tbl, element("w:tbl/w:tblPr")), document)
+        document_part_.get_style_id.return_value = "LightShading-Accent1"
         body_prop_.return_value = body_
         body_.add_table.return_value = table_
         _block_width_prop_.return_value = width = 42
@@ -175,8 +182,78 @@ class DescribeDocument:
         table = document.add_table(rows, cols, style)
 
         body_.add_table.assert_called_once_with(rows, cols, width)
+        document_part_.get_style_id.assert_called_once_with(style, WD_STYLE_TYPE.TABLE)
         assert table == table_
-        assert table.style == style
+        assert table._tbl.tblStyle_val == "LightShading-Accent1"
+
+    @pytest.mark.parametrize("existing_content", [False, True])
+    @pytest.mark.parametrize(
+        ("style_name", "as_object", "exception", "message"),
+        [
+            ("RDW banded table", False, KeyError, "no style with name"),
+            ("Normal", False, ValueError, "assigned style is type"),
+            ("Normal", True, ValueError, "assigned style is type"),
+            ("Default Paragraph Font", False, ValueError, "assigned style is type"),
+            ("Default Paragraph Font", True, ValueError, "assigned style is type"),
+        ],
+    )
+    def it_does_not_add_a_table_when_the_style_is_invalid(
+        self,
+        existing_content: bool,
+        style_name: str,
+        as_object: bool,
+        exception: type[Exception],
+        message: str,
+    ):
+        document = docx.Document()
+        if existing_content:
+            document.add_paragraph("Existing text")
+            document.add_table(1, 1).cell(0, 0).text = "Existing table"
+        style = cast(_TableStyle, document.styles[style_name]) if as_object else style_name
+        original_xml = document.element.xml
+
+        with pytest.raises(exception, match=message):
+            document.add_table(rows=1, cols=5, style=style)
+
+        assert document.element.xml == original_xml
+
+    @pytest.mark.parametrize("as_object", [False, True])
+    @pytest.mark.parametrize("style_name", [None, "Normal Table", "Table Grid", "Custom table"])
+    def it_preserves_table_styles_when_adding_a_table(
+        self, style_name: str | None, as_object: bool
+    ):
+        document = docx.Document()
+        document.styles.add_style("Custom table", WD_STYLE_TYPE.TABLE)
+        style = (
+            cast(_TableStyle, document.styles[style_name])
+            if as_object and style_name is not None
+            else style_name
+        )
+
+        table = document.add_table(rows=2, cols=3, style=style)
+
+        assert len(document.tables) == 1
+        assert len(table.rows) == 2
+        assert len(table.columns) == 3
+        assert table.style == document.styles[style_name or "Normal Table"]
+        if style_name in (None, "Normal Table"):
+            assert table._tbl.tblStyle_val is None
+
+    def it_can_retry_adding_a_table_after_an_invalid_style_and_save(self):
+        document = docx.Document()
+        with pytest.raises(KeyError, match="no style with name"):
+            document.add_table(rows=1, cols=5, style="RDW banded table")
+        table = document.add_table(rows=1, cols=5)
+        table.cell(0, 0).text = "Unit"
+        stream = BytesIO()
+
+        document.save(stream)
+        stream.seek(0)
+        reopened = docx.Document(stream)
+
+        assert len(reopened.tables) == 1
+        assert len(reopened.tables[0].rows) == 1
+        assert reopened.tables[0].cell(0, 0).text == "Unit"
 
     def it_can_save_the_document_to_a_file(self, document_part_: Mock):
         document = Document(cast(CT_Document, element("w:document")), document_part_)
@@ -384,10 +461,6 @@ class DescribeDocument:
     @pytest.fixture
     def styles_(self, request: FixtureRequest):
         return instance_mock(request, Styles)
-
-    @pytest.fixture
-    def table_(self, request: FixtureRequest):
-        return instance_mock(request, Table)
 
     @pytest.fixture
     def tables_(self, request: FixtureRequest):

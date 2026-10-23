@@ -9,6 +9,7 @@ from typing import IO, TYPE_CHECKING, Iterator, List, Sequence
 
 from docx.blkcntnr import BlockItemContainer
 from docx.enum.section import WD_SECTION
+from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
 from docx.shared import ElementProxy, Emu, Inches, Length
@@ -152,9 +153,12 @@ class Document(ElementProxy):
 
         `style` may be a table style object or a table style name. If `style` is |None|,
         the table inherits the default table style of the document.
+
+        An invalid style raises |KeyError| or |ValueError| before the table is added.
         """
+        style_id = self._part.get_style_id(style, WD_STYLE_TYPE.TABLE)
         table = self._body.add_table(rows, cols, self._block_width)
-        table.style = style
+        table._tbl.tblStyle_val = style_id
         return table
 
     @property
