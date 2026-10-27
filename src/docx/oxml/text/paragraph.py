@@ -96,10 +96,10 @@ class CT_P(BaseOxmlElement):
     def text(self):  # pyright: ignore[reportIncompatibleMethodOverride]
         """The textual content of this paragraph.
 
-        Inner-content child elements like `w:r` and `w:hyperlink` are translated to
-        their text equivalent.
+        Inner-content child elements like `w:r`, `w:hyperlink`, and `w:smartTag`
+        are translated to their text equivalent.
         """
-        return "".join(e.text for e in self.xpath("w:r | w:hyperlink"))
+        return "".join(e.text for e in self.xpath("w:r | w:hyperlink | w:smartTag"))
 
     def _insert_pPr(self, pPr: CT_PPr) -> CT_PPr:
         self.insert(0, pPr)

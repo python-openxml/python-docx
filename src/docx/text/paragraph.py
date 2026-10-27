@@ -150,9 +150,9 @@ class Paragraph(StoryChild):
     def text(self) -> str:
         """The textual content of this paragraph.
 
-        The text includes the visible-text portion of any hyperlinks in the paragraph.
-        Tabs and line breaks in the XML are mapped to ``\\t`` and ``\\n`` characters
-        respectively.
+        The text includes the visible-text portion of any hyperlinks and smart
+        tags in the paragraph. Tabs and line breaks in the XML are mapped to
+        ``\\t`` and ``\\n`` characters respectively.
 
         Assigning text to this property causes all existing paragraph content to be
         replaced with a single run containing the assigned text. A ``\\t`` character in

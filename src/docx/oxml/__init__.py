@@ -27,6 +27,7 @@ from docx.oxml.shape import (
 from docx.oxml.shared import CT_DecimalNumber, CT_OnOff, CT_String
 from docx.oxml.text.hyperlink import CT_Hyperlink
 from docx.oxml.text.pagebreak import CT_LastRenderedPageBreak
+from docx.oxml.text.smarttag import CT_SmartTag
 from docx.oxml.text.run import (
     CT_R,
     CT_Br,
@@ -65,6 +66,11 @@ register_element_cls("wp:inline", CT_Inline)
 # hyperlink-related elements
 
 register_element_cls("w:hyperlink", CT_Hyperlink)
+
+# ---------------------------------------------------------------------------
+# smart-tag-related elements
+
+register_element_cls("w:smartTag", CT_SmartTag)
 
 # ---------------------------------------------------------------------------
 # text-related elements

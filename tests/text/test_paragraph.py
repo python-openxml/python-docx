@@ -142,10 +142,18 @@ class DescribeParagraph:
                 'w:p/(w:r/w:t"click ",w:hyperlink{r:id=rId6}/w:r/w:t"here",w:r/w:t" for more")',
                 "click here for more",
             ),
+            (
+                'w:p/(w:r/w:t"a ",w:smartTag/w:r/w:t"0.5m",w:r/w:t" long")',
+                "a 0.5m long",
+            ),
+            (
+                'w:p/(w:smartTag/w:r/w:t"outer ",w:smartTag/(w:r/w:t"inner ",w:r/w:t"text"))',
+                "outer inner text",
+            ),
         ],
     )
     def it_knows_the_text_it_contains(self, p_cxml: str, expected_value: str):
-        """Including the text of embedded hyperlinks."""
+        """Including the text of embedded hyperlinks and smart tags."""
         paragraph = Paragraph(element(p_cxml), None)
         assert paragraph.text == expected_value
 
