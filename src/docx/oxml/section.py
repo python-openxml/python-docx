@@ -9,7 +9,7 @@ from lxml import etree
 from typing_extensions import TypeAlias
 
 from docx.enum.section import WD_HEADER_FOOTER, WD_ORIENTATION, WD_SECTION_START
-from docx.oxml.ns import nsmap
+from docx.oxml.ns import nsmap, qn
 from docx.oxml.shared import CT_OnOff
 from docx.oxml.simpletypes import ST_SignedTwipsMeasure, ST_TwipsMeasure, XsdString
 from docx.oxml.table import CT_Tbl
@@ -339,6 +339,28 @@ class CT_SectPr(BaseOxmlElement):
         preceding_sectPrs = self.xpath("./preceding::w:sectPr[1]")
         return preceding_sectPrs[0] if len(preceding_sectPrs) > 0 else None
 
+    @property
+    def _section_terminal_node(self) -> CT_P | CT_SectPr | None:
+        """Node at which the section governed by this sectPr ends.
+
+        The `w:p` element carrying this sectPr, or this sectPr itself when
+        it is a direct child of `w:body`. None when this sectPr does not
+        terminate a body-level section (for instance when the paragraph
+        carrying it is nested in a table or other content).
+        """
+        parent = self.getparent()
+        if parent is None:
+            return None
+        if parent.tag == qn("w:body"):
+            return self
+        if parent.tag == qn("w:pPr"):
+            p = parent.getparent()
+            if p is not None:
+                body = p.getparent()
+                if body is not None and body.tag == qn("w:body"):
+                    return cast(CT_P, p)
+        return None
+
     def remove_footerReference(self, type_: WD_HEADER_FOOTER) -> str:
         """Return rId of w:footerReference child of `type_` after removing it."""
         footerReference = self.get_footerReference(type_)
@@ -434,6 +456,14 @@ class CT_SectType(BaseOxmlElement):
 # == HELPERS =========================================================================
 
 
+def _sectPr_carried_by(p_element: CT_P) -> CT_SectPr | None:
+    """The `w:sectPr` carried in the `w:pPr` of paragraph `p_element`, or None."""
+    pPr = p_element.find(qn("w:pPr"))
+    if pPr is None:
+        return None
+    return cast("CT_SectPr | None", pPr.find(qn("w:sectPr")))
+
+
 class _SectBlockElementIterator:
     """Generates the block-item XML elements in a section.
 
@@ -453,6 +483,63 @@ class _SectBlockElementIterator:
 
     def _iter_sect_block_elements(self) -> Iterator[BlockElement]:
         """Generate each CT_P or CT_Tbl element in section."""
+        blocks = self._sect_block_elements_local()
+        if blocks is None:
+            yield from self._iter_sect_block_elements_xpath()
+        else:
+            yield from blocks
+
+    def _sect_block_elements_local(self) -> list[BlockElement] | None:
+        """Block elements of this section, collected by sibling navigation.
+
+        The blocks of a section are the body-level `w:p` and `w:tbl`
+        siblings running back from the section's terminal node to (but not
+        including) the terminal paragraph of the preceding section.
+        Collecting them costs time proportional to the size of this
+        section alone, independent of how much of the document precedes
+        it. Returns None when this sectPr does not terminate a body-level
+        section in the ordinary way, in which case the caller falls back
+        to the XPath computation.
+        """
+        sectPr = self._sectPr
+        terminal = sectPr._section_terminal_node
+        if terminal is None:
+            return None
+        if terminal is sectPr:
+            # -- body-based sectPr: the section's blocks precede the sectPr
+            # -- itself, and the boundary check applies from the first node
+            # -- visited --
+            node = sectPr.getprevious()
+            own_terminal = False
+        else:
+            # -- p-based sectPr: the terminal paragraph is this section's
+            # -- last block. A paragraph carrying more than one sectPr is
+            # -- not schema-valid; it keeps the XPath behavior. --
+            pPr = sectPr.getparent()
+            if pPr is not None and len(pPr.findall(qn("w:sectPr"))) > 1:
+                return None
+            node = terminal
+            own_terminal = True
+        blocks: list[BlockElement] = []
+        while node is not None:
+            if node.tag == qn("w:sectPr"):
+                # -- a body-level sectPr terminates the preceding section --
+                break
+            if node.tag == qn("w:p"):
+                if not own_terminal and _sectPr_carried_by(node) is not None:
+                    # -- terminal paragraph of the preceding section; it
+                    # -- belongs to that section, not this one --
+                    break
+                blocks.append(cast(BlockElement, node))
+            elif node.tag == qn("w:tbl"):
+                blocks.append(cast(BlockElement, node))
+            own_terminal = False
+            node = node.getprevious()
+        blocks.reverse()
+        return blocks
+
+    def _iter_sect_block_elements_xpath(self) -> Iterator[BlockElement]:
+        """Generate each CT_P or CT_Tbl element in section (XPath version)."""
         # -- General strategy is to get all block (<w;p> and <w:tbl>) elements from
         # -- start of doc to and including this section, then compute the count of those
         # -- elements that came from prior sections and skip that many to leave only the
