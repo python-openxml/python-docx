@@ -38,6 +38,11 @@ class DescribeSettingsPart:
         assert settings_part.content_type == CT.WML_SETTINGS
         assert settings_part.package is package
         assert len(settings_part.element) == 6
+        # Word 2013+ / Microsoft 365 default (not Word 2010 compat mode 14)
+        settings_xml = SettingsPart._default_settings_xml().decode("utf-8")
+        assert 'w:name="compatibilityMode"' in settings_xml
+        assert 'w:val="15"' in settings_xml
+        assert 'w:val="14"' not in settings_xml
 
     # fixtures -------------------------------------------------------
 

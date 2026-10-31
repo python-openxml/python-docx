@@ -1,5 +1,7 @@
 """Test suite for the docx.api module."""
 
+import zipfile
+
 import pytest
 
 from docx.api import Document as DocumentFactoryFn
@@ -40,6 +42,15 @@ class DescribeDocument:
 
         with pytest.raises(ValueError, match="file 'foobar.xlsx' is not a Word file,"):
             DocumentFactoryFn("foobar.xlsx")
+
+    def it_uses_word_2013_compatibility_mode_in_the_default_template(self):
+        from docx.api import _default_docx_path
+
+        with zipfile.ZipFile(_default_docx_path()) as package:
+            settings_xml = package.read("word/settings.xml").decode("utf-8")
+        assert 'w:name="compatibilityMode"' in settings_xml
+        assert 'w:val="15"' in settings_xml
+        assert 'w:val="14"' not in settings_xml
 
     # -- fixtures --------------------------------------------------------------------------------
 
