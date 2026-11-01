@@ -9,6 +9,7 @@ from typing import cast
 
 import pytest
 
+from docx.api import Document as DocumentFactory
 from docx.comments import Comment, Comments
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
@@ -421,3 +422,14 @@ class Describe_Body:
     @pytest.fixture
     def document_(self, request: FixtureRequest):
         return instance_mock(request, Document)
+
+
+def it_leaves_the_document_unchanged_when_the_style_is_undefined():
+    """A style the document does not define must not leave an unreachable table behind (#1631)."""
+    document = DocumentFactory()
+    assert len(document.tables) == 0
+
+    with pytest.raises(KeyError, match="Not A Defined Table Style"):
+        document.add_table(rows=1, cols=2, style="Not A Defined Table Style")
+
+    assert len(document.tables) == 0

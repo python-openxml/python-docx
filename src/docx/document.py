@@ -151,10 +151,19 @@ class Document(ElementProxy):
         """Add a table having row and column counts of `rows` and `cols` respectively.
 
         `style` may be a table style object or a table style name. If `style` is |None|,
-        the table inherits the default table style of the document.
+        the table inherits the default table style of the document. If `style` names a
+        style that is not defined in this document, |KeyError| is raised and no table is
+        added.
         """
         table = self._body.add_table(rows, cols, self._block_width)
-        table.style = style
+        try:
+            table.style = style
+        except KeyError:
+            # -- the named style is not defined in this document; drop the half-built
+            # -- table so the caller is never left with one it has no handle on, then
+            # -- re-raise so it still learns the style name was wrong (issue #1631).
+            table._tbl.getparent().remove(table._tbl)
+            raise
         return table
 
     @property
