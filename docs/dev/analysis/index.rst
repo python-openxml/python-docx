@@ -11,6 +11,7 @@ Feature Analysis
    :titlesonly:
 
    features/comments
+   features/document-kinds
    features/header
    features/settings
    features/text/index

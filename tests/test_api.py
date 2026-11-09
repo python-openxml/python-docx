@@ -12,14 +12,23 @@ from .unitutil.mock import FixtureRequest, Mock, class_mock, function_mock, inst
 class DescribeDocument:
     """Unit-test suite for `docx.api.Document` factory function."""
 
-    def it_opens_a_docx_file(self, Package_: Mock, document_: Mock):
+    @pytest.mark.parametrize(
+        ("path", "content_type"),
+        [
+            ("foobar.docx", CT.WML_DOCUMENT_MAIN),
+            ("foobar.docm", CT.WML_DOCUMENT_MACRO_MAIN),
+            ("foobar.dotx", CT.WML_TEMPLATE_MAIN),
+            ("foobar.dotm", CT.WML_TEMPLATE_MACRO_MAIN),
+        ],
+    )
+    def it_opens_a_Word_file(self, path: str, content_type: str, Package_: Mock, document_: Mock):
         document_part = Package_.open.return_value.main_document_part
         document_part.document = document_
-        document_part.content_type = CT.WML_DOCUMENT_MAIN
+        document_part.content_type = content_type
 
-        document = DocumentFactoryFn("foobar.docx")
+        document = DocumentFactoryFn(path)
 
-        Package_.open.assert_called_once_with("foobar.docx")
+        Package_.open.assert_called_once_with(path)
         assert document is document_
 
     def it_opens_the_default_docx_if_none_specified(

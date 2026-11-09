@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+Unreleased
+++++++++++
+
+- Fix #212, #284, #363 Open and save macro-enabled documents (.docm), templates (.dotx) and
+  macro-enabled templates (.dotm); package kind and VBA project are preserved on save.
+
+
 1.2.0 (2025-06-16)
 ++++++++++++++++++
 
