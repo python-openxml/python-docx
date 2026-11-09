@@ -286,6 +286,33 @@ class DescribeDocument:
         assert isinstance(width, Length)
         assert width == 3500
 
+    def it_treats_an_explicit_zero_margin_as_zero_not_as_one_inch(
+        self, document: Document, sections_prop_: Mock, section_: Mock
+    ):
+        """Regression for #1638: `or Inches(1)` treated 0 as falsy, shrinking tables by 1 inch."""
+        sections_prop_.return_value = [None, section_]
+        section_.page_width = 6000
+        section_.left_margin = 0
+        section_.right_margin = 0
+
+        width = document._block_width
+
+        assert width == 6000
+
+    def it_falls_back_to_1_inch_margins_when_margin_is_None(
+        self, document: Document, sections_prop_: Mock, section_: Mock
+    ):
+        sections_prop_.return_value = [None, section_]
+        section_.page_width = 6000
+        section_.left_margin = None
+        section_.right_margin = None
+
+        width = document._block_width
+
+        from docx.shared import Inches
+
+        assert width == 6000 - Inches(1) - Inches(1)
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture

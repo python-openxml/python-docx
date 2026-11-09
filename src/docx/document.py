@@ -233,9 +233,9 @@ class Document(ElementProxy):
     def _block_width(self) -> Length:
         """A |Length| object specifying the space between margins in last section."""
         section = self.sections[-1]
-        page_width = section.page_width or Inches(8.5)
-        left_margin = section.left_margin or Inches(1)
-        right_margin = section.right_margin or Inches(1)
+        page_width = section.page_width if section.page_width is not None else Inches(8.5)
+        left_margin = section.left_margin if section.left_margin is not None else Inches(1)
+        right_margin = section.right_margin if section.right_margin is not None else Inches(1)
         return Emu(page_width - left_margin - right_margin)
 
     @property
