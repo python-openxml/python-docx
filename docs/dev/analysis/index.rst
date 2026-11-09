@@ -10,6 +10,7 @@ Feature Analysis
 .. toctree::
    :titlesonly:
 
+   features/comments
    features/header
    features/settings
    features/text/index

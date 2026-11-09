@@ -9,6 +9,7 @@ from typing import cast
 
 import pytest
 
+from docx.comments import Comment, Comments
 from docx.document import Document, _Body
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
@@ -37,6 +38,26 @@ from .unitutil.mock import (
 
 class DescribeDocument:
     """Unit-test suite for `docx.document.Document`."""
+
+    def it_can_add_a_comment(
+        self,
+        document_part_: Mock,
+        comments_prop_: Mock,
+        comments_: Mock,
+        comment_: Mock,
+        run_mark_comment_range_: Mock,
+    ):
+        comment_.comment_id = 42
+        comments_.add_comment.return_value = comment_
+        comments_prop_.return_value = comments_
+        document = Document(cast(CT_Document, element("w:document/w:body/w:p/w:r")), document_part_)
+        run = document.paragraphs[0].runs[0]
+
+        comment = document.add_comment(run, "Comment text.")
+
+        comments_.add_comment.assert_called_once_with("Comment text.", "", "")
+        run_mark_comment_range_.assert_called_once_with(run, run, 42)
+        assert comment is comment_
 
     @pytest.mark.parametrize(
         ("level", "style"), [(0, "Title"), (1, "Heading 1"), (2, "Heading 2"), (9, "Heading 9")]
@@ -164,6 +185,12 @@ class DescribeDocument:
 
         document_part_.save.assert_called_once_with("foobar.docx")
 
+    def it_provides_access_to_the_comments(self, document_part_: Mock, comments_: Mock):
+        document_part_.comments = comments_
+        document = Document(cast(CT_Document, element("w:document")), document_part_)
+
+        assert document.comments is comments_
+
     def it_provides_access_to_its_core_properties(
         self, document_part_: Mock, core_properties_: Mock
     ):
@@ -259,6 +286,33 @@ class DescribeDocument:
         assert isinstance(width, Length)
         assert width == 3500
 
+    def it_treats_an_explicit_zero_margin_as_zero_not_as_one_inch(
+        self, document: Document, sections_prop_: Mock, section_: Mock
+    ):
+        """Regression for #1638: `or Inches(1)` treated 0 as falsy, shrinking tables by 1 inch."""
+        sections_prop_.return_value = [None, section_]
+        section_.page_width = 6000
+        section_.left_margin = 0
+        section_.right_margin = 0
+
+        width = document._block_width
+
+        assert width == 6000
+
+    def it_falls_back_to_1_inch_margins_when_margin_is_None(
+        self, document: Document, sections_prop_: Mock, section_: Mock
+    ):
+        sections_prop_.return_value = [None, section_]
+        section_.page_width = 6000
+        section_.left_margin = None
+        section_.right_margin = None
+
+        width = document._block_width
+
+        from docx.shared import Inches
+
+        assert width == 6000 - Inches(1) - Inches(1)
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture
@@ -280,6 +334,18 @@ class DescribeDocument:
     @pytest.fixture
     def body_prop_(self, request: FixtureRequest):
         return property_mock(request, Document, "_body")
+
+    @pytest.fixture
+    def comment_(self, request: FixtureRequest):
+        return instance_mock(request, Comment)
+
+    @pytest.fixture
+    def comments_(self, request: FixtureRequest):
+        return instance_mock(request, Comments)
+
+    @pytest.fixture
+    def comments_prop_(self, request: FixtureRequest):
+        return property_mock(request, Document, "comments")
 
     @pytest.fixture
     def core_properties_(self, request: FixtureRequest):
@@ -313,6 +379,10 @@ class DescribeDocument:
     @pytest.fixture
     def run_(self, request: FixtureRequest):
         return instance_mock(request, Run)
+
+    @pytest.fixture
+    def run_mark_comment_range_(self, request: FixtureRequest):
+        return method_mock(request, Run, "mark_comment_range")
 
     @pytest.fixture
     def Section_(self, request: FixtureRequest):

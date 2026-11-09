@@ -328,7 +328,7 @@ class Parented:
         self._parent = parent
 
     @property
-    def part(self):
+    def part(self) -> XmlPart:
         """The package part containing this object."""
         return self._parent.part
 

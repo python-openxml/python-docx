@@ -91,6 +91,10 @@ rst_epilog = """
 
 .. |_Columns| replace:: :class:`._Columns`
 
+.. |Comment| replace:: :class:`.Comment`
+
+.. |Comments| replace:: :class:`.Comments`
+
 .. |CoreProperties| replace:: :class:`.CoreProperties`
 
 .. |datetime| replace:: :class:`.datetime.datetime`

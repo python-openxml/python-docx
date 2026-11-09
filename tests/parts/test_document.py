@@ -4,12 +4,14 @@
 
 import pytest
 
+from docx.comments import Comments
 from docx.enum.style import WD_STYLE_TYPE
 from docx.opc.constants import CONTENT_TYPE as CT
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.opc.coreprops import CoreProperties
 from docx.opc.packuri import PackURI
 from docx.package import Package
+from docx.parts.comments import CommentsPart
 from docx.parts.document import DocumentPart
 from docx.parts.hdrftr import FooterPart, HeaderPart
 from docx.parts.numbering import NumberingPart
@@ -108,6 +110,17 @@ class DescribeDocumentPart:
         document_part.save("foobar.docx")
 
         package_.save.assert_called_once_with("foobar.docx")
+
+    def it_provides_access_to_the_comments_added_to_the_document(
+        self, _comments_part_prop_: Mock, comments_part_: Mock, comments_: Mock, package_: Mock
+    ):
+        comments_part_.comments = comments_
+        _comments_part_prop_.return_value = comments_part_
+        document_part = DocumentPart(
+            PackURI("/word/document.xml"), CT.WML_DOCUMENT, element("w:document"), package_
+        )
+
+        assert document_part.comments is comments_
 
     def it_provides_access_to_the_document_settings(
         self, _settings_part_prop_: Mock, settings_part_: Mock, settings_: Mock, package_: Mock
@@ -214,6 +227,39 @@ class DescribeDocumentPart:
         styles_.get_style_id.assert_called_once_with(style_, WD_STYLE_TYPE.CHARACTER)
         assert style_id == "BodyCharacter"
 
+    def it_provides_access_to_its_comments_part_to_help(
+        self, package_: Mock, part_related_by_: Mock, comments_part_: Mock
+    ):
+        part_related_by_.return_value = comments_part_
+        document_part = DocumentPart(
+            PackURI("/word/document.xml"), CT.WML_DOCUMENT, element("w:document"), package_
+        )
+
+        comments_part = document_part._comments_part
+
+        part_related_by_.assert_called_once_with(document_part, RT.COMMENTS)
+        assert comments_part is comments_part_
+
+    def and_it_creates_a_default_comments_part_if_not_present(
+        self,
+        package_: Mock,
+        part_related_by_: Mock,
+        CommentsPart_: Mock,
+        comments_part_: Mock,
+        relate_to_: Mock,
+    ):
+        part_related_by_.side_effect = KeyError
+        CommentsPart_.default.return_value = comments_part_
+        document_part = DocumentPart(
+            PackURI("/word/document.xml"), CT.WML_DOCUMENT, element("w:document"), package_
+        )
+
+        comments_part = document_part._comments_part
+
+        CommentsPart_.default.assert_called_once_with(package_)
+        relate_to_.assert_called_once_with(document_part, comments_part_, RT.COMMENTS)
+        assert comments_part is comments_part_
+
     def it_provides_access_to_its_settings_part_to_help(
         self, part_related_by_: Mock, settings_part_: Mock, package_: Mock
     ):
@@ -281,6 +327,22 @@ class DescribeDocumentPart:
         assert styles_part is styles_part_
 
     # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture
+    def comments_(self, request: FixtureRequest) -> Mock:
+        return instance_mock(request, Comments)
+
+    @pytest.fixture
+    def CommentsPart_(self, request: FixtureRequest) -> Mock:
+        return class_mock(request, "docx.parts.document.CommentsPart")
+
+    @pytest.fixture
+    def comments_part_(self, request: FixtureRequest) -> Mock:
+        return instance_mock(request, CommentsPart)
+
+    @pytest.fixture
+    def _comments_part_prop_(self, request: FixtureRequest) -> Mock:
+        return property_mock(request, DocumentPart, "_comments_part")
 
     @pytest.fixture
     def core_properties_(self, request: FixtureRequest):

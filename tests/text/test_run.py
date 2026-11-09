@@ -11,6 +11,7 @@ import pytest
 from docx import types as t
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK, WD_UNDERLINE
+from docx.oxml.text.paragraph import CT_P
 from docx.oxml.text.run import CT_R
 from docx.parts.document import DocumentPart
 from docx.shape import InlineShape
@@ -121,6 +122,18 @@ class DescribeRun:
 
         actual = [type(item).__name__ for item in inner_content]
         assert actual == expected, f"expected: {expected}, got: {actual}"
+
+    def it_can_mark_a_comment_reference_range(self, paragraph_: Mock):
+        p = cast(CT_P, element('w:p/w:r/w:t"referenced text"'))
+        run = last_run = Run(p.r_lst[0], paragraph_)
+
+        run.mark_comment_range(last_run, comment_id=42)
+
+        assert p.xml == xml(
+            'w:p/(w:commentRangeStart{w:id=42},w:r/w:t"referenced text"'
+            ",w:commentRangeEnd{w:id=42}"
+            ",w:r/(w:rPr/w:rStyle{w:val=CommentReference},w:commentReference{w:id=42}))"
+        )
 
     def it_knows_its_character_style(
         self, part_prop_: Mock, document_part_: Mock, paragraph_: Mock

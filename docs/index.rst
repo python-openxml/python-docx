@@ -81,6 +81,7 @@ User Guide
    user/api-concepts
    user/styles-understanding
    user/styles-using
+   user/comments
    user/shapes
 
 
@@ -96,6 +97,7 @@ API Documentation
    api/text
    api/table
    api/section
+   api/comments
    api/shape
    api/dml
    api/shared
