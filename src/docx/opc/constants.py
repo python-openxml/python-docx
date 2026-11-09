@@ -132,6 +132,7 @@ class CONTENT_TYPE:
     WML_DOCUMENT_GLOSSARY = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document.glossary+xml"
     )
+    WML_DOCUMENT_MACRO_MAIN = "application/vnd.ms-word.document.macroEnabled.main+xml"
     WML_DOCUMENT_MAIN = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"
     )
@@ -146,6 +147,10 @@ class CONTENT_TYPE:
     )
     WML_SETTINGS = "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"
     WML_STYLES = "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"
+    WML_TEMPLATE_MACRO_MAIN = "application/vnd.ms-word.template.macroEnabledTemplate.main+xml"
+    WML_TEMPLATE_MAIN = (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"
+    )
     WML_WEB_SETTINGS = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml"
     )

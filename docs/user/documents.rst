@@ -61,6 +61,29 @@ Things to note:
   what you intend.
 
 
+Macro-enabled documents and templates
+-------------------------------------
+
+Besides a regular ``.docx`` document, |docx| can open a macro-enabled document
+(``.docm``), a template (``.dotx``) and a macro-enabled template (``.dotm``)::
+
+    document = Document('letterhead.dotx')
+    document.add_paragraph('Dear Sir or Madam,')
+    document.save('letterhead-filled.dotx')
+
+The file keeps its kind when saved. A template is saved as a template and a
+macro-enabled file stays macro-enabled, so you should save it using the same
+extension it was opened with, otherwise Word will refuse to open it. Any macros
+(VBA project) the file contains are kept just as they are; |docx| can't read,
+add or change macros.
+
+Things to note:
+
+* Saving a template under a ``.docx`` name does not turn it into a regular
+  document, the file is still a template inside and Word will complain about
+  it.
+
+
 Opening a 'file-like' document
 ------------------------------
 
