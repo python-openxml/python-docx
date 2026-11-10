@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Iterator, List, cast
 
 from docx.enum.style import WD_STYLE_TYPE
+from docx.oxml.ns import qn
 from docx.oxml.text.run import CT_R
 from docx.shared import StoryChild
 from docx.styles.style import ParagraphStyle
@@ -159,13 +160,39 @@ class Paragraph(StoryChild):
         the text is mapped to a ``<w:tab/>`` element and each ``\\n`` or ``\\r``
         character is mapped to a line break. Paragraph-level formatting, such as style,
         is preserved. All run-level formatting, such as bold or italic, is removed.
+
+        Comment anchors in the paragraph are kept. Each ``<w:commentRangeStart>`` is
+        placed before the new run, and each ``<w:commentRangeEnd>`` and comment-reference
+        run after it, so a comment anchored to part of the paragraph then covers all of
+        the new text, not its original span. A comment range that starts or ends in
+        another paragraph keeps its marker there. Footnote references and tracked-change
+        markup (``<w:ins>``, ``<w:del>``) in the paragraph are still removed.
         """
         return self._p.text
 
     @text.setter
     def text(self, text: str | None):
+        # -- comment-range markers and the comment-reference run are paragraph content, so
+        # -- `.clear()` would remove them and leave the comment anchored to nothing. Hold on
+        # -- to the ones in this paragraph, including those inside a hyperlink, which is
+        # -- removed too.
+        comment_markers = self._p.xpath(
+            "(. | ./w:hyperlink)/*[self::w:commentRangeStart or self::w:commentRangeEnd"
+            " or self::w:r[w:commentReference]]"
+        )
         self.clear()
         self.add_run(text)
+        new_r = self._p.r_lst[0]
+        # -- put each one back, range-starts before the new run and range-ends and reference
+        # -- runs after it, both in document order. Only markers that were in this paragraph
+        # -- come back, so a range spanning paragraphs is neither duplicated nor cut short.
+        last = new_r
+        for marker in comment_markers:
+            if marker.tag == qn("w:commentRangeStart"):
+                new_r.addprevious(marker)
+            else:
+                last.addnext(marker)
+                last = marker
 
     def _insert_paragraph_before(self):
         """Return a newly created paragraph, inserted directly before this paragraph."""

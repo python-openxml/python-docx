@@ -9,6 +9,7 @@ from behave.runner import Context
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.oxml.ns import qn
 from docx.text.parfmt import ParagraphFormat
 
 from helpers import saved_docx_path, test_docx, test_text
@@ -23,6 +24,12 @@ def given_a_document_containing_three_paragraphs(context: Context):
     document.add_paragraph("bar")
     document.add_paragraph("baz")
     context.document = document
+
+
+@given("a paragraph having a comment")
+def given_a_paragraph_having_a_comment(context: Context):
+    document = context.document = Document(test_docx("comments-rich-para"))
+    context.paragraph = document.paragraphs[2]
 
 
 @given("a paragraph having {align_type} alignment")
@@ -235,6 +242,20 @@ def then_the_paragraph_has_no_content(context: Context):
 def then_the_paragraph_has_the_style_I_set(context: Context):
     paragraph, expected_style = context.paragraph, context.style
     assert paragraph.style == expected_style
+
+
+@then("the comment is still anchored to the paragraph")
+def then_the_comment_is_still_anchored_to_the_paragraph(context: Context):
+    def comment_0_markers(element: Any) -> list[str]:
+        xpath = ".//w:commentRangeStart | .//w:commentRangeEnd | .//w:commentReference"
+        return [m.tag.split("}")[1] for m in element.xpath(xpath) if m.get(qn("w:id")) == "0"]
+
+    expected = ["commentRangeStart", "commentRangeEnd", "commentReference"]
+    # -- in this paragraph, in order, and nowhere else in the document --
+    actual = comment_0_markers(context.paragraph._p)
+    assert actual == expected, f"expected: {expected}, got: {actual}"
+    actual = comment_0_markers(context.document.element.body)
+    assert actual == expected, f"expected: {expected}, got: {actual}"
 
 
 @then("the paragraph has the text I set")
