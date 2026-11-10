@@ -154,6 +154,76 @@ class DescribeParagraph:
         paragraph.text = text
         assert paragraph.text == expected_text
 
+    def it_reattaches_comment_markers_when_text_is_assigned(self, fake_parent: t.ProvidesStoryPart):
+        p = cast(
+            CT_P,
+            element(
+                'w:p/(w:commentRangeStart{w:id=42},w:r/w:t"old"'
+                ",w:commentRangeEnd{w:id=42}"
+                ",w:r/(w:rPr/w:rStyle{w:val=CommentReference},w:commentReference{w:id=42}))"
+            ),
+        )
+        paragraph = Paragraph(p, fake_parent)
+
+        paragraph.text = "new"
+
+        assert paragraph.text == "new"
+        assert p.xml == xml(
+            'w:p/(w:commentRangeStart{w:id=42},w:r/w:t"new"'
+            ",w:commentRangeEnd{w:id=42}"
+            ",w:r/(w:rPr/w:rStyle{w:val=CommentReference},w:commentReference{w:id=42}))"
+        )
+
+    @pytest.mark.parametrize(
+        ("p_cxml", "expected_cxml"),
+        [
+            # -- range starts here and ends in a later paragraph, only the start comes back --
+            (
+                'w:p/(w:r/w:t"foo ",w:commentRangeStart{w:id=1},w:r/w:t"bar")',
+                'w:p/(w:commentRangeStart{w:id=1},w:r/w:t"new")',
+            ),
+            # -- range starts in an earlier paragraph and ends here --
+            (
+                'w:p/(w:r/w:t"foo",w:commentRangeEnd{w:id=1},w:r/w:commentReference{w:id=1}'
+                ',w:r/w:t" bar")',
+                'w:p/(w:r/w:t"new",w:commentRangeEnd{w:id=1},w:r/w:commentReference{w:id=1})',
+            ),
+            # -- two comments on different words, both now cover the new run --
+            (
+                'w:p/(w:commentRangeStart{w:id=1},w:r/w:t"foo",w:commentRangeEnd{w:id=1}'
+                ',w:r/w:commentReference{w:id=1},w:r/w:t" ",w:commentRangeStart{w:id=2}'
+                ',w:r/w:t"bar",w:commentRangeEnd{w:id=2},w:r/w:commentReference{w:id=2})',
+                'w:p/(w:commentRangeStart{w:id=1},w:commentRangeStart{w:id=2},w:r/w:t"new"'
+                ",w:commentRangeEnd{w:id=1},w:r/w:commentReference{w:id=1}"
+                ",w:commentRangeEnd{w:id=2},w:r/w:commentReference{w:id=2})",
+            ),
+            # -- comment anchored inside a hyperlink, which is removed --
+            (
+                'w:p/(w:r/w:t"see ",w:hyperlink{w:anchor=_Toc1}/(w:commentRangeStart{w:id=3}'
+                ',w:r/w:t"here",w:commentRangeEnd{w:id=3},w:r/w:commentReference{w:id=3}))',
+                'w:p/(w:commentRangeStart{w:id=3},w:r/w:t"new",w:commentRangeEnd{w:id=3}'
+                ",w:r/w:commentReference{w:id=3})",
+            ),
+            # -- paragraph properties stay first --
+            (
+                'w:p/(w:pPr,w:commentRangeStart{w:id=5},w:r/w:t"foo",w:commentRangeEnd{w:id=5}'
+                ",w:r/w:commentReference{w:id=5})",
+                'w:p/(w:pPr,w:commentRangeStart{w:id=5},w:r/w:t"new",w:commentRangeEnd{w:id=5}'
+                ",w:r/w:commentReference{w:id=5})",
+            ),
+        ],
+    )
+    def it_keeps_only_the_comment_markers_it_contains_when_text_is_assigned(
+        self, p_cxml: str, expected_cxml: str, fake_parent: t.ProvidesStoryPart
+    ):
+        p = cast(CT_P, element(p_cxml))
+        paragraph = Paragraph(p, fake_parent)
+
+        paragraph.text = "new"
+
+        assert paragraph.text == "new"
+        assert p.xml == xml(expected_cxml)
+
     def it_knows_its_alignment_value(self, alignment_get_fixture):
         paragraph, expected_value = alignment_get_fixture
         assert paragraph.alignment == expected_value
