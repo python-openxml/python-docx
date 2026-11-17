@@ -1,7 +1,10 @@
 """Test suite for the docx.text.tabstops module."""
 
+from io import BytesIO
+
 import pytest
 
+from docx import Document
 from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.shared import Twips
 from docx.text.tabstops import TabStop, TabStops
@@ -17,9 +20,30 @@ class DescribeTabStop:
 
     def it_can_change_its_position(self, position_set_fixture):
         tab_stop, value, tabs, new_idx, expected_xml = position_set_fixture
+        tab = tab_stop.element
         tab_stop.position = value
         assert tab_stop._tab is tabs[new_idx]
+        assert tab_stop.element is tab is tabs[new_idx]
         assert tabs.xml == expected_xml
+
+    def it_keeps_existing_references_connected_when_repositioned(self):
+        document = Document()
+        tab_stops = document.add_paragraph().paragraph_format.tab_stops
+        tab_stop = tab_stops.add_tab_stop(Twips(720))
+        tab_stops.add_tab_stop(Twips(1440))
+        other_reference = tab_stops[0]
+
+        tab_stop.position = Twips(2160)
+        other_reference.leader = WD_TAB_LEADER.DOTS
+
+        stream = BytesIO()
+        document.save(stream)
+        stream.seek(0)
+        saved_tab_stops = Document(stream).paragraphs[0].paragraph_format.tab_stops
+        assert [stop.position for stop in saved_tab_stops] == [Twips(1440), Twips(2160)]
+        assert saved_tab_stops[1].leader == WD_TAB_LEADER.DOTS
+        assert other_reference.position == Twips(2160)
+        assert tab_stop == other_reference == tab_stops[1]
 
     def it_knows_its_alignment(self, alignment_get_fixture):
         tab_stop, expected_value = alignment_get_fixture
@@ -120,6 +144,12 @@ class DescribeTabStop:
                 Twips(960),
                 1,
                 "w:tabs/(w:tab{w:pos=720,w:val=left},w:tab{w:pos=960,w:val=left})",
+            ),
+            (
+                "w:tabs/(w:tab{w:pos=360,w:val=left},w:tab{w:pos=720,w:val=left})",
+                Twips(720),
+                1,
+                "w:tabs/(w:tab{w:pos=720,w:val=left},w:tab{w:pos=720,w:val=left})",
             ),
             (
                 "w:tabs/(w:tab{w:pos=-72,w:val=left},w:tab{w:pos=-36,w:val=left})",

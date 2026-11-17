@@ -119,5 +119,5 @@ class TabStop(ElementProxy):
     def position(self, value):
         tab = self._tab
         tabs = tab.getparent()
-        self._tab = tabs.insert_tab_in_order(value, tab.val, tab.leader)
-        tabs.remove(tab)
+        tab.pos = value
+        tabs._insert_tab_in_order(tab)
