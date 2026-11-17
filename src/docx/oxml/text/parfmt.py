@@ -378,12 +378,19 @@ class CT_TabStop(BaseOxmlElement):
 class CT_TabStops(BaseOxmlElement):
     """``<w:tabs>`` element, container for a sorted sequence of tab stops."""
 
+    tab_lst: list[CT_TabStop]
+    _new_tab: Callable[[], CT_TabStop]
+
     tab = OneOrMore("w:tab", successors=())
 
     def insert_tab_in_order(self, pos, align, leader):
         """Insert a newly created `w:tab` child element in `pos` order."""
         new_tab = self._new_tab()
         new_tab.pos, new_tab.val, new_tab.leader = pos, align, leader
+        return self._insert_tab_in_order(new_tab)
+
+    def _insert_tab_in_order(self, new_tab: CT_TabStop) -> CT_TabStop:
+        """Insert a new or existing `w:tab` element in `pos` order."""
         for tab in self.tab_lst:
             if new_tab.pos < tab.pos:
                 tab.addprevious(new_tab)
