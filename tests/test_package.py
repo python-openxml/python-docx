@@ -45,6 +45,33 @@ class DescribePackage:
         assert len(image_parts) == 3
         assert all(isinstance(p, ImagePart) for p in image_parts)
 
+    def but_it_skips_image_rels_whose_target_part_is_not_an_ImagePart(self):
+        """Broken or otherwise unparsed images load as plain Part objects.
+
+        Such parts must not be added to the image-part collection, or a later
+        `add_picture()` call fails with "'Part' object has no attribute 'sha1'".
+        """
+        from docx.opc.constants import RELATIONSHIP_TYPE as RT
+        from docx.opc.part import Part
+        from docx.opc.packuri import PackURI
+
+        package = Package()
+        plain_part = Part(PackURI("/word/media/image1.wmf"), "image/x-wmf", b"\x01", package)
+
+        class _Rel:
+            is_external = False
+            reltype = RT.IMAGE
+            target_part = plain_part
+
+        original_iter_rels = package.iter_rels
+        package.iter_rels = lambda: iter([_Rel()])  # type: ignore[method-assign]
+        try:
+            package._gather_image_parts()
+        finally:
+            package.iter_rels = original_iter_rels  # type: ignore[method-assign]
+
+        assert len(package.image_parts) == 0
+
     # fixture components ---------------------------------------------
 
     @pytest.fixture
