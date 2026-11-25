@@ -44,6 +44,12 @@ class Package(OpcPackage):
                 continue
             if rel.target_part in self.image_parts:
                 continue
+            # an image that could not be parsed when the package was loaded
+            # (e.g. one having broken EXIF data) is represented by a plain
+            # |Part| and has no `.sha1` member; skip it here rather than fail
+            # with AttributeError on the next `add_picture()` call
+            if not isinstance(rel.target_part, ImagePart):
+                continue
             self.image_parts.append(cast("ImagePart", rel.target_part))
 
 
