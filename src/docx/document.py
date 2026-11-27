@@ -200,6 +200,9 @@ class Document(ElementProxy):
 
         `path_or_stream` can be either a path to a filesystem location (a string) or a
         file-like object.
+
+        If a file already exists at the specified path, it is overwritten without
+        confirmation. To preserve an existing file, save to a different path.
         """
         self._part.save(path_or_stream)
 
