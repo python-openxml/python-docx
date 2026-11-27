@@ -50,21 +50,20 @@ work around it, so here it is up top.
    The file would get a little bloated if it contained all the style
    definitions you could use but haven't.
 
-#. If you apply a style using |docx| that's not defined in your file (in the
-   styles.xml part if you're curious), Word just ignores it. It doesn't
-   complain, it just doesn't change how things are formatted. I'm sure
-   there's a good reason for this. But it can present as a bit of a puzzle if
-   you don't understand how Word works that way.
+#. If you assign a style by name using |docx| and that style is not defined
+   in your file (in the styles.xml part if you're curious), |docx| raises
+   :exc:`KeyError`. A :ref:`latent style <latent_styles>` definition alone is
+   not enough; the style must have an explicit definition in the document.
 
 #. When you use a style, Word adds it to the file. Once there, it stays.
    I imagine there's a way to get rid of it, but you have to work at it. If
    you apply a style, delete the content you applied it to, and then save the
    document; the style definition stays in the saved file.
 
-All this adds up to the following: If you want to use a style in a document you
-create with |docx|, the document you start with must contain the style
-definition. Otherwise it just won't work. It won't raise an exception, it just
-won't work.
+All this adds up to the following: If you want to use a built-in style in a
+document you create with |docx|, include its definition in the document you
+start with. For a custom style, you can also create its definition with
+:meth:`.Styles.add_style` before applying it.
 
 If you use the "default" template document, it contains the styles listed
 below, most of the ones you're likely to want if you're not designing your own.
